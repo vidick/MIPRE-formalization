@@ -1,0 +1,780 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_ab_snorm_sq_ordComb_le_of_lin",
+  "source_name": "MIPRE.QLD.sum_ab_snorm_sq_ordComb_le_of_lin",
+  "formal_statement": "theorem MIPRE.QLD.sum_ab_snorm_sq_ordComb_le_of_lin (Φ : RA × RB → ℂ) {S : Matrix RA RA ℂ} (hsa : Sᴴ = S)\n    (hidem : S * S = S) (hX : IsPVM X') (hZ : IsPVM Z') (a₀ b₀ : F) :\n    ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)\n        * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ)\n          * bOp (ptComb (ordXZ X' Z') ab.1 ab.2 (ab.1 * a₀ + ab.2 * b₀))) ^ 2\n      ≤ 2 / Fintype.card F * bornProb Φ S 1\n        + snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (X' a₀ * Z' b₀)) ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {RA RB : Type*} [Fintype RA]"
+  ],
+  "docstring": "**The linear fibre**: for the linear form `α a₀ + β b₀`, the fibre always contains the diagonal\npair `(a₀, b₀)`, and any other pair for at most `q` of the `q²` values of `(α, β)`; so the average\nover `(α, β)` of the fibre weights is at most `2/q · ⟨S ⊗ 1⟩` plus the diagonal weight.",
+  "module": "MIPRE.Background.QLD.Separate",
+  "module_doc": "/-!\n# Separating the two point variables (`lem:qld-global-separate`)\n\nAn outcome `g = α g₁ + β g₂` of the global measurement that is linear in the combining\ncoordinates (`IsLinAB`, `lem:qld-global-linear`) is *good* when `g₁` reads only the `x` block and\n`g₂` only the `z` block: `g = α g_X(x) + β g_Z(z)` (`IsGood`). This file bounds the weight of the\nlinear outcomes that are not good, from the two ordered-product estimates of\n`lem:qld-global-products`: the order `X_a Z_b` controls the outcomes whose `g₂` reads a coordinate\noutside the `z` block, and the order `Z_b X_a` those whose `g₁` reads a coordinate outside the `x`\nblock.\n\n## The argument\n\nFor a linear outcome and a base point `u₀`, the fibre `{αa + βb = α g₁(u₀) + β g₂(u₀)}` always\ncontains the diagonal pair `(g₁(u₀), g₂(u₀))`, and contains any other pair for at most `q` of the\n`q²` values of `(α, β)`. So the average over `(α, β)` of `‖(S ⊗ B_u(g(u))) Φ‖²` is at most\n`2/q · ⟨S⟩ + W(g₁(u₀), g₂(u₀))`, with `W(a, b) = ‖(S ⊗ X_a Z_b) Φ‖² ≤ ⟨S ⊗ Z_b⟩`. Averaging over\n`u₀`, read as a uniform `z` block with the other coordinates uniform and independent\n(`sum_uniform_mixOn`): for fixed `z`, `u ↦ g₂(u)` is a polynomial in the other coordinates\n(`LowIndDegPoly.restrictOff`) which, if `g₂` reads a coordinate outside the `z` block, is\nnon-constant except for a set of `z` of probability at most `4md/q` (Schwartz--Zippel on a\nnonzero coefficient), and where it is non-constant each value `b` is taken with probability at\nmost `4md/q`, so `E ⟨S ⊗ Z_{g₂(u)}(z)⟩ ≤ 8md/q · ⟨S⟩`. Altogether\n`E_u ‖(S ⊗ B_u(g(u))) Φ‖² ≤ η ⟨S⟩` with `η = (2 + 8md)/q`, and the assembly of\n`lem:qld-global-linear` gives `(1 - 2η) · (weight of these outcomes) ≤ 2Δ`. The other block is\nthe mirror image, with the roles of `(X, a, α)` and `(Z, b, β)` exchanged.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Separate.lean#L428-L521",
+  "source_path": "MIPRE/Background/QLD/Separate.lean",
+  "lines": [
+   428,
+   521
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-separate",
+    "env": "lemma",
+    "title": "Separating the two point variables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.snorm_sq_ordComb_ordXZ_of_ne",
+   "MIPRE.posSemidef_of_proj",
+   "MIPRE.QLD.card_filter_linear_le",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.IsPVM.coarse"
+  ],
+  "pasted_helpers": 26,
+  "prooflines": 84,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_uniform_bornProb_readOn_le",
+  "source_name": "MIPRE.QLD.sum_uniform_bornProb_readOn_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_uniform_bornProb_readOn_le {T : Finset (Fin (4 * m))}\n    {Op : Point F (4 * m) → F → Matrix RB RB ℂ} (hOp : ∀ u u', Op (mixOn T u u') = Op u')\n    (hpvm : ∀ u, IsPVM (Op u)) {H : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}\n    (hH : H.DepOutside T) (Φ : RA × RB → ℂ) {S : Matrix RA RA ℂ} (hS : S.PosSemidef) :\n    ∑ u, uniform (Point F (4 * m)) u * bornProb Φ S (Op u (H.eval u))\n      ≤ 8 * m * d / Fintype.card F * bornProb Φ S 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m] {RA RB : Type*}"
+  ],
+  "docstring": "**Conditioning on a block**: if `Op` reads only the coordinates in `T` and the polynomial `H`\nreads some coordinate outside `T`, then `E_u ⟨S ⊗ Op_u(H(u))⟩ ≤ 8md/q · ⟨S ⊗ 1⟩`: for fixed `T`\ncoordinates, `H` is a non-constant polynomial in the others except with probability `4md/q`, and a\nnon-constant polynomial takes each value with probability at most `4md/q`.",
+  "module": "MIPRE.Background.QLD.Separate",
+  "module_doc": "/-!\n# Separating the two point variables (`lem:qld-global-separate`)\n\nAn outcome `g = α g₁ + β g₂` of the global measurement that is linear in the combining\ncoordinates (`IsLinAB`, `lem:qld-global-linear`) is *good* when `g₁` reads only the `x` block and\n`g₂` only the `z` block: `g = α g_X(x) + β g_Z(z)` (`IsGood`). This file bounds the weight of the\nlinear outcomes that are not good, from the two ordered-product estimates of\n`lem:qld-global-products`: the order `X_a Z_b` controls the outcomes whose `g₂` reads a coordinate\noutside the `z` block, and the order `Z_b X_a` those whose `g₁` reads a coordinate outside the `x`\nblock.\n\n## The argument\n\nFor a linear outcome and a base point `u₀`, the fibre `{αa + βb = α g₁(u₀) + β g₂(u₀)}` always\ncontains the diagonal pair `(g₁(u₀), g₂(u₀))`, and contains any other pair for at most `q` of the\n`q²` values of `(α, β)`. So the average over `(α, β)` of `‖(S ⊗ B_u(g(u))) Φ‖²` is at most\n`2/q · ⟨S⟩ + W(g₁(u₀), g₂(u₀))`, with `W(a, b) = ‖(S ⊗ X_a Z_b) Φ‖² ≤ ⟨S ⊗ Z_b⟩`. Averaging over\n`u₀`, read as a uniform `z` block with the other coordinates uniform and independent\n(`sum_uniform_mixOn`): for fixed `z`, `u ↦ g₂(u)` is a polynomial in the other coordinates\n(`LowIndDegPoly.restrictOff`) which, if `g₂` reads a coordinate outside the `z` block, is\nnon-constant except for a set of `z` of probability at most `4md/q` (Schwartz--Zippel on a\nnonzero coefficient), and where it is non-constant each value `b` is taken with probability at\nmost `4md/q`, so `E ⟨S ⊗ Z_{g₂(u)}(z)⟩ ≤ 8md/q · ⟨S⟩`. Altogether\n`E_u ‖(S ⊗ B_u(g(u))) Φ‖² ≤ η ⟨S⟩` with `η = (2 + 8md)/q`, and the assembly of\n`lem:qld-global-linear` gives `(1 - 2η) · (weight of these outcomes) ≤ 2Δ`. The other block is\nthe mirror image, with the roles of `(X, a, α)` and `(Z, b, β)` exchanged.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Separate.lean#L532-L611",
+  "source_path": "MIPRE/Background/QLD/Separate.lean",
+  "lines": [
+   532,
+   611
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-separate",
+    "env": "lemma",
+    "title": "Separating the two point variables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.card_eval_eq_zero_le",
+   "MIPRE.sum_uniform_eq_one",
+   "MIPRE.LIDT.LowIndDegPoly.eval_restrictOff",
+   "MIPRE.LIDT.LowIndDegPoly.exists_coef_ne_zero_of_depOutside",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.IsPVM.posSemidef"
+  ],
+  "pasted_helpers": 21,
+  "prooflines": 69,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_uniform_snorm_sq_ordComb_XZ_le_of_isLinAB",
+  "source_name": "MIPRE.QLD.sum_uniform_snorm_sq_ordComb_XZ_le_of_isLinAB",
+  "formal_statement": "theorem MIPRE.QLD.sum_uniform_snorm_sq_ordComb_XZ_le_of_isLinAB (hd : 1 ≤ d) (Φ : RA × RB → ℂ)\n    {S : Matrix RA RA ℂ} (hsa : Sᴴ = S) (hidem : S * S = S) (hX : ∀ x, IsPVM (X x))\n    (hZ : ∀ z, IsPVM (Z z)) {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}\n    (hlin : IsLinAB g) :\n    ∑ u, uniform (Point F (4 * m)) u\n        * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (ordComb ordXZ X Z u (g.eval u))) ^ 2\n      ≤ 2 / Fintype.card F * bornProb Φ S 1\n        + ∑ u₀, uniform (Point F (4 * m)) u₀\n          * bornProb Φ S (Z (zBlk u₀) ((gB hd g).eval u₀)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m] {RA RB : Type*}",
+   "variable {X Z : Point F m → F → Matrix RB RB ℂ}"
+  ],
+  "docstring": "**A linear outcome against the order `X_a Z_b`**: the fibre contributes `2/q · ⟨S ⊗ 1⟩`\nbeyond its diagonal pair, whose weight is at most `E_{u₀} ⟨S ⊗ Z_{g₂(u₀)}(z)⟩`.",
+  "module": "MIPRE.Background.QLD.Separate",
+  "module_doc": "/-!\n# Separating the two point variables (`lem:qld-global-separate`)\n\nAn outcome `g = α g₁ + β g₂` of the global measurement that is linear in the combining\ncoordinates (`IsLinAB`, `lem:qld-global-linear`) is *good* when `g₁` reads only the `x` block and\n`g₂` only the `z` block: `g = α g_X(x) + β g_Z(z)` (`IsGood`). This file bounds the weight of the\nlinear outcomes that are not good, from the two ordered-product estimates of\n`lem:qld-global-products`: the order `X_a Z_b` controls the outcomes whose `g₂` reads a coordinate\noutside the `z` block, and the order `Z_b X_a` those whose `g₁` reads a coordinate outside the `x`\nblock.\n\n## The argument\n\nFor a linear outcome and a base point `u₀`, the fibre `{αa + βb = α g₁(u₀) + β g₂(u₀)}` always\ncontains the diagonal pair `(g₁(u₀), g₂(u₀))`, and contains any other pair for at most `q` of the\n`q²` values of `(α, β)`. So the average over `(α, β)` of `‖(S ⊗ B_u(g(u))) Φ‖²` is at most\n`2/q · ⟨S⟩ + W(g₁(u₀), g₂(u₀))`, with `W(a, b) = ‖(S ⊗ X_a Z_b) Φ‖² ≤ ⟨S ⊗ Z_b⟩`. Averaging over\n`u₀`, read as a uniform `z` block with the other coordinates uniform and independent\n(`sum_uniform_mixOn`): for fixed `z`, `u ↦ g₂(u)` is a polynomial in the other coordinates\n(`LowIndDegPoly.restrictOff`) which, if `g₂` reads a coordinate outside the `z` block, is\nnon-constant except for a set of `z` of probability at most `4md/q` (Schwartz--Zippel on a\nnonzero coefficient), and where it is non-constant each value `b` is taken with probability at\nmost `4md/q`, so `E ⟨S ⊗ Z_{g₂(u)}(z)⟩ ≤ 8md/q · ⟨S⟩`. Altogether\n`E_u ‖(S ⊗ B_u(g(u))) Φ‖² ≤ η ⟨S⟩` with `η = (2 + 8md)/q`, and the assembly of\n`lem:qld-global-linear` gives `(1 - 2η) · (weight of these outcomes) ≤ 2Δ`. The other block is\nthe mirror image, with the roles of `(X, a, α)` and `(Z, b, β)` exchanged.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Separate.lean#L615-L648",
+  "source_path": "MIPRE/Background/QLD/Separate.lean",
+  "lines": [
+   615,
+   648
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_uniform_eq_one",
+   "MIPRE.posSemidef_of_proj",
+   "MIPRE.QLD.eval_pAB",
+   "MIPRE.QLD.eval_linAB",
+   "MIPRE.QLD.pAB_eq_linAB_of_isLinAB",
+   "MIPRE.QLD.sum_ab_snorm_sq_ordComb_le_of_lin",
+   "MIPRE.bornProb_nonneg"
+  ],
+  "pasted_helpers": 23,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_uniform_snorm_sq_ordComb_ZX_le_of_isLinAB",
+  "source_name": "MIPRE.QLD.sum_uniform_snorm_sq_ordComb_ZX_le_of_isLinAB",
+  "formal_statement": "theorem MIPRE.QLD.sum_uniform_snorm_sq_ordComb_ZX_le_of_isLinAB (hd : 1 ≤ d) (Φ : RA × RB → ℂ)\n    {S : Matrix RA RA ℂ} (hsa : Sᴴ = S) (hidem : S * S = S) (hX : ∀ x, IsPVM (X x))\n    (hZ : ∀ z, IsPVM (Z z)) {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}\n    (hlin : IsLinAB g) :\n    ∑ u, uniform (Point F (4 * m)) u\n        * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (ordComb ordZX X Z u (g.eval u))) ^ 2\n      ≤ 2 / Fintype.card F * bornProb Φ S 1\n        + ∑ u₀, uniform (Point F (4 * m)) u₀\n          * bornProb Φ S (X (xBlk u₀) ((gA hd g).eval u₀)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m] {RA RB : Type*}",
+   "variable {X Z : Point F m → F → Matrix RB RB ℂ}"
+  ],
+  "docstring": "**A linear outcome against the order `Z_b X_a`**: the mirror image, with the roles of\n`(X, a, α)` and `(Z, b, β)` exchanged.",
+  "module": "MIPRE.Background.QLD.Separate",
+  "module_doc": "/-!\n# Separating the two point variables (`lem:qld-global-separate`)\n\nAn outcome `g = α g₁ + β g₂` of the global measurement that is linear in the combining\ncoordinates (`IsLinAB`, `lem:qld-global-linear`) is *good* when `g₁` reads only the `x` block and\n`g₂` only the `z` block: `g = α g_X(x) + β g_Z(z)` (`IsGood`). This file bounds the weight of the\nlinear outcomes that are not good, from the two ordered-product estimates of\n`lem:qld-global-products`: the order `X_a Z_b` controls the outcomes whose `g₂` reads a coordinate\noutside the `z` block, and the order `Z_b X_a` those whose `g₁` reads a coordinate outside the `x`\nblock.\n\n## The argument\n\nFor a linear outcome and a base point `u₀`, the fibre `{αa + βb = α g₁(u₀) + β g₂(u₀)}` always\ncontains the diagonal pair `(g₁(u₀), g₂(u₀))`, and contains any other pair for at most `q` of the\n`q²` values of `(α, β)`. So the average over `(α, β)` of `‖(S ⊗ B_u(g(u))) Φ‖²` is at most\n`2/q · ⟨S⟩ + W(g₁(u₀), g₂(u₀))`, with `W(a, b) = ‖(S ⊗ X_a Z_b) Φ‖² ≤ ⟨S ⊗ Z_b⟩`. Averaging over\n`u₀`, read as a uniform `z` block with the other coordinates uniform and independent\n(`sum_uniform_mixOn`): for fixed `z`, `u ↦ g₂(u)` is a polynomial in the other coordinates\n(`LowIndDegPoly.restrictOff`) which, if `g₂` reads a coordinate outside the `z` block, is\nnon-constant except for a set of `z` of probability at most `4md/q` (Schwartz--Zippel on a\nnonzero coefficient), and where it is non-constant each value `b` is taken with probability at\nmost `4md/q`, so `E ⟨S ⊗ Z_{g₂(u)}(z)⟩ ≤ 8md/q · ⟨S⟩`. Altogether\n`E_u ‖(S ⊗ B_u(g(u))) Φ‖² ≤ η ⟨S⟩` with `η = (2 + 8md)/q`, and the assembly of\n`lem:qld-global-linear` gives `(1 - 2η) · (weight of these outcomes) ≤ 2Δ`. The other block is\nthe mirror image, with the roles of `(X, a, α)` and `(Z, b, β)` exchanged.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Separate.lean#L668-L713",
+  "source_path": "MIPRE/Background/QLD/Separate.lean",
+  "lines": [
+   668,
+   713
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_uniform_eq_one",
+   "MIPRE.posSemidef_of_proj",
+   "MIPRE.QLD.eval_pAB",
+   "MIPRE.QLD.eval_linAB",
+   "MIPRE.QLD.pAB_eq_linAB_of_isLinAB",
+   "MIPRE.QLD.sum_ab_snorm_sq_ordComb_le_of_lin",
+   "MIPRE.bornProb_nonneg"
+  ],
+  "pasted_helpers": 24,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_bad_mass_le_of_avg",
+  "source_name": "MIPRE.QLD.sum_bad_mass_le_of_avg",
+  "formal_statement": "theorem MIPRE.QLD.sum_bad_mass_le_of_avg (Φ : RA × RB → ℂ)\n    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))\n      (Matrix RA RA ℂ))\n    (B : Point F (4 * m) → F → Matrix RB RB ℂ)\n    (bad : LowIndDegPoly (F := F) (m := 4 * m) (d := d) → Prop) [DecidablePred bad] {η Δ : ℝ}\n    (havg : ∀ g, bad g → ∑ u, uniform (Point F (4 * m)) u\n      * snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (B u (g.eval u))) ^ 2\n      ≤ η * bornProb Φ (G.M () g) 1)\n    (hprod : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ\n      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - B u (g.eval u))) ^ 2 ≤ Δ) :\n    (1 - 2 * η) * ∑ g ∈ univ.filter bad, bornProb Φ (G.M () g) 1 ≤ 2 * Δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m] {RA RB : Type*}",
+   "variable {X Z : Point F m → F → Matrix RB RB ℂ}"
+  ],
+  "docstring": "**The assembly, abstractly**: if every bad outcome has `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≤ η ⟨G_g⟩`\nand the products estimate `∑_g E_u ‖(G_g ⊗ (1 - B_u(g(u)))) Φ‖² ≤ Δ` holds, then\n`(1 - 2η) · (weight of the bad outcomes) ≤ 2Δ`.",
+  "module": "MIPRE.Background.QLD.Separate",
+  "module_doc": "/-!\n# Separating the two point variables (`lem:qld-global-separate`)\n\nAn outcome `g = α g₁ + β g₂` of the global measurement that is linear in the combining\ncoordinates (`IsLinAB`, `lem:qld-global-linear`) is *good* when `g₁` reads only the `x` block and\n`g₂` only the `z` block: `g = α g_X(x) + β g_Z(z)` (`IsGood`). This file bounds the weight of the\nlinear outcomes that are not good, from the two ordered-product estimates of\n`lem:qld-global-products`: the order `X_a Z_b` controls the outcomes whose `g₂` reads a coordinate\noutside the `z` block, and the order `Z_b X_a` those whose `g₁` reads a coordinate outside the `x`\nblock.\n\n## The argument\n\nFor a linear outcome and a base point `u₀`, the fibre `{αa + βb = α g₁(u₀) + β g₂(u₀)}` always\ncontains the diagonal pair `(g₁(u₀), g₂(u₀))`, and contains any other pair for at most `q` of the\n`q²` values of `(α, β)`. So the average over `(α, β)` of `‖(S ⊗ B_u(g(u))) Φ‖²` is at most\n`2/q · ⟨S⟩ + W(g₁(u₀), g₂(u₀))`, with `W(a, b) = ‖(S ⊗ X_a Z_b) Φ‖² ≤ ⟨S ⊗ Z_b⟩`. Averaging over\n`u₀`, read as a uniform `z` block with the other coordinates uniform and independent\n(`sum_uniform_mixOn`): for fixed `z`, `u ↦ g₂(u)` is a polynomial in the other coordinates\n(`LowIndDegPoly.restrictOff`) which, if `g₂` reads a coordinate outside the `z` block, is\nnon-constant except for a set of `z` of probability at most `4md/q` (Schwartz--Zippel on a\nnonzero coefficient), and where it is non-constant each value `b` is taken with probability at\nmost `4md/q`, so `E ⟨S ⊗ Z_{g₂(u)}(z)⟩ ≤ 8md/q · ⟨S⟩`. Altogether\n`E_u ‖(S ⊗ B_u(g(u))) Φ‖² ≤ η ⟨S⟩` with `η = (2 + 8md)/q`, and the assembly of\n`lem:qld-global-linear` gives `(1 - 2η) · (weight of these outcomes) ≤ 2Δ`. The other block is\nthe mirror image, with the roles of `(X, a, α)` and `(Z, b, β)` exchanged.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Separate.lean#L733-L802",
+  "source_path": "MIPRE/Background/QLD/Separate.lean",
+  "lines": [
+   733,
+   802
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-separate",
+    "env": "lemma",
+    "title": "Separating the two point variables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_uniform_eq_one"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 55,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_not_isGood_mass_le",
+  "source_name": "MIPRE.QLD.sum_not_isGood_mass_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_not_isGood_mass_le (hd : 1 ≤ d) (Φ : RA × RB → ℂ)\n    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))\n      (Matrix RA RA ℂ))\n    (hX : ∀ x, IsPVM (X x)) (hZ : ∀ z, IsPVM (Z z)) {Δ₁ Δ₂ : ℝ}\n    (hXZ : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ\n      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - ordComb ordXZ X Z u (g.eval u))) ^ 2\n      ≤ Δ₁)\n    (hZX : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ\n      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - ordComb ordZX X Z u (g.eval u))) ^ 2\n      ≤ Δ₂) :\n    (1 - 2 * ((2 + 2 * d + 8 * m * d) / Fintype.card F))\n        * ∑ g ∈ univ.filter (fun g => ¬ IsGood g), bornProb Φ (G.M () g) 1\n      ≤ 2 * Δ₁ + 2 * Δ₂ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m] {RA RB : Type*}",
+   "variable {X Z : Point F m → F → Matrix RB RB ℂ}"
+  ],
+  "docstring": "**`lem:qld-global-separate`, abstract form.** With `η = (2 + 2d + 8md)/q`, if the two\nordered-product estimates hold with bounds `Δ₁` (order `X_a Z_b`) and `Δ₂` (order `Z_b X_a`),\nthen `(1 - 2η) · (weight of the outcomes that are not good) ≤ 2Δ₁ + 2Δ₂`.",
+  "module": "MIPRE.Background.QLD.Separate",
+  "module_doc": "/-!\n# Separating the two point variables (`lem:qld-global-separate`)\n\nAn outcome `g = α g₁ + β g₂` of the global measurement that is linear in the combining\ncoordinates (`IsLinAB`, `lem:qld-global-linear`) is *good* when `g₁` reads only the `x` block and\n`g₂` only the `z` block: `g = α g_X(x) + β g_Z(z)` (`IsGood`). This file bounds the weight of the\nlinear outcomes that are not good, from the two ordered-product estimates of\n`lem:qld-global-products`: the order `X_a Z_b` controls the outcomes whose `g₂` reads a coordinate\noutside the `z` block, and the order `Z_b X_a` those whose `g₁` reads a coordinate outside the `x`\nblock.\n\n## The argument\n\nFor a linear outcome and a base point `u₀`, the fibre `{αa + βb = α g₁(u₀) + β g₂(u₀)}` always\ncontains the diagonal pair `(g₁(u₀), g₂(u₀))`, and contains any other pair for at most `q` of the\n`q²` values of `(α, β)`. So the average over `(α, β)` of `‖(S ⊗ B_u(g(u))) Φ‖²` is at most\n`2/q · ⟨S⟩ + W(g₁(u₀), g₂(u₀))`, with `W(a, b) = ‖(S ⊗ X_a Z_b) Φ‖² ≤ ⟨S ⊗ Z_b⟩`. Averaging over\n`u₀`, read as a uniform `z` block with the other coordinates uniform and independent\n(`sum_uniform_mixOn`): for fixed `z`, `u ↦ g₂(u)` is a polynomial in the other coordinates\n(`LowIndDegPoly.restrictOff`) which, if `g₂` reads a coordinate outside the `z` block, is\nnon-constant except for a set of `z` of probability at most `4md/q` (Schwartz--Zippel on a\nnonzero coefficient), and where it is non-constant each value `b` is taken with probability at\nmost `4md/q`, so `E ⟨S ⊗ Z_{g₂(u)}(z)⟩ ≤ 8md/q · ⟨S⟩`. Altogether\n`E_u ‖(S ⊗ B_u(g(u))) Φ‖² ≤ η ⟨S⟩` with `η = (2 + 8md)/q`, and the assembly of\n`lem:qld-global-linear` gives `(1 - 2η) · (weight of these outcomes) ≤ 2Δ`. The other block is\nthe mirror image, with the roles of `(X, a, α)` and `(Z, b, β)` exchanged.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Separate.lean#L804-L894",
+  "source_path": "MIPRE/Background/QLD/Separate.lean",
+  "lines": [
+   804,
+   894
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-separate",
+    "env": "lemma",
+    "title": "Separating the two point variables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.posSemidef_of_proj",
+   "MIPRE.QLD.sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB",
+   "MIPRE.QLD.isGood_of",
+   "MIPRE.QLD.sum_uniform_bornProb_readOn_le",
+   "MIPRE.QLD.sum_uniform_snorm_sq_ordComb_XZ_le_of_isLinAB",
+   "MIPRE.QLD.sum_uniform_snorm_sq_ordComb_ZX_le_of_isLinAB",
+   "MIPRE.QLD.sum_bad_mass_le_of_avg",
+   "MIPRE.bornProb_nonneg"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 75,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.bornProb_extVec2_aOp_aOp",
+  "source_name": "MIPRE.QLD.bornProb_extVec2_aOp_aOp",
+  "formal_statement": "theorem MIPRE.QLD.bornProb_extVec2_aOp_aOp (φ : RA × RB → ℂ) (a₀ : EA) (b₀ : EB) (X : Matrix RA RA ℂ)\n    (Y : Matrix RB RB ℂ) : bornProb (extVec2 φ a₀ b₀) (aOp X) (aOp Y) = bornProb φ X Y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type u} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {R : Type*} [Fintype R] [DecidableEq R]",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {RA RB EA EB : Type*} [Fintype RA] [DecidableEq RA] [Fintype RB] [DecidableEq RB]"
+  ],
+  "docstring": "**An extension by fixed ancilla vectors has the reduced-state property**, on any registers:\noperators extended by the identity on the ancillas have on `extVec2 φ a₀ b₀` the expectation they\nhave on `φ`. Applied twice, it takes the twice-padded state of `lem:qld-global-pvm` back to the\nexpanded state.",
+  "module": "MIPRE.Background.QLD.Simul",
+  "module_doc": "/-!\n# The simultaneous pair measurement: the interface between stages 4 and 5\n\nStage 5 of the Pauli basis test's analysis (`lem:qld-helper`, `lem:qld-exact-paulis`,\n`lem:qld-swap`, and the assembly of `thm:qld`) consumes stage 4 through one statement, the\npaper's `lem:qld-4-7` (blueprint `lem:qld-simultaneous`): a *projective* measurement\n`S-hat_{g_X, g_Z}` on each party's padded local space, with outcomes pairs of polynomials in `m`\nvariables of individual degree at most `d`, whose evaluated `X` and `Z` marginals are consistent\nwith the opposite party's expanded point measurements, in both register versions. This file\nfixes that statement as a structure, `SimulPair`, so that stage 5 can be proved against it while\nstage 4 fills it in, with no `sorry` in the tree at any point.\n\n## The registers\n\nThe Lean padded strategy does not live on the paper's registers `A A' | B A''`:\n`lem:qld-padded-points` dilates its sandwich with an `F × F` ancilla per party, and the seeded\nsoundness theorem is applied to a projective dilation of the padded strategy, which adds one\nmore. So the measurement stage 4 produces acts on `(dA × Anc F m) × EA` for an ancilla type `EA`\nthat stage 5 has no reason to know, and the state it is consistent on is a product of the\nexpanded state `hatVec ψ` with fixed ancilla vectors. The structure carries the ancilla types\n`EA`, `EB` and the state `Φ` abstractly, and records the one property of `Φ` every transfer from\nstages 2 and 3 needs: an operator on the two hat registers, extended by the identity, has the\nexpectation it has on `hatVec ψ` (`Φ_reduced`). Every `extVec2 (hatVec ψ) a₀ b₀`, nested or\nreindexed, satisfies it.\n\n## The consistency\n\n`consA` says that Alice's pair measurement, read through the `W`-component evaluated at a\nuniformly random point `u`, agrees with Bob's expanded `(Point, W)` measurement at `u` up to\n`δ` --- the paper's `eq:qld-s-point-con-alice`; `consB` is `eq:qld-s-point-con-bob`. Both are\nrequired, and no symmetry of the strategy is assumed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Simul.lean#L213-L219",
+  "source_path": "MIPRE/Background/QLD/Simul.lean",
+  "lines": [
+   213,
+   219
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.ancillaEmbed_isometry",
+   "MIPRE.kron_one_mul_ancillaEmbed"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.exists_legal_dilation",
+  "source_name": "MIPRE.QLD.exists_legal_dilation",
+  "formal_statement": "theorem MIPRE.QLD.exists_legal_dilation (hm : m ∣ Fintype.card F) (ψ : dA × dB → ℂ)\n    (MA : Question F m → POVM (Answer F m d) dA) (MB : Question F m → POVM (Answer F m d) dB)\n    {ε : ℝ} (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (a₀ : Answer F m d) :\n    ∃ (MA' : Question F m → POVM (Answer F m d) (dA × Answer F m d))\n      (MB' : Question F m → POVM (Answer F m d) (dB × Answer F m d)),\n      (∀ q, IsPVM fun a => ((MA' q).mats a).val) ∧ (∀ q, IsPVM fun a => ((MB' q).mats a).val) ∧\n      LegalSupport MA' ∧ LegalSupport MB' ∧\n      1 - povmValue (qldGame hm) (extVec2 ψ a₀ a₀) MA' MB' ≤ ε ∧\n      (∀ (W : Bas) (h : Anc F m), ancCompress a₀ ((((MA' (.pauli W)).map rdPauliVec).mats h).val)\n        = (((MA (.pauli W)).map rdPauliVec).mats h).val) ∧\n      (∀ (W : Bas) (h : Anc F m), ancCompress a₀ ((((MB' (.pauli W)).map rdPauliVec).mats h).val)\n        = (((MB (.pauli W)).map rdPauliVec).mats h).val) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.Weyl MIPRE.Introspection",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ}",
+   "variable [Algebra (ZMod 2) F] [NeZero m] {dA dB : Type} [Fintype dA] [DecidableEq dA]"
+  ],
+  "docstring": "**Every POVM strategy is the compression of a legal projective one, on the doubly padded\nstate.** Naimark dilation (`exists_projective_dilation_povm`) makes each party's measurements\nprojective on `d × Answer`, compressed back by the ancilla state `|a₀>`; legalizing\n(`legalizeStrat`) makes them legally supported, keeps them projective, and does not raise the\nfailure probability. The coarse `(Pauli, W)` measurement --- the one the theorem is about --- is\nunchanged by legalization (`rdPauliVec_legalize_pauli`), so it still compresses to the original\nstrategy's.",
+  "module": "MIPRE.Background.QLD.Soundness",
+  "module_doc": "/-!\n# `thm:qld`: soundness of the Pauli basis test\n\nThis file assembles `thm:qld` (the paper's `thm:pauli-appendix`, proved at the end of\n`qld-isometry.tex`) from the swap isometry lemma and four pieces written for this step:\n`Descent.lean`, `PhysEmbed.lean`, `QLDError.lean` and `RegisterForm.lean`. The headline is\n`qld_soundness`: universal constants `a ≥ 1`, `0 < b < 1`, fixed before anything else, such that\nevery **POVM** strategy of the Pauli basis test that fails with probability at most `ε` has local\nisometries `V_A`, `V_B` and **one** unit state `|aux>` with\n\n1. `‖(V_A ⊗ V_B) |ψ> - |EPR_q>^M ⊗ |aux>‖ ≤ δ`, the distance itself and not its square;\n2. for each basis `W`, and for each party, the summed squared state-dependent distance, relative\n   to `|EPR_q>^M ⊗ |aux>`, between the party's **original** coarse `(Pauli, W)` measurement\n   conjugated by its isometry and the honest projectors `tau^W_h` on its register is at most `δ`;\n\nwhere `δ = a (md)^a (ε^b + q^{-b} + 2^{-bmd})` (`errShape`). The isometries are register-first,\n`Matrix (Anc F m × H) d ℂ`, in the vocabulary of the consumer\n(`TypedEstimates.quantumValue_ge_of_valid_isometric_images`): `isometricState`, `registerState`,\n`isometricImage`.\n\n## The route\n\n`MirrorSimul.swap_isometry` is a statement about a *legal projective* strategy, about the swapped\nphysical state `V_A ⊗ V_B |psi-hat>`, and about `V`-conjugation of the dilated measurement.\n`thm:qld` is about an arbitrary POVM strategy, its own state and its own measurement. Three\npassages close the gap, and only the last is more than bookkeeping.\n\n* **Dilate and legalize** (`exists_legal_dilation`). Naimark makes the strategy projective on\n  `d × Answer`, compressed back by the ancilla `|a₀>`; legalizing makes it legally supported,\n  which the chain needs, at no cost in value. Neither changes what the coarse Pauli measurement\n  compresses to (`rdPauliVec_legalize_pauli`).\n* **The state is a product image** (`exists_phys_of_regime`). `mirrorOfGlobalPairs` --- and not\n  `exists_mirrorSimul`, which forgets it --- has an explicit physical state:\n  `physEmb ⊗ physEmb` applied to the doubly padded state (`physVec_mirrorOfGlobalPairs`), which is\n  itself `N ⊗ N` applied to `ψ` (`kronecker_mulVec_extVec2`). So with\n  `phi_A = V_A ∘ physEmb ∘ N`, the paper's `phi_A` composed with the dilation, the swapped physical\n  state is `(phi_A ⊗ phi_B) ψ` on the nose, and item 1 of the swap lemma is item 1 here.\n* **The descent through agreement** (`MirrorSimul.exists_phys_descent`). Compression by an\n  isometry does not preserve a *closeness* statement, which is what item 2 of the swap lemma is;\n  it preserves an *agreement* with a family on the other party, which is bilinear. On the product\n  state `tau^W_h` on Alice's half of the pair acts as `tau^W_h` on Bob's, so closeness to `tau^W`\n  is agreement with `tau^W` across the cut, and that agreement is carried to the pushed-forward\n  state (at `2 sqrt η`), compressed, and carried back (`sum_snorm_sq_d",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Soundness.lean#L162-L198",
+  "source_path": "MIPRE/Background/QLD/Soundness.lean",
+  "lines": [
+   162,
+   198
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.povmValue_le_legalizeStrat",
+   "MIPRE.exists_projective_dilation",
+   "MIPRE.POVM.map_map",
+   "MIPRE.POVM.sum_val",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.IsPVM.coarse"
+  ],
+  "pasted_helpers": 16,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.exists_phys_descent",
+  "source_name": "MIPRE.QLD.MirrorSimul.exists_phys_descent",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.exists_phys_descent {hm : m ∣ Fintype.card F} {ε : ℝ}\n    (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)\n    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (hd : 1 ≤ d)\n    (hδ : 0 ≤ δ) (hε : 0 ≤ ε)\n    (hlt : 2 * Real.sqrt (deltaSelfCons δ ε m d (Fintype.card F))\n      + 2 * deltaSelfCons δ ε m d (Fintype.card F) < 1)\n    {KA KB : Type*} [Fintype KA] [DecidableEq KA] [Fintype KB] [DecidableEq KB]\n    {θ : KA × KB → ℂ} (hθ : ‖evec θ‖ = 1)\n    {EA : Matrix (((dA × Anc F m) × M.Ea) × Anc F m) KA ℂ}\n    {EB : Matrix (((dB × Anc F m) × M.Eb) × Anc F m) KB ℂ}\n    (hEA : EAᴴ * EA = 1) (hEB : EBᴴ * EB = 1) (hphys : M.physVec = (EA ⊗ₖ EB) *ᵥ θ)\n    {PA : Bas → Anc F m → Matrix KA KA ℂ} {PB : Bas → Anc F m → Matrix KB KB ℂ}\n    (hPA0 : ∀ W h, 0 ≤ PA W h) (hPA1 : ∀ W, ∑ h, PA W h = 1)\n    (hPB0 : ∀ W h, 0 ≤ PB W h) (hPB1 : ∀ W, ∑ h, PB W h = 1)\n    (hcompA : ∀ W h, EAᴴ * M.alicePauli W h * EA = PA W h)\n    (hcompB : ∀ W h, EBᴴ * M.bobPauli W h * EB = PB W h) :\n    ∃ aux : ((dA × Anc F m) × M.Ea) × ((dB × Anc F m) × M.Eb) → ℂ,\n      (M.aliceSwap * EA)ᴴ * (M.aliceSwap * EA) = 1 ∧\n      (M.bobSwap * EB)ᴴ * (M.bobSwap * EB) = 1 ∧ ‖evec aux‖ = 1 ∧\n      ‖evec (((M.aliceSwap * EA) ⊗ₖ (M.bobSwap * EB)) *ᵥ θ\n          - outerUnVec (auxVec (F := F) (n := Fin m → Bool) aux))‖\n        ≤ Real.sqrt (etaItemOne δ ε m d (Fintype.card F)) ∧\n      ∀ W : Bas,\n        ∑ h : Anc F m, snorm (outerUnVec (auxVec (F := F) (n := Fin m → Bool) aux))\n            (aOp (M.aliceSwap * EA * PA W h * (M.aliceSwap * EA)ᴴ - bOp (proj (weylOf W) h))) ^ 2\n          ≤ deltaItemTwo δ ε m d (Fintype.card F) (etaItemOne δ ε m d (Fintype.card F))\n            + 8 * Real.sqrt (etaItemOne δ ε m d (Fintype.card F)) ∧\n        ∑ h : Anc F m, snorm (outerUnVec (auxVec (F := F) (n := Fin m → Bool) aux))\n            (bOp (M.bobSwap * EB * PB W h * (M.bobSwap * EB)ᴴ - bOp (proj (weylOf W) h))) ^ 2\n          ≤ deltaItemTwo δ ε m d (Fintype.card F) (etaItemOne δ ε m d (Fintype.card F))\n            + 8 * Real.sqrt (etaItemOne δ ε m d (Fintype.card F)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.Weyl MIPRE.Introspection",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**`thm:qld` at a `MirrorSimul`, for any pair of embeddings of an original space whose image\nthe physical state is.** Let `E_A`, `E_B` be isometries from spaces `K_A`, `K_B` into the two\nphysical registers with `M.physVec = (E_A ⊗ E_B) θ`, and let `P^A_{W,h}`, `P^B_{W,h}` be POVMs on\n`K_A`, `K_B` that the strategy's total Pauli measurements compress to under `E_A`, `E_B`. Then with\n`phi_A = V_A E_A`, `phi_B = V_B E_B` and the auxiliary state of the swap isometry lemma:\n\n1. `phi_A ⊗ phi_B θ` is within `sqrt η` of `|aux> ⊗ |EPR_q>^M`;\n2. `phi_A P^A_{W,h} phi_A^†` is within `deltaItemTwo + 8 sqrt η` of `Id ⊗ tau^W_h` on `A''` in the\n   summed squared state-dependent distance relative to that product state, and likewise for Bob.\n\nItem 1 is item 1 of `swap_isometry`, since `phi_A ⊗ phi_B θ` *is* the swapped physical state.\nItem 2 is item 2 of `swap_isometry` carried down by the descent through agreement\n(`sum_snorm_sq_descent_isometry_aOp`, `..._bOp`): conjugated by `phi_A`, the swap-conjugated\nPauli measurement compresses to `P^A_{W,h}` (`conj_mul_conj_unitary`), and that one identity makes\nboth the passage from `V`-conjugation to `phi`-conjugation and the one from the dilation to the\noriginal measurement.",
+  "module": "MIPRE.Background.QLD.Soundness",
+  "module_doc": "/-!\n# `thm:qld`: soundness of the Pauli basis test\n\nThis file assembles `thm:qld` (the paper's `thm:pauli-appendix`, proved at the end of\n`qld-isometry.tex`) from the swap isometry lemma and four pieces written for this step:\n`Descent.lean`, `PhysEmbed.lean`, `QLDError.lean` and `RegisterForm.lean`. The headline is\n`qld_soundness`: universal constants `a ≥ 1`, `0 < b < 1`, fixed before anything else, such that\nevery **POVM** strategy of the Pauli basis test that fails with probability at most `ε` has local\nisometries `V_A`, `V_B` and **one** unit state `|aux>` with\n\n1. `‖(V_A ⊗ V_B) |ψ> - |EPR_q>^M ⊗ |aux>‖ ≤ δ`, the distance itself and not its square;\n2. for each basis `W`, and for each party, the summed squared state-dependent distance, relative\n   to `|EPR_q>^M ⊗ |aux>`, between the party's **original** coarse `(Pauli, W)` measurement\n   conjugated by its isometry and the honest projectors `tau^W_h` on its register is at most `δ`;\n\nwhere `δ = a (md)^a (ε^b + q^{-b} + 2^{-bmd})` (`errShape`). The isometries are register-first,\n`Matrix (Anc F m × H) d ℂ`, in the vocabulary of the consumer\n(`TypedEstimates.quantumValue_ge_of_valid_isometric_images`): `isometricState`, `registerState`,\n`isometricImage`.\n\n## The route\n\n`MirrorSimul.swap_isometry` is a statement about a *legal projective* strategy, about the swapped\nphysical state `V_A ⊗ V_B |psi-hat>`, and about `V`-conjugation of the dilated measurement.\n`thm:qld` is about an arbitrary POVM strategy, its own state and its own measurement. Three\npassages close the gap, and only the last is more than bookkeeping.\n\n* **Dilate and legalize** (`exists_legal_dilation`). Naimark makes the strategy projective on\n  `d × Answer`, compressed back by the ancilla `|a₀>`; legalizing makes it legally supported,\n  which the chain needs, at no cost in value. Neither changes what the coarse Pauli measurement\n  compresses to (`rdPauliVec_legalize_pauli`).\n* **The state is a product image** (`exists_phys_of_regime`). `mirrorOfGlobalPairs` --- and not\n  `exists_mirrorSimul`, which forgets it --- has an explicit physical state:\n  `physEmb ⊗ physEmb` applied to the doubly padded state (`physVec_mirrorOfGlobalPairs`), which is\n  itself `N ⊗ N` applied to `ψ` (`kronecker_mulVec_extVec2`). So with\n  `phi_A = V_A ∘ physEmb ∘ N`, the paper's `phi_A` composed with the dilation, the swapped physical\n  state is `(phi_A ⊗ phi_B) ψ` on the nose, and item 1 of the swap lemma is item 1 here.\n* **The descent through agreement** (`MirrorSimul.exists_phys_descent`). Compression by an\n  isometry does not preserve a *closeness* statement, which is what item 2 of the swap lemma is;\n  it preserves an *agreement* with a family on the other party, which is bilinear. On the product\n  state `tau^W_h` on Alice's half of the pair acts as `tau^W_h` on Bob's, so closeness to `tau^W`\n  is agreement with `tau^W` across the cut, and that agreement is carried to the pushed-forward\n  state (at `2 sqrt η`), compressed, and carried back (`sum_snorm_sq_d",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Soundness.lean#L258-L328",
+  "source_path": "MIPRE/Background/QLD/Soundness.lean",
+  "lines": [
+   258,
+   328
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.bnd_sum_kronecker",
+   "MIPRE.QLD.sum_snorm_sq_aOp_sub_bOp_le",
+   "MIPRE.QLD.MirrorSimul.qform_endState_twirl_ge",
+   "MIPRE.QLD.mulVec_outerUnVec_auxVec",
+   "MIPRE.QLD.MirrorSimul.sum_snorm_sq_aliceConjPauli_le",
+   "MIPRE.QLD.MirrorSimul.sum_snorm_sq_bob_le",
+   "MIPRE.QLD.abs_qform_sub_qform_le",
+   "MIPRE.QLD.sum_snorm_sq_sub_eq_two_sub",
+   "MIPRE.QLD.exists_auxVec_close",
+   "MIPRE.QLD.sTensor_mul",
+   "MIPRE.QLD.sTensor_one",
+   "MIPRE.QLD.sTensor_conjTranspose",
+   "MIPRE.norm_evec_expVec",
+   "MIPRE.Introspection.norm_evec_comp_equiv",
+   "MIPRE.aOp_sub",
+   "MIPRE.IsPVM.nonneg",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.IsPVM.aOp",
+   "MIPRE.star_sgn",
+   "MIPRE.bornProb_swapVec",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj",
+   "MIPRE.Weyl.epr_unit",
+   "MIPRE.Weyl.stateVec_epr"
+  ],
+  "pasted_helpers": 87,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.exists_phys_of_regime",
+  "source_name": "MIPRE.QLD.exists_phys_of_regime",
+  "formal_statement": "theorem MIPRE.QLD.exists_phys_of_regime (hm : m ∣ Fintype.card F) (hd : 1 ≤ d) {ψ : dA × dB → ℂ}\n    (hψ : star ψ ⬝ᵥ ψ = 1) (MA : Question F m → POVM (Answer F m d) dA)\n    (MB : Question F m → POVM (Answer F m d) dB) {ε : ℝ} (hε : 0 ≤ ε)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (hq : 48 * m * d ≤ Fintype.card F)\n    (hlt : qldHlt ε m d (Fintype.card F) < 1) :\n    ∃ (HA HB : Type) (_ : Fintype HA) (_ : DecidableEq HA) (_ : Fintype HB) (_ : DecidableEq HB)\n      (φA : Matrix (HA × Anc F m) dA ℂ) (φB : Matrix (HB × Anc F m) dB ℂ) (aux : HA × HB → ℂ),\n      φAᴴ * φA = 1 ∧ φBᴴ * φB = 1 ∧ ‖evec aux‖ = 1 ∧\n      ‖evec ((φA ⊗ₖ φB) *ᵥ ψ - outerUnVec (auxVec (F := F) (n := Fin m → Bool) aux))‖\n        ≤ Real.sqrt (qldEta ε m d (Fintype.card F)) ∧\n      ∀ W : Bas,\n        ∑ h : Anc F m, snorm (outerUnVec (auxVec (F := F) (n := Fin m → Bool) aux))\n            (aOp (φA * (((MA (.pauli W)).map rdPauliVec).mats h).val * φAᴴ\n              - bOp (proj (weylOf W) h))) ^ 2\n          ≤ deltaItemTwo (qldDelta ε m d (Fintype.card F)) ε m d (Fintype.card F)\n              (qldEta ε m d (Fintype.card F))\n            + 8 * Real.sqrt (qldEta ε m d (Fintype.card F)) ∧\n        ∑ h : Anc F m, snorm (outerUnVec (auxVec (F := F) (n := Fin m → Bool) aux))\n            (bOp (φB * (((MB (.pauli W)).map rdPauliVec).mats h).val * φBᴴ\n              - bOp (proj (weylOf W) h))) ^ 2\n          ≤ deltaItemTwo (qldDelta ε m d (Fintype.card F)) ε m d (Fintype.card F)\n              (qldEta ε m d (Fintype.card F))\n            + 8 * Real.sqrt (qldEta ε m d (Fintype.card F)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.Weyl MIPRE.Introspection",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**`thm:qld` inside the regime, in physical form.** For a POVM strategy of failure probability\nat most `ε`, when `48 m d ≤ q` and `qldHlt < 1`, there are isometries `phi_A`, `phi_B` from the\noriginal spaces into `H_A ⊗ (C^q)^M`, `H_B ⊗ (C^q)^M` (the half of the pair **last**) and a unit\n`|aux>` on `H_A ⊗ H_B` such that\n\n1. `phi_A ⊗ phi_B |psi>` is within `sqrt qldEta` of `|aux> ⊗ |EPR_q>^M`, and\n2. for each basis `W`, `phi_A M^{(Pauli,W)}_h phi_A^†` is within `deltaItemTwo + 8 sqrt qldEta` of\n   `Id ⊗ tau^W_h`, in the summed squared state-dependent distance relative to that product state,\n   and likewise for Bob, where `M^{(Pauli,W)}_h` is the **original** strategy's coarse Pauli\n   measurement.\n\nThe strategy is dilated and legalized (`exists_legal_dilation`); the dilation has both cuts'\nsimultaneous pair measurements on one state (`exists_globalPair` twice, `mirrorOfGlobalPairs`);\nits physical state is the original state pushed through `phi_0 ∘ N`\n(`physVec_mirrorOfGlobalPairs`, `kronecker_mulVec_extVec2`); and `phi_A = V_A ∘ phi_0 ∘ N`\ncompresses the swap-conjugated Pauli measurement to the original one\n(`physEmb_mul_ancillaEmbed_conj`, then the dilation's compression). The rest is\n`MirrorSimul.exists_phys_descent`.",
+  "module": "MIPRE.Background.QLD.Soundness",
+  "module_doc": "/-!\n# `thm:qld`: soundness of the Pauli basis test\n\nThis file assembles `thm:qld` (the paper's `thm:pauli-appendix`, proved at the end of\n`qld-isometry.tex`) from the swap isometry lemma and four pieces written for this step:\n`Descent.lean`, `PhysEmbed.lean`, `QLDError.lean` and `RegisterForm.lean`. The headline is\n`qld_soundness`: universal constants `a ≥ 1`, `0 < b < 1`, fixed before anything else, such that\nevery **POVM** strategy of the Pauli basis test that fails with probability at most `ε` has local\nisometries `V_A`, `V_B` and **one** unit state `|aux>` with\n\n1. `‖(V_A ⊗ V_B) |ψ> - |EPR_q>^M ⊗ |aux>‖ ≤ δ`, the distance itself and not its square;\n2. for each basis `W`, and for each party, the summed squared state-dependent distance, relative\n   to `|EPR_q>^M ⊗ |aux>`, between the party's **original** coarse `(Pauli, W)` measurement\n   conjugated by its isometry and the honest projectors `tau^W_h` on its register is at most `δ`;\n\nwhere `δ = a (md)^a (ε^b + q^{-b} + 2^{-bmd})` (`errShape`). The isometries are register-first,\n`Matrix (Anc F m × H) d ℂ`, in the vocabulary of the consumer\n(`TypedEstimates.quantumValue_ge_of_valid_isometric_images`): `isometricState`, `registerState`,\n`isometricImage`.\n\n## The route\n\n`MirrorSimul.swap_isometry` is a statement about a *legal projective* strategy, about the swapped\nphysical state `V_A ⊗ V_B |psi-hat>`, and about `V`-conjugation of the dilated measurement.\n`thm:qld` is about an arbitrary POVM strategy, its own state and its own measurement. Three\npassages close the gap, and only the last is more than bookkeeping.\n\n* **Dilate and legalize** (`exists_legal_dilation`). Naimark makes the strategy projective on\n  `d × Answer`, compressed back by the ancilla `|a₀>`; legalizing makes it legally supported,\n  which the chain needs, at no cost in value. Neither changes what the coarse Pauli measurement\n  compresses to (`rdPauliVec_legalize_pauli`).\n* **The state is a product image** (`exists_phys_of_regime`). `mirrorOfGlobalPairs` --- and not\n  `exists_mirrorSimul`, which forgets it --- has an explicit physical state:\n  `physEmb ⊗ physEmb` applied to the doubly padded state (`physVec_mirrorOfGlobalPairs`), which is\n  itself `N ⊗ N` applied to `ψ` (`kronecker_mulVec_extVec2`). So with\n  `phi_A = V_A ∘ physEmb ∘ N`, the paper's `phi_A` composed with the dilation, the swapped physical\n  state is `(phi_A ⊗ phi_B) ψ` on the nose, and item 1 of the swap lemma is item 1 here.\n* **The descent through agreement** (`MirrorSimul.exists_phys_descent`). Compression by an\n  isometry does not preserve a *closeness* statement, which is what item 2 of the swap lemma is;\n  it preserves an *agreement* with a family on the other party, which is bilinear. On the product\n  state `tau^W_h` on Alice's half of the pair acts as `tau^W_h` on Bob's, so closeness to `tau^W`\n  is agreement with `tau^W` across the cut, and that agreement is carried to the pushed-forward\n  state (at `2 sqrt η`), compressed, and carried back (`sum_snorm_sq_d",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Soundness.lean#L341-L404",
+  "source_path": "MIPRE/Background/QLD/Soundness.lean",
+  "lines": [
+   341,
+   404
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.exists_global_pvm",
+   "MIPRE.QLD.physVec_mirrorOfGlobalPairs",
+   "MIPRE.QLD.physEmb_isometry",
+   "MIPRE.QLD.MirrorSimul.exists_phys_descent",
+   "MIPRE.QLD.exists_legal_dilation",
+   "MIPRE.QLD.swapVec_unit",
+   "MIPRE.QLD.povmValue_swapped_le",
+   "MIPRE.ancillaEmbed_isometry",
+   "MIPRE.kron_one_mul_ancillaEmbed",
+   "MIPRE.POVM.sum_val",
+   "MIPRE.extVec2_unit"
+  ],
+  "pasted_helpers": 30,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.exists_le_qldErr",
+  "source_name": "MIPRE.QLD.exists_le_qldErr",
+  "formal_statement": "theorem MIPRE.QLD.exists_le_qldErr (hm : m ∣ Fintype.card F) (hd : 1 ≤ d) {ψ : dA × dB → ℂ}\n    (hψ : star ψ ⬝ᵥ ψ = 1) (MA : Question F m → POVM (Answer F m d) dA)\n    (MB : Question F m → POVM (Answer F m d) dB) {ε : ℝ} (hε : 0 ≤ ε)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :\n    ∃ (HA HB : Type) (_ : Fintype HA) (_ : DecidableEq HA) (_ : Fintype HB) (_ : DecidableEq HB)\n      (VA : Matrix (Anc F m × HA) dA ℂ) (VB : Matrix (Anc F m × HB) dB ℂ) (aux : HA × HB → ℂ),\n      VAᴴ * VA = 1 ∧ VBᴴ * VB = 1 ∧ ‖evec aux‖ = 1 ∧\n      ‖evec (isometricState VA VB ψ - registerState (Anc F m) aux)‖\n        ≤ qldErr ε m d (Fintype.card F) ∧\n      ∀ W : Bas,\n        ∑ h : Anc F m, snorm (registerState (Anc F m) aux)\n            (aOp (isometricImage VA (((MA (.pauli W)).map rdPauliVec).mats h).val\n              - aOp (proj (weylOf W) h))) ^ 2\n          ≤ qldErr ε m d (Fintype.card F) ∧\n        ∑ h : Anc F m, snorm (registerState (Anc F m) aux)\n            (bOp (isometricImage VB (((MB (.pauli W)).map rdPauliVec).mats h).val\n              - aOp (proj (weylOf W) h))) ^ 2\n          ≤ qldErr ε m d (Fintype.card F) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.Weyl MIPRE.Introspection",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**`thm:qld` with its error named**: both items at most `qldErr ε m d q`, for a POVM strategy\nof failure probability at most `ε`. Inside the regime (`48 m d ≤ q` and `qldHlt < 1`) the\nisometries are `exists_phys_of_regime`'s with the register moved to the front (`regFirst`), and\n`RegisterForm` reads the consumer's quantities as the physical ones; each item is also at most the\ntrivial bound `2`, so at most `min qldBound 4`. Outside it `qldErr = 4` and the isometries are the\ninert ancilla `ψ ↦ |0> ⊗ ψ`, with `aux = ψ`: the trivial bounds suffice.",
+  "module": "MIPRE.Background.QLD.Soundness",
+  "module_doc": "/-!\n# `thm:qld`: soundness of the Pauli basis test\n\nThis file assembles `thm:qld` (the paper's `thm:pauli-appendix`, proved at the end of\n`qld-isometry.tex`) from the swap isometry lemma and four pieces written for this step:\n`Descent.lean`, `PhysEmbed.lean`, `QLDError.lean` and `RegisterForm.lean`. The headline is\n`qld_soundness`: universal constants `a ≥ 1`, `0 < b < 1`, fixed before anything else, such that\nevery **POVM** strategy of the Pauli basis test that fails with probability at most `ε` has local\nisometries `V_A`, `V_B` and **one** unit state `|aux>` with\n\n1. `‖(V_A ⊗ V_B) |ψ> - |EPR_q>^M ⊗ |aux>‖ ≤ δ`, the distance itself and not its square;\n2. for each basis `W`, and for each party, the summed squared state-dependent distance, relative\n   to `|EPR_q>^M ⊗ |aux>`, between the party's **original** coarse `(Pauli, W)` measurement\n   conjugated by its isometry and the honest projectors `tau^W_h` on its register is at most `δ`;\n\nwhere `δ = a (md)^a (ε^b + q^{-b} + 2^{-bmd})` (`errShape`). The isometries are register-first,\n`Matrix (Anc F m × H) d ℂ`, in the vocabulary of the consumer\n(`TypedEstimates.quantumValue_ge_of_valid_isometric_images`): `isometricState`, `registerState`,\n`isometricImage`.\n\n## The route\n\n`MirrorSimul.swap_isometry` is a statement about a *legal projective* strategy, about the swapped\nphysical state `V_A ⊗ V_B |psi-hat>`, and about `V`-conjugation of the dilated measurement.\n`thm:qld` is about an arbitrary POVM strategy, its own state and its own measurement. Three\npassages close the gap, and only the last is more than bookkeeping.\n\n* **Dilate and legalize** (`exists_legal_dilation`). Naimark makes the strategy projective on\n  `d × Answer`, compressed back by the ancilla `|a₀>`; legalizing makes it legally supported,\n  which the chain needs, at no cost in value. Neither changes what the coarse Pauli measurement\n  compresses to (`rdPauliVec_legalize_pauli`).\n* **The state is a product image** (`exists_phys_of_regime`). `mirrorOfGlobalPairs` --- and not\n  `exists_mirrorSimul`, which forgets it --- has an explicit physical state:\n  `physEmb ⊗ physEmb` applied to the doubly padded state (`physVec_mirrorOfGlobalPairs`), which is\n  itself `N ⊗ N` applied to `ψ` (`kronecker_mulVec_extVec2`). So with\n  `phi_A = V_A ∘ physEmb ∘ N`, the paper's `phi_A` composed with the dilation, the swapped physical\n  state is `(phi_A ⊗ phi_B) ψ` on the nose, and item 1 of the swap lemma is item 1 here.\n* **The descent through agreement** (`MirrorSimul.exists_phys_descent`). Compression by an\n  isometry does not preserve a *closeness* statement, which is what item 2 of the swap lemma is;\n  it preserves an *agreement* with a family on the other party, which is bilinear. On the product\n  state `tau^W_h` on Alice's half of the pair acts as `tau^W_h` on Bob's, so closeness to `tau^W`\n  is agreement with `tau^W` across the cut, and that agreement is carried to the pushed-forward\n  state (at `2 sqrt η`), compressed, and carried back (`sum_snorm_sq_d",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Soundness.lean#L464-L521",
+  "source_path": "MIPRE/Background/QLD/Soundness.lean",
+  "lines": [
+   464,
+   521
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_snorm_sq_aOp_sub_bOp_le",
+   "MIPRE.QLD.exists_phys_of_regime",
+   "MIPRE.ancillaEmbed_isometry",
+   "MIPRE.norm_evec_expVec",
+   "MIPRE.mulVec_kron_kron_expVec",
+   "MIPRE.Introspection.norm_evec_comp_equiv",
+   "MIPRE.Introspection.registerOp_mulVec",
+   "MIPRE.Introspection.registerOp_kronecker",
+   "MIPRE.aOp_sub",
+   "MIPRE.POVM.sum_val",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.IsPVM.posSemidef",
+   "MIPRE.IsPVM.aOp",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj",
+   "MIPRE.Weyl.stateVec_epr"
+  ],
+  "pasted_helpers": 60,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.qld_soundness",
+  "source_name": "MIPRE.QLD.qld_soundness",
+  "formal_statement": "theorem MIPRE.QLD.qld_soundness :\n    ∃ a b : ℝ, 1 ≤ a ∧ 0 < b ∧ b < 1 ∧\n      ∀ {F : Type} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}\n        [NeZero m] (hm : m ∣ Fintype.card F), 1 ≤ d →\n      ∀ {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]\n        (ψ : dA × dB → ℂ), star ψ ⬝ᵥ ψ = 1 →\n      ∀ (MA : Question F m → POVM (Answer F m d) dA)\n        (MB : Question F m → POVM (Answer F m d) dB) {ε : ℝ}, 0 ≤ ε →\n        1 - povmValue (qldGame hm) ψ MA MB ≤ ε →\n      ∃ (HA HB : Type) (_ : Fintype HA) (_ : DecidableEq HA) (_ : Fintype HB)\n        (_ : DecidableEq HB) (VA : Matrix (Anc F m × HA) dA ℂ) (VB : Matrix (Anc F m × HB) dB ℂ)\n        (aux : HA × HB → ℂ),\n        VAᴴ * VA = 1 ∧ VBᴴ * VB = 1 ∧ ‖evec aux‖ = 1 ∧\n        ‖evec (isometricState VA VB ψ - registerState (Anc F m) aux)‖\n          ≤ errShape a b ε m d (Fintype.card F) ∧\n        ∀ W : Bas,\n          ∑ h : Anc F m, snorm (registerState (Anc F m) aux)\n              (aOp (isometricImage VA (((MA (.pauli W)).map rdPauliVec).mats h).val\n                - aOp (proj (weylOf W) h))) ^ 2\n            ≤ errShape a b ε m d (Fintype.card F) ∧\n          ∑ h : Anc F m, snorm (registerState (Anc F m) aux)\n              (bOp (isometricImage VB (((MB (.pauli W)).map rdPauliVec).mats h).val\n                - aOp (proj (weylOf W) h))) ^ 2\n            ≤ errShape a b ε m d (Fintype.card F) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.Weyl MIPRE.Introspection",
+   "open scoped Kronecker ComplexOrder MatrixOrder"
+  ],
+  "docstring": "**`thm:qld`: soundness of the Pauli basis test** (the paper's `thm:pauli-appendix`). There are\nuniversal constants `a ≥ 1` and `0 < b < 1` such that for every admissible `(q, m, d)` (a field of\ncharacteristic two with `m | q`, and `d ≥ 1`) and **every** POVM strategy `(ψ, M_A, M_B)` of the\nPauli basis test that fails with probability at most `ε`, there are local isometries\n`V_A : C^{d_A} → (C^q)^M ⊗ H_A`, `V_B : C^{d_B} → (C^q)^M ⊗ H_B` (the register first) and a unit\nstate `|aux>` on `H_A ⊗ H_B` such that, with `δ = a (md)^a (ε^b + q^{-b} + 2^{-bmd})`,\n\n1. `‖(V_A ⊗ V_B) |ψ> - |EPR_q>^M ⊗ |aux>‖ ≤ δ`, and\n2. for each basis `W ∈ {X, Z}`, the strategy's own `(Pauli, W)` measurement, read as cube data\n   and conjugated by the party's isometry, is `δ`-close to the honest Pauli basis measurement\n   `tau^W_h` on that party's register, in the summed squared state-dependent distance relative\n   to `|EPR_q>^M ⊗ |aux>` --- for Alice and for Bob, with the one `|aux>`.\n\nThe constants are those of `exists_qldErr_le`, fixed before anything else. The failure bound is\ntaken at `min ε 1`, which is still a failure bound because a value is nonnegative\n(`povmValue_nonneg`), and the rest is `exists_le_qldErr`.",
+  "module": "MIPRE.Background.QLD.Soundness",
+  "module_doc": "/-!\n# `thm:qld`: soundness of the Pauli basis test\n\nThis file assembles `thm:qld` (the paper's `thm:pauli-appendix`, proved at the end of\n`qld-isometry.tex`) from the swap isometry lemma and four pieces written for this step:\n`Descent.lean`, `PhysEmbed.lean`, `QLDError.lean` and `RegisterForm.lean`. The headline is\n`qld_soundness`: universal constants `a ≥ 1`, `0 < b < 1`, fixed before anything else, such that\nevery **POVM** strategy of the Pauli basis test that fails with probability at most `ε` has local\nisometries `V_A`, `V_B` and **one** unit state `|aux>` with\n\n1. `‖(V_A ⊗ V_B) |ψ> - |EPR_q>^M ⊗ |aux>‖ ≤ δ`, the distance itself and not its square;\n2. for each basis `W`, and for each party, the summed squared state-dependent distance, relative\n   to `|EPR_q>^M ⊗ |aux>`, between the party's **original** coarse `(Pauli, W)` measurement\n   conjugated by its isometry and the honest projectors `tau^W_h` on its register is at most `δ`;\n\nwhere `δ = a (md)^a (ε^b + q^{-b} + 2^{-bmd})` (`errShape`). The isometries are register-first,\n`Matrix (Anc F m × H) d ℂ`, in the vocabulary of the consumer\n(`TypedEstimates.quantumValue_ge_of_valid_isometric_images`): `isometricState`, `registerState`,\n`isometricImage`.\n\n## The route\n\n`MirrorSimul.swap_isometry` is a statement about a *legal projective* strategy, about the swapped\nphysical state `V_A ⊗ V_B |psi-hat>`, and about `V`-conjugation of the dilated measurement.\n`thm:qld` is about an arbitrary POVM strategy, its own state and its own measurement. Three\npassages close the gap, and only the last is more than bookkeeping.\n\n* **Dilate and legalize** (`exists_legal_dilation`). Naimark makes the strategy projective on\n  `d × Answer`, compressed back by the ancilla `|a₀>`; legalizing makes it legally supported,\n  which the chain needs, at no cost in value. Neither changes what the coarse Pauli measurement\n  compresses to (`rdPauliVec_legalize_pauli`).\n* **The state is a product image** (`exists_phys_of_regime`). `mirrorOfGlobalPairs` --- and not\n  `exists_mirrorSimul`, which forgets it --- has an explicit physical state:\n  `physEmb ⊗ physEmb` applied to the doubly padded state (`physVec_mirrorOfGlobalPairs`), which is\n  itself `N ⊗ N` applied to `ψ` (`kronecker_mulVec_extVec2`). So with\n  `phi_A = V_A ∘ physEmb ∘ N`, the paper's `phi_A` composed with the dilation, the swapped physical\n  state is `(phi_A ⊗ phi_B) ψ` on the nose, and item 1 of the swap lemma is item 1 here.\n* **The descent through agreement** (`MirrorSimul.exists_phys_descent`). Compression by an\n  isometry does not preserve a *closeness* statement, which is what item 2 of the swap lemma is;\n  it preserves an *agreement* with a family on the other party, which is bilinear. On the product\n  state `tau^W_h` on Alice's half of the pair acts as `tau^W_h` on Bob's, so closeness to `tau^W`\n  is agreement with `tau^W` across the cut, and that agreement is carried to the pushed-forward\n  state (at `2 sqrt η`), compressed, and carried back (`sum_snorm_sq_d",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Soundness.lean#L525-L574",
+  "source_path": "MIPRE/Background/QLD/Soundness.lean",
+  "lines": [
+   525,
+   574
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.errSmall_qldErr",
+   "MIPRE.QLD.exists_le_qldErr",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 10,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.qldGame_mu_symm",
+  "source_name": "MIPRE.QLD.qldGame_mu_symm",
+  "formal_statement": "theorem MIPRE.QLD.qldGame_mu_symm (hm : m ∣ Fintype.card F) (x y : Question F m) :\n    (qldGame (d := d) hm).μ x y = (qldGame (d := d) hm).μ y x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ}",
+   "variable [Algebra (ZMod 2) F] [NeZero m]"
+  ],
+  "docstring": "**The question distribution is symmetric.** The type graph's adjacency is symmetric, so\nexchanging an edge's endpoints is a bijection of the sample space that exchanges the two\nplayers' questions and changes no probability.",
+  "module": "MIPRE.Background.QLD.Swap",
+  "module_doc": "/-!\n# The Pauli basis test is symmetric in the two players\n\nEvery rule of `fig:decider_pauli` is written in both orientations and the sampler draws an\n*ordered* edge of a symmetric type graph, so exchanging the two players is an automorphism of the\ngame (`accepts_symm`, `qldGame_mu_symm`). `povmValue_qldGame_swapVec` is the consequence for a\nstrategy's value, and the two corollaries at the end are what the combining stage actually wants:\nthe expansion stage's estimates, proved about **Alice's** measurements, hold for **Bob's** as\nwell, with the same constants and no second proof.\n\nThe device is `swapVec`: a statement about `stateVec (hatVec (swapVec psi))` is one about\n`stateVecB (hatVec psi)`, because the expanded state's two halves are exchanged by the swap\n(`hatVec_swapVec`, which needs the maximally entangled ancilla to be symmetric ---\n`MIPRE.Weyl.swapVec_epr`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Swap.lean#L81-L96",
+  "source_path": "MIPRE/Background/QLD/Swap.lean",
+  "lines": [
+   81,
+   96
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.swapVec_unit",
+  "source_name": "MIPRE.QLD.swapVec_unit",
+  "formal_statement": "theorem MIPRE.QLD.swapVec_unit (hψ : star ψ ⬝ᵥ ψ = 1) : star (swapVec ψ) ⬝ᵥ swapVec ψ = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ}",
+   "variable [Algebra (ZMod 2) F] [NeZero m]",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.Swap",
+  "module_doc": "/-!\n# The Pauli basis test is symmetric in the two players\n\nEvery rule of `fig:decider_pauli` is written in both orientations and the sampler draws an\n*ordered* edge of a symmetric type graph, so exchanging the two players is an automorphism of the\ngame (`accepts_symm`, `qldGame_mu_symm`). `povmValue_qldGame_swapVec` is the consequence for a\nstrategy's value, and the two corollaries at the end are what the combining stage actually wants:\nthe expansion stage's estimates, proved about **Alice's** measurements, hold for **Bob's** as\nwell, with the same constants and no second proof.\n\nThe device is `swapVec`: a statement about `stateVec (hatVec (swapVec psi))` is one about\n`stateVecB (hatVec psi)`, because the expanded state's two halves are exchanged by the swap\n(`hatVec_swapVec`, which needs the maximally entangled ancilla to be symmetric ---\n`MIPRE.Weyl.swapVec_epr`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Swap.lean#L120-L121",
+  "source_path": "MIPRE/Background/QLD/Swap.lean",
+  "lines": [
+   120,
+   121
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.swapVec_dotProduct"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.povmValue_swapped_le",
+  "source_name": "MIPRE.QLD.povmValue_swapped_le",
+  "formal_statement": "theorem MIPRE.QLD.povmValue_swapped_le (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :\n    1 - povmValue (qldGame hm) (swapVec ψ) MB MA ≤ ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ}",
+   "variable [Algebra (ZMod 2) F] [NeZero m]",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.Swap",
+  "module_doc": "/-!\n# The Pauli basis test is symmetric in the two players\n\nEvery rule of `fig:decider_pauli` is written in both orientations and the sampler draws an\n*ordered* edge of a symmetric type graph, so exchanging the two players is an automorphism of the\ngame (`accepts_symm`, `qldGame_mu_symm`). `povmValue_qldGame_swapVec` is the consequence for a\nstrategy's value, and the two corollaries at the end are what the combining stage actually wants:\nthe expansion stage's estimates, proved about **Alice's** measurements, hold for **Bob's** as\nwell, with the same constants and no second proof.\n\nThe device is `swapVec`: a statement about `stateVec (hatVec (swapVec psi))` is one about\n`stateVecB (hatVec psi)`, because the expanded state's two halves are exchanged by the swap\n(`hatVec_swapVec`, which needs the maximally entangled ancilla to be symmetric ---\n`MIPRE.Weyl.swapVec_epr`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Swap.lean#L123-L125",
+  "source_path": "MIPRE/Background/QLD/Swap.lean",
+  "lines": [
+   123,
+   125
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.qldGame_mu_symm",
+   "MIPRE.povmValue_swapVec_of_symm"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_uniform_bornProb_fibre_le",
+  "source_name": "MIPRE.QLD.sum_uniform_bornProb_fibre_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_uniform_bornProb_fibre_le {Λ : Type*} [Fintype Λ] [DecidableEq Λ]\n    {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)\n    {A : Λ → Matrix dA dA ℂ} {T : Λ → Matrix dB dB ℂ} (hA : IsPVM A) (hT : IsPVM T)\n    {enc : Λ → LowIndDegPoly (F := F) (m := m) (d := d)}\n    (hinj : ∀ h h' : Λ, h ≠ h' → (enc h).toMv ≠ (enc h').toMv) :\n    ∑ u, uniform (Point F m) u * ∑ a : F,\n        bornProb ψ (∑ h ∈ univ.filter fun h => (enc h).eval u = a, A h)\n          (∑ h ∈ univ.filter fun h => (enc h).eval u = a, T h)\n      ≤ (∑ h, bornProb ψ (A h) (T h)) + (m : ℝ) * d / Fintype.card F := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "open MIPRE.LIDT MIPRE.LowDegree",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {R : Type*} [Fintype R] [DecidableEq R]",
+   "variable {m d : ℕ} [NeZero m] {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB]"
+  ],
+  "docstring": "**Display `eq:qld-unitary-8`.**",
+  "module": "MIPRE.Background.QLD.SwapEndgame",
+  "module_doc": "/-!\n# The endgame of `lem:qld-swap` item 2\n\nItem 1 produces a product state `|aux> (x) |EPR_q>^M` close to the conjugated padded state\n(`exists_auxVec_close`). Item 2's endgame computes against that product state and transports the\nanswer back. This file is the part of that computation that is about the product state itself.\n\n## What an operator on the ancilla pair does to a product state\n\n`auxVec aux` is a product: the first factor is arbitrary, the second is the maximally entangled\npair. So an operator acting on the pair alone acts on the second factor and leaves the first, and\ntwo operators that agree on `|EPR_q>` agree on the whole product. That is the last line of display\n`eq:qld-unitary-7`, where a generalized Pauli's spectral projector is moved from one half of the\npair to the other: the projectors are symmetric matrices, so `stateVec_epr_proj` moves them across\nthe pair, and `mulVec_auxVec_congr` carries that to the product state.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/SwapEndgame.lean#L126-L187",
+  "source_path": "MIPRE/Background/QLD/SwapEndgame.lean",
+  "lines": [
+   126,
+   187
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-swap",
+    "env": "lemma",
+    "title": "The swap isometry",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_uniform_eq_one",
+   "MIPRE.QLD.sum_uniform_agree_bornProb_le",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 52,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.qform_endState_weyl",
+  "source_name": "MIPRE.QLD.MirrorSimul.qform_endState_weyl",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.qform_endState_weyl (W : Bas) (v : Anc F m) :\n    qform M.endState (bOp (weylOf W v ⊗ₖ weylOf W v))\n      = bornProb M.physVec (M.aliceWTilde W 1 v) (M.bobWTilde W 1 v) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**The Weyl operator on the two halves of the pair, read on that state, is the two parties'\nexact Pauli observables read on the physical state.** Conjugation by the swap unitaries carries\nthe one to the other exactly.",
+  "module": "MIPRE.Background.QLD.SwapItemOne",
+  "module_doc": "/-!\n# Item 1 of `lem:qld-swap`, unconditional\n\n`MIPRE/Background/QLD/SwapState.lean` proves item 1 of the swap isometry lemma *given its\nhypothesis*: a unit state nearly invariant under both Weyl twirls on its two ancilla halves is\nclose to a product of an auxiliary state and a maximally entangled pair\n(`exists_auxVec_close`). This file supplies the hypothesis, which is\n`lem:qld-pauli-selfcons`.\n\nThe blueprint calls this \"the missing edge\", and says it is one rewriting: the twirl is by\ndefinition the uniform average of the per-probe Weyl operators, so\n`qform_bOp_twirl` turns the near-invariance into an average of per-probe expectations, and at\neach probe that expectation is the two parties' exact Pauli observables agreeing. Three things\nhave to be said to make the rewriting go through.\n\n* **The cut.** `endEquiv` regroups a four-fold product whose ancilla halves sit in the middle;\n  the physical cut of a `MirrorSimul` puts each party's half of the pair it holds at the *end*,\n  so `outerPairEquiv` is the regrouping this needs. It was written when it was clear which one\n  the state actually has.\n* **The conjugation.** `swapU_conj_wTilde_X` and `_Z` say the swap unitary strips the pair\n  measurement off the exact Pauli observable exactly, leaving the honest Weyl operator; read\n  backwards (`conj_inv_of_unitary`) that turns an expectation of the Weyl operator on the swapped\n  state into an expectation of the two observables on the state itself.\n* **The two involutions.** Each party's exact Pauli observable is self-adjoint and squares to\n  one, so its cross-party deviation and its joint expectation determine each other exactly:\n  `xSqNorm = 2 - 2 bornProb`, with no inequality.\n\nWhat is *not* here is item 2, the longer half, which threads these steps into a statement about\nthe conjugated total Pauli measurement `V M^{(Pauli,W)}_h V†`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/SwapItemOne.lean#L203-L229",
+  "source_path": "MIPRE/Background/QLD/SwapItemOne.lean",
+  "lines": [
+   203,
+   229
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-swap",
+    "env": "lemma",
+    "title": "The swap isometry",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.wTilde_eq",
+   "MIPRE.QLD.sTensor_mul",
+   "MIPRE.QLD.sTensor_one",
+   "MIPRE.QLD.sTensor_conjTranspose",
+   "MIPRE.QLD.uOf_conj_wX",
+   "MIPRE.Weyl.wX_mul_wZ"
+  ],
+  "pasted_helpers": 30,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.bornProb_wTilde_ge",
+  "source_name": "MIPRE.QLD.MirrorSimul.bornProb_wTilde_ge",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.bornProb_wTilde_ge {hm : m ∣ Fintype.card F} {ε : ℝ}\n    (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)\n    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (hd : 1 ≤ d)\n    (W : Bas) (e : F) (v : Anc F m) :\n    1 - deltaSelfCons δ ε m d (Fintype.card F) / 2\n      ≤ bornProb M.physVec (M.aliceWTilde W e v) (M.bobWTilde W e v) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**The two observables' agreement, as a Born probability.** Both are self-adjoint involutions,\nso their cross-party deviation and their joint expectation determine each other.",
+  "module": "MIPRE.Background.QLD.SwapItemOne",
+  "module_doc": "/-!\n# Item 1 of `lem:qld-swap`, unconditional\n\n`MIPRE/Background/QLD/SwapState.lean` proves item 1 of the swap isometry lemma *given its\nhypothesis*: a unit state nearly invariant under both Weyl twirls on its two ancilla halves is\nclose to a product of an auxiliary state and a maximally entangled pair\n(`exists_auxVec_close`). This file supplies the hypothesis, which is\n`lem:qld-pauli-selfcons`.\n\nThe blueprint calls this \"the missing edge\", and says it is one rewriting: the twirl is by\ndefinition the uniform average of the per-probe Weyl operators, so\n`qform_bOp_twirl` turns the near-invariance into an average of per-probe expectations, and at\neach probe that expectation is the two parties' exact Pauli observables agreeing. Three things\nhave to be said to make the rewriting go through.\n\n* **The cut.** `endEquiv` regroups a four-fold product whose ancilla halves sit in the middle;\n  the physical cut of a `MirrorSimul` puts each party's half of the pair it holds at the *end*,\n  so `outerPairEquiv` is the regrouping this needs. It was written when it was clear which one\n  the state actually has.\n* **The conjugation.** `swapU_conj_wTilde_X` and `_Z` say the swap unitary strips the pair\n  measurement off the exact Pauli observable exactly, leaving the honest Weyl operator; read\n  backwards (`conj_inv_of_unitary`) that turns an expectation of the Weyl operator on the swapped\n  state into an expectation of the two observables on the state itself.\n* **The two involutions.** Each party's exact Pauli observable is self-adjoint and squares to\n  one, so its cross-party deviation and its joint expectation determine each other exactly:\n  `xSqNorm = 2 - 2 bornProb`, with no inequality.\n\nWhat is *not* here is item 2, the longer half, which threads these steps into a statement about\nthe conjugated total Pauli measurement `V M^{(Pauli,W)}_h V†`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/SwapItemOne.lean#L264-L286",
+  "source_path": "MIPRE/Background/QLD/SwapItemOne.lean",
+  "lines": [
+   264,
+   286
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-swap",
+    "env": "lemma",
+    "title": "The swap isometry",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.wTilde_eq",
+   "MIPRE.QLD.MirrorSimul.snorm_sq_wTilde_le",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.pvmObs_mul",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.epr_unit"
+  ],
+  "pasted_helpers": 41,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.qform_endState_twirl_ge",
+  "source_name": "MIPRE.QLD.MirrorSimul.qform_endState_twirl_ge",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.qform_endState_twirl_ge {hm : m ∣ Fintype.card F} {ε : ℝ}\n    (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)\n    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (hd : 1 ≤ d) (W : Bas) :\n    1 - deltaSelfCons δ ε m d (Fintype.card F) / 2\n      ≤ qform M.endState (bOp (twirl (weylOf W))) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**The near-invariance item 1 asks for.** The twirl is by definition the uniform average of the\nper-probe Weyl operators, and at each probe that average is the two parties' exact Pauli\nobservables agreeing. This is the edge the blueprint's dependency graph was missing.",
+  "module": "MIPRE.Background.QLD.SwapItemOne",
+  "module_doc": "/-!\n# Item 1 of `lem:qld-swap`, unconditional\n\n`MIPRE/Background/QLD/SwapState.lean` proves item 1 of the swap isometry lemma *given its\nhypothesis*: a unit state nearly invariant under both Weyl twirls on its two ancilla halves is\nclose to a product of an auxiliary state and a maximally entangled pair\n(`exists_auxVec_close`). This file supplies the hypothesis, which is\n`lem:qld-pauli-selfcons`.\n\nThe blueprint calls this \"the missing edge\", and says it is one rewriting: the twirl is by\ndefinition the uniform average of the per-probe Weyl operators, so\n`qform_bOp_twirl` turns the near-invariance into an average of per-probe expectations, and at\neach probe that expectation is the two parties' exact Pauli observables agreeing. Three things\nhave to be said to make the rewriting go through.\n\n* **The cut.** `endEquiv` regroups a four-fold product whose ancilla halves sit in the middle;\n  the physical cut of a `MirrorSimul` puts each party's half of the pair it holds at the *end*,\n  so `outerPairEquiv` is the regrouping this needs. It was written when it was clear which one\n  the state actually has.\n* **The conjugation.** `swapU_conj_wTilde_X` and `_Z` say the swap unitary strips the pair\n  measurement off the exact Pauli observable exactly, leaving the honest Weyl operator; read\n  backwards (`conj_inv_of_unitary`) that turns an expectation of the Weyl operator on the swapped\n  state into an expectation of the two observables on the state itself.\n* **The two involutions.** Each party's exact Pauli observable is self-adjoint and squares to\n  one, so its cross-party deviation and its joint expectation determine each other exactly:\n  `xSqNorm = 2 - 2 bornProb`, with no inequality.\n\nWhat is *not* here is item 2, the longer half, which threads these steps into a statement about\nthe conjugated total Pauli measurement `V M^{(Pauli,W)}_h V†`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/SwapItemOne.lean#L288-L312",
+  "source_path": "MIPRE/Background/QLD/SwapItemOne.lean",
+  "lines": [
+   288,
+   312
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-swap",
+    "env": "lemma",
+    "title": "The swap isometry",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_uniform_eq_one",
+   "MIPRE.QLD.MirrorSimul.bornProb_wTilde_ge",
+   "MIPRE.QLD.MirrorSimul.qform_endState_weyl"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.toMv_coeffTable",
+  "source_name": "MIPRE.QLD.toMv_coeffTable",
+  "formal_statement": "theorem MIPRE.QLD.toMv_coeffTable (p : MvPolynomial (Fin m) F)\n    (hp : ∀ i, p.degreeOf i ≤ d) :\n    LowIndDegPoly.toMv (F := F) (n := m) (d := d)\n        (fun e : Fin m → Fin (d + 1) => p.coeff (expFinsupp e)) = p := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "A polynomial of individual degree at most `d` is the polynomial its coefficient table\ndenotes.",
+  "module": "MIPRE.Background.QLD.SwapItemTwo",
+  "module_doc": "/-!\n# Item 2 of `lem:qld-swap`, and the lemma\n\n`MIPRE/Background/QLD/SwapItemOne.lean` proves item 1 of the swap isometry lemma with nothing\nassumed beyond the game (`MirrorSimul.exists_aux_close`): after the two swap unitaries the\nphysical state is close to a product `|aux> ⊗ |EPR_q>^M`. This file proves item 2 --- conjugation\nby a party's swap unitary carries the strategy's total Pauli measurement `M^{(Pauli,W)}_h` to the\nhonest projector `Id ⊗ tau^W_h` on that party's half of the pair, in the state-dependent distance\nrelative to that product state --- for both parties, and puts the two items together relative to\n**one** auxiliary state: `MirrorSimul.swap_isometry`.\n\n## The chain\n\nNo estimate here is new; every display of the paper's argument was already a lemma, and this file\nis the threading. For Alice, on a state `Δ` that carries the pair on `A'' B''` and is within `r`\nof the swapped physical state:\n\n* `eq:qld-unitary-7`: both families are projective, so the summed deviation is twice the deficit\n  of their agreement (`sum_snorm_sq_sub_le_of_agree`); and on the product state `tau^W_h` on `A''`\n  acts as `tau^W_h` on `B''` (`mulVec_outerUnVec_auxVec`, from `stateVec_epr_proj`), which makes\n  the agreement a bipartite Born probability across the physical cut.\n* `eq:qld-unitary-8`: coarse-graining both families along `g_h(u)` raises the agreement by at most\n  `md/q` (`sum_uniform_bornProb_fibre_le`).\n* `eq:qld-unitary-6`, on **Bob's** side: the coarse-grained honest projector is a syndrome\n  projector, which is Bob's exact Pauli measurement conjugated by his swap unitary\n  (`bobSwap_conj_bobMTilde`), so the coarse agreement is `eq:qld-unitary-9`'s.\n* The transport across item 1 (`sum_bornProb_conj_ge_of_close`): the conjugation moves onto the\n  state, where it undoes the swap; the outcome sum is one projection, hence a contraction; and\n  `abs_qform_sub_qform_le` costs `2 r`. With `r` the square root of item 1's bound on the squared\n  distance, this is where `delta_S^{1/4}` enters.\n* `eq:qld-unitary-5`, at the **mirror** instance (`sum_bornProb_physVec_ge`): on the physical state,\n  Bob's exact Pauli measurement against Alice's `(Pauli, W)` reading is the second cut's `mTildeAt`\n  against the swapped strategy's Pauli reading, and `inconsistency_mTilde_pauli_le_of_win` there,\n  with its hypothesis discharged by item 1 of `lem:qld-exact-paulis` at the same instance\n  (`inconsistency_mTilde_le`), bounds it.\n\n## Three things that had to be said\n\n* **The encoding as an outcome.** The Schwartz--Zippel packaging reads its index through\n  coefficient tables of bounded individual degree. `ancPoly h` is the table of the low-degree\n  encoding `ldEnc h`; it is faithful because the encoding is multilinear and `1 ≤ d`\n  (`toMv_coeffTable`), and its value at `u` is the pairing `h . ind_m(u)` (`ancPoly_eval`).\n* **The cut.** Item 1 concludes on its own cut, the two ancilla halves adjacent; the conjugated\n  Pauli measurement lives on Alice's physical register. `o",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/SwapItemTwo.lean#L81-L110",
+  "source_path": "MIPRE/Background/QLD/SwapItemTwo.lean",
+  "lines": [
+   81,
+   110
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-swap",
+    "env": "lemma",
+    "title": "The swap isometry",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 23,
+  "is_target": false
+ }
+]

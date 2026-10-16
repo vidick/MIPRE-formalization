@@ -1,0 +1,556 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.sigmaFinRangeEmbedding_gram_right",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.sigmaFinRangeEmbedding_gram_right",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.sigmaFinRangeEmbedding_gram_right {Outcome : Type uOutcome}\n    [Fintype Outcome] [DecidableEq Outcome]\n    {ι : Type uι} [Fintype ι] [DecidableEq ι]\n    (q : OpFamily Outcome ι)\n    (qa_projective : ∀ a : Outcome, MIPStarRE.Quantum.IsProj (q.outcome a))\n    (q_sum_eq_total : ∑ a : Outcome, q.outcome a = q.total) :\n    (sigmaFinRangeEmbedding q.outcome qa_projective)ᴴ *\n        (sigmaFinRangeEmbedding q.outcome qa_projective) =\n      q.total := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The finite-enumeration range embedding has right Gram matrix equal to the\ntotal operator of the projective family.\n\nThis is the canonical sigma-space form of the paper's identity `X† X = Q`.  The\nproof uses only that the auxiliary projectors `T_a` form a measurement and the\npointwise restatement `Q_a = X† T_a X`, together with the recorded total\nidentity `∑ a, Q_a = Q`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.Sigma",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P rank reduction\n\nSigma-space projectors and rank-reduction lemmas for the paper's `Q/X/XHat/P`\nintermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/Sigma.lean#L430-L480",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/Sigma.lean",
+  "lines": [
+   430,
+   480
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Measurement.sum_eq"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.RankReductionWitness.toSigmaRangeQLayer",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.RankReductionWitness.toSigmaRangeQLayer",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.RankReductionWitness.toSigmaRangeQLayer\n    {Outcome : Type uOutcome} [Fintype Outcome] [DecidableEq Outcome]\n    {ι : Type uι} [Fintype ι] [DecidableEq ι]\n    {ψ : QuantumState ι} {A : Measurement Outcome ι} {ζ : Error}\n    {qLayer : QLayerData Outcome ι}\n    (hRank : RankReductionWitness ψ A ζ qLayer)\n    [Nonempty (FiniteHilbertSpace.sigmaFinCarrier\n      (fun a : Outcome => (qLayer.q.outcome a).rank))] :\n    RankReductionWitness ψ A ζ (sigmaRangeQLayer qLayer.q) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective.RankReductionWitness",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "**Paper source:** `references/ldt-paper/orthonormalization.tex:540-553`\n(`\\label{lem:projective-low-rank-sum}`).\n\nA rank-reduction witness can be viewed on the canonical sigma-range auxiliary\nspace attached to the same projective family.  This is a Lean-only transport\nfrom an arbitrary auxiliary model of the projective family to the finite\nenumeration of its range bases; the mathematical hypotheses are exactly the\nrank-reduction witness fields.\n\n**Faithful encoding:** The theorem changes only the auxiliary-space model used\nto present the same projective family `Q_a`; it is not an additional\nmathematical assumption or proof obligation.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.Sigma",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P rank reduction\n\nSigma-space projectors and rank-reduction lemmas for the paper's `Q/X/XHat/P`\nintermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/Sigma.lean#L770-L810",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/Sigma.lean",
+  "lines": [
+   770,
+   810
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.exists_large_subset_ordered",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.exists_large_subset_ordered",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.exists_large_subset_ordered {α : Type*} [Fintype α] [DecidableEq α]\n    (f : α → ℝ) {d : ℕ} (hd : d ≤ Fintype.card α) :\n    ∃ L : Finset α, L.card = d ∧\n      ∀ s ∈ (Lᶜ : Finset α), ∀ l ∈ L, f s ≤ f l := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective.Truncation",
+   "open scoped BigOperators"
+  ],
+  "docstring": "Choose `d` elements with the largest values of `f`, breaking ties\narbitrarily. The resulting `Large` set has the paper's ordering property:\nevery element outside `Large` has value at most every element of `Large`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.TruncationCombinatorics",
+  "module_doc": "/-!\n# Section 5 — Combinatorial core of the `r > d` truncation branch\n\nHelper lemmas for the `r > d` branch of `lem:projective-low-rank-sum`\n(`references/ldt-paper/orthonormalization.tex:559-658`).\n\nGiven a finite family of overlap values `f : α → ℝ` (with `α` the pair index set\n`{(a, i)}` carrying `r = |α|` entries) and a chosen `Large ⊂ α` of size\n`d < r` such that every `Small = Lᶜ` entry has overlap `≤` every `Large` entry,\nthe paper derives\n\n* `|Large| * ∑_{Small} f ≤ |Small| * ∑_{Large} f` (pairwise double-counting),\n* `r * ∑_{Small} f ≤ |Small| * ∑_{α} f` (partition bound).\n\nWe then combine this with the global `R ≤ (1 + 2√ζ) I` estimate to obtain\n`∑_{Small} f ≤ 4√ζ` when `ζ ≤ 1/4`, which is the combinatorial heart of the\npaper's `4√ζ` truncation error.\n\nThese lemmas do **not** depend on the matrix/spectral scaffolding in\n`QXPLayer/Core.lean` or `QXPLayer/RankReduction/LowRank.lean`; they are pure\ncombinatorics over a chosen partition. The per-projector orthonormal range\ndecomposition is available as `MIPStarRE.Quantum.IsProj.rangeONB`; the concrete\n`Large/Small` choice and truncated projectors are assembled in\n`QXPLayer/RankReduction/LowRank.lean`.\n\n## References\n\n* `references/ldt-paper/orthonormalization.tex` lines 559–658\n  (proof of `lem:projective-low-rank-sum`, `r > d` branch).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/TruncationCombinatorics.lean#L55-L104",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/TruncationCombinatorics.lean",
+  "lines": [
+   55,
+   104
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 43,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.card_mul_sum_small_le",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.card_mul_sum_small_le",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.card_mul_sum_small_le {α : Type*} {L S : Finset α}\n    {f : α → ℝ} (hf : ∀ s ∈ S, ∀ l ∈ L, f s ≤ f l) :\n    (L.card : ℝ) * (∑ s ∈ S, f s) ≤ (S.card : ℝ) * (∑ l ∈ L, f l) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective.Truncation",
+   "open scoped BigOperators"
+  ],
+  "docstring": "**Pairwise ordered double-counting.**\n\nIf every element of `S` has value at most every element of `L`, the sum over `S`\nscaled by `|L|` is dominated by the sum over `L` scaled by `|S|`. Matches the\npaper's inequality `∑_{Small} o ≤ (|Small|/r) · ∑ o` when `L ∪ S` exhausts the\nindex set.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.TruncationCombinatorics",
+  "module_doc": "/-!\n# Section 5 — Combinatorial core of the `r > d` truncation branch\n\nHelper lemmas for the `r > d` branch of `lem:projective-low-rank-sum`\n(`references/ldt-paper/orthonormalization.tex:559-658`).\n\nGiven a finite family of overlap values `f : α → ℝ` (with `α` the pair index set\n`{(a, i)}` carrying `r = |α|` entries) and a chosen `Large ⊂ α` of size\n`d < r` such that every `Small = Lᶜ` entry has overlap `≤` every `Large` entry,\nthe paper derives\n\n* `|Large| * ∑_{Small} f ≤ |Small| * ∑_{Large} f` (pairwise double-counting),\n* `r * ∑_{Small} f ≤ |Small| * ∑_{α} f` (partition bound).\n\nWe then combine this with the global `R ≤ (1 + 2√ζ) I` estimate to obtain\n`∑_{Small} f ≤ 4√ζ` when `ζ ≤ 1/4`, which is the combinatorial heart of the\npaper's `4√ζ` truncation error.\n\nThese lemmas do **not** depend on the matrix/spectral scaffolding in\n`QXPLayer/Core.lean` or `QXPLayer/RankReduction/LowRank.lean`; they are pure\ncombinatorics over a chosen partition. The per-projector orthonormal range\ndecomposition is available as `MIPStarRE.Quantum.IsProj.rangeONB`; the concrete\n`Large/Small` choice and truncated projectors are assembled in\n`QXPLayer/RankReduction/LowRank.lean`.\n\n## References\n\n* `references/ldt-paper/orthonormalization.tex` lines 559–658\n  (proof of `lem:projective-low-rank-sum`, `r > d` branch).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/TruncationCombinatorics.lean#L106-L131",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/TruncationCombinatorics.lean",
+  "lines": [
+   106,
+   131
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.card_univ_mul_sum_compl_le",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.card_univ_mul_sum_compl_le",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.card_univ_mul_sum_compl_le {α : Type*} [Fintype α] [DecidableEq α]\n    (L : Finset α) {f : α → ℝ}\n    (hf : ∀ s ∈ (Lᶜ : Finset α), ∀ l ∈ L, f s ≤ f l) :\n    (Fintype.card α : ℝ) * (∑ s ∈ (Lᶜ : Finset α), f s) ≤\n      (Lᶜ.card : ℝ) * (∑ x, f x) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective.Truncation",
+   "open scoped BigOperators"
+  ],
+  "docstring": "**Partition-total form of the pairwise bound.**\n\nIf `S = Lᶜ`, the paper's `r · ∑_{Small} o ≤ |Small| · ∑ o` follows from\n`card_mul_sum_small_le` after splitting `∑ x, f x = ∑_L f + ∑_{Lᶜ} f`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.TruncationCombinatorics",
+  "module_doc": "/-!\n# Section 5 — Combinatorial core of the `r > d` truncation branch\n\nHelper lemmas for the `r > d` branch of `lem:projective-low-rank-sum`\n(`references/ldt-paper/orthonormalization.tex:559-658`).\n\nGiven a finite family of overlap values `f : α → ℝ` (with `α` the pair index set\n`{(a, i)}` carrying `r = |α|` entries) and a chosen `Large ⊂ α` of size\n`d < r` such that every `Small = Lᶜ` entry has overlap `≤` every `Large` entry,\nthe paper derives\n\n* `|Large| * ∑_{Small} f ≤ |Small| * ∑_{Large} f` (pairwise double-counting),\n* `r * ∑_{Small} f ≤ |Small| * ∑_{α} f` (partition bound).\n\nWe then combine this with the global `R ≤ (1 + 2√ζ) I` estimate to obtain\n`∑_{Small} f ≤ 4√ζ` when `ζ ≤ 1/4`, which is the combinatorial heart of the\npaper's `4√ζ` truncation error.\n\nThese lemmas do **not** depend on the matrix/spectral scaffolding in\n`QXPLayer/Core.lean` or `QXPLayer/RankReduction/LowRank.lean`; they are pure\ncombinatorics over a chosen partition. The per-projector orthonormal range\ndecomposition is available as `MIPStarRE.Quantum.IsProj.rangeONB`; the concrete\n`Large/Small` choice and truncated projectors are assembled in\n`QXPLayer/RankReduction/LowRank.lean`.\n\n## References\n\n* `references/ldt-paper/orthonormalization.tex` lines 559–658\n  (proof of `lem:projective-low-rank-sum`, `r > d` branch).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/TruncationCombinatorics.lean#L133-L160",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/TruncationCombinatorics.lean",
+  "lines": [
+   133,
+   160
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.card_mul_sum_small_le"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.sum_small_le_four_sqrt",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.sum_small_le_four_sqrt",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.sum_small_le_four_sqrt {α : Type*} [Fintype α] [DecidableEq α]\n    (L : Finset α)\n    {f : α → ℝ}\n    {d : ℕ} {ζ : ℝ}\n    (hL_card : L.card = d)\n    (hcard_gt : d < Fintype.card α)\n    (hr_bound : (Fintype.card α : ℝ) ≤ (1 + 2 * Real.sqrt ζ) * d)\n    (hf_ordering : ∀ s ∈ (Lᶜ : Finset α), ∀ l ∈ L, f s ≤ f l)\n    (htotal : (∑ x, f x) ≤ 1 + 2 * Real.sqrt ζ)\n    (hζ_nonneg : 0 ≤ ζ)\n    (hζ_le : ζ ≤ 1 / 4) :\n    (∑ s ∈ (Lᶜ : Finset α), f s) ≤ 4 * Real.sqrt ζ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective.Truncation",
+   "open scoped BigOperators"
+  ],
+  "docstring": "**Small-overlap sum bound.**\n\nAssuming the paper's inputs:\n\n* `L.card = d` with `d < |α|`,\n* `|α| ≤ (1 + 2√ζ) · d`,\n* every `Small = Lᶜ` entry has value at most every `Large = L` entry,\n* `∑ x, f x ≤ 1 + 2√ζ`,\n* `0 ≤ ζ ≤ 1/4`,\n\nthis yields `∑_{Small} f ≤ 4√ζ`, matching `eq:small-overlaps` in the paper. The\nLean statement is slightly stronger than the paper's: it does not need `f ≥ 0`,\nsince the ordering hypothesis and partition-total estimate already suffice.\nSee `docs/paper-gaps/truncation-combinatorics-f-nonneg.tex`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.TruncationCombinatorics",
+  "module_doc": "/-!\n# Section 5 — Combinatorial core of the `r > d` truncation branch\n\nHelper lemmas for the `r > d` branch of `lem:projective-low-rank-sum`\n(`references/ldt-paper/orthonormalization.tex:559-658`).\n\nGiven a finite family of overlap values `f : α → ℝ` (with `α` the pair index set\n`{(a, i)}` carrying `r = |α|` entries) and a chosen `Large ⊂ α` of size\n`d < r` such that every `Small = Lᶜ` entry has overlap `≤` every `Large` entry,\nthe paper derives\n\n* `|Large| * ∑_{Small} f ≤ |Small| * ∑_{Large} f` (pairwise double-counting),\n* `r * ∑_{Small} f ≤ |Small| * ∑_{α} f` (partition bound).\n\nWe then combine this with the global `R ≤ (1 + 2√ζ) I` estimate to obtain\n`∑_{Small} f ≤ 4√ζ` when `ζ ≤ 1/4`, which is the combinatorial heart of the\npaper's `4√ζ` truncation error.\n\nThese lemmas do **not** depend on the matrix/spectral scaffolding in\n`QXPLayer/Core.lean` or `QXPLayer/RankReduction/LowRank.lean`; they are pure\ncombinatorics over a chosen partition. The per-projector orthonormal range\ndecomposition is available as `MIPStarRE.Quantum.IsProj.rangeONB`; the concrete\n`Large/Small` choice and truncated projectors are assembled in\n`QXPLayer/RankReduction/LowRank.lean`.\n\n## References\n\n* `references/ldt-paper/orthonormalization.tex` lines 559–658\n  (proof of `lem:projective-low-rank-sum`, `r > d` branch).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/TruncationCombinatorics.lean#L162-L252",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/TruncationCombinatorics.lean",
+  "lines": [
+   162,
+   252
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.card_univ_mul_sum_compl_le"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 65,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.qaRestated",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.qaRestated",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.qaRestated {Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (data : QXPLayerData Outcome ι) (a : Outcome) :\n    Qa data.qLayer a = (Xa data a)ᴴ * Xa data a ∧\n      Qa data.qLayer a = data.xᴴ * Ta data.qLayer a * data.x ∧\n      Qa data.qLayer a = (Xa data a)ᴴ * data.x := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "**`Q_a` restated** (`lem:qa-restated`).\n\nRewrites the paper's operator `Q_a` in terms of `X_a`, `X`, and `T_a`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.LayerAlgebra",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P algebraic identities\n\nAlgebraic identities for the `Q/X/XHat/P` layer, including the\nrestatements of `Q_a`, `P_a`, the mixed product, and projectivity of `P`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/LayerAlgebra.lean#L129-L158",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/LayerAlgebra.lean",
+  "lines": [
+   129,
+   158
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ProjMeas.outcome_hermitian"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.xExpressionToQExpression",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.xExpressionToQExpression",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.xExpressionToQExpression {Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (data : QXPLayerData Outcome ι) (a : Outcome) :\n    (Xa data a)ᴴ *\n        ((data.x * data.xᴴ - 1) * (data.x * data.xᴴ - 1)) *\n        Xa data a =\n      Qa data.qLayer a * QTotal data.qLayer * Qa data.qLayer a -\n        Qa data.qLayer a := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "**`X`-expression to `Q`-expression** (`lem:X-expression-to-Q-expression`).\n\nConverts the quadratic error term in `X X† - I` to the corresponding\n`Q_a Q Q_a - Q_a` expression.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.LayerAlgebra",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P algebraic identities\n\nAlgebraic identities for the `Q/X/XHat/P` layer, including the\nrestatements of `Q_a`, `P_a`, the mixed product, and projectivity of `P`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/LayerAlgebra.lean#L310-L365",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/LayerAlgebra.lean",
+  "lines": [
+   310,
+   365
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.qaRestated"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 43,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.x_mul_xHat_adjoint_isHermitian",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.x_mul_xHat_adjoint_isHermitian",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.x_mul_xHat_adjoint_isHermitian {Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (data : QXPLayerData Outcome ι) :\n    (data.x * data.xHatᴴ)ᴴ = data.x * data.xHatᴴ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The operator `X Xhat†` is Hermitian in a QXP layer.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.LayerAlgebra",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P algebraic identities\n\nAlgebraic identities for the `Q/X/XHat/P` layer, including the\nrestatements of `Q_a`, `P_a`, the mixed product, and projectivity of `P`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/LayerAlgebra.lean#L474-L495",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/LayerAlgebra.lean",
+  "lines": [
+   474,
+   495
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.x_mul_xHat_adjoint_nonneg",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.x_mul_xHat_adjoint_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.x_mul_xHat_adjoint_nonneg {Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (data : QXPLayerData Outcome ι) :\n    0 ≤ data.x * data.xHatᴴ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The operator `X Xhat†` is positive semidefinite in a QXP layer.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.LayerAlgebra",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P algebraic identities\n\nAlgebraic identities for the `Q/X/XHat/P` layer, including the\nrestatements of `Q_a`, `P_a`, the mixed product, and projectivity of `P`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/LayerAlgebra.lean#L512-L531",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/LayerAlgebra.lean",
+  "lines": [
+   512,
+   531
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.squaredDifference",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.squaredDifference",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.squaredDifference {Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (data : QXPLayerData Outcome ι) :\n    (data.x - data.xHat) * (data.x - data.xHat)ᴴ ≤\n      (data.x * data.xᴴ - 1) * (data.x * data.xᴴ - 1) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "**Squared difference** (`lem:squared-difference`).\n\nBounds the defect between `X` and `XHat` by the squared defect of `X X†`\nfrom the auxiliary identity.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.LayerAlgebra",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P algebraic identities\n\nAlgebraic identities for the `Q/X/XHat/P` layer, including the\nrestatements of `Q_a`, `P_a`, the mixed product, and projectivity of `P`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/LayerAlgebra.lean#L557-L633",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/LayerAlgebra.lean",
+  "lines": [
+   557,
+   633
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.x_mul_xHat_adjoint_isHermitian",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.x_mul_xHat_adjoint_nonneg"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 67,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.exists_unitaryGroup_rows_extending_orthonormal",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.exists_unitaryGroup_rows_extending_orthonormal",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.exists_unitaryGroup_rows_extending_orthonormal\n    {κ μ : Type*} [Fintype μ] [DecidableEq μ]\n    (row : κ → EuclideanSpace ℂ μ)\n    (hrow : Orthonormal ℂ row)\n    (e : κ ↪ μ) :\n    ∃ U : Matrix.unitaryGroup μ ℂ,\n      ∀ (i : κ) (r : μ), (U : Matrix μ μ ℂ) (e i) r = row i r := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "A square unitary group element whose selected rows are a prescribed\northonormal family.\n\nThe row equations are stated pointwise so that later matrix calculations can\nrewrite entries without unfolding the chosen orthonormal basis.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Completion",
+  "module_doc": "/-!\n# Section 5 — Positive-Gram completion\n\nCompletion and polar-extension lemmas for the positive spectral rows of a\nright Gram operator.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Completion.lean#L161-L183",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Completion.lean",
+  "lines": [
+   161,
+   183
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "Matrix.mul_conjTranspose_eq_one_of_orthonormal_rows"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.exists_unitaryGroup_with_positive_gram_spectrum_rows",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.exists_unitaryGroup_with_positive_gram_spectrum_rows",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.exists_unitaryGroup_with_positive_gram_spectrum_rows\n    {μ ι : Type*}\n    [Fintype μ] [DecidableEq μ] [Fintype ι] [DecidableEq ι]\n    (X : Matrix μ ι ℂ) (Q : Matrix ι ι ℂ)\n    (hQ : Q.IsHermitian)\n    (hgram : Xᴴ * X = Q)\n    (e : {i : ι // 0 < hQ.eigenvalues i} ↪ μ) :\n    ∃ U : Matrix.unitaryGroup μ ℂ,\n      ∀ (i : {i : ι // 0 < hQ.eigenvalues i}) (r : μ),\n        (U : Matrix μ μ ℂ) (e i) r =\n          positiveGramSpectrumImageRows X Q hQ i r := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The positive Gram image rows can be embedded into a square unitary group\nelement.\n\nThe hypothesis `e` chooses distinct row positions for the strictly positive\neigenvalues of the Gram operator.  The theorem then completes the corresponding\nnormalized image rows to a unitary element on the row space.  This is the\nbasis-extension ingredient needed to turn the positive spectral part into the\nleft unitary factor of the rectangular polar construction.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Completion",
+  "module_doc": "/-!\n# Section 5 — Positive-Gram completion\n\nCompletion and polar-extension lemmas for the positive spectral rows of a\nright Gram operator.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Completion.lean#L185-L214",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Completion.lean",
+  "lines": [
+   185,
+   214
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.exists_unitaryGroup_rows_extending_orthonormal",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormal_normalized_matrix_image_of_positive_gram_spectrum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.exists_rectangular_coisometry_extending_orthonormal_rows",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.exists_rectangular_coisometry_extending_orthonormal_rows",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.exists_rectangular_coisometry_extending_orthonormal_rows\n    {κ μ ν : Type*} [Fintype μ] [DecidableEq μ] [Fintype ν]\n    (row : κ → EuclideanSpace ℂ ν)\n    (hrow : Orthonormal ℂ row)\n    (e : κ ↪ μ)\n    (hcard : Fintype.card μ ≤ Fintype.card ν) :\n    ∃ W : Matrix μ ν ℂ,\n      W * Wᴴ = (1 : Matrix μ μ ℂ) ∧\n        ∀ (i : κ) (r : ν), W (e i) r = row i r := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Extend an orthonormal row family to a rectangular coisometry.\n\nThe embedding `e : κ ↪ μ` specifies the rows of the rectangular matrix which\nmust agree with the prescribed family.  The dimension hypothesis\n`Fintype.card μ ≤ Fintype.card ν` supplies enough room to complete these rows\nto an orthonormal family indexed by all of `μ`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Completion",
+  "module_doc": "/-!\n# Section 5 — Positive-Gram completion\n\nCompletion and polar-extension lemmas for the positive spectral rows of a\nright Gram operator.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Completion.lean#L241-L268",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Completion.lean",
+  "lines": [
+   241,
+   268
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "Matrix.mul_conjTranspose_eq_one_of_orthonormal_rows"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.exists_rectangular_coisometry_with_positive_gram_spectrum_right_rows",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.exists_rectangular_coisometry_with_positive_gram_spectrum_right_rows",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.exists_rectangular_coisometry_with_positive_gram_spectrum_right_rows\n    {μ ι : Type*} [Fintype μ] [DecidableEq μ] [Fintype ι] [DecidableEq ι]\n    (Q : Matrix ι ι ℂ) (hQ : Q.IsHermitian)\n    (e : {i : ι // 0 < hQ.eigenvalues i} ↪ μ)\n    (hcard : Fintype.card μ ≤ Fintype.card ι) :\n    ∃ W : Matrix μ ι ℂ,\n      W * Wᴴ = (1 : Matrix μ μ ℂ) ∧\n        ∀ (i : {i : ι // 0 < hQ.eigenvalues i}) (r : ι),\n          W (e i) r = positiveGramSpectrumRightRows Q hQ i r := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Extend the positive Gram right-singular rows to a rectangular coisometry.\n\nThe selected rows are the conjugate eigenvector rows of the right Gram\noperator.  The cardinality hypothesis is the rectangular dimension condition:\nthere must be enough columns to complete the prescribed rows to an\northonormal row family indexed by the auxiliary row space.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Completion",
+  "module_doc": "/-!\n# Section 5 — Positive-Gram completion\n\nCompletion and polar-extension lemmas for the positive spectral rows of a\nright Gram operator.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Completion.lean#L270-L306",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Completion.lean",
+  "lines": [
+   270,
+   306
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.exists_rectangular_coisometry_extending_orthonormal_rows",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.positive_gram_spectrum_right_rows_mul_conjTranspose"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.transpose_unitaryGroup_mul_rectangular_coisometry",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.transpose_unitaryGroup_mul_rectangular_coisometry",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.transpose_unitaryGroup_mul_rectangular_coisometry\n    {μ ι : Type*} [Fintype μ] [DecidableEq μ] [Fintype ι]\n    (U : Matrix.unitaryGroup μ ℂ) (W : Matrix μ ι ℂ)\n    (hW : W * Wᴴ = (1 : Matrix μ μ ℂ)) :\n    ((U : Matrix μ μ ℂ)ᵀ * W) * ((U : Matrix μ μ ℂ)ᵀ * W)ᴴ =\n      (1 : Matrix μ μ ℂ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Left multiplication by the transpose of a unitary group element preserves\nrow coisometries.\n\nThis is the coisometry half of the polar-extension calculation for the\ncandidate `Xhat = Uᵀ W`: the rectangular factor `W` has orthonormal rows, and\nthe square factor `U` merely changes the orthonormal basis of the row space.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Completion",
+  "module_doc": "/-!\n# Section 5 — Positive-Gram completion\n\nCompletion and polar-extension lemmas for the positive spectral rows of a\nright Gram operator.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Completion.lean#L308-L335",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Completion.lean",
+  "lines": [
+   308,
+   335
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.adjoint_image_eq_zero_of_unitary_positive_gram_completion_row",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.adjoint_image_eq_zero_of_unitary_positive_gram_completion_row",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.adjoint_image_eq_zero_of_unitary_positive_gram_completion_row\n    {μ ι : Type*} [Fintype μ] [DecidableEq μ] [Fintype ι] [DecidableEq ι]\n    (X : Matrix μ ι ℂ) (Q : Matrix ι ι ℂ)\n    (hQ : Q.IsHermitian) (hQ_pos : Q.PosSemidef)\n    (hgram : Xᴴ * X = Q)\n    (e : {i : ι // 0 < hQ.eigenvalues i} ↪ μ)\n    (U : Matrix μ μ ℂ)\n    (hU_left : U * Uᴴ = (1 : Matrix μ μ ℂ))\n    (hU_rows : ∀ (i : {i : ι // 0 < hQ.eigenvalues i}) (r : μ),\n      U (e i) r = positiveGramSpectrumImageRows X Q hQ i r)\n    (a : μ) (ha : a ∉ Set.range e) :\n    (Matrix.toEuclideanLin X).adjoint (WithLp.toLp 2 fun r : μ => U a r) = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Completion rows of the left unitary outside the positive Gram spectrum are\nkilled by `X†`.\n\nThe selected rows of `U` are the normalized positive images of the Gram\neigenvectors.  If a row index is not one of the selected positive spectral\nindices, the row-orthogonality of `U` makes that row orthogonal to all positive\nGram images.  The adjoint-kernel lemma then gives the stated vanishing.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Completion",
+  "module_doc": "/-!\n# Section 5 — Positive-Gram completion\n\nCompletion and polar-extension lemmas for the positive spectral rows of a\nright Gram operator.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Completion.lean#L337-L370",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Completion.lean",
+  "lines": [
+   337,
+   370
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.adjoint_image_eq_zero_of_orthogonal_positive_gram_images"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.positive_gram_polar_extension_mixed_eq_positive_rows",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.positive_gram_polar_extension_mixed_eq_positive_rows",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.positive_gram_polar_extension_mixed_eq_positive_rows\n    {μ ι : Type*} [Fintype μ] [DecidableEq μ] [Fintype ι] [DecidableEq ι]\n    (X : Matrix μ ι ℂ) (Q : Matrix ι ι ℂ)\n    (hQ : Q.IsHermitian) (hQ_pos : Q.PosSemidef)\n    (hgram : Xᴴ * X = Q)\n    (e : {i : ι // 0 < hQ.eigenvalues i} ↪ μ)\n    (U : Matrix μ μ ℂ) (W : Matrix μ ι ℂ)\n    (hU_left : U * Uᴴ = (1 : Matrix μ μ ℂ))\n    (hU_rows : ∀ (i : {i : ι // 0 < hQ.eigenvalues i}) (r : μ),\n      U (e i) r = positiveGramSpectrumImageRows X Q hQ i r)\n    (hW_rows : ∀ (i : {i : ι // 0 < hQ.eigenvalues i}) (r : ι),\n      W (e i) r = positiveGramSpectrumRightRows Q hQ i r) :\n    Xᴴ * (Uᵀ * W) =\n      Xᴴ * (positiveGramSpectrumImageRows X Q hQ)ᵀ *\n        positiveGramSpectrumRightRows Q hQ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The polar-extension mixed product is the positive-spectrum mixed product.\n\nThe candidate `Xhat = Uᵀ W` has selected rows matching the positive left and\nright singular rows.  After expanding the middle index, the selected part is\nexactly the positive-spectrum square-root product, while every complementary\nrow is killed by `X†`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Completion",
+  "module_doc": "/-!\n# Section 5 — Positive-Gram completion\n\nCompletion and polar-extension lemmas for the positive spectral rows of a\nright Gram operator.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Completion.lean#L419-L494",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Completion.lean",
+  "lines": [
+   419,
+   494
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.adjoint_image_eq_zero_of_unitary_positive_gram_completion_row"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 55,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormal_normalized_image_of_adjoint_comp_eigenvectors",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormal_normalized_image_of_adjoint_comp_eigenvectors",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.orthonormal_normalized_image_of_adjoint_comp_eigenvectors\n    {κ E F : Type*}\n    [NormedAddCommGroup E] [InnerProductSpace ℂ E]\n    [FiniteDimensional ℂ E]\n    [NormedAddCommGroup F] [InnerProductSpace ℂ F]\n    [FiniteDimensional ℂ F]\n    (L : E →ₗ[ℂ] F)\n    (v : κ → E) (lam : κ → ℝ)\n    (hv : Orthonormal ℂ v)\n    (hlam : ∀ i : κ, 0 < lam i)\n    (heig : ∀ i : κ, L.adjoint (L (v i)) = (lam i : ℂ) • v i) :\n    Orthonormal ℂ\n      (fun i : κ => ((1 / Real.sqrt (lam i) : ℝ) : ℂ) • L (v i)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Normalizing the images of positive Gram eigenvectors gives an orthonormal\nfamily.\n\nThis is the elementary singular-vector calculation underlying the rectangular\npolar-decomposition route.  If `v_i` are orthonormal eigenvectors of `L†L` with\npositive eigenvalues `λ_i`, then the vectors `λ_i^{-1/2} L v_i` are\northonormal in the target Hilbert space.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Rows",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P identities and approximations\n\nLate-stage algebraic identities and approximation lemmas for the paper's\n`Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Rows.lean#L150-L233",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Rows.lean",
+  "lines": [
+   150,
+   233
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 64,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormal_normalized_matrix_image_of_positive_gram_spectrum",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormal_normalized_matrix_image_of_positive_gram_spectrum",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.orthonormal_normalized_matrix_image_of_positive_gram_spectrum\n    {μ ι : Type*}\n    [Fintype μ] [Fintype ι] [DecidableEq ι]\n    (X : Matrix μ ι ℂ) (Q : Matrix ι ι ℂ)\n    (hQ : Q.IsHermitian)\n    (hgram : Xᴴ * X = Q) :\n    Orthonormal ℂ\n      (fun i : {i : ι // 0 < hQ.eigenvalues i} =>\n        ((1 / Real.sqrt (hQ.eigenvalues i.1) : ℝ) : ℂ) •\n          Matrix.toEuclideanLin X (hQ.eigenvectorBasis i.1)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Spectral form of `orthonormal_normalized_matrix_image_of_gram_eigenvectors`.\n\nAfter the right Gram matrix of `X` has been identified with a Hermitian\noperator `Q`, its positive spectral subspace gives an orthonormal family of\nnormalized images under `X`.  This is the form used when the rectangular polar\nconstruction is indexed by the positive spectrum of the total `Q` operator.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Rows",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P identities and approximations\n\nLate-stage algebraic identities and approximation lemmas for the paper's\n`Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Rows.lean#L276-L302",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Rows.lean",
+  "lines": [
+   276,
+   302
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormal_normalized_image_of_adjoint_comp_eigenvectors"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 11,
+  "is_target": false
+ }
+]

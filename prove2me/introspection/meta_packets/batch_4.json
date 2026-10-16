@@ -1,0 +1,683 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "Orthogonalization.FinDim.JointEigenbasis.le_one_of_lam_le_one",
+  "source_name": "Orthogonalization.FinDim.JointEigenbasis.le_one_of_lam_le_one",
+  "formal_statement": "theorem Orthogonalization.FinDim.JointEigenbasis.le_one_of_lam_le_one (h : ∀ k, J.lam k ≤ 1) : x ≤ (1 : H →L[ℂ] H) := by sorry",
+  "preamble_opens": [
+   "open Orthogonalization",
+   "open Orthogonalization.FinDim",
+   "open Orthogonalization.FinDim.JointEigenbasis",
+   "open scoped BigOperators ComplexOrder InnerProductSpace",
+   "open Module",
+   "variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [FiniteDimensional ℂ H]",
+   "variable {x a : H →L[ℂ] H} (J : JointEigenbasis x a)"
+  ],
+  "docstring": "If all eigenvalues of `x` are at most `1` then `x ≤ 1` in the Loewner order.",
+  "module": "MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.JointDiag",
+  "module_doc": "/-! ### Elementary consequences of the eigen-equations -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Orthonormalization/Orthogonalization/FinDim/JointDiag.lean#L437-L449",
+  "source_path": "MIPRE/Background/Orthonormalization/Orthogonalization/FinDim/JointDiag.lean",
+  "lines": [
+   437,
+   449
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 4,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "Orthogonalization.FinDim.exists_dominating_finset",
+  "source_name": "Orthogonalization.FinDim.exists_dominating_finset",
+  "formal_statement": "theorem Orthogonalization.FinDim.exists_dominating_finset (c : α → ℝ) :\n    ∀ n : ℕ, n ≤ Fintype.card α →\n      ∃ S : Finset α, S.card = n ∧ ∀ x ∈ S, ∀ y ∉ S, c y ≤ c x := by sorry",
+  "preamble_opens": [
+   "open Orthogonalization",
+   "open Orthogonalization.FinDim",
+   "open scoped BigOperators ComplexOrder InnerProductSpace",
+   "open Module",
+   "variable {α : Type*} [Fintype α] [DecidableEq α]"
+  ],
+  "docstring": "**Top-`n` selection.** For every `n ≤ card α` there is a set of `n` indices on\nwhich `c` dominates its values on the complement.",
+  "module": "MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Selection",
+  "module_doc": "/-! ### The combinatorial selection lemma -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Orthonormalization/Orthogonalization/FinDim/Selection.lean#L157-L178",
+  "source_path": "MIPRE/Background/Orthonormalization/Orthogonalization/FinDim/Selection.lean",
+  "lines": [
+   157,
+   178
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "Orthogonalization.FinDim.sum_le_sum_dominating",
+  "source_name": "Orthogonalization.FinDim.sum_le_sum_dominating",
+  "formal_statement": "theorem Orthogonalization.FinDim.sum_le_sum_dominating (c w : α → ℝ) (hw0 : ∀ x, 0 ≤ w x) (hw1 : ∀ x, w x ≤ 1)\n    (S : Finset α) (hdom : ∀ x ∈ S, ∀ y ∉ S, c y ≤ c x) (hsum : ∑ x, w x = S.card) :\n    ∑ x, w x * c x ≤ ∑ x ∈ S, c x := by sorry",
+  "preamble_opens": [
+   "open Orthogonalization",
+   "open Orthogonalization.FinDim",
+   "open scoped BigOperators ComplexOrder InnerProductSpace",
+   "open Module",
+   "variable {α : Type*} [Fintype α] [DecidableEq α]"
+  ],
+  "docstring": "A weighted sum with weights in `[0,1]` summing to `card S` is dominated by the\nplain sum over a set `S` on which `c` dominates its values off `S`.",
+  "module": "MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Selection",
+  "module_doc": "/-! ### The combinatorial selection lemma -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Orthonormalization/Orthogonalization/FinDim/Selection.lean#L180-L211",
+  "source_path": "MIPRE/Background/Orthonormalization/Orthogonalization/FinDim/Selection.lean",
+  "lines": [
+   180,
+   211
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "Orthogonalization.FinDim.exists_commuting_projections",
+  "source_name": "Orthogonalization.FinDim.exists_commuting_projections",
+  "formal_statement": "theorem Orthogonalization.FinDim.exists_commuting_projections (φ : (H →L[ℂ] H) →ₗ[ℂ] ℂ) (a : ι → H →L[ℂ] H)\n    (ha0 : ∀ i, 0 ≤ a i) (ha1 : ∑ i, a i = 1) :\n    ∃ q : ι → H →L[ℂ] H, (∀ i, IsStarProjection (q i)) ∧ (∀ i, Commute (q i) (a i)) ∧\n      ∑ i, LinearMap.trace ℂ H (q i : H →ₗ[ℂ] H) = (finrank ℂ H : ℂ) ∧\n      (φ (∑ i, a i * a i)).re ≤ (φ (∑ i, q i * a i)).re := by sorry",
+  "preamble_opens": [
+   "open Orthogonalization",
+   "open Orthogonalization.FinDim",
+   "open scoped BigOperators ComplexOrder InnerProductSpace",
+   "open Module",
+   "variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [FiniteDimensional ℂ H]",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "**Lemma 3.1 for `B(H)`, `H` finite-dimensional.** For a POVM `(a i)` and any\nlinear functional `φ` on `B(H)` there are projections `q i` commuting with `a i`,\nof total trace `dim H`, with `φ(∑ a i a i) ≤ φ(∑ q i a i)` (real parts). The `q i`\nare sums of rank-one spectral projections of `a i`, selected by\n`exists_finset_sum_ge`.",
+  "module": "MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Selection",
+  "module_doc": "/-! ### The combinatorial selection lemma -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Orthonormalization/Orthogonalization/FinDim/Selection.lean#L300-L366",
+  "source_path": "MIPRE/Background/Orthonormalization/Orthogonalization/FinDim/Selection.lean",
+  "lines": [
+   300,
+   366
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "Orthogonalization.FinDim.JointEigenbasis.le_one_of_lam_le_one",
+   "Orthogonalization.FinDim.exists_jointEigenbasis",
+   "Orthogonalization.FinDim.exists_dominating_finset",
+   "Orthogonalization.FinDim.sum_le_sum_dominating"
+  ],
+  "pasted_helpers": 24,
+  "prooflines": 57,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "Orthogonalization.phiNormSq_add_le",
+  "source_name": "Orthogonalization.phiNormSq_add_le",
+  "formal_statement": "theorem Orthogonalization.phiNormSq_add_le (hφ : ∀ z : H →L[ℂ] H, 0 ≤ φ (star z * z)) (b c : ι → H →L[ℂ] H) :\n    Real.sqrt (phiNormSq φ (b + c))\n      ≤ Real.sqrt (phiNormSq φ b) + Real.sqrt (phiNormSq φ c) := by sorry",
+  "preamble_opens": [
+   "open Orthogonalization",
+   "open scoped ComplexOrder BigOperators",
+   "variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]",
+   "variable {φ : (H →L[ℂ] H) →ₗ[ℂ] ℂ} {ι : Type*} [Fintype ι]"
+  ],
+  "docstring": "**Triangle inequality** for the seminorm `‖·‖_φ` of tuples:\n`‖b + c‖_φ ≤ ‖b‖_φ + ‖c‖_φ`.\n\nThe proof expands `‖b + c‖_φ²`, bounds each cross term by Cauchy–Schwarz for\n`φ` and then sums with the discrete Cauchy–Schwarz inequality\n`Real.sum_sqrt_mul_sqrt_le`.",
+  "module": "MIPRE.Background.Orthonormalization.Orthogonalization.PhiNorm",
+  "module_doc": "/-! ### Cauchy–Schwarz for a positive functional -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Orthonormalization/Orthogonalization/PhiNorm.lean#L247-L307",
+  "source_path": "MIPRE/Background/Orthonormalization/Orthogonalization/PhiNorm.lean",
+  "lines": [
+   247,
+   307
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 5,
+  "prooflines": 52,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "Orthogonalization.phiNormSq_add_add_lt",
+  "source_name": "Orthogonalization.phiNormSq_add_add_lt",
+  "formal_statement": "theorem Orthogonalization.phiNormSq_add_add_lt (hφ : ∀ z : H →L[ℂ] H, 0 ≤ φ (star z * z))\n    {b c d : ι → H →L[ℂ] H} {ε : ℝ} (hε : 0 < ε)\n    (hb : phiNormSq φ b ≤ ε) (hc : phiNormSq φ c ≤ ε) (hd : phiNormSq φ d < ε) :\n    phiNormSq φ (b + c + d) < 9 * ε := by sorry",
+  "preamble_opens": [
+   "open Orthogonalization",
+   "open scoped ComplexOrder BigOperators",
+   "variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]",
+   "variable {φ : (H →L[ℂ] H) →ₗ[ℂ] ℂ} {ι : Type*} [Fintype ι]"
+  ],
+  "docstring": "**The three-term estimate.** If `b` and `c` have squared seminorm at most\n`ε` and `d` has squared seminorm strictly less than `ε`, then `b + c + d` has\nsquared seminorm strictly less than `9 ε`. This is exactly how the constant `9`\nof Theorem 1.2 arises from three applications of the triangle inequality.",
+  "module": "MIPRE.Background.Orthonormalization.Orthogonalization.PhiNorm",
+  "module_doc": "/-! ### Cauchy–Schwarz for a positive functional -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Orthonormalization/Orthogonalization/PhiNorm.lean#L325-L348",
+  "source_path": "MIPRE/Background/Orthonormalization/Orthogonalization/PhiNorm.lean",
+  "lines": [
+   325,
+   348
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "Orthogonalization.phiNormSq_add_le"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MS.pvBit_rep",
+  "source_name": "MIPRE.QLD.MS.pvBit_rep",
+  "formal_statement": "theorem MIPRE.QLD.MS.pvBit_rep (c : Fin layout.r) {a : Fin layout.s → ZMod 2}\n    (ha : (∑ k ∈ layout.V c, a k) = game.b c) (j : Fin 3) :\n    pvBit c (rep c (Sum.inl a)) j = a (cell c j) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MS",
+   "open Finset Matrix Kronecker MIPRE MIPRE.LCS MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**On a parity-valid answer the repair loses nothing**: the outcome's bit at each cell is the\nanswer's. For the third cell this is the parity condition.",
+  "module": "MIPRE.Background.QLD.Anticomm",
+  "module_doc": "/-!\n# Direct Magic Square anticommutation\n\nBlueprint `lem:ms-direct-anticomm`: a strategy failing the Magic Square game with probability\n`ε` has `‖{B₁, B₅}|ψ⟩‖² ≤ 186624 ε` for the *original* `±1`-observables of the two players ---\nno isometry, no projectivity, no extracted EPR pairs. This is the only thing the Pauli basis\ntest consumes from the Magic Square, and it is much weaker than the full rigidity theorem\n`thm:ms-rigidity`, which this repository does not prove.\n\n## The shape of the argument\n\nAlice's constraint answers are **repaired** to parity-valid ones and pushed forward to a POVM\nwith four outcomes (`repPOVM`), then **dilated** to a projective measurement on one shared\nancilla (`MIPRE.exists_projective_dilation`). Signed sums of that measurement are reflections\nthat commute within a constraint and multiply to its sign *exactly*\n(`MIPRE.pvmObs_mul_mul`) --- that is what the dilation buys, and it is why the repair has to\nhappen first.\n\nThe rest is norm bookkeeping on the dilated state, in the operator-bound calculus of\n`MIPRE/Foundations/OpBound.lean`: each of Alice's reflections is within `γ` of the\ncorresponding Bob observable, `γ² ≤ 144 ε`; a Bob word of length `t` can be replaced by the\nreversed word of Alice reflections at cost `t γ`; a within-constraint relation costs `3 γ`; and\nthe six-step path through the six constraints turns `d a e b` into `- d e a b` at cost `24 γ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Anticomm.lean#L91-L107",
+  "source_path": "MIPRE/Background/QLD/Anticomm.lean",
+  "lines": [
+   91,
+   107
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 5,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MS.word2",
+  "source_name": "MIPRE.QLD.MS.word2",
+  "formal_statement": "theorem MIPRE.QLD.MS.word2 (hγ : ∀ c j, snorm (dst ψ) (aOp (refl D c j) - bOp (bobs MB (cell c j))) ≤ γ)\n    (c c' : Fin layout.r) (i j : Fin 3) :\n    snorm (dst ψ) (bOp (bobs MB (cell c i) * bobs MB (cell c' j))\n      - aOp (refl D c' j * refl D c i)) ≤ 2 * γ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MS",
+   "open Finset Matrix Kronecker MIPRE MIPRE.LCS MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {MB : layout.Question → POVM layout.Answer dB}",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {ψ : dA × dB → ℂ} {D : Dilated MA} {γ : ℝ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.Anticomm",
+  "module_doc": "/-!\n# Direct Magic Square anticommutation\n\nBlueprint `lem:ms-direct-anticomm`: a strategy failing the Magic Square game with probability\n`ε` has `‖{B₁, B₅}|ψ⟩‖² ≤ 186624 ε` for the *original* `±1`-observables of the two players ---\nno isometry, no projectivity, no extracted EPR pairs. This is the only thing the Pauli basis\ntest consumes from the Magic Square, and it is much weaker than the full rigidity theorem\n`thm:ms-rigidity`, which this repository does not prove.\n\n## The shape of the argument\n\nAlice's constraint answers are **repaired** to parity-valid ones and pushed forward to a POVM\nwith four outcomes (`repPOVM`), then **dilated** to a projective measurement on one shared\nancilla (`MIPRE.exists_projective_dilation`). Signed sums of that measurement are reflections\nthat commute within a constraint and multiply to its sign *exactly*\n(`MIPRE.pvmObs_mul_mul`) --- that is what the dilation buys, and it is why the repair has to\nhappen first.\n\nThe rest is norm bookkeeping on the dilated state, in the operator-bound calculus of\n`MIPRE/Foundations/OpBound.lean`: each of Alice's reflections is within `γ` of the\ncorresponding Bob observable, `γ² ≤ 144 ε`; a Bob word of length `t` can be replaced by the\nreversed word of Alice reflections at cost `t γ`; a within-constraint relation costs `3 γ`; and\nthe six-step path through the six constraints turns `d a e b` into `- d e a b` at cost `24 γ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Anticomm.lean#L307-L328",
+  "source_path": "MIPRE/Background/QLD/Anticomm.lean",
+  "lines": [
+   307,
+   328
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.bnd_one_of_conjTranspose_mul_self_le",
+   "MIPRE.POVM.sub_mul_self_le_one",
+   "MIPRE.pvmObs_mul",
+   "MIPRE.star_sgn"
+  ],
+  "pasted_helpers": 34,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MS.dd_suffix",
+  "source_name": "MIPRE.QLD.MS.dd_suffix",
+  "formal_statement": "theorem MIPRE.QLD.MS.dd_suffix {X Y W : Matrix dB dB ℂ} {XD : Matrix (dA × PV) (dA × PV) ℂ} {δ : ℝ}\n    (hX : Bnd (bOp X : Matrix ((dA × PV) × dB) ((dA × PV) × dB) ℂ) 1)\n    (hY : Bnd (bOp Y : Matrix ((dA × PV) × dB) ((dA × PV) × dB) ℂ) 1)\n    (hXD : XDᴴ * XD = 1)\n    (hδ : snorm (dst ψ) (bOp W - aOp XD) ≤ δ) :\n    dd ψ (X * W) (Y * W) ≤ dd ψ X Y + 2 * δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MS",
+   "open Finset Matrix Kronecker MIPRE MIPRE.LCS MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {MB : layout.Question → POVM layout.Answer dB}",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {ψ : dA × dB → ℂ} {D : Dilated MA} {γ : ℝ}"
+  ],
+  "docstring": "**Appending a Bob suffix costs twice its replacement cost.**",
+  "module": "MIPRE.Background.QLD.Anticomm",
+  "module_doc": "/-!\n# Direct Magic Square anticommutation\n\nBlueprint `lem:ms-direct-anticomm`: a strategy failing the Magic Square game with probability\n`ε` has `‖{B₁, B₅}|ψ⟩‖² ≤ 186624 ε` for the *original* `±1`-observables of the two players ---\nno isometry, no projectivity, no extracted EPR pairs. This is the only thing the Pauli basis\ntest consumes from the Magic Square, and it is much weaker than the full rigidity theorem\n`thm:ms-rigidity`, which this repository does not prove.\n\n## The shape of the argument\n\nAlice's constraint answers are **repaired** to parity-valid ones and pushed forward to a POVM\nwith four outcomes (`repPOVM`), then **dilated** to a projective measurement on one shared\nancilla (`MIPRE.exists_projective_dilation`). Signed sums of that measurement are reflections\nthat commute within a constraint and multiply to its sign *exactly*\n(`MIPRE.pvmObs_mul_mul`) --- that is what the dilation buys, and it is why the repair has to\nhappen first.\n\nThe rest is norm bookkeeping on the dilated state, in the operator-bound calculus of\n`MIPRE/Foundations/OpBound.lean`: each of Alice's reflections is within `γ` of the\ncorresponding Bob observable, `γ² ≤ 144 ε`; a Bob word of length `t` can be replaced by the\nreversed word of Alice reflections at cost `t γ`; a within-constraint relation costs `3 γ`; and\nthe six-step path through the six constraints turns `d a e b` into `- d e a b` at cost `24 γ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Anticomm.lean#L391-L408",
+  "source_path": "MIPRE/Background/QLD/Anticomm.lean",
+  "lines": [
+   391,
+   408
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MS.relation_core",
+  "source_name": "MIPRE.QLD.MS.relation_core",
+  "formal_statement": "theorem MIPRE.QLD.MS.relation_core\n    (hγ : ∀ c j, snorm (dst ψ) (aOp (refl D c j) - bOp (bobs MB (cell c j))) ≤ γ)\n    (c : Fin layout.r) (i j : Fin 3)\n    (hij : refl D c j * refl D c i = sgn (game.b c) • refl D c 2) :\n    dd ψ (bobs MB (cell c i) * bobs MB (cell c j)) (sgn (game.b c) • bobs MB (cell c 2))\n      ≤ 3 * γ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MS",
+   "open Finset Matrix Kronecker MIPRE MIPRE.LCS MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {MB : layout.Question → POVM layout.Answer dB}",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {ψ : dA × dB → ℂ} {D : Dilated MA} {γ : ℝ}"
+  ],
+  "docstring": "**A within-constraint relation costs `3 γ`.** The two Bob letters are transported to the\nconstraint's two Alice reflections, which costs `2 γ`; their product *is* the third reflection\ntimes the constraint's sign, with no error; and that reflection is returned to Bob for a\nfurther `γ`.",
+  "module": "MIPRE.Background.QLD.Anticomm",
+  "module_doc": "/-!\n# Direct Magic Square anticommutation\n\nBlueprint `lem:ms-direct-anticomm`: a strategy failing the Magic Square game with probability\n`ε` has `‖{B₁, B₅}|ψ⟩‖² ≤ 186624 ε` for the *original* `±1`-observables of the two players ---\nno isometry, no projectivity, no extracted EPR pairs. This is the only thing the Pauli basis\ntest consumes from the Magic Square, and it is much weaker than the full rigidity theorem\n`thm:ms-rigidity`, which this repository does not prove.\n\n## The shape of the argument\n\nAlice's constraint answers are **repaired** to parity-valid ones and pushed forward to a POVM\nwith four outcomes (`repPOVM`), then **dilated** to a projective measurement on one shared\nancilla (`MIPRE.exists_projective_dilation`). Signed sums of that measurement are reflections\nthat commute within a constraint and multiply to its sign *exactly*\n(`MIPRE.pvmObs_mul_mul`) --- that is what the dilation buys, and it is why the repair has to\nhappen first.\n\nThe rest is norm bookkeeping on the dilated state, in the operator-bound calculus of\n`MIPRE/Foundations/OpBound.lean`: each of Alice's reflections is within `γ` of the\ncorresponding Bob observable, `γ² ≤ 144 ε`; a Bob word of length `t` can be replaced by the\nreversed word of Alice reflections at cost `t γ`; a within-constraint relation costs `3 γ`; and\nthe six-step path through the six constraints turns `d a e b` into `- d e a b` at cost `24 γ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Anticomm.lean#L410-L435",
+  "source_path": "MIPRE/Background/QLD/Anticomm.lean",
+  "lines": [
+   410,
+   435
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.MS.word2",
+   "MIPRE.aOp_smul"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MS.path",
+  "source_name": "MIPRE.QLD.MS.path",
+  "formal_statement": "theorem MIPRE.QLD.MS.path (hγ : ∀ c j, snorm (dst ψ) (aOp (refl D c j) - bOp (bobs MB (cell c j))) ≤ γ) :\n    dd ψ (bobs MB (var 3) * bobs MB (var 0) * (bobs MB (var 4) * bobs MB (var 1)))\n      (-(bobs MB (var 3) * bobs MB (var 4) * (bobs MB (var 0) * bobs MB (var 1)))) ≤ 24 * γ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MS",
+   "open Finset Matrix Kronecker MIPRE MIPRE.LCS MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {MB : layout.Question → POVM layout.Answer dB}",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {ψ : dA × dB → ℂ} {D : Dilated MA} {γ : ℝ}"
+  ],
+  "docstring": "**The six-step path.**",
+  "module": "MIPRE.Background.QLD.Anticomm",
+  "module_doc": "/-!\n# Direct Magic Square anticommutation\n\nBlueprint `lem:ms-direct-anticomm`: a strategy failing the Magic Square game with probability\n`ε` has `‖{B₁, B₅}|ψ⟩‖² ≤ 186624 ε` for the *original* `±1`-observables of the two players ---\nno isometry, no projectivity, no extracted EPR pairs. This is the only thing the Pauli basis\ntest consumes from the Magic Square, and it is much weaker than the full rigidity theorem\n`thm:ms-rigidity`, which this repository does not prove.\n\n## The shape of the argument\n\nAlice's constraint answers are **repaired** to parity-valid ones and pushed forward to a POVM\nwith four outcomes (`repPOVM`), then **dilated** to a projective measurement on one shared\nancilla (`MIPRE.exists_projective_dilation`). Signed sums of that measurement are reflections\nthat commute within a constraint and multiply to its sign *exactly*\n(`MIPRE.pvmObs_mul_mul`) --- that is what the dilation buys, and it is why the repair has to\nhappen first.\n\nThe rest is norm bookkeeping on the dilated state, in the operator-bound calculus of\n`MIPRE/Foundations/OpBound.lean`: each of Alice's reflections is within `γ` of the\ncorresponding Bob observable, `γ² ≤ 144 ε`; a Bob word of length `t` can be replaced by the\nreversed word of Alice reflections at cost `t γ`; a within-constraint relation costs `3 γ`; and\nthe six-step path through the six constraints turns `d a e b` into `- d e a b` at cost `24 γ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Anticomm.lean#L463-L562",
+  "source_path": "MIPRE/Background/QLD/Anticomm.lean",
+  "lines": [
+   463,
+   562
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.MS.word2",
+   "MIPRE.QLD.MS.dd_suffix",
+   "MIPRE.QLD.MS.relation_core",
+   "MIPRE.bnd_one_of_conjTranspose_mul_self_le",
+   "MIPRE.POVM.sub_mul_self_le_one",
+   "MIPRE.pvmObs_mul",
+   "MIPRE.sgn_add",
+   "MIPRE.star_sgn"
+  ],
+  "pasted_helpers": 43,
+  "prooflines": 96,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MS.bnd_one_sub_sq",
+  "source_name": "MIPRE.QLD.MS.bnd_one_sub_sq",
+  "formal_statement": "theorem MIPRE.QLD.MS.bnd_one_sub_sq (j : Fin layout.s) :\n    Bnd (bOp (1 - bobs MB j * bobs MB j)\n      : Matrix ((dA × PV) × dB) ((dA × PV) × dB) ℂ) 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MS",
+   "open Finset Matrix Kronecker MIPRE MIPRE.LCS MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {MB : layout.Question → POVM layout.Answer dB}",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {ψ : dA × dB → ℂ} {D : Dilated MA} {γ : ℝ}"
+  ],
+  "docstring": "**`Id - b²` is a contraction**, because `0 ≤ b² ≤ 1`.",
+  "module": "MIPRE.Background.QLD.Anticomm",
+  "module_doc": "/-!\n# Direct Magic Square anticommutation\n\nBlueprint `lem:ms-direct-anticomm`: a strategy failing the Magic Square game with probability\n`ε` has `‖{B₁, B₅}|ψ⟩‖² ≤ 186624 ε` for the *original* `±1`-observables of the two players ---\nno isometry, no projectivity, no extracted EPR pairs. This is the only thing the Pauli basis\ntest consumes from the Magic Square, and it is much weaker than the full rigidity theorem\n`thm:ms-rigidity`, which this repository does not prove.\n\n## The shape of the argument\n\nAlice's constraint answers are **repaired** to parity-valid ones and pushed forward to a POVM\nwith four outcomes (`repPOVM`), then **dilated** to a projective measurement on one shared\nancilla (`MIPRE.exists_projective_dilation`). Signed sums of that measurement are reflections\nthat commute within a constraint and multiply to its sign *exactly*\n(`MIPRE.pvmObs_mul_mul`) --- that is what the dilation buys, and it is why the repair has to\nhappen first.\n\nThe rest is norm bookkeeping on the dilated state, in the operator-bound calculus of\n`MIPRE/Foundations/OpBound.lean`: each of Alice's reflections is within `γ` of the\ncorresponding Bob observable, `γ² ≤ 144 ε`; a Bob word of length `t` can be replaced by the\nreversed word of Alice reflections at cost `t γ`; a within-constraint relation costs `3 γ`; and\nthe six-step path through the six constraints turns `d a e b` into `- d e a b` at cost `24 γ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Anticomm.lean#L592-L609",
+  "source_path": "MIPRE/Background/QLD/Anticomm.lean",
+  "lines": [
+   592,
+   609
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.bnd_one_of_conjTranspose_mul_self_le",
+   "MIPRE.POVM.sub_mul_self_le_one"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MS.snorm_one_sub_sq",
+  "source_name": "MIPRE.QLD.MS.snorm_one_sub_sq",
+  "formal_statement": "theorem MIPRE.QLD.MS.snorm_one_sub_sq (hγ : ∀ c j, snorm (dst ψ) (aOp (refl D c j)\n      - bOp (bobs MB (cell c j))) ≤ γ) (c : Fin layout.r) (j : Fin 3) :\n    snorm (dst ψ) (bOp (1 - bobs MB (cell c j) * bobs MB (cell c j))) ≤ 2 * γ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MS",
+   "open Finset Matrix Kronecker MIPRE MIPRE.LCS MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {MB : layout.Question → POVM layout.Answer dB}",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {ψ : dA × dB → ℂ} {D : Dilated MA} {γ : ℝ}"
+  ],
+  "docstring": "**`‖(Id - b²)|ψ'⟩‖ ≤ 2 γ`**, from `Id - b² = (D + b)(D - b)` across the two factors.",
+  "module": "MIPRE.Background.QLD.Anticomm",
+  "module_doc": "/-!\n# Direct Magic Square anticommutation\n\nBlueprint `lem:ms-direct-anticomm`: a strategy failing the Magic Square game with probability\n`ε` has `‖{B₁, B₅}|ψ⟩‖² ≤ 186624 ε` for the *original* `±1`-observables of the two players ---\nno isometry, no projectivity, no extracted EPR pairs. This is the only thing the Pauli basis\ntest consumes from the Magic Square, and it is much weaker than the full rigidity theorem\n`thm:ms-rigidity`, which this repository does not prove.\n\n## The shape of the argument\n\nAlice's constraint answers are **repaired** to parity-valid ones and pushed forward to a POVM\nwith four outcomes (`repPOVM`), then **dilated** to a projective measurement on one shared\nancilla (`MIPRE.exists_projective_dilation`). Signed sums of that measurement are reflections\nthat commute within a constraint and multiply to its sign *exactly*\n(`MIPRE.pvmObs_mul_mul`) --- that is what the dilation buys, and it is why the repair has to\nhappen first.\n\nThe rest is norm bookkeeping on the dilated state, in the operator-bound calculus of\n`MIPRE/Foundations/OpBound.lean`: each of Alice's reflections is within `γ` of the\ncorresponding Bob observable, `γ² ≤ 144 ε`; a Bob word of length `t` can be replaced by the\nreversed word of Alice reflections at cost `t γ`; a within-constraint relation costs `3 γ`; and\nthe six-step path through the six constraints turns `d a e b` into `- d e a b` at cost `24 γ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Anticomm.lean#L611-L632",
+  "source_path": "MIPRE/Background/QLD/Anticomm.lean",
+  "lines": [
+   611,
+   632
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.bnd_one_of_conjTranspose_mul_self_le",
+   "MIPRE.POVM.sub_mul_self_le_one",
+   "MIPRE.pvmObs_mul",
+   "MIPRE.star_sgn"
+  ],
+  "pasted_helpers": 31,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MS.snorm_anti",
+  "source_name": "MIPRE.QLD.MS.snorm_anti",
+  "formal_statement": "theorem MIPRE.QLD.MS.snorm_anti\n    (hγ : ∀ c j, snorm (dst ψ) (aOp (refl D c j) - bOp (bobs MB (cell c j))) ≤ γ) :\n    snorm (dst ψ) (bOp (anti MB) : Matrix ((dA × PV) × dB) ((dA × PV) × dB) ℂ) ≤ 36 * γ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MS",
+   "open Finset Matrix Kronecker MIPRE MIPRE.LCS MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {MB : layout.Question → POVM layout.Answer dB}",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {ψ : dA × dB → ℂ} {D : Dilated MA} {γ : ℝ}"
+  ],
+  "docstring": "**The anticommutator is within `36 γ` of zero on the state.**",
+  "module": "MIPRE.Background.QLD.Anticomm",
+  "module_doc": "/-!\n# Direct Magic Square anticommutation\n\nBlueprint `lem:ms-direct-anticomm`: a strategy failing the Magic Square game with probability\n`ε` has `‖{B₁, B₅}|ψ⟩‖² ≤ 186624 ε` for the *original* `±1`-observables of the two players ---\nno isometry, no projectivity, no extracted EPR pairs. This is the only thing the Pauli basis\ntest consumes from the Magic Square, and it is much weaker than the full rigidity theorem\n`thm:ms-rigidity`, which this repository does not prove.\n\n## The shape of the argument\n\nAlice's constraint answers are **repaired** to parity-valid ones and pushed forward to a POVM\nwith four outcomes (`repPOVM`), then **dilated** to a projective measurement on one shared\nancilla (`MIPRE.exists_projective_dilation`). Signed sums of that measurement are reflections\nthat commute within a constraint and multiply to its sign *exactly*\n(`MIPRE.pvmObs_mul_mul`) --- that is what the dilation buys, and it is why the repair has to\nhappen first.\n\nThe rest is norm bookkeeping on the dilated state, in the operator-bound calculus of\n`MIPRE/Foundations/OpBound.lean`: each of Alice's reflections is within `γ` of the\ncorresponding Bob observable, `γ² ≤ 144 ε`; a Bob word of length `t` can be replaced by the\nreversed word of Alice reflections at cost `t γ`; a within-constraint relation costs `3 γ`; and\nthe six-step path through the six constraints turns `d a e b` into `- d e a b` at cost `24 γ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Anticomm.lean#L634-L732",
+  "source_path": "MIPRE/Background/QLD/Anticomm.lean",
+  "lines": [
+   634,
+   732
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.MS.word2",
+   "MIPRE.QLD.MS.path",
+   "MIPRE.QLD.MS.bnd_one_sub_sq",
+   "MIPRE.QLD.MS.snorm_one_sub_sq",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.bnd_one_of_conjTranspose_mul_self_le",
+   "MIPRE.POVM.sub_mul_self_le_one",
+   "MIPRE.pvmObs_mul",
+   "MIPRE.star_sgn"
+  ],
+  "pasted_helpers": 44,
+  "prooflines": 95,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MS.condWin_le_agree",
+  "source_name": "MIPRE.QLD.MS.condWin_le_agree",
+  "formal_statement": "theorem MIPRE.QLD.MS.condWin_le_agree (c : Fin layout.r) (j : Fin 3) :\n    condWin nonlocalGame ψ MA MB (Sum.inl c) (Sum.inr (cell c j))\n      ≤ ∑ d : layout.Answer, ∑ w : ZMod 2,\n          (if pvBit c (rep c d) j = w then (1 : ℝ) else 0)\n            * bornProb ψ (((MA (Sum.inl c)).mats d).val)\n                (((MB (Sum.inr (cell c j))).mats (Sum.inr w)).val) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MS",
+   "open Finset Matrix Kronecker MIPRE MIPRE.LCS MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {MB : layout.Question → POVM layout.Answer dB}",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {ψ : dA × dB → ℂ} {MA : layout.Question → POVM layout.Answer dA}"
+  ],
+  "docstring": "**Every winning answer pair agrees**, so the accepted mass is at most the agreeing mass.",
+  "module": "MIPRE.Background.QLD.Anticomm",
+  "module_doc": "/-!\n# Direct Magic Square anticommutation\n\nBlueprint `lem:ms-direct-anticomm`: a strategy failing the Magic Square game with probability\n`ε` has `‖{B₁, B₅}|ψ⟩‖² ≤ 186624 ε` for the *original* `±1`-observables of the two players ---\nno isometry, no projectivity, no extracted EPR pairs. This is the only thing the Pauli basis\ntest consumes from the Magic Square, and it is much weaker than the full rigidity theorem\n`thm:ms-rigidity`, which this repository does not prove.\n\n## The shape of the argument\n\nAlice's constraint answers are **repaired** to parity-valid ones and pushed forward to a POVM\nwith four outcomes (`repPOVM`), then **dilated** to a projective measurement on one shared\nancilla (`MIPRE.exists_projective_dilation`). Signed sums of that measurement are reflections\nthat commute within a constraint and multiply to its sign *exactly*\n(`MIPRE.pvmObs_mul_mul`) --- that is what the dilation buys, and it is why the repair has to\nhappen first.\n\nThe rest is norm bookkeeping on the dilated state, in the operator-bound calculus of\n`MIPRE/Foundations/OpBound.lean`: each of Alice's reflections is within `γ` of the\ncorresponding Bob observable, `γ² ≤ 144 ε`; a Bob word of length `t` can be replaced by the\nreversed word of Alice reflections at cost `t γ`; a within-constraint relation costs `3 γ`; and\nthe six-step path through the six constraints turns `d a e b` into `- d e a b` at cost `24 γ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Anticomm.lean#L795-L834",
+  "source_path": "MIPRE/Background/QLD/Anticomm.lean",
+  "lines": [
+   795,
+   834
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.MS.pvBit_rep",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 33,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MS.one_sub_two_mul_condFail_le_corr",
+  "source_name": "MIPRE.QLD.MS.one_sub_two_mul_condFail_le_corr",
+  "formal_statement": "theorem MIPRE.QLD.MS.one_sub_two_mul_condFail_le_corr (hψ : star ψ ⬝ᵥ ψ = 1) (c : Fin layout.r) (j : Fin 3) :\n    1 - 2 * condFail nonlocalGame ψ MA MB (Sum.inl c) (Sum.inr (cell c j))\n      ≤ corr ψ MA MB c j := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MS",
+   "open Finset Matrix Kronecker MIPRE MIPRE.LCS MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {MB : layout.Question → POVM layout.Answer dB}",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {ψ : dA × dB → ℂ} {MA : layout.Question → POVM layout.Answer dA}"
+  ],
+  "docstring": "**The correlation is at least `1 - 2 ℓ`.**",
+  "module": "MIPRE.Background.QLD.Anticomm",
+  "module_doc": "/-!\n# Direct Magic Square anticommutation\n\nBlueprint `lem:ms-direct-anticomm`: a strategy failing the Magic Square game with probability\n`ε` has `‖{B₁, B₅}|ψ⟩‖² ≤ 186624 ε` for the *original* `±1`-observables of the two players ---\nno isometry, no projectivity, no extracted EPR pairs. This is the only thing the Pauli basis\ntest consumes from the Magic Square, and it is much weaker than the full rigidity theorem\n`thm:ms-rigidity`, which this repository does not prove.\n\n## The shape of the argument\n\nAlice's constraint answers are **repaired** to parity-valid ones and pushed forward to a POVM\nwith four outcomes (`repPOVM`), then **dilated** to a projective measurement on one shared\nancilla (`MIPRE.exists_projective_dilation`). Signed sums of that measurement are reflections\nthat commute within a constraint and multiply to its sign *exactly*\n(`MIPRE.pvmObs_mul_mul`) --- that is what the dilation buys, and it is why the repair has to\nhappen first.\n\nThe rest is norm bookkeeping on the dilated state, in the operator-bound calculus of\n`MIPRE/Foundations/OpBound.lean`: each of Alice's reflections is within `γ` of the\ncorresponding Bob observable, `γ² ≤ 144 ε`; a Bob word of length `t` can be replaced by the\nreversed word of Alice reflections at cost `t γ`; a within-constraint relation costs `3 γ`; and\nthe six-step path through the six constraints turns `d a e b` into `- d e a b` at cost `24 γ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Anticomm.lean#L836-L856",
+  "source_path": "MIPRE/Background/QLD/Anticomm.lean",
+  "lines": [
+   836,
+   856
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.MS.condWin_le_agree",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.sum_bornProb"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MS.emb_compress_refl",
+  "source_name": "MIPRE.QLD.MS.emb_compress_refl",
+  "formal_statement": "theorem MIPRE.QLD.MS.emb_compress_refl (D : Dilated MA) (c : Fin layout.r) (j : Fin 3) :\n    (emb dA)ᴴ * (refl D c j * emb dA)\n      = ∑ d : layout.Answer, csgn c j (rep c d) • ((MA (Sum.inl c)).mats d).val := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MS",
+   "open Finset Matrix Kronecker MIPRE MIPRE.LCS MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {MB : layout.Question → POVM layout.Answer dB}",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {ψ : dA × dB → ℂ} {MA : layout.Question → POVM layout.Answer dA}"
+  ],
+  "docstring": "**The compression of Alice's reflection is her repaired POVM, signed.**",
+  "module": "MIPRE.Background.QLD.Anticomm",
+  "module_doc": "/-!\n# Direct Magic Square anticommutation\n\nBlueprint `lem:ms-direct-anticomm`: a strategy failing the Magic Square game with probability\n`ε` has `‖{B₁, B₅}|ψ⟩‖² ≤ 186624 ε` for the *original* `±1`-observables of the two players ---\nno isometry, no projectivity, no extracted EPR pairs. This is the only thing the Pauli basis\ntest consumes from the Magic Square, and it is much weaker than the full rigidity theorem\n`thm:ms-rigidity`, which this repository does not prove.\n\n## The shape of the argument\n\nAlice's constraint answers are **repaired** to parity-valid ones and pushed forward to a POVM\nwith four outcomes (`repPOVM`), then **dilated** to a projective measurement on one shared\nancilla (`MIPRE.exists_projective_dilation`). Signed sums of that measurement are reflections\nthat commute within a constraint and multiply to its sign *exactly*\n(`MIPRE.pvmObs_mul_mul`) --- that is what the dilation buys, and it is why the repair has to\nhappen first.\n\nThe rest is norm bookkeeping on the dilated state, in the operator-bound calculus of\n`MIPRE/Foundations/OpBound.lean`: each of Alice's reflections is within `γ` of the\ncorresponding Bob observable, `γ² ≤ 144 ε`; a Bob word of length `t` can be replaced by the\nreversed word of Alice reflections at cost `t γ`; a within-constraint relation costs `3 γ`; and\nthe six-step path through the six constraints turns `d a e b` into `- d e a b` at cost `24 γ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Anticomm.lean#L886-L906",
+  "source_path": "MIPRE/Background/QLD/Anticomm.lean",
+  "lines": [
+   886,
+   906
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MS.qform_eq_corr",
+  "source_name": "MIPRE.QLD.MS.qform_eq_corr",
+  "formal_statement": "theorem MIPRE.QLD.MS.qform_eq_corr (D : Dilated MA) (c : Fin layout.r) (j : Fin 3) :\n    qform (dst ψ) (aOp (refl D c j) * bOp (bobs MB (cell c j))) = corr ψ MA MB c j := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MS",
+   "open Finset Matrix Kronecker MIPRE MIPRE.LCS MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {MB : layout.Question → POVM layout.Answer dB}",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {ψ : dA × dB → ℂ} {MA : layout.Question → POVM layout.Answer dA}"
+  ],
+  "docstring": "**The correlation is the quadratic form of `C_{c,j} ⊗ B_j`.**",
+  "module": "MIPRE.Background.QLD.Anticomm",
+  "module_doc": "/-!\n# Direct Magic Square anticommutation\n\nBlueprint `lem:ms-direct-anticomm`: a strategy failing the Magic Square game with probability\n`ε` has `‖{B₁, B₅}|ψ⟩‖² ≤ 186624 ε` for the *original* `±1`-observables of the two players ---\nno isometry, no projectivity, no extracted EPR pairs. This is the only thing the Pauli basis\ntest consumes from the Magic Square, and it is much weaker than the full rigidity theorem\n`thm:ms-rigidity`, which this repository does not prove.\n\n## The shape of the argument\n\nAlice's constraint answers are **repaired** to parity-valid ones and pushed forward to a POVM\nwith four outcomes (`repPOVM`), then **dilated** to a projective measurement on one shared\nancilla (`MIPRE.exists_projective_dilation`). Signed sums of that measurement are reflections\nthat commute within a constraint and multiply to its sign *exactly*\n(`MIPRE.pvmObs_mul_mul`) --- that is what the dilation buys, and it is why the repair has to\nhappen first.\n\nThe rest is norm bookkeeping on the dilated state, in the operator-bound calculus of\n`MIPRE/Foundations/OpBound.lean`: each of Alice's reflections is within `γ` of the\ncorresponding Bob observable, `γ² ≤ 144 ε`; a Bob word of length `t` can be replaced by the\nreversed word of Alice reflections at cost `t γ`; a within-constraint relation costs `3 γ`; and\nthe six-step path through the six constraints turns `d a e b` into `- d e a b` at cost `24 γ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Anticomm.lean#L908-L936",
+  "source_path": "MIPRE/Background/QLD/Anticomm.lean",
+  "lines": [
+   908,
+   936
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.MS.emb_compress_refl",
+   "MIPRE.sum_kronecker_left"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MS.close_of_fail",
+  "source_name": "MIPRE.QLD.MS.close_of_fail",
+  "formal_statement": "theorem MIPRE.QLD.MS.close_of_fail (hψ : star ψ ⬝ᵥ ψ = 1) (D : Dilated MA) {ε : ℝ} (hε : 0 ≤ ε)\n    (hfail : 1 - povmValue nonlocalGame ψ MA MB ≤ ε) :\n    ∀ c j, snorm (dst ψ) (aOp (refl D c j) - bOp (bobs MB (cell c j)))\n      ≤ 12 * Real.sqrt ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MS",
+   "open Finset Matrix Kronecker MIPRE MIPRE.LCS MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {MB : layout.Question → POVM layout.Answer dB}",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {ψ : dA × dB → ℂ} {MA : layout.Question → POVM layout.Answer dA}"
+  ],
+  "docstring": "**The closeness hypothesis, with `γ = 12 √ε`.**",
+  "module": "MIPRE.Background.QLD.Anticomm",
+  "module_doc": "/-!\n# Direct Magic Square anticommutation\n\nBlueprint `lem:ms-direct-anticomm`: a strategy failing the Magic Square game with probability\n`ε` has `‖{B₁, B₅}|ψ⟩‖² ≤ 186624 ε` for the *original* `±1`-observables of the two players ---\nno isometry, no projectivity, no extracted EPR pairs. This is the only thing the Pauli basis\ntest consumes from the Magic Square, and it is much weaker than the full rigidity theorem\n`thm:ms-rigidity`, which this repository does not prove.\n\n## The shape of the argument\n\nAlice's constraint answers are **repaired** to parity-valid ones and pushed forward to a POVM\nwith four outcomes (`repPOVM`), then **dilated** to a projective measurement on one shared\nancilla (`MIPRE.exists_projective_dilation`). Signed sums of that measurement are reflections\nthat commute within a constraint and multiply to its sign *exactly*\n(`MIPRE.pvmObs_mul_mul`) --- that is what the dilation buys, and it is why the repair has to\nhappen first.\n\nThe rest is norm bookkeeping on the dilated state, in the operator-bound calculus of\n`MIPRE/Foundations/OpBound.lean`: each of Alice's reflections is within `γ` of the\ncorresponding Bob observable, `γ² ≤ 144 ε`; a Bob word of length `t` can be replaced by the\nreversed word of Alice reflections at cost `t γ`; a within-constraint relation costs `3 γ`; and\nthe six-step path through the six constraints turns `d a e b` into `- d e a b` at cost `24 γ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Anticomm.lean#L970-L993",
+  "source_path": "MIPRE/Background/QLD/Anticomm.lean",
+  "lines": [
+   970,
+   993
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.MS.one_sub_two_mul_condFail_le_corr",
+   "MIPRE.QLD.MS.qform_eq_corr",
+   "MIPRE.ancillaEmbed_isometry",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.bnd_one_of_conjTranspose_mul_self_le",
+   "MIPRE.condFail_le_div",
+   "MIPRE.POVM.sub_mul_self_le_one",
+   "MIPRE.pvmObs_mul",
+   "MIPRE.star_sgn"
+  ],
+  "pasted_helpers": 37,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MS.snorm_bOp_eq",
+  "source_name": "MIPRE.QLD.MS.snorm_bOp_eq",
+  "formal_statement": "theorem MIPRE.QLD.MS.snorm_bOp_eq (ψ : dA × dB → ℂ) (R : Matrix dB dB ℂ) :\n    snorm (dst ψ) (bOp R : Matrix ((dA × PV) × dB) ((dA × PV) × dB) ℂ)\n      = ‖stateVecB ψ R‖ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MS",
+   "open Finset Matrix Kronecker MIPRE MIPRE.LCS MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {MA : layout.Question → POVM layout.Answer dA}",
+   "variable {MB : layout.Question → POVM layout.Answer dB}",
+   "variable {MA : layout.Question → POVM layout.Answer dA}"
+  ],
+  "docstring": "The dilated state's norm of a Bob operator is the original state's.",
+  "module": "MIPRE.Background.QLD.Anticomm",
+  "module_doc": "/-!\n# Direct Magic Square anticommutation\n\nBlueprint `lem:ms-direct-anticomm`: a strategy failing the Magic Square game with probability\n`ε` has `‖{B₁, B₅}|ψ⟩‖² ≤ 186624 ε` for the *original* `±1`-observables of the two players ---\nno isometry, no projectivity, no extracted EPR pairs. This is the only thing the Pauli basis\ntest consumes from the Magic Square, and it is much weaker than the full rigidity theorem\n`thm:ms-rigidity`, which this repository does not prove.\n\n## The shape of the argument\n\nAlice's constraint answers are **repaired** to parity-valid ones and pushed forward to a POVM\nwith four outcomes (`repPOVM`), then **dilated** to a projective measurement on one shared\nancilla (`MIPRE.exists_projective_dilation`). Signed sums of that measurement are reflections\nthat commute within a constraint and multiply to its sign *exactly*\n(`MIPRE.pvmObs_mul_mul`) --- that is what the dilation buys, and it is why the repair has to\nhappen first.\n\nThe rest is norm bookkeeping on the dilated state, in the operator-bound calculus of\n`MIPRE/Foundations/OpBound.lean`: each of Alice's reflections is within `γ` of the\ncorresponding Bob observable, `γ² ≤ 144 ε`; a Bob word of length `t` can be replaced by the\nreversed word of Alice reflections at cost `t γ`; a within-constraint relation costs `3 γ`; and\nthe six-step path through the six constraints turns `d a e b` into `- d e a b` at cost `24 γ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Anticomm.lean#L999-L1014",
+  "source_path": "MIPRE/Background/QLD/Anticomm.lean",
+  "lines": [
+   999,
+   1014
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.ancillaEmbed_isometry"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 12,
+  "is_target": false
+ }
+]

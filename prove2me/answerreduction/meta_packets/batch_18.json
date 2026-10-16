@@ -1,0 +1,643 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.avgOver_uniform_pointNext_decompose",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.avgOver_uniform_pointNext_decompose",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.avgOver_uniform_pointNext_decompose\n    (params : Parameters) [FieldModel params.q]\n    (f : Point params.next → Error) :\n    avgOver (uniformDistribution (Point params.next)) f =\n      avgOver (uniformDistribution (Fq params))\n        (fun x => avgOver (uniformDistribution (Point params))\n          (fun u => f (appendPoint params u x))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Decompose the uniform average over a next-level point into a height and prefix average.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Approximation",
+  "module_doc": "/-!\n# Section 10 — commutativity points approximation layer\n\nRestricted-diagonal approximation infrastructure for commutativity at points.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/Approximation.lean#L113-L123",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/Approximation.lean",
+  "lines": [
+   113,
+   123
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "PMF.bind_sum_smul",
+   "PMF.uniformOfFintype_prod_eq_bind",
+   "PMF.uniformOfFintype_map_equiv",
+   "PMF.map_sum_smul",
+   "PMF.realWeightedSum_uniformOfFintype_comm"
+  ],
+  "pasted_helpers": 15,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.avgOver_uniform_pointNext_height",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.avgOver_uniform_pointNext_height",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.avgOver_uniform_pointNext_height\n    (params : Parameters) [FieldModel params.q]\n    (f : Fq params → Error) :\n    avgOver (uniformDistribution (Point params.next)) (fun u => f (pointHeight params u)) =\n      avgOver (uniformDistribution (Fq params)) f := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Marginalizing a uniform point in `Point params.next` to its height\ncoordinate gives the uniform distribution on `Fq params`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Approximation",
+  "module_doc": "/-!\n# Section 10 — commutativity points approximation layer\n\nRestricted-diagonal approximation infrastructure for commutativity at points.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/Approximation.lean#L125-L134",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/Approximation.lean",
+  "lines": [
+   125,
+   134
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "PMF.uniformOfFintype_sum_equiv_fst_smul"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.sampledDiagonalLineApproximation_pointWithDiagonalLine",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.sampledDiagonalLineApproximation_pointWithDiagonalLine",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.sampledDiagonalLineApproximation_pointWithDiagonalLine\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma) :\n    SDDRel strategy.state\n      (pointWithDiagonalLineDistribution params)\n      (IdxSubMeas.liftLeft\n        (sampledPointMeasurement params strategy))\n      (IdxSubMeas.liftRight\n        (sampledDiagonalLineEvaluation params strategy))\n      (pointDiagonalLineApproxError params gamma) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Transport the corrected restricted-diagonal approximation bound to the\nshared point-with-diagonal-line distribution used downstream.\n\nThe reindexing runs through `rebasedLastRestrictedQuestionEquiv`, which turns a\nrestricted sample together with an evaluation parameter into the corresponding\nrebased diagonal-line question.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Approximation",
+  "module_doc": "/-!\n# Section 10 — commutativity points approximation layer\n\nRestricted-diagonal approximation infrastructure for commutativity at points.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/Approximation.lean#L397-L544",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/Approximation.lean",
+  "lines": [
+   397,
+   544
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.DiagonalLine.rebaseAt_rebase",
+   "MIPStarRE.LDT.avgOver_uniform_equiv",
+   "MIPStarRE.LDT.avgOver_uniform_fst",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.SubMeas.postprocess_transport"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 129,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.answer_sampledDiagonalLineApproximation_pointWithDiagonalLine",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.answer_sampledDiagonalLineApproximation_pointWithDiagonalLine",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.answer_sampledDiagonalLineApproximation_pointWithDiagonalLine\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : AnswerSymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma) :\n    SDDRel strategy.state\n      (pointWithDiagonalLineDistribution params)\n      (IdxSubMeas.liftLeft\n        (fun q =>\n          (strategy.pointMeasurement (sampledPointFromDiagonalQuestion params q)).toSubMeas))\n      (IdxSubMeas.liftRight\n        (fun q =>\n          postprocess ((strategy.diagonalMeasurement q.1).toSubMeas) (fun f => f q.2)))\n      (pointDiagonalLineApproxError params gamma) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Answer-valued version of\n`sampledDiagonalLineApproximation_pointWithDiagonalLine`.\n\nThis is the Section 10 diagonal approximation needed by the answer-valued\ncommutativity route: it uses the answer-valued diagonal verifier relation\ndirectly and does not pass through an ordinary dummy diagonal measurement.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.Approximation",
+  "module_doc": "/-!\n# Section 10 — commutativity points approximation layer\n\nRestricted-diagonal approximation infrastructure for commutativity at points.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/Approximation.lean#L671-L871",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/Approximation.lean",
+  "lines": [
+   671,
+   871
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.DiagonalLine.rebaseAt_rebase",
+   "MIPStarRE.LDT.avgOver_uniform_equiv",
+   "MIPStarRE.LDT.avgOver_uniform_fst",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.SubMeas.postprocess_transport"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 180,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.commutativityPoints",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.commutativityPoints",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.commutativityPoints\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma) :\n    SDDOpRel strategy.state\n      (uniformDistribution (PointPairQuestion params))\n      (pointMeasurementProductLeft params strategy)\n      (pointMeasurementProductRight params strategy)\n      (commutativityPointsError params gamma) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "`thm:commutativity-points`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.BridgeTheorems.DropBridges",
+  "module_doc": "/-!\n# Section 10 commutativity points: drop comparisons\n\nComparison lemmas that drop structure from the mixed line family back to the\nordered diagonal-line product, used in the drop direction of the Section 10\npoint-commutativity argument.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/BridgeTheorems/DropBridges.lean#L333-L433",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/BridgeTheorems/DropBridges.lean",
+  "lines": [
+   333,
+   433
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Distribution.map_sum_smul",
+   "PMF.uniformOfFintype_sum_equiv_fst_smul",
+   "MIPStarRE.LDT.CommutativityPoints.orderedLiftToMixedLine",
+   "MIPStarRE.LDT.CommutativityPoints.orderedLiftToLineProduct",
+   "MIPStarRE.LDT.Preliminaries.stateDependentDistanceOpRel_triangle"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 89,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.orderedLiftToMixedLine",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.orderedLiftToMixedLine",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.orderedLiftToMixedLine\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma) :\n    SDDOpRel strategy.state\n      (pointPairSharedDiagonalLineDistribution params)\n      (pointMeasurementProductAlongSharedLine params strategy)\n      (IdxSubMeas.toIdxOpFamily (pointDiagonalLineMixedProductLeft params strategy))\n      (pointDiagonalLineApproxError params gamma) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Lift the ordered shared-line point product to the mixed line family.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.BridgeTheorems.LiftBridges",
+  "module_doc": "/-!\n# Section 10 commutativity points: lift comparisons\n\nComparison lemmas lifting the ordered shared-line point product to the mixed\nline family, used in the lift direction of the Section 10 point-commutativity\nargument.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/BridgeTheorems/LiftBridges.lean#L50-L164",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/BridgeTheorems/LiftBridges.lean",
+  "lines": [
+   50,
+   164
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.opTensor_le_leftTensor",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.leftTensor_le_one",
+   "MIPStarRE.LDT.CommutativityPoints.sddOpRel_reindex",
+   "MIPStarRE.LDT.CommutativityPoints.sddOpRel_congr_outcome",
+   "MIPStarRE.LDT.CommutativityPoints.subMeas_sum_adjoint_mul_le_one",
+   "MIPStarRE.LDT.CommutativityPoints.liftLeft_mul_leftPlaced_outcome",
+   "MIPStarRE.LDT.CommutativityPoints.liftLeft_mul_rightPlaced_outcome",
+   "MIPStarRE.LDT.CommutativityPoints.sampledDiagonalLineApproximation_ignore_first",
+   "MIPStarRE.LDT.Preliminaries.cabApproxDelta_raw"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 103,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.orderedLiftToLineProduct",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.orderedLiftToLineProduct",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.orderedLiftToLineProduct\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma) :\n    SDDOpRel strategy.state\n      (pointPairSharedDiagonalLineDistribution params)\n      (IdxSubMeas.toIdxOpFamily (pointDiagonalLineMixedProductLeft params strategy))\n      (diagonalLineProductOrdered params strategy)\n      (pointDiagonalLineApproxError params gamma) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Lift the mixed line family to the ordered shared-line line product.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.BridgeTheorems.LiftBridges",
+  "module_doc": "/-!\n# Section 10 commutativity points: lift comparisons\n\nComparison lemmas lifting the ordered shared-line point product to the mixed\nline family, used in the lift direction of the Section 10 point-commutativity\nargument.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/BridgeTheorems/LiftBridges.lean#L166-L289",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/BridgeTheorems/LiftBridges.lean",
+  "lines": [
+   166,
+   289
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.opTensor_le_leftTensor",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.leftTensor_le_one",
+   "MIPStarRE.LDT.CommutativityPoints.sddOpRel_congr_outcome",
+   "MIPStarRE.LDT.CommutativityPoints.subMeas_sum_adjoint_mul_le_one",
+   "MIPStarRE.LDT.CommutativityPoints.liftRight_mul_leftPlaced_outcome",
+   "MIPStarRE.LDT.CommutativityPoints.liftRight_mul_rightPlaced_outcome",
+   "MIPStarRE.LDT.CommutativityPoints.sampledDiagonalLineApproximation_ignore_second",
+   "MIPStarRE.LDT.Preliminaries.cabApproxDelta_raw"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 112,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.sddOpRel_symm",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.sddOpRel_symm",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.sddOpRel_symm\n    {Question Outcome : Type*}\n    [Fintype Outcome]\n    (ψ : QuantumState ι) (𝒟 : Distribution Question)\n    (A B : IdxOpFamily Question Outcome ι) (δ : Error) :\n    SDDOpRel ψ 𝒟 A B δ →\n      SDDOpRel ψ 𝒟 B A δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.Core",
+  "module_doc": "/-!\n# Section 10 commutativity points: shared helpers core\n\nShared reindexing and tensor-placement helpers used by the Section 10\ncommutativity-of-points argument.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/Core.lean#L60-L69",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/Core.lean",
+  "lines": [
+   60,
+   69
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.qSDDOp_symm"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.qSDDOp_reindex",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.qSDDOp_reindex",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.qSDDOp_reindex\n    {Outcome Outcome' : Type*}\n    [Fintype Outcome] [Fintype Outcome']\n    (e : Outcome ≃ Outcome')\n    (ψ : QuantumState ι)\n    (A B : OpFamily Outcome ι) :\n    qSDDOp ψ A B =\n      qSDDOp ψ\n        ({ outcome := fun a' => A.outcome (e.symm a')\n           total := A.total } : OpFamily Outcome' ι)\n        ({ outcome := fun a' => B.outcome (e.symm a')\n           total := B.total } : OpFamily Outcome' ι) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Reindexing the outcome type of both operator families preserves `qSDDOp`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.Core",
+  "module_doc": "/-!\n# Section 10 commutativity points: shared helpers core\n\nShared reindexing and tensor-placement helpers used by the Section 10\ncommutativity-of-points argument.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/Core.lean#L71-L106",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/Core.lean",
+  "lines": [
+   71,
+   106
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.sddOpRel_reindex",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.sddOpRel_reindex",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.sddOpRel_reindex\n    {Question Outcome Outcome' : Type*}\n    [Fintype Outcome] [Fintype Outcome']\n    (e : Outcome ≃ Outcome')\n    (ψ : QuantumState ι) (𝒟 : Distribution Question)\n    (A B : IdxOpFamily Question Outcome ι) (δ : Error) :\n    SDDOpRel ψ 𝒟 A B δ →\n      SDDOpRel ψ 𝒟\n        (fun q =>\n          ({ outcome := fun a' => (A q).outcome (e.symm a')\n             total := (A q).total } : OpFamily Outcome' ι))\n        (fun q =>\n          ({ outcome := fun a' => (B q).outcome (e.symm a')\n             total := (B q).total } : OpFamily Outcome' ι))\n        δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Reindexing the outcome type of both indexed families preserves `SDDOpRel`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.Core",
+  "module_doc": "/-!\n# Section 10 commutativity points: shared helpers core\n\nShared reindexing and tensor-placement helpers used by the Section 10\ncommutativity-of-points argument.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/Core.lean#L108-L139",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/Core.lean",
+  "lines": [
+   108,
+   139
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.CommutativityPoints.qSDDOp_reindex"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.sddOpRel_congr_outcome",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.sddOpRel_congr_outcome",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.sddOpRel_congr_outcome\n    {Question Outcome : Type*}\n    [Fintype Outcome]\n    (ψ : QuantumState ι) (𝒟 : Distribution Question)\n    (A B A' B' : IdxOpFamily Question Outcome ι) (δ : Error)\n    (hA : ∀ q a, (A q).outcome a = (A' q).outcome a)\n    (hB : ∀ q a, (B q).outcome a = (B' q).outcome a) :\n    SDDOpRel ψ 𝒟 A B δ →\n      SDDOpRel ψ 𝒟 A' B' δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Pointwise equality of outcomes preserves `SDDOpRel`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.Core",
+  "module_doc": "/-!\n# Section 10 commutativity points: shared helpers core\n\nShared reindexing and tensor-placement helpers used by the Section 10\ncommutativity-of-points argument.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/Core.lean#L141-L163",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/Core.lean",
+  "lines": [
+   141,
+   163
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.subMeas_sum_adjoint_mul_le_one",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.subMeas_sum_adjoint_mul_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.subMeas_sum_adjoint_mul_le_one\n    {Outcome : Type*}\n    [Fintype Outcome]\n    (A : SubMeas Outcome ι) :\n    ∑ a : Outcome, (A.outcome a)ᴴ * A.outcome a ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.Core",
+  "module_doc": "/-!\n# Section 10 commutativity points: shared helpers core\n\nShared reindexing and tensor-placement helpers used by the Section 10\ncommutativity-of-points argument.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/Core.lean#L165-L181",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/Core.lean",
+  "lines": [
+   165,
+   181
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.outcome_hermitian",
+   "MIPStarRE.LDT.SubMeas.outcome_le_one",
+   "MIPStarRE.Quantum.sq_le_self"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.liftLeft_mul_leftPlaced_outcome",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.liftLeft_mul_leftPlaced_outcome",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.liftLeft_mul_leftPlaced_outcome\n    {α β : Type*}\n    [Fintype α] [Fintype β]\n    (A : SubMeas α ι) (B : SubMeas β ι)\n    (a : α) (b : β) :\n    (A.liftLeft).outcome a * (OpFamily.leftPlacedOpFamily B.toOpFamily).outcome b =\n      leftTensor (A.outcome a * B.outcome b) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Multiplying a left lift with a left-placed family stays on the left tensor factor.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.Core",
+  "module_doc": "/-!\n# Section 10 commutativity points: shared helpers core\n\nShared reindexing and tensor-placement helpers used by the Section 10\ncommutativity-of-points argument.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/Core.lean#L183-L196",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/Core.lean",
+  "lines": [
+   183,
+   196
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.liftLeft_mul_rightPlaced_outcome",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.liftLeft_mul_rightPlaced_outcome",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.liftLeft_mul_rightPlaced_outcome\n    {α β : Type*}\n    [Fintype α] [Fintype β]\n    (A : SubMeas α ι) (B : SubMeas β ι)\n    (a : α) (b : β) :\n    (A.liftLeft).outcome a * (OpFamily.rightPlacedOpFamily B.toOpFamily).outcome b =\n      opTensor (A.outcome a) (B.outcome b) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Multiplying a left lift with a right-placed family gives the tensor product.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.Core",
+  "module_doc": "/-!\n# Section 10 commutativity points: shared helpers core\n\nShared reindexing and tensor-placement helpers used by the Section 10\ncommutativity-of-points argument.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/Core.lean#L198-L211",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/Core.lean",
+  "lines": [
+   198,
+   211
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.liftRight_mul_leftPlaced_outcome",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.liftRight_mul_leftPlaced_outcome",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.liftRight_mul_leftPlaced_outcome\n    {α β : Type*}\n    [Fintype α] [Fintype β]\n    (A : SubMeas α ι) (B : SubMeas β ι)\n    (a : α) (b : β) :\n    (A.liftRight).outcome a * (OpFamily.leftPlacedOpFamily B.toOpFamily).outcome b =\n      opTensor (B.outcome b) (A.outcome a) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Multiplying a right lift with a left-placed family gives the tensor product.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.Core",
+  "module_doc": "/-!\n# Section 10 commutativity points: shared helpers core\n\nShared reindexing and tensor-placement helpers used by the Section 10\ncommutativity-of-points argument.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/Core.lean#L213-L226",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/Core.lean",
+  "lines": [
+   213,
+   226
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.liftRight_mul_rightPlaced_outcome",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.liftRight_mul_rightPlaced_outcome",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.liftRight_mul_rightPlaced_outcome\n    {α β : Type*}\n    [Fintype α] [Fintype β]\n    (A : SubMeas α ι) (B : SubMeas β ι)\n    (a : α) (b : β) :\n    (A.liftRight).outcome a * (OpFamily.rightPlacedOpFamily B.toOpFamily).outcome b =\n      rightTensor (A.outcome a * B.outcome b) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Multiplying a right lift with a right-placed family stays on the right tensor factor.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.Core",
+  "module_doc": "/-!\n# Section 10 commutativity points: shared helpers core\n\nShared reindexing and tensor-placement helpers used by the Section 10\ncommutativity-of-points argument.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/Core.lean#L228-L241",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/Core.lean",
+  "lines": [
+   228,
+   241
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.rightTensor_mul_rightTensor"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.avgOver_pointPairSharedDiagonalLine_ignore_first",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.avgOver_pointPairSharedDiagonalLine_ignore_first",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.avgOver_pointPairSharedDiagonalLine_ignore_first\n    (params : Parameters)\n    [FieldModel params.q]\n    (f : PointDiagonalLineQuestion params → Error) :\n    avgOver (pointPairSharedDiagonalLineDistribution params)\n      (fun q => f (q.1, q.2.2)) =\n      avgOver (pointWithDiagonalLineDistribution params) f := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine",
+  "module_doc": "/-!\n# Section 10 commutativity points: shared-line helpers\n\nCompatibility lemmas between sampled point pairs and shared-diagonal line\nquestions, used by both the lift and drop comparisons.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/SharedLine.lean#L182-L203",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/SharedLine.lean",
+  "lines": [
+   182,
+   203
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Distribution.map_sum_smul",
+   "PMF.uniformOfFintype_map_equiv",
+   "PMF.map_sum_smul"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.avgOver_pointPairSharedDiagonalLine_ignore_second",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.avgOver_pointPairSharedDiagonalLine_ignore_second",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.avgOver_pointPairSharedDiagonalLine_ignore_second\n    (params : Parameters)\n    [FieldModel params.q]\n    (f : PointDiagonalLineQuestion params → Error) :\n    avgOver (pointPairSharedDiagonalLineDistribution params)\n      (fun q => f (q.1, q.2.1)) =\n      avgOver (pointWithDiagonalLineDistribution params) f := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine",
+  "module_doc": "/-!\n# Section 10 commutativity points: shared-line helpers\n\nCompatibility lemmas between sampled point pairs and shared-diagonal line\nquestions, used by both the lift and drop comparisons.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/SharedLine.lean#L205-L226",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/SharedLine.lean",
+  "lines": [
+   205,
+   226
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Distribution.map_sum_smul",
+   "PMF.uniformOfFintype_map_equiv",
+   "PMF.map_sum_smul"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.pointMeasurementProductAlongSharedLineReversed_outcome",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.pointMeasurementProductAlongSharedLineReversed_outcome",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.pointMeasurementProductAlongSharedLineReversed_outcome\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (q : PointPairDiagonalLineQuestion params)\n    (a b : Fq params) :\n    (pointMeasurementProductAlongSharedLineReversed params strategy q).outcome (a, b) =\n      leftTensor\n        ((strategy.pointMeasurement (q.1.pointAt q.2.2)).outcome b *\n          (strategy.pointMeasurement (q.1.pointAt q.2.1)).outcome a) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine",
+  "module_doc": "/-!\n# Section 10 commutativity points: shared-line helpers\n\nCompatibility lemmas between sampled point pairs and shared-diagonal line\nquestions, used by both the lift and drop comparisons.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/SharedLine.lean#L257-L269",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/SharedLine.lean",
+  "lines": [
+   257,
+   269
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.pointDiagonalLineMixedProductRight_outcome",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.pointDiagonalLineMixedProductRight_outcome",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.pointDiagonalLineMixedProductRight_outcome\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (q : PointPairDiagonalLineQuestion params)\n    (a b : Fq params) :\n    ((IdxSubMeas.toIdxOpFamily\n        (pointDiagonalLineMixedProductRight params strategy) q).outcome (a, b)) =\n      opTensor\n        ((strategy.pointMeasurement (q.1.pointAt q.2.2)).outcome b)\n        ((sampledDiagonalLineEvaluation params strategy (q.1, q.2.1)).outcome a) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine",
+  "module_doc": "/-!\n# Section 10 commutativity points: shared-line helpers\n\nCompatibility lemmas between sampled point pairs and shared-diagonal line\nquestions, used by both the lift and drop comparisons.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/SharedLine.lean#L286-L314",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/SharedLine.lean",
+  "lines": [
+   286,
+   314
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.opTensor_le_leftTensor",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.leftTensor_le_one"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 18,
+  "is_target": false
+ }
+]

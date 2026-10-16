@@ -1,0 +1,632 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedPresentation.mu_constant_edge",
+  "source_name": "MIPRE.Introspection.TypedPresentation.mu_constant_edge",
+  "formal_statement": "theorem MIPRE.Introspection.TypedPresentation.mu_constant_edge (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (P : PauliType → CL.CLFun (ZMod 2) κ 3)\n    (D : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      CL.Detyping.Question (QuestionType PauliType ℓ) κ → A → B → Bool)\n    (t u : QuestionType PauliType ℓ) (x y : κ → ZMod 2)\n    (ht : ∀ z, (family P t).eval z = x) (hu : ∀ z, (family P u).eval z = y)\n    (hedge : TypeGraph.Adj E X Z t u) :\n    (game E X Z ℓ P D).μ (t, x) (u, y) = ((TypeGraph.edges E X Z ℓ).card : ℝ)⁻¹ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedPresentation",
+   "open Finset Matrix Classical",
+   "variable {PauliType κ A B C H K : Type*}"
+  ],
+  "docstring": "An edge whose two questions are constant has exactly its ordered-edge\nprobability; no injectivity of the sampler's seed map is needed.",
+  "module": "MIPRE.Foundations.Introspection.PauliAuxEstimates",
+  "module_doc": "/-! # Actual Pauli/auxiliary edge probabilities and agreement estimates\n\nThe Pauli-X and Pauli-Z vertices have a fixed question. We state that property\nexplicitly: the generic Pauli CL family supplied to the typed construction\ndoes not itself force their question to be zero. Both edge orientations have\nexactly inverse ordered-edge-count probability.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliAuxEstimates.lean#L31-L61",
+  "source_path": "MIPRE/Foundations/Introspection/PauliAuxEstimates.lean",
+  "lines": [
+   31,
+   61
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-hiding-initialization",
+    "env": "lemma",
+    "title": "Initializing hiding from the actual Pauli tests",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.TypeGraph.edges_nonempty"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.constant_edge_agreement_estimate",
+  "source_name": "MIPRE.Introspection.TypedEstimates.constant_edge_agreement_estimate",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.constant_edge_agreement_estimate (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (P : PauliType → CL.CLFun (ZMod 2) κ 3)\n    (D : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      CL.Detyping.Question (QuestionType PauliType ℓ) κ → A → B → Bool)\n    (ψ : H × K → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1)\n    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVM A H)\n    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVM B K)\n    {ε : ℝ} (hfail : 1 - povmValue (TypedPresentation.game E X Z ℓ P D) ψ MA MB ≤ ε)\n    (t u : QuestionType PauliType ℓ) (x y : κ → ZMod 2)\n    (ht : ∀ z, (TypedPresentation.family P t).eval z = x)\n    (hu : ∀ z, (TypedPresentation.family P u).eval z = y)\n    (hedge : TypeGraph.Adj E X Z t u) (f : A → C) (g : B → C)\n    (hcheck : ∀ a b, D (t, x) (u, y) a b = true → f a = g b) :\n    (∑ z, xSqNorm ψ ((((MA (t, x)).map f).mats z).val)\n      ((((MB (u, y)).map g).mats z).val)) ≤ 2 * (TypeGraph.edges E X Z ℓ).card * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {PauliType κ A B C H K : Type*}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.PauliAuxEstimates",
+  "module_doc": "/-! # Actual Pauli/auxiliary edge probabilities and agreement estimates\n\nThe Pauli-X and Pauli-Z vertices have a fixed question. We state that property\nexplicitly: the generic Pauli CL family supplied to the typed construction\ndoes not itself force their question to be zero. Both edge orientations have\nexactly inverse ordered-edge-count probability.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliAuxEstimates.lean#L94-L125",
+  "source_path": "MIPRE/Foundations/Introspection/PauliAuxEstimates.lean",
+  "lines": [
+   94,
+   125
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.xSqNorm_sum_le_two_mul",
+   "MIPRE.one_sub_sum_bornProb_le_condFail",
+   "MIPRE.Introspection.TypedPresentation.mu_constant_edge",
+   "MIPRE.Introspection.TypeGraph.edges_nonempty",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.sum_bornProb"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliErrorParameters.qldError_le_profile",
+  "source_name": "MIPRE.Introspection.PauliErrorParameters.qldError_le_profile",
+  "formal_statement": "theorem MIPRE.Introspection.PauliErrorParameters.qldError_le_profile {a b c x m q ε : ℝ}\n    (ha : 1 ≤ a) (hb0 : 0 < b) (hb1 : b ≤ 1) (hc : 1 ≤ c)\n    (hcb : 2 * a + 2 ≤ c * b) (hx : 1 ≤ x) (hm : 0 ≤ m) (hε : 0 ≤ ε)\n    (hmx : m ≤ (c + 1) * x) (hqx : x ^ c ≤ q)\n    (h2x : x ^ c ≤ (2 : ℝ) ^ (2 * m)) :\n    qldError a b m q ε ≤ errorProfile (profileCoefficient a c) b x ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliErrorParameters",
+   "open MIPRE.Introspection.SourceCompiler MIPRE.Introspection.PauliSamplerParameters"
+  ],
+  "docstring": "The two QLD tails are absorbed from elementary lower bounds on `q` and\n`2^(2m)`. These bounds are discharged for the executable parameters below.",
+  "module": "MIPRE.Foundations.Introspection.PauliErrorParameters",
+  "module_doc": "/-! # Canonical parameters absorb the actual QLD error tails\n\nAt degree one, the QLD loss is `a*m^a*(ε^b+q^(-b)+2^(-b*m))`.\nThe field size and dyadic point dimension chosen by the executable sampler make\nboth residual terms polynomially small in `λ*n`, with uniform constants.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliErrorParameters.lean#L33-L91",
+  "source_path": "MIPRE/Foundations/Introspection/PauliErrorParameters.lean",
+  "lines": [
+   33,
+   91
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 51,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliErrorParameters.exists_even_constant",
+  "source_name": "MIPRE.Introspection.PauliErrorParameters.exists_even_constant",
+  "formal_statement": "theorem MIPRE.Introspection.PauliErrorParameters.exists_even_constant (a : ℝ) {b : ℝ} (hb0 : 0 < b) :\n    ∃ c : ℕ, 2 ≤ c ∧ Even c ∧ 2 * a + 2 ≤ (c : ℝ) * b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliErrorParameters",
+   "open MIPRE.Introspection.SourceCompiler MIPRE.Introspection.PauliSamplerParameters"
+  ],
+  "docstring": "The executable sampler can use one even constant meeting the required\ntail exponent, independently of the verifier and its index.",
+  "module": "MIPRE.Foundations.Introspection.PauliErrorParameters",
+  "module_doc": "/-! # Canonical parameters absorb the actual QLD error tails\n\nAt degree one, the QLD loss is `a*m^a*(ε^b+q^(-b)+2^(-b*m))`.\nThe field size and dyadic point dimension chosen by the executable sampler make\nboth residual terms polynomially small in `λ*n`, with uniform constants.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliErrorParameters.lean#L158-L168",
+  "source_path": "MIPRE/Foundations/Introspection/PauliErrorParameters.lean",
+  "lines": [
+   158,
+   168
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.exists_pauli_mixing",
+  "source_name": "MIPRE.Introspection.exists_pauli_mixing",
+  "formal_statement": "theorem MIPRE.Introspection.exists_pauli_mixing (L : (Fin n → F) →ₗ[F] (Fin n → F))\n    (ξ : H × K → ℂ) (hξ : ‖evec ξ‖ = 1)\n    (M : POVM ((Fin n → F) × A) ((Fin n → F) × H))\n    (hM : IsPVM (fun p => (M.mats p).val)) :\n    ∃ Q : (Fin n → F) → POVM A H,\n      (∑ p : (Fin n → F) × A, stateSqNorm (eprWithAux ξ)\n        ((M.mats p).val - synOf wZ L p.1 ⊗ₖ ((Q p.1).mats p.2).val)) ≤\n      2 * mixingError L ξ M + 4 * Real.sqrt (mixingError L ξ M) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix MIPRE.Weyl Classical",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "Pauli mixing produces normalized POVMs on the ancilla at every retained fibre.",
+  "module": "MIPRE.Foundations.Introspection.PauliMixing",
+  "module_doc": "/-! # Pauli mixing with a retained classical fibre\n\nThe sampled register has a fixed coordinate presentation, with arbitrary auxiliary systems.\nThe output consists of actual ancillary POVMs. Consistency and the two readout commutator\nerrors control the squared state distance by an explicit square-root estimate.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliMixing.lean#L54-L87",
+  "source_path": "MIPRE/Foundations/Introspection/PauliMixing.lean",
+  "lines": [
+   54,
+   87
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-mixing-coordinates",
+    "env": "lemma",
+    "title": "Retained-fibre mixing in coordinate presentations",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.norm_evec_expVec",
+   "MIPRE.mulVec_kron_kron_expVec",
+   "MIPRE.Introspection.block_retention_dist_avg",
+   "MIPRE.Introspection.linear_twirl_blocks",
+   "MIPRE.Introspection.sum_norm_linearFourier_sq",
+   "MIPRE.Introspection.linear_measurement_fourier",
+   "MIPRE.Introspection.linear_measurement_isPVM",
+   "MIPRE.Introspection.pauli_twirl_dist_le",
+   "MIPRE.Introspection.fine_commutator_parseval",
+   "MIPRE.aOp_sub",
+   "MIPRE.IsPVM.aOp",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.epr_unit",
+   "MIPRE.Weyl.stateVec_epr"
+  ],
+  "pasted_helpers": 23,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.completePauliPOVM_isPVM",
+  "source_name": "MIPRE.Introspection.completePauliPOVM_isPVM",
+  "formal_statement": "theorem MIPRE.Introspection.completePauliPOVM_isPVM (a₀ : PA) (M : POVM (ParsedAnswer V A PA) H)\n    (hM : IsPVM (fun a => (M.mats a).val)) :\n    IsPVM (fun a => ((completePauliPOVM a₀ M).mats a).val) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "variable {V A PA H K : Type*} [Fintype V] [Fintype A] [Fintype PA] [DecidableEq PA]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.PauliRestriction",
+  "module_doc": "/-! # Restricting a parsed introspection strategy to its Pauli tests\n\nMalformed outer answer constructors are completed at a fixed Pauli answer.\nEvery originally accepted Pauli answer pair remains accepted, including on\nloops, where the parsed predicate checks both consistency and the Pauli rule.\nThe uniform full type graph bounds the mean failure along each of its edges.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliRestriction.lean#L33-L36",
+  "source_path": "MIPRE/Foundations/Introspection/PauliRestriction.lean",
+  "lines": [
+   33,
+   36
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-pauli-restriction",
+    "env": "lemma",
+    "title": "Restriction to the actual Pauli game",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.IsPVM.coarse"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.completed_pauli_condFail_le",
+  "source_name": "MIPRE.Introspection.TypedEstimates.completed_pauli_condFail_le",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.completed_pauli_condFail_le (E : T → T → Bool) (X Z : T)\n    (P : T → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)\n    (project : PA → ι → F) (D : (ι → F) → (ι → F) → A → A → Bool)\n    (DP : T → T → (κ → ZMod 2) → (κ → ZMod 2) → PA → PA → Bool)\n    (GP : Game (CL.Detyping.Question T κ) (CL.Detyping.Question T κ) PA PA)\n    (hDP : ∀ x y a b, GP.D x y a b = DP x.1 y.1 x.2 y.2 a b)\n    (ψ : H × K → ℂ)\n    (MA : CL.Detyping.Question (QuestionType T ℓ) κ → POVM (ParsedAnswer (ι → F) A PA) H)\n    (MB : CL.Detyping.Question (QuestionType T ℓ) κ → POVM (ParsedAnswer (ι → F) A PA) K)\n    (a₀ b₀ : PA) (x y : CL.Detyping.Question T κ) :\n    condFail GP ψ (fun x => completePauliPOVM a₀ (MA (.inl x.1, x.2)))\n      (fun y => completePauliPOVM b₀ (MB (.inl y.1, y.2))) x y ≤\n    condFail (parsedGame E X Z P L project D DP) ψ MA MB (.inl x.1,x.2) (.inl y.1,y.2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {T F ι κ A PA H K : Type*}"
+  ],
+  "docstring": "Completion can only improve the conditional Pauli success probability.",
+  "module": "MIPRE.Foundations.Introspection.PauliRestriction",
+  "module_doc": "/-! # Restricting a parsed introspection strategy to its Pauli tests\n\nMalformed outer answer constructors are completed at a fixed Pauli answer.\nEvery originally accepted Pauli answer pair remains accepted, including on\nloops, where the parsed predicate checks both consistency and the Pauli rule.\nThe uniform full type graph bounds the mean failure along each of its edges.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliRestriction.lean#L77-L103",
+  "source_path": "MIPRE/Foundations/Introspection/PauliRestriction.lean",
+  "lines": [
+   77,
+   103
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-pauli-restriction",
+    "env": "lemma",
+    "title": "Restriction to the actual Pauli game",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb_mapB",
+   "MIPRE.sum_bornProb_mapA",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.typed_edge_mean_failure_le",
+  "source_name": "MIPRE.Introspection.TypedEstimates.typed_edge_mean_failure_le",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.typed_edge_mean_failure_le {B : Type*} [Fintype B]\n    (E : T → T → Bool) (X Z : T) (P : T → CL.CLFun (ZMod 2) κ 3)\n    (D : CL.Detyping.Question (QuestionType T ℓ) κ →\n      CL.Detyping.Question (QuestionType T ℓ) κ → A → B → Bool)\n    (ψ : H × K → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1)\n    (MA : CL.Detyping.Question (QuestionType T ℓ) κ → POVM A H)\n    (MB : CL.Detyping.Question (QuestionType T ℓ) κ → POVM B K)\n    {ε : ℝ} (hf : 1 - povmValue (TypedPresentation.game E X Z ℓ P D) ψ MA MB ≤ ε)\n    (p q : QuestionType T ℓ) (hpq : TypeGraph.Adj E X Z p q) :\n    (∑ z : κ → ZMod 2, condFail (TypedPresentation.game E X Z ℓ P D) ψ MA MB\n      (p, (TypedPresentation.family P p).eval z)\n      (q, (TypedPresentation.family P q).eval z)) / Fintype.card (κ → ZMod 2) ≤\n      (TypeGraph.edges E X Z ℓ).card * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {T F ι κ A PA H K : Type*}"
+  ],
+  "docstring": "The full uniform type graph bounds the seed-averaged failure on each\nindividual edge, without requiring injectivity of the question maps.",
+  "module": "MIPRE.Foundations.Introspection.PauliRestriction",
+  "module_doc": "/-! # Restricting a parsed introspection strategy to its Pauli tests\n\nMalformed outer answer constructors are completed at a fixed Pauli answer.\nEvery originally accepted Pauli answer pair remains accepted, including on\nloops, where the parsed predicate checks both consistency and the Pauli rule.\nThe uniform full type graph bounds the mean failure along each of its edges.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliRestriction.lean#L105-L156",
+  "source_path": "MIPRE/Foundations/Introspection/PauliRestriction.lean",
+  "lines": [
+   105,
+   156
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-pauli-restriction",
+    "env": "lemma",
+    "title": "Restriction to the actual Pauli game",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.TypeGraph.edges_nonempty",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.sum_bornProb"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 36,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliSamplerParameters.registerPower_eq",
+  "source_name": "MIPRE.Introspection.PauliSamplerParameters.registerPower_eq",
+  "formal_statement": "theorem MIPRE.Introspection.PauliSamplerParameters.registerPower_eq (c lam n : ℕ) :\n    registerPower c lam n = 2 ^ selectorBits c lam n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliSamplerParameters",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Introspection.SourceCompiler"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.PauliSamplerParams",
+  "module_doc": "/-! # Canonical parameters for the executable Pauli sampler\n\nThe selector width, field width and point dimension are computed from the\nsame canonical parameters as the source compiler. The program returns unary\nparameters, which are the input format of the uniform field algorithms.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliSamplerParams.lean#L20-L21",
+  "source_path": "MIPRE/Foundations/Introspection/PauliSamplerParams.lean",
+  "lines": [
+   20,
+   21
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliSamplerParameters.registerPower_pos",
+  "source_name": "MIPRE.Introspection.PauliSamplerParameters.registerPower_pos",
+  "formal_statement": "theorem MIPRE.Introspection.PauliSamplerParameters.registerPower_pos (c lam n : ℕ) : 1 ≤ registerPower c lam n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliSamplerParameters",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Introspection.SourceCompiler"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.PauliSamplerParams",
+  "module_doc": "/-! # Canonical parameters for the executable Pauli sampler\n\nThe selector width, field width and point dimension are computed from the\nsame canonical parameters as the source compiler. The program returns unary\nparameters, which are the input format of the uniform field algorithms.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliSamplerParams.lean#L37-L38",
+  "source_path": "MIPRE/Foundations/Introspection/PauliSamplerParams.lean",
+  "lines": [
+   37,
+   38
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliSamplerParameters.selectorBits_le_fieldBits",
+  "source_name": "MIPRE.Introspection.PauliSamplerParameters.selectorBits_le_fieldBits",
+  "formal_statement": "theorem MIPRE.Introspection.PauliSamplerParameters.selectorBits_le_fieldBits {c : ℕ} (hc : 1 ≤ c) (lam n : ℕ) :\n    selectorBits c lam n ≤ fieldBits c lam n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliSamplerParameters",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Introspection.SourceCompiler"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.PauliSamplerParams",
+  "module_doc": "/-! # Canonical parameters for the executable Pauli sampler\n\nThe selector width, field width and point dimension are computed from the\nsame canonical parameters as the source compiler. The program returns unary\nparameters, which are the input format of the uniform field algorithms.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliSamplerParams.lean#L64-L88",
+  "source_path": "MIPRE/Foundations/Introspection/PauliSamplerParams.lean",
+  "lines": [
+   64,
+   88
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliSamplerParameters.four_le_registerBits",
+  "source_name": "MIPRE.Introspection.PauliSamplerParameters.four_le_registerBits",
+  "formal_statement": "theorem MIPRE.Introspection.PauliSamplerParameters.four_le_registerBits {c : ℕ} (hc : 2 ≤ c) (lam n : ℕ) :\n    4 ≤ registerBits c lam n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliSamplerParameters",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Introspection.SourceCompiler"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.PauliSamplerParams",
+  "module_doc": "/-! # Canonical parameters for the executable Pauli sampler\n\nThe selector width, field width and point dimension are computed from the\nsame canonical parameters as the source compiler. The program returns unary\nparameters, which are the input format of the uniform field algorithms.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliSamplerParams.lean#L90-L98",
+  "source_path": "MIPRE/Foundations/Introspection/PauliSamplerParams.lean",
+  "lines": [
+   90,
+   98
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliSamplerParameters.originalBound_three_le_registerBits",
+  "source_name": "MIPRE.Introspection.PauliSamplerParameters.originalBound_three_le_registerBits",
+  "formal_statement": "theorem MIPRE.Introspection.PauliSamplerParameters.originalBound_three_le_registerBits {c : ℕ} (hc : 2 ≤ c) (lam n : ℕ) :\n    3 * originalBound lam n ≤ registerBits c lam n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliSamplerParameters",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Introspection.SourceCompiler"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.PauliSamplerParams",
+  "module_doc": "/-! # Canonical parameters for the executable Pauli sampler\n\nThe selector width, field width and point dimension are computed from the\nsame canonical parameters as the source compiler. The program returns unary\nparameters, which are the input format of the uniform field algorithms.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliSamplerParams.lean#L100-L114",
+  "source_path": "MIPRE/Foundations/Introspection/PauliSamplerParams.lean",
+  "lines": [
+   100,
+   114
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliSamplerParameters.prog_closed",
+  "source_name": "MIPRE.Introspection.PauliSamplerParameters.prog_closed",
+  "formal_statement": "theorem MIPRE.Introspection.PauliSamplerParameters.prog_closed (c : ℕ) : (prog c).WellScoped 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliSamplerParameters",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Introspection.SourceCompiler"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.PauliSamplerParams",
+  "module_doc": "/-! # Canonical parameters for the executable Pauli sampler\n\nThe selector width, field width and point dimension are computed from the\nsame canonical parameters as the source compiler. The program returns unary\nparameters, which are the input format of the uniform field algorithms.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliSamplerParams.lean#L133-L136",
+  "source_path": "MIPRE/Foundations/Introspection/PauliSamplerParams.lean",
+  "lines": [
+   133,
+   136
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 4,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliSamplerParameters.prog_runs",
+  "source_name": "MIPRE.Introspection.PauliSamplerParameters.prog_runs",
+  "formal_statement": "theorem MIPRE.Introspection.PauliSamplerParameters.prog_runs (c lam n : ℕ) : ∃ time,\n    (prog c).Runs (encode (lam, n)) (encode (parameters c lam n)) time := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliSamplerParameters",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Introspection.SourceCompiler"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.PauliSamplerParams",
+  "module_doc": "/-! # Canonical parameters for the executable Pauli sampler\n\nThe selector width, field width and point dimension are computed from the\nsame canonical parameters as the source compiler. The program returns unary\nparameters, which are the input format of the uniform field algorithms.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliSamplerParams.lean#L138-L174",
+  "source_path": "MIPRE/Foundations/Introspection/PauliSamplerParams.lean",
+  "lines": [
+   138,
+   174
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.mulLoop_runs",
+   "MIPRE.Introspection.ClockArithmetic.bothUnary_runs",
+   "MIPRE.Introspection.PauliSamplerParameters.registerPower_eq"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliSamplerParameters.prog_runs_cost",
+  "source_name": "MIPRE.Introspection.PauliSamplerParameters.prog_runs_cost",
+  "formal_statement": "theorem MIPRE.Introspection.PauliSamplerParameters.prog_runs_cost (c lam n : ℕ) : ∃ time ≤ cost c lam n,\n    (prog c).Runs (encode (lam, n)) (encode (parameters c lam n)) time := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliSamplerParameters",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Introspection.SourceCompiler MIPRE.Introspection.ClockArithmetic"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.PauliSamplerParamsCost",
+  "module_doc": "/-! # Execution cost of the canonical Pauli parameters -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliSamplerParamsCost.lean#L25-L71",
+  "source_path": "MIPRE/Foundations/Introspection/PauliSamplerParamsCost.lean",
+  "lines": [
+   25,
+   71
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.mulLoop_runs",
+   "MIPRE.Introspection.ClockArithmetic.bothUnary_runs",
+   "MIPRE.Introspection.PauliSamplerParameters.registerPower_eq"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 45,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliSamplerParameters.cost_le_majorant",
+  "source_name": "MIPRE.Introspection.PauliSamplerParameters.cost_le_majorant",
+  "formal_statement": "theorem MIPRE.Introspection.PauliSamplerParameters.cost_le_majorant {c lam n v : ℕ} (hc : 1 ≤ c)\n    (hl : lam ≤ v) (hn : n ≤ v) (hu : lam * n ≤ v) :\n    cost c lam n ≤ costMajorant c v := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliSamplerParameters",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Introspection.SourceCompiler MIPRE.Introspection.ClockArithmetic"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.PauliSamplerParamsCost",
+  "module_doc": "/-! # Execution cost of the canonical Pauli parameters -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliSamplerParamsCost.lean#L112-L149",
+  "source_path": "MIPRE/Foundations/Introspection/PauliSamplerParamsCost.lean",
+  "lines": [
+   112,
+   149
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.PauliSamplerParameters.selectorBits_le_fieldBits"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliSamplerParameters.costMajorant_polyBounded",
+  "source_name": "MIPRE.Introspection.PauliSamplerParameters.costMajorant_polyBounded",
+  "formal_statement": "theorem MIPRE.Introspection.PauliSamplerParameters.costMajorant_polyBounded (c : ℕ) : PolyBounded (costMajorant c) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliSamplerParameters",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Introspection.SourceCompiler MIPRE.Introspection.ClockArithmetic"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.PauliSamplerParamsCost",
+  "module_doc": "/-! # Execution cost of the canonical Pauli parameters -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliSamplerParamsCost.lean#L151-L158",
+  "source_path": "MIPRE/Foundations/Introspection/PauliSamplerParamsCost.lean",
+  "lines": [
+   151,
+   158
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.pauli_twirl_dist_le",
+  "source_name": "MIPRE.Introspection.pauli_twirl_dist_le",
+  "formal_statement": "theorem MIPRE.Introspection.pauli_twirl_dist_le (L : (Fin n → F) →ₗ[F] (Fin n → F))\n    (ξ : H × K → ℂ) (M : POVM A ((Fin n → F) × H)) :\n    (∑ a, stateSqNorm (eprWithAux ξ)\n      (averageX L.ker (dephaseZ (M.mats a).val) - (M.mats a).val)) ≤\n      4 * ((Fintype.card (Fin n → F) : ℝ)⁻¹ * ∑ v : Fin n → F, ∑ a,\n        stateSqNorm (eprWithAux ξ) ((M.mats a).val * aOp (wZ v) - aOp (wZ v) * (M.mats a).val)) +\n      4 * ((Fintype.card L.ker : ℝ)⁻¹ * ∑ v : L.ker, ∑ a,\n        stateSqNorm (eprWithAux ξ) ((M.mats a).val * aOp (wX v.1) - aOp (wX v.1) * (M.mats a).val)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix MIPRE.Weyl Classical",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "Twirling by all `Z` operators and kernel `X` operators costs four times each commutator error.",
+  "module": "MIPRE.Foundations.Introspection.PauliTwirlDistance",
+  "module_doc": "/-! # Approximate Pauli mixing with explicit constants -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliTwirlDistance.lean#L39-L64",
+  "source_path": "MIPRE/Foundations/Introspection/PauliTwirlDistance.lean",
+  "lines": [
+   39,
+   64
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-mixing-coordinates",
+    "env": "lemma",
+    "title": "Retained-fibre mixing in coordinate presentations",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.mulVec_kron_kron_expVec",
+   "MIPRE.Introspection.composed_twirl_dist_le",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.Weyl.stateVec_epr"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.fine_commutator_parseval",
+  "source_name": "MIPRE.Introspection.fine_commutator_parseval",
+  "formal_statement": "theorem MIPRE.Introspection.fine_commutator_parseval\n    (ψ : ((Fin n → F) × H) × K → ℂ)\n    (M : Matrix ((Fin n → F) × H) ((Fin n → F) × H) ℂ) :\n    (∑ y : Fin n → F, stateSqNorm ψ\n      (M * aOp (synOf wZ (LinearMap.id : (Fin n → F) →ₗ[F] (Fin n → F)) y) -\n        aOp (synOf wZ (LinearMap.id : (Fin n → F) →ₗ[F] (Fin n → F)) y) * M)) =\n    (Fintype.card (Fin n → F) : ℝ)⁻¹ * ∑ v : Fin n → F,\n      stateSqNorm ψ (M * aOp (wZ v) - aOp (wZ v) * M) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix MIPRE.Weyl Classical",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "Fine `Z` readouts transfer to the uniform full-register Pauli error.",
+  "module": "MIPRE.Foundations.Introspection.PauliTwirlDistance",
+  "module_doc": "/-! # Approximate Pauli mixing with explicit constants -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliTwirlDistance.lean#L66-L85",
+  "source_path": "MIPRE/Foundations/Introspection/PauliTwirlDistance.lean",
+  "lines": [
+   66,
+   85
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-mixing-coordinates",
+    "env": "lemma",
+    "title": "Retained-fibre mixing in coordinate presentations",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.sum_norm_linearFourier_sq",
+   "MIPRE.Introspection.linear_measurement_fourier"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 11,
+  "is_target": false
+ }
+]

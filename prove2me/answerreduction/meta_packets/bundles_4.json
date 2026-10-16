@@ -1,0 +1,3828 @@
+[
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientOrbit",
+  "module_doc": "/-! # Polynomial products with coefficients in an explicit binary quotient -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientOrbit.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientOrbit.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryQuotient.ProductState",
+   "MIPRE.LowDegree.BinaryQuotient.SquareState",
+   "MIPRE.LowDegree.BinaryQuotient.coeffPolynomial",
+   "MIPRE.LowDegree.BinaryQuotient.linearMulBits",
+   "MIPRE.LowDegree.BinaryQuotient.linearMulBitsProg",
+   "MIPRE.LowDegree.BinaryQuotient.linearMulCarry",
+   "MIPRE.LowDegree.BinaryQuotient.linearMulCarryProg",
+   "MIPRE.LowDegree.BinaryQuotient.linearProductBits",
+   "MIPRE.LowDegree.BinaryQuotient.linearProductBitsProg",
+   "MIPRE.LowDegree.BinaryQuotient.orbitBits",
+   "MIPRE.LowDegree.BinaryQuotient.orbitBitsProg",
+   "MIPRE.LowDegree.BinaryQuotient.orbitProductBits",
+   "MIPRE.LowDegree.BinaryQuotient.orbitProductBitsProg",
+   "MIPRE.LowDegree.BinaryQuotient.productStep",
+   "MIPRE.LowDegree.BinaryQuotient.scaleCoeffProg",
+   "MIPRE.LowDegree.BinaryQuotient.squareStep",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientOrbit.0.MIPRE.LowDegree.BinaryQuotient.productStepProg",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientOrbit.0.MIPRE.LowDegree.BinaryQuotient.squareStepProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryQuotient.coeffPolynomial_cons",
+   "MIPRE.LowDegree.BinaryQuotient.coeffPolynomial_nil",
+   "MIPRE.LowDegree.BinaryQuotient.esize_coefficients_le",
+   "MIPRE.LowDegree.BinaryQuotient.fold_productStep_shape",
+   "MIPRE.LowDegree.BinaryQuotient.fold_productStep_width",
+   "MIPRE.LowDegree.BinaryQuotient.iterate_squareStep_shape",
+   "MIPRE.LowDegree.BinaryQuotient.length_linearMulBits",
+   "MIPRE.LowDegree.BinaryQuotient.length_linearMulCarry",
+   "MIPRE.LowDegree.BinaryQuotient.length_orbitBits",
+   "MIPRE.LowDegree.BinaryQuotient.length_orbitProductBits",
+   "MIPRE.LowDegree.BinaryQuotient.linearMulBitsProg_apply",
+   "MIPRE.LowDegree.BinaryQuotient.linearMulCarryProg_apply",
+   "MIPRE.LowDegree.BinaryQuotient.linearMulCarry_width_le",
+   "MIPRE.LowDegree.BinaryQuotient.linearProductBitsProg_apply",
+   "MIPRE.LowDegree.BinaryQuotient.orbitBitsProg_apply",
+   "MIPRE.LowDegree.BinaryQuotient.orbitProductBitsProg_apply",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientOrbit.0.MIPRE.LowDegree.BinaryQuotient.productStep_bounded",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientOrbit.0.MIPRE.LowDegree.BinaryQuotient.squareStep_bounded"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.ProductState",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     147,
+     148
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.SquareState",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     279,
+     280
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.coeffPolynomial",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     19,
+     22
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.coeffPolynomial_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     26,
+     27
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.coeffPolynomial_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     24,
+     24
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.esize_coefficients_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     224,
+     234
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.fold_productStep_shape",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     154,
+     163
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.fold_productStep_width",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     165,
+     173
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.iterate_squareStep_shape",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     285,
+     293
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.length_linearMulBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     41,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.length_linearMulCarry",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     37,
+     39
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.length_orbitBits",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     334,
+     336
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.length_orbitProductBits",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     395,
+     400
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.linearMulBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     33,
+     35
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.linearMulBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     118,
+     121
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.linearMulBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     123,
+     127
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.linearMulCarry",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     29,
+     31
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.linearMulCarryProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     102,
+     110
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.linearMulCarryProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     112,
+     116
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.linearMulCarry_width_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     129,
+     145
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.linearProductBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     202,
+     204
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.linearProductBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     271,
+     274
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.linearProductBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     276,
+     277
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.orbitBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     330,
+     332
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.orbitBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     356,
+     358
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.orbitBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     360,
+     361
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.orbitProductBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     363,
+     365
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.orbitProductBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     367,
+     369
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.orbitProductBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     371,
+     375
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.productStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     150,
+     152
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.scaleCoeffProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     98,
+     100
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.squareStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     282,
+     283
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientOrbit.0.MIPRE.LowDegree.BinaryQuotient.productStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     216,
+     222
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientOrbit.0.MIPRE.LowDegree.BinaryQuotient.productStep_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     236,
+     269
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientOrbit.0.MIPRE.LowDegree.BinaryQuotient.squareStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     316,
+     316
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientOrbit.0.MIPRE.LowDegree.BinaryQuotient.squareStep_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     318,
+     328
+    ]
+   }
+  ],
+  "lines": 308,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryQuotient.ProductState": [
+    "/-- Modulus and accumulated coefficient list for a product of linear factors. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.SquareState": [
+    "/-- State for successive Frobenius powers, retaining the modulus. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.coeffPolynomial": [
+    "/-- Interpret a list of binary coefficient vectors as a polynomial. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.linearMulBits": [
+    "/-- Multiplication by `X + a` on encoded coefficient lists. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.linearMulBitsProg": [
+    "/-- Polynomial-time multiplication by one encoded monic linear factor. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.linearMulCarry": [
+    "/-- Multiply by a linear factor, with an extra constant coefficient carried in. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.linearMulCarryProg": [
+    "/-- A uniform linear-factor multiplication program on arbitrary nested lists. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.linearProductBits": [
+    "/-- Product of the monic linear factors with the supplied roots. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.linearProductBitsProg": [
+    "/-- One globally polynomial-time program for a product of encoded linear factors. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.orbitBits": [
+    "/-- The first Frobenius powers of a supplied represented element. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.orbitBitsProg": [
+    "/-- A polynomial-time orbit printer, valid on every raw input. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.orbitProductBits": [
+    "/-- Multiply the monic linear factors for a specified Frobenius orbit. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.orbitProductBitsProg": [
+    "/-- A uniform polynomial-time Frobenius-orbit product program. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.productStep": [
+    "/-- Multiply the accumulated polynomial by the next supplied linear factor. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.scaleCoeffProg": [
+    "/-- Scalar multiplication of all coefficient vectors by a supplied quotient element. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.squareStep": [
+    "/-- One repeated-squaring step in a supplied binary quotient. -/"
+   ],
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientOrbit.0.MIPRE.LowDegree.BinaryQuotient.productStepProg": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientOrbit.0.MIPRE.LowDegree.BinaryQuotient.squareStepProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryTraceBits",
+  "module": "MIPRE.Foundations.LowDegree.BinaryTraceBits",
+  "module_doc": "/-! # Explicit polynomial-time Frobenius-stride traces -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryTraceBits.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryTraceBits.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryQuotient.TraceState",
+   "MIPRE.LowDegree.BinaryQuotient.frobeniusBits",
+   "MIPRE.LowDegree.BinaryQuotient.frobeniusBitsProg",
+   "MIPRE.LowDegree.BinaryQuotient.squareFuel",
+   "MIPRE.LowDegree.BinaryQuotient.traceBits",
+   "MIPRE.LowDegree.BinaryQuotient.traceBitsProg",
+   "MIPRE.LowDegree.BinaryQuotient.traceStep",
+   "_private.MIPRE.Foundations.LowDegree.BinaryTraceBits.0.MIPRE.LowDegree.BinaryQuotient.squareFuelProg",
+   "_private.MIPRE.Foundations.LowDegree.BinaryTraceBits.0.MIPRE.LowDegree.BinaryQuotient.traceStepProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryQuotient.fold_squareFuel",
+   "MIPRE.LowDegree.BinaryQuotient.fold_traceStep_shape",
+   "MIPRE.LowDegree.BinaryQuotient.frobeniusBitsProg_apply",
+   "MIPRE.LowDegree.BinaryQuotient.frobeniusBits_width_le",
+   "MIPRE.LowDegree.BinaryQuotient.traceBitsProg_apply",
+   "_private.MIPRE.Foundations.LowDegree.BinaryTraceBits.0.MIPRE.LowDegree.BinaryQuotient.squareFuel_bounded",
+   "_private.MIPRE.Foundations.LowDegree.BinaryTraceBits.0.MIPRE.LowDegree.BinaryQuotient.traceStep_bounded"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.TraceState",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     69,
+     70
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.fold_squareFuel",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     18,
+     23
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.fold_traceStep_shape",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     76,
+     87
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.frobeniusBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     40,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.frobeniusBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     44,
+     46
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.frobeniusBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     48,
+     52
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.frobeniusBits_width_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     54,
+     56
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.squareFuel",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     15,
+     16
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.traceBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     153,
+     155
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.traceBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     157,
+     165
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.traceBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     167,
+     170
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.traceStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     72,
+     74
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryTraceBits.0.MIPRE.LowDegree.BinaryQuotient.squareFuelProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     25,
+     26
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryTraceBits.0.MIPRE.LowDegree.BinaryQuotient.squareFuel_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     28,
+     38
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryTraceBits.0.MIPRE.LowDegree.BinaryQuotient.traceStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     124,
+     135
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryTraceBits.0.MIPRE.LowDegree.BinaryQuotient.traceStep_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     137,
+     151
+    ]
+   }
+  ],
+  "lines": 182,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit"
+  ],
+  "blueprint": [
+   "lem:binary-odd-prime-power-irreducible"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryQuotient.TraceState": [
+    "/-- Stride, modulus, accumulated sum, and the current Frobenius conjugate. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.frobeniusBits": [
+    "/-- A supplied unary number of squarings in the explicit binary quotient. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.frobeniusBitsProg": [
+    "/-- The stride Frobenius program is globally polynomially bounded. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.squareFuel": [
+    "/-- Repeat squaring once per unary stride bit. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.traceBits": [
+    "/-- The binary vector for the sum of the requested Frobenius-stride conjugates. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.traceBitsProg": [
+    "/-- One globally polynomial-time program computes every such modular trace sum. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.traceStep": [
+    "/-- Add the current conjugate and advance by the fixed Frobenius stride. -/"
+   ],
+   "_private.MIPRE.Foundations.LowDegree.BinaryTraceBits.0.MIPRE.LowDegree.BinaryQuotient.squareFuelProg": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryTraceBits.0.MIPRE.LowDegree.BinaryQuotient.traceStepProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+  "module": "MIPRE.Foundations.LowDegree.BinaryOrbitPolynomial",
+  "module_doc": "/-! # Algebra of closed binary Frobenius-orbit polynomials -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryOrbitPolynomial.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryOrbitPolynomial.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryQuotient.orbitPolynomial"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryQuotient.natDegree_orbitPolynomial",
+   "MIPRE.LowDegree.BinaryQuotient.orbitPolynomial_monic",
+   "MIPRE.LowDegree.BinaryQuotient.orbitPolynomial_succ",
+   "MIPRE.LowDegree.BinaryQuotient.orbitPolynomial_zero"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.natDegree_orbitPolynomial",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     46,
+     54
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.orbitPolynomial",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     17,
+     19
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.orbitPolynomial_monic",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     40,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.orbitPolynomial_succ",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     23,
+     32
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.orbitPolynomial_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     21,
+     21
+    ]
+   }
+  ],
+  "lines": 106,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryQuotient.orbitPolynomial": [
+    "/-- The monic polynomial product over a specified initial Frobenius orbit. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+  "module": "MIPRE.Foundations.LowDegree.BinaryOrbitDescent",
+  "module_doc": "/-! # Descending a closed orbit product to binary coefficient bits -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryOrbitDescent.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryOrbitDescent.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryQuotient.descendBits",
+   "MIPRE.LowDegree.BinaryQuotient.descendBitsProg",
+   "MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBits",
+   "MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBitsProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryQuotient.descendBitsProg_apply",
+   "MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBitsProg_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.descendBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     27,
+     28
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.descendBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     30,
+     31
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.descendBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     33,
+     34
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     70,
+     72
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     74,
+     76
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     78,
+     82
+    ]
+   }
+  ],
+  "lines": 99,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial"
+  ],
+  "blueprint": [
+   "lem:binary-orbit-polynomial"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryQuotient.descendBits": [
+    "/-- Select the constant coordinate of each quotient coefficient. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.descendBitsProg": [
+    "/-- Coefficient descent has a fixed linear-time list program. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBits": [
+    "/-- Print binary coefficients of the supplied Frobenius orbit. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBitsProg": [
+    "/-- A uniform polynomial-time program for a binary orbit polynomial. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial",
+  "module_doc": "/-! # Polynomial arithmetic with supplied binary-quotient coefficient vectors -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientPolynomial.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientPolynomial.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryQuotient.addCoeffLists",
+   "MIPRE.LowDegree.BinaryQuotient.addCoeffListsProg",
+   "MIPRE.LowDegree.BinaryQuotient.mulCoeffLists",
+   "MIPRE.LowDegree.BinaryQuotient.mulCoeffListsProg",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.AddState",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.MulState",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.addStep",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.addStepProg",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.finishAdd",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.mulStep",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.mulStepProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryQuotient.addCoeffListsProg_apply",
+   "MIPRE.LowDegree.BinaryQuotient.addCoeffLists_nil_right",
+   "MIPRE.LowDegree.BinaryQuotient.addCoeffLists_width_le",
+   "MIPRE.LowDegree.BinaryQuotient.length_addCoeffLists",
+   "MIPRE.LowDegree.BinaryQuotient.mulCoeffListsProg_apply",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.addStepProg_apply",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.addStep_growth",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.finishAdd_fold",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.fold_mulStep_eq",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.fold_mulStep_shape",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.fold_mulStep_width",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.mulStep_bounded"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.addCoeffLists",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     15,
+     19
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.addCoeffListsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     132,
+     145
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.addCoeffListsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     147,
+     148
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.addCoeffLists_nil_right",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     21,
+     22
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.addCoeffLists_width_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     46,
+     59
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.length_addCoeffLists",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     24,
+     29
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.mulCoeffLists",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     151,
+     154
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.mulCoeffListsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     301,
+     314
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.mulCoeffListsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     316,
+     317
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.AddState",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     79,
+     79
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.MulState",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     212,
+     212
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.addStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     81,
+     84
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.addStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     105,
+     112
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.addStepProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     114,
+     117
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.addStep_growth",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     119,
+     130
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.finishAdd",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     86,
+     86
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.finishAdd_fold",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     88,
+     103
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.fold_mulStep_eq",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     247,
+     252
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.fold_mulStep_shape",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     217,
+     229
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.fold_mulStep_width",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     231,
+     245
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.mulStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     214,
+     215
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.mulStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     254,
+     264
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.mulStep_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     266,
+     299
+    ]
+   }
+  ],
+  "lines": 290,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryQuotient.addCoeffLists": [
+    "/-- Add coefficient lists, keeping unmatched final coefficients. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.addCoeffListsProg": [
+    "/-- One globally polynomial-time coefficient addition program. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.mulCoeffLists": [
+    "/-- Horner multiplication of two polynomial coefficient lists. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.mulCoeffListsProg": [
+    "/-- A globally polynomial-time product of two supplied-quotient coefficient lists. -/"
+   ],
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.AddState": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.MulState": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.addStep": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.addStepProg": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.finishAdd": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.mulStep": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial.0.MIPRE.LowDegree.BinaryQuotient.mulStepProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientTranslation",
+  "module_doc": "/-! # Translating binary polynomials in a supplied polynomial quotient -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientTranslation.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientTranslation.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryQuotient.translateBits",
+   "MIPRE.LowDegree.BinaryQuotient.translateBitsProg",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientTranslation.0.MIPRE.LowDegree.BinaryQuotient.TranslateState",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientTranslation.0.MIPRE.LowDegree.BinaryQuotient.translateStep",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientTranslation.0.MIPRE.LowDegree.BinaryQuotient.translateStepProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryQuotient.length_translateBits",
+   "MIPRE.LowDegree.BinaryQuotient.translateBitsProg_apply",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientTranslation.0.MIPRE.LowDegree.BinaryQuotient.fold_translateStep_eq",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientTranslation.0.MIPRE.LowDegree.BinaryQuotient.fold_translateStep_shape",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientTranslation.0.MIPRE.LowDegree.BinaryQuotient.fold_translateStep_width",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientTranslation.0.MIPRE.LowDegree.BinaryQuotient.translateStep_bounded"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.length_translateBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     20,
+     22
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.translateBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     15,
+     18
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.translateBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     133,
+     146
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.translateBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     148,
+     149
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientTranslation.0.MIPRE.LowDegree.BinaryQuotient.TranslateState",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     57,
+     57
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientTranslation.0.MIPRE.LowDegree.BinaryQuotient.fold_translateStep_eq",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     84,
+     90
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientTranslation.0.MIPRE.LowDegree.BinaryQuotient.fold_translateStep_shape",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     62,
+     72
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientTranslation.0.MIPRE.LowDegree.BinaryQuotient.fold_translateStep_width",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     74,
+     82
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientTranslation.0.MIPRE.LowDegree.BinaryQuotient.translateStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     59,
+     60
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientTranslation.0.MIPRE.LowDegree.BinaryQuotient.translateStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     92,
+     102
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotientTranslation.0.MIPRE.LowDegree.BinaryQuotient.translateStep_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     104,
+     131
+    ]
+   }
+  ],
+  "lines": 179,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryQuotient.translateBits": [
+    "/-- Horner translation by the represented element `a`. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.translateBitsProg": [
+    "/-- One globally polynomial-time binary polynomial translation program. -/"
+   ],
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientTranslation.0.MIPRE.LowDegree.BinaryQuotient.TranslateState": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientTranslation.0.MIPRE.LowDegree.BinaryQuotient.translateStep": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotientTranslation.0.MIPRE.LowDegree.BinaryQuotient.translateStepProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+  "module": "MIPRE.Foundations.LowDegree.BinaryCoprimeDegree",
+  "module_doc": "/-! # Exact degrees of sums with coprime binary field degrees -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryCoprimeDegree.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryCoprimeDegree.lean",
+  "defmat": [],
+  "embedded": [
+   "_private.MIPRE.Foundations.LowDegree.BinaryCoprimeDegree.0.MIPRE.LowDegree.BinaryFiniteField.frobenius_comm",
+   "_private.MIPRE.Foundations.LowDegree.BinaryCoprimeDegree.0.MIPRE.LowDegree.BinaryFiniteField.iterate_add_delta",
+   "_private.MIPRE.Foundations.LowDegree.BinaryCoprimeDegree.0.MIPRE.LowDegree.BinaryFiniteField.nsmul_delta_eq_zero"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryCoprimeDegree.0.MIPRE.LowDegree.BinaryFiniteField.frobenius_comm",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     17,
+     20
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryCoprimeDegree.0.MIPRE.LowDegree.BinaryFiniteField.iterate_add_delta",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     22,
+     29
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryCoprimeDegree.0.MIPRE.LowDegree.BinaryFiniteField.nsmul_delta_eq_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     31,
+     36
+    ]
+   }
+  ],
+  "lines": 45,
+  "published_bundle": null,
+  "imports": [],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+  "module": "MIPRE.Foundations.LowDegree.BinaryComposedSumPolynomial",
+  "module_doc": "/-! # Binary composed-sum polynomials as products of Frobenius translates -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryComposedSumPolynomial.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryComposedSumPolynomial.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryQuotient.composedSumPolynomial",
+   "MIPRE.LowDegree.BinaryQuotient.translatedPolynomial"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryQuotient.composedSumPolynomial_monic",
+   "MIPRE.LowDegree.BinaryQuotient.composedSumPolynomial_succ",
+   "MIPRE.LowDegree.BinaryQuotient.composedSumPolynomial_zero",
+   "MIPRE.LowDegree.BinaryQuotient.natDegree_composedSumPolynomial",
+   "MIPRE.LowDegree.BinaryQuotient.natDegree_translatedPolynomial",
+   "MIPRE.LowDegree.BinaryQuotient.translatedPolynomial_monic"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.composedSumPolynomial",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     22,
+     24
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.composedSumPolynomial_monic",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     55,
+     62
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.composedSumPolynomial_succ",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     29,
+     37
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.composedSumPolynomial_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     26,
+     27
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.natDegree_composedSumPolynomial",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     64,
+     73
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.natDegree_translatedPolynomial",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     51,
+     53
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.translatedPolynomial",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     18,
+     20
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.translatedPolynomial_monic",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     45,
+     49
+    ]
+   }
+  ],
+  "lines": 132,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryQuotient.composedSumPolynomial": [
+    "/-- Product of all specified Frobenius translates of a binary polynomial. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.translatedPolynomial": [
+    "/-- Translate a binary polynomial by an element of the ambient binary algebra. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+  "module": "MIPRE.Foundations.LowDegree.BinaryComposedSumProg",
+  "module_doc": "/-! # Uniform polynomial-time products of Frobenius translates -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryComposedSumProg.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryComposedSumProg.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryQuotient.NormState",
+   "MIPRE.LowDegree.BinaryQuotient.composedSumBits",
+   "MIPRE.LowDegree.BinaryQuotient.composedSumBitsProg",
+   "MIPRE.LowDegree.BinaryQuotient.normProductBits",
+   "MIPRE.LowDegree.BinaryQuotient.normProductBitsProg",
+   "MIPRE.LowDegree.BinaryQuotient.normStep",
+   "MIPRE.LowDegree.BinaryQuotient.rootBits",
+   "MIPRE.LowDegree.BinaryQuotient.rootBitsProg",
+   "_private.MIPRE.Foundations.LowDegree.BinaryComposedSumProg.0.MIPRE.LowDegree.BinaryQuotient.normStepProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryQuotient.composedSumBitsProg_apply",
+   "MIPRE.LowDegree.BinaryQuotient.length_rootBits",
+   "MIPRE.LowDegree.BinaryQuotient.normProductBitsProg_apply",
+   "MIPRE.LowDegree.BinaryQuotient.rootBitsProg_apply",
+   "_private.MIPRE.Foundations.LowDegree.BinaryComposedSumProg.0.MIPRE.LowDegree.BinaryQuotient.fold_normStep_shape",
+   "_private.MIPRE.Foundations.LowDegree.BinaryComposedSumProg.0.MIPRE.LowDegree.BinaryQuotient.fold_normStep_width_le",
+   "_private.MIPRE.Foundations.LowDegree.BinaryComposedSumProg.0.MIPRE.LowDegree.BinaryQuotient.normStep_bounded"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.NormState",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     15,
+     16
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.composedSumBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     149,
+     151
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.composedSumBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     153,
+     156
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.composedSumBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     158,
+     159
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.length_rootBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     137,
+     138
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.normProductBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     74,
+     76
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.normProductBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     125,
+     129
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.normProductBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     131,
+     132
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.normStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     18,
+     20
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.rootBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     134,
+     135
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.rootBitsProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     145,
+     145
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.rootBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     147,
+     147
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryComposedSumProg.0.MIPRE.LowDegree.BinaryQuotient.fold_normStep_shape",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     22,
+     34
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryComposedSumProg.0.MIPRE.LowDegree.BinaryQuotient.fold_normStep_width_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     36,
+     44
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryComposedSumProg.0.MIPRE.LowDegree.BinaryQuotient.normStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     86,
+     92
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryComposedSumProg.0.MIPRE.LowDegree.BinaryQuotient.normStep_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     94,
+     123
+    ]
+   }
+  ],
+  "lines": 189,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial"
+  ],
+  "blueprint": [
+   "lem:binary-coprime-degree-combination"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryQuotient.NormState": [
+    "/-- Modulus, binary polynomial to translate, and accumulating coefficient list. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.composedSumBits": [
+    "/-- Binary output of the composed-sum construction for the supplied monic modulus and polynomial. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.composedSumBitsProg": [
+    "/-- The composed-sum constructor is polynomial-time on every pair of raw lists. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.normProductBits": [
+    "/-- Product of the translates specified by a list of quotient elements. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.normProductBitsProg": [
+    "/-- One globally polynomial-time program for a supplied list of polynomial translates. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.normStep": [
+    "/-- Multiply the accumulator by one translated copy of the binary polynomial. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.rootBits": [
+    "/-- A fixed-width encoding of the canonical quotient root, also valid in degree one. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.rootBitsProg": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryComposedSumProg.0.MIPRE.LowDegree.BinaryQuotient.normStepProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+  "module": "MIPRE.Foundations.LowDegree.BinaryOddPrimeProgram",
+  "module_doc": "/-! # The explicit odd-prime-power construction program -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryOddPrimeProgram.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryOddPrimeProgram.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryPolynomial.oddExtensionBits",
+   "MIPRE.LowDegree.BinaryPolynomial.oddExtensionLowerBits",
+   "MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBits",
+   "MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBitsProg",
+   "MIPRE.LowDegree.BinaryPolynomial.oddTraceBits"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBitsProg_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.oddExtensionBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     17,
+     19
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.oddExtensionLowerBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     21,
+     22
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     29,
+     31
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     33,
+     41
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     43,
+     48
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.oddTraceBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     24,
+     27
+    ]
+   }
+  ],
+  "lines": 140,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg"
+  ],
+  "blueprint": [
+   "lem:binary-odd-prime-power-irreducible"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryPolynomial.oddExtensionBits": [
+    "/-- The full binary modulus for Shoup's flat auxiliary extension. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.oddExtensionLowerBits": [
+    "/-- The lower coefficients used by quotient arithmetic. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBits": [
+    "/-- Print the descended orbit polynomial of the trace generator. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.oddPrimePowerBitsProg": [
+    "/-- One total polynomial-time program takes unary prime and requested prime-power degree. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.oddTraceBits": [
+    "/-- The trace generator in the explicitly represented flat extension. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+  "module": "MIPRE.Foundations.LowDegree.BinaryPrimePowerTrace",
+  "module_doc": "/-! # Exact degree of the odd-prime Shoup trace -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryPrimePowerTrace.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryPrimePowerTrace.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryPrimePowerTrace.traceElement"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryPrimePowerTrace.traceElement",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     17,
+     19
+    ]
+   }
+  ],
+  "lines": 104,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryPrimePowerTrace.traceElement": [
+    "/-- The Frobenius trace used by Shoup's prime-power construction. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+  "module": "MIPRE.Foundations.LowDegree.BinaryArtinSchreier",
+  "module_doc": "/-!\n# The characteristic-two Artin–Schreier tower step\n\nThe polynomial `X² + X + a` has no root exactly when its quadratic quotient is\nan extension field. In that extension, multiplication of `a` by the canonical\nroot supplies the next no-root parameter. These are algebraic correctness\nlemmas for the explicit binary tower constructor; they do not choose a root\nby searching through the field.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryArtinSchreier.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryArtinSchreier.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryArtinSchreier.quadratic",
+   "MIPRE.LowDegree.BinaryArtinSchreier.quadraticBasis"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryArtinSchreier.comp_quadratic_irreducible",
+   "MIPRE.LowDegree.BinaryArtinSchreier.quadraticBasis_apply",
+   "MIPRE.LowDegree.BinaryArtinSchreier.quadratic_eval",
+   "MIPRE.LowDegree.BinaryArtinSchreier.quadratic_irreducible_iff",
+   "MIPRE.LowDegree.BinaryArtinSchreier.quadratic_monic",
+   "MIPRE.LowDegree.BinaryArtinSchreier.quadratic_natDegree",
+   "MIPRE.LowDegree.BinaryArtinSchreier.root_not_mem_range",
+   "MIPRE.LowDegree.BinaryArtinSchreier.root_relation"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.comp_quadratic_irreducible",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     153,
+     198
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.quadratic",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     31,
+     32
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.quadraticBasis",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     55,
+     58
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.quadraticBasis_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     60,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.quadratic_eval",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     41,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.quadratic_irreducible_iff",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     44,
+     53
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.quadratic_monic",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     37,
+     39
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.quadratic_natDegree",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     34,
+     35
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.root_not_mem_range",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     142,
+     151
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.root_relation",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     85,
+     92
+    ]
+   }
+  ],
+  "lines": 140,
+  "published_bundle": null,
+  "imports": [],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryArtinSchreier.quadratic": [
+    "/-- The monic quadratic used by the characteristic-two tower. -/"
+   ],
+   "MIPRE.LowDegree.BinaryArtinSchreier.quadraticBasis": [
+    "/-- The specified basis of every monic quadratic quotient, indexed by `Fin 2`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+  "module": "MIPRE.Foundations.LowDegree.BinaryArtinSchreierProg",
+  "module_doc": "/-! # Effective substitution by the Artin–Schreier polynomial -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryArtinSchreierProg.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryArtinSchreierProg.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryPolynomial.artinSchreierStep",
+   "MIPRE.LowDegree.BinaryPolynomial.substituteArtinSchreierBits",
+   "MIPRE.LowDegree.BinaryPolynomial.substituteArtinSchreierBitsProg",
+   "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierProg.0.MIPRE.LowDegree.BinaryPolynomial.artinSchreierStepProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryPolynomial.artinSchreierStep_length",
+   "MIPRE.LowDegree.BinaryPolynomial.substituteArtinSchreierBitsProg_apply",
+   "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierProg.0.MIPRE.LowDegree.BinaryPolynomial.artinSchreierStep_bounded",
+   "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierProg.0.MIPRE.LowDegree.BinaryPolynomial.fold_artinSchreierStep_length"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.artinSchreierStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     13,
+     15
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.artinSchreierStep_length",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     17,
+     19
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.substituteArtinSchreierBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     30,
+     32
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.substituteArtinSchreierBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     79,
+     87
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.substituteArtinSchreierBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     89,
+     90
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierProg.0.MIPRE.LowDegree.BinaryPolynomial.artinSchreierStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     64,
+     66
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierProg.0.MIPRE.LowDegree.BinaryPolynomial.artinSchreierStep_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     68,
+     77
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierProg.0.MIPRE.LowDegree.BinaryPolynomial.fold_artinSchreierStep_length",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     49,
+     55
+    ]
+   }
+  ],
+  "lines": 83,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryPolynomial.artinSchreierStep": [
+    "/-- One Horner step for substitution by `X² + X`. Both XOR inputs have equal width. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.substituteArtinSchreierBits": [
+    "/-- Substitute `X² + X`, then remove redundant trailing zero coefficients. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.substituteArtinSchreierBitsProg": [
+    "/-- A single ambient polynomial-time program for `X² + X` substitution. -/"
+   ],
+   "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierProg.0.MIPRE.LowDegree.BinaryPolynomial.artinSchreierStepProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+  "module": "MIPRE.Foundations.LowDegree.BinaryArtinSchreierTower",
+  "module_doc": "/-! # A uniform effective step of the binary Artin–Schreier tower -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryArtinSchreierTower.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryArtinSchreierTower.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryArtinSchreier.TowerInvariant",
+   "MIPRE.LowDegree.BinaryArtinSchreier.cubicParameterBits",
+   "MIPRE.LowDegree.BinaryArtinSchreier.cubicParameterBitsProg",
+   "MIPRE.LowDegree.BinaryArtinSchreier.parameterOrbitBits",
+   "MIPRE.LowDegree.BinaryArtinSchreier.quotientFintype",
+   "MIPRE.LowDegree.BinaryArtinSchreier.rootVectorBits",
+   "MIPRE.LowDegree.BinaryArtinSchreier.rootVectorBitsProg",
+   "MIPRE.LowDegree.BinaryArtinSchreier.towerStepBits",
+   "MIPRE.LowDegree.BinaryArtinSchreier.towerStepBitsProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryArtinSchreier.cubicParameterBitsProg_apply",
+   "MIPRE.LowDegree.BinaryArtinSchreier.cubicParameterBits_length",
+   "MIPRE.LowDegree.BinaryArtinSchreier.evalBits_cubicParameterBits",
+   "MIPRE.LowDegree.BinaryArtinSchreier.evalBits_rootVectorBits",
+   "MIPRE.LowDegree.BinaryArtinSchreier.parameterOrbitBits_length",
+   "MIPRE.LowDegree.BinaryArtinSchreier.parameterOrbitBits_spec",
+   "MIPRE.LowDegree.BinaryArtinSchreier.quotientCharP",
+   "MIPRE.LowDegree.BinaryArtinSchreier.quotientFiniteDimensional",
+   "MIPRE.LowDegree.BinaryArtinSchreier.rootVectorBitsProg_apply",
+   "MIPRE.LowDegree.BinaryArtinSchreier.rootVectorBits_length",
+   "MIPRE.LowDegree.BinaryArtinSchreier.towerStepBitsProg_apply",
+   "MIPRE.LowDegree.BinaryArtinSchreier.towerStepBits_irreducible",
+   "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierTower.0.MIPRE.LowDegree.BinaryArtinSchreier.quotient_finrank",
+   "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierTower.0.MIPRE.LowDegree.BinaryArtinSchreier.quotient_pow_card"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.TowerInvariant",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     217,
+     224
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.cubicParameterBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     30,
+     34
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.cubicParameterBitsProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     56,
+     59
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.cubicParameterBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     62,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.cubicParameterBits_length",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     36,
+     41
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.evalBits_cubicParameterBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     43,
+     51
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.evalBits_rootVectorBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     24,
+     28
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.parameterOrbitBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     76,
+     78
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.parameterOrbitBits_length",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     80,
+     82
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.parameterOrbitBits_spec",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     113,
+     135
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.quotientCharP",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     97,
+     99
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.quotientFiniteDimensional",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     93,
+     95
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.quotientFintype",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     89,
+     91
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.rootVectorBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     18,
+     19
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.rootVectorBitsProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     53,
+     54
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.rootVectorBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     61,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.rootVectorBits_length",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     21,
+     22
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.towerStepBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     65,
+     67
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.towerStepBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     69,
+     72
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.towerStepBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     74,
+     74
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.towerStepBits_irreducible",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     137,
+     149
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierTower.0.MIPRE.LowDegree.BinaryArtinSchreier.quotient_finrank",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     101,
+     104
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierTower.0.MIPRE.LowDegree.BinaryArtinSchreier.quotient_pow_card",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     106,
+     111
+    ]
+   }
+  ],
+  "lines": 231,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryArtinSchreier.TowerInvariant": [
+    "/-- A valid stage records the exact power-of-two width and the cubic no-root invariant. -/"
+   ],
+   "MIPRE.LowDegree.BinaryArtinSchreier.cubicParameterBits": [
+    "/-- The uniform parameter `α³ + α²` in the supplied quotient. -/"
+   ],
+   "MIPRE.LowDegree.BinaryArtinSchreier.cubicParameterBitsProg": null,
+   "MIPRE.LowDegree.BinaryArtinSchreier.parameterOrbitBits": [
+    "/-- The coefficient list of the parameter's complete old-field Frobenius product. -/"
+   ],
+   "MIPRE.LowDegree.BinaryArtinSchreier.quotientFintype": null,
+   "MIPRE.LowDegree.BinaryArtinSchreier.rootVectorBits": [
+    "/-- The canonical quotient root, computed by multiplying the encoded unit by `X`. -/"
+   ],
+   "MIPRE.LowDegree.BinaryArtinSchreier.rootVectorBitsProg": null,
+   "MIPRE.LowDegree.BinaryArtinSchreier.towerStepBits": [
+    "/-- Form the parameter's complete Frobenius product and substitute `X² + X`. -/"
+   ],
+   "MIPRE.LowDegree.BinaryArtinSchreier.towerStepBitsProg": [
+    "/-- A single ambient program for one tower step, valid also on malformed moduli. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+  "module": "MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop",
+  "module_doc": "/-!\n# The bounded power-of-two constructor\n\nThe input is the requested degree in unary. The loop caps all intermediate\nmoduli by this input degree, including on malformed states. The unbounded\nmathematical stage sequence below is used only to state the induction proof.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryArtinSchreierLoop.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryArtinSchreierLoop.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryArtinSchreier.TowerState",
+   "MIPRE.LowDegree.BinaryArtinSchreier.cappedStep",
+   "MIPRE.LowDegree.BinaryArtinSchreier.cappedStepProg",
+   "MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBits",
+   "MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBitsProg",
+   "MIPRE.LowDegree.BinaryArtinSchreier.stage",
+   "MIPRE.LowDegree.BinaryArtinSchreier.towerLoopProg",
+   "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop.0.MIPRE.LowDegree.BinaryArtinSchreier.isEmptyUnaryProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryArtinSchreier.cappedStepProg_apply",
+   "MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBitsProg_apply",
+   "MIPRE.LowDegree.BinaryArtinSchreier.stage_invariant",
+   "MIPRE.LowDegree.BinaryArtinSchreier.towerLoopProg_apply",
+   "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop.0.MIPRE.LowDegree.BinaryArtinSchreier.cappedStep_bounded",
+   "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop.0.MIPRE.LowDegree.BinaryArtinSchreier.cappedStep_stage",
+   "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop.0.MIPRE.LowDegree.BinaryArtinSchreier.cappedStep_stage_fixed",
+   "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop.0.MIPRE.LowDegree.BinaryArtinSchreier.cappedStep_width",
+   "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop.0.MIPRE.LowDegree.BinaryArtinSchreier.fold_cappedStep",
+   "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop.0.MIPRE.LowDegree.BinaryArtinSchreier.fold_cappedStep_width",
+   "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop.0.MIPRE.LowDegree.BinaryArtinSchreier.iterate_cappedStep_finished",
+   "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop.0.MIPRE.LowDegree.BinaryArtinSchreier.iterate_cappedStep_stage"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.TowerState",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     32,
+     33
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.cappedStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     35,
+     38
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.cappedStepProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     44,
+     53
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.cappedStepProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     55,
+     55
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     102,
+     105
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     107,
+     111
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     113,
+     113
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.stage",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     22,
+     25
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.stage_invariant",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     27,
+     30
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.towerLoopProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     88,
+     90
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryArtinSchreier.towerLoopProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     92,
+     93
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop.0.MIPRE.LowDegree.BinaryArtinSchreier.cappedStep_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     76,
+     86
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop.0.MIPRE.LowDegree.BinaryArtinSchreier.cappedStep_stage",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     115,
+     131
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop.0.MIPRE.LowDegree.BinaryArtinSchreier.cappedStep_stage_fixed",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     145,
+     147
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop.0.MIPRE.LowDegree.BinaryArtinSchreier.cappedStep_width",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     57,
+     62
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop.0.MIPRE.LowDegree.BinaryArtinSchreier.fold_cappedStep",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     95,
+     100
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop.0.MIPRE.LowDegree.BinaryArtinSchreier.fold_cappedStep_width",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     64,
+     74
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop.0.MIPRE.LowDegree.BinaryArtinSchreier.isEmptyUnaryProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     40,
+     42
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop.0.MIPRE.LowDegree.BinaryArtinSchreier.iterate_cappedStep_finished",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     149,
+     162
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop.0.MIPRE.LowDegree.BinaryArtinSchreier.iterate_cappedStep_stage",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     133,
+     143
+    ]
+   }
+  ],
+  "lines": 235,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower"
+  ],
+  "blueprint": [
+   "lem:binary-power-two-irreducible"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryArtinSchreier.TowerState": [
+    "/-- Target degree in unary and the current lower coefficients. -/"
+   ],
+   "MIPRE.LowDegree.BinaryArtinSchreier.cappedStep": [
+    "/-- Grow only below the target, and cap every replacement by the target width. -/"
+   ],
+   "MIPRE.LowDegree.BinaryArtinSchreier.cappedStepProg": [
+    "/-- One uniform capped step, including its unary stopping test. -/"
+   ],
+   "MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBits": [
+    "/-- Return the degree-one polynomial for unary zero or one, otherwise run the capped tower. -/"
+   ],
+   "MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBitsProg": [
+    "/-- A fixed ambient polynomial-time program on the requested degree, not its logarithm. -/"
+   ],
+   "MIPRE.LowDegree.BinaryArtinSchreier.stage": [
+    "/-- The mathematical sequence used to prove the bounded loop correct. -/"
+   ],
+   "MIPRE.LowDegree.BinaryArtinSchreier.towerLoopProg": [
+    "/-- Run a polynomially bounded number of capped tower steps. -/"
+   ],
+   "_private.MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop.0.MIPRE.LowDegree.BinaryArtinSchreier.isEmptyUnaryProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+  "module": "MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic",
+  "module_doc": "/-! # Polynomial-time unary arithmetic for degree decomposition -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/UnaryDegreeArithmetic.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/UnaryDegreeArithmetic.lean",
+  "defmat": [
+   "MIPRE.LowDegree.DegreeArithmetic.descendingUnary",
+   "MIPRE.LowDegree.DegreeArithmetic.descendingUnaryProg",
+   "MIPRE.LowDegree.DegreeArithmetic.dvdUnaryProg",
+   "MIPRE.LowDegree.DegreeArithmetic.eqUnaryProg",
+   "MIPRE.LowDegree.DegreeArithmetic.isEmptyProg",
+   "MIPRE.LowDegree.DegreeArithmetic.leUnaryProg",
+   "MIPRE.LowDegree.DegreeArithmetic.modStep",
+   "MIPRE.LowDegree.DegreeArithmetic.modUnaryProg",
+   "MIPRE.LowDegree.DegreeArithmetic.mulUnaryProg",
+   "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.ModState",
+   "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.MultiplyState",
+   "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.modStepProg",
+   "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.multiplyStep",
+   "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.multiplyStepProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.DegreeArithmetic.descendingUnaryProg_apply",
+   "MIPRE.LowDegree.DegreeArithmetic.dvdUnaryProg_apply",
+   "MIPRE.LowDegree.DegreeArithmetic.eqUnaryProg_apply",
+   "MIPRE.LowDegree.DegreeArithmetic.esize_unary_list",
+   "MIPRE.LowDegree.DegreeArithmetic.isEmptyProg_apply",
+   "MIPRE.LowDegree.DegreeArithmetic.leUnaryProg_apply",
+   "MIPRE.LowDegree.DegreeArithmetic.modStep_mod",
+   "MIPRE.LowDegree.DegreeArithmetic.modUnaryProg_apply",
+   "MIPRE.LowDegree.DegreeArithmetic.mulUnaryProg_apply",
+   "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.fold_modStep",
+   "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.fold_multiplyStep",
+   "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.iterate_modStep",
+   "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.iterate_tail_size",
+   "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.modStepProg_apply",
+   "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.modStep_growth",
+   "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.multiplyStep_bounded"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.descendingUnary",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     132,
+     133
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.descendingUnaryProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     135,
+     137
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.descendingUnaryProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     139,
+     139
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.dvdUnaryProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     112,
+     119
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.dvdUnaryProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     121,
+     122
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.eqUnaryProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     36,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.eqUnaryProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     44,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.esize_unary_list",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     165,
+     167
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.isEmptyProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     17,
+     20
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.isEmptyProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     22,
+     23
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.leUnaryProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     25,
+     31
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.leUnaryProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     33,
+     34
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.modStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     49,
+     51
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.modStep_mod",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     70,
+     83
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.modUnaryProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     97,
+     107
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.modUnaryProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     109,
+     110
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.mulUnaryProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     208,
+     216
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.mulUnaryProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     218,
+     219
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.ModState",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     47,
+     47
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.MultiplyState",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     169,
+     169
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.fold_modStep",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     91,
+     95
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.fold_multiplyStep",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     173,
+     182
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.iterate_modStep",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     85,
+     89
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.iterate_tail_size",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     124,
+     130
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.modStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     53,
+     56
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.modStepProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     58,
+     61
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.modStep_growth",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     63,
+     68
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.multiplyStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     171,
+     171
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.multiplyStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     184,
+     185
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.multiplyStep_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     187,
+     206
+    ]
+   }
+  ],
+  "lines": 214,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates"
+  ],
+  "blueprint": [
+   "lem:binary-degree-decomposition"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.DegreeArithmetic.descendingUnary": [
+    "/-- Enumerate unary values from the input down through zero, without duplicates. -/"
+   ],
+   "MIPRE.LowDegree.DegreeArithmetic.descendingUnaryProg": [
+    "/-- Every bounded candidate degree can be printed in polynomial time. -/"
+   ],
+   "MIPRE.LowDegree.DegreeArithmetic.dvdUnaryProg": [
+    "/-- A divisibility test on two unary values. -/"
+   ],
+   "MIPRE.LowDegree.DegreeArithmetic.eqUnaryProg": [
+    "/-- Exact equality of unary values. -/"
+   ],
+   "MIPRE.LowDegree.DegreeArithmetic.isEmptyProg": [
+    "/-- A list emptiness test, uniform in its element encoding. -/"
+   ],
+   "MIPRE.LowDegree.DegreeArithmetic.leUnaryProg": [
+    "/-- Compare unary integers by removing the second length from the first. -/"
+   ],
+   "MIPRE.LowDegree.DegreeArithmetic.modStep": [
+    "/-- Increment the remainder and reset it when the modulus is reached. -/"
+   ],
+   "MIPRE.LowDegree.DegreeArithmetic.modUnaryProg": [
+    "/-- A globally polynomial-time unary remainder program, including divisor zero. -/"
+   ],
+   "MIPRE.LowDegree.DegreeArithmetic.mulUnaryProg": [
+    "/-- Unary multiplication has a global quadratic-size fold implementation. -/"
+   ],
+   "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.ModState": null,
+   "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.MultiplyState": null,
+   "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.modStepProg": null,
+   "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.multiplyStep": null,
+   "_private.MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic.0.MIPRE.LowDegree.DegreeArithmetic.multiplyStepProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_UnaryPrimality",
+  "module": "MIPRE.Foundations.LowDegree.UnaryPrimality",
+  "module_doc": "/-! # Polynomial-time trial primality for unary degree parameters -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/UnaryPrimality.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/UnaryPrimality.lean",
+  "defmat": [
+   "MIPRE.LowDegree.DegreeArithmetic.primeUnary",
+   "MIPRE.LowDegree.DegreeArithmetic.primeUnaryProg",
+   "MIPRE.LowDegree.DegreeArithmetic.trialCheck",
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.PrimeState",
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.allTrialsProg",
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.primeStep",
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.primeStepProg",
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.trialCheckProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.DegreeArithmetic.primeUnaryProg_apply",
+   "MIPRE.LowDegree.DegreeArithmetic.primeUnary_eq",
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.fold_primeStep",
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.primeStep_growth",
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.tail_empty_iff"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.primeUnary",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     72,
+     74
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.primeUnaryProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     104,
+     111
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.primeUnaryProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     113,
+     113
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.primeUnary_eq",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     76,
+     102
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.trialCheck",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     18,
+     19
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.PrimeState",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     33,
+     33
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.allTrialsProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     63,
+     70
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.fold_primeStep",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     38,
+     45
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.primeStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     35,
+     36
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.primeStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     47,
+     52
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.primeStep_growth",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     54,
+     61
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.tail_empty_iff",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     15,
+     16
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.trialCheckProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     21,
+     31
+    ]
+   }
+  ],
+  "lines": 136,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic"
+  ],
+  "blueprint": [
+   "lem:binary-degree-decomposition"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.DegreeArithmetic.primeUnary": [
+    "/-- The raw trial-division predicate. -/"
+   ],
+   "MIPRE.LowDegree.DegreeArithmetic.primeUnaryProg": [
+    "/-- One polynomial-time primality program on every unary input. -/"
+   ],
+   "MIPRE.LowDegree.DegreeArithmetic.trialCheck": [
+    "/-- Ignore candidate divisors zero and one, and reject every other actual divisor. -/"
+   ],
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.PrimeState": null,
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.allTrialsProg": null,
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.primeStep": null,
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.primeStepProg": null,
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimality.0.MIPRE.LowDegree.DegreeArithmetic.trialCheckProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_UnaryPrimePower",
+  "module": "MIPRE.Foundations.LowDegree.UnaryPrimePower",
+  "module_doc": "/-! # A capped unary program for maximal prime-power divisors -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/UnaryPrimePower.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/UnaryPrimePower.lean",
+  "defmat": [
+   "MIPRE.LowDegree.DegreeArithmetic.PrimePowerState",
+   "MIPRE.LowDegree.DegreeArithmetic.primePowerStep",
+   "MIPRE.LowDegree.DegreeArithmetic.primePowerUnary",
+   "MIPRE.LowDegree.DegreeArithmetic.primePowerUnaryProg",
+   "MIPRE.LowDegree.DegreeArithmetic.rawPrimePower",
+   "MIPRE.LowDegree.DegreeArithmetic.rawPrimePowerProg",
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimePower.0.MIPRE.LowDegree.DegreeArithmetic.primePowerStepProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.DegreeArithmetic.primePowerUnaryProg_apply",
+   "MIPRE.LowDegree.DegreeArithmetic.rawPrimePowerProg_apply",
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimePower.0.MIPRE.LowDegree.DegreeArithmetic.fold_primePowerStep",
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimePower.0.MIPRE.LowDegree.DegreeArithmetic.fold_primePowerStep_shape",
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimePower.0.MIPRE.LowDegree.DegreeArithmetic.iterate_primePowerStep",
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimePower.0.MIPRE.LowDegree.DegreeArithmetic.primePowerStep_bounded",
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimePower.0.MIPRE.LowDegree.DegreeArithmetic.primePowerStep_fixed",
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimePower.0.MIPRE.LowDegree.DegreeArithmetic.primePowerStep_progress",
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimePower.0.MIPRE.LowDegree.DegreeArithmetic.primePowerStep_shape"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.PrimePowerState",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     15,
+     16
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.primePowerStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     18,
+     21
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.primePowerUnary",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     129,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.primePowerUnaryProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     133,
+     139
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.primePowerUnaryProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     141,
+     142
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.rawPrimePower",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     69,
+     71
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.rawPrimePowerProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     73,
+     76
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.rawPrimePowerProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     78,
+     78
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryPrimePower.0.MIPRE.LowDegree.DegreeArithmetic.fold_primePowerStep",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     108,
+     112
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryPrimePower.0.MIPRE.LowDegree.DegreeArithmetic.fold_primePowerStep_shape",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     44,
+     55
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryPrimePower.0.MIPRE.LowDegree.DegreeArithmetic.iterate_primePowerStep",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     95,
+     106
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryPrimePower.0.MIPRE.LowDegree.DegreeArithmetic.primePowerStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     23,
+     34
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryPrimePower.0.MIPRE.LowDegree.DegreeArithmetic.primePowerStep_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     57,
+     67
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryPrimePower.0.MIPRE.LowDegree.DegreeArithmetic.primePowerStep_fixed",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     89,
+     93
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryPrimePower.0.MIPRE.LowDegree.DegreeArithmetic.primePowerStep_progress",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     80,
+     87
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.UnaryPrimePower.0.MIPRE.LowDegree.DegreeArithmetic.primePowerStep_shape",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     36,
+     42
+    ]
+   }
+  ],
+  "lines": 150,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality"
+  ],
+  "blueprint": [
+   "lem:binary-degree-decomposition"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.DegreeArithmetic.PrimePowerState": [
+    "/-- Target integer, candidate prime, and current prime power, all unary. -/"
+   ],
+   "MIPRE.LowDegree.DegreeArithmetic.primePowerStep": [
+    "/-- Advance a dividing prime power, capping every replacement by the target input. -/"
+   ],
+   "MIPRE.LowDegree.DegreeArithmetic.primePowerUnary": [
+    "/-- Nonprime candidates contribute the neutral degree one. -/"
+   ],
+   "MIPRE.LowDegree.DegreeArithmetic.primePowerUnaryProg": [
+    "/-- One total polynomial-time program for each prime's contribution to a unary degree. -/"
+   ],
+   "MIPRE.LowDegree.DegreeArithmetic.rawPrimePower": [
+    "/-- The capped maximum-power search. -/"
+   ],
+   "MIPRE.LowDegree.DegreeArithmetic.rawPrimePowerProg": [
+    "/-- Uniform polynomial-time implementation of the capped maximum-power search. -/"
+   ],
+   "_private.MIPRE.Foundations.LowDegree.UnaryPrimePower.0.MIPRE.LowDegree.DegreeArithmetic.primePowerStepProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+  "module": "MIPRE.Foundations.LowDegree.BinaryDegreeFactors",
+  "module_doc": "/-!\n# Prime-power degree decomposition\n\nThis list is used only in the proof of the all-degrees constructor. The\nexecutable constructor computes the same prime-power factors by bounded unary\narithmetic. Indices outside the prime support contribute the neutral factor one.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryDegreeFactors.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryDegreeFactors.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryDegreeFactors.degreeFactors"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryDegreeFactors.degreeFactors",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     19,
+     21
+    ]
+   }
+  ],
+  "lines": 26,
+  "published_bundle": null,
+  "imports": [],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryDegreeFactors.degreeFactors": [
+    "/-- Prime-power degree factors in ascending base order, including neutral factors. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+  "module": "MIPRE.Foundations.LowDegree.BinaryDegreeDecomposition",
+  "module_doc": "/-! # Executable prime-power decomposition of a unary requested degree -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryDegreeDecomposition.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryDegreeDecomposition.lean",
+  "defmat": [
+   "MIPRE.LowDegree.DegreeArithmetic.ascendingUnary",
+   "MIPRE.LowDegree.DegreeArithmetic.ascendingUnaryProg",
+   "MIPRE.LowDegree.DegreeArithmetic.primePowerPairs",
+   "MIPRE.LowDegree.DegreeArithmetic.primePowerPairsProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.DegreeArithmetic.ascendingUnaryProg_apply",
+   "MIPRE.LowDegree.DegreeArithmetic.primePowerPairsProg_apply",
+   "_private.MIPRE.Foundations.LowDegree.BinaryDegreeDecomposition.0.MIPRE.LowDegree.DegreeArithmetic.descendingUnary_cons"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.ascendingUnary",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     16,
+     17
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.ascendingUnaryProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     41,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.ascendingUnaryProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     44,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.primePowerPairs",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     46,
+     48
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.primePowerPairsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     50,
+     53
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.DegreeArithmetic.primePowerPairsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     55,
+     55
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryDegreeDecomposition.0.MIPRE.LowDegree.DegreeArithmetic.descendingUnary_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     19,
+     21
+    ]
+   }
+  ],
+  "lines": 63,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors"
+  ],
+  "blueprint": [
+   "lem:binary-degree-decomposition"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.DegreeArithmetic.ascendingUnary": [
+    "/-- Enumerate all candidate prime indices in ascending order. -/"
+   ],
+   "MIPRE.LowDegree.DegreeArithmetic.ascendingUnaryProg": [
+    "/-- A polynomial-time ascending unary enumeration. -/"
+   ],
+   "MIPRE.LowDegree.DegreeArithmetic.primePowerPairs": [
+    "/-- Prime indices paired with their maximal dividing prime power; neutral entries have power one. -/"
+   ],
+   "MIPRE.LowDegree.DegreeArithmetic.primePowerPairsProg": [
+    "/-- One globally polynomial-time prime-power decomposition program. -/"
+   ]
+  }
+ }
+]

@@ -1,0 +1,2494 @@
+[
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichMain.Completeness",
+  "module_doc": "/-!\n# Switch-sandwich main: completeness estimate\n\n`prop:switch-sandwich` assembled from the left and right transfer steps on a\nnormalized quantum state with a subprobability distribution.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`, `prop:switch-sandwich`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichMain/Completeness.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichMain/Completeness.lean",
+  "defmat": [],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichMain.Completeness.0.MIPStarRE.LDT.Preliminaries.completenessTransfer_core"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichMain.Completeness.0.MIPStarRE.LDT.Preliminaries.completenessTransfer_core",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     101,
+     235
+    ]
+   }
+  ],
+  "lines": 458,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Core",
+  "module_doc": "/-!\n# Preliminary comparison theorems: bipartite self-consistency (core)\n\nCore building blocks for bipartite self-consistency: reflexivity of the\nquestion-level state-dependent distance `qSDD` and its lift to the family-level\n`sddError`.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/BipartiteSelfConsistency/Core.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/BipartiteSelfConsistency/Core.lean",
+  "defmat": [],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Core.0.MIPStarRE.LDT.Preliminaries.qSDD_liftLeft_liftRight_le_two_qBipartiteSSCDefect"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Core.0.MIPStarRE.LDT.Preliminaries.qSDD_liftLeft_liftRight_le_two_qBipartiteSSCDefect",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     135,
+     329
+    ]
+   }
+  ],
+  "lines": 533,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz",
+  "module_doc": "/-!\n# Cauchy–Schwarz Inequalities for Approximate Measurements\n\nFormalizes Cauchy–Schwarz-style propositions from Section 3\n(Preliminaries) of the LDT paper:\n- `easyApproxFromApproxDelta` — Proposition `prop:easy-approx-from-approx-delta`\n- `closenessOfIP` / `closenessOfIPAdjoint` — Proposition `prop:closeness-of-ip`\n  (`eq:closeness3` / `eq:closeness4`)\n- `cabApproxDelta` — Proposition `prop:cab-approx-delta`\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/CauchySchwarz.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/CauchySchwarz.lean",
+  "defmat": [],
+  "embedded": [
+   "MIPStarRE.LDT.Preliminaries.sum_ev_mul_le_sqrt",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz.0.MIPStarRE.LDT.Preliminaries.question_easyApproxFromApproxDelta"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.Preliminaries.sum_ev_mul_le_sqrt",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     69,
+     97
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz.0.MIPStarRE.LDT.Preliminaries.question_easyApproxFromApproxDelta",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     99,
+     166
+    ]
+   }
+  ],
+  "lines": 423,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Projectivization",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization",
+  "module_doc": "/-!\n# Section 5 — Rounding To Projectors Core\n\nInternal lemmas for the orthogonalization and rounding-to-projectors chain.\n\nThis file extracts the consistency-to-almost-projective and spectral/rounding\nsteps so that `QXPLayer.lean` can depend on them without importing the full\nSection 5 theorem file.\n\n## References\n\n- `references/ldt-paper/orthonormalization.tex`\n- `blueprint/src/chapter/ch04_projective.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Projectivization.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Projectivization.lean",
+  "defmat": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.zeroProjSubMeas"
+  ],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.abs_sum_ev_opTensor_le_sqrt_mul_sqrt",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.leftTensor_outcome_mul_conjTranspose_eq",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.qSSCDefect_leftPlacedMeasurement_le_two_qBipartiteConsDefect",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.qSSCDefect_rightPlacedMeasurement_le_two_qBipartiteConsDefect",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.rightTensor_outcome_conjTranspose_mul_eq",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.sourceAlmostProjective_of_ssc",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.sum_ev_leftTensor_outcome_sq_nonneg",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.sum_ev_opTensor_outcome_le_totalMass",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.sum_ev_rightTensor_outcome_sq_nonneg",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.totalMass_sub_two_defect_le_diagA"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.zeroProjSubMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     613,
+     625
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.abs_sum_ev_opTensor_le_sqrt_mul_sqrt",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     130,
+     153
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.leftTensor_outcome_mul_conjTranspose_eq",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     109,
+     117
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.qSSCDefect_leftPlacedMeasurement_le_two_qBipartiteConsDefect",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     235,
+     345
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.qSSCDefect_rightPlacedMeasurement_le_two_qBipartiteConsDefect",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     347,
+     465
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.rightTensor_outcome_conjTranspose_mul_eq",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     119,
+     128
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.sourceAlmostProjective_of_ssc",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     467,
+     496
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.sum_ev_leftTensor_outcome_sq_nonneg",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     155,
+     165
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.sum_ev_opTensor_outcome_le_totalMass",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     179,
+     207
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.sum_ev_rightTensor_outcome_sq_nonneg",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     167,
+     177
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization.0.MIPStarRE.LDT.MakingMeasurementsProjective.totalMass_sub_two_defect_le_diagA",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     209,
+     227
+    ]
+   }
+  ],
+  "lines": 759,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.MakingMeasurementsProjective.zeroProjSubMeas": [
+    "/-- The zero family is a projective submeasurement. This supplies trivial",
+    "large-error branches where the target error bound is already at least the",
+    "universal `qSDD ≤ 1` estimate. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_Core",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.Core",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P core data\n\nScalar error estimates, core data structures, and shared operator-family\ndefinitions for the paper's `Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/Core.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/Core.lean",
+  "defmat": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.PFamily",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.Pa",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.QLayerData",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.QTotal",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerData",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerData.ofQLayerAndSvdIdentities",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.Qa",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.RankReductionWitness",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.RoundingToProjectorsWitness",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.Ta",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.Xa",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.constOpFamily",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.pFamilyFromXHat",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.zetaQuarterRoot"
+  ],
+  "embedded": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.xSquared_of_qa_eq"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.PFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     321,
+     326
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.Pa",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     314,
+     319
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.QLayerData",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     168,
+     175
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.QTotal",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     184,
+     189
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerData",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     281,
+     298
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerData.ofQLayerAndSvdIdentities",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     398,
+     440
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.Qa",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     177,
+     182
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.RankReductionWitness",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     239,
+     269
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.RoundingToProjectorsWitness",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     198,
+     223
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.Ta",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     191,
+     196
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.Xa",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     300,
+     305
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.constOpFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     160,
+     166
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.pFamilyFromXHat",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     271,
+     279
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     225,
+     237
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.xSquared_of_qa_eq",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     354,
+     396
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.zetaQuarterRoot",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     110,
+     113
+    ]
+   }
+  ],
+  "lines": 595,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Projectivization"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.MakingMeasurementsProjective.PFamily": [
+    "/-- The raw operator family `P = {P_a}`. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.Pa": [
+    "/-- The paper's operator `P_a = XHat† · T_a · XHat`. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.QLayerData": [
+    "/-- Data for the paper's intermediate `Q`-layer: the rank-reduced family",
+    "`Q_a`, its total operator `Q`, and the auxiliary projective measurement `T_a`",
+    "used to define `X_a`, `XHat_a`, and `P_a`. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.QTotal": [
+    "/-- The paper's total operator `Q = ∑_a Q_a`. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerData": [
+    "/-- Data for the paper's `X/XHat/P` layer built on top of `Q_a` and the",
+    "auxiliary projectors `T_a`.",
+    "",
+    "The local API deliberately stores only the primitive identities used by the",
+    "subsequent `P`-vs-`Q` arguments.  Earlier versions also carried explicit SVD",
+    "matrices for `X * Xᴴ`, `Xᴴ * X`, and `X * XHatᴴ`; those fields required a",
+    "general rectangular complex-matrix SVD producer that is not available in the",
+    "current Mathlib toolchain and was not consumed by the downstream proofs. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerData.ofQLayerAndSvdIdentities": [
+    "/-- Assembles the `QXPLayerData` datum from a `Q`-layer and the",
+    "SVD-derived identities.",
+    "",
+    "Given a `Q`-layer (`def:matrix-decomposition-Q`), the matrix decomposition `X`",
+    "of the paper, the chosen `Xhat`, and the two genuinely SVD-derived identities",
+    "`Xhat * Xhatᴴ = I` (`lem:X-hat-squared`) and `Xᴴ * Xhat = √Q`",
+    "(`lem:X-times-X-hat`), this assembles the `QXPLayerData` datum consumed by",
+    "the downstream `lem:P-Q-approx` argument.",
+    "",
+    "The identity `x_gram_right` (`Xᴴ * X = Q`, paper label `lem:X-squared`) is",
+    "discharged by `xSquared_of_qa_eq`, from the representation",
+    "`Q_a = Xᴴ * T_a * X` and the measurement identity for `T`. The other",
+    "propositional fields, including `qa_projective`, are supplied by the caller.",
+    "",
+    "The hypothesis `qa_eq` records exactly the `lem:qa-restated` choice, and the",
+    "two SVD-derived hypotheses (`xHat_coisometry` and `xHat_mixed`) are precisely",
+    "what the paper proves about `Xhat = U · I_{m×d} · V†`.  These hypotheses are",
+    "supplied by the sigma-range / rectangular polar-decomposition route, which",
+    "provides the unitary and coisometry factors from the positive spectral",
+    "subspace of `Q`.  The paper's `lem:X-squared`, `lem:X-hat-squared`, and",
+    "`lem:X-times-X-hat` are therefore proved given the `QXPLayerData` hypotheses;",
+    "the end-to-end chain through the rounding-to-projectors, rank-reduction, and",
+    "orthogonalization lemmas remains to be closed upstream. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.Qa": [
+    "/-- The paper's operator `Q_a`. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.RankReductionWitness": [
+    "/-- Paper origin: `references/ldt-paper/orthonormalization.tex:540-553`",
+    "(`\\label{lem:projective-low-rank-sum}`; rank-reduction lemma with",
+    "`12√ζ` closeness, `(1+2√ζ)·I` total bound, and rank constraint",
+    "`∑ rank(Q_a) ≤ d`).",
+    "",
+    "Witness structure for the rank-reduction lemma. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.RoundingToProjectorsWitness": [
+    "/-- Paper origin: `references/ldt-paper/orthonormalization.tex:414-531`",
+    "(`\\label{lem:projective-non-measurement}`; full rounding-to-projectors",
+    "lemma with `2√ζ` closeness and `(1+2√ζ)·I` total bound).",
+    "",
+    "Witness structure for the paper's rounding-to-projectors lemma.",
+    "",
+    "A value `RoundingToProjectorsWitness ψ A ζ R` is the honest output consumed by",
+    "this QXP rank-reduction layer: a chosen rounded family `R_a` together with the",
+    "paper's `2√ζ` closeness estimate and `(1 + 2√ζ) I` total-mass bound. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.Ta": [
+    "/-- The paper's auxiliary projector `T_a`. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.Xa": [
+    "/-- The paper's matrix `X_a = T_a · X`. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.constOpFamily": [
+    "/-- A raw operator family viewed as a constant indexed family on the trivial",
+    "question set. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.pFamilyFromXHat": [
+    "/-- The raw operator family obtained by sandwiching the auxiliary projectors",
+    "`T_a` with a candidate `XHat`. This is the family later named `P`. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement": [
+    "/-- **Rounding to projectors** (`lem:projective-non-measurement`).",
+    "",
+    "This is the paper-facing proposition consumed by the QXP rank-reduction layer:",
+    "there is a rounded projective family `R_a` equipped with the bounds recorded in",
+    "`RoundingToProjectorsWitness ψ A ζ R`. The constructive spectral-truncation",
+    "theorem supplies this witness from `eq:A-looks-projective`. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.zetaQuarterRoot": [
+    "/-- The quarter-root error term `ζ^(1/4)` used throughout the paper's late-stage",
+    "orthonormalization estimates. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CompletionTransfer",
+  "module_doc": "/-!\n# Preliminary comparison theorems: completion and chain rules\n\nCompletion lemmas and final chain inequalities from the preliminaries chapter.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/CompletionTransfer.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/CompletionTransfer.lean",
+  "defmat": [],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CompletionTransfer.0.MIPStarRE.LDT.Preliminaries.questionSDDOp_chain"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CompletionTransfer.0.MIPStarRE.LDT.Preliminaries.questionSDDOp_chain",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     352,
+     400
+    ]
+   }
+  ],
+  "lines": 369,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_Quantum_ProjectorONB",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB",
+  "module_doc": "/-!\n# Projector Range Orthonormal Bases\n\nThis file packages the finite-dimensional spectral decomposition of an\northogonal projector as an orthonormal basis of its range. It supplies the\nrank-one decomposition needed by the rank-reduction truncation branch in the\nlow-degree-test formalization.\n\n## References\n\n- `references/ldt-paper/orthonormalization.tex`, lines 570--573.\n- `MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/LowRank.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/ProjectorONB.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/ProjectorONB.lean",
+  "defmat": [
+   "MIPStarRE.Quantum.IsProj.rangeONB",
+   "MIPStarRE.Quantum.ProjectorRangeONB",
+   "MIPStarRE.Quantum.ProjectorRangeONB.rankOne",
+   "MIPStarRE.Quantum.ProjectorRangeONB.subprojector",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB.0.MIPStarRE.Quantum.IsProj.nonzeroEigenEquivFinRank"
+  ],
+  "embedded": [
+   "MIPStarRE.Quantum.IsProj.eigenvalues_zero_or_one",
+   "MIPStarRE.Quantum.IsProj.eq_sum_nonzero_eigenvector_projectors",
+   "MIPStarRE.Quantum.ProjectorRangeONB.rankOne_apply",
+   "MIPStarRE.Quantum.hermitian_eq_sum_eigenvalues_vecMulVec"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.Quantum.IsProj.eigenvalues_zero_or_one",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     59,
+     95
+    ]
+   },
+   {
+    "name": "MIPStarRE.Quantum.IsProj.eq_sum_nonzero_eigenvector_projectors",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     97,
+     120
+    ]
+   },
+   {
+    "name": "MIPStarRE.Quantum.IsProj.rangeONB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     341,
+     370
+    ]
+   },
+   {
+    "name": "MIPStarRE.Quantum.ProjectorRangeONB",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     150,
+     159
+    ]
+   },
+   {
+    "name": "MIPStarRE.Quantum.ProjectorRangeONB.rankOne",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     165,
+     168
+    ]
+   },
+   {
+    "name": "MIPStarRE.Quantum.ProjectorRangeONB.rankOne_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     175,
+     177
+    ]
+   },
+   {
+    "name": "MIPStarRE.Quantum.ProjectorRangeONB.subprojector",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     170,
+     173
+    ]
+   },
+   {
+    "name": "MIPStarRE.Quantum.hermitian_eq_sum_eigenvalues_vecMulVec",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     38,
+     57
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB.0.MIPStarRE.Quantum.IsProj.nonzeroEigenEquivFinRank",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     335,
+     339
+    ]
+   }
+  ],
+  "lines": 223,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.Quantum.IsProj.rangeONB": [
+    "/-- Choose an orthonormal basis of the range of a projector using Mathlib's",
+    "Hermitian spectral theorem. -/"
+   ],
+   "MIPStarRE.Quantum.ProjectorRangeONB": [
+    "/-- A rank-indexed orthonormal basis of the range of a projector, packaged with",
+    "the corresponding rank-one decomposition. -/"
+   ],
+   "MIPStarRE.Quantum.ProjectorRangeONB.rankOne": [
+    "/-- The rank-one projector attached to one vector of a projector range ONB. -/"
+   ],
+   "MIPStarRE.Quantum.ProjectorRangeONB.subprojector": [
+    "/-- The partial projector obtained by summing a subset of range ONB rank-one projectors. -/"
+   ],
+   "_private.MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB.0.MIPStarRE.Quantum.IsProj.nonzeroEigenEquivFinRank": [
+    "/-- The nonzero-eigenvalue index set of a projector has cardinality equal to its",
+    "matrix rank. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_RankReduction_Sigma",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.Sigma",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P rank reduction\n\nSigma-space projectors and rank-reduction lemmas for the paper's `Q/X/XHat/P`\nintermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/Sigma.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/Sigma.lean",
+  "defmat": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.FiniteHilbertSpace.sigmaFin",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.FiniteHilbertSpace.sigmaFinCarrier",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.FiniteHilbertSpace.sigmaFinLift",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerData.ofSigmaRangeAndSvdIdentities",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.pointProjMeas",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.sigmaFinProjMeas",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.sigmaFinRangeEmbedding",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.sigmaRangeCarrier",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.sigmaRangeQLayer",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.Sigma.0.MIPStarRE.LDT.MakingMeasurementsProjective.finSigmaProjMeas",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.Sigma.0.MIPStarRE.LDT.MakingMeasurementsProjective.sigmaFinCarrierEquiv"
+  ],
+  "embedded": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.sigmaFinRangeEmbedding_qa_eq"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.FiniteHilbertSpace.sigmaFin",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     194,
+     202
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.FiniteHilbertSpace.sigmaFinCarrier",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     181,
+     186
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.FiniteHilbertSpace.sigmaFinLift",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     188,
+     192
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerData.ofSigmaRangeAndSvdIdentities",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     608,
+     651
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.pointProjMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     742,
+     756
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.sigmaFinProjMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     256,
+     263
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.sigmaFinRangeEmbedding",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     265,
+     282
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.sigmaFinRangeEmbedding_qa_eq",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     359,
+     428
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.sigmaRangeCarrier",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     206,
+     211
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.sigmaRangeQLayer",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     588,
+     606
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.Sigma.0.MIPStarRE.LDT.MakingMeasurementsProjective.finSigmaProjMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     230,
+     254
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.Sigma.0.MIPStarRE.LDT.MakingMeasurementsProjective.sigmaFinCarrierEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     213,
+     228
+    ]
+   }
+  ],
+  "lines": 610,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Projectivization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_ProjectorONB"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.MakingMeasurementsProjective.FiniteHilbertSpace.sigmaFin": [
+    "/-- The finite Hilbert space whose preferred basis is a lifted finite-enumeration",
+    "model of `Σ a, Fin (m a)`. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.FiniteHilbertSpace.sigmaFinCarrier": [
+    "/-- A chosen finite-enumeration model of the paper's carrier `Σ a, Fin (m a)`.",
+    "Using `Fin (Fintype.card Outcome)` keeps the base carrier in a small universe;",
+    "`sigmaFin` then lifts it to the requested auxiliary-space universe with `ULift`. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.FiniteHilbertSpace.sigmaFinLift": [
+    "/-- The lifted sigma carrier used as the auxiliary Hilbert-space basis for",
+    "`sigmaFin`. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerData.ofSigmaRangeAndSvdIdentities": [
+    "/-- Assemble `QXPLayerData` from the canonical sigma-space embedding and the",
+    "remaining SVD/polar identities for `Xhat`.",
+    "",
+    "The matrix `X` and the auxiliary projective measurement are fixed to be the",
+    "finite-enumeration sigma construction associated to the projective family `q`.",
+    "Thus the hypothesis `Q_a = X† T_a X` required by",
+    "`QXPLayerData.ofQLayerAndSvdIdentities` is supplied by",
+    "`sigmaFinRangeEmbedding_qa_eq`; only the coisometry and mixed-square-root",
+    "identities for `Xhat` remain as inputs. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.pointProjMeas": [
+    "/-- A one-point projective measurement concentrating all mass on the chosen outcome. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.sigmaFinProjMeas": [
+    "/-- The block projective measurement on the lifted finite-enumeration model of",
+    "`Σ a, Fin (m a)` selecting the `a`-block. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.sigmaFinRangeEmbedding": [
+    "/-- The matrix `X` associated to a projective family on the sigma auxiliary",
+    "space.",
+    "",
+    "Rows are indexed by the finite model of `Σ a, Fin (rank Q_a)`.  The row",
+    "corresponding to `(a,i)` is the bra vector `⟨v_{a,i}|`, where",
+    "`v_{a,i}` is the `i`th vector in the chosen orthonormal basis of the range of",
+    "`Q_a`.  This is the Lean form of",
+    "`X = Σ_a Σ_i |a,i⟩⟨v_{a,i}|` in the paper. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.sigmaRangeCarrier": [
+    "/-- The lifted sigma carrier associated to the ranks of an operator family. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.sigmaRangeQLayer": [
+    "/-- The finite-enumeration `Q` layer associated to an operator family.",
+    "",
+    "The auxiliary Hilbert space is the finite-enumeration model of",
+    "`Σ a, Fin (rank Q_a)`, lifted to the universe of the ambient space.  The block",
+    "measurement selecting the summands indexed by a fixed outcome is projective.",
+    "This construction requires the sigma carrier to be nonempty; the degenerate",
+    "all-ranks-zero case is handled separately by the low-rank auxiliary-space",
+    "producer. -/"
+   ],
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.Sigma.0.MIPStarRE.LDT.MakingMeasurementsProjective.finSigmaProjMeas": [
+    "/-- The canonical block projective measurement on the lifted sigma carrier",
+    "indexed by `Fin n`. -/"
+   ],
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.Sigma.0.MIPStarRE.LDT.MakingMeasurementsProjective.sigmaFinCarrierEquiv": [
+    "/-- A finite-enumeration carrier is equivalent to the paper's literal sigma type",
+    "`Σ a, Fin (m a)`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_RankReduction_LowRank",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.LowRank",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P low-rank truncation\n\nRank-reduction auxiliary-space constructions and the low-rank truncation branch for\nthe paper's `Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/LowRank.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/LowRank.lean",
+  "defmat": [],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.LowRank.0.MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_qSDD_truncation_eq_compl_overlap",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.LowRank.0.MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_truncationOverlap_eq_ev_sum"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.LowRank.0.MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_qSDD_truncation_eq_compl_overlap",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     292,
+     343
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.LowRank.0.MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_truncationOverlap_eq_ev_sum",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     262,
+     290
+    ]
+   }
+  ],
+  "lines": 446,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Projectivization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_ProjectorONB",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_RankReduction_Sigma"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_QCompleteness",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.QCompleteness",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P q-completeness\n\nCompleteness estimates for the rank-reduced `Q` family in the paper's\n`Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/QCompleteness.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/QCompleteness.lean",
+  "defmat": [],
+  "embedded": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.spectralTruncationError_le_half",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.QCompleteness.0.MIPStarRE.LDT.MakingMeasurementsProjective.one_sub_spectralTruncationError_smul_le_sqrt"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.spectralTruncationError_le_half",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     144,
+     152
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.QCompleteness.0.MIPStarRE.LDT.MakingMeasurementsProjective.one_sub_spectralTruncationError_smul_le_sqrt",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     415,
+     476
+    ]
+   }
+  ],
+  "lines": 441,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Projectivization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_ProjectorONB",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_RankReduction_Sigma",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_RankReduction_LowRank"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayerIdentities_PositiveGram_Rows",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Rows",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P identities and approximations\n\nLate-stage algebraic identities and approximation lemmas for the paper's\n`Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Rows.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Rows.lean",
+  "defmat": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.normalizedMatrixImageRows",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.positiveGramSpectrumImageRows",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.positiveGramSpectrumRightRows"
+  ],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Rows.0.MIPStarRE.LDT.MakingMeasurementsProjective.toEuclideanLin_gram_eigenvectorBasis"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.normalizedMatrixImageRows",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     304,
+     313
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.positiveGramSpectrumImageRows",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     315,
+     324
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.positiveGramSpectrumRightRows",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     453,
+     462
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Rows.0.MIPStarRE.LDT.MakingMeasurementsProjective.toEuclideanLin_gram_eigenvectorBasis",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     262,
+     274
+    ]
+   }
+  ],
+  "lines": 429,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Projectivization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_ProjectorONB",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_RankReduction_Sigma",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_RankReduction_LowRank",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_QCompleteness"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.MakingMeasurementsProjective.normalizedMatrixImageRows": [
+    "/-- The matrix whose rows are the normalized images of a prescribed Gram",
+    "eigenvector family. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.positiveGramSpectrumImageRows": [
+    "/-- The matrix of normalized images indexed by the positive spectrum of a",
+    "Hermitian Gram operator. -/"
+   ],
+   "MIPStarRE.LDT.MakingMeasurementsProjective.positiveGramSpectrumRightRows": [
+    "/-- Rows dual to the positive Gram eigenvectors.",
+    "",
+    "Multiplying the positive mixed columns by this matrix sums those columns",
+    "against the conjugate eigenvector coordinates.  Thus the product is the",
+    "spectral expansion of the square root of the Gram operator. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayerIdentities_PositiveGram_Completion",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Completion",
+  "module_doc": "/-!\n# Section 5 — Positive-Gram completion\n\nCompletion and polar-extension lemmas for the positive spectral rows of a\nright Gram operator.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Completion.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Completion.lean",
+  "defmat": [],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Completion.0.MIPStarRE.LDT.MakingMeasurementsProjective.exists_orthonormalBasis_extension_of_embedding"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Completion.0.MIPStarRE.LDT.MakingMeasurementsProjective.exists_orthonormalBasis_extension_of_embedding",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     125,
+     159
+    ]
+   }
+  ],
+  "lines": 426,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Projectivization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_ProjectorONB",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_RankReduction_Sigma",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_RankReduction_LowRank",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_QCompleteness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayerIdentities_PositiveGram_Rows"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayerIdentities_LayerAlgebra",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.LayerAlgebra",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P algebraic identities\n\nAlgebraic identities for the `Q/X/XHat/P` layer, including the\nrestatements of `Q_a`, `P_a`, the mixed product, and projectivity of `P`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/LayerAlgebra.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/LayerAlgebra.lean",
+  "defmat": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.qxpProjSubMeas"
+  ],
+  "embedded": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.pProjectivity",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.qxpProjSubMeas_outcome",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.sum_pa_eq_xHat_adjoint_mul_xHat",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.LayerAlgebra.0.MIPStarRE.LDT.MakingMeasurementsProjective.xHat_mixed_adjoint"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.pProjectivity",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     660,
+     718
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.qxpProjSubMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     720,
+     727
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.qxpProjSubMeas_outcome",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     729,
+     734
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.sum_pa_eq_xHat_adjoint_mul_xHat",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     635,
+     658
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.LayerAlgebra.0.MIPStarRE.LDT.MakingMeasurementsProjective.xHat_mixed_adjoint",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     447,
+     459
+    ]
+   }
+  ],
+  "lines": 519,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Projectivization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_ProjectorONB",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_RankReduction_Sigma",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_RankReduction_LowRank",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_QCompleteness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayerIdentities_PositiveGram_Rows",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayerIdentities_PositiveGram_Completion"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.MakingMeasurementsProjective.qxpProjSubMeas": [
+    "/-- The canonical projective submeasurement obtained from the Q/X/XHat/P",
+    "layer. Its outcomes are the paper's operators `P_a`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayerIdentities_ProjectorApprox",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox",
+  "module_doc": "/-!\n# Section 5 — P-Q approximation for QXP layers\n\nThe final comparison estimates between the projective family `P` produced\nfrom `XHat` and the original projective `Q` layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/ProjectorApprox.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/ProjectorApprox.lean",
+  "defmat": [],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox.0.MIPStarRE.LDT.MakingMeasurementsProjective.pa_hermitian",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox.0.MIPStarRE.LDT.MakingMeasurementsProjective.pa_idempotent",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox.0.MIPStarRE.LDT.MakingMeasurementsProjective.pa_mass_le_one",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox.0.MIPStarRE.LDT.MakingMeasurementsProjective.pa_nonneg",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox.0.MIPStarRE.LDT.MakingMeasurementsProjective.q_p_cross_close",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox.0.MIPStarRE.LDT.MakingMeasurementsProjective.xHat_cross_sum_eq_sqrt"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox.0.MIPStarRE.LDT.MakingMeasurementsProjective.pa_hermitian",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     139,
+     144
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox.0.MIPStarRE.LDT.MakingMeasurementsProjective.pa_idempotent",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     146,
+     152
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox.0.MIPStarRE.LDT.MakingMeasurementsProjective.pa_mass_le_one",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     154,
+     171
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox.0.MIPStarRE.LDT.MakingMeasurementsProjective.pa_nonneg",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     131,
+     137
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox.0.MIPStarRE.LDT.MakingMeasurementsProjective.q_p_cross_close",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     235,
+     395
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox.0.MIPStarRE.LDT.MakingMeasurementsProjective.xHat_cross_sum_eq_sqrt",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     173,
+     219
+    ]
+   }
+  ],
+  "lines": 662,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Projectivization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_ProjectorONB",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_RankReduction_Sigma",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_RankReduction_LowRank",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_QCompleteness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayerIdentities_PositiveGram_Rows",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayerIdentities_PositiveGram_Completion",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayerIdentities_LayerAlgebra"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Completion",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Completion",
+  "module_doc": "/-!\n# Preliminary completion lemmas\n\nStructural completion helpers that stay close to `completeAtOutcome` while\nkeeping only the light projectivity dependencies from\n`SwitchSandwichPrep/Core.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Completion.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Completion.lean",
+  "defmat": [
+   "MIPStarRE.LDT.Preliminaries.completeAtOutcomeProj"
+  ],
+  "embedded": [
+   "MIPStarRE.LDT.Preliminaries.completeAtOutcomeProj_toMeasurement",
+   "MIPStarRE.LDT.Preliminaries.completeAtOutcomeProj_toSubMeas"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.Preliminaries.completeAtOutcomeProj",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     51,
+     89
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Preliminaries.completeAtOutcomeProj_toMeasurement",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     91,
+     95
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Preliminaries.completeAtOutcomeProj_toSubMeas",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     97,
+     101
+    ]
+   }
+  ],
+  "lines": 365,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.Preliminaries.completeAtOutcomeProj": [
+    "/-- Completing a projective submeasurement at a distinguished outcome preserves",
+    "projectivity. The residual effect `1 - P.total` is a projection orthogonal to",
+    "`P.outcome a0`, so the completed effect remains idempotent. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Triangles_Core",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.Core",
+  "module_doc": "/-!\n# Triangle Inequalities for State-Dependent Distance: Core\n\nThis module contains the main triangle-substitution estimates for approximate\nmeasurements.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Triangles/Core.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Triangles/Core.lean",
+  "defmat": [],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.Core.0.MIPStarRE.LDT.Preliminaries.avgOver_abs_le_sqrt_of_pointwise_nonneg",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.Core.0.MIPStarRE.LDT.Preliminaries.right_match_gap_abs_le_sqrt_qSDD"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.Core.0.MIPStarRE.LDT.Preliminaries.avgOver_abs_le_sqrt_of_pointwise_nonneg",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     188,
+     208
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.Core.0.MIPStarRE.LDT.Preliminaries.right_match_gap_abs_le_sqrt_qSDD",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     513,
+     566
+    ]
+   }
+  ],
+  "lines": 397,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_ProjectivizationChain_Basic",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.ProjectivizationChain.Basic",
+  "module_doc": "/-!\n# Section 5 — basic projectivization data\n\nThis module contains the scalar estimates and elementary transport lemmas used\nby the orthonormalization projectivization chain.  The mathematical source is the\northonormalization-and-completion argument in `inductive_step.tex`, lines\n130--149, together with the orthonormalization theorem and the completion\nproposition cited there.\n\nThe declarations here are deliberately prior to the construction of the final\nprojective measurements.  They record the literal scalar obtained by composing\northonormalization with completion, its absorbed form in the unit-error regime,\nthe right-register transport available under permutation invariance, and the\nresidual hypotheses passed to the self-consistency handoff theorem.  The actual\nprojective-measurement output theorem is in `ProjectivizationChain.Output`.\n\nThe scalar computation is\n\n    ζ₂ = 2 · (100·ζ^{1/4}) + 4 · √(100·ζ^{1/4}) + 2·ζ\n       = 200·ζ^{1/4} + 40·ζ^{1/8} + 2·ζ.\n\nThe paper prints the closed form `ζ₂ = 200·ζ^{1/4} + 40·ζ^{1/8}`.  The Lean\ncascade uses the slightly widened absorbed scalar\n`200·ζ^{1/4} + 42·ζ^{1/8}` downstream, since in the non-vacuous regime\n`0 ≤ ζ ≤ 1` gives `2·ζ ≤ 2·ζ^{1/8}`.\n\n## Status\n\n- The orthonormalization step uses the source theorem `orthonormalization`.\n  The theorem has a tracked proof gap for the sharp paper constant; this file\n  no longer exposes its proof-stage construction data as a hypothesis of the\n  orthonormalization projectivization output statement.\n- The completion step uses the **fully-formalized** `completingToMeasurement`\n  (`\\leanok` in `blueprint/src/chapter/ch03_preliminaries.tex`), so no new\n  bridge is introduced here.\n- The output `Q` is now a `ProjMeas`. This uses the generic helper\n  `Preliminaries.completeAtOutcomeProj`, whose proof relies only on the\n  existing facts that `P.total` is a projection and that each `P_a` is\n  absorbed by `P.total`.\n\n## References\n\n- Paper: `references/ldt-paper/inductive_step.tex` lines 130–149\n  (application of `lem:orthonormalization-main-lemma` +\n  `prop:completing-to-measurement`).\n- Paper: `references/ldt-paper/orthonormalization.tex` lines 67–77\n  (`thm:orthonormalization`).\n- Paper: `references/ldt-paper/preliminaries.tex` lines 1101–1170\n  (`prop:completing-to-measurement`).\n- Blueprint: `blueprint/src/chapter/ch10_induction.tex` lines 350–360\n  (`eq:G-with-Q-A`).\n- Blueprint: `blueprint/src/chapter/ch04_projective.tex`\n  (orthonormalization theorem).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/ProjectivizationChain/Basic.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/ProjectivizationChain/Basic.lean",
+  "defmat": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalizeAndCompleteError"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalizeAndCompleteError",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     128,
+     144
+    ]
+   }
+  ],
+  "lines": 469,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Projectivization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_ProjectorONB",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_RankReduction_Sigma",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_RankReduction_LowRank",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_QCompleteness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayerIdentities_PositiveGram_Rows",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayerIdentities_PositiveGram_Completion",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayerIdentities_LayerAlgebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayerIdentities_ProjectorApprox",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Completion",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Triangles_Core"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalizeAndCompleteError": [
+    "/-- The combined error of the orthonormalization and completion chain.",
+    "",
+    "Substituting `δ := orthonormalizationError ζ = 100·ζ^{1/4}` into the",
+    "closeness conclusion of `prop:completing-to-measurement`",
+    "(`2·δ + 4·√δ + 2·ζ`) gives",
+    "",
+    "    `2 · (100·ζ^{1/4}) + 4 · √(100·ζ^{1/4}) + 2·ζ",
+    "       = 200·ζ^{1/4} + 40·ζ^{1/8} + 2·ζ`.",
+    "",
+    "This is the literal error returned by composing the two existing lemmas.",
+    "The paper's printed `ζ₂ = 200·ζ^{1/4} + 40·ζ^{1/8}` (`inductive_step.tex`,",
+    "line 149) drops the residual `2·ζ` term; the formal cascade absorbs it into",
+    "the widened scalar `200·ζ^{1/4} + 42·ζ^{1/8}`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Test_MainTheorem_SourceScalars",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceScalars",
+  "module_doc": "/-!\n# Main-formal scalar bounds\n\nScalar estimates for the two-space `mainFormal` theorem.  This module defines\nthe five scalars that appear in the paper's error calculation:\n\n* `σ` — the symmetrized induction consistency error\n* `ζ₁` — the cross-consistency error after unsymmetrization\n* `ζ₂` — the orthonormalize-and-complete closeness error\n* `ζ₃` — the projective self-consistency error\n* `ζ₄` — the final point-consistency error\n\nThe core structure `MainFormalScalarBounds` (Prop) bundles the three\nhypotheses needed to invoke the checked Step 8 bound\n`errorCascade_le_mainFormalError`:\n\n* `cascadeHypotheses` — the standing scalar regime (`q > 0`, `k ≥ 1`,\n  `m ≥ 1`, `0 ≤ ε ≤ 1`, `d ≤ q`).\n* `inductionNu_nonneg` — nonnegativity of the symmetrized main-induction\n  `ν` at `(3ε, 3ε, 3ε)`.\n* `inductionNu_bound` — the paper line 71–73 coarsening\n  `ν ≤ 10000 k² m² (ε^{1/1024} + (d/q)^{1/1024})`.\n\nThe cascade comparisons `ζ₁ ≤ …`, `ζ₃ ≤ 2·mainFormalError`, etc. are then\nderived in the private theorem `cascadeBounds` via\n`errorCascade_le_mainFormalError`, which calls the already-formalized\nscalar cascade estimates from `LDT.Test.MainTheorem.ScalarBounds`.  The module also\nprovides the vacuous-branch analysis (`mainFormalError_ge_one_of_*`) and\nthe coarsening lemma that absorbs `orthonormalizeAndCompleteError` into\n`ζ₂` (`orthonormalizeAndCompleteError_zeta1_le_zeta2`).\n\n## References\n\n* Paper: `references/ldt-paper/inductive_step.tex`,\n  error computations (lines 68–75, 186–234).\n* Blueprint: `blueprint/src/chapter/ch10_induction.tex`,\n  `\\label{def:main-formal-error-cascade}`,\n  `\\label{thm:sigma-bound-main-formal}`, and\n  `\\label{thm:zeta-bounds-main-formal}`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceScalars.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceScalars.lean",
+  "defmat": [
+   "MIPStarRE.LDT.Test.MainFormalScalarBounds",
+   "MIPStarRE.LDT.Test.MainFormalScalarBounds.line169Error",
+   "MIPStarRE.LDT.Test.MainFormalScalarBounds.sigma",
+   "MIPStarRE.LDT.Test.MainFormalScalarBounds.zeta1",
+   "MIPStarRE.LDT.Test.MainFormalScalarBounds.zeta2",
+   "MIPStarRE.LDT.Test.MainFormalScalarBounds.zeta3",
+   "MIPStarRE.LDT.Test.MainFormalScalarBounds.zeta4",
+   "MIPStarRE.LDT.Test.MainFormalScalarBounds.zeta4Repaired",
+   "MIPStarRE.LDT.Test.mainFormalInductionNu"
+  ],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceScalars.0.MIPStarRE.LDT.Test.MainFormalScalarBounds.cascadeBounds"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.Test.MainFormalScalarBounds",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     297,
+     315
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Test.MainFormalScalarBounds.line169Error",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     371,
+     375
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Test.MainFormalScalarBounds.sigma",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     344,
+     347
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Test.MainFormalScalarBounds.zeta1",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     349,
+     352
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Test.MainFormalScalarBounds.zeta2",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     354,
+     359
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Test.MainFormalScalarBounds.zeta3",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     361,
+     364
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Test.MainFormalScalarBounds.zeta4",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     366,
+     369
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Test.MainFormalScalarBounds.zeta4Repaired",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     377,
+     386
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Test.mainFormalInductionNu",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     117,
+     125
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceScalars.0.MIPStarRE.LDT.Test.MainFormalScalarBounds.cascadeBounds",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     388,
+     401
+    ]
+   }
+  ],
+  "lines": 541,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MainInductionStep_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_MainTheorem_ScalarBounds_Definitions",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_MainTheorem_ScalarBounds_EnvelopeBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Projectivization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_ProjectorONB",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_RankReduction_Sigma",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_RankReduction_LowRank",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayer_QCompleteness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayerIdentities_PositiveGram_Rows",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayerIdentities_PositiveGram_Completion",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayerIdentities_LayerAlgebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_QXPLayerIdentities_ProjectorApprox",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Completion",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Triangles_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_ProjectivizationChain_Basic"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.Test.MainFormalScalarBounds": [
+    "/-- Scalar hypotheses for the Section 3 error cascade of `mainFormal`.",
+    "",
+    "This record is intentionally scalar-only. It does not assert any measurement",
+    "transport. Its fields are precisely the hypotheses needed to invoke the already",
+    "formalized Step 8 bound `errorCascade_le_mainFormalError` on the",
+    "main-induction `ν` produced after symmetrization (paper lines 68--75). The",
+    "corrected source route derives these scalar side conditions in the non-vacuous",
+    "branch and otherwise uses the saturated-error witness. -/"
+   ],
+   "MIPStarRE.LDT.Test.MainFormalScalarBounds.line169Error": [
+    "/-- The repaired line-169 error `ζ₁ + 10·ζ₁^(1/8)` coming from the checked local",
+    "pre-completion transport. -/"
+   ],
+   "MIPStarRE.LDT.Test.MainFormalScalarBounds.sigma": [
+    "/-- The paper's `σ`, built from the symmetrized main-induction `ν`. -/"
+   ],
+   "MIPStarRE.LDT.Test.MainFormalScalarBounds.zeta1": [
+    "/-- The paper's `ζ₁ = 2σ + 2√(3ε + 2σ) + md/q`. -/"
+   ],
+   "MIPStarRE.LDT.Test.MainFormalScalarBounds.zeta2": [
+    "/-- The formal Step 6 scalar",
+    "`ζ₂ = 200ζ₁^(1/4) + 42ζ₁^(1/8)`, widening the paper's printed coefficient",
+    "`40` to absorb the extra completion term. -/"
+   ],
+   "MIPStarRE.LDT.Test.MainFormalScalarBounds.zeta3": [
+    "/-- The paper's self-consistency scalar `ζ₃ = 6ζ₁ + 6ζ₂`. -/"
+   ],
+   "MIPStarRE.LDT.Test.MainFormalScalarBounds.zeta4": [
+    "/-- The paper's point-consistency scalar `ζ₄ = 2σ + 2√(ζ₁ + ζ₃/2)`. -/"
+   ],
+   "MIPStarRE.LDT.Test.MainFormalScalarBounds.zeta4Repaired": [
+    "/-- The repaired point-consistency scalar obtained by substituting the checked",
+    "line-169 repair error into the final point-transport triangle.",
+    "",
+    "**Source:** This is source-faithful scalar bookkeeping for the repaired",
+    "line-169 route documented in `docs/paper-gaps/issue-1099-sharper-local-fix.tex`",
+    "and absorbed by the paper's final cascade estimate in",
+    "`references/ldt-paper/inductive_step.tex:186-234`. -/"
+   ],
+   "MIPStarRE.LDT.Test.mainFormalInductionNu": [
+    "/-- The Section 3 specialization of the main-induction `ν` after Step 1",
+    "symmetrization.",
+    "",
+    "Paper lines 68--75 apply `thm:main-induction` to the symmetrized strategy with",
+    "errors `(3ε, 3ε, 3ε)` and then coarsen its `ν` to the Section 3 scalar cascade.",
+    "This definition keeps the pre-coarsened main-induction quantity available for the",
+    "main theorem conclusion. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomialEmbedding",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LinePolynomialEmbedding",
+  "module_doc": "/-!\n# Axis-line to global polynomial lifts\n\nUtility lemmas for substituting a univariate axis-line polynomial into a chosen\nambient coordinate.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/LinePolynomialEmbedding.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/LinePolynomialEmbedding.lean",
+  "defmat": [
+   "MIPStarRE.LDT.axisLinePolynomialToPolynomial"
+  ],
+  "embedded": [
+   "MIPStarRE.LDT.degreeOf_eval₂_C_X_le_natDegree"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.axisLinePolynomialToPolynomial",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     47,
+     59
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.degreeOf_eval₂_C_X_le_natDegree",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     24,
+     45
+    ]
+   }
+  ],
+  "lines": 140,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.axisLinePolynomialToPolynomial": [
+    "/-- Extend an axis-line answer to a global polynomial by substituting the ambient",
+    "coordinate `X i` for the formal line parameter. Away from direction `i`, the result",
+    "is constant, so in the `m = 1` base case this identifies the unique axis-parallel",
+    "line polynomial with an ambient low-degree polynomial. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyPolynomialFamilies",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyPolynomialFamilies",
+  "module_doc": "/-!\n# Polynomial-family interfaces for the low individual degree test\n\nPackaged slice-indexed polynomial-family interfaces extracted from\n`MIPStarRE.LDT.Test.Strategy`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyPolynomialFamilies.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyPolynomialFamilies.lean",
+  "defmat": [
+   "MIPStarRE.LDT.IdxPolyFamily",
+   "MIPStarRE.LDT.IdxPolyFamily.Complete",
+   "MIPStarRE.LDT.IdxPolyFamily.ConsistentWithPoints",
+   "MIPStarRE.LDT.IdxPolyFamily.SliceBoundednessInput",
+   "MIPStarRE.LDT.IdxPolyFamily.SliceBoundednessInput.storedResidual",
+   "MIPStarRE.LDT.IdxPolyFamily.StronglySelfConsistent",
+   "MIPStarRE.LDT.IdxPolyFamily.averagedPointEvaluationOperator",
+   "MIPStarRE.LDT.IdxPolyFamily.averagedSlicePointEvaluationOperator",
+   "MIPStarRE.LDT.IdxPolyFamily.averagedSliceTotalOperator",
+   "MIPStarRE.LDT.IdxPolyFamily.averagedSubMeas",
+   "MIPStarRE.LDT.IdxPolyFamily.evaluatedAtNextPoint",
+   "MIPStarRE.LDT.IdxPolyFamily.ofSliceMeas",
+   "MIPStarRE.LDT.IdxPolyFamily.ofSymStrat"
+  ],
+  "embedded": [
+   "MIPStarRE.LDT.IdxPolyFamily.averagedSliceTotalOperator_eq_one",
+   "MIPStarRE.LDT.IdxPolyFamily.ofSliceMeas_dominationTarget",
+   "MIPStarRE.LDT.IdxPolyFamily.ofSliceMeas_meas",
+   "MIPStarRE.LDT.IdxPolyFamily.ofSliceMeas_witness",
+   "MIPStarRE.LDT.IdxPolyFamily.ofSymStrat_dominationTarget",
+   "MIPStarRE.LDT.IdxPolyFamily.ofSymStrat_meas",
+   "MIPStarRE.LDT.IdxPolyFamily.ofSymStrat_witness",
+   "MIPStarRE.LDT.IdxPolyFamily.ofSymStrat_witness_eq_averagedSliceTotalOperator"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     59,
+     76
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.Complete",
+    "kind": "inductive",
+    "has_doc": false,
+    "lines": [
+     231,
+     236
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.ConsistentWithPoints",
+    "kind": "inductive",
+    "has_doc": false,
+    "lines": [
+     238,
+     246
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.SliceBoundednessInput",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     274,
+     301
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.SliceBoundednessInput.storedResidual",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     305,
+     323
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.StronglySelfConsistent",
+    "kind": "inductive",
+    "has_doc": false,
+    "lines": [
+     264,
+     272
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.averagedPointEvaluationOperator",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     131,
+     138
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.averagedSlicePointEvaluationOperator",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     140,
+     147
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.averagedSliceTotalOperator",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     149,
+     157
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.averagedSliceTotalOperator_eq_one",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     159,
+     181
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.averagedSubMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     112,
+     120
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.evaluatedAtNextPoint",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     122,
+     129
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.ofSliceMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     83,
+     93
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.ofSliceMeas_dominationTarget",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     106,
+     110
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.ofSliceMeas_meas",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     95,
+     98
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.ofSliceMeas_witness",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     100,
+     104
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.ofSymStrat",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     183,
+     200
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.ofSymStrat_dominationTarget",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     223,
+     229
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.ofSymStrat_meas",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     202,
+     206
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.ofSymStrat_witness",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     215,
+     221
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.IdxPolyFamily.ofSymStrat_witness_eq_averagedSliceTotalOperator",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     208,
+     213
+    ]
+   }
+  ],
+  "lines": 561,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.IdxPolyFamily": [
+    "/-- A packaged family `x ↦ G^x` together with its witness operators and domination targets.",
+    "",
+    "The `witness` and `dominationTarget` fields store the per-slice PSD operator",
+    "`Z^x` and per-slice, per-polynomial operator `E_u A^{u,x}_{g(u)}` appearing in",
+    "the paper's boundedness hypothesis (`references/ldt-paper/commutativity-G.tex`,",
+    "item `data-processed-boundedness`). We store these operators explicitly rather",
+    "than hiding them behind ambient defaults, so each constructor must choose an",
+    "honest witness/target pair.",
+    "",
+    "Callers without access to an ambient strategy can use `ofSliceMeas`, which takes",
+    "`Z^x := ∑_g G^x_g` and `dominationTarget x g := G^x_g`. Callers with access to a",
+    "symmetric strategy should prefer the constructor `ofSymStrat`,",
+    "which derives both fields from the strategy itself. -/"
+   ],
+   "MIPStarRE.LDT.IdxPolyFamily.Complete": null,
+   "MIPStarRE.LDT.IdxPolyFamily.ConsistentWithPoints": null,
+   "MIPStarRE.LDT.IdxPolyFamily.SliceBoundednessInput": [
+    "/-- Paper-faithful boundedness input for slice-indexed polynomial families.",
+    "",
+    "This structure encodes the boundedness item in",
+    "`references/ldt-paper/commutativity-G.tex` and `references/ldt-paper/ld-pasting.tex`.",
+    "It consists of positive witnesses `Z^x`, the averaged residual bound",
+    "`E_x <psi| (I - G^x) tensor Z^x |psi> <= zeta`, and the domination condition",
+    "`Z^x >= E_u A^{u,x}_{g(u)}`.",
+    "",
+    "The domination condition is stated directly against the averaged point operator",
+    "from the strategy.  It is not mediated through `family.dominationTarget`, so this",
+    "public input does not contain an additional identification bridge. -/"
+   ],
+   "MIPStarRE.LDT.IdxPolyFamily.SliceBoundednessInput.storedResidual": [
+    "/-- The boundedness residual obtained from a concrete slice family `G`.",
+    "",
+    "Paper origin: `references/ldt-paper/inductive_step.tex:461-551`",
+    "(`\\label{thm:self-improvement-in-induction-section}`), especially the boundedness",
+    "field of the slice-wise self-improvement output.",
+    "",
+    "This is the induction-oriented `Z^x ⊗ (I - G^x)` term after replacing the",
+    "abstract slice family by the concrete `G`, written in the paper's",
+    "`(I - G^x) ⊗ Z^x` orientation. -/"
+   ],
+   "MIPStarRE.LDT.IdxPolyFamily.StronglySelfConsistent": null,
+   "MIPStarRE.LDT.IdxPolyFamily.averagedPointEvaluationOperator": [
+    "/-- Averaged point operator `E_u A^u_{h(u)}` appearing in source-style",
+    "boundedness assumptions. -/"
+   ],
+   "MIPStarRE.LDT.IdxPolyFamily.averagedSlicePointEvaluationOperator": [
+    "/-- Slice-wise averaged point operator `E_u A^{u,x}_{g(u)}` from the paper's",
+    "boundedness hypothesis. -/"
+   ],
+   "MIPStarRE.LDT.IdxPolyFamily.averagedSliceTotalOperator": [
+    "/-- Slice-wise averaged total operator `E_u \\sum_a A^{u,x}_a`.",
+    "",
+    "For a genuine symmetric strategy this simplifies to `1`, but keeping the",
+    "strategy-shaped formula explicit records where the witness comes from. -/"
+   ],
+   "MIPStarRE.LDT.IdxPolyFamily.averagedSubMeas": [
+    "/-- The averaged submeasurement `G = E_x G^x`: average the slice",
+    "measurements over the uniform distribution on slice heights `x ∈ F_q`. -/"
+   ],
+   "MIPStarRE.LDT.IdxPolyFamily.evaluatedAtNextPoint": [
+    "/-- Evaluate the slice family at a point `(u, x)` in `F_q^{m+1}`. -/"
+   ],
+   "MIPStarRE.LDT.IdxPolyFamily.ofSliceMeas": [
+    "/-- Honest local constructor when only the slice family `x ↦ G^x` is available.",
+    "",
+    "This uses the slice total `∑_g G^x_g` as the witness operator and the concrete",
+    "outcome `G^x_g` as the domination target. -/"
+   ],
+   "MIPStarRE.LDT.IdxPolyFamily.ofSymStrat": [
+    "/-- Paper-facing constructor: bundle a slice submeasurement with a symmetric",
+    "strategy so that both the domination target and the witness are derived from the",
+    "strategy itself.",
+    "",
+    "Concretely, `dominationTarget x g` is the averaged slice-point evaluation",
+    "operator `E_u A^{u,x}_{g(u)}` from `references/ldt-paper/commutativity-G.tex`,",
+    "and `witness x` is the corresponding averaged slice-total operator",
+    "`E_u \\sum_a A^{u,x}_a`. Since point measurements are genuine measurements, this",
+    "witness simplifies to `1`, but its stored definition keeps the provenance",
+    "explicit. -/"
+   ]
+  }
+ }
+]

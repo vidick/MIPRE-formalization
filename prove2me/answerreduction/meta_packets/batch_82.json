@@ -1,0 +1,604 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.exec_copyUntil",
+  "source_name": "MIPRE.TM.Interp.exec_copyUntil",
+  "formal_statement": "theorem MIPRE.TM.Interp.exec_copyUntil {k : ProgId} {pc : Fin maxPc} {m : Option Sym} {src dst : WT}\n    (hins : instrAt k pc = .copyUntil m src dst) (hpc : pc.val + 1 < maxPc) (hsd : src ≠ dst)\n    (l : List Sym) :\n    ∀ (c : Cfg input), c.state = at_ k pc → Holds (c.workTapes src) (c.workTapePos src) l →\n      (∀ s ∈ l, some s ≠ m) → c.workTapes src (c.workTapePos src + l.length) = m →\n    ∃ c', Reach c (l.length + 1) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [src, dst] ∧\n      c'.workTapes src = c.workTapes src ∧ c'.workTapePos src = c.workTapePos src + l.length ∧\n      Holds (c'.workTapes dst) (c.workTapePos dst) l ∧\n      (∀ q, (q < c.workTapePos dst ∨ c.workTapePos dst + l.length ≤ q) →\n        c'.workTapes dst q = c.workTapes dst q) ∧\n      c'.workTapePos dst = c.workTapePos dst + l.length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "Copy the `l` held from the head of `src` (none of whose symbols is `m`) onto `dst`,\nstopping with the `src` head on the `m` after it.",
+  "module": "MIPRE.TM.Interp.Routines",
+  "module_doc": "/-!\n# The routines: specifications of the instructions\n\nEach instruction's specification is a reachability statement: from a configuration at\nthe instruction's first phase, with the tapes it reads in a stated shape, a bounded\nnumber of steps leads to the configuration at the next instruction, with the stated\neffect on the tapes it touches and none on the others (`Untouched`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Routines.lean#L467-L535",
+  "source_path": "MIPRE/TM/Interp/Routines.lean",
+  "lines": [
+   467,
+   535
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 23,
+  "prooflines": 56,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.scan_leftToMarker",
+  "source_name": "MIPRE.TM.Interp.scan_leftToMarker",
+  "formal_statement": "theorem MIPRE.TM.Interp.scan_leftToMarker {k : ProgId} {pc : Fin maxPc} {m : Sym} {t : WT}\n    (hins : instrAt k pc = .leftToMarker m t) (hpc : pc.val + 1 < maxPc) (l : List Sym) :\n    ∀ (c : Cfg input), c.state = some ⟨k, pc, p1⟩ →\n      Holds (c.workTapes t) (c.workTapePos t + 1 - l.length) l → (∀ s ∈ l, s ≠ m) →\n      (c.workTapes t (c.workTapePos t - l.length) = some m ∨\n        c.workTapes t (c.workTapePos t - l.length) = none) →\n    ∃ c', Reach c (l.length + 1) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [t] ∧\n      c'.workTapes t = c.workTapes t ∧ c'.workTapePos t = c.workTapePos t - l.length + 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "The scan of `leftToMarker` (phase `p1`): over the cells `pos - n + 1 … pos`, none holding\n`m`, to the marker or blank at `pos - n`, then one right.",
+  "module": "MIPRE.TM.Interp.Routines",
+  "module_doc": "/-!\n# The routines: specifications of the instructions\n\nEach instruction's specification is a reachability statement: from a configuration at\nthe instruction's first phase, with the tapes it reads in a stated shape, a bounded\nnumber of steps leads to the configuration at the next instruction, with the stated\neffect on the tapes it touches and none on the others (`Untouched`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Routines.lean#L590-L653",
+  "source_path": "MIPRE/TM/Interp/Routines.lean",
+  "lines": [
+   590,
+   653
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 22,
+  "prooflines": 54,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.exec_leftToMarker",
+  "source_name": "MIPRE.TM.Interp.exec_leftToMarker",
+  "formal_statement": "theorem MIPRE.TM.Interp.exec_leftToMarker {k : ProgId} {pc : Fin maxPc} {m : Sym} {t : WT}\n    (hins : instrAt k pc = .leftToMarker m t) (hpc : pc.val + 1 < maxPc) (l : List Sym)\n    (c : Cfg input) (hq : c.state = at_ k pc)\n    (hl : Holds (c.workTapes t) (c.workTapePos t - l.length) l) (hm : ∀ s ∈ l, s ≠ m)\n    (hend : c.workTapes t (c.workTapePos t - l.length - 1) = some m ∨\n      c.workTapes t (c.workTapePos t - l.length - 1) = none) :\n    ∃ c', Reach c (l.length + 2) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [t] ∧\n      c'.workTapes t = c.workTapes t ∧ c'.workTapePos t = c.workTapePos t - l.length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "`leftToMarker`: from `pos`, with `l` (no `m`) on `pos - |l| … pos - 1` and the marker or a\nblank at `pos - |l| - 1`, to `pos - |l|`.",
+  "module": "MIPRE.TM.Interp.Routines",
+  "module_doc": "/-!\n# The routines: specifications of the instructions\n\nEach instruction's specification is a reachability statement: from a configuration at\nthe instruction's first phase, with the tapes it reads in a stated shape, a bounded\nnumber of steps leads to the configuration at the next instruction, with the stated\neffect on the tapes it touches and none on the others (`Untouched`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Routines.lean#L655-L681",
+  "source_path": "MIPRE/TM/Interp/Routines.lean",
+  "lines": [
+   655,
+   681
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.scan_leftToMarker"
+  ],
+  "pasted_helpers": 15,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.scan_popBack",
+  "source_name": "MIPRE.TM.Interp.scan_popBack",
+  "formal_statement": "theorem MIPRE.TM.Interp.scan_popBack {k : ProgId} {pc : Fin maxPc} {m : Sym} {t : WT}\n    (hins : instrAt k pc = .popBack m t) (hpc : pc.val + 1 < maxPc) (l : List Sym) :\n    ∀ (c : Cfg input), c.state = some ⟨k, pc, p2⟩ →\n      Holds (c.workTapes t) (c.workTapePos t + 1 - l.length) l → (∀ s ∈ l, s ≠ m) →\n      (c.workTapes t (c.workTapePos t - l.length) = some m ∨\n        c.workTapes t (c.workTapePos t - l.length) = none) →\n    ∃ c', Reach c (l.length + 1) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [t] ∧\n      (∀ q, (q < c.workTapePos t + 1 - l.length ∨ c.workTapePos t < q) →\n        c'.workTapes t q = c.workTapes t q) ∧\n      BlankFrom (c'.workTapes t) (c.workTapePos t + 1 - l.length) l.length ∧\n      c'.workTapePos t = c.workTapePos t - l.length + 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "The scan of `popBack` (phase `p2`): erase the cells `pos - n + 1 … pos`, none holding `m`,\nto the marker or blank at `pos - n`, then one right.",
+  "module": "MIPRE.TM.Interp.Routines",
+  "module_doc": "/-!\n# The routines: specifications of the instructions\n\nEach instruction's specification is a reachability statement: from a configuration at\nthe instruction's first phase, with the tapes it reads in a stated shape, a bounded\nnumber of steps leads to the configuration at the next instruction, with the stated\neffect on the tapes it touches and none on the others (`Untouched`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Routines.lean#L685-L765",
+  "source_path": "MIPRE/TM/Interp/Routines.lean",
+  "lines": [
+   685,
+   765
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 25,
+  "prooflines": 68,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.exec_popBack_empty",
+  "source_name": "MIPRE.TM.Interp.exec_popBack_empty",
+  "formal_statement": "theorem MIPRE.TM.Interp.exec_popBack_empty {k : ProgId} {pc : Fin maxPc} {m : Sym} {t : WT}\n    (hins : instrAt k pc = .popBack m t) (hpc : pc.val + 1 < maxPc) (c : Cfg input)\n    (hq : c.state = at_ k pc) (hbl : c.workTapes t (c.workTapePos t - 1) = none) :\n    ∃ c', Reach c 2 c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [t] ∧\n      c'.workTapes t = c.workTapes t ∧ c'.workTapePos t = c.workTapePos t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "`popBack` on an empty tape: two steps, nothing.",
+  "module": "MIPRE.TM.Interp.Routines",
+  "module_doc": "/-!\n# The routines: specifications of the instructions\n\nEach instruction's specification is a reachability statement: from a configuration at\nthe instruction's first phase, with the tapes it reads in a stated shape, a bounded\nnumber of steps leads to the configuration at the next instruction, with the stated\neffect on the tapes it touches and none on the others (`Untouched`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Routines.lean#L767-L792",
+  "source_path": "MIPRE/TM/Interp/Routines.lean",
+  "lines": [
+   767,
+   792
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 16,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.exec_popBack",
+  "source_name": "MIPRE.TM.Interp.exec_popBack",
+  "formal_statement": "theorem MIPRE.TM.Interp.exec_popBack {k : ProgId} {pc : Fin maxPc} {m : Sym} {t : WT}\n    (hins : instrAt k pc = .popBack m t) (hpc : pc.val + 1 < maxPc) (l : List Sym) (a : Sym)\n    (c : Cfg input) (hq : c.state = at_ k pc)\n    (hl : Holds (c.workTapes t) (c.workTapePos t - l.length - 1) (l ++ [a])) (hm : ∀ s ∈ l, s ≠ m)\n    (hend : c.workTapes t (c.workTapePos t - l.length - 2) = some m ∨\n      c.workTapes t (c.workTapePos t - l.length - 2) = none) :\n    ∃ c', Reach c (l.length + 3) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [t] ∧\n      (∀ q, (q < c.workTapePos t - l.length - 1 ∨ c.workTapePos t ≤ q) →\n        c'.workTapes t q = c.workTapes t q) ∧\n      BlankFrom (c'.workTapes t) (c.workTapePos t - l.length - 1) (l.length + 1) ∧\n      c'.workTapePos t = c.workTapePos t - l.length - 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "`popBack`: from the end `pos`, with `l ++ [a]` on `pos - |l| - 1 … pos - 1`, `l` free of\n`m`, and the marker or a blank before: erase them, ending at `pos - |l| - 1`.",
+  "module": "MIPRE.TM.Interp.Routines",
+  "module_doc": "/-!\n# The routines: specifications of the instructions\n\nEach instruction's specification is a reachability statement: from a configuration at\nthe instruction's first phase, with the tapes it reads in a stated shape, a bounded\nnumber of steps leads to the configuration at the next instruction, with the stated\neffect on the tapes it touches and none on the others (`Untouched`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Routines.lean#L794-L852",
+  "source_path": "MIPRE/TM/Interp/Routines.lean",
+  "lines": [
+   794,
+   852
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.scan_popBack"
+  ],
+  "pasted_helpers": 24,
+  "prooflines": 46,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.exec_charge_one",
+  "source_name": "MIPRE.TM.Interp.exec_charge_one",
+  "formal_statement": "theorem MIPRE.TM.Interp.exec_charge_one {k : ProgId} {pc : Fin maxPc}\n    (hins : instrAt k pc = .charge false) (hpc : pc.val + 1 < maxPc) (c : Cfg input)\n    (hq : c.state = at_ k pc) {r : ℕ} (hb : Unary (c.workTapes BUD) (r + 1))\n    (hpos : c.workTapePos BUD = r + 1) :\n    ∃ c', Reach c 2 c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [BUD] ∧\n      Unary (c'.workTapes BUD) r ∧ c'.workTapePos BUD = r := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "`charge`: one step left, then a pop per unit; halts on an exhausted budget.",
+  "module": "MIPRE.TM.Interp.Routines",
+  "module_doc": "/-!\n# The routines: specifications of the instructions\n\nEach instruction's specification is a reachability statement: from a configuration at\nthe instruction's first phase, with the tapes it reads in a stated shape, a bounded\nnumber of steps leads to the configuration at the next instruction, with the stated\neffect on the tapes it touches and none on the others (`Untouched`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Routines.lean#L901-L930",
+  "source_path": "MIPRE/TM/Interp/Routines.lean",
+  "lines": [
+   901,
+   930
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 20,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.exec_charge_one_fail",
+  "source_name": "MIPRE.TM.Interp.exec_charge_one_fail",
+  "formal_statement": "theorem MIPRE.TM.Interp.exec_charge_one_fail {k : ProgId} {pc : Fin maxPc}\n    (hins : instrAt k pc = .charge false) (c : Cfg input)\n    (hq : c.state = at_ k pc) (hb : Unary (c.workTapes BUD) 0) : HaltsIn c 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Routines",
+  "module_doc": "/-!\n# The routines: specifications of the instructions\n\nEach instruction's specification is a reachability statement: from a configuration at\nthe instruction's first phase, with the tapes it reads in a stated shape, a bounded\nnumber of steps leads to the configuration at the next instruction, with the stated\neffect on the tapes it touches and none on the others (`Untouched`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Routines.lean#L932-L946",
+  "source_path": "MIPRE/TM/Interp/Routines.lean",
+  "lines": [
+   932,
+   946
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 14,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.scan_rewindInput",
+  "source_name": "MIPRE.TM.Interp.scan_rewindInput",
+  "formal_statement": "theorem MIPRE.TM.Interp.scan_rewindInput {k : ProgId} {pc : Fin maxPc} {j : IT}\n    (hins : instrAt k pc = .rewindInput j) (hpc : pc.val + 1 < maxPc) (q : ℕ) :\n    ∀ (c : Cfg input), c.state = some ⟨k, pc, p1⟩ → (c.inputPos j : ℕ) = q →\n      q ≤ (input j).length →\n    ∃ c', Reach c (q + 1) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [j] [] ∧\n      (c'.inputPos j : ℕ) = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "The scan of `rewindInput` (phase `p1`): from position `q` to position `0`.",
+  "module": "MIPRE.TM.Interp.Routines",
+  "module_doc": "/-!\n# The routines: specifications of the instructions\n\nEach instruction's specification is a reachability statement: from a configuration at\nthe instruction's first phase, with the tapes it reads in a stated shape, a bounded\nnumber of steps leads to the configuration at the next instruction, with the stated\neffect on the tapes it touches and none on the others (`Untouched`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Routines.lean#L995-L1030",
+  "source_path": "MIPRE/TM/Interp/Routines.lean",
+  "lines": [
+   995,
+   1030
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 20,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.exec_rewindInput",
+  "source_name": "MIPRE.TM.Interp.exec_rewindInput",
+  "formal_statement": "theorem MIPRE.TM.Interp.exec_rewindInput {k : ProgId} {pc : Fin maxPc} {j : IT}\n    (hins : instrAt k pc = .rewindInput j) (hpc : pc.val + 1 < maxPc) (c : Cfg input)\n    (hq : c.state = at_ k pc) :\n    ∃ n ≤ (c.inputPos j : ℕ) + 2, ∃ c', Reach c n c' [] ∧ c'.state = next_ k pc hpc ∧\n      Untouched c c' [j] [] ∧ (c'.inputPos j : ℕ) = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Routines",
+  "module_doc": "/-!\n# The routines: specifications of the instructions\n\nEach instruction's specification is a reachability statement: from a configuration at\nthe instruction's first phase, with the tapes it reads in a stated shape, a bounded\nnumber of steps leads to the configuration at the next instruction, with the stated\neffect on the tapes it touches and none on the others (`Untouched`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Routines.lean#L1032-L1055",
+  "source_path": "MIPRE/TM/Interp/Routines.lean",
+  "lines": [
+   1032,
+   1055
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.scan_rewindInput"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.init_run",
+  "source_name": "MIPRE.TM.Interp.init_run",
+  "formal_statement": "theorem MIPRE.TM.Interp.init_run (D : Prog) (n : ℕ) (x y a b : BitStr) (Tb : ℕ) (ha : a.length ≤ Tb)\n    (hb : b.length ≤ Tb) :\n    ∃ m ≤ initBound D n x y a b Tb, ∃ (c : Cfg (uInput D n Tb x y a b)) (ds : WT → TapeSt),\n      Reach (U.initCfg (uInput D n Tb x y a b)) m c [] ∧ Desc c (at_ .dispatch 0) ds ∧\n      RepOf ds ⟨.ev D, [encode (n, x, y, a, b)], []⟩ Tb (ctrlRepr (.ev D)).length 0 ∧\n      (ds X).l.length = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "**The initialization**: from the initial configuration on the inputs `(𝒟, n, T, x, y, a, b)`\nwith `|a|, |b| ≤ T`, `U` reaches the dispatcher representing `⟨ev 𝒟, [encode (n, x, y, a, b)], []⟩`\nwith budget `Tb` and an empty scratch tape.",
+  "module": "MIPRE.TM.Interp.Run",
+  "module_doc": "/-!\n# The run of the interpreter\n\nThe inputs of `U` (`uInput`), the initialization (`init_run`), the simulation of a run of the\nevaluation machine (`sim_run`), and the acceptance theorem: on the inputs\n`(𝒟, n, T, x, y, a, b)` with `|a|, |b| ≤ T`, `U` accepts (halts having output `1`) iff `𝒟`\naccepts `(n, x, y, a, b)` within cost `T`, and then within an explicit polynomial number of\nsteps.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Run.lean#L274-L357",
+  "source_path": "MIPRE/TM/Interp/Run.lean",
+  "lines": [
+   274,
+   357
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.TapeIs.of_overwrite",
+   "MIPRE.TM.Interp.exec_buildAnswer",
+   "MIPRE.TM.Interp.exec_copyUnary",
+   "MIPRE.TM.Interp.exec_copyInputBits",
+   "MIPRE.TM.Interp.exec_checkLen",
+   "MIPRE.TM.Interp.exec_rewindInput"
+  ],
+  "pasted_helpers": 57,
+  "prooflines": 75,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.sim_run",
+  "source_name": "MIPRE.TM.Interp.sim_run",
+  "formal_statement": "theorem MIPRE.TM.Interp.sim_run (Z : ℕ) : ∀ (N : ℕ) (m : Machine.Cfg) (c : Cfg input) (ds : WT → TapeSt) (r : ℕ),\n    Desc c (at_ .dispatch 0) ds → RepOf ds m r (ctrlRepr m.ctrl).length (kontRepr m.kont).length →\n    (∀ i < N, sz (Machine.step^[i] m) ≤ Z) →\n    (∀ i < N, ∀ v, (Machine.step^[i] m).ctrl = .ret v → (Machine.step^[i] m).kont ≠ []) →\n    costSum m N ≤ r →\n    ∃ n, N ≤ n ∧ n ≤ N * stepB Z ((ds X).l.length + N * Z) ∧ ∃ (c' : Cfg input) (ds' : WT → TapeSt),\n      Reach c n c' [] ∧ Desc c' (at_ .dispatch 0) ds' ∧\n      RepOf ds' (Machine.step^[N] m) (r - costSum m N) (ctrlRepr (Machine.step^[N] m).ctrl).length\n        (kontRepr (Machine.step^[N] m).kont).length ∧\n      (ds' X).l.length ≤ (ds X).l.length + N * Z := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "**The simulation**: `N` steps of the machine, none of them from a final configuration, with\ntheir total cost covered by the budget, are simulated by at least `N` and at most\n`N · stepB Z (xl + N Z)` steps of `U`.",
+  "module": "MIPRE.TM.Interp.Run",
+  "module_doc": "/-!\n# The run of the interpreter\n\nThe inputs of `U` (`uInput`), the initialization (`init_run`), the simulation of a run of the\nevaluation machine (`sim_run`), and the acceptance theorem: on the inputs\n`(𝒟, n, T, x, y, a, b)` with `|a|, |b| ≤ T`, `U` accepts (halts having output `1`) iff `𝒟`\naccepts `(n, x, y, a, b)` within cost `T`, and then within an explicit polynomial number of\nsteps.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Run.lean#L425-L468",
+  "source_path": "MIPRE/TM/Interp/Run.lean",
+  "lines": [
+   425,
+   468
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.step_run"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.accepts_of_acceptsWithin",
+  "source_name": "MIPRE.TM.Interp.accepts_of_acceptsWithin",
+  "formal_statement": "theorem MIPRE.TM.Interp.accepts_of_acceptsWithin (D : Decider) (n : ℕ) (x y a b : BitStr) (Tb : ℕ)\n    (ha : a.length ≤ Tb) (hb : b.length ≤ Tb) (h : D.AcceptsWithin n x y a b Tb) :\n    ∃ m ≤ runBound D.prog n x y a b Tb, AcceptsFrom (U.initCfg (uInput D.prog n Tb x y a b)) m := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "**Completeness**: if `𝒟` accepts `(n, x, y, a, b)` within cost `T` (and `|a|, |b| ≤ T`),\n`U` accepts the inputs `(𝒟, n, T, x, y, a, b)` within `runBound` steps.",
+  "module": "MIPRE.TM.Interp.Run",
+  "module_doc": "/-!\n# The run of the interpreter\n\nThe inputs of `U` (`uInput`), the initialization (`init_run`), the simulation of a run of the\nevaluation machine (`sim_run`), and the acceptance theorem: on the inputs\n`(𝒟, n, T, x, y, a, b)` with `|a|, |b| ≤ T`, `U` accepts (halts having output `1`) iff `𝒟`\naccepts `(n, x, y, a, b)` within cost `T`, and then within an explicit polynomial number of\nsteps.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Run.lean#L519-L576",
+  "source_path": "MIPRE/TM/Interp/Run.lean",
+  "lines": [
+   519,
+   576
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Machine.eval_steps_count",
+   "MIPRE.Cost.Machine.eval_steps_bound",
+   "MIPRE.TM.Interp.length_frameRepr_le",
+   "MIPRE.TM.Interp.init_run",
+   "MIPRE.TM.Interp.sim_run",
+   "MIPRE.TM.Interp.final_run"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 53,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.acceptsWithin_of_accepts",
+  "source_name": "MIPRE.TM.Interp.acceptsWithin_of_accepts",
+  "formal_statement": "theorem MIPRE.TM.Interp.acceptsWithin_of_accepts (D : Decider) (n : ℕ) (x y a b : BitStr) (Tb : ℕ)\n    (ha : a.length ≤ Tb) (hb : b.length ≤ Tb) (S : ℕ)\n    (hS : (U.configs (U.initCfg (uInput D.prog n Tb x y a b)) S).state = none ∧\n      U.outputString (U.initCfg (uInput D.prog n Tb x y a b)) S = [.one]) :\n    D.AcceptsWithin n x y a b Tb := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "**Soundness**: if `U` accepts the inputs `(𝒟, n, T, x, y, a, b)` (with `|a|, |b| ≤ T`) at some\ntime `S`, `𝒟` accepts `(n, x, y, a, b)` within cost `T`.",
+  "module": "MIPRE.TM.Interp.Run",
+  "module_doc": "/-!\n# The run of the interpreter\n\nThe inputs of `U` (`uInput`), the initialization (`init_run`), the simulation of a run of the\nevaluation machine (`sim_run`), and the acceptance theorem: on the inputs\n`(𝒟, n, T, x, y, a, b)` with `|a|, |b| ≤ T`, `U` accepts (halts having output `1`) iff `𝒟`\naccepts `(n, x, y, a, b)` within cost `T`, and then within an explicit polynomial number of\nsteps.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Run.lean#L578-L663",
+  "source_path": "MIPRE/TM/Interp/Run.lean",
+  "lines": [
+   578,
+   663
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Machine.eval_of_steps",
+   "MIPRE.TM.Interp.init_run",
+   "MIPRE.TM.Interp.sim_run",
+   "MIPRE.TM.Interp.final_run",
+   "MIPRE.TM.Interp.step_fail"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 79,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.size_get_le",
+  "source_name": "MIPRE.TM.Interp.size_get_le",
+  "formal_statement": "theorem MIPRE.TM.Interp.size_get_le (env : Env) (i : ℕ) : (Env.get env i).size ≤ (envRepr env).length + 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean#L206-L217",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "lines": [
+   206,
+   217
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.evDispatch_round",
+  "source_name": "MIPRE.TM.Interp.evDispatch_round",
+  "formal_statement": "theorem MIPRE.TM.Interp.evDispatch_round {pc : Fin maxPc} {tgt : ProgId} (h1 : instrAt .evDispatch pc = .move C true)\n    (h2 : pc.val + 1 < maxPc) (h2' : instrAt .evDispatch ⟨pc.val + 1, h2⟩ = .move C true)\n    (h3 : pc.val + 2 < maxPc) (h3' : instrAt .evDispatch ⟨pc.val + 2, h3⟩ = .branch C (some .zero) tgt)\n    {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evDispatch pc) ds) :\n    ((ds C).l[(ds C).p + 2]? = some .zero →\n      ∃ c', Reach c 3 c' [] ∧ Desc c' (at_ tgt 0) (Function.update ds C ⟨(ds C).l, (ds C).p + 2⟩)) ∧\n    ((ds C).l[(ds C).p + 2]? ≠ some .zero → (h4 : pc.val + 2 + 1 < maxPc) →\n      ∃ c', Reach c 3 c' [] ∧\n        Desc c' (next_ .evDispatch ⟨pc.val + 2, h3⟩ h4)\n          (Function.update ds C ⟨(ds C).l, (ds C).p + 2⟩)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "One round of `evDispatch`: two moves and a branch on the bit two cells right.",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean#L223-L244",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "lines": [
+   223,
+   244
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 36,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.dispatch_ev",
+  "source_name": "MIPRE.TM.Interp.dispatch_ev",
+  "formal_statement": "theorem MIPRE.TM.Interp.dispatch_ev {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispatch 0) ds)\n    {p : Prog} {env : Env} {k : List Frame} {r : ℕ}\n    (hr : RepOf ds ⟨.ev p, env, k⟩ r (ctrlRepr (.ev p)).length (kontRepr k).length) :\n    PreTo1 c ((ctrlRepr (.ev p)).length + 26) (at_ (evTarget p) 0) ⟨.ev p, env, k⟩ r (evHead p)\n      (kontRepr k).length (ds X).l.length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "From the dispatcher, a control `ev p` reaches its case program with the head of `C` on the\nfinal `0` of the tag.",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean#L265-L382",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "lines": [
+   265,
+   382
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.D_rewind",
+   "MIPRE.TM.Interp.evDispatch_round"
+  ],
+  "pasted_helpers": 51,
+  "prooflines": 111,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.case_evVar",
+  "source_name": "MIPRE.TM.Interp.case_evVar",
+  "formal_statement": "theorem MIPRE.TM.Interp.case_evVar {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evVar 0) ds)\n    {i : ℕ} {env : Env} {k : List Frame} {r : ℕ}\n    (hr : RepOf ds ⟨.ev (.var i), env, k⟩ (r + ((Env.get env i).size + 1)) 2 (kontRepr k).length) :\n    StepTo c (caseBound ⟨.ev (.var i), env, k⟩ (ds X).l.length) ⟨.ret (Env.get env i), env, k⟩ r\n      ((ds X).l.length + sz ⟨.ev (.var i), env, k⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean#L436-L482",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "lines": [
+   436,
+   482
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.D_rewind",
+   "MIPRE.TM.Interp.D_charge",
+   "MIPRE.TM.Interp.D_getEnv",
+   "MIPRE.TM.Interp.D_copyTree_charge",
+   "MIPRE.TM.Interp.D_write",
+   "MIPRE.TM.Interp.size_get_le"
+  ],
+  "pasted_helpers": 45,
+  "prooflines": 42,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.case_evCons",
+  "source_name": "MIPRE.TM.Interp.case_evCons",
+  "formal_statement": "theorem MIPRE.TM.Interp.case_evCons {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evCons 0) ds)\n    {h t : Prog} {env : Env} {k : List Frame} {r : ℕ}\n    (hr : RepOf ds ⟨.ev (.cons h t), env, k⟩ r 6 (kontRepr k).length) :\n    PreTo c (caseBound ⟨.ev (.cons h t), env, k⟩ (ds X).l.length) (at_ .evCons 15)\n      ⟨.ev h, env, .cons1 t env :: k⟩ r (ctrlRepr (.ev h)).length\n      (kontRepr (.cons1 t env :: k)).length ((ds X).l.length + sz ⟨.ev (.cons h t), env, k⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "The common tail of `evCons` and `evLet`: after the frame is pushed, rebuild the control\nfrom the scratch tape and charge. Stated inline in each case.",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean#L592-L657",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "lines": [
+   592,
+   657
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.D_rewind",
+   "MIPRE.TM.Interp.D_copyUntil",
+   "MIPRE.TM.Interp.D_copyTree",
+   "MIPRE.TM.Interp.D_write"
+  ],
+  "pasted_helpers": 43,
+  "prooflines": 58,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.case_evElim_nil",
+  "source_name": "MIPRE.TM.Interp.case_evElim_nil",
+  "formal_statement": "theorem MIPRE.TM.Interp.case_evElim_nil {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evElim 0) ds)\n    {i : ℕ} {n cc : Prog} {env : Env} {k : List Frame} {r : ℕ}\n    (hr : RepOf ds ⟨.ev (.elim i n cc), env, k⟩ r 8 (kontRepr k).length)\n    (hv : Env.get env i = .nil) :\n    PreTo c (caseBound ⟨.ev (.elim i n cc), env, k⟩ (ds X).l.length) (at_ .evElimNil 6)\n      ⟨.ev n, env, k⟩ r (ctrlRepr (.ev n)).length (kontRepr k).length\n      ((ds X).l.length + sz ⟨.ev (.elim i n cc), env, k⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "`elim` when the value is `nil`: evaluate `n`.",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean#L696-L759",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "lines": [
+   696,
+   759
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.D_rewind",
+   "MIPRE.TM.Interp.D_getEnv",
+   "MIPRE.TM.Interp.D_copyTree",
+   "MIPRE.TM.Interp.D_write"
+  ],
+  "pasted_helpers": 49,
+  "prooflines": 56,
+  "is_target": false
+ }
+]

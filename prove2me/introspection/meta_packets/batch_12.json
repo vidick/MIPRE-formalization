@@ -1,0 +1,741 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.SimulPair.sum_bornProb_cubeData_ge",
+  "source_name": "MIPRE.QLD.SimulPair.sum_bornProb_cubeData_ge",
+  "formal_statement": "theorem MIPRE.QLD.SimulPair.sum_bornProb_cubeData_ge {hm : m ∣ Fintype.card F} {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (hd : 1 ≤ d) (W : Bas) :\n    1 - (δ + 2 * ((δ + Real.sqrt (688 * ε)) + (m : ℝ) * d / Fintype.card F))\n      ≤ ∑ u, uniform (Point F m) u * ∑ g,\n          bornProb P.Φ (((polyMarg P.SA W).mats g).val)\n            (aOp (hatMats MB W u (dotF (cubeData g) (indVec u)))) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.SimulPair",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl MvPolynomial",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable (P : SimulPair ψ MA MB δ)"
+  ],
+  "docstring": "**`lem:qld-exact-paulis`, item 1, as the agreement the appendix's chain establishes.**\n\n`mTilde` reads the outcome `g` through the value at `u` of the encoding of its cube data,\n`\\coded(g) . ind_m(u)`, and not through `g(u)`; expanding its definition and contracting the\ngeneralized Pauli on the opposite party's ancilla against the strategy's point measurement turns\nthe agreement of `mTilde` with `M^{(Point,W),u}` into the left-hand side below. It differs from\nthe helper's agreement only at outcomes that are not their own encoding, where the two labels can\ndiffer, and each term is at most the outcome's own weight; so twice the mass off the interpolants\npays for the substitution.",
+  "module": "MIPRE.Background.QLD.Multilinear",
+  "module_doc": "/-!\n# The mass at non-multilinear outcomes (`lem:qld-exact-paulis`, the approximate half)\n\nThe Pauli construction of `MIPRE/Background/QLD/ExactPauli.lean` reads an outcome `g` of the\nsimultaneous measurement through the *multilinear interpolant* of its values on the boolean cube,\n`Coded(g) · ind_m(u)`, rather than through `g(u)` itself. The two agree exactly when `g` is\nmultilinear and not otherwise, so the construction is consistent with the strategy's point\nmeasurement up to the mass the simultaneous measurement puts on non-multilinear outcomes.\n\nThat mass is what the paper's `lem:qld-construct-the-paulis` bounds, in an argument it repaired\ntwice. The repair is to compare the outcome not with the point measurement --- whose label depends\non the sampled point --- but with a projective family indexed by **cube data**, which does not.\nThen the point is independent of the operators, and Schwartz--Zippel applies in the direction it\nis true in: two distinct polynomials of total degree `md` *agree* on at most an `md/q` fraction.\n\nThis file is the aggregation step, stated so that its two inputs are visible: a lower bound on the\nagreement with the cube-data family, and a uniform bound on the probability that a bad outcome\nagrees with any one of its labels.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Multilinear.lean#L499-L549",
+  "source_path": "MIPRE/Background/QLD/Multilinear.lean",
+  "lines": [
+   499,
+   549
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.isPVM_hatMats",
+   "MIPRE.QLD.sum_diag_eq_one_sub",
+   "MIPRE.sum_uniform_eq_one",
+   "MIPRE.QLD.sum_uniform_agree_ldEnc_le_of_not_isInterp",
+   "MIPRE.QLD.SimulPair.sum_bornProb_off_le",
+   "MIPRE.sum_bornProb_map_eq",
+   "MIPRE.QLD.sum_sub_le_of_eq_on",
+   "MIPRE.POVM.map_map",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.IsPVM.posSemidef",
+   "MIPRE.IsPVM.aOp"
+  ],
+  "pasted_helpers": 20,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.nonMultilinear_mass_le",
+  "source_name": "MIPRE.QLD.nonMultilinear_mass_le",
+  "formal_statement": "theorem MIPRE.QLD.nonMultilinear_mass_le {S T : G → ℝ} {ML : Finset G} {c eta : ℝ}\n    (hS : ∀ g, 0 ≤ S g) (hsum : ∑ g, S g = 1) (hT : ∀ g, T g ≤ S g)\n    (hoff : ∀ g ∉ ML, T g ≤ c * S g) (hc : 0 ≤ c) (hlow : 1 - eta ≤ ∑ g, T g) :\n    ∑ g ∈ univ \\ ML, S g ≤ eta + c := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset MvPolynomial MIPRE.LowDegree",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ}",
+   "variable {G : Type*} [Fintype G] [DecidableEq G]"
+  ],
+  "docstring": "**The mass bound.** If `T` is dominated by the distribution `S`, is at most `c` times `S` away\nfrom the good set `ML`, and still carries total weight at least `1 - eta`, then `S` puts at most\n`eta + c` off `ML`.\n\nThis is the appendix's aggregation step, and it is the shape the repaired argument needs: the\nagreement bound of `prob_agree_ldEnc_le_of_not_multilinear` is exactly the hypothesis `hoff` at\n`c = md/q`. The proof is one split of the total: on `ML` only the domination `T <= S` is available,\noff `ML` the agreement bound applies, and comparing with `sum S = 1` isolates the mass off `ML`.",
+  "module": "MIPRE.Background.QLD.NonMultilinear",
+  "module_doc": "/-!\n# The non-multilinear mass, and Schwartz--Zippel in the agreement direction\n\nThis file is the repair of the campaign's critical finding at ledger node `1.2.2.15`, recorded in\nblueprint `rem:qld-admitted`.\n\nThe separating stage of the appendix needs to replace, inside a Born average, the evaluation\n`g(u)` of an outcome `g` of individual degree at most `d` by the evaluation\n`Coded(g) . ind_m(u)` --- which is the evaluation at `u` of the *multilinear* interpolant of `g`'s\nvalues on the cube `{0,1}^m`. The two agree for multilinear `g` and not otherwise.\n\nAn earlier revision of the paper bounded the substitution error by `2 E_u 1[g(u) != g_k(u)] <=\n2md/q`. **That applies Schwartz--Zippel backwards.** What Schwartz--Zippel gives is that two\n*distinct* polynomials of total degree at most `md` *agree* on at most an `md/q` fraction of\n`F_q^m`; so for a non-multilinear `g` the *disagreement* indicator has expectation close to `1`,\nnot close to `0`, and the step as written was equivalent to an unproven assertion.\n\nThe two halves of the correct argument are the two halves of this file, and neither mentions the\ngame.\n\n## The agreement bound, in the right direction\n\n`prob_agree_ldEnc_le_of_not_multilinear`: a polynomial of individual degree at most `d` that is\n**not** multilinear agrees with the multilinear interpolant of *any* boolean-cube data on at most\nan `md/q` fraction of points. The point is that non-multilinearity makes `g` distinct from every\nmultilinear polynomial at once, so a single application of\n`MIPRE.LowDegree.prob_agree_le_individualDegree` covers every `k` uniformly --- which is what the\nnext step needs, since it sums over `k`.\n\n## The mass bound\n\n`nonMultilinear_mass_le`: the combinatorial step that turns the agreement bound into a bound on the\n*mass* the outcome distribution places on non-multilinear outcomes. Stated for abstract\nnonnegative weights, because that is all it uses: a distribution `S` on outcomes, a subdistribution\n`T` dominated by it, a set `ML` of good outcomes, the agreement bound `T g <= c * S g` off `ML`,\nand a lower bound `1 - eta` on `T`'s total. The conclusion is `S (ML^c) <= eta + c`.\n\n`sum_sub_le_of_eq_on`: the substitution error itself, once the mass is bounded. Two families\nagreeing on `ML` and each dominated by `S` in absolute value differ in total by at most twice the\nmass off `ML`.\n\n## What is not here\n\nThat the substituted quantity agrees with the original *on* the multilinear outcomes --- the\npaper's parenthesis \"there `g_{Coded(g)} = g`\" --- is the statement that a multilinear polynomial\nis the interpolant of its own values on `{0,1}^m`, i.e. that multilinear interpolation is unique.\nIt is an independent fact about `MvPolynomial`, not part of this repair, and it is an outstanding\ningredient: `sum_sub_le_of_eq_on` accordingly takes the agreement on the good set as a\nhypothesis rather than deriving it.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/NonMultilinear.lean#L90-L118",
+  "source_path": "MIPRE/Background/QLD/NonMultilinear.lean",
+  "lines": [
+   90,
+   118
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_sub_le_of_eq_on",
+  "source_name": "MIPRE.QLD.sum_sub_le_of_eq_on",
+  "formal_statement": "theorem MIPRE.QLD.sum_sub_le_of_eq_on {A B S : G → ℝ} {ML : Finset G}\n    (hon : ∀ g ∈ ML, A g = B g) (hA : ∀ g, |A g| ≤ S g) (hB : ∀ g, |B g| ≤ S g) :\n    |∑ g, A g - ∑ g, B g| ≤ 2 * ∑ g ∈ univ \\ ML, S g := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset MvPolynomial MIPRE.LowDegree",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ}",
+   "variable {G : Type*} [Fintype G] [DecidableEq G]"
+  ],
+  "docstring": "**The substitution error.** Two families that agree on `ML` and are each dominated in absolute\nvalue by `S` differ in total by at most twice the mass off `ML`.",
+  "module": "MIPRE.Background.QLD.NonMultilinear",
+  "module_doc": "/-!\n# The non-multilinear mass, and Schwartz--Zippel in the agreement direction\n\nThis file is the repair of the campaign's critical finding at ledger node `1.2.2.15`, recorded in\nblueprint `rem:qld-admitted`.\n\nThe separating stage of the appendix needs to replace, inside a Born average, the evaluation\n`g(u)` of an outcome `g` of individual degree at most `d` by the evaluation\n`Coded(g) . ind_m(u)` --- which is the evaluation at `u` of the *multilinear* interpolant of `g`'s\nvalues on the cube `{0,1}^m`. The two agree for multilinear `g` and not otherwise.\n\nAn earlier revision of the paper bounded the substitution error by `2 E_u 1[g(u) != g_k(u)] <=\n2md/q`. **That applies Schwartz--Zippel backwards.** What Schwartz--Zippel gives is that two\n*distinct* polynomials of total degree at most `md` *agree* on at most an `md/q` fraction of\n`F_q^m`; so for a non-multilinear `g` the *disagreement* indicator has expectation close to `1`,\nnot close to `0`, and the step as written was equivalent to an unproven assertion.\n\nThe two halves of the correct argument are the two halves of this file, and neither mentions the\ngame.\n\n## The agreement bound, in the right direction\n\n`prob_agree_ldEnc_le_of_not_multilinear`: a polynomial of individual degree at most `d` that is\n**not** multilinear agrees with the multilinear interpolant of *any* boolean-cube data on at most\nan `md/q` fraction of points. The point is that non-multilinearity makes `g` distinct from every\nmultilinear polynomial at once, so a single application of\n`MIPRE.LowDegree.prob_agree_le_individualDegree` covers every `k` uniformly --- which is what the\nnext step needs, since it sums over `k`.\n\n## The mass bound\n\n`nonMultilinear_mass_le`: the combinatorial step that turns the agreement bound into a bound on the\n*mass* the outcome distribution places on non-multilinear outcomes. Stated for abstract\nnonnegative weights, because that is all it uses: a distribution `S` on outcomes, a subdistribution\n`T` dominated by it, a set `ML` of good outcomes, the agreement bound `T g <= c * S g` off `ML`,\nand a lower bound `1 - eta` on `T`'s total. The conclusion is `S (ML^c) <= eta + c`.\n\n`sum_sub_le_of_eq_on`: the substitution error itself, once the mass is bounded. Two families\nagreeing on `ML` and each dominated by `S` in absolute value differ in total by at most twice the\nmass off `ML`.\n\n## What is not here\n\nThat the substituted quantity agrees with the original *on* the multilinear outcomes --- the\npaper's parenthesis \"there `g_{Coded(g)} = g`\" --- is the statement that a multilinear polynomial\nis the interpolant of its own values on `{0,1}^m`, i.e. that multilinear interpolation is unique.\nIt is an independent fact about `MvPolynomial`, not part of this repair, and it is an outstanding\ningredient: `sum_sub_le_of_eq_on` accordingly takes the agreement on the good set as a\nhypothesis rather than deriving it.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/NonMultilinear.lean#L120-L138",
+  "source_path": "MIPRE/Background/QLD/NonMultilinear.lean",
+  "lines": [
+   120,
+   138
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.exists_projective_of_nearProjective",
+  "source_name": "MIPRE.QLD.exists_projective_of_nearProjective",
+  "formal_statement": "theorem MIPRE.QLD.exists_projective_of_nearProjective {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)\n    (Q : POVM A dA) (ε : ℝ) (hε : 1 - ε < ∑ a, stateSqNorm ψ ((Q.mats a).val)) :\n    ∃ P : A → Matrix dA dA ℂ,\n      (∀ a, (P a)ᴴ = P a) ∧ (∀ a, P a * P a = P a) ∧ (∑ a, P a = 1) ∧\n        ∑ a, stateSqNorm ψ ((Q.mats a).val - P a) < 9 * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix Kronecker MIPRE",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {A : Type*} [Fintype A] [DecidableEq A]",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**From near-projectivity to a projective measurement**, in the vocabulary of `MIPRE.POVM` and\n`def:state-distance`. This is `thm:orthonormalization` applied on Alice's space with the reduced\nstate of `ψ`; the hypothesis is its `φ(∑ aᵢ²) > 1 − ε`, which here reads\n`∑ₐ ‖(Qₐ ⊗ Id)|ψ⟩‖² > 1 − ε` because the POVM elements are self-adjoint.",
+  "module": "MIPRE.Background.QLD.Ortho",
+  "module_doc": "/-!\n# Orthonormalization in the vocabulary of the Pauli basis test\n\nBlueprint `cor:ortho-from-consistency` turns bipartite consistency of two POVMs into closeness of\none of them to a *projective* measurement. It rests on `thm:orthonormalization`, which this\nrepository has through the vendored development, but it is not that theorem restated: the theorem\nasks for strict near-projectivity in a normal state and what the appendix has is consistency.\n\nThis file is the first half: the **interface**, from near-projectivity in the reduced state to a\nprojective family close in the state-dependent distance of `def:state-distance`. Nothing in the\nrepository had called `Orthogonalization.povm_orthogonalization_finDim` before, so the bridge from\n`MIPRE.POVM` (matrices) to its vocabulary (continuous linear maps on a Hilbert space) is here.\n\nThree choices worth recording, all of which make the bridge cheaper than it looks:\n\n* **The un-bridged form of the vendored theorem.** `Statement.lean`'s version wants a\n  `NormalState` on a `VonNeumannAlgebra`, and Mathlib has no `⊤ : VonNeumannAlgebra H`.\n  `FinDim/Main.lean`'s wants only a linear functional with `0 ≤ φ (star x * x)` and `φ 1 = 1`, so\n  there is no algebra to construct and no weak-* continuity to prove.\n* **Alice's space, not the tensor product.** The blueprint's proof text applies the theorem to the\n  algebra `L(H_A) ⊗ Id` inside `L(H_A ⊗ H_B)`; the equivalent move that needs no algebra is to\n  work on `H_A` with the *reduced* functional `x ↦ ⟨ψ| x ⊗ Id |ψ⟩`, whose projections then come\n  out on `H_A` directly, which is where the conclusion wants them.\n* **`quadForm_eq`** says `⟨ψ| M† M ⊗ Id |ψ⟩` *is* `stateSqNorm ψ M` as a complex number, so\n  positivity of the functional is immediate and the conclusion translates without a second\n  computation.\n\nThe second half --- deriving near-projectivity from consistency by the Cauchy--Schwarz step, which\nis what makes this a corollary about *consistency* --- is `Consistency.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Ortho.lean#L147-L191",
+  "source_path": "MIPRE/Background/QLD/Ortho.lean",
+  "lines": [
+   147,
+   191
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "Orthogonalization.assembled_bound",
+   "Orthogonalization.assembledPVM_isStarProjection",
+   "Orthogonalization.FinDim.exists_isometryData",
+   "Orthogonalization.FinDim.exists_commuting_projections",
+   "MIPRE.quadForm_eq"
+  ],
+  "pasted_helpers": 15,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_seedIn",
+  "source_name": "MIPRE.QLD.sum_seedIn",
+  "formal_statement": "theorem MIPRE.QLD.sum_seedIn {M : Type*} [AddCommMonoid M] (hm : m ∣ Fintype.card F) (i : Fin m)\n    (g : F → M) :\n    ∑ s : F, g (seedIn hm i s) = m • ∑ o : Fin (Fintype.card F / m), g ((seedEquiv hm).symm (i, o)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ}",
+   "variable [NeZero m]"
+  ],
+  "docstring": "**A uniform seed retargeted to a fixed block is uniform on that block.** Summing over all\nseeds counts each seed of block `i` exactly `m` times, once per block the offset could have come\nfrom. This is the only property of `seedIn` the mixture-of-products statement of\n`lem:qld-sublines` uses.",
+  "module": "MIPRE.Background.QLD.Padded",
+  "module_doc": "/-!\n# The padded space, and the sublines of a padded line\n\nBlueprint `lem:qld-sublines`. The combining stage compares a measurement of *pairs* of\n`m`-variable polynomials with a low-degree test, and a low-degree test wants a single polynomial\nin a number of variables dividing `q`. The paper's device is to pad: work over `F_q^{4m}`, whose\ncoordinates split as `u = (x, z, alpha, beta, w)` with `x, z` in `F_q^m`, `alpha, beta` in `F_q`\nand `w` in `F_q^{2m-2}` the dummy coordinates, and to combine the pair `(f_X, f_Z)` into the\nsingle polynomial `alpha f_X(x) + beta f_Z(z)`. Admissibility makes `m` a power of two, so\n`2m + 2` never divides `q = 2^k`, while `4m` does as soon as `4m <= q`; that is the whole reason\nthe dummy block is there.\n\nThis file is the geometry of that padding, and it is deliberately free of operators.\n\n## The two pieces\n\n* **The seed's block and offset.** The seeded test reads an axis index off a seed through\n  `chi`, which is \"which of the `m` equal blocks of `F` does `s` fall into\". `seedEquiv` names\n  the corresponding bijection `F ~ Fin m x Fin (q/m)`, with `chi` as its first component. Two\n  things follow that the subline construction needs: a seed can be *retargeted* to a prescribed\n  block keeping its offset (`seedIn`), and a uniform seed retargeted to a fixed block is uniform\n  on that block's fibre (`sum_seedIn`). The paper's \"choose `s_X` uniformly at random subject to\n  `chi(s_X) = i`\" is exactly this.\n* **The blocks of `F_q^{4m}`.** `xIdx`, `zIdx`, `aIdx`, `bIdx` are the coordinate positions and\n  `xBlk`, `zBlk`, `alph`, `bet` the projections. `padCase` classifies a coordinate position into\n  the four blocks, which is the case distinction the construction of `lem:qld-sublines` branches\n  on: whether the padded line's direction moves an `X` coordinate, a `Z` coordinate, or only\n  `alpha`, `beta` and the dummy coordinates.\n\n## Why `4m` and not `2m + 2`\n\n`aIdx` and `bIdx` sit at positions `2m` and `2m + 1`, so the dummy block is positions\n`2m + 2, ..., 4m - 1`, of size `2m - 2`. Every index bound below needs only `1 <= m`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Padded.lean#L95-L113",
+  "source_path": "MIPRE/Background/QLD/Padded.lean",
+  "lines": [
+   95,
+   113
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-sublines",
+    "env": "lemma",
+    "title": "The sublines distribution",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.xBlk_dir_sub",
+  "source_name": "MIPRE.QLD.xBlk_dir_sub",
+  "formal_statement": "theorem MIPRE.QLD.xBlk_dir_sub (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty)\n    (P : LPData F (4 * m)) (e : F × Point F m) :\n    xBlk (P.dir hm4 t) = (subX hm4 hm P e).dir hm t ∨ xBlk (P.dir hm4 t) = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ}",
+   "variable [NeZero m]"
+  ],
+  "docstring": "**The `X` block of the padded direction is the `X` subline's direction, or it vanishes.** This\nis the whole geometric content of the construction: in the first case the `X` block of a point moves\nalong the subline as the point moves along the padded line, in the second it does not move at all,\nand either way it stays on the subline.",
+  "module": "MIPRE.Background.QLD.Padded",
+  "module_doc": "/-!\n# The padded space, and the sublines of a padded line\n\nBlueprint `lem:qld-sublines`. The combining stage compares a measurement of *pairs* of\n`m`-variable polynomials with a low-degree test, and a low-degree test wants a single polynomial\nin a number of variables dividing `q`. The paper's device is to pad: work over `F_q^{4m}`, whose\ncoordinates split as `u = (x, z, alpha, beta, w)` with `x, z` in `F_q^m`, `alpha, beta` in `F_q`\nand `w` in `F_q^{2m-2}` the dummy coordinates, and to combine the pair `(f_X, f_Z)` into the\nsingle polynomial `alpha f_X(x) + beta f_Z(z)`. Admissibility makes `m` a power of two, so\n`2m + 2` never divides `q = 2^k`, while `4m` does as soon as `4m <= q`; that is the whole reason\nthe dummy block is there.\n\nThis file is the geometry of that padding, and it is deliberately free of operators.\n\n## The two pieces\n\n* **The seed's block and offset.** The seeded test reads an axis index off a seed through\n  `chi`, which is \"which of the `m` equal blocks of `F` does `s` fall into\". `seedEquiv` names\n  the corresponding bijection `F ~ Fin m x Fin (q/m)`, with `chi` as its first component. Two\n  things follow that the subline construction needs: a seed can be *retargeted* to a prescribed\n  block keeping its offset (`seedIn`), and a uniform seed retargeted to a fixed block is uniform\n  on that block's fibre (`sum_seedIn`). The paper's \"choose `s_X` uniformly at random subject to\n  `chi(s_X) = i`\" is exactly this.\n* **The blocks of `F_q^{4m}`.** `xIdx`, `zIdx`, `aIdx`, `bIdx` are the coordinate positions and\n  `xBlk`, `zBlk`, `alph`, `bet` the projections. `padCase` classifies a coordinate position into\n  the four blocks, which is the case distinction the construction of `lem:qld-sublines` branches\n  on: whether the padded line's direction moves an `X` coordinate, a `Z` coordinate, or only\n  `alpha`, `beta` and the dummy coordinates.\n\n## Why `4m` and not `2m + 2`\n\n`aIdx` and `bIdx` sit at positions `2m` and `2m + 1`, so the dummy block is positions\n`2m + 2, ..., 4m - 1`, of size `2m - 2`. Every index bound below needs only `1 <= m`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Padded.lean#L537-L563",
+  "source_path": "MIPRE/Background/QLD/Padded.lean",
+  "lines": [
+   537,
+   563
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-sublines",
+    "env": "lemma",
+    "title": "The sublines distribution",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 10,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.zBlk_dir_sub",
+  "source_name": "MIPRE.QLD.zBlk_dir_sub",
+  "formal_statement": "theorem MIPRE.QLD.zBlk_dir_sub (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty)\n    (P : LPData F (4 * m)) (e : F × Point F m) :\n    zBlk (P.dir hm4 t) = (subZ hm4 hm t P e).dir hm t ∨ zBlk (P.dir hm4 t) = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ}",
+   "variable [NeZero m]"
+  ],
+  "docstring": "**The `Z` block of the padded direction is the `Z` subline's direction, or it vanishes.**",
+  "module": "MIPRE.Background.QLD.Padded",
+  "module_doc": "/-!\n# The padded space, and the sublines of a padded line\n\nBlueprint `lem:qld-sublines`. The combining stage compares a measurement of *pairs* of\n`m`-variable polynomials with a low-degree test, and a low-degree test wants a single polynomial\nin a number of variables dividing `q`. The paper's device is to pad: work over `F_q^{4m}`, whose\ncoordinates split as `u = (x, z, alpha, beta, w)` with `x, z` in `F_q^m`, `alpha, beta` in `F_q`\nand `w` in `F_q^{2m-2}` the dummy coordinates, and to combine the pair `(f_X, f_Z)` into the\nsingle polynomial `alpha f_X(x) + beta f_Z(z)`. Admissibility makes `m` a power of two, so\n`2m + 2` never divides `q = 2^k`, while `4m` does as soon as `4m <= q`; that is the whole reason\nthe dummy block is there.\n\nThis file is the geometry of that padding, and it is deliberately free of operators.\n\n## The two pieces\n\n* **The seed's block and offset.** The seeded test reads an axis index off a seed through\n  `chi`, which is \"which of the `m` equal blocks of `F` does `s` fall into\". `seedEquiv` names\n  the corresponding bijection `F ~ Fin m x Fin (q/m)`, with `chi` as its first component. Two\n  things follow that the subline construction needs: a seed can be *retargeted* to a prescribed\n  block keeping its offset (`seedIn`), and a uniform seed retargeted to a fixed block is uniform\n  on that block's fibre (`sum_seedIn`). The paper's \"choose `s_X` uniformly at random subject to\n  `chi(s_X) = i`\" is exactly this.\n* **The blocks of `F_q^{4m}`.** `xIdx`, `zIdx`, `aIdx`, `bIdx` are the coordinate positions and\n  `xBlk`, `zBlk`, `alph`, `bet` the projections. `padCase` classifies a coordinate position into\n  the four blocks, which is the case distinction the construction of `lem:qld-sublines` branches\n  on: whether the padded line's direction moves an `X` coordinate, a `Z` coordinate, or only\n  `alpha`, `beta` and the dummy coordinates.\n\n## Why `4m` and not `2m + 2`\n\n`aIdx` and `bIdx` sit at positions `2m` and `2m + 1`, so the dummy block is positions\n`2m + 2, ..., 4m - 1`, of size `2m - 2`. Every index bound below needs only `1 <= m`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Padded.lean#L565-L597",
+  "source_path": "MIPRE/Background/QLD/Padded.lean",
+  "lines": [
+   565,
+   597
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-sublines",
+    "env": "lemma",
+    "title": "The sublines distribution",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 11,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_point_pad",
+  "source_name": "MIPRE.QLD.sum_point_pad",
+  "formal_statement": "theorem MIPRE.QLD.sum_point_pad {M : Type*} [AddCommMonoid M] (g : Point F m → Point F m → M) :\n    ∑ u : Point F (4 * m), g (xBlk u) (zBlk u)\n      = Fintype.card (Fin (2 * m) → F)\n        • ∑ pX : Point F m, ∑ pZ : Point F m, g pX pZ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ}",
+   "variable [NeZero m]"
+  ],
+  "docstring": "**The `X` and `Z` blocks of a uniform padded point are uniform and independent.** The remaining\n`2m` coordinates -- `alpha`, `beta` and the dummy block -- contribute the multiplicity.",
+  "module": "MIPRE.Background.QLD.Padded",
+  "module_doc": "/-!\n# The padded space, and the sublines of a padded line\n\nBlueprint `lem:qld-sublines`. The combining stage compares a measurement of *pairs* of\n`m`-variable polynomials with a low-degree test, and a low-degree test wants a single polynomial\nin a number of variables dividing `q`. The paper's device is to pad: work over `F_q^{4m}`, whose\ncoordinates split as `u = (x, z, alpha, beta, w)` with `x, z` in `F_q^m`, `alpha, beta` in `F_q`\nand `w` in `F_q^{2m-2}` the dummy coordinates, and to combine the pair `(f_X, f_Z)` into the\nsingle polynomial `alpha f_X(x) + beta f_Z(z)`. Admissibility makes `m` a power of two, so\n`2m + 2` never divides `q = 2^k`, while `4m` does as soon as `4m <= q`; that is the whole reason\nthe dummy block is there.\n\nThis file is the geometry of that padding, and it is deliberately free of operators.\n\n## The two pieces\n\n* **The seed's block and offset.** The seeded test reads an axis index off a seed through\n  `chi`, which is \"which of the `m` equal blocks of `F` does `s` fall into\". `seedEquiv` names\n  the corresponding bijection `F ~ Fin m x Fin (q/m)`, with `chi` as its first component. Two\n  things follow that the subline construction needs: a seed can be *retargeted* to a prescribed\n  block keeping its offset (`seedIn`), and a uniform seed retargeted to a fixed block is uniform\n  on that block's fibre (`sum_seedIn`). The paper's \"choose `s_X` uniformly at random subject to\n  `chi(s_X) = i`\" is exactly this.\n* **The blocks of `F_q^{4m}`.** `xIdx`, `zIdx`, `aIdx`, `bIdx` are the coordinate positions and\n  `xBlk`, `zBlk`, `alph`, `bet` the projections. `padCase` classifies a coordinate position into\n  the four blocks, which is the case distinction the construction of `lem:qld-sublines` branches\n  on: whether the padded line's direction moves an `X` coordinate, a `Z` coordinate, or only\n  `alpha`, `beta` and the dummy coordinates.\n\n## Why `4m` and not `2m + 2`\n\n`aIdx` and `bIdx` sit at positions `2m` and `2m + 1`, so the dummy block is positions\n`2m + 2, ..., 4m - 1`, of size `2m - 2`. Every index bound below needs only `1 <= m`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Padded.lean#L729-L749",
+  "source_path": "MIPRE/Background/QLD/Padded.lean",
+  "lines": [
+   729,
+   749
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-sublines",
+    "env": "lemma",
+    "title": "The sublines distribution",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 4,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sumSub_free",
+  "source_name": "MIPRE.QLD.sumSub_free",
+  "formal_statement": "theorem MIPRE.QLD.sumSub_free (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) {s : F}\n    (h : padCase (chi hm4 s) = .ab ∨ padCase (chi hm4 s) = .dum) {M : Type*} [AddCommMonoid M]\n    (g : LPData F m → LPData F m → M) :\n    sumSub hm4 hm t s g\n      = (Fintype.card (Point F (4 * m)) * Fintype.card (Fin (2 * m) → F))\n        • sumAll (fun cX => sumAll (fun cZ => g cX cZ)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ}",
+   "variable [NeZero m]"
+  ],
+  "docstring": "**Neither side is forced**: the axis index of the padded line lies in the `alpha`/`beta` block\nor among the dummy coordinates, so the padded direction moves neither the `X` nor the `Z` block and\nboth sublines are sampled fresh. Both sides get the unrestricted law.",
+  "module": "MIPRE.Background.QLD.Padded",
+  "module_doc": "/-!\n# The padded space, and the sublines of a padded line\n\nBlueprint `lem:qld-sublines`. The combining stage compares a measurement of *pairs* of\n`m`-variable polynomials with a low-degree test, and a low-degree test wants a single polynomial\nin a number of variables dividing `q`. The paper's device is to pad: work over `F_q^{4m}`, whose\ncoordinates split as `u = (x, z, alpha, beta, w)` with `x, z` in `F_q^m`, `alpha, beta` in `F_q`\nand `w` in `F_q^{2m-2}` the dummy coordinates, and to combine the pair `(f_X, f_Z)` into the\nsingle polynomial `alpha f_X(x) + beta f_Z(z)`. Admissibility makes `m` a power of two, so\n`2m + 2` never divides `q = 2^k`, while `4m` does as soon as `4m <= q`; that is the whole reason\nthe dummy block is there.\n\nThis file is the geometry of that padding, and it is deliberately free of operators.\n\n## The two pieces\n\n* **The seed's block and offset.** The seeded test reads an axis index off a seed through\n  `chi`, which is \"which of the `m` equal blocks of `F` does `s` fall into\". `seedEquiv` names\n  the corresponding bijection `F ~ Fin m x Fin (q/m)`, with `chi` as its first component. Two\n  things follow that the subline construction needs: a seed can be *retargeted* to a prescribed\n  block keeping its offset (`seedIn`), and a uniform seed retargeted to a fixed block is uniform\n  on that block's fibre (`sum_seedIn`). The paper's \"choose `s_X` uniformly at random subject to\n  `chi(s_X) = i`\" is exactly this.\n* **The blocks of `F_q^{4m}`.** `xIdx`, `zIdx`, `aIdx`, `bIdx` are the coordinate positions and\n  `xBlk`, `zBlk`, `alph`, `bet` the projections. `padCase` classifies a coordinate position into\n  the four blocks, which is the case distinction the construction of `lem:qld-sublines` branches\n  on: whether the padded line's direction moves an `X` coordinate, a `Z` coordinate, or only\n  `alpha`, `beta` and the dummy coordinates.\n\n## Why `4m` and not `2m + 2`\n\n`aIdx` and `bIdx` sit at positions `2m` and `2m + 1`, so the dummy block is positions\n`2m + 2, ..., 4m - 1`, of size `2m - 2`. Every index bound below needs only `1 <= m`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Padded.lean#L818-L861",
+  "source_path": "MIPRE/Background/QLD/Padded.lean",
+  "lines": [
+   818,
+   861
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-sublines",
+    "env": "lemma",
+    "title": "The sublines distribution",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_point_pad"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sumSub_zc",
+  "source_name": "MIPRE.QLD.sumSub_zc",
+  "formal_statement": "theorem MIPRE.QLD.sumSub_zc (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) {s : F}\n    {i : Fin m} (h : padCase (chi hm4 s) = .zc i) {M : Type*} [AddCommMonoid M]\n    (g : LPData F m → LPData F m → M) :\n    sumSub hm4 hm t s g\n      = (Fintype.card (Fin (2 * m) → F) * Fintype.card (Point F m)\n            * Fintype.card (Fin (2 * m) → F) * Fintype.card (Point F m) * m)\n        • sumAll (fun cX => sumRestr hm i (fun cZ => g cX cZ)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ}",
+   "variable [NeZero m]"
+  ],
+  "docstring": "**The `Z` side is forced**: the padded axis index lies in the `Z` block, so the `Z` subline's\ndirection is the `Z` block of the padded direction and its axis index is `i`, while the `X` block of\nthe padded direction vanishes and the `X` subline is sampled fresh. The `Z` side gets the restricted\nlaw `D_{ty,i}`, the `X` side the unrestricted one.",
+  "module": "MIPRE.Background.QLD.Padded",
+  "module_doc": "/-!\n# The padded space, and the sublines of a padded line\n\nBlueprint `lem:qld-sublines`. The combining stage compares a measurement of *pairs* of\n`m`-variable polynomials with a low-degree test, and a low-degree test wants a single polynomial\nin a number of variables dividing `q`. The paper's device is to pad: work over `F_q^{4m}`, whose\ncoordinates split as `u = (x, z, alpha, beta, w)` with `x, z` in `F_q^m`, `alpha, beta` in `F_q`\nand `w` in `F_q^{2m-2}` the dummy coordinates, and to combine the pair `(f_X, f_Z)` into the\nsingle polynomial `alpha f_X(x) + beta f_Z(z)`. Admissibility makes `m` a power of two, so\n`2m + 2` never divides `q = 2^k`, while `4m` does as soon as `4m <= q`; that is the whole reason\nthe dummy block is there.\n\nThis file is the geometry of that padding, and it is deliberately free of operators.\n\n## The two pieces\n\n* **The seed's block and offset.** The seeded test reads an axis index off a seed through\n  `chi`, which is \"which of the `m` equal blocks of `F` does `s` fall into\". `seedEquiv` names\n  the corresponding bijection `F ~ Fin m x Fin (q/m)`, with `chi` as its first component. Two\n  things follow that the subline construction needs: a seed can be *retargeted* to a prescribed\n  block keeping its offset (`seedIn`), and a uniform seed retargeted to a fixed block is uniform\n  on that block's fibre (`sum_seedIn`). The paper's \"choose `s_X` uniformly at random subject to\n  `chi(s_X) = i`\" is exactly this.\n* **The blocks of `F_q^{4m}`.** `xIdx`, `zIdx`, `aIdx`, `bIdx` are the coordinate positions and\n  `xBlk`, `zBlk`, `alph`, `bet` the projections. `padCase` classifies a coordinate position into\n  the four blocks, which is the case distinction the construction of `lem:qld-sublines` branches\n  on: whether the padded line's direction moves an `X` coordinate, a `Z` coordinate, or only\n  `alpha`, `beta` and the dummy coordinates.\n\n## Why `4m` and not `2m + 2`\n\n`aIdx` and `bIdx` sit at positions `2m` and `2m + 1`, so the dummy block is positions\n`2m + 2, ..., 4m - 1`, of size `2m - 2`. Every index bound below needs only `1 <= m`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Padded.lean#L863-L917",
+  "source_path": "MIPRE/Background/QLD/Padded.lean",
+  "lines": [
+   863,
+   917
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-sublines",
+    "env": "lemma",
+    "title": "The sublines distribution",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_point_pad",
+   "MIPRE.QLD.sum_seedIn"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 44,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sumSub_xc",
+  "source_name": "MIPRE.QLD.sumSub_xc",
+  "formal_statement": "theorem MIPRE.QLD.sumSub_xc (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) {t : CL.Ty} {s : F}\n    {i : Fin m} (h : padCase (chi hm4 s) = .xc i) (ht : t ≠ .dline) {M : Type*} [AddCommMonoid M]\n    (g : LPData F m → LPData F m → M) :\n    sumSub hm4 hm t s g\n      = (Fintype.card (Fin (2 * m) → F) * Fintype.card (Point F m)\n            * Fintype.card (Fin (2 * m) → F) * Fintype.card (Point F m) * m)\n        • sumRestr hm i (fun cX => sumAll (fun cZ => g cX cZ)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ}",
+   "variable [NeZero m]"
+  ],
+  "docstring": "**The `X` side is forced and the `Z` side is not**: the padded axis index lies in the `X` block\nand the padded line is axis-parallel (or the question is a point), so the `Z` block of its direction\nvanishes. The `X` side gets the restricted law `D_{ty,i}`, the `Z` side the unrestricted one.",
+  "module": "MIPRE.Background.QLD.Padded",
+  "module_doc": "/-!\n# The padded space, and the sublines of a padded line\n\nBlueprint `lem:qld-sublines`. The combining stage compares a measurement of *pairs* of\n`m`-variable polynomials with a low-degree test, and a low-degree test wants a single polynomial\nin a number of variables dividing `q`. The paper's device is to pad: work over `F_q^{4m}`, whose\ncoordinates split as `u = (x, z, alpha, beta, w)` with `x, z` in `F_q^m`, `alpha, beta` in `F_q`\nand `w` in `F_q^{2m-2}` the dummy coordinates, and to combine the pair `(f_X, f_Z)` into the\nsingle polynomial `alpha f_X(x) + beta f_Z(z)`. Admissibility makes `m` a power of two, so\n`2m + 2` never divides `q = 2^k`, while `4m` does as soon as `4m <= q`; that is the whole reason\nthe dummy block is there.\n\nThis file is the geometry of that padding, and it is deliberately free of operators.\n\n## The two pieces\n\n* **The seed's block and offset.** The seeded test reads an axis index off a seed through\n  `chi`, which is \"which of the `m` equal blocks of `F` does `s` fall into\". `seedEquiv` names\n  the corresponding bijection `F ~ Fin m x Fin (q/m)`, with `chi` as its first component. Two\n  things follow that the subline construction needs: a seed can be *retargeted* to a prescribed\n  block keeping its offset (`seedIn`), and a uniform seed retargeted to a fixed block is uniform\n  on that block's fibre (`sum_seedIn`). The paper's \"choose `s_X` uniformly at random subject to\n  `chi(s_X) = i`\" is exactly this.\n* **The blocks of `F_q^{4m}`.** `xIdx`, `zIdx`, `aIdx`, `bIdx` are the coordinate positions and\n  `xBlk`, `zBlk`, `alph`, `bet` the projections. `padCase` classifies a coordinate position into\n  the four blocks, which is the case distinction the construction of `lem:qld-sublines` branches\n  on: whether the padded line's direction moves an `X` coordinate, a `Z` coordinate, or only\n  `alpha`, `beta` and the dummy coordinates.\n\n## Why `4m` and not `2m + 2`\n\n`aIdx` and `bIdx` sit at positions `2m` and `2m + 1`, so the dummy block is positions\n`2m + 2, ..., 4m - 1`, of size `2m - 2`. Every index bound below needs only `1 <= m`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Padded.lean#L919-L980",
+  "source_path": "MIPRE/Background/QLD/Padded.lean",
+  "lines": [
+   919,
+   980
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-sublines",
+    "env": "lemma",
+    "title": "The sublines distribution",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_point_pad",
+   "MIPRE.QLD.sum_seedIn"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 52,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sumSub_xc_dline",
+  "source_name": "MIPRE.QLD.sumSub_xc_dline",
+  "formal_statement": "theorem MIPRE.QLD.sumSub_xc_dline (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) {s : F}\n    {i : Fin m} (h : padCase (chi hm4 s) = .xc i) {M : Type*} [AddCommMonoid M]\n    (g : LPData F m → LPData F m → M) :\n    sumSub hm4 hm .dline s g\n      = (Fintype.card (Fin (2 * m) → F) * Fintype.card (Fin (2 * m) → F)\n            * Fintype.card (Point F m) * m * Fintype.card (Point F m) * m)\n        • sumRestr hm i (fun cX => sumRestr hm 0 (fun cZ => g cX cZ)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ}",
+   "variable [NeZero m]"
+  ],
+  "docstring": "**Both sides are forced**: the padded axis index lies in the `X` block and the padded line is\ndiagonal, so its direction truncates nothing of the `Z` block and the `Z` subline is forced as well,\nat axis index `0`. Both sides get restricted laws. This is the branch whose repair the paper's\nround-12 note on `lem:qld-sublines` records.",
+  "module": "MIPRE.Background.QLD.Padded",
+  "module_doc": "/-!\n# The padded space, and the sublines of a padded line\n\nBlueprint `lem:qld-sublines`. The combining stage compares a measurement of *pairs* of\n`m`-variable polynomials with a low-degree test, and a low-degree test wants a single polynomial\nin a number of variables dividing `q`. The paper's device is to pad: work over `F_q^{4m}`, whose\ncoordinates split as `u = (x, z, alpha, beta, w)` with `x, z` in `F_q^m`, `alpha, beta` in `F_q`\nand `w` in `F_q^{2m-2}` the dummy coordinates, and to combine the pair `(f_X, f_Z)` into the\nsingle polynomial `alpha f_X(x) + beta f_Z(z)`. Admissibility makes `m` a power of two, so\n`2m + 2` never divides `q = 2^k`, while `4m` does as soon as `4m <= q`; that is the whole reason\nthe dummy block is there.\n\nThis file is the geometry of that padding, and it is deliberately free of operators.\n\n## The two pieces\n\n* **The seed's block and offset.** The seeded test reads an axis index off a seed through\n  `chi`, which is \"which of the `m` equal blocks of `F` does `s` fall into\". `seedEquiv` names\n  the corresponding bijection `F ~ Fin m x Fin (q/m)`, with `chi` as its first component. Two\n  things follow that the subline construction needs: a seed can be *retargeted* to a prescribed\n  block keeping its offset (`seedIn`), and a uniform seed retargeted to a fixed block is uniform\n  on that block's fibre (`sum_seedIn`). The paper's \"choose `s_X` uniformly at random subject to\n  `chi(s_X) = i`\" is exactly this.\n* **The blocks of `F_q^{4m}`.** `xIdx`, `zIdx`, `aIdx`, `bIdx` are the coordinate positions and\n  `xBlk`, `zBlk`, `alph`, `bet` the projections. `padCase` classifies a coordinate position into\n  the four blocks, which is the case distinction the construction of `lem:qld-sublines` branches\n  on: whether the padded line's direction moves an `X` coordinate, a `Z` coordinate, or only\n  `alpha`, `beta` and the dummy coordinates.\n\n## Why `4m` and not `2m + 2`\n\n`aIdx` and `bIdx` sit at positions `2m` and `2m + 1`, so the dummy block is positions\n`2m + 2, ..., 4m - 1`, of size `2m - 2`. Every index bound below needs only `1 <= m`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Padded.lean#L982-L1059",
+  "source_path": "MIPRE/Background/QLD/Padded.lean",
+  "lines": [
+   982,
+   1059
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-sublines",
+    "env": "lemma",
+    "title": "The sublines distribution",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_point_pad",
+   "MIPRE.QLD.sum_seedIn"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 67,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.avgSub_le_mul_avgAll",
+  "source_name": "MIPRE.QLD.avgSub_le_mul_avgAll",
+  "formal_statement": "theorem MIPRE.QLD.avgSub_le_mul_avgAll (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty)\n    (s : F) {g : LPData F m → LPData F m → ℝ} (hpos : ∀ cX cZ, 0 ≤ g cX cZ) :\n    avgSub hm4 hm t s g\n      ≤ (m : ℝ) * (m : ℝ) * avgAll (fun cX => avgAll (fun cZ => g cX cZ)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ}",
+   "variable [NeZero m]"
+  ],
+  "docstring": "**The padded line-point law is at most `m^2` times the product of the two unrestricted subline\nlaws**, whatever the padded seed and the line type.",
+  "module": "MIPRE.Background.QLD.Padded",
+  "module_doc": "/-!\n# The padded space, and the sublines of a padded line\n\nBlueprint `lem:qld-sublines`. The combining stage compares a measurement of *pairs* of\n`m`-variable polynomials with a low-degree test, and a low-degree test wants a single polynomial\nin a number of variables dividing `q`. The paper's device is to pad: work over `F_q^{4m}`, whose\ncoordinates split as `u = (x, z, alpha, beta, w)` with `x, z` in `F_q^m`, `alpha, beta` in `F_q`\nand `w` in `F_q^{2m-2}` the dummy coordinates, and to combine the pair `(f_X, f_Z)` into the\nsingle polynomial `alpha f_X(x) + beta f_Z(z)`. Admissibility makes `m` a power of two, so\n`2m + 2` never divides `q = 2^k`, while `4m` does as soon as `4m <= q`; that is the whole reason\nthe dummy block is there.\n\nThis file is the geometry of that padding, and it is deliberately free of operators.\n\n## The two pieces\n\n* **The seed's block and offset.** The seeded test reads an axis index off a seed through\n  `chi`, which is \"which of the `m` equal blocks of `F` does `s` fall into\". `seedEquiv` names\n  the corresponding bijection `F ~ Fin m x Fin (q/m)`, with `chi` as its first component. Two\n  things follow that the subline construction needs: a seed can be *retargeted* to a prescribed\n  block keeping its offset (`seedIn`), and a uniform seed retargeted to a fixed block is uniform\n  on that block's fibre (`sum_seedIn`). The paper's \"choose `s_X` uniformly at random subject to\n  `chi(s_X) = i`\" is exactly this.\n* **The blocks of `F_q^{4m}`.** `xIdx`, `zIdx`, `aIdx`, `bIdx` are the coordinate positions and\n  `xBlk`, `zBlk`, `alph`, `bet` the projections. `padCase` classifies a coordinate position into\n  the four blocks, which is the case distinction the construction of `lem:qld-sublines` branches\n  on: whether the padded line's direction moves an `X` coordinate, a `Z` coordinate, or only\n  `alpha`, `beta` and the dummy coordinates.\n\n## Why `4m` and not `2m + 2`\n\n`aIdx` and `bIdx` sit at positions `2m` and `2m + 1`, so the dummy block is positions\n`2m + 2, ..., 4m - 1`, of size `2m - 2`. Every index bound below needs only `1 <= m`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Padded.lean#L1342-L1371",
+  "source_path": "MIPRE/Background/QLD/Padded.lean",
+  "lines": [
+   1342,
+   1371
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-lines",
+    "env": "lemma",
+    "title": "Padded line POVM",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sumSub_free",
+   "MIPRE.QLD.sumSub_zc",
+   "MIPRE.QLD.sumSub_xc",
+   "MIPRE.QLD.sumSub_xc_dline"
+  ],
+  "pasted_helpers": 22,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sumSubAB_eq",
+  "source_name": "MIPRE.QLD.sumSubAB_eq",
+  "formal_statement": "theorem MIPRE.QLD.sumSubAB_eq (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F) (t : CL.Ty) (s : F)\n    (g : F → F → LPData F m → LPData F m → ℝ) :\n    (Fintype.card (F × F) : ℝ) * sumSubAB hm4 hm t s g\n      = ∑ p : F × F, sumSub hm4 hm t s (g p.1 p.2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ}",
+   "variable [NeZero m]"
+  ],
+  "docstring": "**`(alpha, beta)` is uniform and independent of the two sublines**, because translating the\npadded point in those two coordinates alone is a bijection that leaves both sublines fixed.",
+  "module": "MIPRE.Background.QLD.Padded",
+  "module_doc": "/-!\n# The padded space, and the sublines of a padded line\n\nBlueprint `lem:qld-sublines`. The combining stage compares a measurement of *pairs* of\n`m`-variable polynomials with a low-degree test, and a low-degree test wants a single polynomial\nin a number of variables dividing `q`. The paper's device is to pad: work over `F_q^{4m}`, whose\ncoordinates split as `u = (x, z, alpha, beta, w)` with `x, z` in `F_q^m`, `alpha, beta` in `F_q`\nand `w` in `F_q^{2m-2}` the dummy coordinates, and to combine the pair `(f_X, f_Z)` into the\nsingle polynomial `alpha f_X(x) + beta f_Z(z)`. Admissibility makes `m` a power of two, so\n`2m + 2` never divides `q = 2^k`, while `4m` does as soon as `4m <= q`; that is the whole reason\nthe dummy block is there.\n\nThis file is the geometry of that padding, and it is deliberately free of operators.\n\n## The two pieces\n\n* **The seed's block and offset.** The seeded test reads an axis index off a seed through\n  `chi`, which is \"which of the `m` equal blocks of `F` does `s` fall into\". `seedEquiv` names\n  the corresponding bijection `F ~ Fin m x Fin (q/m)`, with `chi` as its first component. Two\n  things follow that the subline construction needs: a seed can be *retargeted* to a prescribed\n  block keeping its offset (`seedIn`), and a uniform seed retargeted to a fixed block is uniform\n  on that block's fibre (`sum_seedIn`). The paper's \"choose `s_X` uniformly at random subject to\n  `chi(s_X) = i`\" is exactly this.\n* **The blocks of `F_q^{4m}`.** `xIdx`, `zIdx`, `aIdx`, `bIdx` are the coordinate positions and\n  `xBlk`, `zBlk`, `alph`, `bet` the projections. `padCase` classifies a coordinate position into\n  the four blocks, which is the case distinction the construction of `lem:qld-sublines` branches\n  on: whether the padded line's direction moves an `X` coordinate, a `Z` coordinate, or only\n  `alpha`, `beta` and the dummy coordinates.\n\n## Why `4m` and not `2m + 2`\n\n`aIdx` and `bIdx` sit at positions `2m` and `2m + 1`, so the dummy block is positions\n`2m + 2, ..., 4m - 1`, of size `2m - 2`. Every index bound below needs only `1 <= m`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Padded.lean#L1468-L1500",
+  "source_path": "MIPRE/Background/QLD/Padded.lean",
+  "lines": [
+   1468,
+   1500
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-lines",
+    "env": "lemma",
+    "title": "Padded line POVM",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 6,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.avgSubAB_le_of_forall",
+  "source_name": "MIPRE.QLD.avgSubAB_le_of_forall",
+  "formal_statement": "theorem MIPRE.QLD.avgSubAB_le_of_forall (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F)\n    (t : CL.Ty) (s : F) {g : F → F → LPData F m → LPData F m → ℝ} {delta : ℝ}\n    (h : ∀ a b : F, avgSub hm4 hm t s (g a b) ≤ delta) :\n    avgSubAB hm4 hm t s g ≤ delta := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ}",
+   "variable [NeZero m]"
+  ],
+  "docstring": "**A bound that holds for every fixed `(alpha, beta)` holds for the padded law.**",
+  "module": "MIPRE.Background.QLD.Padded",
+  "module_doc": "/-!\n# The padded space, and the sublines of a padded line\n\nBlueprint `lem:qld-sublines`. The combining stage compares a measurement of *pairs* of\n`m`-variable polynomials with a low-degree test, and a low-degree test wants a single polynomial\nin a number of variables dividing `q`. The paper's device is to pad: work over `F_q^{4m}`, whose\ncoordinates split as `u = (x, z, alpha, beta, w)` with `x, z` in `F_q^m`, `alpha, beta` in `F_q`\nand `w` in `F_q^{2m-2}` the dummy coordinates, and to combine the pair `(f_X, f_Z)` into the\nsingle polynomial `alpha f_X(x) + beta f_Z(z)`. Admissibility makes `m` a power of two, so\n`2m + 2` never divides `q = 2^k`, while `4m` does as soon as `4m <= q`; that is the whole reason\nthe dummy block is there.\n\nThis file is the geometry of that padding, and it is deliberately free of operators.\n\n## The two pieces\n\n* **The seed's block and offset.** The seeded test reads an axis index off a seed through\n  `chi`, which is \"which of the `m` equal blocks of `F` does `s` fall into\". `seedEquiv` names\n  the corresponding bijection `F ~ Fin m x Fin (q/m)`, with `chi` as its first component. Two\n  things follow that the subline construction needs: a seed can be *retargeted* to a prescribed\n  block keeping its offset (`seedIn`), and a uniform seed retargeted to a fixed block is uniform\n  on that block's fibre (`sum_seedIn`). The paper's \"choose `s_X` uniformly at random subject to\n  `chi(s_X) = i`\" is exactly this.\n* **The blocks of `F_q^{4m}`.** `xIdx`, `zIdx`, `aIdx`, `bIdx` are the coordinate positions and\n  `xBlk`, `zBlk`, `alph`, `bet` the projections. `padCase` classifies a coordinate position into\n  the four blocks, which is the case distinction the construction of `lem:qld-sublines` branches\n  on: whether the padded line's direction moves an `X` coordinate, a `Z` coordinate, or only\n  `alpha`, `beta` and the dummy coordinates.\n\n## Why `4m` and not `2m + 2`\n\n`aIdx` and `bIdx` sit at positions `2m` and `2m + 1`, so the dummy block is positions\n`2m + 2, ..., 4m - 1`, of size `2m - 2`. Every index bound below needs only `1 <= m`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Padded.lean#L1537-L1552",
+  "source_path": "MIPRE/Background/QLD/Padded.lean",
+  "lines": [
+   1537,
+   1552
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-lines",
+    "env": "lemma",
+    "title": "Padded line POVM",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sumSubAB_eq"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.exists_global_pvm",
+  "source_name": "MIPRE.QLD.exists_global_pvm",
+  "formal_statement": "theorem MIPRE.QLD.exists_global_pvm (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)\n    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (hε : 0 ≤ ε)\n    (hlegA : LegalSupport MA) (hlegB : LegalSupport MB) (hd : 1 ≤ d) :\n    ∃ (PA : ProjectiveMeasurement (CL.Question F (4 * m)) (CL.Answer F (4 * m) d 1)\n          (Matrix (PadReg F m d dA) (PadReg F m d dA) ℂ))\n      (PB : ProjectiveMeasurement (CL.Question F (4 * m)) (CL.Answer F (4 * m) d 1)\n          (Matrix (PadReg F m d dB) (PadReg F m d dB) ℂ))\n      (GA : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))\n          (Matrix (PadReg F m d dA) (PadReg F m d dA) ℂ))\n      (GB : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))\n          (Matrix (PadReg F m d dB) (PadReg F m d dB) ℂ)),\n      (∀ u, (pointPOVM PA u).compress ansZero = padPt hprojA u)\n      ∧ (∀ u, (pointPOVM PB u).compress ansZero = padPt hprojB u)\n      ∧ inconsistency (uniform (Point F (4 * m))) (padState (F := F) (m := m) (d := d) ψ)\n          (pointPOVM PA) (evalPOVM GB) ≤ deltaLD (Fintype.card F) m d ε\n      ∧ inconsistency (uniform (Point F (4 * m))) (padState (F := F) (m := m) (d := d) ψ)\n          (evalPOVM GA) (pointPOVM PB) ≤ deltaLD (Fintype.card F) m d ε\n      ∧ inconsistency (uniform Unit) (padState (F := F) (m := m) (d := d) ψ)\n          (fun _ => GA.toPOVM ()) (fun _ => GB.toPOVM ()) ≤ deltaLD (Fintype.card F) m d ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.Adapter",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (hm : m ∣ Fintype.card F) (hm4 : 4 * m ∣ Fintype.card F)"
+  ],
+  "docstring": "**`lem:qld-global-pvm`, as the soundness theorem returns it.** For a legal projective strategy\nof the Pauli basis test of value `1 - ε`: projective dilations `PA`, `PB` of the padded strategy,\nwhose point measurements compress to the padded point measurements, and projective low-degree\nmeasurements `GA`, `GB` on the dilated registers, with the two point-consistency estimates and the\nfull-polynomial consistency on the twice-padded state, all with error `δ_ld`.",
+  "module": "MIPRE.Background.QLD.PaddedLIDT",
+  "module_doc": "/-!\n# The global polynomial measurements: applying the seeded soundness theorem\n\n`lem:qld-global-pvm`. By `lem:qld-global-success` (`padStrat_value`), the padded strategy\n`(extHat ψ, padStrat hprojA, padStrat hprojB)` wins the seeded low individual degree test at\n`(q, 4m, d, 1)` with probability at least `1 - δ_GS`, where\n`δ_GS = 5 m² δ_P(ε, md/q + 1/q) + 4 δ_Q(ε) + (md + 1)/q`. This file feeds it to\n`clSoundness_ldc_one_deltaCL_of_povm`, the seeded soundness theorem for POVM strategies, and reads\nthe conclusion back in the form stages 4b and 4c consume. It is the one module of the Pauli basis\ntest's analysis that reaches the vendored MIPStarRE tree.\n\n## What the theorem returns\n\nThe soundness theorem dilates the padded strategy projectively (`lem:naimark-dilation`), which\nadjoins to each party one more ancilla, indexed by the test's answers and prepared in the zero\nanswer `ansZero`. The two low-degree measurements `GA`, `GB` it produces are projective on the\ndilated registers `PadReg`, and its three consistency estimates hold on the twice-padded state\n`padState ψ = extVec2 (extHat ψ) ansZero ansZero`, against the dilation's own point measurements.\nThose compress to the padded strategy's (`padStrat_point_map_toValue`), whose operators are the\nexpanded sandwich combinations `ptComb (sand M̂^X M̂^Z) α β`, extended by the identity\n(`padPt_mats`).\n\n## Why no further dilation is needed\n\nOn a product state `extVec2 Ψ a₀ b₀` the Born probability of `X ⊗ E` depends on `E` only through\nits compression by `|b₀⟩` (`bornProb_extVec2_ancCompress`). The dilation's point measurement and\nthe padded strategy's own point measurement extended by the identity on the answer ancilla have\nthe same compression, so every consistency estimate against the former is the same number against\nthe latter (`inconsistency_padState_aOp_right`). The final form, `exists_global_pvm_hat`,\ntherefore mentions no dilation: it is a pair of projective measurements `GA`, `GB` on the two\n`PadReg` registers whose evaluated marginals are consistent, on `padState ψ`, with the *original*\nstrategy's expanded sandwich combinations, doubly extended; and every expectation of a doubly\nextended operator on `padState ψ` is its expectation on `hatVec ψ`\n(`bornProb_padState_aOp_aOp`), so the conclusions of stages 2 and 3 transfer.\n\n## The error\n\n`δ_ld = deltaLD q m d ε = deltaCL q (4m) d (deltaGS q m d ε)`: the soundness theorem's error at\n`(q, 4m, d, 1)` for a strategy of value `1 - δ_GS`. It is of the blueprint's displayed form\n`A (md)^A ((δ_GS)^b + q^{-b} + 2^{-bmd})`, since `(4md)^A = 4^A (md)^A` and\n`2^{-4bmd} ≤ 2^{-bmd}`.\n\nThe recovered polynomials live on `F^{4m}`, while the point measurements read only the `2m + 2`\ncoordinates `xBlk`, `zBlk`, `alph`, `bet`. The Schwartz--Zippel argument that the polynomials\nmostly do not read the remaining dummy coordinates is `MIPRE/Background/QLD/Dummy.lean`;\n`exists_global_pvm_wIndep` is `lem:qld-global-dummy` for the measurements produced here.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedLIDT.lean#L188-L228",
+  "source_path": "MIPRE/Background/QLD/PaddedLIDT.lean",
+  "lines": [
+   188,
+   228
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-pvm",
+    "env": "lemma",
+    "title": "A global padded polynomial PVM",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL_of_povm",
+   "MIPRE.QLD.hatVec_unit",
+   "MIPRE.QLD.padStrat_value",
+   "MIPRE.POVM.map_map",
+   "MIPRE.extVec2_unit"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.extVec2_swapVec",
+  "source_name": "MIPRE.QLD.extVec2_swapVec",
+  "formal_statement": "theorem MIPRE.QLD.extVec2_swapVec {Anc Bnc : Type*} [Fintype Anc] [DecidableEq Anc] [Fintype Bnc]\n    [DecidableEq Bnc] (ψ : dA × dB → ℂ) (a₀ : Anc) (b₀ : Bnc) :\n    extVec2 (swapVec ψ) b₀ a₀ = swapVec (extVec2 ψ a₀ b₀) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**Swapping the state swaps the twice-extended state**, the two ancilla labels being exchanged\nwith it.",
+  "module": "MIPRE.Background.QLD.PaddedLines",
+  "module_doc": "/-!\n# The padded line measurement's consistency\n\nBlueprint `lem:qld-padded-lines`, the analytic half. `Combine.lean` built the measurement; this file\nproves it consistent with the padded point measurement on the padded line-point law.\n\nThe paper chains three Cauchy--Schwarz claims here. They are not needed for this construction, and\n`reports/padded-lines-product-law.md` says why: the joint law of the two sublines-with-points is\n*exactly* a product of the two marginals at a fixed padded seed, so the product form of the\npairs-of-lines lemma applies directly. What is left is a single coarse-graining step, and that is\nwhat this file adds.\n\n* **Coarse-graining both sides the same way can only increase agreement.**\n  `sum_bornProb_le_fibre`, for bare matrix families rather than `POVM` structures --- which is what\n  the pasted line measurement is.\n* **The two coarse-grained families.** `ptComb` is the combined point measurement read along the\n  linear form `(a, b)`, the paper's `Q-hat^{x,z,alpha,beta}`; `lineComb` is the pasted line\n  measurement coarse-grained by the combining map. `lineComb_eq_sum_pasteFib` identifies the second\n  as a coarse-graining of the first coarse-graining, which is what makes them comparable.\n* **The bound.** `padded_lines_consistency`: the two disagree by at most `m^2 * delta_P` on the\n  padded line-point law, at every padded seed and line type.\n\nThe `m^2` and the functional form are discussed in the report: it is `poly(m) * poly(eps, md/q)`\nrather than the `m * poly(eps, md/q)` the blueprint statement advertises, which\n`lem:qld-simultaneous`'s `a(md)^a` prefactor absorbs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedLines.lean#L94-L111",
+  "source_path": "MIPRE/Background/QLD/PaddedLines.lean",
+  "lines": [
+   94,
+   111
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.hatLinePOVM_aline_eq_zero_of_not_degLE",
+  "source_name": "MIPRE.QLD.hatLinePOVM_aline_eq_zero_of_not_degLE",
+  "formal_statement": "theorem MIPRE.QLD.hatLinePOVM_aline_eq_zero_of_not_degLE (hd : 1 ≤ d) {n : ℕ}\n    {M : Question F m → POVM (Answer F m d) d'} (hleg : LegalSupport M) (W : Bas)\n    (c : Content F m) {f : LinePoly F n} (hf : ¬ DegLE f d) :\n    ((hatLinePOVM n hm M W (.aline W) (abaseOf hm W) (dirOf hm) c).mats f).val = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The support half of `lem:qld-axis-degree`, at the expanded measurement**: for `d ≥ 1` and a\nlegally supported strategy, the expanded axis-parallel line measurement has no element off the\npolynomials of degree at most `d`.",
+  "module": "MIPRE.Background.QLD.PaddedLines",
+  "module_doc": "/-!\n# The padded line measurement's consistency\n\nBlueprint `lem:qld-padded-lines`, the analytic half. `Combine.lean` built the measurement; this file\nproves it consistent with the padded point measurement on the padded line-point law.\n\nThe paper chains three Cauchy--Schwarz claims here. They are not needed for this construction, and\n`reports/padded-lines-product-law.md` says why: the joint law of the two sublines-with-points is\n*exactly* a product of the two marginals at a fixed padded seed, so the product form of the\npairs-of-lines lemma applies directly. What is left is a single coarse-graining step, and that is\nwhat this file adds.\n\n* **Coarse-graining both sides the same way can only increase agreement.**\n  `sum_bornProb_le_fibre`, for bare matrix families rather than `POVM` structures --- which is what\n  the pasted line measurement is.\n* **The two coarse-grained families.** `ptComb` is the combined point measurement read along the\n  linear form `(a, b)`, the paper's `Q-hat^{x,z,alpha,beta}`; `lineComb` is the pasted line\n  measurement coarse-grained by the combining map. `lineComb_eq_sum_pasteFib` identifies the second\n  as a coarse-graining of the first coarse-graining, which is what makes them comparable.\n* **The bound.** `padded_lines_consistency`: the two disagree by at most `m^2 * delta_P` on the\n  padded line-point law, at every padded seed and line type.\n\nThe `m^2` and the functional form are discussed in the report: it is `poly(m) * poly(eps, md/q)`\nrather than the `m * poly(eps, md/q)` the blueprint statement advertises, which\n`lem:qld-simultaneous`'s `a(md)^a` prefactor absorbs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedLines.lean#L295-L316",
+  "source_path": "MIPRE/Background/QLD/PaddedLines.lean",
+  "lines": [
+   295,
+   316
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-axis-degree",
+    "env": "lemma",
+    "title": "Axis degree for expanded line measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.degreeOf_ind_le",
+   "MIPRE.LowDegree.natDegree_lineRestrict_single_le"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.padded_lines_consistency",
+  "source_name": "MIPRE.QLD.padded_lines_consistency",
+  "formal_statement": "theorem MIPRE.QLD.padded_lines_consistency (hm4 : 4 * m ∣ Fintype.card F) (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)\n    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val))\n    (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z)\n    (hfacX : FactorsX PX) (hfacZ : FactorsZ PZ)\n    (hX1 : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ f : LinePoly F (m * d),\n        xSqNorm (hatVec (F := F) (m := m) ψ) (PX.lineMats d MA c f)\n          (PX.lineMats d MB c f) ≤ 172 * ε)\n    (hX2 : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ a : F,\n        xSqNorm (hatVec (F := F) (m := m) ψ) (hatMats MA .X (c.pt .X) a)\n          (PX.lineEvalMats d MB c a) ≤ 172 * ε)\n    (hZ2 : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ b : F,\n        xSqNorm (hatVec (F := F) (m := m) ψ) (hatMats MA .Z (c.pt .Z) b)\n          (PZ.lineEvalMats d MB c b) ≤ 172 * ε)\n    {εc : ℝ} (hcoll : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *\n      collProb PX d c ≤ εc) (ty : CL.Ty) (s : F) :\n    ∃ QA : LPData F m × LPData F m → F × F →\n        Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ,\n      (∀ p, IsPVM (QA p))\n      ∧ (∀ p r, (ancillaEmbed (dA × Anc F m) ((0 : F), (0 : F)))ᴴ\n            * (QA p r * ancillaEmbed (dA × Anc F m) ((0 : F), (0 : F)))\n          = sand (hatMats MA .X p.1.pt) (hatMats MA .Z p.2.pt) r)\n      ∧ 1 - avgSubAB hm4 hm ty s (fun a b cX cZ =>\n            ∑ v : F, bornProb (extHat (m := m) ψ) (ptComb (QA (cX, cZ)) a b v)\n              (lineComb PX PZ d MB (pairCX (cX, cZ)) (pairCZ (cX, cZ)) a b v))\n        ≤ (m : ℝ) * (m : ℝ) * deltaPairs ε εc := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**`lem:qld-padded-lines`, the consistency bound.** On the padded line-point law, at every padded\nseed and line type, the combined point measurement read along `(alpha, beta)` at the sampled point\nagrees with the pasted line measurement coarse-grained by the combining map, up to\n`m^2 * delta_P`.\n\nThe proof is the coarse-graining step and then the two domination lemmas: agreement only increases\nunder a common coarse-graining, the padded law is at most `m^2` times the product law\n(`avgSub_le_mul_avgAll`), and `(alpha, beta)` is uniform and independent of both sublines\n(`avgSubAB_le_of_forall`). The paper's Claims 17-1 to 17-3 are not used; see\n`reports/padded-lines-product-law.md`.",
+  "module": "MIPRE.Background.QLD.PaddedLines",
+  "module_doc": "/-!\n# The padded line measurement's consistency\n\nBlueprint `lem:qld-padded-lines`, the analytic half. `Combine.lean` built the measurement; this file\nproves it consistent with the padded point measurement on the padded line-point law.\n\nThe paper chains three Cauchy--Schwarz claims here. They are not needed for this construction, and\n`reports/padded-lines-product-law.md` says why: the joint law of the two sublines-with-points is\n*exactly* a product of the two marginals at a fixed padded seed, so the product form of the\npairs-of-lines lemma applies directly. What is left is a single coarse-graining step, and that is\nwhat this file adds.\n\n* **Coarse-graining both sides the same way can only increase agreement.**\n  `sum_bornProb_le_fibre`, for bare matrix families rather than `POVM` structures --- which is what\n  the pasted line measurement is.\n* **The two coarse-grained families.** `ptComb` is the combined point measurement read along the\n  linear form `(a, b)`, the paper's `Q-hat^{x,z,alpha,beta}`; `lineComb` is the pasted line\n  measurement coarse-grained by the combining map. `lineComb_eq_sum_pasteFib` identifies the second\n  as a coarse-graining of the first coarse-graining, which is what makes them comparable.\n* **The bound.** `padded_lines_consistency`: the two disagree by at most `m^2 * delta_P` on the\n  padded line-point law, at every padded seed and line type.\n\nThe `m^2` and the functional form are discussed in the report: it is `poly(m) * poly(eps, md/q)`\nrather than the `m * poly(eps, md/q)` the blueprint statement advertises, which\n`lem:qld-simultaneous`'s `a(md)^a` prefactor absorbs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedLines.lean#L358-L476",
+  "source_path": "MIPRE/Background/QLD/PaddedLines.lean",
+  "lines": [
+   358,
+   476
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-lines",
+    "env": "lemma",
+    "title": "Padded line POVM",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_pasteLine",
+   "MIPRE.QLD.hatVec_unit",
+   "MIPRE.QLD.avgSub_le_mul_avgAll",
+   "MIPRE.QLD.sumSubAB_eq",
+   "MIPRE.QLD.avgSubAB_le_of_forall",
+   "MIPRE.QLD.pairs_of_lines_prod_of_items",
+   "MIPRE.aOp_mul",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.IsPVM.posSemidef",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.IsPVM.aOp",
+   "MIPRE.extVec2_unit",
+   "MIPRE.Weyl.isPVM_synOf"
+  ],
+  "pasted_helpers": 32,
+  "prooflines": 81,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.padded_lines_consistency_swap",
+  "source_name": "MIPRE.QLD.padded_lines_consistency_swap",
+  "formal_statement": "theorem MIPRE.QLD.padded_lines_consistency_swap (hm4 : 4 * m ∣ Fintype.card F) (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)\n    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val))\n    (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z)\n    (hfacX : FactorsX PX) (hfacZ : FactorsZ PZ)\n    (hX1 : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ f : LinePoly F (m * d),\n        xSqNorm (hatVec (F := F) (m := m) ψ) (PX.lineMats d MA c f)\n          (PX.lineMats d MB c f) ≤ 172 * ε)\n    (hX2' : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ a : F,\n        xSqNorm (hatVec (F := F) (m := m) ψ) (PX.lineEvalMats d MA c a)\n          (hatMats MB .X (c.pt .X) a) ≤ 172 * ε)\n    (hZ2' : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ b : F,\n        xSqNorm (hatVec (F := F) (m := m) ψ) (PZ.lineEvalMats d MA c b)\n          (hatMats MB .Z (c.pt .Z) b) ≤ 172 * ε)\n    {εc : ℝ} (hcoll : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *\n      collProb PX d c ≤ εc) (ty : CL.Ty) (s : F) :\n    ∃ QB : LPData F m × LPData F m → F × F →\n        Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ,\n      (∀ p, IsPVM (QB p))\n      ∧ (∀ p r, (ancillaEmbed (dB × Anc F m) ((0 : F), (0 : F)))ᴴ\n            * (QB p r * ancillaEmbed (dB × Anc F m) ((0 : F), (0 : F)))\n          = sand (hatMats MB .X p.1.pt) (hatMats MB .Z p.2.pt) r)\n      ∧ 1 - avgSubAB hm4 hm ty s (fun a b cX cZ =>\n            ∑ v : F, bornProb (extHat (m := m) ψ)\n              (lineComb PX PZ d MA (pairCX (cX, cZ)) (pairCZ (cX, cZ)) a b v)\n              (ptComb (QB (cX, cZ)) a b v))\n        ≤ (m : ℝ) * (m : ℝ) * deltaPairs ε εc := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**`lem:qld-padded-lines`, the consistency bound in the other register version**: the line\nmeasurement on Alice's registers against the padded point measurement on Bob's.",
+  "module": "MIPRE.Background.QLD.PaddedLines",
+  "module_doc": "/-!\n# The padded line measurement's consistency\n\nBlueprint `lem:qld-padded-lines`, the analytic half. `Combine.lean` built the measurement; this file\nproves it consistent with the padded point measurement on the padded line-point law.\n\nThe paper chains three Cauchy--Schwarz claims here. They are not needed for this construction, and\n`reports/padded-lines-product-law.md` says why: the joint law of the two sublines-with-points is\n*exactly* a product of the two marginals at a fixed padded seed, so the product form of the\npairs-of-lines lemma applies directly. What is left is a single coarse-graining step, and that is\nwhat this file adds.\n\n* **Coarse-graining both sides the same way can only increase agreement.**\n  `sum_bornProb_le_fibre`, for bare matrix families rather than `POVM` structures --- which is what\n  the pasted line measurement is.\n* **The two coarse-grained families.** `ptComb` is the combined point measurement read along the\n  linear form `(a, b)`, the paper's `Q-hat^{x,z,alpha,beta}`; `lineComb` is the pasted line\n  measurement coarse-grained by the combining map. `lineComb_eq_sum_pasteFib` identifies the second\n  as a coarse-graining of the first coarse-graining, which is what makes them comparable.\n* **The bound.** `padded_lines_consistency`: the two disagree by at most `m^2 * delta_P` on the\n  padded line-point law, at every padded seed and line type.\n\nThe `m^2` and the functional form are discussed in the report: it is `poly(m) * poly(eps, md/q)`\nrather than the `m * poly(eps, md/q)` the blueprint statement advertises, which\n`lem:qld-simultaneous`'s `a(md)^a` prefactor absorbs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedLines.lean#L489-L550",
+  "source_path": "MIPRE/Background/QLD/PaddedLines.lean",
+  "lines": [
+   489,
+   550
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-lines",
+    "env": "lemma",
+    "title": "Padded line POVM",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.padded_lines_consistency",
+   "MIPRE.QLD.extVec2_swapVec",
+   "MIPRE.QLD.swapVec_unit",
+   "MIPRE.QLD.povmValue_swapped_le",
+   "MIPRE.bornProb_swapVec"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 31,
+  "is_target": false
+ }
+]

@@ -1,0 +1,761 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.chain_pair_point",
+  "source_name": "MIPRE.QLD.chain_pair_point",
+  "formal_statement": "theorem MIPRE.QLD.chain_pair_point (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :\n    ∑ c ∈ commSet, (Fintype.card (Content F m) : ℝ)⁻¹ *\n        ∑ o : ZMod 2,\n          xSqNorm ψ ((((MA (c.question hm .pair)).map (rdBitPair W)).mats o).val)\n            (((ptPOVMB hm MB W c).mats o).val)\n      ≤ 1548 * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "**The chain** (the paper's `eq:lc-11`, mirrored): Alice's `Pair` measurement read in one basis\nis cross-party close to Bob's point probe, on the commuting tuples. Three links at `172 eps`, one\nthree-term triangle inequality.",
+  "module": "MIPRE.Background.QLD.Commutation",
+  "module_doc": "/-!\n# Signed commutation of the point observables, on the anticommuting tuples\n\nBlueprint `lem:qld-obs-commutation`, the anticommuting case. On a tuple `omega` with\n`gamma(omega) = 1` the two point observables **anticommute** on the state:\n\n```\nX^{r_X}(u_X) Z^{r_Z}(u_Z) (x) Id  ~  - Z^{r_Z}(u_Z) X^{r_X}(u_X) (x) Id .\n```\n\nThree inputs, all already proved:\n\n* **item 7** of `lem:qld-win` (`item_ms_consistency_X`, `item_ms_consistency_Z`): each point\n  probe agrees with one of the two distinguished `Variable` bits on the *other* side. At the\n  level of observables that is `X (x) Id ~ Id (x) V_1` and `Z (x) Id ~ Id (x) V_5`, at `344 eps`\n  each --- item 7 at the two-outcome probe, then `xStateDist_obsOf_le`;\n* **item 6** (`item_magicSquare`): those two `Variable` observables anticommute on the state, at\n  `16049664 eps`;\n* the **order reversal** `norm_stateVec_anticomm_le`, which is what carries an anticommutation\n  from Bob's side to Alice's --- and is where the sign comes from.\n\n## Why this case costs `eps` and not `sqrt(eps)`\n\nThe blueprint states `lem:qld-obs-commutation` at `O(sqrt(eps))`, and that is what the\n*commuting* case costs: it needs the `Pair` measurement to be projective, which a general POVM\nstrategy's is not, so it goes through `cor:ortho-from-consistency` and pays a square root. The\nanticommuting case does not: every input is already a squared-norm bound linear in `eps`, and the\nonly inequalities used are the triangle inequality and `(u+v+w)^2 <= 3(u^2+v^2+w^2)`. So the\nconstant here is honest and there is no square root --- `48157248 eps`, from\n`12 * 344 + 12 * 344 + 3 * 16049664`.\n\nThat asymmetry is worth recording rather than rounding away: when the commuting case is\nformalized the two halves will not combine into a single `O(sqrt(eps))` by adding constants, and\nthe square root will be attributable to exactly one of them.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Commutation.lean#L410-L447",
+  "source_path": "MIPRE/Background/QLD/Commutation.lean",
+  "lines": [
+   410,
+   447
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-obs-commutation-comm",
+    "env": "lemma",
+    "title": "Signed commutation, the commuting case",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.adj_symm",
+   "MIPRE.QLD.agree_subtest_le",
+   "MIPRE.sum_snorm_sq_triangle3"
+  ],
+  "pasted_helpers": 21,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.xStateDist_ptObs_ptObsB",
+  "source_name": "MIPRE.QLD.xStateDist_ptObs_ptObsB",
+  "formal_statement": "theorem MIPRE.QLD.xStateDist_ptObs_ptObsB (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :\n    xStateDist (commWeight F m) ψ (ptObs hm MA W) (ptObsB hm MB W) ≤ 344 * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "**The point observables are cross-party consistent at the content's own probe.** Item 1 at the\ntype `(Point, W)` with the reading `rdProbeAt W`, which is a *family* --- the probe depends on the\ncontent --- and then `xStateDist_obsOf_le`. `pts_obs_consistency` is the same statement at a fixed\n`r`; here the probe is the one the commutation check uses.",
+  "module": "MIPRE.Background.QLD.Commutation",
+  "module_doc": "/-!\n# Signed commutation of the point observables, on the anticommuting tuples\n\nBlueprint `lem:qld-obs-commutation`, the anticommuting case. On a tuple `omega` with\n`gamma(omega) = 1` the two point observables **anticommute** on the state:\n\n```\nX^{r_X}(u_X) Z^{r_Z}(u_Z) (x) Id  ~  - Z^{r_Z}(u_Z) X^{r_X}(u_X) (x) Id .\n```\n\nThree inputs, all already proved:\n\n* **item 7** of `lem:qld-win` (`item_ms_consistency_X`, `item_ms_consistency_Z`): each point\n  probe agrees with one of the two distinguished `Variable` bits on the *other* side. At the\n  level of observables that is `X (x) Id ~ Id (x) V_1` and `Z (x) Id ~ Id (x) V_5`, at `344 eps`\n  each --- item 7 at the two-outcome probe, then `xStateDist_obsOf_le`;\n* **item 6** (`item_magicSquare`): those two `Variable` observables anticommute on the state, at\n  `16049664 eps`;\n* the **order reversal** `norm_stateVec_anticomm_le`, which is what carries an anticommutation\n  from Bob's side to Alice's --- and is where the sign comes from.\n\n## Why this case costs `eps` and not `sqrt(eps)`\n\nThe blueprint states `lem:qld-obs-commutation` at `O(sqrt(eps))`, and that is what the\n*commuting* case costs: it needs the `Pair` measurement to be projective, which a general POVM\nstrategy's is not, so it goes through `cor:ortho-from-consistency` and pays a square root. The\nanticommuting case does not: every input is already a squared-norm bound linear in `eps`, and the\nonly inequalities used are the triangle inequality and `(u+v+w)^2 <= 3(u^2+v^2+w^2)`. So the\nconstant here is honest and there is no square root --- `48157248 eps`, from\n`12 * 344 + 12 * 344 + 3 * 16049664`.\n\nThat asymmetry is worth recording rather than rounding away: when the commuting case is\nformalized the two halves will not combine into a single `O(sqrt(eps))` by adding constants, and\nthe square root will be attributable to exactly one of them.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Commutation.lean#L507-L531",
+  "source_path": "MIPRE/Background/QLD/Commutation.lean",
+  "lines": [
+   507,
+   531
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-obs-commutation-comm",
+    "env": "lemma",
+    "title": "Signed commutation, the commuting case",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.agree_subtest_le",
+   "MIPRE.xStateDist_obsOf_le"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.incQty_le_condFail",
+  "source_name": "MIPRE.QLD.incQty_le_condFail",
+  "formal_statement": "theorem MIPRE.QLD.incQty_le_condFail (hψ : star ψ ⬝ᵥ ψ = 1) (c : Content F m) :\n    incQty hm ψ MA MB c\n      ≤ condFail (qldGame hm) ψ MA MB (c.question hm .pair) (c.question hm .pair) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "**The inconsistency of the two joint `Pair` measurements is a conditional failure.** Item 1\nagain, at the Born level, which is where data processing is available: `fact:data-processing` is a\nstatement about *consistency*, and NW19's own remark gives a counterexample for the\nstate-dependent distance.",
+  "module": "MIPRE.Background.QLD.Commutation",
+  "module_doc": "/-!\n# Signed commutation of the point observables, on the anticommuting tuples\n\nBlueprint `lem:qld-obs-commutation`, the anticommuting case. On a tuple `omega` with\n`gamma(omega) = 1` the two point observables **anticommute** on the state:\n\n```\nX^{r_X}(u_X) Z^{r_Z}(u_Z) (x) Id  ~  - Z^{r_Z}(u_Z) X^{r_X}(u_X) (x) Id .\n```\n\nThree inputs, all already proved:\n\n* **item 7** of `lem:qld-win` (`item_ms_consistency_X`, `item_ms_consistency_Z`): each point\n  probe agrees with one of the two distinguished `Variable` bits on the *other* side. At the\n  level of observables that is `X (x) Id ~ Id (x) V_1` and `Z (x) Id ~ Id (x) V_5`, at `344 eps`\n  each --- item 7 at the two-outcome probe, then `xStateDist_obsOf_le`;\n* **item 6** (`item_magicSquare`): those two `Variable` observables anticommute on the state, at\n  `16049664 eps`;\n* the **order reversal** `norm_stateVec_anticomm_le`, which is what carries an anticommutation\n  from Bob's side to Alice's --- and is where the sign comes from.\n\n## Why this case costs `eps` and not `sqrt(eps)`\n\nThe blueprint states `lem:qld-obs-commutation` at `O(sqrt(eps))`, and that is what the\n*commuting* case costs: it needs the `Pair` measurement to be projective, which a general POVM\nstrategy's is not, so it goes through `cor:ortho-from-consistency` and pays a square root. The\nanticommuting case does not: every input is already a squared-norm bound linear in `eps`, and the\nonly inequalities used are the triangle inequality and `(u+v+w)^2 <= 3(u^2+v^2+w^2)`. So the\nconstant here is honest and there is no square root --- `48157248 eps`, from\n`12 * 344 + 12 * 344 + 3 * 16049664`.\n\nThat asymmetry is worth recording rather than rounding away: when the commuting case is\nformalized the two halves will not combine into a single `O(sqrt(eps))` by adding constants, and\nthe square root will be attributable to exactly one of them.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Commutation.lean#L533-L556",
+  "source_path": "MIPRE/Background/QLD/Commutation.lean",
+  "lines": [
+   533,
+   556
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-obs-commutation-comm",
+    "env": "lemma",
+    "title": "Signed commutation, the commuting case",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_diag_eq_one_sub",
+   "MIPRE.one_sub_sum_bornProb_le_condFail"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sq_norm_ptObs_comm_le_of_content",
+  "source_name": "MIPRE.QLD.sq_norm_ptObs_comm_le_of_content",
+  "formal_statement": "theorem MIPRE.QLD.sq_norm_ptObs_comm_le_of_content (hψ : star ψ ⬝ᵥ ψ = 1) (c : Content F m)\n    {η : ℝ} (hη : 0 < η) :\n    ‖stateVec ψ (ptObs hm MA .X c * ptObs hm MA .Z c\n        - ptObs hm MA .Z c * ptObs hm MA .X c)‖ ^ 2\n      ≤ 12 * xSqNorm ψ (ptObs hm MA .X c) (ptObsB hm MB .X c)\n        + 12 * xSqNorm ψ (ptObs hm MA .Z c) (ptObsB hm MB .Z c)\n        + 768 * (2 * (chainQty hm ψ MA MB .X c + chainQty hm ψ MA MB .Z c)\n          + 72 * (incQty hm ψ MA MB c + η)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "**The per-content bound.** At one content, the two point observables commute on the state up\nto the chain, the projectivization, and the two cross-party consistencies of the observables\nthemselves. `768 = 3 * 256`: the analysis contributes `16`, the observable expansion `16`, and the\nfinal triangle inequality `3`.",
+  "module": "MIPRE.Background.QLD.Commutation",
+  "module_doc": "/-!\n# Signed commutation of the point observables, on the anticommuting tuples\n\nBlueprint `lem:qld-obs-commutation`, the anticommuting case. On a tuple `omega` with\n`gamma(omega) = 1` the two point observables **anticommute** on the state:\n\n```\nX^{r_X}(u_X) Z^{r_Z}(u_Z) (x) Id  ~  - Z^{r_Z}(u_Z) X^{r_X}(u_X) (x) Id .\n```\n\nThree inputs, all already proved:\n\n* **item 7** of `lem:qld-win` (`item_ms_consistency_X`, `item_ms_consistency_Z`): each point\n  probe agrees with one of the two distinguished `Variable` bits on the *other* side. At the\n  level of observables that is `X (x) Id ~ Id (x) V_1` and `Z (x) Id ~ Id (x) V_5`, at `344 eps`\n  each --- item 7 at the two-outcome probe, then `xStateDist_obsOf_le`;\n* **item 6** (`item_magicSquare`): those two `Variable` observables anticommute on the state, at\n  `16049664 eps`;\n* the **order reversal** `norm_stateVec_anticomm_le`, which is what carries an anticommutation\n  from Bob's side to Alice's --- and is where the sign comes from.\n\n## Why this case costs `eps` and not `sqrt(eps)`\n\nThe blueprint states `lem:qld-obs-commutation` at `O(sqrt(eps))`, and that is what the\n*commuting* case costs: it needs the `Pair` measurement to be projective, which a general POVM\nstrategy's is not, so it goes through `cor:ortho-from-consistency` and pays a square root. The\nanticommuting case does not: every input is already a squared-norm bound linear in `eps`, and the\nonly inequalities used are the triangle inequality and `(u+v+w)^2 <= 3(u^2+v^2+w^2)`. So the\nconstant here is honest and there is no square root --- `48157248 eps`, from\n`12 * 344 + 12 * 344 + 3 * 16049664`.\n\nThat asymmetry is worth recording rather than rounding away: when the commuting case is\nformalized the two halves will not combine into a single `O(sqrt(eps))` by adding constants, and\nthe square root will be attributable to exactly one of them.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Commutation.lean#L573-L694",
+  "source_path": "MIPRE/Background/QLD/Commutation.lean",
+  "lines": [
+   573,
+   694
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-obs-commutation-comm",
+    "env": "lemma",
+    "title": "Signed commutation, the commuting case",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.one_sub_two_mul_lt_sum_stateSqNorm",
+   "MIPRE.QLD.exists_projective_of_nearProjective",
+   "MIPRE.sq_sum_le_card_mul_sum_sq",
+   "MIPRE.sum_xSqNorm_le_of_two_step",
+   "MIPRE.POVM.sum_mats_map_prod",
+   "MIPRE.POVM.sum_mats_map_prod'",
+   "MIPRE.commutation_analysis",
+   "MIPRE.obs2_commutator_eq",
+   "MIPRE.norm_stateVec_comm_le",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_sub",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.POVM.sub_mul_self_le_one",
+   "MIPRE.bornProb_nonneg"
+  ],
+  "pasted_helpers": 33,
+  "prooflines": 110,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.comm_signed_commutation",
+  "source_name": "MIPRE.QLD.comm_signed_commutation",
+  "formal_statement": "theorem MIPRE.QLD.comm_signed_commutation (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :\n    ∑ c ∈ commSet, (Fintype.card (Content F m) : ℝ)⁻¹ *\n        ‖stateVec ψ (ptObs hm MA .X c * ptObs hm MA .Z c\n          - ptObs hm MA .Z c * ptObs hm MA .X c)‖ ^ 2\n      ≤ 9519168 * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "**The commuting half of `lem:qld-obs-commutation`.** On the commuting tuples the two point\nobservables commute on the state, at `9519168 eps` --- and, like the anticommuting half, with no\nsquare root.",
+  "module": "MIPRE.Background.QLD.Commutation",
+  "module_doc": "/-!\n# Signed commutation of the point observables, on the anticommuting tuples\n\nBlueprint `lem:qld-obs-commutation`, the anticommuting case. On a tuple `omega` with\n`gamma(omega) = 1` the two point observables **anticommute** on the state:\n\n```\nX^{r_X}(u_X) Z^{r_Z}(u_Z) (x) Id  ~  - Z^{r_Z}(u_Z) X^{r_X}(u_X) (x) Id .\n```\n\nThree inputs, all already proved:\n\n* **item 7** of `lem:qld-win` (`item_ms_consistency_X`, `item_ms_consistency_Z`): each point\n  probe agrees with one of the two distinguished `Variable` bits on the *other* side. At the\n  level of observables that is `X (x) Id ~ Id (x) V_1` and `Z (x) Id ~ Id (x) V_5`, at `344 eps`\n  each --- item 7 at the two-outcome probe, then `xStateDist_obsOf_le`;\n* **item 6** (`item_magicSquare`): those two `Variable` observables anticommute on the state, at\n  `16049664 eps`;\n* the **order reversal** `norm_stateVec_anticomm_le`, which is what carries an anticommutation\n  from Bob's side to Alice's --- and is where the sign comes from.\n\n## Why this case costs `eps` and not `sqrt(eps)`\n\nThe blueprint states `lem:qld-obs-commutation` at `O(sqrt(eps))`, and that is what the\n*commuting* case costs: it needs the `Pair` measurement to be projective, which a general POVM\nstrategy's is not, so it goes through `cor:ortho-from-consistency` and pays a square root. The\nanticommuting case does not: every input is already a squared-norm bound linear in `eps`, and the\nonly inequalities used are the triangle inequality and `(u+v+w)^2 <= 3(u^2+v^2+w^2)`. So the\nconstant here is honest and there is no square root --- `48157248 eps`, from\n`12 * 344 + 12 * 344 + 3 * 16049664`.\n\nThat asymmetry is worth recording rather than rounding away: when the commuting case is\nformalized the two halves will not combine into a single `O(sqrt(eps))` by adding constants, and\nthe square root will be attributable to exactly one of them.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Commutation.lean#L702-L746",
+  "source_path": "MIPRE/Background/QLD/Commutation.lean",
+  "lines": [
+   702,
+   746
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-obs-commutation-comm",
+    "env": "lemma",
+    "title": "Signed commutation, the commuting case",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.chain_pair_point",
+   "MIPRE.QLD.xStateDist_ptObs_ptObsB",
+   "MIPRE.QLD.incQty_le_condFail",
+   "MIPRE.QLD.sq_norm_ptObs_comm_le_of_content",
+   "MIPRE.QLD.le_qldGame_mu",
+   "MIPRE.sum_condFail_le_of_pushforward",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.sum_bornProb"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 36,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.signed_commutation",
+  "source_name": "MIPRE.QLD.signed_commutation",
+  "formal_statement": "theorem MIPRE.QLD.signed_commutation (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :\n    ∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *\n        ‖stateVec ψ (ptObs hm MA .X c * ptObs hm MA .Z c\n          - sgn (gam c.omega) • (ptObs hm MA .Z c * ptObs hm MA .X c))‖ ^ 2\n      ≤ 57676416 * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "**`lem:qld-obs-commutation`.** On average over the verifier's content, the two point\nobservables commute up to the sign `(-1)^{gamma(omega)}`, at `57676416 eps = 9519168 eps +\n48157248 eps`. The blueprint states this at `O(sqrt(eps))`; it is `O(eps)`, and the two halves are\nwhere that is decided.",
+  "module": "MIPRE.Background.QLD.Commutation",
+  "module_doc": "/-!\n# Signed commutation of the point observables, on the anticommuting tuples\n\nBlueprint `lem:qld-obs-commutation`, the anticommuting case. On a tuple `omega` with\n`gamma(omega) = 1` the two point observables **anticommute** on the state:\n\n```\nX^{r_X}(u_X) Z^{r_Z}(u_Z) (x) Id  ~  - Z^{r_Z}(u_Z) X^{r_X}(u_X) (x) Id .\n```\n\nThree inputs, all already proved:\n\n* **item 7** of `lem:qld-win` (`item_ms_consistency_X`, `item_ms_consistency_Z`): each point\n  probe agrees with one of the two distinguished `Variable` bits on the *other* side. At the\n  level of observables that is `X (x) Id ~ Id (x) V_1` and `Z (x) Id ~ Id (x) V_5`, at `344 eps`\n  each --- item 7 at the two-outcome probe, then `xStateDist_obsOf_le`;\n* **item 6** (`item_magicSquare`): those two `Variable` observables anticommute on the state, at\n  `16049664 eps`;\n* the **order reversal** `norm_stateVec_anticomm_le`, which is what carries an anticommutation\n  from Bob's side to Alice's --- and is where the sign comes from.\n\n## Why this case costs `eps` and not `sqrt(eps)`\n\nThe blueprint states `lem:qld-obs-commutation` at `O(sqrt(eps))`, and that is what the\n*commuting* case costs: it needs the `Pair` measurement to be projective, which a general POVM\nstrategy's is not, so it goes through `cor:ortho-from-consistency` and pays a square root. The\nanticommuting case does not: every input is already a squared-norm bound linear in `eps`, and the\nonly inequalities used are the triangle inequality and `(u+v+w)^2 <= 3(u^2+v^2+w^2)`. So the\nconstant here is honest and there is no square root --- `48157248 eps`, from\n`12 * 344 + 12 * 344 + 3 * 16049664`.\n\nThat asymmetry is worth recording rather than rounding away: when the commuting case is\nformalized the two halves will not combine into a single `O(sqrt(eps))` by adding constants, and\nthe square root will be attributable to exactly one of them.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Commutation.lean#L754-L793",
+  "source_path": "MIPRE/Background/QLD/Commutation.lean",
+  "lines": [
+   754,
+   793
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-obs-commutation",
+    "env": "lemma",
+    "title": "Signed commutation of the point observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.acomm_signed_commutation",
+   "MIPRE.QLD.comm_signed_commutation"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 30,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.isPVM_reindex_povm",
+  "source_name": "MIPRE.isPVM_reindex_povm",
+  "formal_statement": "theorem MIPRE.isPVM_reindex_povm {A : Type*} [Fintype A] (e : d ≃ d') {M : POVM A d}\n    (h : IsPVM fun a => ((M.mats a).val)) : IsPVM fun a => (((M.reindex e).mats a).val) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {d d' Λ : Type*} [Fintype d] [DecidableEq d] [Fintype d'] [DecidableEq d'] [Fintype Λ]"
+  ],
+  "docstring": "A reindexed projective POVM is projective.",
+  "module": "MIPRE.Background.QLD.Complete",
+  "module_doc": "/-!\n# Completing the pair measurement and its evaluated marginals (`lem:qld-global-complete`,\n`lem:qld-global-sandwich`)\n\nStage 4 ends with the interface `SimulPair` (`lem:qld-simultaneous`): a projective measurement\nwith outcomes pairs `(g_X, g_Z)` of polynomials in `m` variables, whose evaluated marginals are\nconsistent with the opposite party's expanded point measurements. This file builds it from a\nglobal measurement `G` with outcomes in `LowIndDegPoly F (4m) d` (the polynomials on the padded\npoint) and the estimates of stage 4b, abstractly: for a projective `G` on Alice's register and\ntwo projective families `X x`, `Z z` on Bob's.\n\n## The completion\n\nA good outcome `g = α g_X(x) + β g_Z(z)` (`IsGood`) is relabelled by the pair `(g_X, g_Z)`, read\noff its two coefficient polynomials through `LowIndDegPoly.blockPoly` (a polynomial reading only\nthe `x` block, as a polynomial in `m` variables); every other outcome is sent to the fixed pair\n`(0, 0)`. This is a coarse-graining of `G`, so it is a complete projective measurement\n(`pairMeas`, `isPVM_pairMeas`): the paper's completion by the orthogonal complement `R`, whose\nweight is the weight of the non-good outcomes, bounded by `lem:qld-global-separate`.\n\n## The marginals\n\nFrom the products estimate `∑_g E_u ‖(G_g ⊗ (1 - B_u(g(u)))) Φ‖² ≤ Δ`, the triangle inequality\nand Cauchy--Schwarz give `∑_g E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≥ 1 - 2√Δ`\n(`one_sub_two_sqrt_le_sum_snorm_sq`). For a good `g` and the order `X_a Z_b`, the fibre analysis\nof `lem:qld-global-separate` bounds `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖²` by `2/q · ⟨G_g⟩` plus the\ndiagonal weight `E_z ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩`, and the non-good outcomes carry weight at most\n`δ_G`; hence the `Z` marginal `E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 - 2√Δ - 2/q - δ_G`\n(`marg_Z_ge`), and the order `Z_b X_a` gives the `X` marginal. The consistency form\n(`inconsistency_evalMarg_Z_le`, `_X_le`) is the same statement read through `inconsistency`.\nThe register transport to the shape of `SimulPair` (`reindex_aOp_aOp`, `isPVM_reindex`) and the\ninstance itself are in `PaddedLIDT.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Complete.lean#L68-L72",
+  "source_path": "MIPRE/Background/QLD/Complete.lean",
+  "lines": [
+   68,
+   72
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.reindex_aOp_aOp",
+  "source_name": "MIPRE.reindex_aOp_aOp",
+  "formal_statement": "theorem MIPRE.reindex_aOp_aOp (X : Matrix d d ℂ) :\n    Matrix.reindex (Equiv.prodAssoc d E E') (Equiv.prodAssoc d E E')\n        (aOp (aOp X : Matrix (d × E) (d × E) ℂ) : Matrix ((d × E) × E') ((d × E) × E') ℂ)\n      = (aOp X : Matrix (d × (E × E')) (d × (E × E')) ℂ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {d d' Λ : Type*} [Fintype d] [DecidableEq d] [Fintype d'] [DecidableEq d'] [Fintype Λ]",
+   "variable {E E' : Type*} [Fintype E] [DecidableEq E] [Fintype E'] [DecidableEq E']"
+  ],
+  "docstring": "Extending twice by the identity and reassociating is extending once by the product ancilla.",
+  "module": "MIPRE.Background.QLD.Complete",
+  "module_doc": "/-!\n# Completing the pair measurement and its evaluated marginals (`lem:qld-global-complete`,\n`lem:qld-global-sandwich`)\n\nStage 4 ends with the interface `SimulPair` (`lem:qld-simultaneous`): a projective measurement\nwith outcomes pairs `(g_X, g_Z)` of polynomials in `m` variables, whose evaluated marginals are\nconsistent with the opposite party's expanded point measurements. This file builds it from a\nglobal measurement `G` with outcomes in `LowIndDegPoly F (4m) d` (the polynomials on the padded\npoint) and the estimates of stage 4b, abstractly: for a projective `G` on Alice's register and\ntwo projective families `X x`, `Z z` on Bob's.\n\n## The completion\n\nA good outcome `g = α g_X(x) + β g_Z(z)` (`IsGood`) is relabelled by the pair `(g_X, g_Z)`, read\noff its two coefficient polynomials through `LowIndDegPoly.blockPoly` (a polynomial reading only\nthe `x` block, as a polynomial in `m` variables); every other outcome is sent to the fixed pair\n`(0, 0)`. This is a coarse-graining of `G`, so it is a complete projective measurement\n(`pairMeas`, `isPVM_pairMeas`): the paper's completion by the orthogonal complement `R`, whose\nweight is the weight of the non-good outcomes, bounded by `lem:qld-global-separate`.\n\n## The marginals\n\nFrom the products estimate `∑_g E_u ‖(G_g ⊗ (1 - B_u(g(u)))) Φ‖² ≤ Δ`, the triangle inequality\nand Cauchy--Schwarz give `∑_g E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≥ 1 - 2√Δ`\n(`one_sub_two_sqrt_le_sum_snorm_sq`). For a good `g` and the order `X_a Z_b`, the fibre analysis\nof `lem:qld-global-separate` bounds `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖²` by `2/q · ⟨G_g⟩` plus the\ndiagonal weight `E_z ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩`, and the non-good outcomes carry weight at most\n`δ_G`; hence the `Z` marginal `E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 - 2√Δ - 2/q - δ_G`\n(`marg_Z_ge`), and the order `Z_b X_a` gives the `X` marginal. The consistency form\n(`inconsistency_evalMarg_Z_le`, `_X_le`) is the same statement read through `inconsistency`.\nThe register transport to the shape of `SimulPair` (`reindex_aOp_aOp`, `isPVM_reindex`) and the\ninstance itself are in `PaddedLIDT.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Complete.lean#L76-L83",
+  "source_path": "MIPRE/Background/QLD/Complete.lean",
+  "lines": [
+   76,
+   83
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.POVM.aOp_aOp_reindex",
+  "source_name": "MIPRE.POVM.aOp_aOp_reindex",
+  "formal_statement": "theorem MIPRE.POVM.aOp_aOp_reindex {A : Type*} [Fintype A] (M : POVM A d) :\n    ((M.aOp (E := E)).aOp (E := E')).reindex (Equiv.prodAssoc d E E') = M.aOp (E := E × E') := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.POVM",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {d d' Λ : Type*} [Fintype d] [DecidableEq d] [Fintype d'] [DecidableEq d'] [Fintype Λ]",
+   "variable {E E' : Type*} [Fintype E] [DecidableEq E] [Fintype E'] [DecidableEq E']"
+  ],
+  "docstring": "The POVM form of `reindex_aOp_aOp`.",
+  "module": "MIPRE.Background.QLD.Complete",
+  "module_doc": "/-!\n# Completing the pair measurement and its evaluated marginals (`lem:qld-global-complete`,\n`lem:qld-global-sandwich`)\n\nStage 4 ends with the interface `SimulPair` (`lem:qld-simultaneous`): a projective measurement\nwith outcomes pairs `(g_X, g_Z)` of polynomials in `m` variables, whose evaluated marginals are\nconsistent with the opposite party's expanded point measurements. This file builds it from a\nglobal measurement `G` with outcomes in `LowIndDegPoly F (4m) d` (the polynomials on the padded\npoint) and the estimates of stage 4b, abstractly: for a projective `G` on Alice's register and\ntwo projective families `X x`, `Z z` on Bob's.\n\n## The completion\n\nA good outcome `g = α g_X(x) + β g_Z(z)` (`IsGood`) is relabelled by the pair `(g_X, g_Z)`, read\noff its two coefficient polynomials through `LowIndDegPoly.blockPoly` (a polynomial reading only\nthe `x` block, as a polynomial in `m` variables); every other outcome is sent to the fixed pair\n`(0, 0)`. This is a coarse-graining of `G`, so it is a complete projective measurement\n(`pairMeas`, `isPVM_pairMeas`): the paper's completion by the orthogonal complement `R`, whose\nweight is the weight of the non-good outcomes, bounded by `lem:qld-global-separate`.\n\n## The marginals\n\nFrom the products estimate `∑_g E_u ‖(G_g ⊗ (1 - B_u(g(u)))) Φ‖² ≤ Δ`, the triangle inequality\nand Cauchy--Schwarz give `∑_g E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≥ 1 - 2√Δ`\n(`one_sub_two_sqrt_le_sum_snorm_sq`). For a good `g` and the order `X_a Z_b`, the fibre analysis\nof `lem:qld-global-separate` bounds `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖²` by `2/q · ⟨G_g⟩` plus the\ndiagonal weight `E_z ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩`, and the non-good outcomes carry weight at most\n`δ_G`; hence the `Z` marginal `E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 - 2√Δ - 2/q - δ_G`\n(`marg_Z_ge`), and the order `Z_b X_a` gives the `X` marginal. The consistency form\n(`inconsistency_evalMarg_Z_le`, `_X_le`) is the same statement read through `inconsistency`.\nThe register transport to the shape of `SimulPair` (`reindex_aOp_aOp`, `isPVM_reindex`) and the\ninstance itself are in `PaddedLIDT.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Complete.lean#L85-L89",
+  "source_path": "MIPRE/Background/QLD/Complete.lean",
+  "lines": [
+   85,
+   89
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.reindex_aOp_aOp"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.not_depOutside_gA_of_isGood",
+  "source_name": "MIPRE.QLD.not_depOutside_gA_of_isGood",
+  "formal_statement": "theorem MIPRE.QLD.not_depOutside_gA_of_isGood (hd : 1 ≤ d)\n    {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)} (hg : IsGood g) :\n    ¬ (gA hd g).DepOutside xSet := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]"
+  ],
+  "docstring": "The `α` coefficient of a good outcome reads only the `x` block.",
+  "module": "MIPRE.Background.QLD.Complete",
+  "module_doc": "/-!\n# Completing the pair measurement and its evaluated marginals (`lem:qld-global-complete`,\n`lem:qld-global-sandwich`)\n\nStage 4 ends with the interface `SimulPair` (`lem:qld-simultaneous`): a projective measurement\nwith outcomes pairs `(g_X, g_Z)` of polynomials in `m` variables, whose evaluated marginals are\nconsistent with the opposite party's expanded point measurements. This file builds it from a\nglobal measurement `G` with outcomes in `LowIndDegPoly F (4m) d` (the polynomials on the padded\npoint) and the estimates of stage 4b, abstractly: for a projective `G` on Alice's register and\ntwo projective families `X x`, `Z z` on Bob's.\n\n## The completion\n\nA good outcome `g = α g_X(x) + β g_Z(z)` (`IsGood`) is relabelled by the pair `(g_X, g_Z)`, read\noff its two coefficient polynomials through `LowIndDegPoly.blockPoly` (a polynomial reading only\nthe `x` block, as a polynomial in `m` variables); every other outcome is sent to the fixed pair\n`(0, 0)`. This is a coarse-graining of `G`, so it is a complete projective measurement\n(`pairMeas`, `isPVM_pairMeas`): the paper's completion by the orthogonal complement `R`, whose\nweight is the weight of the non-good outcomes, bounded by `lem:qld-global-separate`.\n\n## The marginals\n\nFrom the products estimate `∑_g E_u ‖(G_g ⊗ (1 - B_u(g(u)))) Φ‖² ≤ Δ`, the triangle inequality\nand Cauchy--Schwarz give `∑_g E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≥ 1 - 2√Δ`\n(`one_sub_two_sqrt_le_sum_snorm_sq`). For a good `g` and the order `X_a Z_b`, the fibre analysis\nof `lem:qld-global-separate` bounds `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖²` by `2/q · ⟨G_g⟩` plus the\ndiagonal weight `E_z ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩`, and the non-good outcomes carry weight at most\n`δ_G`; hence the `Z` marginal `E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 - 2√Δ - 2/q - δ_G`\n(`marg_Z_ge`), and the order `Z_b X_a` gives the `X` marginal. The consistency form\n(`inconsistency_evalMarg_Z_le`, `_X_le`) is the same statement read through `inconsistency`.\nThe register transport to the shape of `SimulPair` (`reindex_aOp_aOp`, `isPVM_reindex`) and the\ninstance itself are in `PaddedLIDT.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Complete.lean#L138-L156",
+  "source_path": "MIPRE/Background/QLD/Complete.lean",
+  "lines": [
+   138,
+   156
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-complete",
+    "env": "lemma",
+    "title": "Completing the pair measurement projectively",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.not_depOutside_gB_of_isGood",
+  "source_name": "MIPRE.QLD.not_depOutside_gB_of_isGood",
+  "formal_statement": "theorem MIPRE.QLD.not_depOutside_gB_of_isGood (hd : 1 ≤ d)\n    {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)} (hg : IsGood g) :\n    ¬ (gB hd g).DepOutside zSet := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]"
+  ],
+  "docstring": "The `β` coefficient of a good outcome reads only the `z` block.",
+  "module": "MIPRE.Background.QLD.Complete",
+  "module_doc": "/-!\n# Completing the pair measurement and its evaluated marginals (`lem:qld-global-complete`,\n`lem:qld-global-sandwich`)\n\nStage 4 ends with the interface `SimulPair` (`lem:qld-simultaneous`): a projective measurement\nwith outcomes pairs `(g_X, g_Z)` of polynomials in `m` variables, whose evaluated marginals are\nconsistent with the opposite party's expanded point measurements. This file builds it from a\nglobal measurement `G` with outcomes in `LowIndDegPoly F (4m) d` (the polynomials on the padded\npoint) and the estimates of stage 4b, abstractly: for a projective `G` on Alice's register and\ntwo projective families `X x`, `Z z` on Bob's.\n\n## The completion\n\nA good outcome `g = α g_X(x) + β g_Z(z)` (`IsGood`) is relabelled by the pair `(g_X, g_Z)`, read\noff its two coefficient polynomials through `LowIndDegPoly.blockPoly` (a polynomial reading only\nthe `x` block, as a polynomial in `m` variables); every other outcome is sent to the fixed pair\n`(0, 0)`. This is a coarse-graining of `G`, so it is a complete projective measurement\n(`pairMeas`, `isPVM_pairMeas`): the paper's completion by the orthogonal complement `R`, whose\nweight is the weight of the non-good outcomes, bounded by `lem:qld-global-separate`.\n\n## The marginals\n\nFrom the products estimate `∑_g E_u ‖(G_g ⊗ (1 - B_u(g(u)))) Φ‖² ≤ Δ`, the triangle inequality\nand Cauchy--Schwarz give `∑_g E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≥ 1 - 2√Δ`\n(`one_sub_two_sqrt_le_sum_snorm_sq`). For a good `g` and the order `X_a Z_b`, the fibre analysis\nof `lem:qld-global-separate` bounds `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖²` by `2/q · ⟨G_g⟩` plus the\ndiagonal weight `E_z ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩`, and the non-good outcomes carry weight at most\n`δ_G`; hence the `Z` marginal `E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 - 2√Δ - 2/q - δ_G`\n(`marg_Z_ge`), and the order `Z_b X_a` gives the `X` marginal. The consistency form\n(`inconsistency_evalMarg_Z_le`, `_X_le`) is the same statement read through `inconsistency`.\nThe register transport to the shape of `SimulPair` (`reindex_aOp_aOp`, `isPVM_reindex`) and the\ninstance itself are in `PaddedLIDT.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Complete.lean#L158-L176",
+  "source_path": "MIPRE/Background/QLD/Complete.lean",
+  "lines": [
+   158,
+   176
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-complete",
+    "env": "lemma",
+    "title": "Completing the pair measurement projectively",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.isPVM_pairMeas",
+  "source_name": "MIPRE.QLD.isPVM_pairMeas",
+  "formal_statement": "theorem MIPRE.QLD.isPVM_pairMeas (hd : 1 ≤ d)\n    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))\n      (Matrix R R ℂ)) : IsPVM fun p => (((pairMeas hd G).mats p).val) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]",
+   "variable {R : Type*} [Fintype R] [DecidableEq R]"
+  ],
+  "docstring": "**The completed pair measurement is projective.**",
+  "module": "MIPRE.Background.QLD.Complete",
+  "module_doc": "/-!\n# Completing the pair measurement and its evaluated marginals (`lem:qld-global-complete`,\n`lem:qld-global-sandwich`)\n\nStage 4 ends with the interface `SimulPair` (`lem:qld-simultaneous`): a projective measurement\nwith outcomes pairs `(g_X, g_Z)` of polynomials in `m` variables, whose evaluated marginals are\nconsistent with the opposite party's expanded point measurements. This file builds it from a\nglobal measurement `G` with outcomes in `LowIndDegPoly F (4m) d` (the polynomials on the padded\npoint) and the estimates of stage 4b, abstractly: for a projective `G` on Alice's register and\ntwo projective families `X x`, `Z z` on Bob's.\n\n## The completion\n\nA good outcome `g = α g_X(x) + β g_Z(z)` (`IsGood`) is relabelled by the pair `(g_X, g_Z)`, read\noff its two coefficient polynomials through `LowIndDegPoly.blockPoly` (a polynomial reading only\nthe `x` block, as a polynomial in `m` variables); every other outcome is sent to the fixed pair\n`(0, 0)`. This is a coarse-graining of `G`, so it is a complete projective measurement\n(`pairMeas`, `isPVM_pairMeas`): the paper's completion by the orthogonal complement `R`, whose\nweight is the weight of the non-good outcomes, bounded by `lem:qld-global-separate`.\n\n## The marginals\n\nFrom the products estimate `∑_g E_u ‖(G_g ⊗ (1 - B_u(g(u)))) Φ‖² ≤ Δ`, the triangle inequality\nand Cauchy--Schwarz give `∑_g E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≥ 1 - 2√Δ`\n(`one_sub_two_sqrt_le_sum_snorm_sq`). For a good `g` and the order `X_a Z_b`, the fibre analysis\nof `lem:qld-global-separate` bounds `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖²` by `2/q · ⟨G_g⟩` plus the\ndiagonal weight `E_z ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩`, and the non-good outcomes carry weight at most\n`δ_G`; hence the `Z` marginal `E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 - 2√Δ - 2/q - δ_G`\n(`marg_Z_ge`), and the order `Z_b X_a` gives the `X` marginal. The consistency form\n(`inconsistency_evalMarg_Z_le`, `_X_le`) is the same statement read through `inconsistency`.\nThe register transport to the shape of `SimulPair` (`reindex_aOp_aOp`, `isPVM_reindex`) and the\ninstance itself are in `PaddedLIDT.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Complete.lean#L228-L236",
+  "source_path": "MIPRE/Background/QLD/Complete.lean",
+  "lines": [
+   228,
+   236
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-complete",
+    "env": "lemma",
+    "title": "Completing the pair measurement projectively",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.IsPVM.coarse"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.inconsistency_map_eq",
+  "source_name": "MIPRE.QLD.inconsistency_map_eq",
+  "formal_statement": "theorem MIPRE.QLD.inconsistency_map_eq {Q : Type*} [Fintype Q] (μ : Q → ℝ) (hμ : ∑ q, μ q = 1)\n    {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)\n    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := n) (d := d)) (Matrix RA RA ℂ))\n    (f : Q → LowIndDegPoly (F := F) (m := n) (d := d) → F) (P : Q → POVM F RB) :\n    inconsistency μ Φ (fun q => (G.toPOVM ()).map (f q)) P\n      = 1 - ∑ q, μ q * ∑ g, bornProb Φ (G.M () g) (((P q).mats (f q g)).val) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {n d : ℕ} {RA RB : Type*} [Fintype RA]"
+  ],
+  "docstring": "**The inconsistency of a coarse-graining of a projective measurement**, against a family of\nPOVMs indexed by the same questions: one minus the average agreement, outcome by outcome of the\noriginal measurement. `inconsistency_evalPOVM_eq` is the case of evaluation at the point.",
+  "module": "MIPRE.Background.QLD.Complete",
+  "module_doc": "/-!\n# Completing the pair measurement and its evaluated marginals (`lem:qld-global-complete`,\n`lem:qld-global-sandwich`)\n\nStage 4 ends with the interface `SimulPair` (`lem:qld-simultaneous`): a projective measurement\nwith outcomes pairs `(g_X, g_Z)` of polynomials in `m` variables, whose evaluated marginals are\nconsistent with the opposite party's expanded point measurements. This file builds it from a\nglobal measurement `G` with outcomes in `LowIndDegPoly F (4m) d` (the polynomials on the padded\npoint) and the estimates of stage 4b, abstractly: for a projective `G` on Alice's register and\ntwo projective families `X x`, `Z z` on Bob's.\n\n## The completion\n\nA good outcome `g = α g_X(x) + β g_Z(z)` (`IsGood`) is relabelled by the pair `(g_X, g_Z)`, read\noff its two coefficient polynomials through `LowIndDegPoly.blockPoly` (a polynomial reading only\nthe `x` block, as a polynomial in `m` variables); every other outcome is sent to the fixed pair\n`(0, 0)`. This is a coarse-graining of `G`, so it is a complete projective measurement\n(`pairMeas`, `isPVM_pairMeas`): the paper's completion by the orthogonal complement `R`, whose\nweight is the weight of the non-good outcomes, bounded by `lem:qld-global-separate`.\n\n## The marginals\n\nFrom the products estimate `∑_g E_u ‖(G_g ⊗ (1 - B_u(g(u)))) Φ‖² ≤ Δ`, the triangle inequality\nand Cauchy--Schwarz give `∑_g E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≥ 1 - 2√Δ`\n(`one_sub_two_sqrt_le_sum_snorm_sq`). For a good `g` and the order `X_a Z_b`, the fibre analysis\nof `lem:qld-global-separate` bounds `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖²` by `2/q · ⟨G_g⟩` plus the\ndiagonal weight `E_z ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩`, and the non-good outcomes carry weight at most\n`δ_G`; hence the `Z` marginal `E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 - 2√Δ - 2/q - δ_G`\n(`marg_Z_ge`), and the order `Z_b X_a` gives the `X` marginal. The consistency form\n(`inconsistency_evalMarg_Z_le`, `_X_le`) is the same statement read through `inconsistency`.\nThe register transport to the shape of `SimulPair` (`reindex_aOp_aOp`, `isPVM_reindex`) and the\ninstance itself are in `PaddedLIDT.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Complete.lean#L256-L293",
+  "source_path": "MIPRE/Background/QLD/Complete.lean",
+  "lines": [
+   256,
+   293
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-complete",
+    "env": "lemma",
+    "title": "Completing the pair measurement projectively",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_sum",
+   "MIPRE.POVM.sum_val"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.one_sub_two_sqrt_le_sum_snorm_sq",
+  "source_name": "MIPRE.QLD.one_sub_two_sqrt_le_sum_snorm_sq",
+  "formal_statement": "theorem MIPRE.QLD.one_sub_two_sqrt_le_sum_snorm_sq {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)\n    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))\n      (Matrix RA RA ℂ))\n    (B : Point F (4 * m) → F → Matrix RB RB ℂ) {Δ : ℝ}\n    (hprod : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ\n      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - B u (g.eval u))) ^ 2 ≤ Δ) :\n    1 - 2 * Real.sqrt Δ ≤ ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ\n      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (B u (g.eval u))) ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m] {RA RB : Type*}"
+  ],
+  "docstring": "**The products estimate bounds the weight through `B` from below**: from\n`∑_g E_u ‖(G_g ⊗ (1 - B_u(g(u)))) Φ‖² ≤ Δ`, the triangle inequality and Cauchy--Schwarz give\n`∑_g E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≥ 1 - 2√Δ`.",
+  "module": "MIPRE.Background.QLD.Complete",
+  "module_doc": "/-!\n# Completing the pair measurement and its evaluated marginals (`lem:qld-global-complete`,\n`lem:qld-global-sandwich`)\n\nStage 4 ends with the interface `SimulPair` (`lem:qld-simultaneous`): a projective measurement\nwith outcomes pairs `(g_X, g_Z)` of polynomials in `m` variables, whose evaluated marginals are\nconsistent with the opposite party's expanded point measurements. This file builds it from a\nglobal measurement `G` with outcomes in `LowIndDegPoly F (4m) d` (the polynomials on the padded\npoint) and the estimates of stage 4b, abstractly: for a projective `G` on Alice's register and\ntwo projective families `X x`, `Z z` on Bob's.\n\n## The completion\n\nA good outcome `g = α g_X(x) + β g_Z(z)` (`IsGood`) is relabelled by the pair `(g_X, g_Z)`, read\noff its two coefficient polynomials through `LowIndDegPoly.blockPoly` (a polynomial reading only\nthe `x` block, as a polynomial in `m` variables); every other outcome is sent to the fixed pair\n`(0, 0)`. This is a coarse-graining of `G`, so it is a complete projective measurement\n(`pairMeas`, `isPVM_pairMeas`): the paper's completion by the orthogonal complement `R`, whose\nweight is the weight of the non-good outcomes, bounded by `lem:qld-global-separate`.\n\n## The marginals\n\nFrom the products estimate `∑_g E_u ‖(G_g ⊗ (1 - B_u(g(u)))) Φ‖² ≤ Δ`, the triangle inequality\nand Cauchy--Schwarz give `∑_g E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≥ 1 - 2√Δ`\n(`one_sub_two_sqrt_le_sum_snorm_sq`). For a good `g` and the order `X_a Z_b`, the fibre analysis\nof `lem:qld-global-separate` bounds `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖²` by `2/q · ⟨G_g⟩` plus the\ndiagonal weight `E_z ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩`, and the non-good outcomes carry weight at most\n`δ_G`; hence the `Z` marginal `E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 - 2√Δ - 2/q - δ_G`\n(`marg_Z_ge`), and the order `Z_b X_a` gives the `X` marginal. The consistency form\n(`inconsistency_evalMarg_Z_le`, `_X_le`) is the same statement read through `inconsistency`.\nThe register transport to the shape of `SimulPair` (`reindex_aOp_aOp`, `isPVM_reindex`) and the\ninstance itself are in `PaddedLIDT.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Complete.lean#L346-L418",
+  "source_path": "MIPRE/Background/QLD/Complete.lean",
+  "lines": [
+   346,
+   418
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-sandwich",
+    "env": "lemma",
+    "title": "Sandwich estimates and the two marginals",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_uniform_eq_one",
+   "MIPRE.aOp_sum",
+   "MIPRE.sum_weighted_mul_le_sqrt"
+  ],
+  "pasted_helpers": 19,
+  "prooflines": 61,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.marg_Z_ge",
+  "source_name": "MIPRE.QLD.marg_Z_ge",
+  "formal_statement": "theorem MIPRE.QLD.marg_Z_ge (hd : 1 ≤ d) {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)\n    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))\n      (Matrix RA RA ℂ))\n    (hX : ∀ x, IsPVM (X x)) (hZ : ∀ z, IsPVM (Z z)) {Δ δG : ℝ}\n    (hprod : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ\n      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - ordComb ordXZ X Z u (g.eval u))) ^ 2\n      ≤ Δ)\n    (hbad : ∑ g ∈ univ.filter (fun g => ¬ IsGood g), bornProb Φ (G.M () g) 1 ≤ δG) :\n    1 - 2 * Real.sqrt Δ - 2 / Fintype.card F - δG\n      ≤ ∑ z, uniform (Point F m) z\n          * ∑ g, bornProb Φ (G.M () g) (Z z ((PolyPair.proj .Z (pairOf hd g)).eval z)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m] {RA RB : Type*}",
+   "variable {X Z : Point F m → F → Matrix RB RB ℂ}"
+  ],
+  "docstring": "**The `Z` marginal of the completed measurement tracks Bob's `Z` point measurement**: from\nthe products estimate for the order `X_a Z_b` and the weight `δ_G` of the non-good outcomes,\n`E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 - 2√Δ - 2/q - δ_G`, where `g_Z` is the second component of\nthe relabelled outcome.",
+  "module": "MIPRE.Background.QLD.Complete",
+  "module_doc": "/-!\n# Completing the pair measurement and its evaluated marginals (`lem:qld-global-complete`,\n`lem:qld-global-sandwich`)\n\nStage 4 ends with the interface `SimulPair` (`lem:qld-simultaneous`): a projective measurement\nwith outcomes pairs `(g_X, g_Z)` of polynomials in `m` variables, whose evaluated marginals are\nconsistent with the opposite party's expanded point measurements. This file builds it from a\nglobal measurement `G` with outcomes in `LowIndDegPoly F (4m) d` (the polynomials on the padded\npoint) and the estimates of stage 4b, abstractly: for a projective `G` on Alice's register and\ntwo projective families `X x`, `Z z` on Bob's.\n\n## The completion\n\nA good outcome `g = α g_X(x) + β g_Z(z)` (`IsGood`) is relabelled by the pair `(g_X, g_Z)`, read\noff its two coefficient polynomials through `LowIndDegPoly.blockPoly` (a polynomial reading only\nthe `x` block, as a polynomial in `m` variables); every other outcome is sent to the fixed pair\n`(0, 0)`. This is a coarse-graining of `G`, so it is a complete projective measurement\n(`pairMeas`, `isPVM_pairMeas`): the paper's completion by the orthogonal complement `R`, whose\nweight is the weight of the non-good outcomes, bounded by `lem:qld-global-separate`.\n\n## The marginals\n\nFrom the products estimate `∑_g E_u ‖(G_g ⊗ (1 - B_u(g(u)))) Φ‖² ≤ Δ`, the triangle inequality\nand Cauchy--Schwarz give `∑_g E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≥ 1 - 2√Δ`\n(`one_sub_two_sqrt_le_sum_snorm_sq`). For a good `g` and the order `X_a Z_b`, the fibre analysis\nof `lem:qld-global-separate` bounds `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖²` by `2/q · ⟨G_g⟩` plus the\ndiagonal weight `E_z ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩`, and the non-good outcomes carry weight at most\n`δ_G`; hence the `Z` marginal `E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 - 2√Δ - 2/q - δ_G`\n(`marg_Z_ge`), and the order `Z_b X_a` gives the `X` marginal. The consistency form\n(`inconsistency_evalMarg_Z_le`, `_X_le`) is the same statement read through `inconsistency`.\nThe register transport to the shape of `SimulPair` (`reindex_aOp_aOp`, `isPVM_reindex`) and the\ninstance itself are in `PaddedLIDT.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Complete.lean#L422-L494",
+  "source_path": "MIPRE/Background/QLD/Complete.lean",
+  "lines": [
+   422,
+   494
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-sandwich",
+    "env": "lemma",
+    "title": "Sandwich estimates and the two marginals",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.LowIndDegPoly.eval_blockPoly",
+   "MIPRE.QLD.one_sub_two_sqrt_le_sum_snorm_sq",
+   "MIPRE.QLD.not_depOutside_gB_of_isGood",
+   "MIPRE.sum_uniform_eq_one",
+   "MIPRE.QLD.snorm_sq_ordComb_ordXZ_of_ne",
+   "MIPRE.posSemidef_of_proj",
+   "MIPRE.QLD.sum_point_pad",
+   "MIPRE.QLD.sum_uniform_snorm_sq_ordComb_XZ_le_of_isLinAB",
+   "MIPRE.aOp_sum",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.IsPVM.posSemidef",
+   "MIPRE.IsPVM.coarse"
+  ],
+  "pasted_helpers": 35,
+  "prooflines": 58,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.marg_X_ge",
+  "source_name": "MIPRE.QLD.marg_X_ge",
+  "formal_statement": "theorem MIPRE.QLD.marg_X_ge (hd : 1 ≤ d) {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)\n    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))\n      (Matrix RA RA ℂ))\n    (hX : ∀ x, IsPVM (X x)) (hZ : ∀ z, IsPVM (Z z)) {Δ δG : ℝ}\n    (hprod : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ\n      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - ordComb ordZX X Z u (g.eval u))) ^ 2\n      ≤ Δ)\n    (hbad : ∑ g ∈ univ.filter (fun g => ¬ IsGood g), bornProb Φ (G.M () g) 1 ≤ δG) :\n    1 - 2 * Real.sqrt Δ - 2 / Fintype.card F - δG\n      ≤ ∑ x, uniform (Point F m) x\n          * ∑ g, bornProb Φ (G.M () g) (X x ((PolyPair.proj .X (pairOf hd g)).eval x)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m] {RA RB : Type*}",
+   "variable {X Z : Point F m → F → Matrix RB RB ℂ}"
+  ],
+  "docstring": "**The `X` marginal**, from the order `Z_b X_a`: the mirror image.",
+  "module": "MIPRE.Background.QLD.Complete",
+  "module_doc": "/-!\n# Completing the pair measurement and its evaluated marginals (`lem:qld-global-complete`,\n`lem:qld-global-sandwich`)\n\nStage 4 ends with the interface `SimulPair` (`lem:qld-simultaneous`): a projective measurement\nwith outcomes pairs `(g_X, g_Z)` of polynomials in `m` variables, whose evaluated marginals are\nconsistent with the opposite party's expanded point measurements. This file builds it from a\nglobal measurement `G` with outcomes in `LowIndDegPoly F (4m) d` (the polynomials on the padded\npoint) and the estimates of stage 4b, abstractly: for a projective `G` on Alice's register and\ntwo projective families `X x`, `Z z` on Bob's.\n\n## The completion\n\nA good outcome `g = α g_X(x) + β g_Z(z)` (`IsGood`) is relabelled by the pair `(g_X, g_Z)`, read\noff its two coefficient polynomials through `LowIndDegPoly.blockPoly` (a polynomial reading only\nthe `x` block, as a polynomial in `m` variables); every other outcome is sent to the fixed pair\n`(0, 0)`. This is a coarse-graining of `G`, so it is a complete projective measurement\n(`pairMeas`, `isPVM_pairMeas`): the paper's completion by the orthogonal complement `R`, whose\nweight is the weight of the non-good outcomes, bounded by `lem:qld-global-separate`.\n\n## The marginals\n\nFrom the products estimate `∑_g E_u ‖(G_g ⊗ (1 - B_u(g(u)))) Φ‖² ≤ Δ`, the triangle inequality\nand Cauchy--Schwarz give `∑_g E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≥ 1 - 2√Δ`\n(`one_sub_two_sqrt_le_sum_snorm_sq`). For a good `g` and the order `X_a Z_b`, the fibre analysis\nof `lem:qld-global-separate` bounds `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖²` by `2/q · ⟨G_g⟩` plus the\ndiagonal weight `E_z ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩`, and the non-good outcomes carry weight at most\n`δ_G`; hence the `Z` marginal `E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 - 2√Δ - 2/q - δ_G`\n(`marg_Z_ge`), and the order `Z_b X_a` gives the `X` marginal. The consistency form\n(`inconsistency_evalMarg_Z_le`, `_X_le`) is the same statement read through `inconsistency`.\nThe register transport to the shape of `SimulPair` (`reindex_aOp_aOp`, `isPVM_reindex`) and the\ninstance itself are in `PaddedLIDT.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Complete.lean#L496-L566",
+  "source_path": "MIPRE/Background/QLD/Complete.lean",
+  "lines": [
+   496,
+   566
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-sandwich",
+    "env": "lemma",
+    "title": "Sandwich estimates and the two marginals",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.LowIndDegPoly.eval_blockPoly",
+   "MIPRE.QLD.one_sub_two_sqrt_le_sum_snorm_sq",
+   "MIPRE.QLD.not_depOutside_gA_of_isGood",
+   "MIPRE.sum_uniform_eq_one",
+   "MIPRE.QLD.snorm_sq_ordComb_ordXZ_of_ne",
+   "MIPRE.posSemidef_of_proj",
+   "MIPRE.QLD.sum_point_pad",
+   "MIPRE.QLD.sum_uniform_snorm_sq_ordComb_ZX_le_of_isLinAB",
+   "MIPRE.aOp_sum",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.IsPVM.posSemidef",
+   "MIPRE.IsPVM.coarse"
+  ],
+  "pasted_helpers": 36,
+  "prooflines": 59,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.inconsistency_evalMarg_Z_le",
+  "source_name": "MIPRE.QLD.inconsistency_evalMarg_Z_le",
+  "formal_statement": "theorem MIPRE.QLD.inconsistency_evalMarg_Z_le (hd : 1 ≤ d) {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)\n    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))\n      (Matrix RA RA ℂ))\n    (hX : ∀ x, IsPVM (X x)) (hZ : ∀ z, IsPVM (Z z)) (N : Point F m → POVM F RB)\n    (hN : ∀ z a, ((N z).mats a).val = Z z a) {Δ δG : ℝ}\n    (hprod : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ\n      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - ordComb ordXZ X Z u (g.eval u))) ^ 2\n      ≤ Δ)\n    (hbad : ∑ g ∈ univ.filter (fun g => ¬ IsGood g), bornProb Φ (G.M () g) 1 ≤ δG) :\n    inconsistency (uniform (Point F m)) Φ (fun z => evalMarg (pairMeas hd G) .Z z) N\n      ≤ 2 * Real.sqrt Δ + 2 / Fintype.card F + δG := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m] {RA RB : Type*}",
+   "variable {X Z : Point F m → F → Matrix RB RB ℂ}"
+  ],
+  "docstring": "**`lem:qld-global-sandwich`, the `Z` marginal in consistency form**: the evaluated `Z`\nmarginal of the completed measurement against a family `N` whose elements are the `Z z a`.",
+  "module": "MIPRE.Background.QLD.Complete",
+  "module_doc": "/-!\n# Completing the pair measurement and its evaluated marginals (`lem:qld-global-complete`,\n`lem:qld-global-sandwich`)\n\nStage 4 ends with the interface `SimulPair` (`lem:qld-simultaneous`): a projective measurement\nwith outcomes pairs `(g_X, g_Z)` of polynomials in `m` variables, whose evaluated marginals are\nconsistent with the opposite party's expanded point measurements. This file builds it from a\nglobal measurement `G` with outcomes in `LowIndDegPoly F (4m) d` (the polynomials on the padded\npoint) and the estimates of stage 4b, abstractly: for a projective `G` on Alice's register and\ntwo projective families `X x`, `Z z` on Bob's.\n\n## The completion\n\nA good outcome `g = α g_X(x) + β g_Z(z)` (`IsGood`) is relabelled by the pair `(g_X, g_Z)`, read\noff its two coefficient polynomials through `LowIndDegPoly.blockPoly` (a polynomial reading only\nthe `x` block, as a polynomial in `m` variables); every other outcome is sent to the fixed pair\n`(0, 0)`. This is a coarse-graining of `G`, so it is a complete projective measurement\n(`pairMeas`, `isPVM_pairMeas`): the paper's completion by the orthogonal complement `R`, whose\nweight is the weight of the non-good outcomes, bounded by `lem:qld-global-separate`.\n\n## The marginals\n\nFrom the products estimate `∑_g E_u ‖(G_g ⊗ (1 - B_u(g(u)))) Φ‖² ≤ Δ`, the triangle inequality\nand Cauchy--Schwarz give `∑_g E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≥ 1 - 2√Δ`\n(`one_sub_two_sqrt_le_sum_snorm_sq`). For a good `g` and the order `X_a Z_b`, the fibre analysis\nof `lem:qld-global-separate` bounds `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖²` by `2/q · ⟨G_g⟩` plus the\ndiagonal weight `E_z ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩`, and the non-good outcomes carry weight at most\n`δ_G`; hence the `Z` marginal `E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 - 2√Δ - 2/q - δ_G`\n(`marg_Z_ge`), and the order `Z_b X_a` gives the `X` marginal. The consistency form\n(`inconsistency_evalMarg_Z_le`, `_X_le`) is the same statement read through `inconsistency`.\nThe register transport to the shape of `SimulPair` (`reindex_aOp_aOp`, `isPVM_reindex`) and the\ninstance itself are in `PaddedLIDT.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Complete.lean#L568-L586",
+  "source_path": "MIPRE/Background/QLD/Complete.lean",
+  "lines": [
+   568,
+   586
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-sandwich",
+    "env": "lemma",
+    "title": "Sandwich estimates and the two marginals",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.inconsistency_map_eq",
+   "MIPRE.QLD.marg_Z_ge",
+   "MIPRE.sum_uniform_eq_one",
+   "MIPRE.POVM.map_map"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.inconsistency_evalMarg_X_le",
+  "source_name": "MIPRE.QLD.inconsistency_evalMarg_X_le",
+  "formal_statement": "theorem MIPRE.QLD.inconsistency_evalMarg_X_le (hd : 1 ≤ d) {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)\n    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))\n      (Matrix RA RA ℂ))\n    (hX : ∀ x, IsPVM (X x)) (hZ : ∀ z, IsPVM (Z z)) (N : Point F m → POVM F RB)\n    (hN : ∀ x a, ((N x).mats a).val = X x a) {Δ δG : ℝ}\n    (hprod : ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ\n      ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ) * bOp (1 - ordComb ordZX X Z u (g.eval u))) ^ 2\n      ≤ Δ)\n    (hbad : ∑ g ∈ univ.filter (fun g => ¬ IsGood g), bornProb Φ (G.M () g) 1 ≤ δG) :\n    inconsistency (uniform (Point F m)) Φ (fun x => evalMarg (pairMeas hd G) .X x) N\n      ≤ 2 * Real.sqrt Δ + 2 / Fintype.card F + δG := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m] {RA RB : Type*}",
+   "variable {X Z : Point F m → F → Matrix RB RB ℂ}"
+  ],
+  "docstring": "**`lem:qld-global-sandwich`, the `X` marginal in consistency form.**",
+  "module": "MIPRE.Background.QLD.Complete",
+  "module_doc": "/-!\n# Completing the pair measurement and its evaluated marginals (`lem:qld-global-complete`,\n`lem:qld-global-sandwich`)\n\nStage 4 ends with the interface `SimulPair` (`lem:qld-simultaneous`): a projective measurement\nwith outcomes pairs `(g_X, g_Z)` of polynomials in `m` variables, whose evaluated marginals are\nconsistent with the opposite party's expanded point measurements. This file builds it from a\nglobal measurement `G` with outcomes in `LowIndDegPoly F (4m) d` (the polynomials on the padded\npoint) and the estimates of stage 4b, abstractly: for a projective `G` on Alice's register and\ntwo projective families `X x`, `Z z` on Bob's.\n\n## The completion\n\nA good outcome `g = α g_X(x) + β g_Z(z)` (`IsGood`) is relabelled by the pair `(g_X, g_Z)`, read\noff its two coefficient polynomials through `LowIndDegPoly.blockPoly` (a polynomial reading only\nthe `x` block, as a polynomial in `m` variables); every other outcome is sent to the fixed pair\n`(0, 0)`. This is a coarse-graining of `G`, so it is a complete projective measurement\n(`pairMeas`, `isPVM_pairMeas`): the paper's completion by the orthogonal complement `R`, whose\nweight is the weight of the non-good outcomes, bounded by `lem:qld-global-separate`.\n\n## The marginals\n\nFrom the products estimate `∑_g E_u ‖(G_g ⊗ (1 - B_u(g(u)))) Φ‖² ≤ Δ`, the triangle inequality\nand Cauchy--Schwarz give `∑_g E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≥ 1 - 2√Δ`\n(`one_sub_two_sqrt_le_sum_snorm_sq`). For a good `g` and the order `X_a Z_b`, the fibre analysis\nof `lem:qld-global-separate` bounds `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖²` by `2/q · ⟨G_g⟩` plus the\ndiagonal weight `E_z ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩`, and the non-good outcomes carry weight at most\n`δ_G`; hence the `Z` marginal `E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 - 2√Δ - 2/q - δ_G`\n(`marg_Z_ge`), and the order `Z_b X_a` gives the `X` marginal. The consistency form\n(`inconsistency_evalMarg_Z_le`, `_X_le`) is the same statement read through `inconsistency`.\nThe register transport to the shape of `SimulPair` (`reindex_aOp_aOp`, `isPVM_reindex`) and the\ninstance itself are in `PaddedLIDT.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Complete.lean#L588-L605",
+  "source_path": "MIPRE/Background/QLD/Complete.lean",
+  "lines": [
+   588,
+   605
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-sandwich",
+    "env": "lemma",
+    "title": "Sandwich estimates and the two marginals",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.inconsistency_map_eq",
+   "MIPRE.QLD.marg_X_ge",
+   "MIPRE.sum_uniform_eq_one",
+   "MIPRE.POVM.map_map"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_diag_eq_one_sub",
+  "source_name": "MIPRE.QLD.sum_diag_eq_one_sub",
+  "formal_statement": "theorem MIPRE.QLD.sum_diag_eq_one_sub {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) (Q : POVM A dA)\n    (R : POVM A dB) :\n    ∑ a, (star ψ ⬝ᵥ ((((Q.mats a).val ⊗ₖ ((R.mats a).val))) *ᵥ ψ)).re\n      = 1 - pairInconsistency ψ Q R := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix Kronecker MIPRE",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {A : Type*} [Fintype A] [DecidableEq A]",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**The diagonal terms sum to `1 - γ`**, because `∑_{a,b} Q_a ⊗ R_b = Id`.",
+  "module": "MIPRE.Background.QLD.Consistency",
+  "module_doc": "/-!\n# From bipartite consistency to near-projectivity\n\nThe second half of blueprint `cor:ortho-from-consistency`. `Ortho.lean` turns *near-projectivity*\nof a POVM on Alice's factor into a projective measurement close to it; what the appendix has is\n*consistency* of Alice's POVM with one of Bob's. The bridge is a Cauchy--Schwarz step: writing\n`γ = ∑_{a ≠ b} ⟨ψ| Q_a ⊗ R_b |ψ⟩`, so that `∑_a ⟨ψ| Q_a ⊗ R_a |ψ⟩ = 1 - γ`,\n\n`1 - γ = ∑_a ⟨(Q_a ⊗ Id)ψ, (Id ⊗ R_a)ψ⟩ ≤ (∑_a ‖(Q_a ⊗ Id)ψ‖²)^{1/2} (∑_a ‖(Id ⊗ R_a)ψ‖²)^{1/2}`\n\nand the second factor is at most one because `∑_a R_a² ≤ ∑_a R_a = Id`.\n\n## A repair to the blueprint's proof\n\nThe blueprint and the paper close with a compactness step: the theorem gives a projective family\nonly for `ε > 2γ` strictly, and a limit along `ε ↓ 2γ` is taken inside the compact set of\nprojective measurements to reach the bound `18γ` itself. That step is not formalized, and it is\nnot needed. `(1 - γ)² = 1 - 2γ + γ²` has slack `γ²` over `1 - 2γ`, so the hypothesis of\n`exists_projective_of_nearProjective` already holds *strictly* at `ε = 2δ` whenever `γ ≤ δ` and\n`δ > 0`, whether or not `γ = 0`:\n\n* if `γ ≥ 1` the conclusion is vacuous, `1 - 2δ ≤ -1 < 0 ≤ ∑_a ‖(Q_a ⊗ Id)ψ‖²`;\n* otherwise `∑_a ‖(Q_a ⊗ Id)ψ‖² ≥ (1 - γ)² = 1 - 2γ + γ² > 1 - 2δ`, since `2γ - γ² < 2δ` holds\n  for every `γ ≤ δ` with `δ > 0` --- at `γ = δ` because `γ² > 0`, and at `γ < δ` because\n  `γ² ≥ 0`.\n\nSo `exists_projective_of_consistent` below is stated for a *bound* `δ > 0` on the inconsistency\nrather than for the inconsistency itself, and concludes the strict `< 18 δ`. It is what every\napplication needs, `η_ortho(δ) = 18 δ` being linear as the paper requires, and it costs no\ncompactness. The one thing it does not give is the exact `δ = 0` case, where the paper's limit\nyields a projective measurement agreeing with `Q` on `ψ` exactly; no application uses it.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Consistency.lean#L70-L113",
+  "source_path": "MIPRE/Background/QLD/Consistency.lean",
+  "lines": [
+   70,
+   113
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-obs-commutation-comm",
+    "env": "lemma",
+    "title": "Signed commutation, the commuting case",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.POVM.sum_val"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 39,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_normSq_stateVecB_le_one",
+  "source_name": "MIPRE.QLD.sum_normSq_stateVecB_le_one",
+  "formal_statement": "theorem MIPRE.QLD.sum_normSq_stateVecB_le_one {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) (R : POVM A dB) :\n    ∑ a, ‖stateVecB ψ (((R.mats a).val))‖ ^ 2 ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix Kronecker MIPRE",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {A : Type*} [Fintype A] [DecidableEq A]",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**`∑_a ‖(Id ⊗ R_a)|ψ⟩‖² ≤ 1`**, because `∑_a R_a² ≤ ∑_a R_a = Id` and the reduced state of\nBob's factor is a positive unital functional. `swapVec` is what lets `Ortho.lean`'s Alice-side\nreduced state serve on Bob's factor.",
+  "module": "MIPRE.Background.QLD.Consistency",
+  "module_doc": "/-!\n# From bipartite consistency to near-projectivity\n\nThe second half of blueprint `cor:ortho-from-consistency`. `Ortho.lean` turns *near-projectivity*\nof a POVM on Alice's factor into a projective measurement close to it; what the appendix has is\n*consistency* of Alice's POVM with one of Bob's. The bridge is a Cauchy--Schwarz step: writing\n`γ = ∑_{a ≠ b} ⟨ψ| Q_a ⊗ R_b |ψ⟩`, so that `∑_a ⟨ψ| Q_a ⊗ R_a |ψ⟩ = 1 - γ`,\n\n`1 - γ = ∑_a ⟨(Q_a ⊗ Id)ψ, (Id ⊗ R_a)ψ⟩ ≤ (∑_a ‖(Q_a ⊗ Id)ψ‖²)^{1/2} (∑_a ‖(Id ⊗ R_a)ψ‖²)^{1/2}`\n\nand the second factor is at most one because `∑_a R_a² ≤ ∑_a R_a = Id`.\n\n## A repair to the blueprint's proof\n\nThe blueprint and the paper close with a compactness step: the theorem gives a projective family\nonly for `ε > 2γ` strictly, and a limit along `ε ↓ 2γ` is taken inside the compact set of\nprojective measurements to reach the bound `18γ` itself. That step is not formalized, and it is\nnot needed. `(1 - γ)² = 1 - 2γ + γ²` has slack `γ²` over `1 - 2γ`, so the hypothesis of\n`exists_projective_of_nearProjective` already holds *strictly* at `ε = 2δ` whenever `γ ≤ δ` and\n`δ > 0`, whether or not `γ = 0`:\n\n* if `γ ≥ 1` the conclusion is vacuous, `1 - 2δ ≤ -1 < 0 ≤ ∑_a ‖(Q_a ⊗ Id)ψ‖²`;\n* otherwise `∑_a ‖(Q_a ⊗ Id)ψ‖² ≥ (1 - γ)² = 1 - 2γ + γ² > 1 - 2δ`, since `2γ - γ² < 2δ` holds\n  for every `γ ≤ δ` with `δ > 0` --- at `γ = δ` because `γ² > 0`, and at `γ < δ` because\n  `γ² ≥ 0`.\n\nSo `exists_projective_of_consistent` below is stated for a *bound* `δ > 0` on the inconsistency\nrather than for the inconsistency itself, and concludes the strict `< 18 δ`. It is what every\napplication needs, `η_ortho(δ) = 18 δ` being linear as the paper requires, and it costs no\ncompactness. The one thing it does not give is the exact `δ = 0` case, where the paper's limit\nyields a projective measurement agreeing with `Q` on `ψ` exactly; no application uses it.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Consistency.lean#L117-L145",
+  "source_path": "MIPRE/Background/QLD/Consistency.lean",
+  "lines": [
+   117,
+   145
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.POVM.sum_val",
+   "MIPRE.norm_stateVecB",
+   "MIPRE.swapVec_dotProduct",
+   "MIPRE.quadForm_eq"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 23,
+  "is_target": false
+ }
+]

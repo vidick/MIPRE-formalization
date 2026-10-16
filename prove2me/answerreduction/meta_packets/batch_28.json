@@ -1,0 +1,644 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.normalized_matrix_image_rows_transpose_mixed",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.normalized_matrix_image_rows_transpose_mixed",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.normalized_matrix_image_rows_transpose_mixed\n    {κ μ ι : Type*}\n    [Fintype μ] [Fintype ι] [DecidableEq ι]\n    (X : Matrix μ ι ℂ)\n    (v : κ → EuclideanSpace ℂ ι) (lam : κ → ℝ)\n    (hlam : ∀ i : κ, 0 < lam i)\n    (heig : ∀ i : κ,\n      Matrix.toEuclideanLin (Xᴴ * X) (v i) = (lam i : ℂ) • v i) :\n    Xᴴ * (normalizedMatrixImageRows X v lam)ᵀ =\n      Matrix.of fun j i => ((Real.sqrt (lam i) : ℝ) : ℂ) * v i j := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The transpose of the normalized-image row matrix satisfies the mixed\nGram identity on the chosen eigenvector family.\n\nThis is the finite-dimensional calculation\n\\[\n  X^\\dagger(\\lambda_i^{-1/2}Xv_i)=\\lambda_i^{1/2}v_i,\n\\]\nrecorded as a matrix identity with one column for each eigenvector.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Rows",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P identities and approximations\n\nLate-stage algebraic identities and approximation lemmas for the paper's\n`Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Rows.lean#L348-L399",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Rows.lean",
+  "lines": [
+   348,
+   399
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.sqrt_eq_sum_sqrt_eigenvalues_vecMulVec",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.sqrt_eq_sum_sqrt_eigenvalues_vecMulVec",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.sqrt_eq_sum_sqrt_eigenvalues_vecMulVec\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (Q : Matrix ι ι ℂ) (hQ : Q.IsHermitian)\n    (hQ_pos : Q.PosSemidef) :\n    CFC.sqrt Q =\n      ∑ i : ι, (((Real.sqrt (hQ.eigenvalues i) : ℝ) : ℂ) •\n        Matrix.vecMulVec ((hQ.eigenvectorBasis i).ofLp)\n          (star ((hQ.eigenvectorBasis i).ofLp))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Spectral expansion of the CFC square root of a positive Hermitian matrix.\n\nThis is the square-root analogue of the Hermitian spectral expansion.  It is\nused below to compare the mixed product produced by the positive Gram-image\ncolumns with the operator `CFC.sqrt Q` on the whole ambient space, including\nthe zero eigenspace.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Rows",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P identities and approximations\n\nLate-stage algebraic identities and approximation lemmas for the paper's\n`Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Rows.lean#L423-L451",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Rows.lean",
+  "lines": [
+   423,
+   451
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.positive_gram_spectrum_right_rows_mul_conjTranspose",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.positive_gram_spectrum_right_rows_mul_conjTranspose",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.positive_gram_spectrum_right_rows_mul_conjTranspose\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (Q : Matrix ι ι ℂ) (hQ : Q.IsHermitian) :\n    positiveGramSpectrumRightRows Q hQ *\n        (positiveGramSpectrumRightRows Q hQ)ᴴ =\n      (1 : Matrix {i : ι // 0 < hQ.eigenvalues i}\n        {i : ι // 0 < hQ.eigenvalues i} ℂ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The conjugate eigenvector rows over the positive Gram spectrum are\northonormal.\n\nThis is the right-singular-vector companion to the normalized image-row\ncoisometry.  It is independent of the matrix `X`; it uses only the\northonormality of the Hermitian eigenvector basis for `Q`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Rows",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P identities and approximations\n\nLate-stage algebraic identities and approximation lemmas for the paper's\n`Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Rows.lean#L464-L493",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Rows.lean",
+  "lines": [
+   464,
+   493
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.positive_gram_spectrum_image_rows_mixed_eq_sqrt",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.positive_gram_spectrum_image_rows_mixed_eq_sqrt",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.positive_gram_spectrum_image_rows_mixed_eq_sqrt\n    {μ ι : Type*}\n    [Fintype μ] [Fintype ι] [DecidableEq ι]\n    (X : Matrix μ ι ℂ) (Q : Matrix ι ι ℂ)\n    (hQ : Q.IsHermitian)\n    (hQ_pos : Q.PosSemidef)\n    (hgram : Xᴴ * X = Q) :\n    Xᴴ * (positiveGramSpectrumImageRows X Q hQ)ᵀ *\n        positiveGramSpectrumRightRows Q hQ =\n      CFC.sqrt Q := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The positive Gram-image rows recover the square root of the Gram operator.\n\nThe identity\n`Xᴴ * (positiveGramSpectrumImageRows X Q hQ)ᵀ` records the positive spectral\ncolumns `sqrt(λ_i) v_i`.  Multiplying by the conjugate eigenvector rows gives\nthe spectral expansion of `CFC.sqrt Q`; the zero eigenspace contributes nothing\nbecause `Q` is positive semidefinite.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Rows",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P identities and approximations\n\nLate-stage algebraic identities and approximation lemmas for the paper's\n`Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Rows.lean#L495-L538",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Rows.lean",
+  "lines": [
+   495,
+   538
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.normalized_matrix_image_rows_transpose_mixed",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.sqrt_eq_sum_sqrt_eigenvalues_vecMulVec"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.matrix_image_eq_zero_of_nonpositive_gram_eigenvalue",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.matrix_image_eq_zero_of_nonpositive_gram_eigenvalue",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.matrix_image_eq_zero_of_nonpositive_gram_eigenvalue\n    {μ ι : Type*}\n    [Fintype μ] [Fintype ι] [DecidableEq ι]\n    (X : Matrix μ ι ℂ) (Q : Matrix ι ι ℂ)\n    (hQ : Q.IsHermitian)\n    (hQ_pos : Q.PosSemidef)\n    (hgram : Xᴴ * X = Q)\n    (i : ι) (hi : ¬ 0 < hQ.eigenvalues i) :\n    Matrix.toEuclideanLin X (hQ.eigenvectorBasis i) = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Zero Gram eigenvectors are killed by the rectangular matrix.\n\nIf `Q = Xᴴ * X` is positive semidefinite and an eigenvalue of `Q` is not\nstrictly positive, then it is zero.  The corresponding eigenvector therefore\nlies in the kernel of `X`.  This is the algebraic reason why the arbitrary\ncompletion directions in the rectangular polar construction do not contribute\nto the mixed product `Xᴴ * Xhat`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Rows",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P identities and approximations\n\nLate-stage algebraic identities and approximation lemmas for the paper's\n`Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Rows.lean#L540-L572",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Rows.lean",
+  "lines": [
+   540,
+   572
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.adjoint_image_eq_zero_of_orthogonal_positive_gram_images",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.adjoint_image_eq_zero_of_orthogonal_positive_gram_images",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.adjoint_image_eq_zero_of_orthogonal_positive_gram_images\n    {μ ι : Type*}\n    [Fintype μ] [Fintype ι] [DecidableEq ι]\n    (X : Matrix μ ι ℂ) (Q : Matrix ι ι ℂ)\n    (hQ : Q.IsHermitian)\n    (hQ_pos : Q.PosSemidef)\n    (hgram : Xᴴ * X = Q)\n    (y : EuclideanSpace ℂ μ)\n    (hy : ∀ i : {i : ι // 0 < hQ.eigenvalues i},\n      inner ℂ\n        (((1 / Real.sqrt (hQ.eigenvalues i.1) : ℝ) : ℂ) •\n          Matrix.toEuclideanLin X (hQ.eigenvectorBasis i.1))\n        y = 0) :\n    (Matrix.toEuclideanLin X).adjoint y = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Vectors orthogonal to the positive Gram images are killed by `X†`.\n\nThe proof tests the adjoint vector against the complete eigenvector basis of\n`Q = Xᴴ * X`.  Positive eigenvectors are handled by the normalized-image\northogonality assumption, while non-positive eigenvectors are killed by `X`\nitself.  This is the kernel statement needed when completing the positive\nleft singular-vector rows to a full unitary.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Rows",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P identities and approximations\n\nLate-stage algebraic identities and approximation lemmas for the paper's\n`Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Rows.lean#L574-L633",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Rows.lean",
+  "lines": [
+   574,
+   633
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.matrix_image_eq_zero_of_nonpositive_gram_eigenvalue"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 39,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.exists_xHat_of_sigmaFinRangeEmbedding_positiveGram",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.exists_xHat_of_sigmaFinRangeEmbedding_positiveGram",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.exists_xHat_of_sigmaFinRangeEmbedding_positiveGram\n    {Outcome : Type uOutcome} [Fintype Outcome] [DecidableEq Outcome]\n    {ι : Type uι} [Fintype ι] [DecidableEq ι]\n    {ψ : QuantumState ι} {A : Measurement Outcome ι} {ζ : Error}\n    {qLayer : QLayerData Outcome ι}\n    (hRank : RankReductionWitness ψ A ζ qLayer)\n    [Nonempty (FiniteHilbertSpace.sigmaFinCarrier\n      (fun a : Outcome => (qLayer.q.outcome a).rank))] :\n    ∃ xHat : Matrix (sigmaRangeCarrier qLayer.q) ι ℂ,\n      xHat * xHatᴴ =\n        (1 : MIPStarRE.Quantum.Op (sigmaRangeCarrier qLayer.q)) ∧\n        (sigmaFinRangeEmbedding qLayer.q.outcome hRank.projective)ᴴ * xHat =\n          CFC.sqrt (QTotal qLayer) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Sigma-range specialization of the positive-Gram `Xhat` construction.\n\nFor a rank-reduction witness, the canonical sigma-space embedding satisfies\n`X†X = Q`.  The stored total-rank bound supplies the rectangular dimension\nhypothesis, so the positive-Gram construction produces the `Xhat` required by\nthe QXP data package.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.PositiveGram.Sigma",
+  "module_doc": "/-!\n# Section 5 — Positive-Gram sigma-space specialization\n\nApplication of the positive-Gram polar construction to the canonical\nsigma-space layer obtained from a rank-reduction witness.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Sigma.lean#L171-L210",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/PositiveGram/Sigma.lean",
+  "lines": [
+   171,
+   210
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.sigmaFinRangeEmbedding_gram_right",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.RankReductionWitness.toSigmaRangeQLayer",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.exists_rectangular_coisometry_with_positive_gram_spectrum_right_rows",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.transpose_unitaryGroup_mul_rectangular_coisometry",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.positive_gram_polar_extension_mixed_eq_positive_rows",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.exists_unitaryGroup_with_positive_gram_spectrum_rows",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormal_normalized_matrix_image_of_positive_gram_spectrum",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.positive_gram_spectrum_image_rows_mixed_eq_sqrt"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.pQApprox",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.pQApprox",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.pQApprox {Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState ι)\n    (A : Measurement Outcome ι) (ζ : Error)\n    (data : QXPLayerData Outcome ι)\n    (hψ : ψ.IsNormalized)\n    (hζ : 0 ≤ ζ) (hζ_small : ζ ≤ 1 / (4 : Error)) :\n    RankReductionWitness ψ A ζ data.qLayer →\n      SDDOpRel ψ (uniformDistribution Unit)\n        (constOpFamily data.qLayer.q)\n        (constOpFamily (PFamily data))\n        (30 * zetaQuarterRoot ζ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "**`P` is close to `Q`** (`lem:P-Q-approx`).\n\nThe final internal comparison in the paper's repair step is derived from the\nprimitive `X/XHat/P` identities in `QXPLayerData`, the rank-reduction witness,\nand the standard small-error hypotheses.  No closeness bound is stored inside\n`QXPLayerData`; the proof below follows the paper's expansion through\n`squaredDifference`, `qAlmostProjective`, and `sqrtQCompleteness`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayerIdentities.ProjectorApprox",
+  "module_doc": "/-!\n# Section 5 — P-Q approximation for QXP layers\n\nThe final comparison estimates between the projective family `P` produced\nfrom `XHat` and the original projective `Q` layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/ProjectorApprox.lean#L397-L526",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayerIdentities/ProjectorApprox.lean",
+  "lines": [
+   397,
+   526
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.ev_mul_comm_of_psd",
+   "MIPStarRE.LDT.ev_add",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.ev_scale",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.sqrtQCompleteness",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.spectralTruncationError_le_zetaQuarterRoot"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 110,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement_of_sourceAlmostProjective_two_mul",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement_of_sourceAlmostProjective_two_mul",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement_of_sourceAlmostProjective_two_mul\n    {Outcome : Type uOutcome} [Fintype Outcome]\n    {ι : Type uι} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι) (A : Measurement Outcome ι) (ζ : Error)\n    (hζ : 0 < ζ) (hζ_small : ζ ≤ 1 / 4)\n    (hsource : ∑ a, ev ψ (A.outcome a - A.outcome a * A.outcome a) ≤ 2 * ζ) :\n    projectiveNonMeasurement ψ A ζ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Construct the paper witness `lem:projective-non-measurement` from the\nsource almost-projective defect at the paper's `2ζ` scale.\n\nThis is the spectral-truncation stage of Section 5 in the form needed by the\ntop-level orthonormalization theorem: the input defect is bounded by `2 * ζ`,\nand choosing the truncation threshold `1 - sqrt ζ` gives the paper's\n`2 * sqrt ζ` closeness bound together with the total bound\n`(1 + 2 * sqrt ζ) * I`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.SpectralTruncation.ProjectiveNonMeasurement",
+  "module_doc": "/-!\n# Section 5 — Projective Non-Measurement from Spectral Truncation\n\nThis file proves the constructive spectral-truncation form of the paper witness\n`lem:projective-non-measurement`.  The rounded projective family is obtained by\nfunctional calculus, using the threshold `1 - sqrt ζ` in the nontrivial regime\nand the zero family in the large-error regime.\n\n## References\n\n- `references/ldt-paper/orthonormalization.tex` (lines 420-550)\n- Blueprint: Chapter 4 (`blueprint/src/chapter/ch04_projective.tex`)\n- Related downstream applications: #422 (mainFormal), #834 (Step 6)\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/SpectralTruncation/ProjectiveNonMeasurement.lean#L474-L546",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/SpectralTruncation/ProjectiveNonMeasurement.lean",
+  "lines": [
+   474,
+   546
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 58,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement_of_sourceAlmostProjective_zero",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement_of_sourceAlmostProjective_zero",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement_of_sourceAlmostProjective_zero\n    {Outcome : Type uOutcome} [Fintype Outcome]\n    {ι : Type uι} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι) (A : Measurement Outcome ι)\n    (hsource : ∑ a, ev ψ (A.outcome a - A.outcome a * A.outcome a) ≤ 0) :\n    projectiveNonMeasurement ψ A 0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The exact endpoint `ζ = 0` of `lem:projective-non-measurement`.\n\nHere the source almost-projective defect vanishes exactly. We round each effect\nto the spectral projector onto its `1`-eigenspace. The total operator is then\ndominated by `I`, and the finite-spectrum comparison shows that the resulting\nstate-dependent operator distance is exactly zero.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.SpectralTruncation.ProjectiveNonMeasurement",
+  "module_doc": "/-!\n# Section 5 — Projective Non-Measurement from Spectral Truncation\n\nThis file proves the constructive spectral-truncation form of the paper witness\n`lem:projective-non-measurement`.  The rounded projective family is obtained by\nfunctional calculus, using the threshold `1 - sqrt ζ` in the nontrivial regime\nand the zero family in the large-error regime.\n\n## References\n\n- `references/ldt-paper/orthonormalization.tex` (lines 420-550)\n- Blueprint: Chapter 4 (`blueprint/src/chapter/ch04_projective.tex`)\n- Related downstream applications: #422 (mainFormal), #834 (Step 6)\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/SpectralTruncation/ProjectiveNonMeasurement.lean#L548-L750",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/SpectralTruncation/ProjectiveNonMeasurement.lean",
+  "lines": [
+   548,
+   750
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.ev_real_smul",
+   "MIPStarRE.LDT.Measurement.outcome_hermitian"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 191,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement_of_sourceAlmostProjective_large",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement_of_sourceAlmostProjective_large",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement_of_sourceAlmostProjective_large\n    {Outcome : Type uOutcome} [Fintype Outcome]\n    {ι : Type uι} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι) (A : Measurement Outcome ι) (ζ : Error)\n    (hψ : ψ.IsNormalized) (hlarge : 1 / 4 < ζ) :\n    projectiveNonMeasurement ψ A ζ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The large-error branch of `lem:projective-non-measurement`.\n\nThe paper treats the surrounding orthonormalization lemma as trivial when\n`ζ > 1/4`. On a normalized state, the zero projector family already satisfies\nthe required `2\\sqrt{ζ}` state-dependent operator bound in this regime.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.SpectralTruncation.ProjectiveNonMeasurement",
+  "module_doc": "/-!\n# Section 5 — Projective Non-Measurement from Spectral Truncation\n\nThis file proves the constructive spectral-truncation form of the paper witness\n`lem:projective-non-measurement`.  The rounded projective family is obtained by\nfunctional calculus, using the threshold `1 - sqrt ζ` in the nontrivial regime\nand the zero family in the large-error regime.\n\n## References\n\n- `references/ldt-paper/orthonormalization.tex` (lines 420-550)\n- Blueprint: Chapter 4 (`blueprint/src/chapter/ch04_projective.tex`)\n- Related downstream applications: #422 (mainFormal), #834 (Step 6)\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/SpectralTruncation/ProjectiveNonMeasurement.lean#L752-L808",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/SpectralTruncation/ProjectiveNonMeasurement.lean",
+  "lines": [
+   752,
+   808
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Measurement.outcome_hermitian",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.spectralTruncationError_nonneg",
+   "MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_one"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 46,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement_of_sourceAlmostProjective_two_mul_full",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement_of_sourceAlmostProjective_two_mul_full",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement_of_sourceAlmostProjective_two_mul_full\n    {Outcome : Type uOutcome} [Fintype Outcome]\n    {ι : Type uι} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι) (A : Measurement Outcome ι) (ζ : Error)\n    (hψ : ψ.IsNormalized)\n    (hsource : ∑ a, ev ψ (A.outcome a - A.outcome a * A.outcome a) ≤ 2 * ζ) :\n    projectiveNonMeasurement ψ A ζ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Unconditional constructive producer for `lem:projective-non-measurement`\nfrom the paper's `2ζ` source-defect bound.\n\nThis theorem combines the exact endpoint `ζ = 0`, the nontrivial spectral proof\nfor `0 < ζ ≤ 1/4`, and the trivial large-error branch used in the surrounding\npaper argument.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.SpectralTruncation.ProjectiveNonMeasurement",
+  "module_doc": "/-!\n# Section 5 — Projective Non-Measurement from Spectral Truncation\n\nThis file proves the constructive spectral-truncation form of the paper witness\n`lem:projective-non-measurement`.  The rounded projective family is obtained by\nfunctional calculus, using the threshold `1 - sqrt ζ` in the nontrivial regime\nand the zero family in the large-error regime.\n\n## References\n\n- `references/ldt-paper/orthonormalization.tex` (lines 420-550)\n- Blueprint: Chapter 4 (`blueprint/src/chapter/ch04_projective.tex`)\n- Related downstream applications: #422 (mainFormal), #834 (Step 6)\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/SpectralTruncation/ProjectiveNonMeasurement.lean#L810-L837",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/SpectralTruncation/ProjectiveNonMeasurement.lean",
+  "lines": [
+   810,
+   837
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.sourceAlmostProjective_nonneg",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement_of_sourceAlmostProjective_two_mul",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement_of_sourceAlmostProjective_zero",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement_of_sourceAlmostProjective_large"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.degreeZeroPastedPointConsistency",
+  "source_name": "MIPStarRE.LDT.Pasting.degreeZeroPastedPointConsistency",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.degreeZeroPastedPointConsistency\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma kappa zeta : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (family : IdxPolyFamily params ι)\n    (hcomplete : family.Complete strategy.state kappa)\n    (hcons : family.ConsistentWithPoints strategy zeta)\n    (hd_zero : params.d = 0)\n    (k : ℕ) :\n    ∃ H : Measurement (Polynomial params.next) ι,\n      H =\n          Preliminaries.completeAtOutcome\n            (averagedSliceAppendedSubMeas params family)\n            (pastedFallbackOutcome params) ∧\n        ConsRel strategy.state (uniformDistribution (Point params.next))\n          (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)\n          (polynomialEvaluationFamily params.next H.toSubMeas)\n          (MainInductionStep.ldPastingInInductionError params k\n            eps delta gamma kappa zeta) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Degree-zero point-consistency construction for `thm:ld-pasting`.\n\nPaper origin: `references/ldt-paper/ld-pasting.tex:12-55`.  In the degree-zero\nbranch the slice polynomials and the last-coordinate line answers are constant\non their respective domains.  The measurement is the completion of\n`averagedSliceAppendedSubMeas`, the averaged slice family viewed as a global\npolynomial family by ignoring the appended variable.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.DegreeZero",
+  "module_doc": "/-!\n# Section 12 pasting: degree-zero branch\n\nAuxiliary constructions for the `d = 0` complementary branch of\n`thm:ld-pasting`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/DegreeZero.lean#L725-L872",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/DegreeZero.lean",
+  "lines": [
+   725,
+   872
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_const",
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.leftTensor_le_one",
+   "MIPStarRE.LDT.Pasting.bipartiteConsError_uniform_le_one",
+   "MIPStarRE.LDT.Preliminaries.evaluateAt_completeAtOutcome",
+   "MIPStarRE.LDT.Preliminaries.qBipartiteConsDefect_completeAtOutcome_right_le",
+   "MIPStarRE.LDT.ConsRel.mono",
+   "MIPStarRE.LDT.bipartiteConsError_nonneg",
+   "MIPStarRE.LDT.postprocess_total",
+   "MIPStarRE.LDT.eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.delta_nonneg_of_isGood",
+   "MIPStarRE.LDT.gamma_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 120,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.degreeZeroPastedPointConsistency_of_axis_self",
+  "source_name": "MIPStarRE.LDT.Pasting.degreeZeroPastedPointConsistency_of_axis_self",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.degreeZeroPastedPointConsistency_of_axis_self\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma kappa zeta : Error)\n    (haxis : strategy.axisParallelFailureProbability ≤ eps)\n    (hselfBound : strategy.selfConsistencyFailureProbability ≤ delta)\n    (heps_nonneg : 0 ≤ eps)\n    (hdelta_nonneg : 0 ≤ delta)\n    (hgamma_nonneg : 0 ≤ gamma)\n    (family : IdxPolyFamily params ι)\n    (hcomplete : family.Complete strategy.state kappa)\n    (hcons : family.ConsistentWithPoints strategy zeta)\n    (hd_zero : params.d = 0)\n    (k : ℕ) :\n    ∃ H : Measurement (Polynomial params.next) ι,\n      H =\n          Preliminaries.completeAtOutcome\n            (averagedSliceAppendedSubMeas params family)\n            (pastedFallbackOutcome params) ∧\n        ConsRel strategy.state (uniformDistribution (Point params.next))\n          (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)\n          (polynomialEvaluationFamily params.next H.toSubMeas)\n          (MainInductionStep.ldPastingInInductionError params k\n            eps delta gamma kappa zeta) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Axis/self-consistency form of the degree-zero point-consistency\nconstruction.\n\nThis is the same construction as `degreeZeroPastedPointConsistency`, with the\nordinary good-strategy hypotheses replaced by the two estimates actually used in\nthe proof.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.DegreeZero",
+  "module_doc": "/-!\n# Section 12 pasting: degree-zero branch\n\nAuxiliary constructions for the `d = 0` complementary branch of\n`thm:ld-pasting`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/DegreeZero.lean#L874-L1021",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/DegreeZero.lean",
+  "lines": [
+   874,
+   1021
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_const",
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.leftTensor_le_one",
+   "MIPStarRE.LDT.Pasting.bipartiteConsError_uniform_le_one",
+   "MIPStarRE.LDT.Preliminaries.evaluateAt_completeAtOutcome",
+   "MIPStarRE.LDT.Preliminaries.qBipartiteConsDefect_completeAtOutcome_right_le",
+   "MIPStarRE.LDT.ConsRel.mono",
+   "MIPStarRE.LDT.bipartiteConsError_nonneg",
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 117,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldPastingNCompleteness_of_overAllOutcomes_fromHToG_tail",
+  "source_name": "MIPStarRE.LDT.Pasting.ldPastingNCompleteness_of_overAllOutcomes_fromHToG_tail",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldPastingNCompleteness_of_overAllOutcomes_fromHToG_tail\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma kappa zeta : Error)\n    (heps_nonneg : 0 ≤ eps)\n    (hdelta_nonneg : 0 ≤ delta)\n    (hgamma_nonneg : 0 ≤ gamma)\n    (hzeta_nonneg : 0 ≤ zeta)\n    (family : IdxPolyFamily params ι)\n    (k : ℕ)\n    (hk_pos : 1 ≤ k)\n    (hOAO : OverAllOutcomesStatement params strategy family eps delta gamma zeta k)\n    (hFrom : FromHToGStatement params strategy strategy.state family gamma zeta k)\n    (htail :\n      1 - kappa * (1 + 1 / (100 * (params.m : Error))) -\n          Real.exp (-((k : Error) / (80000 * ((params.m : Error) ^ (2 : ℕ))))) ≤\n        fromHToGBernoulliTailMass params strategy.state family k) :\n    LdPastingNCompletenessStatement params strategy family kappa\n      (MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta) k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Internal form of `cor:ld-pasting-N-completeness` from the two preceding\nmass-comparison inputs.\n\nThis theorem isolates the scalar assembly after `lem:over-all-outcomes`,\n`lem:from-H-to-G`, and the Bernoulli-tail lower bound have already been\nestablished.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.Final",
+  "module_doc": "/-!\n# Section 12 pasting: final pasting theorems\n\nFinal completeness and pasting theorems.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/Final.lean#L317-L375",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/Final.lean",
+  "lines": [
+   317,
+   375
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 33,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldPastingNCompleteness_of_tailLowerBound",
+  "source_name": "MIPStarRE.LDT.Pasting.ldPastingNCompleteness_of_tailLowerBound",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldPastingNCompleteness_of_tailLowerBound\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma kappa zeta : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (hgamma_le : gamma ≤ 1)\n    (hzeta_le : zeta ≤ 1)\n    (hdq_le : params.d ≤ params.q)\n    (hd : 0 < params.d)\n    (family : IdxPolyFamily params ι)\n    (hcons : family.ConsistentWithPoints strategy zeta)\n    (hself : family.StronglySelfConsistent strategy.state zeta)\n    (hbound : IdxPolyFamily.SliceBoundednessInput strategy family zeta)\n    (k : ℕ)\n    (hk_pos : 1 ≤ k)\n    (_hk : 400 * params.m * params.d ≤ k)\n    (htail :\n      1 - kappa * (1 + 1 / (100 * (params.m : Error))) -\n          Real.exp (-((k : Error) / (80000 * ((params.m : Error) ^ (2 : ℕ))))) ≤\n        fromHToGBernoulliTailMass params strategy.state family k) :\n    LdPastingNCompletenessStatement params strategy family kappa\n      (MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta) k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "`cor:ld-pasting-N-completeness` once the Bernoulli-tail lower bound is\nsupplied explicitly.\n\nThis records the downstream scalar algebra after `lem:over-all-outcomes` and\n`lem:from-H-to-G`. The hypothesis `htail` is exactly the `θ = 1 / (200m)`\nspecialization of `lem:chernoff-bernoulli-matrix` for the averaged complete\noperator `G = \\mathbb E_x \\sum_g G^x_g`, expressed as the concrete\n`fromHToGBernoulliTailMass` lower bound with error\n`κ · (1 + 1/(100m)) + exp(-k / (80000 m²))`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.Final",
+  "module_doc": "/-!\n# Section 12 pasting: final pasting theorems\n\nFinal completeness and pasting theorems.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/Final.lean#L378-L431",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/Final.lean",
+  "lines": [
+   378,
+   431
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.ldPastingNCompleteness_of_overAllOutcomes_fromHToG_tail",
+   "MIPStarRE.LDT.Pasting.fromHToG",
+   "MIPStarRE.LDT.Pasting.overAllOutcomes",
+   "MIPStarRE.LDT.bipartiteConsError_nonneg",
+   "MIPStarRE.LDT.eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.delta_nonneg_of_isGood",
+   "MIPStarRE.LDT.gamma_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldPastingNCompleteness_ofComMain_of_axis_self",
+  "source_name": "MIPStarRE.LDT.Pasting.ldPastingNCompleteness_ofComMain_of_axis_self",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldPastingNCompleteness_ofComMain_of_axis_self\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma kappa zeta : Error)\n    (haxis : strategy.axisParallelFailureProbability ≤ eps)\n    (hself_good : strategy.selfConsistencyFailureProbability ≤ delta)\n    (hgamma_nonneg : 0 ≤ gamma)\n    (hgamma_le : gamma ≤ 1)\n    (hzeta_nonneg : 0 ≤ zeta)\n    (hzeta_le : zeta ≤ 1)\n    (hdq_le : params.d ≤ params.q)\n    (hd : 0 < params.d)\n    (family : IdxPolyFamily params ι)\n    (hcomplete : family.Complete strategy.state kappa)\n    (hcons : family.ConsistentWithPoints strategy zeta)\n    (hself : family.StronglySelfConsistent strategy.state zeta)\n    (hcom : Commutativity.ComMainConclusion params strategy family gamma zeta)\n    (k : ℕ)\n    (hk_pos : 1 ≤ k)\n    (hk : 400 * params.m * params.d ≤ k) :\n    LdPastingNCompletenessStatement params strategy family kappa\n      (MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta) k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Internal form of `cor:ld-pasting-N-completeness` from the Section 11\ncommutativity conclusion.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.Final",
+  "module_doc": "/-!\n# Section 12 pasting: final pasting theorems\n\nFinal completeness and pasting theorems.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/Final.lean#L463-L513",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/Final.lean",
+  "lines": [
+   463,
+   513
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.ldPastingNCompleteness_of_overAllOutcomes_fromHToG_tail",
+   "MIPStarRE.LDT.Pasting.fromHToG_ofGHatFactsAndHalfSandwich",
+   "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_core",
+   "MIPStarRE.LDT.Pasting.overAllOutcomes_ofGHatFacts_of_axis_self",
+   "MIPStarRE.LDT.Pasting.gHatFacts_ofComMainAndSelfConsistency",
+   "MIPStarRE.LDT.bipartiteConsError_nonneg",
+   "MIPStarRE.LDT.bipartiteSSCError_nonneg"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldPastingNontrivial",
+  "source_name": "MIPStarRE.LDT.Pasting.ldPastingNontrivial",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldPastingNontrivial\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma kappa zeta : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (hgamma_le : gamma ≤ 1)\n    (hzeta_le : zeta ≤ 1)\n    (hdq_le : params.d ≤ params.q)\n    (hd : 0 < params.d)\n    (family : IdxPolyFamily params ι)\n    (hcomplete : family.Complete strategy.state kappa)\n    (hcons : family.ConsistentWithPoints strategy zeta)\n    (hself : family.StronglySelfConsistent strategy.state zeta)\n    (hbound : IdxPolyFamily.SliceBoundednessInput strategy family zeta)\n    (k : ℕ)\n    (hk_pos : 1 ≤ k)\n    (hk : 400 * params.m * params.d ≤ k) :\n    ∃ H : Measurement (Polynomial params.next) ι,\n      H = constructedPastedMeasurement params family k ∧\n        LdPastingConclusion params strategy family H eps delta gamma kappa zeta k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Restricted nontrivial-regime Lean form of `thm:ld-pasting`.\n\nThe source theorem is `references/ldt-paper/ld-pasting.tex`, lines 12--50.\nLines 52--55 explain that the proof may assume the nontrivial regime\n`eps, delta, gamma, zeta, d / q ≤ 1`, since the complementary cases are\ntrivial.  This declaration states the restricted assumptions\n`gamma ≤ 1`, `zeta ≤ 1`, `params.d ≤ params.q`, `0 < params.d`, and `1 ≤ k`.\nThe unrestricted statement aligned with the paper is `ldPasting`; the\ndegree-zero complementary branch is handled separately by\n`ldPastingDegreeZeroBranch`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.Final",
+  "module_doc": "/-!\n# Section 12 pasting: final pasting theorems\n\nFinal completeness and pasting theorems.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/Final.lean#L550-L594",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/Final.lean",
+  "lines": [
+   550,
+   594
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.ldPastingNCompleteness_of_tailLowerBound",
+   "MIPStarRE.LDT.Pasting.hAConsistency_submeas",
+   "MIPStarRE.LDT.Pasting.hAConsistency_completed_from_submeas"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldPasting",
+  "source_name": "MIPStarRE.LDT.Pasting.ldPasting",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldPasting\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma kappa zeta : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (family : IdxPolyFamily params ι)\n    (hcomplete : family.Complete strategy.state kappa)\n    (hcons : family.ConsistentWithPoints strategy zeta)\n    (hself : family.StronglySelfConsistent strategy.state zeta)\n    (hbound : IdxPolyFamily.SliceBoundednessInput strategy family zeta)\n    (k : ℕ)\n    (hk : 400 * params.m * params.d ≤ k) :\n    ∃ H : Measurement (Polynomial params.next) ι,\n      LdPastingConclusion params strategy family H eps delta gamma kappa zeta k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Paper-aligned form of `thm:ld-pasting`.\n\nPaper origin: `references/ldt-paper/ld-pasting.tex`, lines 12--50.  The\nfollowing lines 52--55 explain that the proof may restrict to the regime\n`eps, delta, gamma, zeta, d / q ≤ 1`, because the complementary cases are\ntrivial.  The restricted theorem `ldPastingNontrivial` proves the nontrivial\nregime, and the large-`gamma`, large-`zeta`, large-`d / q`, and `k = 0`\ncomplementary branches are proved above, including the degree-zero case, so\nthis declaration keeps the unrestricted paper statement visible without adding\nthe non-paper assumptions from the restricted theorem.  The former obstruction is documented in\n`docs/paper-gaps/issue-1622-ld-pasting-degree-zero.tex`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.Final",
+  "module_doc": "/-!\n# Section 12 pasting: final pasting theorems\n\nFinal completeness and pasting theorems.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/Final.lean#L824-L876",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/Final.lean",
+  "lines": [
+   824,
+   876
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.leftTensor_le_one",
+   "MIPStarRE.LDT.Pasting.degreeZeroPastedPointConsistency",
+   "MIPStarRE.LDT.Pasting.ldPastingNontrivial",
+   "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_large_zeta",
+   "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_large_degreeRatio",
+   "MIPStarRE.LDT.Pasting.one_le_ldPastingError_of_one_le_nu",
+   "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_large_gamma",
+   "MIPStarRE.LDT.Pasting.bipartiteConsError_uniform_le_one"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_ofGHatFactsAndHalfSandwich",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_ofGHatFactsAndHalfSandwich",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_ofGHatFactsAndHalfSandwich\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (ψbi : QuantumState (ι × ι))\n    (hnorm : ψbi.IsNormalized)\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error)\n    (hgamma_nonneg : 0 ≤ gamma) (hzeta_nonneg : 0 ≤ zeta)\n    (hzeta_le_one : zeta ≤ 1)\n    (hfacts : GHatFactsStatement params ψbi family gamma zeta)\n    (hhalf : ∀ j : ℕ, 2 ≤ j →\n      CommuteGHalfSandwichStatement params ψbi family gamma zeta j)\n    (k : ℕ) :\n    FromHToGStatement params strategy ψbi family gamma zeta k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Internal form of `lem:from-H-to-G` after applying `cor:G-hat-facts` and\n`lem:commute-g-half-sandwich`.\n\n**Source:** The proof in `references/ldt-paper/ld-pasting.tex:1295-1670`\nuses the completed-measurement facts and the half-sandwich commutation theorem\ninternally.  The paper-facing theorem `fromHToG` below derives those inputs\nfrom the source hypotheses.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G theorem\n\nDerivation of `lem:from-H-to-G`, from the `G`-hat facts, the half-sandwich\ncommutation theorem, and the telescoping Bernoulli-stage comparison.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG.lean#L38-L78",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG.lean",
+  "lines": [
+   38,
+   78
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.fromHToG_incompletePart_average_total_eq",
+   "MIPStarRE.LDT.Pasting.fromHToGPaperTotalError_le",
+   "MIPStarRE.LDT.Pasting.fromHToGStageMass_zero_eq",
+   "MIPStarRE.LDT.Pasting.abs_telescope_nat",
+   "MIPStarRE.LDT.Pasting.fromHToGStageMass_terminal_eq",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStage_paperMoveChain"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 19,
+  "is_target": false
+ }
+]

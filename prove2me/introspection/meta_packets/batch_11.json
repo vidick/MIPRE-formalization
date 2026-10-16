@@ -1,0 +1,776 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.pAB_ne_linAB",
+  "source_name": "MIPRE.QLD.pAB_ne_linAB",
+  "formal_statement": "theorem MIPRE.QLD.pAB_ne_linAB (hd : 1 ≤ d) {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}\n    {e₀ : Fin (4 * m) → Fin (d + 1)}\n    (hpat : ¬ (((e₀ (aIdx m) : ℕ) = 1 ∧ (e₀ (bIdx m) : ℕ) = 0)\n      ∨ ((e₀ (aIdx m) : ℕ) = 0 ∧ (e₀ (bIdx m) : ℕ) = 1)))\n    {u₀ : Point F (4 * m)} (hu : (g.coef abSet (patAB (e₀ (aIdx m)) (e₀ (bIdx m)))).eval u₀ ≠ 0)\n    (a b : F) : pAB g u₀ ≠ linAB hd a b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]"
+  ],
+  "docstring": "Where a non-linear coefficient does not vanish, the outcome read at `(α, β)` differs from every\nlinear form.",
+  "module": "MIPRE.Background.QLD.Linear",
+  "module_doc": "/-!\n# Linearity in the two combining coefficients (`lem:qld-global-linear`)\n\nAn outcome `g` of the global measurement is a polynomial on `F^{4m}`; read at the padded point\n`u = (x, z, α, β, w)` it is a polynomial in `(α, β)` whose coefficients are polynomials in the other\ncoordinates. The good outcomes are those of the form `g = α g₁(x, z) + β g₂(x, z)`: linear in\n`(α, β)` with no constant term and no other monomial. This file bounds the weight of the others\n(`IsLinAB` fails) from the ordered-product estimate of `lem:qld-global-products` for the order\n`X_a Z_b`.\n\n## The polynomial side\n\n`LowIndDegPoly.coef g T t` is the coefficient vector, in the variables outside `T`, of the\nmonomial pattern `t` on the coordinates `T` (`eval_eq_sum_coef`): `g(u) = ∑_t u^t_T · coef(u)`.\nThose generic facts are in `MIPRE/Background/LIDT/Coefficients.lean`.\nWith `T = {aIdx, bIdx}` the patterns are pairs `(i, j)`, and `pAB g u₀` is the bivariate\npolynomial `(α, β) ↦ g(setAB u₀ α β)` as a coefficient vector on `Fin 2` (`eval_pAB`). If `g` is\nnot of the good form, some coefficient `G_{i₀ j₀}` with `(i₀, j₀) ∉ {(1, 0), (0, 1)}` is a nonzero\npolynomial, so by Schwartz--Zippel it vanishes at a uniform `u₀` with probability at most\n`4md/q` (`sum_uniform_eval_eq_zero_le`); where it does not vanish, `pAB g u₀` differs from every\nlinear form `α a + β b` (`pAB_ne_linAB`), so they agree at a uniform `(α, β)` with probability at\nmost `2d/q` (`sum_agree_two_le`).\n\n## The operator side\n\nFor `β ≠ 0` the fibre `{αa + βb = c}` has one `b` per `a`, so\n`‖(G_g ⊗ ∑_{fibre} X_a Z_b) Φ‖² = ∑_{fibre} ‖(G_g ⊗ X_a Z_b) Φ‖²` (Pythagoras, the `X_a` being\northogonal projectors), and the weights `W_g(a, b) = ‖(G_g ⊗ X_a Z_b) Φ‖²` do not depend on\n`(α, β)` and sum to `⟨G_g⟩`. Averaging over `(α, β)` and then over the other coordinates\n(`sum_uniform_setAB` reads the uniform padded point as a uniform base point with a fresh uniform\npair), an outcome that is not of the good form has `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≤ η ⟨G_g⟩` with\n`η = (1 + 2d + 4md)/q` (`sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB`). On the other hand\n`⟨G_g⟩ ≤ 2 ‖(G_g ⊗ B_u) Φ‖² + 2 ‖(G_g ⊗ (1 - B_u)) Φ‖²` for every `u`, and the second terms are\nwhat the product estimate bounds by `Δ` in total; hence\n`(1 - 2η) · (weight of the bad outcomes) ≤ 2Δ` (`sum_bad_linear_mass_le`). This is the linear\nbound the paper's `cnote` at `eq:qld-g-prime-bound` describes, rather than the displayed `√Δ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Linear.lean#L325-L357",
+  "source_path": "MIPRE/Background/QLD/Linear.lean",
+  "lines": [
+   325,
+   357
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-linear",
+    "env": "lemma",
+    "title": "Linearity in the two combining coefficients",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.fiber_eq_image",
+  "source_name": "MIPRE.QLD.fiber_eq_image",
+  "formal_statement": "theorem MIPRE.QLD.fiber_eq_image {α β c : F} (hβ : β ≠ 0) :\n    (univ.filter fun p : F × F => α * p.1 + β * p.2 = c) = univ.image (fibMap α β c) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {RA RB : Type*} [Fintype RA]",
+   "variable {X' Z' : F → Matrix RB RB ℂ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.Linear",
+  "module_doc": "/-!\n# Linearity in the two combining coefficients (`lem:qld-global-linear`)\n\nAn outcome `g` of the global measurement is a polynomial on `F^{4m}`; read at the padded point\n`u = (x, z, α, β, w)` it is a polynomial in `(α, β)` whose coefficients are polynomials in the other\ncoordinates. The good outcomes are those of the form `g = α g₁(x, z) + β g₂(x, z)`: linear in\n`(α, β)` with no constant term and no other monomial. This file bounds the weight of the others\n(`IsLinAB` fails) from the ordered-product estimate of `lem:qld-global-products` for the order\n`X_a Z_b`.\n\n## The polynomial side\n\n`LowIndDegPoly.coef g T t` is the coefficient vector, in the variables outside `T`, of the\nmonomial pattern `t` on the coordinates `T` (`eval_eq_sum_coef`): `g(u) = ∑_t u^t_T · coef(u)`.\nThose generic facts are in `MIPRE/Background/LIDT/Coefficients.lean`.\nWith `T = {aIdx, bIdx}` the patterns are pairs `(i, j)`, and `pAB g u₀` is the bivariate\npolynomial `(α, β) ↦ g(setAB u₀ α β)` as a coefficient vector on `Fin 2` (`eval_pAB`). If `g` is\nnot of the good form, some coefficient `G_{i₀ j₀}` with `(i₀, j₀) ∉ {(1, 0), (0, 1)}` is a nonzero\npolynomial, so by Schwartz--Zippel it vanishes at a uniform `u₀` with probability at most\n`4md/q` (`sum_uniform_eval_eq_zero_le`); where it does not vanish, `pAB g u₀` differs from every\nlinear form `α a + β b` (`pAB_ne_linAB`), so they agree at a uniform `(α, β)` with probability at\nmost `2d/q` (`sum_agree_two_le`).\n\n## The operator side\n\nFor `β ≠ 0` the fibre `{αa + βb = c}` has one `b` per `a`, so\n`‖(G_g ⊗ ∑_{fibre} X_a Z_b) Φ‖² = ∑_{fibre} ‖(G_g ⊗ X_a Z_b) Φ‖²` (Pythagoras, the `X_a` being\northogonal projectors), and the weights `W_g(a, b) = ‖(G_g ⊗ X_a Z_b) Φ‖²` do not depend on\n`(α, β)` and sum to `⟨G_g⟩`. Averaging over `(α, β)` and then over the other coordinates\n(`sum_uniform_setAB` reads the uniform padded point as a uniform base point with a fresh uniform\npair), an outcome that is not of the good form has `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≤ η ⟨G_g⟩` with\n`η = (1 + 2d + 4md)/q` (`sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB`). On the other hand\n`⟨G_g⟩ ≤ 2 ‖(G_g ⊗ B_u) Φ‖² + 2 ‖(G_g ⊗ (1 - B_u)) Φ‖²` for every `u`, and the second terms are\nwhat the product estimate bounds by `Δ` in total; hence\n`(1 - 2η) · (weight of the bad outcomes) ≤ 2Δ` (`sum_bad_linear_mass_le`). This is the linear\nbound the paper's `cnote` at `eq:qld-g-prime-bound` describes, rather than the displayed `√Δ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Linear.lean#L405-L418",
+  "source_path": "MIPRE/Background/QLD/Linear.lean",
+  "lines": [
+   405,
+   418
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-linear",
+    "env": "lemma",
+    "title": "Linearity in the two combining coefficients",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.snorm_sq_ordComb_ordXZ_of_ne",
+  "source_name": "MIPRE.QLD.snorm_sq_ordComb_ordXZ_of_ne",
+  "formal_statement": "theorem MIPRE.QLD.snorm_sq_ordComb_ordXZ_of_ne (Φ : RA × RB → ℂ) (S : Matrix RA RA ℂ) (hX : IsPVM X')\n    {α β c : F} (hβ : β ≠ 0) :\n    snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (ptComb (ordXZ X' Z') α β c)) ^ 2\n      = ∑ p ∈ univ.filter (fun p : F × F => α * p.1 + β * p.2 = c),\n          snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (X' p.1 * Z' p.2)) ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {RA RB : Type*} [Fintype RA]",
+   "variable {X' Z' : F → Matrix RB RB ℂ}"
+  ],
+  "docstring": "**Pythagoras on the fibre**: for `β ≠ 0` the fibre has one `b` per `a`, and the `X_a` are\northogonal projectors.",
+  "module": "MIPRE.Background.QLD.Linear",
+  "module_doc": "/-!\n# Linearity in the two combining coefficients (`lem:qld-global-linear`)\n\nAn outcome `g` of the global measurement is a polynomial on `F^{4m}`; read at the padded point\n`u = (x, z, α, β, w)` it is a polynomial in `(α, β)` whose coefficients are polynomials in the other\ncoordinates. The good outcomes are those of the form `g = α g₁(x, z) + β g₂(x, z)`: linear in\n`(α, β)` with no constant term and no other monomial. This file bounds the weight of the others\n(`IsLinAB` fails) from the ordered-product estimate of `lem:qld-global-products` for the order\n`X_a Z_b`.\n\n## The polynomial side\n\n`LowIndDegPoly.coef g T t` is the coefficient vector, in the variables outside `T`, of the\nmonomial pattern `t` on the coordinates `T` (`eval_eq_sum_coef`): `g(u) = ∑_t u^t_T · coef(u)`.\nThose generic facts are in `MIPRE/Background/LIDT/Coefficients.lean`.\nWith `T = {aIdx, bIdx}` the patterns are pairs `(i, j)`, and `pAB g u₀` is the bivariate\npolynomial `(α, β) ↦ g(setAB u₀ α β)` as a coefficient vector on `Fin 2` (`eval_pAB`). If `g` is\nnot of the good form, some coefficient `G_{i₀ j₀}` with `(i₀, j₀) ∉ {(1, 0), (0, 1)}` is a nonzero\npolynomial, so by Schwartz--Zippel it vanishes at a uniform `u₀` with probability at most\n`4md/q` (`sum_uniform_eval_eq_zero_le`); where it does not vanish, `pAB g u₀` differs from every\nlinear form `α a + β b` (`pAB_ne_linAB`), so they agree at a uniform `(α, β)` with probability at\nmost `2d/q` (`sum_agree_two_le`).\n\n## The operator side\n\nFor `β ≠ 0` the fibre `{αa + βb = c}` has one `b` per `a`, so\n`‖(G_g ⊗ ∑_{fibre} X_a Z_b) Φ‖² = ∑_{fibre} ‖(G_g ⊗ X_a Z_b) Φ‖²` (Pythagoras, the `X_a` being\northogonal projectors), and the weights `W_g(a, b) = ‖(G_g ⊗ X_a Z_b) Φ‖²` do not depend on\n`(α, β)` and sum to `⟨G_g⟩`. Averaging over `(α, β)` and then over the other coordinates\n(`sum_uniform_setAB` reads the uniform padded point as a uniform base point with a fresh uniform\npair), an outcome that is not of the good form has `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≤ η ⟨G_g⟩` with\n`η = (1 + 2d + 4md)/q` (`sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB`). On the other hand\n`⟨G_g⟩ ≤ 2 ‖(G_g ⊗ B_u) Φ‖² + 2 ‖(G_g ⊗ (1 - B_u)) Φ‖²` for every `u`, and the second terms are\nwhat the product estimate bounds by `Δ` in total; hence\n`(1 - 2η) · (weight of the bad outcomes) ≤ 2Δ` (`sum_bad_linear_mass_le`). This is the linear\nbound the paper's `cnote` at `eq:qld-g-prime-bound` describes, rather than the displayed `√Δ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Linear.lean#L420-L439",
+  "source_path": "MIPRE/Background/QLD/Linear.lean",
+  "lines": [
+   420,
+   439
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-linear",
+    "env": "lemma",
+    "title": "Linearity in the two combining coefficients",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.fiber_eq_image",
+   "MIPRE.snorm_sq_sum_proj_mul",
+   "MIPRE.IsPVM.orthogonal"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_ab_snorm_sq_ordComb_le_of_good",
+  "source_name": "MIPRE.QLD.sum_ab_snorm_sq_ordComb_le_of_good",
+  "formal_statement": "theorem MIPRE.QLD.sum_ab_snorm_sq_ordComb_le_of_good {X' Z' : F → Matrix RB RB ℂ} (hd : 1 ≤ d)\n    (Φ : RA × RB → ℂ) {S : Matrix RA RA ℂ} (hsa : Sᴴ = S) (hidem : S * S = S) (hX : IsPVM X')\n    (hZ : IsPVM Z') {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}\n    {e₀ : Fin (4 * m) → Fin (d + 1)}\n    (hpat : ¬ (((e₀ (aIdx m) : ℕ) = 1 ∧ (e₀ (bIdx m) : ℕ) = 0)\n      ∨ ((e₀ (aIdx m) : ℕ) = 0 ∧ (e₀ (bIdx m) : ℕ) = 1)))\n    {u₀ : Point F (4 * m)} (hu : (g.coef abSet (patAB (e₀ (aIdx m)) (e₀ (bIdx m)))).eval u₀ ≠ 0) :\n    ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)\n        * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ)\n          * bOp (ptComb (ordXZ X' Z') ab.1 ab.2 ((pAB g u₀).eval ![ab.1, ab.2]))) ^ 2\n      ≤ (1 + 2 * d) / Fintype.card F * bornProb Φ S 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m] {RA RB : Type*}"
+  ],
+  "docstring": "**A good base point**: where a non-linear coefficient of `g` does not vanish, the average over\nthe combining pair `(α, β)` of `‖(S ⊗ B_{α,β}(g(setAB u₀ α β))) Φ‖²` is at most\n`(1 + 2d)/q · ⟨S ⊗ 1⟩`: the pairs with `β = 0` contribute `1/q`, and for `β ≠ 0` each weight\n`W(a, b)` is counted with the probability, at most `2d/q`, that `(α, β)` puts `(a, b)` on the\nsampled fibre.",
+  "module": "MIPRE.Background.QLD.Linear",
+  "module_doc": "/-!\n# Linearity in the two combining coefficients (`lem:qld-global-linear`)\n\nAn outcome `g` of the global measurement is a polynomial on `F^{4m}`; read at the padded point\n`u = (x, z, α, β, w)` it is a polynomial in `(α, β)` whose coefficients are polynomials in the other\ncoordinates. The good outcomes are those of the form `g = α g₁(x, z) + β g₂(x, z)`: linear in\n`(α, β)` with no constant term and no other monomial. This file bounds the weight of the others\n(`IsLinAB` fails) from the ordered-product estimate of `lem:qld-global-products` for the order\n`X_a Z_b`.\n\n## The polynomial side\n\n`LowIndDegPoly.coef g T t` is the coefficient vector, in the variables outside `T`, of the\nmonomial pattern `t` on the coordinates `T` (`eval_eq_sum_coef`): `g(u) = ∑_t u^t_T · coef(u)`.\nThose generic facts are in `MIPRE/Background/LIDT/Coefficients.lean`.\nWith `T = {aIdx, bIdx}` the patterns are pairs `(i, j)`, and `pAB g u₀` is the bivariate\npolynomial `(α, β) ↦ g(setAB u₀ α β)` as a coefficient vector on `Fin 2` (`eval_pAB`). If `g` is\nnot of the good form, some coefficient `G_{i₀ j₀}` with `(i₀, j₀) ∉ {(1, 0), (0, 1)}` is a nonzero\npolynomial, so by Schwartz--Zippel it vanishes at a uniform `u₀` with probability at most\n`4md/q` (`sum_uniform_eval_eq_zero_le`); where it does not vanish, `pAB g u₀` differs from every\nlinear form `α a + β b` (`pAB_ne_linAB`), so they agree at a uniform `(α, β)` with probability at\nmost `2d/q` (`sum_agree_two_le`).\n\n## The operator side\n\nFor `β ≠ 0` the fibre `{αa + βb = c}` has one `b` per `a`, so\n`‖(G_g ⊗ ∑_{fibre} X_a Z_b) Φ‖² = ∑_{fibre} ‖(G_g ⊗ X_a Z_b) Φ‖²` (Pythagoras, the `X_a` being\northogonal projectors), and the weights `W_g(a, b) = ‖(G_g ⊗ X_a Z_b) Φ‖²` do not depend on\n`(α, β)` and sum to `⟨G_g⟩`. Averaging over `(α, β)` and then over the other coordinates\n(`sum_uniform_setAB` reads the uniform padded point as a uniform base point with a fresh uniform\npair), an outcome that is not of the good form has `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≤ η ⟨G_g⟩` with\n`η = (1 + 2d + 4md)/q` (`sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB`). On the other hand\n`⟨G_g⟩ ≤ 2 ‖(G_g ⊗ B_u) Φ‖² + 2 ‖(G_g ⊗ (1 - B_u)) Φ‖²` for every `u`, and the second terms are\nwhat the product estimate bounds by `Δ` in total; hence\n`(1 - 2η) · (weight of the bad outcomes) ≤ 2Δ` (`sum_bad_linear_mass_le`). This is the linear\nbound the paper's `cnote` at `eq:qld-g-prime-bound` describes, rather than the displayed `√Δ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Linear.lean#L533-L599",
+  "source_path": "MIPRE/Background/QLD/Linear.lean",
+  "lines": [
+   533,
+   599
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-linear",
+    "env": "lemma",
+    "title": "Linearity in the two combining coefficients",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_agree_two_le",
+   "MIPRE.QLD.pAB_ne_linAB",
+   "MIPRE.QLD.snorm_sq_ordComb_ordXZ_of_ne",
+   "MIPRE.posSemidef_of_proj",
+   "MIPRE.QLD.eval_linAB",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.IsPVM.coarse"
+  ],
+  "pasted_helpers": 26,
+  "prooflines": 51,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB",
+  "source_name": "MIPRE.QLD.sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB",
+  "formal_statement": "theorem MIPRE.QLD.sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB (hd : 1 ≤ d) (Φ : RA × RB → ℂ)\n    {S : Matrix RA RA ℂ} (hsa : Sᴴ = S) (hidem : S * S = S) (hX : ∀ x, IsPVM (X x))\n    (hZ : ∀ z, IsPVM (Z z)) {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}\n    (hg : ¬ IsLinAB g) :\n    ∑ u, uniform (Point F (4 * m)) u\n        * snorm Φ ((aOp S : Matrix (RA × RB) _ ℂ) * bOp (ordComb ordXZ X Z u (g.eval u))) ^ 2\n      ≤ (1 + 2 * d + 4 * m * d) / Fintype.card F * bornProb Φ S 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m] {RA RB : Type*}",
+   "variable {X Z : Point F m → F → Matrix RB RB ℂ}"
+  ],
+  "docstring": "**A bad outcome carries little of its own weight through `B_u`**: if `g` is not linear in\n`(α, β)`, then `E_u ‖(S ⊗ B_u(g(u))) Φ‖² ≤ (1 + 2d + 4md)/q · ⟨S ⊗ 1⟩`, the `4md/q` being the\nprobability that the witnessing non-linear coefficient vanishes at the base point.",
+  "module": "MIPRE.Background.QLD.Linear",
+  "module_doc": "/-!\n# Linearity in the two combining coefficients (`lem:qld-global-linear`)\n\nAn outcome `g` of the global measurement is a polynomial on `F^{4m}`; read at the padded point\n`u = (x, z, α, β, w)` it is a polynomial in `(α, β)` whose coefficients are polynomials in the other\ncoordinates. The good outcomes are those of the form `g = α g₁(x, z) + β g₂(x, z)`: linear in\n`(α, β)` with no constant term and no other monomial. This file bounds the weight of the others\n(`IsLinAB` fails) from the ordered-product estimate of `lem:qld-global-products` for the order\n`X_a Z_b`.\n\n## The polynomial side\n\n`LowIndDegPoly.coef g T t` is the coefficient vector, in the variables outside `T`, of the\nmonomial pattern `t` on the coordinates `T` (`eval_eq_sum_coef`): `g(u) = ∑_t u^t_T · coef(u)`.\nThose generic facts are in `MIPRE/Background/LIDT/Coefficients.lean`.\nWith `T = {aIdx, bIdx}` the patterns are pairs `(i, j)`, and `pAB g u₀` is the bivariate\npolynomial `(α, β) ↦ g(setAB u₀ α β)` as a coefficient vector on `Fin 2` (`eval_pAB`). If `g` is\nnot of the good form, some coefficient `G_{i₀ j₀}` with `(i₀, j₀) ∉ {(1, 0), (0, 1)}` is a nonzero\npolynomial, so by Schwartz--Zippel it vanishes at a uniform `u₀` with probability at most\n`4md/q` (`sum_uniform_eval_eq_zero_le`); where it does not vanish, `pAB g u₀` differs from every\nlinear form `α a + β b` (`pAB_ne_linAB`), so they agree at a uniform `(α, β)` with probability at\nmost `2d/q` (`sum_agree_two_le`).\n\n## The operator side\n\nFor `β ≠ 0` the fibre `{αa + βb = c}` has one `b` per `a`, so\n`‖(G_g ⊗ ∑_{fibre} X_a Z_b) Φ‖² = ∑_{fibre} ‖(G_g ⊗ X_a Z_b) Φ‖²` (Pythagoras, the `X_a` being\northogonal projectors), and the weights `W_g(a, b) = ‖(G_g ⊗ X_a Z_b) Φ‖²` do not depend on\n`(α, β)` and sum to `⟨G_g⟩`. Averaging over `(α, β)` and then over the other coordinates\n(`sum_uniform_setAB` reads the uniform padded point as a uniform base point with a fresh uniform\npair), an outcome that is not of the good form has `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≤ η ⟨G_g⟩` with\n`η = (1 + 2d + 4md)/q` (`sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB`). On the other hand\n`⟨G_g⟩ ≤ 2 ‖(G_g ⊗ B_u) Φ‖² + 2 ‖(G_g ⊗ (1 - B_u)) Φ‖²` for every `u`, and the second terms are\nwhat the product estimate bounds by `Δ` in total; hence\n`(1 - 2η) · (weight of the bad outcomes) ≤ 2Δ` (`sum_bad_linear_mass_le`). This is the linear\nbound the paper's `cnote` at `eq:qld-g-prime-bound` describes, rather than the displayed `√Δ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Linear.lean#L603-L660",
+  "source_path": "MIPRE/Background/QLD/Linear.lean",
+  "lines": [
+   603,
+   660
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-linear",
+    "env": "lemma",
+    "title": "Linearity in the two combining coefficients",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.card_eval_eq_zero_le",
+   "MIPRE.sum_uniform_eq_one",
+   "MIPRE.QLD.snorm_sq_ordComb_ordXZ_of_ne",
+   "MIPRE.QLD.sum_ab_snorm_sq_ordComb_le_of_good",
+   "MIPRE.posSemidef_of_proj",
+   "MIPRE.QLD.eval_pAB",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.IsPVM.coarse"
+  ],
+  "pasted_helpers": 37,
+  "prooflines": 48,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_shift_gen",
+  "source_name": "MIPRE.QLD.sum_shift_gen",
+  "formal_statement": "theorem MIPRE.QLD.sum_shift_gen {α : Type*} [Fintype α] {V : Type*} [AddCommGroup V] [Module F V]\n    {sh : V → α → α} (hzero : ∀ a, sh 0 a = a)\n    (hadd : ∀ (w w' : V) (a : α), sh w' (sh w a) = sh (w + w') a)\n    {dir : α → V} (hdir : ∀ (a : α) (w : V), dir (sh w a) = dir a) (g : α → ℝ) :\n    ∑ i : α × F, ((Fintype.card α : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)\n        * g (sh (i.2 • dir i.1) i.1)\n      = ∑ a : α, (Fintype.card α : ℝ)⁻¹ * g a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m : ℕ} [NeZero m]"
+  ],
+  "docstring": "**The change of variables**, for an arbitrary finite sample space: averaging a quantity is\naveraging it over (sample, shift) pairs with the shift applied. Nothing here is about contents --- a\nfinite sample space, a shift action on it, and a direction the shift does not move --- which is what\nlets the same device serve a product of two independent line-point laws.",
+  "module": "MIPRE.Background.QLD.Lines",
+  "module_doc": "/-!\n# Pairs of lines\n\nBlueprint `lem:qld-pairs-of-lines`, the paper's `lem:qld-xz-lines`. The combined point measurement\nof `lem:qld-combined-points` returns both bases' values at the two sampled points; this stage\nreplaces it by a measurement returning a *pair of line polynomials*, one per basis, which is what\nthe padding stage can then compare with a low-degree test.\n\nThe analytic content is the pasting lemma (`MIPRE/Foundations/Pasting.lean`). What this file\nsupplies is its four hypotheses at the QLD line measurements, and there are three pieces of\nbookkeeping in the way.\n\n* **The marginal step.** `lem:qld-combined-points` gives the joint measurement against the\n  *ordered product* of the two point measurements; the pasting lemma wants each marginal against a\n  single line measurement. `sum_xSqNorm_marg_le'` takes the first step and a three-term triangle\n  through Bob's own point measurement takes the second.\n* **The extended space.** The joint measurement lives on each party's space enlarged by one\n  `F_q x F_q` register (the Naimark dilation); the line measurements live on the unenlarged ones.\n  `xSqNorm_extVec2_aOp` transports the latter.\n* **The probe.** The pasting lemma's collision term needs the point to be uniform on its line once\n  the line is fixed. Here the content determines both, so the factorization is produced by\n  *shifting the point along the direction the content itself carries*: for each fixed shift the map\n  is a bijection of contents, the line data is invariant under it, and the parameter of the point\n  moves by exactly the shift.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Lines.lean#L200-L224",
+  "source_path": "MIPRE/Background/QLD/Lines.lean",
+  "lines": [
+   200,
+   224
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pairs-of-lines",
+    "env": "lemma",
+    "title": "Pairs of lines",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.card_collide_le",
+  "source_name": "MIPRE.QLD.card_collide_le",
+  "formal_statement": "theorem MIPRE.QLD.card_collide_le (P : LinePres F m hm W) (d : ℕ) (c : Content F m)\n    {f f' : LinePoly F (m * d)} (hne : f' ≠ f) :\n    ((univ.filter fun t : F =>\n        LinePoly.eval f' (P.param (Content.shiftAlong W P.dir t c))\n          = LinePoly.eval f (P.param (Content.shiftAlong W P.dir t c))).card : ℝ)\n      ≤ collProb P d c * (Fintype.card F : ℝ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {hm : m ∣ Fintype.card F} {W : Bas}"
+  ],
+  "docstring": "**The collision count.** Two distinct line polynomials agree, along the shifted point's\nparameter, at at most `collProb` of the shifts.",
+  "module": "MIPRE.Background.QLD.Lines",
+  "module_doc": "/-!\n# Pairs of lines\n\nBlueprint `lem:qld-pairs-of-lines`, the paper's `lem:qld-xz-lines`. The combined point measurement\nof `lem:qld-combined-points` returns both bases' values at the two sampled points; this stage\nreplaces it by a measurement returning a *pair of line polynomials*, one per basis, which is what\nthe padding stage can then compare with a low-degree test.\n\nThe analytic content is the pasting lemma (`MIPRE/Foundations/Pasting.lean`). What this file\nsupplies is its four hypotheses at the QLD line measurements, and there are three pieces of\nbookkeeping in the way.\n\n* **The marginal step.** `lem:qld-combined-points` gives the joint measurement against the\n  *ordered product* of the two point measurements; the pasting lemma wants each marginal against a\n  single line measurement. `sum_xSqNorm_marg_le'` takes the first step and a three-term triangle\n  through Bob's own point measurement takes the second.\n* **The extended space.** The joint measurement lives on each party's space enlarged by one\n  `F_q x F_q` register (the Naimark dilation); the line measurements live on the unenlarged ones.\n  `xSqNorm_extVec2_aOp` transports the latter.\n* **The probe.** The pasting lemma's collision term needs the point to be uniform on its line once\n  the line is fixed. Here the content determines both, so the factorization is produced by\n  *shifting the point along the direction the content itself carries*: for each fixed shift the map\n  is a bijection of contents, the line data is invariant under it, and the parameter of the point\n  moves by exactly the shift.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Lines.lean#L520-L550",
+  "source_path": "MIPRE/Background/QLD/Lines.lean",
+  "lines": [
+   520,
+   550
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pairs-of-lines",
+    "env": "lemma",
+    "title": "Pairs of lines",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 9,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_content_normSq_point_line_le",
+  "source_name": "MIPRE.QLD.sum_content_normSq_point_line_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_content_normSq_point_line_le (W : Bas) (P : LinePres F m hm W)\n    (hpt : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ a : F,\n        xSqNorm (hatVec (F := F) (m := m) ψ) (hatMats MA W (c.pt W) a)\n          (hatMats MB W (c.pt W) a) ≤ 172 * ε)\n    (hline : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ a : F,\n        xSqNorm (hatVec (F := F) (m := m) ψ) (hatMats MA W (c.pt W) a)\n          (P.lineEvalMats d MB c a) ≤ 172 * ε) :\n    ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ a : F,\n        ‖stateVecB (hatVec (F := F) (m := m) ψ)\n          (hatMats MB W (c.pt W) a - P.lineEvalMats d MB c a)‖ ^ 2\n      ≤ 2 * (172 * ε) + 2 * (172 * ε) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**Bob's point measurement against Bob's own line measurement.** Alice's point measurement is the\nbridge: her copy is consistent with both --- with Bob's point measurement by the expansion stage's\nself-consistency, with Bob's line measurement by its consistency with the points --- so a triangle\ninequality gives the same-side bound at four times the input.",
+  "module": "MIPRE.Background.QLD.Lines",
+  "module_doc": "/-!\n# Pairs of lines\n\nBlueprint `lem:qld-pairs-of-lines`, the paper's `lem:qld-xz-lines`. The combined point measurement\nof `lem:qld-combined-points` returns both bases' values at the two sampled points; this stage\nreplaces it by a measurement returning a *pair of line polynomials*, one per basis, which is what\nthe padding stage can then compare with a low-degree test.\n\nThe analytic content is the pasting lemma (`MIPRE/Foundations/Pasting.lean`). What this file\nsupplies is its four hypotheses at the QLD line measurements, and there are three pieces of\nbookkeeping in the way.\n\n* **The marginal step.** `lem:qld-combined-points` gives the joint measurement against the\n  *ordered product* of the two point measurements; the pasting lemma wants each marginal against a\n  single line measurement. `sum_xSqNorm_marg_le'` takes the first step and a three-term triangle\n  through Bob's own point measurement takes the second.\n* **The extended space.** The joint measurement lives on each party's space enlarged by one\n  `F_q x F_q` register (the Naimark dilation); the line measurements live on the unenlarged ones.\n  `xSqNorm_extVec2_aOp` transports the latter.\n* **The probe.** The pasting lemma's collision term needs the point to be uniform on its line once\n  the line is fixed. Here the content determines both, so the factorization is produced by\n  *shifting the point along the direction the content itself carries*: for each fixed shift the map\n  is a bijection of contents, the line data is invariant under it, and the parameter of the point\n  moves by exactly the shift.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Lines.lean#L612-L654",
+  "source_path": "MIPRE/Background/QLD/Lines.lean",
+  "lines": [
+   612,
+   654
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pairs-of-lines",
+    "env": "lemma",
+    "title": "Pairs of lines",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 8,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_xSqNorm_marg_point_le",
+  "source_name": "MIPRE.QLD.sum_xSqNorm_marg_point_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_xSqNorm_marg_point_le (W : Bas) (c : Content F m)\n    {QA : Content F m → F × F → Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ}\n    (hQA : ∀ c, IsPVM (QA c))\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) :\n    (∑ a : F, xSqNorm (extHat (m := m) ψ) (∑ q : F, QA c (pairEquiv W (a, q)))\n        (aOp (hatMats MB W (c.pt W) a)))\n      ≤ 10 * ∑ p : F × F, xSqNorm (extHat (m := m) ψ) (QA c p)\n          (aOp (hatMats MB W.other (c.pt W.other) (valOf W.other p)\n            * hatMats MB W (c.pt W) (valOf W p))) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The marginal step at the QLD point measurements**, at one content: the joint measurement's\n`W`-marginal is consistent with Bob's `W`-point measurement.",
+  "module": "MIPRE.Background.QLD.Lines",
+  "module_doc": "/-!\n# Pairs of lines\n\nBlueprint `lem:qld-pairs-of-lines`, the paper's `lem:qld-xz-lines`. The combined point measurement\nof `lem:qld-combined-points` returns both bases' values at the two sampled points; this stage\nreplaces it by a measurement returning a *pair of line polynomials*, one per basis, which is what\nthe padding stage can then compare with a low-degree test.\n\nThe analytic content is the pasting lemma (`MIPRE/Foundations/Pasting.lean`). What this file\nsupplies is its four hypotheses at the QLD line measurements, and there are three pieces of\nbookkeeping in the way.\n\n* **The marginal step.** `lem:qld-combined-points` gives the joint measurement against the\n  *ordered product* of the two point measurements; the pasting lemma wants each marginal against a\n  single line measurement. `sum_xSqNorm_marg_le'` takes the first step and a three-term triangle\n  through Bob's own point measurement takes the second.\n* **The extended space.** The joint measurement lives on each party's space enlarged by one\n  `F_q x F_q` register (the Naimark dilation); the line measurements live on the unenlarged ones.\n  `xSqNorm_extVec2_aOp` transports the latter.\n* **The probe.** The pasting lemma's collision term needs the point to be uniform on its line once\n  the line is fixed. Here the content determines both, so the factorization is produced by\n  *shifting the point along the direction the content itself carries*: for each fixed shift the map\n  is a bijection of contents, the line data is invariant under it, and the parameter of the point\n  moves by exactly the shift.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Lines.lean#L662-L684",
+  "source_path": "MIPRE/Background/QLD/Lines.lean",
+  "lines": [
+   662,
+   684
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pairs-of-lines",
+    "env": "lemma",
+    "title": "Pairs of lines",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.isPVM_hatMats",
+   "MIPRE.aOp_mul",
+   "MIPRE.IsPVM.aOp",
+   "MIPRE.sum_xSqNorm_marg_le",
+   "MIPRE.sum_snorm_sq_mul_proj_le"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_content_marg_line_le",
+  "source_name": "MIPRE.QLD.sum_content_marg_line_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_content_marg_line_le (W : Bas) (P : LinePres F m hm W) {κ η : ℝ}\n    {QA : Content F m → F × F → Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ}\n    (hQA : ∀ c, IsPVM (QA c))\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val))\n    (hord : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ p : F × F,\n        xSqNorm (extHat (m := m) ψ) (QA c p)\n          (aOp (hatMats MB W.other (c.pt W.other) (valOf W.other p)\n            * hatMats MB W (c.pt W) (valOf W p))) ≤ κ)\n    (hptline : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ a : F,\n        ‖stateVecB (hatVec (F := F) (m := m) ψ)\n          (hatMats MB W (c.pt W) a - P.lineEvalMats d MB c a)‖ ^ 2 ≤ η) :\n    ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ a : F,\n        xSqNorm (extHat (m := m) ψ) (∑ q : F, QA c (pairEquiv W (a, q)))\n          (aOp (P.lineEvalMats d MB c a))\n      ≤ 2 * (10 * κ) + 2 * η := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The joint measurement's marginal against the line measurement**, on average over the\ncontent.",
+  "module": "MIPRE.Background.QLD.Lines",
+  "module_doc": "/-!\n# Pairs of lines\n\nBlueprint `lem:qld-pairs-of-lines`, the paper's `lem:qld-xz-lines`. The combined point measurement\nof `lem:qld-combined-points` returns both bases' values at the two sampled points; this stage\nreplaces it by a measurement returning a *pair of line polynomials*, one per basis, which is what\nthe padding stage can then compare with a low-degree test.\n\nThe analytic content is the pasting lemma (`MIPRE/Foundations/Pasting.lean`). What this file\nsupplies is its four hypotheses at the QLD line measurements, and there are three pieces of\nbookkeeping in the way.\n\n* **The marginal step.** `lem:qld-combined-points` gives the joint measurement against the\n  *ordered product* of the two point measurements; the pasting lemma wants each marginal against a\n  single line measurement. `sum_xSqNorm_marg_le'` takes the first step and a three-term triangle\n  through Bob's own point measurement takes the second.\n* **The extended space.** The joint measurement lives on each party's space enlarged by one\n  `F_q x F_q` register (the Naimark dilation); the line measurements live on the unenlarged ones.\n  `xSqNorm_extVec2_aOp` transports the latter.\n* **The probe.** The pasting lemma's collision term needs the point to be uniform on its line once\n  the line is fixed. Here the content determines both, so the factorization is produced by\n  *shifting the point along the direction the content itself carries*: for each fixed shift the map\n  is a bijection of contents, the line data is invariant under it, and the parameter of the point\n  moves by exactly the shift.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Lines.lean#L704-L733",
+  "source_path": "MIPRE/Background/QLD/Lines.lean",
+  "lines": [
+   704,
+   733
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pairs-of-lines",
+    "env": "lemma",
+    "title": "Pairs of lines",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_xSqNorm_marg_point_le",
+   "MIPRE.aOp_sub",
+   "MIPRE.normSq_stateVecB_extVec2_aOp"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.pasteJ_eq_pasteLine",
+  "source_name": "MIPRE.QLD.pasteJ_eq_pasteLine",
+  "formal_statement": "theorem MIPRE.QLD.pasteJ_eq_pasteLine (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z) (d : ℕ)\n    (M : Question F m → POVM (Answer F m d) dB) (cX cZ : Content F m) (p : F × F) :\n    pasteJ (fun b : F => (aOp (PZ.lineEvalMats d M cZ b)\n        : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))\n        (fun f => (aOp (PX.lineMats d M cX f)\n          : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ))\n        (fun f => LinePoly.eval f (PX.param cX)) p\n      = ∑ q ∈ univ.filter fun q : LinePoly F (m * d) × LinePoly F (m * d) =>\n            LinePoly.eval q.1 (PX.param cX) = p.2 ∧ LinePoly.eval q.2 (PZ.param cZ) = p.1,\n          pasteLine PX PZ d M cX cZ q := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The pasted family, coarse-grained by the two evaluations, is the pasting lemma's sandwich.**\nOnly the distributivity of the sandwich over the inner family's fibre, and the regrouping of a pair\nof fibres into a fibre of pairs.",
+  "module": "MIPRE.Background.QLD.Lines",
+  "module_doc": "/-!\n# Pairs of lines\n\nBlueprint `lem:qld-pairs-of-lines`, the paper's `lem:qld-xz-lines`. The combined point measurement\nof `lem:qld-combined-points` returns both bases' values at the two sampled points; this stage\nreplaces it by a measurement returning a *pair of line polynomials*, one per basis, which is what\nthe padding stage can then compare with a low-degree test.\n\nThe analytic content is the pasting lemma (`MIPRE/Foundations/Pasting.lean`). What this file\nsupplies is its four hypotheses at the QLD line measurements, and there are three pieces of\nbookkeeping in the way.\n\n* **The marginal step.** `lem:qld-combined-points` gives the joint measurement against the\n  *ordered product* of the two point measurements; the pasting lemma wants each marginal against a\n  single line measurement. `sum_xSqNorm_marg_le'` takes the first step and a three-term triangle\n  through Bob's own point measurement takes the second.\n* **The extended space.** The joint measurement lives on each party's space enlarged by one\n  `F_q x F_q` register (the Naimark dilation); the line measurements live on the unenlarged ones.\n  `xSqNorm_extVec2_aOp` transports the latter.\n* **The probe.** The pasting lemma's collision term needs the point to be uniform on its line once\n  the line is fixed. Here the content determines both, so the factorization is produced by\n  *shifting the point along the direction the content itself carries*: for each fixed shift the map\n  is a bijection of contents, the line data is invariant under it, and the parameter of the point\n  moves by exactly the shift.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Lines.lean#L757-L782",
+  "source_path": "MIPRE/Background/QLD/Lines.lean",
+  "lines": [
+   757,
+   782
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pairs-of-lines",
+    "env": "lemma",
+    "title": "Pairs of lines",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_sum"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.pairs_of_lines_gen",
+  "source_name": "MIPRE.QLD.pairs_of_lines_gen",
+  "formal_statement": "theorem MIPRE.QLD.pairs_of_lines_gen {ι : Type*} [Fintype ι] [Nonempty ι]\n    (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z) (kX kZ : ι → Content F m)\n    {sh : Point F m → ι → ι} (hzero : ∀ a, sh 0 a = a)\n    (hadd : ∀ (w w' : Point F m) (a : ι), sh w' (sh w a) = sh (w + w') a)\n    (hkX : ∀ (w : Point F m) (a : ι), kX (sh w a) = Content.shiftPt .X w (kX a))\n    (hkZ : ∀ (w : Point F m) (a : ι), kZ (sh w a) = Content.shiftPt .X w (kZ a))\n    {QA : ι → F × F → Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ}\n    (hQA : ∀ a, IsPVM (QA a)) (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) {δ η εc : ℝ}\n    (hmargX : ∑ a : ι, (Fintype.card ι : ℝ)⁻¹ * ∑ x : F,\n        xSqNorm (extHat (m := m) ψ) (∑ q : F, QA a (x, q))\n          (aOp (PX.lineEvalMats d MB (kX a) x)) ≤ δ)\n    (hmargZ : ∑ a : ι, (Fintype.card ι : ℝ)⁻¹ * ∑ b : F,\n        xSqNorm (extHat (m := m) ψ) (∑ q : F, QA a (q, b))\n          (aOp (PZ.lineEvalMats d MB (kZ a) b)) ≤ δ)\n    (hselfX : ∑ a : ι, (Fintype.card ι : ℝ)⁻¹ *\n        ∑ f : LinePoly F (m * d), xSqNorm (extHat (m := m) ψ) (aOp (PX.lineMats d MA (kX a) f))\n          (aOp (PX.lineMats d MB (kX a) f)) ≤ η)\n    (hcoll : ∑ a : ι, (Fintype.card ι : ℝ)⁻¹ * collProb PX d (kX a) ≤ εc) :\n    1 - ∑ a : ι, (Fintype.card ι : ℝ)⁻¹ * ∑ p : F × F,\n        bornProb (extHat (m := m) ψ) (QA a p)\n          (∑ q ∈ univ.filter fun q : LinePoly F (m * d) × LinePoly F (m * d) =>\n              LinePoly.eval q.1 (PX.param (kX a)) = p.1\n                ∧ LinePoly.eval q.2 (PZ.param (kZ a)) = p.2,\n            pasteLine PX PZ d MB (kX a) (kZ a) q)\n      ≤ δ / 2 + Real.sqrt (δ / 2) + Real.sqrt (32 * δ + 4 * Real.sqrt η + 2 * εc) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**`lem:qld-pairs-of-lines`, over an arbitrary question distribution.** The sample space is any\nfinite nonempty `iota` carrying a content for each side --- `kX` presenting the `X` line, `kZ` the\n`Z` line --- together with a shift that moves the `X` point and that both contents see as such.\nAlice's joint point measurement agrees with the pasted line measurement, coarse-grained by\nevaluating each line polynomial at the parameter of the point of its own side, up to\n`delta/2 + sqrt(delta/2) + sqrt(32 delta + 4 sqrt(eta) + 2 eps_c)`.\n\nThe three inputs are the two marginal consistencies, the `X`-line measurement's cross-party\nself-consistency at the fine level, and the average collision probability of the `X`-side outcome\nmap --- and the shift is what turns the question distribution into the product the collision bound\nneeds.\n\n**Why two contents, and why nothing forces them to agree.** Each of the pasting lemma's hypotheses\ninvolves *one* line and the two points; none involves both lines. So the `X` line may be read off\none content and the `Z` line off another, and the two need share nothing. At `kX = kZ = id` this is\n`pairs_of_lines`, on the Pauli basis test's own distribution, where they are the same content and the\ntwo lines are therefore dependent; at a pair of line-point data it is the product form\n`lem:qld-padded-lines` needs, where they are independent.",
+  "module": "MIPRE.Background.QLD.Lines",
+  "module_doc": "/-!\n# Pairs of lines\n\nBlueprint `lem:qld-pairs-of-lines`, the paper's `lem:qld-xz-lines`. The combined point measurement\nof `lem:qld-combined-points` returns both bases' values at the two sampled points; this stage\nreplaces it by a measurement returning a *pair of line polynomials*, one per basis, which is what\nthe padding stage can then compare with a low-degree test.\n\nThe analytic content is the pasting lemma (`MIPRE/Foundations/Pasting.lean`). What this file\nsupplies is its four hypotheses at the QLD line measurements, and there are three pieces of\nbookkeeping in the way.\n\n* **The marginal step.** `lem:qld-combined-points` gives the joint measurement against the\n  *ordered product* of the two point measurements; the pasting lemma wants each marginal against a\n  single line measurement. `sum_xSqNorm_marg_le'` takes the first step and a three-term triangle\n  through Bob's own point measurement takes the second.\n* **The extended space.** The joint measurement lives on each party's space enlarged by one\n  `F_q x F_q` register (the Naimark dilation); the line measurements live on the unenlarged ones.\n  `xSqNorm_extVec2_aOp` transports the latter.\n* **The probe.** The pasting lemma's collision term needs the point to be uniform on its line once\n  the line is fixed. Here the content determines both, so the factorization is produced by\n  *shifting the point along the direction the content itself carries*: for each fixed shift the map\n  is a bijection of contents, the line data is invariant under it, and the parameter of the point\n  moves by exactly the shift.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Lines.lean#L786-L993",
+  "source_path": "MIPRE/Background/QLD/Lines.lean",
+  "lines": [
+   786,
+   993
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pairs-of-lines",
+    "env": "lemma",
+    "title": "Pairs of lines",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.hatVec_unit",
+   "MIPRE.QLD.card_collide_le",
+   "MIPRE.QLD.pasteJ_eq_pasteLine",
+   "MIPRE.QLD.sum_shift_gen",
+   "MIPRE.aOp_sum",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.IsPVM.aOp",
+   "MIPRE.one_sub_sum_bornProb_pasteJ_le",
+   "MIPRE.sum_collisionTerm_le",
+   "MIPRE.extVec2_unit",
+   "MIPRE.Weyl.isPVM_synOf"
+  ],
+  "pasted_helpers": 20,
+  "prooflines": 162,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_content_degenerate_le",
+  "source_name": "MIPRE.QLD.sum_content_degenerate_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_content_degenerate_le (hm : m ∣ Fintype.card F) :\n    ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *\n        (if ∃ j, ddirOf hm c j ≠ 0 then (0 : ℝ) else 1)\n      ≤ (Fintype.card F : ℝ)⁻¹ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**A degenerate diagonal line is rare.** Shifting the content's raw direction along the seed's\nown pivot coordinate moves the diagonal direction's pivot coordinate by the shift, so at most one\nshift in `q` makes that direction vanish --- and the same change of variables that produced the\npoint's uniformity on its line gives the bound.",
+  "module": "MIPRE.Background.QLD.Lines",
+  "module_doc": "/-!\n# Pairs of lines\n\nBlueprint `lem:qld-pairs-of-lines`, the paper's `lem:qld-xz-lines`. The combined point measurement\nof `lem:qld-combined-points` returns both bases' values at the two sampled points; this stage\nreplaces it by a measurement returning a *pair of line polynomials*, one per basis, which is what\nthe padding stage can then compare with a low-degree test.\n\nThe analytic content is the pasting lemma (`MIPRE/Foundations/Pasting.lean`). What this file\nsupplies is its four hypotheses at the QLD line measurements, and there are three pieces of\nbookkeeping in the way.\n\n* **The marginal step.** `lem:qld-combined-points` gives the joint measurement against the\n  *ordered product* of the two point measurements; the pasting lemma wants each marginal against a\n  single line measurement. `sum_xSqNorm_marg_le'` takes the first step and a three-term triangle\n  through Bob's own point measurement takes the second.\n* **The extended space.** The joint measurement lives on each party's space enlarged by one\n  `F_q x F_q` register (the Naimark dilation); the line measurements live on the unenlarged ones.\n  `xSqNorm_extVec2_aOp` transports the latter.\n* **The probe.** The pasting lemma's collision term needs the point to be uniform on its line once\n  the line is fixed. Here the content determines both, so the factorization is produced by\n  *shifting the point along the direction the content itself carries*: for each fixed shift the map\n  is a bijection of contents, the line data is invariant under it, and the parameter of the point\n  moves by exactly the shift.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Lines.lean#L1104-L1157",
+  "source_path": "MIPRE/Background/QLD/Lines.lean",
+  "lines": [
+   1104,
+   1157
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pairs-of-lines",
+    "env": "lemma",
+    "title": "Pairs of lines",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_shift_gen"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 46,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_content_collProb_dPres",
+  "source_name": "MIPRE.QLD.sum_content_collProb_dPres",
+  "formal_statement": "theorem MIPRE.QLD.sum_content_collProb_dPres (hm : m ∣ Fintype.card F) (W : Bas) (d : ℕ) :\n    ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * collProb (dPres hm W) d c\n      ≤ (m * d : ℝ) / (Fintype.card F : ℝ) + (Fintype.card F : ℝ)⁻¹ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The diagonal collision probability**: `m d / q` on the non-degenerate lines, and the\ndegenerate ones contribute at most another `1/q`.",
+  "module": "MIPRE.Background.QLD.Lines",
+  "module_doc": "/-!\n# Pairs of lines\n\nBlueprint `lem:qld-pairs-of-lines`, the paper's `lem:qld-xz-lines`. The combined point measurement\nof `lem:qld-combined-points` returns both bases' values at the two sampled points; this stage\nreplaces it by a measurement returning a *pair of line polynomials*, one per basis, which is what\nthe padding stage can then compare with a low-degree test.\n\nThe analytic content is the pasting lemma (`MIPRE/Foundations/Pasting.lean`). What this file\nsupplies is its four hypotheses at the QLD line measurements, and there are three pieces of\nbookkeeping in the way.\n\n* **The marginal step.** `lem:qld-combined-points` gives the joint measurement against the\n  *ordered product* of the two point measurements; the pasting lemma wants each marginal against a\n  single line measurement. `sum_xSqNorm_marg_le'` takes the first step and a three-term triangle\n  through Bob's own point measurement takes the second.\n* **The extended space.** The joint measurement lives on each party's space enlarged by one\n  `F_q x F_q` register (the Naimark dilation); the line measurements live on the unenlarged ones.\n  `xSqNorm_extVec2_aOp` transports the latter.\n* **The probe.** The pasting lemma's collision term needs the point to be uniform on its line once\n  the line is fixed. Here the content determines both, so the factorization is produced by\n  *shifting the point along the direction the content itself carries*: for each fixed shift the map\n  is a bijection of contents, the line data is invariant under it, and the parameter of the point\n  moves by exactly the shift.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Lines.lean#L1159-L1183",
+  "source_path": "MIPRE/Background/QLD/Lines.lean",
+  "lines": [
+   1159,
+   1183
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pairs-of-lines",
+    "env": "lemma",
+    "title": "Pairs of lines",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_content_degenerate_le"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_mass_off_le",
+  "source_name": "MIPRE.sum_mass_off_le",
+  "formal_statement": "theorem MIPRE.sum_mass_off_le {F : Type*} [DecidableEq F] {μ : X → ℝ} (hμ0 : ∀ x, 0 ≤ μ x)\n    (hμ : ∑ x, μ x = 1) {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1) {S : G → Matrix RA RA ℂ}\n    (hS : IsPVM S) {N : K → Matrix RB RB ℂ} (hN : IsPVM N) (val : K → X → F) (ev : G → X → F)\n    {ML : Finset G} {η c : ℝ} (hc : 0 ≤ c)\n    (hlow : 1 - η ≤ ∑ g, ∑ x, μ x\n      * ∑ k ∈ univ.filter fun k => val k x = ev g x, bornProb Φ (S g) (N k))\n    (hagree : ∀ g ∉ ML, ∀ k, ∑ x, μ x * (if val k x = ev g x then (1 : ℝ) else 0) ≤ c) :\n    ∑ g ∈ univ \\ ML, bornProb Φ (S g) 1 ≤ η + c := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {RA RB G K X : Type*} [Fintype RA] [DecidableEq RA] [Fintype RB] [DecidableEq RB]"
+  ],
+  "docstring": "**The aggregation step.** `S` is a projective measurement on one party and `N` one on the\nother, `val` and `ev` two labellings by a field element at each question, and the agreement of `S`\nwith `N` under matching labels is at least `1 - η`. If off a set `ML` every outcome of `S` matches\nevery label of `N` with probability at most `c`, the mass of `S` off `ML` is at most `η + c`.",
+  "module": "MIPRE.Background.QLD.Multilinear",
+  "module_doc": "/-!\n# The mass at non-multilinear outcomes (`lem:qld-exact-paulis`, the approximate half)\n\nThe Pauli construction of `MIPRE/Background/QLD/ExactPauli.lean` reads an outcome `g` of the\nsimultaneous measurement through the *multilinear interpolant* of its values on the boolean cube,\n`Coded(g) · ind_m(u)`, rather than through `g(u)` itself. The two agree exactly when `g` is\nmultilinear and not otherwise, so the construction is consistent with the strategy's point\nmeasurement up to the mass the simultaneous measurement puts on non-multilinear outcomes.\n\nThat mass is what the paper's `lem:qld-construct-the-paulis` bounds, in an argument it repaired\ntwice. The repair is to compare the outcome not with the point measurement --- whose label depends\non the sampled point --- but with a projective family indexed by **cube data**, which does not.\nThen the point is independent of the operators, and Schwartz--Zippel applies in the direction it\nis true in: two distinct polynomials of total degree `md` *agree* on at most an `md/q` fraction.\n\nThis file is the aggregation step, stated so that its two inputs are visible: a lower bound on the\nagreement with the cube-data family, and a uniform bound on the probability that a bad outcome\nagrees with any one of its labels.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Multilinear.lean#L42-L95",
+  "source_path": "MIPRE/Background/QLD/Multilinear.lean",
+  "lines": [
+   42,
+   95
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.nonMultilinear_mass_le",
+   "MIPRE.aOp_sum",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.IsPVM.posSemidef"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 41,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_filter_bornProb_eq",
+  "source_name": "MIPRE.sum_filter_bornProb_eq",
+  "formal_statement": "theorem MIPRE.sum_filter_bornProb_eq {C : Type*} [Fintype C] [DecidableEq C] (Φ : RA × RB → ℂ)\n    (S : POVM G RA) (N : POVM K RB) (ev : G → C) (val : K → C) :\n    ∑ g, ∑ k ∈ univ.filter fun k => val k = ev g,\n        bornProb Φ ((S.mats g).val) ((N.mats k).val)\n      = ∑ c, bornProb Φ (((S.map ev).mats c).val) (((N.map val).mats c).val) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {RA RB G K X : Type*} [Fintype RA] [DecidableEq RA] [Fintype RB] [DecidableEq RB]"
+  ],
+  "docstring": "**Grouping an agreement by the common label.** Summing the Born probabilities of all outcome\npairs whose labels match is the same as summing the two coarse-grained measurements against each\nother at each label. This is what lets the helper's agreement, which is stated at an outcome in\n`F_q`, be read as an agreement between the polynomial-indexed marginal and a point-independent\nfamily on the other party.",
+  "module": "MIPRE.Background.QLD.Multilinear",
+  "module_doc": "/-!\n# The mass at non-multilinear outcomes (`lem:qld-exact-paulis`, the approximate half)\n\nThe Pauli construction of `MIPRE/Background/QLD/ExactPauli.lean` reads an outcome `g` of the\nsimultaneous measurement through the *multilinear interpolant* of its values on the boolean cube,\n`Coded(g) · ind_m(u)`, rather than through `g(u)` itself. The two agree exactly when `g` is\nmultilinear and not otherwise, so the construction is consistent with the strategy's point\nmeasurement up to the mass the simultaneous measurement puts on non-multilinear outcomes.\n\nThat mass is what the paper's `lem:qld-construct-the-paulis` bounds, in an argument it repaired\ntwice. The repair is to compare the outcome not with the point measurement --- whose label depends\non the sampled point --- but with a projective family indexed by **cube data**, which does not.\nThen the point is independent of the operators, and Schwartz--Zippel applies in the direction it\nis true in: two distinct polynomials of total degree `md` *agree* on at most an `md/q` fraction.\n\nThis file is the aggregation step, stated so that its two inputs are visible: a lower bound on the\nagreement with the cube-data family, and a uniform bound on the probability that a bad outcome\nagrees with any one of its labels.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Multilinear.lean#L117-L140",
+  "source_path": "MIPRE/Background/QLD/Multilinear.lean",
+  "lines": [
+   117,
+   140
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_sum"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_bornProb_map_eq",
+  "source_name": "MIPRE.sum_bornProb_map_eq",
+  "formal_statement": "theorem MIPRE.sum_bornProb_map_eq {C : Type*} [Fintype C] [DecidableEq C] (Φ : RA × RB → ℂ)\n    (S : POVM G RA) (ev : G → C) (N : C → Matrix RB RB ℂ) :\n    ∑ c, bornProb Φ (((S.map ev).mats c).val) (N c)\n      = ∑ g, bornProb Φ ((S.mats g).val) (N (ev g)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {RA RB G K X : Type*} [Fintype RA] [DecidableEq RA] [Fintype RB] [DecidableEq RB]"
+  ],
+  "docstring": "**Reading a coarse-grained measurement against a family indexed by the labels** is reading the\noriginal measurement against the family at its own label.",
+  "module": "MIPRE.Background.QLD.Multilinear",
+  "module_doc": "/-!\n# The mass at non-multilinear outcomes (`lem:qld-exact-paulis`, the approximate half)\n\nThe Pauli construction of `MIPRE/Background/QLD/ExactPauli.lean` reads an outcome `g` of the\nsimultaneous measurement through the *multilinear interpolant* of its values on the boolean cube,\n`Coded(g) · ind_m(u)`, rather than through `g(u)` itself. The two agree exactly when `g` is\nmultilinear and not otherwise, so the construction is consistent with the strategy's point\nmeasurement up to the mass the simultaneous measurement puts on non-multilinear outcomes.\n\nThat mass is what the paper's `lem:qld-construct-the-paulis` bounds, in an argument it repaired\ntwice. The repair is to compare the outcome not with the point measurement --- whose label depends\non the sampled point --- but with a projective family indexed by **cube data**, which does not.\nThen the point is independent of the operators, and Schwartz--Zippel applies in the direction it\nis true in: two distinct polynomials of total degree `md` *agree* on at most an `md/q` fraction.\n\nThis file is the aggregation step, stated so that its two inputs are visible: a lower bound on the\nagreement with the cube-data family, and a uniform bound on the probability that a bad outcome\nagrees with any one of its labels.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Multilinear.lean#L142-L159",
+  "source_path": "MIPRE/Background/QLD/Multilinear.lean",
+  "lines": [
+   142,
+   159
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_sum"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_uniform_agree_ldEnc_le_of_not_isInterp",
+  "source_name": "MIPRE.QLD.sum_uniform_agree_ldEnc_le_of_not_isInterp",
+  "formal_statement": "theorem MIPRE.QLD.sum_uniform_agree_ldEnc_le_of_not_isInterp (hd : 1 ≤ d)\n    {g : LowIndDegPoly (F := F) (m := m) (d := d)} (hg : ¬ IsInterp g) (k : Anc F m) :\n    ∑ u, uniform (Point F m) u\n        * (if dotF k (indVec u) = g.eval u then (1 : ℝ) else 0)\n      ≤ (m : ℝ) * d / Fintype.card F := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl MvPolynomial",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**Schwartz--Zippel off the interpolants**, uniformly in the cube datum.",
+  "module": "MIPRE.Background.QLD.Multilinear",
+  "module_doc": "/-!\n# The mass at non-multilinear outcomes (`lem:qld-exact-paulis`, the approximate half)\n\nThe Pauli construction of `MIPRE/Background/QLD/ExactPauli.lean` reads an outcome `g` of the\nsimultaneous measurement through the *multilinear interpolant* of its values on the boolean cube,\n`Coded(g) · ind_m(u)`, rather than through `g(u)` itself. The two agree exactly when `g` is\nmultilinear and not otherwise, so the construction is consistent with the strategy's point\nmeasurement up to the mass the simultaneous measurement puts on non-multilinear outcomes.\n\nThat mass is what the paper's `lem:qld-construct-the-paulis` bounds, in an argument it repaired\ntwice. The repair is to compare the outcome not with the point measurement --- whose label depends\non the sampled point --- but with a projective family indexed by **cube data**, which does not.\nThen the point is independent of the operators, and Schwartz--Zippel applies in the direction it\nis true in: two distinct polynomials of total degree `md` *agree* on at most an `md/q` fraction.\n\nThis file is the aggregation step, stated so that its two inputs are visible: a lower bound on the\nagreement with the cube-data family, and a uniform bound on the probability that a bad outcome\nagrees with any one of its labels.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Multilinear.lean#L287-L305",
+  "source_path": "MIPRE/Background/QLD/Multilinear.lean",
+  "lines": [
+   287,
+   305
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.LowIndDegPoly.degreeOf_toMv_le",
+   "MIPRE.LowDegree.degreeOf_ind_le",
+   "MIPRE.LowDegree.prob_agree_le_individualDegree"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.SimulPair.sum_bornProb_hatPauli_ge",
+  "source_name": "MIPRE.QLD.SimulPair.sum_bornProb_hatPauli_ge",
+  "formal_statement": "theorem MIPRE.QLD.SimulPair.sum_bornProb_hatPauli_ge {hm : m ∣ Fintype.card F} {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :\n    1 - δ - Real.sqrt (688 * ε) ≤ ∑ u, uniform (Point F m) u * ∑ a : F,\n      bornProb P.Φ (((evalMarg P.SA W u).mats a).val)\n        (aOp ((((hatPauli MB W).map fun k => dotF k (indVec u)).mats a).val)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.SimulPair",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl MvPolynomial",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable (P : SimulPair ψ MA MB δ)"
+  ],
+  "docstring": "**The substitution.** Replacing Bob's expanded point measurement by the point-independent\nhatted Pauli family inside the helper's agreement costs `sqrt (688 eps)`: one Cauchy--Schwarz at\neach point against Alice's projective marginal, then Jensen for the average over points.",
+  "module": "MIPRE.Background.QLD.Multilinear",
+  "module_doc": "/-!\n# The mass at non-multilinear outcomes (`lem:qld-exact-paulis`, the approximate half)\n\nThe Pauli construction of `MIPRE/Background/QLD/ExactPauli.lean` reads an outcome `g` of the\nsimultaneous measurement through the *multilinear interpolant* of its values on the boolean cube,\n`Coded(g) · ind_m(u)`, rather than through `g(u)` itself. The two agree exactly when `g` is\nmultilinear and not otherwise, so the construction is consistent with the strategy's point\nmeasurement up to the mass the simultaneous measurement puts on non-multilinear outcomes.\n\nThat mass is what the paper's `lem:qld-construct-the-paulis` bounds, in an argument it repaired\ntwice. The repair is to compare the outcome not with the point measurement --- whose label depends\non the sampled point --- but with a projective family indexed by **cube data**, which does not.\nThen the point is independent of the operators, and Schwartz--Zippel applies in the direction it\nis true in: two distinct polynomials of total degree `md` *agree* on at most an `md/q` fraction.\n\nThis file is the aggregation step, stated so that its two inputs are visible: a lower bound on the\nagreement with the cube-data family, and a uniform bound on the probability that a bad outcome\nagrees with any one of its labels.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Multilinear.lean#L360-L418",
+  "source_path": "MIPRE/Background/QLD/Multilinear.lean",
+  "lines": [
+   360,
+   418
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_diag_eq_one_sub",
+   "MIPRE.sum_uniform_eq_one",
+   "MIPRE.QLD.sum_content_pt",
+   "MIPRE.QLD.hatPauli_map",
+   "MIPRE.QLD.abs_sum_bornProb_le",
+   "MIPRE.QLD.sum_normSq_hat_point_sub_pauli_le",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_sub",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.sum_weighted_mul_le_sqrt"
+  ],
+  "pasted_helpers": 25,
+  "prooflines": 51,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.SimulPair.sum_bornProb_off_le",
+  "source_name": "MIPRE.QLD.SimulPair.sum_bornProb_off_le",
+  "formal_statement": "theorem MIPRE.QLD.SimulPair.sum_bornProb_off_le {hm : m ∣ Fintype.card F} {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas)\n    {ML : Finset (LowIndDegPoly (F := F) (m := m) (d := d))} {c : ℝ} (hc : 0 ≤ c)\n    (hagree : ∀ g ∉ ML, ∀ k : Anc F m, ∑ u, uniform (Point F m) u\n      * (if dotF k (indVec u) = g.eval u then (1 : ℝ) else 0) ≤ c) :\n    ∑ g ∈ univ \\ ML, bornProb P.Φ (((polyMarg P.SA W).mats g).val) 1\n      ≤ (δ + Real.sqrt (688 * ε)) + c := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.SimulPair",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl MvPolynomial",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable (P : SimulPair ψ MA MB δ)"
+  ],
+  "docstring": "**The mass off a set of outcomes**, the critical step of `lem:qld-construct-the-paulis`.\nAlice's polynomial-indexed marginal agrees, at a point sampled *after* the operators are fixed,\nwith the point-independent hatted Pauli family; if off `ML` an outcome can agree with any one cube\ndatum with probability at most `c`, the mass the marginal puts off `ML` is at most the sum of the\ntwo errors.",
+  "module": "MIPRE.Background.QLD.Multilinear",
+  "module_doc": "/-!\n# The mass at non-multilinear outcomes (`lem:qld-exact-paulis`, the approximate half)\n\nThe Pauli construction of `MIPRE/Background/QLD/ExactPauli.lean` reads an outcome `g` of the\nsimultaneous measurement through the *multilinear interpolant* of its values on the boolean cube,\n`Coded(g) · ind_m(u)`, rather than through `g(u)` itself. The two agree exactly when `g` is\nmultilinear and not otherwise, so the construction is consistent with the strategy's point\nmeasurement up to the mass the simultaneous measurement puts on non-multilinear outcomes.\n\nThat mass is what the paper's `lem:qld-construct-the-paulis` bounds, in an argument it repaired\ntwice. The repair is to compare the outcome not with the point measurement --- whose label depends\non the sampled point --- but with a projective family indexed by **cube data**, which does not.\nThen the point is independent of the operators, and Schwartz--Zippel applies in the direction it\nis true in: two distinct polynomials of total degree `md` *agree* on at most an `md/q` fraction.\n\nThis file is the aggregation step, stated so that its two inputs are visible: a lower bound on the\nagreement with the cube-data family, and a uniform bound on the probability that a bad outcome\nagrees with any one of its labels.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Multilinear.lean#L420-L460",
+  "source_path": "MIPRE/Background/QLD/Multilinear.lean",
+  "lines": [
+   420,
+   460
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_uniform_eq_one",
+   "MIPRE.QLD.SimulPair.sum_bornProb_hatPauli_ge",
+   "MIPRE.sum_mass_off_le",
+   "MIPRE.sum_filter_bornProb_eq",
+   "MIPRE.POVM.map_map",
+   "MIPRE.aOp_sum",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.IsPVM.aOp",
+   "MIPRE.Weyl.isPVM_synOf"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 28,
+  "is_target": false
+ }
+]

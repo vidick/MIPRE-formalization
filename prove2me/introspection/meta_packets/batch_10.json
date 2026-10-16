@@ -1,0 +1,771 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_xSqNorm_hatPOVM_le",
+  "source_name": "MIPRE.QLD.sum_xSqNorm_hatPOVM_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_xSqNorm_hatPOVM_le {ψ : dA × dB → ℂ} {hm : m ∣ Fintype.card F}\n    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}\n    (hψ : star ψ ⬝ᵥ ψ = 1) (W : Bas) (c : Content F m) :\n    ∑ a : F, xSqNorm (hatVec (F := F) (m := m) ψ) (((hatPOVM hm MA W c).mats a).val)\n        (((hatPOVM hm MB W c).mats a).val)\n      ≤ 2 * condFail (qldGame hm) ψ MA MB (c.question hm (.point W))\n          (c.question hm (.point W)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The hatted measurements are cross-party consistent**, at one content: twice the conditional\nfailure of the `(Point, W)` subtest, and nothing for the ancilla. The three inputs meet here --- the\nstrategy's consistency, the ancilla's *perfect* consistency, and Born-level data processing for the\nconvolution.",
+  "module": "MIPRE.Background.QLD.Expanded",
+  "module_doc": "/-!\n# The expansion stage: the hatted point observables\n\nBlueprint `lem:qld-expanded-points`, the commutation half. The expansion adjoins\n`|EPR_q>^{(x) M}` to each player and replaces the point observable by\n\n```\n  W-hat^r(u) = W^r(u) (x) tau^W(r . ind_m(u)) ,\n```\n\nthe strategy's own observable tensored with a generalized Pauli on the ancilla. The point of\ndoing so is a **single exact cancellation**:\n\n* the strategy's two observables commute up to the sign `(-1)^{gamma(omega)}`\n  (`signed_commutation`), at `O(eps)`;\n* the two ancilla Pauli observables commute up to the *same* sign, **exactly** --- that is the\n  twisted commutation relation of `def:generalized-pauli`, and the sign is the same because\n  `gamma(omega)` *is* the form `tr(r_X ind(u_X) . r_Z ind(u_Z))` (`gam_eq_trDot`).\n\nSo the hatted observables commute up to nothing at all: the two signs multiply to one, and what\nis left is the strategy's error with no sign in it. Without the ancillas the two bases would only\ncommute up to an error carrying `(-1)^gamma`, which does not improve with `eps`.\n\n## What makes it cheap\n\nThree facts, none of them about the Pauli test. The ancilla operator that survives the\ncancellation is *unitary*, so it is invisible to the state-norm\n(`norm_stateVec_kron_unitary`); what is left has an **inert** ancilla, so it has the same norm on\nthe expanded state as on the original one (`norm_stateVec_expVec_kron_one`); and the ancilla state\nis a unit vector (`epr_unit`). The expansion therefore costs exactly the constant of\n`lem:qld-obs-commutation` and nothing more.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Expanded.lean#L288-L344",
+  "source_path": "MIPRE/Background/QLD/Expanded.lean",
+  "lines": [
+   288,
+   344
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-expanded-consistency",
+    "env": "lemma",
+    "title": "Expanded point measurements are self-consistent",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_bornProb_epr_synOfPOVM",
+   "MIPRE.QLD.hatVec_unit",
+   "MIPRE.xSqNorm_sum_le_two_mul",
+   "MIPRE.one_sub_sum_bornProb_le_condFail",
+   "MIPRE.sum_bornProb_le_map",
+   "MIPRE.mulVec_kron_kron_expVec",
+   "MIPRE.POVM.posSemidef"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 46,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.hatPOVM_consistency",
+  "source_name": "MIPRE.QLD.hatPOVM_consistency",
+  "formal_statement": "theorem MIPRE.QLD.hatPOVM_consistency {ψ : dA × dB → ℂ} {hm : m ∣ Fintype.card F}\n    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}\n    {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :\n    ∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *\n        ∑ a : F, xSqNorm (hatVec (F := F) (m := m) ψ) (((hatPOVM hm MA W c).mats a).val)\n          (((hatPOVM hm MB W c).mats a).val)\n      ≤ 172 * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The self-consistency half of `lem:qld-expanded-points`.** On average over the verifier's\ncontent, the two players' hatted point measurements agree across the re-bipartitioned parties at\n`172 eps` --- the constant of item 1 of `lem:qld-win`, with the expansion contributing nothing.",
+  "module": "MIPRE.Background.QLD.Expanded",
+  "module_doc": "/-!\n# The expansion stage: the hatted point observables\n\nBlueprint `lem:qld-expanded-points`, the commutation half. The expansion adjoins\n`|EPR_q>^{(x) M}` to each player and replaces the point observable by\n\n```\n  W-hat^r(u) = W^r(u) (x) tau^W(r . ind_m(u)) ,\n```\n\nthe strategy's own observable tensored with a generalized Pauli on the ancilla. The point of\ndoing so is a **single exact cancellation**:\n\n* the strategy's two observables commute up to the sign `(-1)^{gamma(omega)}`\n  (`signed_commutation`), at `O(eps)`;\n* the two ancilla Pauli observables commute up to the *same* sign, **exactly** --- that is the\n  twisted commutation relation of `def:generalized-pauli`, and the sign is the same because\n  `gamma(omega)` *is* the form `tr(r_X ind(u_X) . r_Z ind(u_Z))` (`gam_eq_trDot`).\n\nSo the hatted observables commute up to nothing at all: the two signs multiply to one, and what\nis left is the strategy's error with no sign in it. Without the ancillas the two bases would only\ncommute up to an error carrying `(-1)^gamma`, which does not improve with `eps`.\n\n## What makes it cheap\n\nThree facts, none of them about the Pauli test. The ancilla operator that survives the\ncancellation is *unitary*, so it is invisible to the state-norm\n(`norm_stateVec_kron_unitary`); what is left has an **inert** ancilla, so it has the same norm on\nthe expanded state as on the original one (`norm_stateVec_expVec_kron_one`); and the ancilla state\nis a unit vector (`epr_unit`). The expansion therefore costs exactly the constant of\n`lem:qld-obs-commutation` and nothing more.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Expanded.lean#L346-L369",
+  "source_path": "MIPRE/Background/QLD/Expanded.lean",
+  "lines": [
+   346,
+   369
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-expanded-consistency",
+    "env": "lemma",
+    "title": "Expanded point measurements are self-consistent",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_xSqNorm_hatPOVM_le",
+   "MIPRE.QLD.le_qldGame_mu",
+   "MIPRE.sum_condFail_le_of_pushforward",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.sum_bornProb"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.eval_padLine",
+  "source_name": "MIPRE.QLD.eval_padLine",
+  "formal_statement": "theorem MIPRE.QLD.eval_padLine {k n : ℕ} (hkn : k ≤ n) (f : LinePoly F k) (t : F) :\n    (padLine n f).eval t = f.eval t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**Padding does not change the polynomial.**",
+  "module": "MIPRE.Background.QLD.Expanded",
+  "module_doc": "/-!\n# The expansion stage: the hatted point observables\n\nBlueprint `lem:qld-expanded-points`, the commutation half. The expansion adjoins\n`|EPR_q>^{(x) M}` to each player and replaces the point observable by\n\n```\n  W-hat^r(u) = W^r(u) (x) tau^W(r . ind_m(u)) ,\n```\n\nthe strategy's own observable tensored with a generalized Pauli on the ancilla. The point of\ndoing so is a **single exact cancellation**:\n\n* the strategy's two observables commute up to the sign `(-1)^{gamma(omega)}`\n  (`signed_commutation`), at `O(eps)`;\n* the two ancilla Pauli observables commute up to the *same* sign, **exactly** --- that is the\n  twisted commutation relation of `def:generalized-pauli`, and the sign is the same because\n  `gamma(omega)` *is* the form `tr(r_X ind(u_X) . r_Z ind(u_Z))` (`gam_eq_trDot`).\n\nSo the hatted observables commute up to nothing at all: the two signs multiply to one, and what\nis left is the strategy's error with no sign in it. Without the ancillas the two bases would only\ncommute up to an error carrying `(-1)^gamma`, which does not improve with `eps`.\n\n## What makes it cheap\n\nThree facts, none of them about the Pauli test. The ancilla operator that survives the\ncancellation is *unitary*, so it is invisible to the state-norm\n(`norm_stateVec_kron_unitary`); what is left has an **inert** ancilla, so it has the same norm on\nthe expanded state as on the original one (`norm_stateVec_expVec_kron_one`); and the ancilla state\nis a unit vector (`epr_unit`). The expansion therefore costs exactly the constant of\n`lem:qld-obs-commutation` and nothing more.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Expanded.lean#L449-L463",
+  "source_path": "MIPRE/Background/QLD/Expanded.lean",
+  "lines": [
+   449,
+   463
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-expanded-lines",
+    "env": "lemma",
+    "title": "Expanded line measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.synLinePOVM_map_eval",
+  "source_name": "MIPRE.QLD.synLinePOVM_map_eval",
+  "formal_statement": "theorem MIPRE.QLD.synLinePOVM_map_eval {n : ℕ} (hmn : m ≤ n) (W : Bas) (u₀ w : Point F m) (t : F) :\n    (synLinePOVM n W u₀ w).map (fun f => LinePoly.eval f t) = synPOVM W (u₀ + t • w) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The ancilla's line and point measurements are exactly compatible.** Relabelling a line\noutcome by its value at the point of parameter `t` gives precisely the point measurement at that\npoint --- not approximately: the two families are the same coarse-graining of the same\neigenbasis measurement.",
+  "module": "MIPRE.Background.QLD.Expanded",
+  "module_doc": "/-!\n# The expansion stage: the hatted point observables\n\nBlueprint `lem:qld-expanded-points`, the commutation half. The expansion adjoins\n`|EPR_q>^{(x) M}` to each player and replaces the point observable by\n\n```\n  W-hat^r(u) = W^r(u) (x) tau^W(r . ind_m(u)) ,\n```\n\nthe strategy's own observable tensored with a generalized Pauli on the ancilla. The point of\ndoing so is a **single exact cancellation**:\n\n* the strategy's two observables commute up to the sign `(-1)^{gamma(omega)}`\n  (`signed_commutation`), at `O(eps)`;\n* the two ancilla Pauli observables commute up to the *same* sign, **exactly** --- that is the\n  twisted commutation relation of `def:generalized-pauli`, and the sign is the same because\n  `gamma(omega)` *is* the form `tr(r_X ind(u_X) . r_Z ind(u_Z))` (`gam_eq_trDot`).\n\nSo the hatted observables commute up to nothing at all: the two signs multiply to one, and what\nis left is the strategy's error with no sign in it. Without the ancillas the two bases would only\ncommute up to an error carrying `(-1)^gamma`, which does not improve with `eps`.\n\n## What makes it cheap\n\nThree facts, none of them about the Pauli test. The ancilla operator that survives the\ncancellation is *unitary*, so it is invisible to the state-norm\n(`norm_stateVec_kron_unitary`); what is left has an **inert** ancilla, so it has the same norm on\nthe expanded state as on the original one (`norm_stateVec_expVec_kron_one`); and the ancilla state\nis a unit vector (`epr_unit`). The expansion therefore costs exactly the constant of\n`lem:qld-obs-commutation` and nothing more.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Expanded.lean#L479-L496",
+  "source_path": "MIPRE/Background/QLD/Expanded.lean",
+  "lines": [
+   479,
+   496
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-expanded-lines",
+    "env": "lemma",
+    "title": "Expanded line measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.totalDegree_ind_le",
+   "MIPRE.LowDegree.natDegree_lineRestrict_le",
+   "MIPRE.Weyl.sum_synOf"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_xSqNorm_hatLinePOVM_le",
+  "source_name": "MIPRE.QLD.sum_xSqNorm_hatLinePOVM_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_xSqNorm_hatLinePOVM_le {n : ℕ} {ψ : dA × dB → ℂ} {hm : m ∣ Fintype.card F}\n    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}\n    (hψ : star ψ ⬝ᵥ ψ = 1) (W : Bas) (ty : Ty) (base dir : Content F m → Point F m)\n    (c : Content F m) :\n    ∑ f : LinePoly F n, xSqNorm (hatVec (F := F) (m := m) ψ)\n        (((hatLinePOVM n hm MA W ty base dir c).mats f).val)\n        (((hatLinePOVM n hm MB W ty base dir c).mats f).val)\n      ≤ 2 * condFail (qldGame hm) ψ MA MB (c.question hm ty) (c.question hm ty) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The hatted line measurements are cross-party consistent**, at one content: twice the\nconditional failure of the line type's own consistency subtest, and nothing for the ancilla. The\nthree inputs are the same three as in the point case --- the strategy's consistency, the ancilla's\n*perfect* consistency, and Born-level data processing for the convolution.",
+  "module": "MIPRE.Background.QLD.Expanded",
+  "module_doc": "/-!\n# The expansion stage: the hatted point observables\n\nBlueprint `lem:qld-expanded-points`, the commutation half. The expansion adjoins\n`|EPR_q>^{(x) M}` to each player and replaces the point observable by\n\n```\n  W-hat^r(u) = W^r(u) (x) tau^W(r . ind_m(u)) ,\n```\n\nthe strategy's own observable tensored with a generalized Pauli on the ancilla. The point of\ndoing so is a **single exact cancellation**:\n\n* the strategy's two observables commute up to the sign `(-1)^{gamma(omega)}`\n  (`signed_commutation`), at `O(eps)`;\n* the two ancilla Pauli observables commute up to the *same* sign, **exactly** --- that is the\n  twisted commutation relation of `def:generalized-pauli`, and the sign is the same because\n  `gamma(omega)` *is* the form `tr(r_X ind(u_X) . r_Z ind(u_Z))` (`gam_eq_trDot`).\n\nSo the hatted observables commute up to nothing at all: the two signs multiply to one, and what\nis left is the strategy's error with no sign in it. Without the ancillas the two bases would only\ncommute up to an error carrying `(-1)^gamma`, which does not improve with `eps`.\n\n## What makes it cheap\n\nThree facts, none of them about the Pauli test. The ancilla operator that survives the\ncancellation is *unitary*, so it is invisible to the state-norm\n(`norm_stateVec_kron_unitary`); what is left has an **inert** ancilla, so it has the same norm on\nthe expanded state as on the original one (`norm_stateVec_expVec_kron_one`); and the ancilla state\nis a unit vector (`epr_unit`). The expansion therefore costs exactly the constant of\n`lem:qld-obs-commutation` and nothing more.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Expanded.lean#L528-L590",
+  "source_path": "MIPRE/Background/QLD/Expanded.lean",
+  "lines": [
+   528,
+   590
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-expanded-lines",
+    "env": "lemma",
+    "title": "Expanded line measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_bornProb_epr_synOfPOVM",
+   "MIPRE.QLD.hatVec_unit",
+   "MIPRE.xSqNorm_sum_le_two_mul",
+   "MIPRE.one_sub_sum_bornProb_le_condFail",
+   "MIPRE.sum_bornProb_le_map",
+   "MIPRE.mulVec_kron_kron_expVec",
+   "MIPRE.POVM.posSemidef"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 51,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.hatLinePOVM_consistency",
+  "source_name": "MIPRE.QLD.hatLinePOVM_consistency",
+  "formal_statement": "theorem MIPRE.QLD.hatLinePOVM_consistency {n : ℕ} {ψ : dA × dB → ℂ} {hm : m ∣ Fintype.card F}\n    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}\n    {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) (ty : Ty)\n    (base dir : Content F m → Point F m) :\n    ∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *\n        ∑ f : LinePoly F n, xSqNorm (hatVec (F := F) (m := m) ψ)\n          (((hatLinePOVM n hm MA W ty base dir c).mats f).val)\n          (((hatLinePOVM n hm MB W ty base dir c).mats f).val)\n      ≤ 172 * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The self-consistency item of `lem:qld-expanded-lines`.** On average over the verifier's\ncontent --- which is the line--point distribution, the line and the point being read off the same\nsample --- the two players' hatted line measurements agree at `172 eps`.",
+  "module": "MIPRE.Background.QLD.Expanded",
+  "module_doc": "/-!\n# The expansion stage: the hatted point observables\n\nBlueprint `lem:qld-expanded-points`, the commutation half. The expansion adjoins\n`|EPR_q>^{(x) M}` to each player and replaces the point observable by\n\n```\n  W-hat^r(u) = W^r(u) (x) tau^W(r . ind_m(u)) ,\n```\n\nthe strategy's own observable tensored with a generalized Pauli on the ancilla. The point of\ndoing so is a **single exact cancellation**:\n\n* the strategy's two observables commute up to the sign `(-1)^{gamma(omega)}`\n  (`signed_commutation`), at `O(eps)`;\n* the two ancilla Pauli observables commute up to the *same* sign, **exactly** --- that is the\n  twisted commutation relation of `def:generalized-pauli`, and the sign is the same because\n  `gamma(omega)` *is* the form `tr(r_X ind(u_X) . r_Z ind(u_Z))` (`gam_eq_trDot`).\n\nSo the hatted observables commute up to nothing at all: the two signs multiply to one, and what\nis left is the strategy's error with no sign in it. Without the ancillas the two bases would only\ncommute up to an error carrying `(-1)^gamma`, which does not improve with `eps`.\n\n## What makes it cheap\n\nThree facts, none of them about the Pauli test. The ancilla operator that survives the\ncancellation is *unitary*, so it is invisible to the state-norm\n(`norm_stateVec_kron_unitary`); what is left has an **inert** ancilla, so it has the same norm on\nthe expanded state as on the original one (`norm_stateVec_expVec_kron_one`); and the ancilla state\nis a unit vector (`epr_unit`). The expansion therefore costs exactly the constant of\n`lem:qld-obs-commutation` and nothing more.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Expanded.lean#L592-L616",
+  "source_path": "MIPRE/Background/QLD/Expanded.lean",
+  "lines": [
+   592,
+   616
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-expanded-lines",
+    "env": "lemma",
+    "title": "Expanded line measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_xSqNorm_hatLinePOVM_le",
+   "MIPRE.QLD.le_qldGame_mu",
+   "MIPRE.sum_condFail_le_of_pushforward",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.sum_bornProb"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_xSqNorm_hatLine_point_le",
+  "source_name": "MIPRE.QLD.sum_xSqNorm_hatLine_point_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_xSqNorm_hatLine_point_le {n : ℕ} (hmn : m ≤ n) {ψ : dA × dB → ℂ}\n    {hm : m ∣ Fintype.card F}\n    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}\n    (hψ : star ψ ⬝ᵥ ψ = 1) (W : Bas) (ty : Ty) (base dir : Content F m → Point F m)\n    (hon : ∀ c : Content F m,\n      base c + (MIPRE.LIDT.CL.lineParam (base c) (dir c) (c.pt W)) • dir c = c.pt W)\n    (hsub : ∀ (c : Content F m) (a b : Answer F m d),\n      accepts hm (c.question hm (.point W)) (c.question hm ty) a b = true →\n        rdVal a = (rdLine n b).eval (MIPRE.LIDT.CL.lineParam (base c) (dir c) (c.pt W)))\n    (c : Content F m) :\n    ∑ a : F, xSqNorm (hatVec (F := F) (m := m) ψ) (((hatPOVM hm MA W c).mats a).val)\n        ((((hatLinePOVM n hm MB W ty base dir c).map\n            (fun f => LinePoly.eval f\n              (MIPRE.LIDT.CL.lineParam (base c) (dir c) (c.pt W)))).mats a).val)\n      ≤ 2 * condFail (qldGame hm) ψ MA MB (c.question hm (.point W)) (c.question hm ty) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The line-against-point item of `lem:qld-expanded-lines`.** At one content: twice the\nconditional failure of the line subtest, and nothing for the ancilla, whose line and point\nmeasurements are *exactly* compatible (`synLinePOVM_map_eval`). This single inequality carries both\nof the paper's two forms --- comparing a line outcome with a point outcome, and comparing the\nevaluation of the line polynomial at the point --- because at the Born level the coarse-graining\nthat relates them is free.",
+  "module": "MIPRE.Background.QLD.Expanded",
+  "module_doc": "/-!\n# The expansion stage: the hatted point observables\n\nBlueprint `lem:qld-expanded-points`, the commutation half. The expansion adjoins\n`|EPR_q>^{(x) M}` to each player and replaces the point observable by\n\n```\n  W-hat^r(u) = W^r(u) (x) tau^W(r . ind_m(u)) ,\n```\n\nthe strategy's own observable tensored with a generalized Pauli on the ancilla. The point of\ndoing so is a **single exact cancellation**:\n\n* the strategy's two observables commute up to the sign `(-1)^{gamma(omega)}`\n  (`signed_commutation`), at `O(eps)`;\n* the two ancilla Pauli observables commute up to the *same* sign, **exactly** --- that is the\n  twisted commutation relation of `def:generalized-pauli`, and the sign is the same because\n  `gamma(omega)` *is* the form `tr(r_X ind(u_X) . r_Z ind(u_Z))` (`gam_eq_trDot`).\n\nSo the hatted observables commute up to nothing at all: the two signs multiply to one, and what\nis left is the strategy's error with no sign in it. Without the ancillas the two bases would only\ncommute up to an error carrying `(-1)^gamma`, which does not improve with `eps`.\n\n## What makes it cheap\n\nThree facts, none of them about the Pauli test. The ancilla operator that survives the\ncancellation is *unitary*, so it is invisible to the state-norm\n(`norm_stateVec_kron_unitary`); what is left has an **inert** ancilla, so it has the same norm on\nthe expanded state as on the original one (`norm_stateVec_expVec_kron_one`); and the ancilla state\nis a unit vector (`epr_unit`). The expansion therefore costs exactly the constant of\n`lem:qld-obs-commutation` and nothing more.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Expanded.lean#L638-L714",
+  "source_path": "MIPRE/Background/QLD/Expanded.lean",
+  "lines": [
+   638,
+   714
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-expanded-lines",
+    "env": "lemma",
+    "title": "Expanded line measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_bornProb_epr_synOfPOVM",
+   "MIPRE.QLD.synLinePOVM_map_eval",
+   "MIPRE.QLD.hatVec_unit",
+   "MIPRE.xSqNorm_sum_le_two_mul",
+   "MIPRE.one_sub_sum_bornProb_le_condFail",
+   "MIPRE.POVM.map_map",
+   "MIPRE.sum_bornProb_le_map",
+   "MIPRE.POVM.kron_map",
+   "MIPRE.mulVec_kron_kron_expVec",
+   "MIPRE.POVM.posSemidef"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 56,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.rep_add_lineParam_smul",
+  "source_name": "MIPRE.QLD.rep_add_lineParam_smul",
+  "formal_statement": "theorem MIPRE.QLD.rep_add_lineParam_smul (v x : Point F m) :\n    MIPRE.LIDT.CL.rep v x\n        + (MIPRE.LIDT.CL.lineParam (MIPRE.LIDT.CL.rep v x) v x) • v = x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The sampled point lies on the line the seeded test reports**, at the parameter `lineParam`\ncomputes. The base point is the canonical representative, which differs from the point by an\nelement of the direction's span (`MIPRE.CL.sub_canonLin_mem`).",
+  "module": "MIPRE.Background.QLD.Expanded",
+  "module_doc": "/-!\n# The expansion stage: the hatted point observables\n\nBlueprint `lem:qld-expanded-points`, the commutation half. The expansion adjoins\n`|EPR_q>^{(x) M}` to each player and replaces the point observable by\n\n```\n  W-hat^r(u) = W^r(u) (x) tau^W(r . ind_m(u)) ,\n```\n\nthe strategy's own observable tensored with a generalized Pauli on the ancilla. The point of\ndoing so is a **single exact cancellation**:\n\n* the strategy's two observables commute up to the sign `(-1)^{gamma(omega)}`\n  (`signed_commutation`), at `O(eps)`;\n* the two ancilla Pauli observables commute up to the *same* sign, **exactly** --- that is the\n  twisted commutation relation of `def:generalized-pauli`, and the sign is the same because\n  `gamma(omega)` *is* the form `tr(r_X ind(u_X) . r_Z ind(u_Z))` (`gam_eq_trDot`).\n\nSo the hatted observables commute up to nothing at all: the two signs multiply to one, and what\nis left is the strategy's error with no sign in it. Without the ancillas the two bases would only\ncommute up to an error carrying `(-1)^gamma`, which does not improve with `eps`.\n\n## What makes it cheap\n\nThree facts, none of them about the Pauli test. The ancilla operator that survives the\ncancellation is *unitary*, so it is invisible to the state-norm\n(`norm_stateVec_kron_unitary`); what is left has an **inert** ancilla, so it has the same norm on\nthe expanded state as on the original one (`norm_stateVec_expVec_kron_one`); and the ancilla state\nis a unit vector (`epr_unit`). The expansion therefore costs exactly the constant of\n`lem:qld-obs-commutation` and nothing more.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Expanded.lean#L718-L736",
+  "source_path": "MIPRE/Background/QLD/Expanded.lean",
+  "lines": [
+   718,
+   736
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-expanded-lines",
+    "env": "lemma",
+    "title": "Expanded line measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.hatLinePOVM_point_consistency",
+  "source_name": "MIPRE.QLD.hatLinePOVM_point_consistency",
+  "formal_statement": "theorem MIPRE.QLD.hatLinePOVM_point_consistency {n : ℕ} (hmn : m ≤ n) {ψ : dA × dB → ℂ}\n    {hm : m ∣ Fintype.card F}\n    {MA : Question F m → POVM (Answer F m d) dA} {MB : Question F m → POVM (Answer F m d) dB}\n    {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) (ty : Ty)\n    (hadj : adj (.point W) ty = true) (base dir : Content F m → Point F m)\n    (hon : ∀ c : Content F m,\n      base c + (MIPRE.LIDT.CL.lineParam (base c) (dir c) (c.pt W)) • dir c = c.pt W)\n    (hsub : ∀ (c : Content F m) (a b : Answer F m d),\n      accepts hm (c.question hm (.point W)) (c.question hm ty) a b = true →\n        rdVal a = (rdLine n b).eval (MIPRE.LIDT.CL.lineParam (base c) (dir c) (c.pt W))) :\n    ∑ c, (Fintype.card (Content F m) : ℝ)⁻¹ *\n        ∑ a : F, xSqNorm (hatVec (F := F) (m := m) ψ) (((hatPOVM hm MA W c).mats a).val)\n          ((((hatLinePOVM n hm MB W ty base dir c).map\n              (fun f => LinePoly.eval f\n                (MIPRE.LIDT.CL.lineParam (base c) (dir c) (c.pt W)))).mats a).val)\n      ≤ 172 * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The line-against-point item of `lem:qld-expanded-lines`, on average over the content.**",
+  "module": "MIPRE.Background.QLD.Expanded",
+  "module_doc": "/-!\n# The expansion stage: the hatted point observables\n\nBlueprint `lem:qld-expanded-points`, the commutation half. The expansion adjoins\n`|EPR_q>^{(x) M}` to each player and replaces the point observable by\n\n```\n  W-hat^r(u) = W^r(u) (x) tau^W(r . ind_m(u)) ,\n```\n\nthe strategy's own observable tensored with a generalized Pauli on the ancilla. The point of\ndoing so is a **single exact cancellation**:\n\n* the strategy's two observables commute up to the sign `(-1)^{gamma(omega)}`\n  (`signed_commutation`), at `O(eps)`;\n* the two ancilla Pauli observables commute up to the *same* sign, **exactly** --- that is the\n  twisted commutation relation of `def:generalized-pauli`, and the sign is the same because\n  `gamma(omega)` *is* the form `tr(r_X ind(u_X) . r_Z ind(u_Z))` (`gam_eq_trDot`).\n\nSo the hatted observables commute up to nothing at all: the two signs multiply to one, and what\nis left is the strategy's error with no sign in it. Without the ancillas the two bases would only\ncommute up to an error carrying `(-1)^gamma`, which does not improve with `eps`.\n\n## What makes it cheap\n\nThree facts, none of them about the Pauli test. The ancilla operator that survives the\ncancellation is *unitary*, so it is invisible to the state-norm\n(`norm_stateVec_kron_unitary`); what is left has an **inert** ancilla, so it has the same norm on\nthe expanded state as on the original one (`norm_stateVec_expVec_kron_one`); and the ancilla state\nis a unit vector (`epr_unit`). The expansion therefore costs exactly the constant of\n`lem:qld-obs-commutation` and nothing more.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Expanded.lean#L788-L818",
+  "source_path": "MIPRE/Background/QLD/Expanded.lean",
+  "lines": [
+   788,
+   818
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-expanded-lines",
+    "env": "lemma",
+    "title": "Expanded line measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_xSqNorm_hatLine_point_le",
+   "MIPRE.QLD.le_qldGame_mu",
+   "MIPRE.sum_condFail_le_of_pushforward",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.sum_bornProb"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.adj_symm",
+  "source_name": "MIPRE.QLD.adj_symm",
+  "formal_statement": "theorem MIPRE.QLD.adj_symm (t u : Ty) : adj t u = adj u t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset MIPRE.LIDT MIPRE.LCS.MagicSquare",
+   "open MvPolynomial (eval)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.Game",
+  "module_doc": "/-!\n# The Pauli basis test\n\nBlueprint `def:qld-game`, the paper's game `game^pauli_{(q,m,d)}` (`ldt.tex`, `sec:qld-game`\nfor the question distribution and `fig:decider_pauli` for the decision procedure). This is the\ngame `thm:qld` is about and `lem:qld-win` unpacks.\n\nThe test certifies that the players share `|EPR_q⟩^{⊗ M}`, `M = 2^m`. A player asked\n`(Pauli, W)` measures `{τ^W_h}_{h ∈ F_q^M}` and reports `h`; every other question probes\nlimited information about `h` through its low-degree encoding `g_h : F_q^m → F_q`\n(`MIPRE.LowDegree.ldEnc`), and the subtests check that those probes are consistent with each\nother and across the two bases.\n\n## The three groups of question types\n\n`type^pauli = ({Point, ALine, DLine, Pauli, Pair} × {X, Z}) ∪ type^MS ∪ {Pair}` --- twenty-six\ntypes, `Ty` below, in three groups with three different jobs.\n\n* **`(Point, W)`, `(ALine, W)`, `(DLine, W)`, `(Pauli, W)`** run the *classical* low-degree test\n  of `def:lidt-cl` separately in each basis, plus the tie from a point probe to the full\n  outcome. The line and point content is read off the sample exactly as the seeded CL game\n  reads it (`MIPRE.LIDT.CL.chi`, `rep`, `zeroBelow`), which is what makes the distribution a\n  typed CL distribution and lets the soundness proof feed `thm:lidt-cl-soundness`.\n* **`Pair`, `(Pair, W)`** are the commutation check. The two two-outcome measurements\n  `tr(g_{h_X}(u_X) r_X)` and `tr(g_{h_Z}(u_Z) r_Z)` either commute or anticommute, according to\n  `γ(ω) = 0` or not (`MIPRE.LowDegree.acGamma`, blueprint `fact:omega-anticomm-prob`); when\n  they commute the verifier asks for both at once and compares.\n* **`Constraint_i`, `Variable_j`** are the Magic Square, run *when they anticommute* --- which\n  is exactly when they cannot be measured together. `thm:ms-from-ac` is the completeness\n  direction, and `lem:ms-direct-anticomm` (`MIPRE/Background/QLD/Anticomm.lean`) is the\n  soundness direction this game consumes. The indices here are the layout's own\n  (`MIPRE.LCS.MagicSquare.layout`), `0`-indexed against the paper's `1`-indexed\n  `Constraint_1..6` and `Variable_1..9`, so the paper's distinguished pair\n  `(Point, X)`--`Variable_1` and `(Point, Z)`--`Variable_5` is `var 0` with `X` and `var 4`\n  with `Z` here.\n\n## The distribution\n\n`adj` is the type graph `fig:type-graph-pauli`: thirty non-loop edges (eighteen Magic Square\nincidences, six line/point and point/Pauli edges, two point/variable edges, four through the\ncommutation check) and a self-loop at every one of the twenty-six vertices. The verifier draws\nan ordered pair of adjacent types --- the graph distribution of `def:graph-distribution`, each\nnon-loop edge contributing two ordered pairs and each self-loop one, so uniform over the\n`2 * 30 + 26 = 86` ordered pairs --- then `(u_X, u_Z, s, v, r_X, r_Z)` uniformly, and hands\neach player the content its type prescribes. Sampling the pair and the content independently\nand uniformly is what makes `Sample` a product and `μ_sum_one` one divisio",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Game.lean#L133-L133",
+  "source_path": "MIPRE/Background/QLD/Game.lean",
+  "lines": [
+   133,
+   133
+  ],
+  "blueprint": [
+   {
+    "label": "def:qld-game",
+    "env": "definition",
+    "title": "Pauli basis test",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.snorm_aOp_mul_one_sub_le",
+  "source_name": "MIPRE.snorm_aOp_mul_one_sub_le",
+  "formal_statement": "theorem MIPRE.snorm_aOp_mul_one_sub_le (Φ : RA × RB → ℂ) {T A : Matrix RA RA ℂ} {B : Matrix RB RB ℂ}\n    (hT : Tᴴ = T) (hTi : T * T = T) (hB : Bᴴ = B) (hBi : B * B = B) :\n    snorm Φ ((aOp (T * (1 - A)) : Matrix (RA × RB) _ ℂ)) ≤ xNorm Φ T B + xNorm Φ A B := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {RA RB : Type*} [Fintype RA] [DecidableEq RA] [Fintype RB] [DecidableEq RB]"
+  ],
+  "docstring": "**The same-party deviation is at most the two cross-party ones.**",
+  "module": "MIPRE.Background.QLD.Helper",
+  "module_doc": "/-!\n# The marginals track the point measurements (`lem:qld-helper`)\n\nStage 5 uses the simultaneous pair measurement of `lem:qld-simultaneous` through two statements,\nthe paper's `lem:qld-constructing-the-paulis-helper`. For `W ∈ {X, Z}`, on average over a uniform\npoint `u ∈ F_q^m`, with `S^W_a` the evaluated `W` marginal of Alice's pair measurement and\n`M̂^{W,u}_a` the expanded point measurement:\n\n* **cross-party**: `∑_a ⟨S^W_a ⊗ M̂^{B,W,u}_a⟩ ≥ 1 - δ_S`, the consistency read as an agreement;\n* **same-party**: `∑_a ‖(S^W_a (1 - M̂^{A,W,u}_a) ⊗ 1) Φ‖² ≤ 4 δ_S + 2 κ`, in which *both*\n  factors sit on Alice --- the form the Pauli construction needs, since it multiplies the\n  marginal by the point measurement on one side.\n\n`κ` is the self-consistency of the expanded point measurements (`lem:qld-expanded-points`,\n`172 ε`), which is what lets the second statement cross from one party to the other.\n\n## The identity behind the same-party statement\n\nWith `T = S^W_a` and `A = M̂^{A,W,u}_a` projectors on Alice, `B = M̂^{B,W,u}_a` a projector on\nBob, and `Φ` the state,\n\n`T ⊗ 1 · (1 - A ⊗ 1) = (1 - 1 ⊗ B)(T ⊗ 1 - 1 ⊗ B) - (T ⊗ 1)(A ⊗ 1 - 1 ⊗ B)`,\n\nbecause the cross terms `(T ⊗ 1)(1 ⊗ B)` cancel and `(1 - 1 ⊗ B)(1 ⊗ B) = 0` by projectivity of\n`B` (`snorm_proj_one_sub_le`). Both factors in front are contractions, so the deviation of the\nsame-party product is at most the sum of the two cross-party deviations: the first is the\nconsistency of the marginal with Bob's point measurement, the second the self-consistency of the\npoint measurements. No positivity of the state is used beyond its being a unit vector.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Helper.lean#L63-L86",
+  "source_path": "MIPRE/Background/QLD/Helper.lean",
+  "lines": [
+   63,
+   86
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-helper",
+    "env": "lemma",
+    "title": "The marginals track the point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_sub",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.bnd_one_of_conjTranspose_mul_self_le"
+  ],
+  "pasted_helpers": 16,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_content_pt",
+  "source_name": "MIPRE.QLD.sum_content_pt",
+  "formal_statement": "theorem MIPRE.QLD.sum_content_pt (W : Bas) (f : Point F m → ℝ) :\n    ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * f (c.pt W)\n      = ∑ u, uniform (Point F m) u * f u := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {hm : m ∣ Fintype.card F} {ε : ℝ}"
+  ],
+  "docstring": "**The verifier's `W` block is uniform**: an average over contents of a function of the\ncontent's `W` point is the average over a uniform point.",
+  "module": "MIPRE.Background.QLD.Helper",
+  "module_doc": "/-!\n# The marginals track the point measurements (`lem:qld-helper`)\n\nStage 5 uses the simultaneous pair measurement of `lem:qld-simultaneous` through two statements,\nthe paper's `lem:qld-constructing-the-paulis-helper`. For `W ∈ {X, Z}`, on average over a uniform\npoint `u ∈ F_q^m`, with `S^W_a` the evaluated `W` marginal of Alice's pair measurement and\n`M̂^{W,u}_a` the expanded point measurement:\n\n* **cross-party**: `∑_a ⟨S^W_a ⊗ M̂^{B,W,u}_a⟩ ≥ 1 - δ_S`, the consistency read as an agreement;\n* **same-party**: `∑_a ‖(S^W_a (1 - M̂^{A,W,u}_a) ⊗ 1) Φ‖² ≤ 4 δ_S + 2 κ`, in which *both*\n  factors sit on Alice --- the form the Pauli construction needs, since it multiplies the\n  marginal by the point measurement on one side.\n\n`κ` is the self-consistency of the expanded point measurements (`lem:qld-expanded-points`,\n`172 ε`), which is what lets the second statement cross from one party to the other.\n\n## The identity behind the same-party statement\n\nWith `T = S^W_a` and `A = M̂^{A,W,u}_a` projectors on Alice, `B = M̂^{B,W,u}_a` a projector on\nBob, and `Φ` the state,\n\n`T ⊗ 1 · (1 - A ⊗ 1) = (1 - 1 ⊗ B)(T ⊗ 1 - 1 ⊗ B) - (T ⊗ 1)(A ⊗ 1 - 1 ⊗ B)`,\n\nbecause the cross terms `(T ⊗ 1)(1 ⊗ B)` cancel and `(1 - 1 ⊗ B)(1 ⊗ B) = 0` by projectivity of\n`B` (`snorm_proj_one_sub_le`). Both factors in front are contractions, so the deviation of the\nsame-party product is at most the sum of the two cross-party deviations: the first is the\nconsistency of the marginal with Bob's point measurement, the second the self-consistency of the\npoint measurements. No positivity of the state is used beyond its being a unit vector.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Helper.lean#L141-L168",
+  "source_path": "MIPRE/Background/QLD/Helper.lean",
+  "lines": [
+   141,
+   168
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-helper",
+    "env": "lemma",
+    "title": "The marginals track the point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_uniform_eq_one",
+   "MIPRE.QLD.sum_content_blocks"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_uniform_xSqNorm_hatMats_le",
+  "source_name": "MIPRE.QLD.sum_uniform_xSqNorm_hatMats_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_uniform_xSqNorm_hatMats_le (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :\n    ∑ u, uniform (Point F m) u * ∑ a : F,\n        xSqNorm (hatVec (F := F) (m := m) ψ) (hatMats MA W u a) (hatMats MB W u a)\n      ≤ 172 * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {hm : m ∣ Fintype.card F} {ε : ℝ}"
+  ],
+  "docstring": "`lem:qld-expanded-points`, read at a uniform point rather than at the verifier's content: the\ncontent's `W` block is uniform, and the hatted measurement at a content is the one at its point.",
+  "module": "MIPRE.Background.QLD.Helper",
+  "module_doc": "/-!\n# The marginals track the point measurements (`lem:qld-helper`)\n\nStage 5 uses the simultaneous pair measurement of `lem:qld-simultaneous` through two statements,\nthe paper's `lem:qld-constructing-the-paulis-helper`. For `W ∈ {X, Z}`, on average over a uniform\npoint `u ∈ F_q^m`, with `S^W_a` the evaluated `W` marginal of Alice's pair measurement and\n`M̂^{W,u}_a` the expanded point measurement:\n\n* **cross-party**: `∑_a ⟨S^W_a ⊗ M̂^{B,W,u}_a⟩ ≥ 1 - δ_S`, the consistency read as an agreement;\n* **same-party**: `∑_a ‖(S^W_a (1 - M̂^{A,W,u}_a) ⊗ 1) Φ‖² ≤ 4 δ_S + 2 κ`, in which *both*\n  factors sit on Alice --- the form the Pauli construction needs, since it multiplies the\n  marginal by the point measurement on one side.\n\n`κ` is the self-consistency of the expanded point measurements (`lem:qld-expanded-points`,\n`172 ε`), which is what lets the second statement cross from one party to the other.\n\n## The identity behind the same-party statement\n\nWith `T = S^W_a` and `A = M̂^{A,W,u}_a` projectors on Alice, `B = M̂^{B,W,u}_a` a projector on\nBob, and `Φ` the state,\n\n`T ⊗ 1 · (1 - A ⊗ 1) = (1 - 1 ⊗ B)(T ⊗ 1 - 1 ⊗ B) - (T ⊗ 1)(A ⊗ 1 - 1 ⊗ B)`,\n\nbecause the cross terms `(T ⊗ 1)(1 ⊗ B)` cancel and `(1 - 1 ⊗ B)(1 ⊗ B) = 0` by projectivity of\n`B` (`snorm_proj_one_sub_le`). Both factors in front are contractions, so the deviation of the\nsame-party product is at most the sum of the two cross-party deviations: the first is the\nconsistency of the marginal with Bob's point measurement, the second the self-consistency of the\npoint measurements. No positivity of the state is used beyond its being a unit vector.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Helper.lean#L170-L190",
+  "source_path": "MIPRE/Background/QLD/Helper.lean",
+  "lines": [
+   170,
+   190
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-helper",
+    "env": "lemma",
+    "title": "The marginals track the point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.hatPOVM_consistency",
+   "MIPRE.QLD.sum_content_pt"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.SimulPair.sum_xSqNorm_evalMarg_le",
+  "source_name": "MIPRE.QLD.SimulPair.sum_xSqNorm_evalMarg_le",
+  "formal_statement": "theorem MIPRE.QLD.SimulPair.sum_xSqNorm_evalMarg_le (W : Bas) :\n    ∑ u, uniform (Point F m) u * ∑ a : F,\n        xSqNorm P.Φ (((evalMarg P.SA W u).mats a).val) (aOp (hatMats MB W u a))\n      ≤ 2 * δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.SimulPair",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable (P : SimulPair ψ MA MB δ)"
+  ],
+  "docstring": "The cross-party deviation of the marginal from the point measurement, from item 1.",
+  "module": "MIPRE.Background.QLD.Helper",
+  "module_doc": "/-!\n# The marginals track the point measurements (`lem:qld-helper`)\n\nStage 5 uses the simultaneous pair measurement of `lem:qld-simultaneous` through two statements,\nthe paper's `lem:qld-constructing-the-paulis-helper`. For `W ∈ {X, Z}`, on average over a uniform\npoint `u ∈ F_q^m`, with `S^W_a` the evaluated `W` marginal of Alice's pair measurement and\n`M̂^{W,u}_a` the expanded point measurement:\n\n* **cross-party**: `∑_a ⟨S^W_a ⊗ M̂^{B,W,u}_a⟩ ≥ 1 - δ_S`, the consistency read as an agreement;\n* **same-party**: `∑_a ‖(S^W_a (1 - M̂^{A,W,u}_a) ⊗ 1) Φ‖² ≤ 4 δ_S + 2 κ`, in which *both*\n  factors sit on Alice --- the form the Pauli construction needs, since it multiplies the\n  marginal by the point measurement on one side.\n\n`κ` is the self-consistency of the expanded point measurements (`lem:qld-expanded-points`,\n`172 ε`), which is what lets the second statement cross from one party to the other.\n\n## The identity behind the same-party statement\n\nWith `T = S^W_a` and `A = M̂^{A,W,u}_a` projectors on Alice, `B = M̂^{B,W,u}_a` a projector on\nBob, and `Φ` the state,\n\n`T ⊗ 1 · (1 - A ⊗ 1) = (1 - 1 ⊗ B)(T ⊗ 1 - 1 ⊗ B) - (T ⊗ 1)(A ⊗ 1 - 1 ⊗ B)`,\n\nbecause the cross terms `(T ⊗ 1)(1 ⊗ B)` cancel and `(1 - 1 ⊗ B)(1 ⊗ B) = 0` by projectivity of\n`B` (`snorm_proj_one_sub_le`). Both factors in front are contractions, so the deviation of the\nsame-party product is at most the sum of the two cross-party deviations: the first is the\nconsistency of the marginal with Bob's point measurement, the second the self-consistency of the\npoint measurements. No positivity of the state is used beyond its being a unit vector.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Helper.lean#L221-L241",
+  "source_path": "MIPRE/Background/QLD/Helper.lean",
+  "lines": [
+   221,
+   241
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-helper",
+    "env": "lemma",
+    "title": "The marginals track the point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_diag_eq_one_sub",
+   "MIPRE.sum_uniform_eq_one",
+   "MIPRE.xSqNorm_sum_le_two_mul"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.SimulPair.sum_snorm_sq_evalMarg_one_sub_le",
+  "source_name": "MIPRE.QLD.SimulPair.sum_snorm_sq_evalMarg_one_sub_le",
+  "formal_statement": "theorem MIPRE.QLD.SimulPair.sum_snorm_sq_evalMarg_one_sub_le {hm : m ∣ Fintype.card F} {ε : ℝ}\n    (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) :\n    ∑ u, uniform (Point F m) u * ∑ a : F, snorm P.Φ\n        (aOp ((((evalMarg P.SA W u).mats a).val)\n          * (1 - (aOp (hatMats MA W u a) : Matrix ((dA × Anc F m) × P.EA) _ ℂ)))) ^ 2\n      ≤ 4 * δ + 2 * (172 * ε) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.SimulPair",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable (P : SimulPair ψ MA MB δ)"
+  ],
+  "docstring": "**`lem:qld-helper`, item 2**: the same-party product of the marginal with the complement of\n*Alice's own* point measurement is small.",
+  "module": "MIPRE.Background.QLD.Helper",
+  "module_doc": "/-!\n# The marginals track the point measurements (`lem:qld-helper`)\n\nStage 5 uses the simultaneous pair measurement of `lem:qld-simultaneous` through two statements,\nthe paper's `lem:qld-constructing-the-paulis-helper`. For `W ∈ {X, Z}`, on average over a uniform\npoint `u ∈ F_q^m`, with `S^W_a` the evaluated `W` marginal of Alice's pair measurement and\n`M̂^{W,u}_a` the expanded point measurement:\n\n* **cross-party**: `∑_a ⟨S^W_a ⊗ M̂^{B,W,u}_a⟩ ≥ 1 - δ_S`, the consistency read as an agreement;\n* **same-party**: `∑_a ‖(S^W_a (1 - M̂^{A,W,u}_a) ⊗ 1) Φ‖² ≤ 4 δ_S + 2 κ`, in which *both*\n  factors sit on Alice --- the form the Pauli construction needs, since it multiplies the\n  marginal by the point measurement on one side.\n\n`κ` is the self-consistency of the expanded point measurements (`lem:qld-expanded-points`,\n`172 ε`), which is what lets the second statement cross from one party to the other.\n\n## The identity behind the same-party statement\n\nWith `T = S^W_a` and `A = M̂^{A,W,u}_a` projectors on Alice, `B = M̂^{B,W,u}_a` a projector on\nBob, and `Φ` the state,\n\n`T ⊗ 1 · (1 - A ⊗ 1) = (1 - 1 ⊗ B)(T ⊗ 1 - 1 ⊗ B) - (T ⊗ 1)(A ⊗ 1 - 1 ⊗ B)`,\n\nbecause the cross terms `(T ⊗ 1)(1 ⊗ B)` cancel and `(1 - 1 ⊗ B)(1 ⊗ B) = 0` by projectivity of\n`B` (`snorm_proj_one_sub_le`). Both factors in front are contractions, so the deviation of the\nsame-party product is at most the sum of the two cross-party deviations: the first is the\nconsistency of the marginal with Bob's point measurement, the second the self-consistency of the\npoint measurements. No positivity of the state is used beyond its being a unit vector.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Helper.lean#L257-L294",
+  "source_path": "MIPRE/Background/QLD/Helper.lean",
+  "lines": [
+   257,
+   294
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-helper",
+    "env": "lemma",
+    "title": "The marginals track the point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.isPVM_hatMats",
+   "MIPRE.QLD.SimulPair.sum_xSqNorm_evalMarg_le",
+   "MIPRE.snorm_aOp_mul_one_sub_le",
+   "MIPRE.QLD.sum_uniform_xSqNorm_hatMats_le",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.IsPVM.aOp"
+  ],
+  "pasted_helpers": 28,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.povmValue_le_legalizeStrat",
+  "source_name": "MIPRE.QLD.povmValue_le_legalizeStrat",
+  "formal_statement": "theorem MIPRE.QLD.povmValue_le_legalizeStrat (hm : m ∣ Fintype.card F) (ψ : dA × dB → ℂ)\n    (MA : Question F m → POVM (Answer F m d) dA) (MB : Question F m → POVM (Answer F m d) dB) :\n    povmValue (qldGame hm) ψ MA MB\n      ≤ povmValue (qldGame hm) ψ (legalizeStrat MA) (legalizeStrat MB) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LCS.MagicSquare",
+   "variable {F : Type*} [Field F] {m d : ℕ}",
+   "variable [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] [NeZero m] {dA dB : Type} [Fintype dA]"
+  ],
+  "docstring": "**Legalizing both strategies does not decrease the value.** The decider rejects an answer of\nthe wrong format before any rule runs, so an accepted pair consists of legal answers, which\nlegalization leaves alone; the accepted mass can only grow.",
+  "module": "MIPRE.Background.QLD.Legalize",
+  "module_doc": "/-!\n# Legalizing a strategy for the Pauli basis test\n\nThe paper's strategies answer each question in the format its type prescribes: a strategy's\nmeasurement for a `(Point, W)` question has outcomes in `F_q`, for an axis-parallel line question\noutcomes of degree at most `d`, and so on. The Lean strategies of `MIPRE.QLD` are more permissive:\none answer type `Answer F m d` serves every question, so a measurement may have an element on an\nanswer of the wrong format. The decider rejects such an answer before running any rule\n(`Question.fmtOk`), so the mass on them is controlled by the failure probability --- but \"controlled\nby `O(ε)`\" is not \"zero\", and one place needs zero. `lem:qld-axis-degree` asks that the expanded\naxis-parallel line measurement be *supported* on polynomials of degree at most `d`, which the\npaper takes from the format and which a `dpoly` answer to an axis question breaks.\n\nThis file makes the paper's convention available at no cost. `legalize q a` keeps an answer of the\nright format and replaces any other by a fixed legal default (`Question.defaultAns`); the\n**legalized strategy** `legalizeStrat M` relabels every measurement along it. Four things hold, and\nthey are all one needs to pass to the legalized strategy without loss of generality:\n\n* it is projective when the original is (`isPVM_legalizeStrat`);\n* it has no element on an answer of the wrong format (`legalizeStrat_mats_eq_zero`,\n  packaged as `LegalSupport`);\n* its value in the game is at least the original's (`povmValue_le_legalizeStrat`): the decider\n  rejected the answers that were changed, so no accepted pair is lost;\n* every reading the rules and the conclusions use is unchanged (`rdVal_legalize_point` and its\n  siblings, lifted to the measurements by `legalizeStrat_map`): the defaults read as `0`, which is\n  what every reading already assigns to an ill-formatted answer. In particular the point-probe\n  measurements and the hatted point measurements of the two strategies coincide\n  (`ptPOVM_legalizeStrat`, `hatPtPOVM_legalizeStrat`), so a conclusion about the legalized\n  strategy's point or Pauli measurements is a conclusion about the original's.\n\nSo every hypothesis of the appendix's chain holds for `legalizeStrat MA`, `legalizeStrat MB` when it\nholds for `MA`, `MB`, and the extra property --- legal support --- is what\n`MIPRE/Background/QLD/PaddedLines.lean` turns into the exact degree bound of `lem:qld-axis-degree`.\nThe campaign record had costed that lemma as \"coarse-grain and pay the format-failure probability,\nwhich changes the constants\"; legalizing the strategy first costs nothing and changes no constant.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Legalize.lean#L203-L229",
+  "source_path": "MIPRE/Background/QLD/Legalize.lean",
+  "lines": [
+   203,
+   229
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-axis-degree",
+    "env": "lemma",
+    "title": "Axis degree for expanded line measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb_mapB",
+   "MIPRE.sum_bornProb_mapA",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.posSemidef_of_proj",
+  "source_name": "MIPRE.posSemidef_of_proj",
+  "formal_statement": "theorem MIPRE.posSemidef_of_proj {N : Type*} [Fintype N] {P : Matrix N N ℂ} (hsa : Pᴴ = P)\n    (hidem : P * P = P) : P.PosSemidef := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Matrix",
+   "open scoped ComplexOrder MatrixOrder"
+  ],
+  "docstring": "A self-adjoint idempotent is positive semidefinite.",
+  "module": "MIPRE.Background.QLD.Linear",
+  "module_doc": "/-!\n# Linearity in the two combining coefficients (`lem:qld-global-linear`)\n\nAn outcome `g` of the global measurement is a polynomial on `F^{4m}`; read at the padded point\n`u = (x, z, α, β, w)` it is a polynomial in `(α, β)` whose coefficients are polynomials in the other\ncoordinates. The good outcomes are those of the form `g = α g₁(x, z) + β g₂(x, z)`: linear in\n`(α, β)` with no constant term and no other monomial. This file bounds the weight of the others\n(`IsLinAB` fails) from the ordered-product estimate of `lem:qld-global-products` for the order\n`X_a Z_b`.\n\n## The polynomial side\n\n`LowIndDegPoly.coef g T t` is the coefficient vector, in the variables outside `T`, of the\nmonomial pattern `t` on the coordinates `T` (`eval_eq_sum_coef`): `g(u) = ∑_t u^t_T · coef(u)`.\nThose generic facts are in `MIPRE/Background/LIDT/Coefficients.lean`.\nWith `T = {aIdx, bIdx}` the patterns are pairs `(i, j)`, and `pAB g u₀` is the bivariate\npolynomial `(α, β) ↦ g(setAB u₀ α β)` as a coefficient vector on `Fin 2` (`eval_pAB`). If `g` is\nnot of the good form, some coefficient `G_{i₀ j₀}` with `(i₀, j₀) ∉ {(1, 0), (0, 1)}` is a nonzero\npolynomial, so by Schwartz--Zippel it vanishes at a uniform `u₀` with probability at most\n`4md/q` (`sum_uniform_eval_eq_zero_le`); where it does not vanish, `pAB g u₀` differs from every\nlinear form `α a + β b` (`pAB_ne_linAB`), so they agree at a uniform `(α, β)` with probability at\nmost `2d/q` (`sum_agree_two_le`).\n\n## The operator side\n\nFor `β ≠ 0` the fibre `{αa + βb = c}` has one `b` per `a`, so\n`‖(G_g ⊗ ∑_{fibre} X_a Z_b) Φ‖² = ∑_{fibre} ‖(G_g ⊗ X_a Z_b) Φ‖²` (Pythagoras, the `X_a` being\northogonal projectors), and the weights `W_g(a, b) = ‖(G_g ⊗ X_a Z_b) Φ‖²` do not depend on\n`(α, β)` and sum to `⟨G_g⟩`. Averaging over `(α, β)` and then over the other coordinates\n(`sum_uniform_setAB` reads the uniform padded point as a uniform base point with a fresh uniform\npair), an outcome that is not of the good form has `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≤ η ⟨G_g⟩` with\n`η = (1 + 2d + 4md)/q` (`sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB`). On the other hand\n`⟨G_g⟩ ≤ 2 ‖(G_g ⊗ B_u) Φ‖² + 2 ‖(G_g ⊗ (1 - B_u)) Φ‖²` for every `u`, and the second terms are\nwhat the product estimate bounds by `Δ` in total; hence\n`(1 - 2η) · (weight of the bad outcomes) ≤ 2Δ` (`sum_bad_linear_mass_le`). This is the linear\nbound the paper's `cnote` at `eq:qld-g-prime-bound` describes, rather than the displayed `√Δ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Linear.lean#L54-L59",
+  "source_path": "MIPRE/Background/QLD/Linear.lean",
+  "lines": [
+   54,
+   59
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-linear",
+    "env": "lemma",
+    "title": "Linearity in the two combining coefficients",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.eval_pAB",
+  "source_name": "MIPRE.QLD.eval_pAB",
+  "formal_statement": "theorem MIPRE.QLD.eval_pAB (g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)) (u₀ : Point F (4 * m))\n    (α β : F) : (pAB g u₀).eval ![α, β] = g.eval (setAB u₀ α β) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]"
+  ],
+  "docstring": "**`pAB g u₀` evaluated at `(α, β)` is `g` at `setAB u₀ α β`.**",
+  "module": "MIPRE.Background.QLD.Linear",
+  "module_doc": "/-!\n# Linearity in the two combining coefficients (`lem:qld-global-linear`)\n\nAn outcome `g` of the global measurement is a polynomial on `F^{4m}`; read at the padded point\n`u = (x, z, α, β, w)` it is a polynomial in `(α, β)` whose coefficients are polynomials in the other\ncoordinates. The good outcomes are those of the form `g = α g₁(x, z) + β g₂(x, z)`: linear in\n`(α, β)` with no constant term and no other monomial. This file bounds the weight of the others\n(`IsLinAB` fails) from the ordered-product estimate of `lem:qld-global-products` for the order\n`X_a Z_b`.\n\n## The polynomial side\n\n`LowIndDegPoly.coef g T t` is the coefficient vector, in the variables outside `T`, of the\nmonomial pattern `t` on the coordinates `T` (`eval_eq_sum_coef`): `g(u) = ∑_t u^t_T · coef(u)`.\nThose generic facts are in `MIPRE/Background/LIDT/Coefficients.lean`.\nWith `T = {aIdx, bIdx}` the patterns are pairs `(i, j)`, and `pAB g u₀` is the bivariate\npolynomial `(α, β) ↦ g(setAB u₀ α β)` as a coefficient vector on `Fin 2` (`eval_pAB`). If `g` is\nnot of the good form, some coefficient `G_{i₀ j₀}` with `(i₀, j₀) ∉ {(1, 0), (0, 1)}` is a nonzero\npolynomial, so by Schwartz--Zippel it vanishes at a uniform `u₀` with probability at most\n`4md/q` (`sum_uniform_eval_eq_zero_le`); where it does not vanish, `pAB g u₀` differs from every\nlinear form `α a + β b` (`pAB_ne_linAB`), so they agree at a uniform `(α, β)` with probability at\nmost `2d/q` (`sum_agree_two_le`).\n\n## The operator side\n\nFor `β ≠ 0` the fibre `{αa + βb = c}` has one `b` per `a`, so\n`‖(G_g ⊗ ∑_{fibre} X_a Z_b) Φ‖² = ∑_{fibre} ‖(G_g ⊗ X_a Z_b) Φ‖²` (Pythagoras, the `X_a` being\northogonal projectors), and the weights `W_g(a, b) = ‖(G_g ⊗ X_a Z_b) Φ‖²` do not depend on\n`(α, β)` and sum to `⟨G_g⟩`. Averaging over `(α, β)` and then over the other coordinates\n(`sum_uniform_setAB` reads the uniform padded point as a uniform base point with a fresh uniform\npair), an outcome that is not of the good form has `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≤ η ⟨G_g⟩` with\n`η = (1 + 2d + 4md)/q` (`sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB`). On the other hand\n`⟨G_g⟩ ≤ 2 ‖(G_g ⊗ B_u) Φ‖² + 2 ‖(G_g ⊗ (1 - B_u)) Φ‖²` for every `u`, and the second terms are\nwhat the product estimate bounds by `Δ` in total; hence\n`(1 - 2η) · (weight of the bad outcomes) ≤ 2Δ` (`sum_bad_linear_mass_le`). This is the linear\nbound the paper's `cnote` at `eq:qld-g-prime-bound` describes, rather than the displayed `√Δ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Linear.lean#L143-L183",
+  "source_path": "MIPRE/Background/QLD/Linear.lean",
+  "lines": [
+   143,
+   183
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-linear",
+    "env": "lemma",
+    "title": "Linearity in the two combining coefficients",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.LowIndDegPoly.eval_coef_of_eq_off",
+   "MIPRE.LIDT.LowIndDegPoly.eval_eq_sum_coef"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 37,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.eval_linAB",
+  "source_name": "MIPRE.QLD.eval_linAB",
+  "formal_statement": "theorem MIPRE.QLD.eval_linAB (hd : 1 ≤ d) (a b α β : F) :\n    (linAB hd a b).eval ![α, β] = α * a + β * b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {d : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.Linear",
+  "module_doc": "/-!\n# Linearity in the two combining coefficients (`lem:qld-global-linear`)\n\nAn outcome `g` of the global measurement is a polynomial on `F^{4m}`; read at the padded point\n`u = (x, z, α, β, w)` it is a polynomial in `(α, β)` whose coefficients are polynomials in the other\ncoordinates. The good outcomes are those of the form `g = α g₁(x, z) + β g₂(x, z)`: linear in\n`(α, β)` with no constant term and no other monomial. This file bounds the weight of the others\n(`IsLinAB` fails) from the ordered-product estimate of `lem:qld-global-products` for the order\n`X_a Z_b`.\n\n## The polynomial side\n\n`LowIndDegPoly.coef g T t` is the coefficient vector, in the variables outside `T`, of the\nmonomial pattern `t` on the coordinates `T` (`eval_eq_sum_coef`): `g(u) = ∑_t u^t_T · coef(u)`.\nThose generic facts are in `MIPRE/Background/LIDT/Coefficients.lean`.\nWith `T = {aIdx, bIdx}` the patterns are pairs `(i, j)`, and `pAB g u₀` is the bivariate\npolynomial `(α, β) ↦ g(setAB u₀ α β)` as a coefficient vector on `Fin 2` (`eval_pAB`). If `g` is\nnot of the good form, some coefficient `G_{i₀ j₀}` with `(i₀, j₀) ∉ {(1, 0), (0, 1)}` is a nonzero\npolynomial, so by Schwartz--Zippel it vanishes at a uniform `u₀` with probability at most\n`4md/q` (`sum_uniform_eval_eq_zero_le`); where it does not vanish, `pAB g u₀` differs from every\nlinear form `α a + β b` (`pAB_ne_linAB`), so they agree at a uniform `(α, β)` with probability at\nmost `2d/q` (`sum_agree_two_le`).\n\n## The operator side\n\nFor `β ≠ 0` the fibre `{αa + βb = c}` has one `b` per `a`, so\n`‖(G_g ⊗ ∑_{fibre} X_a Z_b) Φ‖² = ∑_{fibre} ‖(G_g ⊗ X_a Z_b) Φ‖²` (Pythagoras, the `X_a` being\northogonal projectors), and the weights `W_g(a, b) = ‖(G_g ⊗ X_a Z_b) Φ‖²` do not depend on\n`(α, β)` and sum to `⟨G_g⟩`. Averaging over `(α, β)` and then over the other coordinates\n(`sum_uniform_setAB` reads the uniform padded point as a uniform base point with a fresh uniform\npair), an outcome that is not of the good form has `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≤ η ⟨G_g⟩` with\n`η = (1 + 2d + 4md)/q` (`sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB`). On the other hand\n`⟨G_g⟩ ≤ 2 ‖(G_g ⊗ B_u) Φ‖² + 2 ‖(G_g ⊗ (1 - B_u)) Φ‖²` for every `u`, and the second terms are\nwhat the product estimate bounds by `Δ` in total; hence\n`(1 - 2η) · (weight of the bad outcomes) ≤ 2Δ` (`sum_bad_linear_mass_le`). This is the linear\nbound the paper's `cnote` at `eq:qld-g-prime-bound` describes, rather than the displayed `√Δ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Linear.lean#L221-L244",
+  "source_path": "MIPRE/Background/QLD/Linear.lean",
+  "lines": [
+   221,
+   244
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-linear",
+    "env": "lemma",
+    "title": "Linearity in the two combining coefficients",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_agree_two_le",
+  "source_name": "MIPRE.QLD.sum_agree_two_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_agree_two_le {p q : LowIndDegPoly (F := F) (m := 2) (d := d)} (hpq : p ≠ q) :\n    ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)\n        * (if p.eval ![ab.1, ab.2] = q.eval ![ab.1, ab.2] then (1 : ℝ) else 0)\n      ≤ 2 * d / Fintype.card F := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {d : ℕ}"
+  ],
+  "docstring": "**Schwartz--Zippel on two variables**: two different coefficient vectors agree at a uniform\npair with probability at most `2d/q`.",
+  "module": "MIPRE.Background.QLD.Linear",
+  "module_doc": "/-!\n# Linearity in the two combining coefficients (`lem:qld-global-linear`)\n\nAn outcome `g` of the global measurement is a polynomial on `F^{4m}`; read at the padded point\n`u = (x, z, α, β, w)` it is a polynomial in `(α, β)` whose coefficients are polynomials in the other\ncoordinates. The good outcomes are those of the form `g = α g₁(x, z) + β g₂(x, z)`: linear in\n`(α, β)` with no constant term and no other monomial. This file bounds the weight of the others\n(`IsLinAB` fails) from the ordered-product estimate of `lem:qld-global-products` for the order\n`X_a Z_b`.\n\n## The polynomial side\n\n`LowIndDegPoly.coef g T t` is the coefficient vector, in the variables outside `T`, of the\nmonomial pattern `t` on the coordinates `T` (`eval_eq_sum_coef`): `g(u) = ∑_t u^t_T · coef(u)`.\nThose generic facts are in `MIPRE/Background/LIDT/Coefficients.lean`.\nWith `T = {aIdx, bIdx}` the patterns are pairs `(i, j)`, and `pAB g u₀` is the bivariate\npolynomial `(α, β) ↦ g(setAB u₀ α β)` as a coefficient vector on `Fin 2` (`eval_pAB`). If `g` is\nnot of the good form, some coefficient `G_{i₀ j₀}` with `(i₀, j₀) ∉ {(1, 0), (0, 1)}` is a nonzero\npolynomial, so by Schwartz--Zippel it vanishes at a uniform `u₀` with probability at most\n`4md/q` (`sum_uniform_eval_eq_zero_le`); where it does not vanish, `pAB g u₀` differs from every\nlinear form `α a + β b` (`pAB_ne_linAB`), so they agree at a uniform `(α, β)` with probability at\nmost `2d/q` (`sum_agree_two_le`).\n\n## The operator side\n\nFor `β ≠ 0` the fibre `{αa + βb = c}` has one `b` per `a`, so\n`‖(G_g ⊗ ∑_{fibre} X_a Z_b) Φ‖² = ∑_{fibre} ‖(G_g ⊗ X_a Z_b) Φ‖²` (Pythagoras, the `X_a` being\northogonal projectors), and the weights `W_g(a, b) = ‖(G_g ⊗ X_a Z_b) Φ‖²` do not depend on\n`(α, β)` and sum to `⟨G_g⟩`. Averaging over `(α, β)` and then over the other coordinates\n(`sum_uniform_setAB` reads the uniform padded point as a uniform base point with a fresh uniform\npair), an outcome that is not of the good form has `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≤ η ⟨G_g⟩` with\n`η = (1 + 2d + 4md)/q` (`sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB`). On the other hand\n`⟨G_g⟩ ≤ 2 ‖(G_g ⊗ B_u) Φ‖² + 2 ‖(G_g ⊗ (1 - B_u)) Φ‖²` for every `u`, and the second terms are\nwhat the product estimate bounds by `Δ` in total; hence\n`(1 - 2η) · (weight of the bad outcomes) ≤ 2Δ` (`sum_bad_linear_mass_le`). This is the linear\nbound the paper's `cnote` at `eq:qld-g-prime-bound` describes, rather than the displayed `√Δ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Linear.lean#L246-L273",
+  "source_path": "MIPRE/Background/QLD/Linear.lean",
+  "lines": [
+   246,
+   273
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-linear",
+    "env": "lemma",
+    "title": "Linearity in the two combining coefficients",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.prob_agreeOn_le_individualDegree",
+   "MIPRE.LIDT.LowIndDegPoly.degreeOf_toMv_le"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 22,
+  "is_target": false
+ }
+]

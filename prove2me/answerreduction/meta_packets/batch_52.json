@@ -1,0 +1,596 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.zeta4Repaired_bound",
+  "source_name": "MIPStarRE.LDT.Test.zeta4Repaired_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.zeta4Repaired_bound {params : Parameters} {k : ℕ} {eps : Error}\n    (h : CascadeHypotheses params k eps) {ν σ ζ₁ ζ₂ ζ₃ : Error} (hνNN : 0 ≤ ν)\n    (hν : ν ≤ 10000 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (2 : ℕ)) *\n      (Real.rpow eps (1 / (1024 : Error)) +\n        Real.rpow ((params.d : Error) / (params.q : Error)) (1 / (1024 : Error))))\n    (hσEq : σ = cascadeSigma params k ν)\n    (hζ₁Eq : ζ₁ = cascadeZeta1 params eps σ)\n    (hζ₂Eq : ζ₂ = cascadeZeta2 ζ₁)\n    (hζ₃Eq : ζ₃ = cascadeZeta3 ζ₁ ζ₂) :\n    cascadeZeta4Repaired σ ζ₁ ζ₃ ≤ mainFormalError params k eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators"
+  ],
+  "docstring": "The repaired `ζ₄` obtained by substituting the checked local line-169 repair\ninto the final point-transport triangle is also absorbed by `mainFormalError`.\n\n**Source:** This is source-faithful scalar bookkeeping for the repaired\nline-169 route documented in `docs/paper-gaps/issue-1099-sharper-local-fix.tex`\nand the final absorption estimate from\n`references/ldt-paper/inductive_step.tex:186-234`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.CascadeBounds.Zeta4",
+  "module_doc": "/-!\n# Error cascade — bound for `ζ₄`\n\nThis module contains the `ζ₄` cascade estimate used in Step 8 of the main\ninductive step and its absorption into `mainFormalError`.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 220--228.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/Zeta4.lean#L248-L394",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/Zeta4.lean",
+  "lines": [
+   248,
+   394
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Test.cascadeZeta1_bound_general",
+   "MIPStarRE.LDT.Test.cascadeSigma_tight_bound",
+   "MIPStarRE.LDT.Test.cascadeZeta1_bound_special",
+   "MIPStarRE.LDT.Test.cascadeZeta3_bound",
+   "MIPStarRE.LDT.Test.stepEnvelope_rpow_eighth_le",
+   "MIPStarRE.LDT.Test.sqrt_scaled_stepEnvelope_le",
+   "MIPStarRE.LDT.Test.rpow_Z1_factor_le"
+  ],
+  "pasted_helpers": 22,
+  "prooflines": 130,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.sqrt_stepEnvelope_le",
+  "source_name": "MIPStarRE.LDT.Test.sqrt_stepEnvelope_le",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.sqrt_stepEnvelope_le {params : Parameters} {k : ℕ} {eps : Error}\n    (h : CascadeHypotheses params k eps) {n N : Error} (hn : 0 < n) (hN : 0 < N) :\n    Real.sqrt (stepEnvelope params k eps n N) ≤ stepEnvelope params k eps (2 * n) (2 * N) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.EnvelopeBounds",
+  "module_doc": "/-!\n# Error cascade — envelope and root bounding machinery\n\nInternal helper lemmas for the error-cascade bookkeeping of Step 8.\nThese provide the step-envelope interpolation (`stepEnvelope`),\nmonotonicity under denominator enlargement, square-root scaling, and\nexplicit numeric bounds on various `rpow` and `sqrt` expressions.\nAll lemmas are technical and should not be part of downstream API.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 187–234.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/EnvelopeBounds.lean#L117-L135",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/EnvelopeBounds.lean",
+  "lines": [
+   117,
+   135
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.sqrt_add3_le_add3_sqrt"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.mdq_le_k2m4_stepEnvelope2048",
+  "source_name": "MIPStarRE.LDT.Test.mdq_le_k2m4_stepEnvelope2048",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.mdq_le_k2m4_stepEnvelope2048 {params : Parameters} {k : ℕ} {eps : Error}\n    (h : CascadeHypotheses params k eps) :\n    (params.m : Error) * ((params.d : Error) / (params.q : Error)) ≤\n      ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (4 : ℕ)) *\n        stepEnvelope params k eps (2048 : Error) (160000 : Error) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.EnvelopeBounds",
+  "module_doc": "/-!\n# Error cascade — envelope and root bounding machinery\n\nInternal helper lemmas for the error-cascade bookkeeping of Step 8.\nThese provide the step-envelope interpolation (`stepEnvelope`),\nmonotonicity under denominator enlargement, square-root scaling, and\nexplicit numeric bounds on various `rpow` and `sqrt` expressions.\nAll lemmas are technical and should not be part of downstream API.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 187–234.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/EnvelopeBounds.lean#L187-L205",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/EnvelopeBounds.lean",
+  "lines": [
+   187,
+   205
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 10,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.stepEnvelope_rpow_quarter_le",
+  "source_name": "MIPStarRE.LDT.Test.stepEnvelope_rpow_quarter_le",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.stepEnvelope_rpow_quarter_le {params : Parameters} {k : ℕ} {eps : Error}\n    (h : CascadeHypotheses params k eps) :\n    Real.rpow (stepEnvelope params k eps (2048 : Error) (160000 : Error)) (1 / (4 : Error)) ≤\n      stepEnvelope params k eps (8192 : Error) (640000 : Error) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.EnvelopeBounds",
+  "module_doc": "/-!\n# Error cascade — envelope and root bounding machinery\n\nInternal helper lemmas for the error-cascade bookkeeping of Step 8.\nThese provide the step-envelope interpolation (`stepEnvelope`),\nmonotonicity under denominator enlargement, square-root scaling, and\nexplicit numeric bounds on various `rpow` and `sqrt` expressions.\nAll lemmas are technical and should not be part of downstream API.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 187–234.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/EnvelopeBounds.lean#L331-L355",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/EnvelopeBounds.lean",
+  "lines": [
+   331,
+   355
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Test.sqrt_stepEnvelope_le"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.stepEnvelope_rpow_eighth_le",
+  "source_name": "MIPStarRE.LDT.Test.stepEnvelope_rpow_eighth_le",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.stepEnvelope_rpow_eighth_le {params : Parameters} {k : ℕ} {eps : Error}\n    (h : CascadeHypotheses params k eps) :\n    Real.rpow (stepEnvelope params k eps (2048 : Error) (160000 : Error)) (1 / (8 : Error)) ≤\n      stepEnvelope params k eps (16384 : Error) (1280000 : Error) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.EnvelopeBounds",
+  "module_doc": "/-!\n# Error cascade — envelope and root bounding machinery\n\nInternal helper lemmas for the error-cascade bookkeeping of Step 8.\nThese provide the step-envelope interpolation (`stepEnvelope`),\nmonotonicity under denominator enlargement, square-root scaling, and\nexplicit numeric bounds on various `rpow` and `sqrt` expressions.\nAll lemmas are technical and should not be part of downstream API.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 187–234.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/EnvelopeBounds.lean#L357-L391",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/EnvelopeBounds.lean",
+  "lines": [
+   357,
+   391
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Test.sqrt_stepEnvelope_le"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.sqrt_scaled_stepEnvelope_le",
+  "source_name": "MIPStarRE.LDT.Test.sqrt_scaled_stepEnvelope_le",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.sqrt_scaled_stepEnvelope_le {params : Parameters} {k : ℕ} {eps x C n N : Error}\n    (h : CascadeHypotheses params k eps)\n    (hC : 0 ≤ C)\n    (hx : x ≤ C * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (4 : ℕ)) *\n      stepEnvelope params k eps n N)\n    (hn : 0 < n) (hN : 0 < N) :\n    Real.sqrt x ≤\n      Real.sqrt C * (k : Error) * ((params.m : Error) ^ (2 : ℕ)) *\n        stepEnvelope params k eps (2 * n) (2 * N) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.EnvelopeBounds",
+  "module_doc": "/-!\n# Error cascade — envelope and root bounding machinery\n\nInternal helper lemmas for the error-cascade bookkeeping of Step 8.\nThese provide the step-envelope interpolation (`stepEnvelope`),\nmonotonicity under denominator enlargement, square-root scaling, and\nexplicit numeric bounds on various `rpow` and `sqrt` expressions.\nAll lemmas are technical and should not be part of downstream API.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 187–234.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/EnvelopeBounds.lean#L393-L433",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/EnvelopeBounds.lean",
+  "lines": [
+   393,
+   433
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Test.sqrt_stepEnvelope_le"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.rpow_Z1_factor_le",
+  "source_name": "MIPStarRE.LDT.Test.rpow_Z1_factor_le",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.rpow_Z1_factor_le {params : Parameters} {k : ℕ}\n    {Z1 k2 m4 E2048 r Crpow Erpow : Error}\n    (hZ1NN : 0 ≤ Z1)\n    (hZ1 : Z1 ≤ 20204 * k2 * m4 * E2048)\n    (hrNN : 0 ≤ r)\n    (hk2NN : 0 ≤ k2)\n    (hm4NN : 0 ≤ m4)\n    (hE2048NN : 0 ≤ E2048)\n    (hA : Real.rpow (20204 : Error) r ≤ Crpow)\n    (hB : Real.rpow k2 r ≤ (k : Error))\n    (hC : Real.rpow m4 r ≤ (params.m : Error))\n    (hD : Real.rpow E2048 r ≤ Erpow) :\n    Real.rpow Z1 r ≤ Crpow * (k : Error) * (params.m : Error) * Erpow := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.EnvelopeBounds",
+  "module_doc": "/-!\n# Error cascade — envelope and root bounding machinery\n\nInternal helper lemmas for the error-cascade bookkeeping of Step 8.\nThese provide the step-envelope interpolation (`stepEnvelope`),\nmonotonicity under denominator enlargement, square-root scaling, and\nexplicit numeric bounds on various `rpow` and `sqrt` expressions.\nAll lemmas are technical and should not be part of downstream API.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 187–234.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/EnvelopeBounds.lean#L435-L499",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/EnvelopeBounds.lean",
+  "lines": [
+   435,
+   499
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 52,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.completedProjectiveMeasurementsAndLine169_ofTwoSidedSubmeasurements",
+  "source_name": "MIPStarRE.LDT.ProjStrat.completedProjectiveMeasurementsAndLine169_ofTwoSidedSubmeasurements",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.completedProjectiveMeasurementsAndLine169_ofTwoSidedSubmeasurements\n    (params : Parameters)\n    [FieldModel params.q]\n    {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA]\n    [Fintype ιB] [DecidableEq ιB]\n    (strategy : ProjStrat params ιA ιB)\n    (G_A : Measurement (Polynomial params) ιA)\n    (G_B : Measurement (Polynomial params) ιB)\n    (P_A : ProjSubMeas (Polynomial params) ιA)\n    (P_B : ProjSubMeas (Polynomial params) ιB)\n    (ζ : Error)\n    (hfull : ConsRel strategy.state (uniformDistribution Unit)\n      (constSubMeasFamily G_A.toSubMeas)\n      (constSubMeasFamily G_B.toSubMeas) ζ)\n    (hleft :\n      SDDRel strategy.state (uniformDistribution Unit)\n        (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) G_A.toSubMeas))\n        (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) P_A.toSubMeas))\n        (MakingMeasurementsProjective.orthonormalizationError ζ))\n    (hright :\n      SDDRel strategy.state (uniformDistribution Unit)\n        (constSubMeasFamily (rightPlacedSubMeas (ιA := ιA) G_B.toSubMeas))\n        (constSubMeasFamily (rightPlacedSubMeas (ιA := ιA) P_B.toSubMeas))\n        (MakingMeasurementsProjective.orthonormalizationError ζ)) :\n    ∃ Q_A : ProjMeas (Polynomial params) ιA,\n      ∃ Q_B : ProjMeas (Polynomial params) ιB,\n        SDDRel strategy.state (uniformDistribution Unit)\n          (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) G_A.toSubMeas))\n          (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) Q_A.toSubMeas))\n          (MakingMeasurementsProjective.orthonormalizeAndCompleteError ζ) ∧\n        SDDRel strategy.state (uniformDistribution Unit)\n          (constSubMeasFamily (rightPlacedSubMeas (ιA := ιA) G_B.toSubMeas))\n          (constSubMeasFamily (rightPlacedSubMeas (ιA := ιA) Q_B.toSubMeas))\n          (MakingMeasurementsProjective.orthonormalizeAndCompleteError ζ) ∧\n        ConsRel strategy.state (uniformDistribution Unit)\n          (constSubMeasFamily Q_A.toSubMeas)\n          (constSubMeasFamily G_B.toSubMeas)\n          (ζ + Real.sqrt (MakingMeasurementsProjective.orthonormalizationError ζ)) ∧\n        ConsRel strategy.state (uniformDistribution Unit)\n          (constSubMeasFamily G_A.toSubMeas)\n          (constSubMeasFamily Q_B.toSubMeas)\n          (ζ + Real.sqrt (MakingMeasurementsProjective.orthonormalizationError ζ)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "Complete the two projective submeasurements and derive the two repaired\npolynomial line-169 consistency relations.\n\nPaper origin: `references/ldt-paper/inductive_step.tex:167-172`.  The paper\napplies `triangle-sub` after the completion estimates.  The formal statement\nuses the checked repaired version: the replacement of `G_A` by `Q_A` and of\n`G_B` by `Q_B` is charged directly from the pre-completion orthonormalization\ndistance, giving the error `ζ + sqrt (orthonormalizationError ζ)`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceRoleRegister.Completion",
+  "module_doc": "/-!\n# Source-Boundary Role-Register Handoff: Completion Lemmas\n\nThis module contains the completion and line-169 transport lemmas for the\ntwo-space source role-register route.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceRoleRegister/Completion.lean#L859-L948",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceRoleRegister/Completion.lean",
+  "lines": [
+   859,
+   948
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 39,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.completedProjectiveConsistency_ofFullConsistency",
+  "source_name": "MIPStarRE.LDT.ProjStrat.completedProjectiveConsistency_ofFullConsistency",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.completedProjectiveConsistency_ofFullConsistency\n    (params : Parameters)\n    [FieldModel params.q]\n    {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA]\n    [Fintype ιB] [DecidableEq ιB]\n    (strategy : ProjStrat params ιA ιB)\n    (G_A : Measurement (Polynomial params) ιA)\n    (G_B : Measurement (Polynomial params) ιB)\n    (Q_A : ProjMeas (Polynomial params) ιA)\n    (Q_B : ProjMeas (Polynomial params) ιB)\n    (ζ : Error)\n    (hfull : ConsRel strategy.state (uniformDistribution Unit)\n      (constSubMeasFamily G_A.toSubMeas)\n      (constSubMeasFamily G_B.toSubMeas) ζ)\n    (hleftComplete :\n      SDDRel strategy.state (uniformDistribution Unit)\n        (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) G_A.toSubMeas))\n        (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) Q_A.toSubMeas))\n        (MakingMeasurementsProjective.orthonormalizeAndCompleteError ζ))\n    (hrightComplete :\n      SDDRel strategy.state (uniformDistribution Unit)\n        (constSubMeasFamily (rightPlacedSubMeas (ιA := ιA) G_B.toSubMeas))\n        (constSubMeasFamily (rightPlacedSubMeas (ιA := ιA) Q_B.toSubMeas))\n        (MakingMeasurementsProjective.orthonormalizeAndCompleteError ζ)) :\n    let ζ₂ : Error := MakingMeasurementsProjective.orthonormalizeAndCompleteError ζ\n    SDDRel strategy.state (uniformDistribution Unit)\n      (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) Q_A.toSubMeas))\n      (constSubMeasFamily (rightPlacedSubMeas (ιA := ιA) Q_B.toSubMeas))\n      (6 * ζ + 6 * ζ₂) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "The line-156 projective consistency estimate after completing both\npolynomial submeasurements.\n\nPaper origin: `references/ldt-paper/inductive_step.tex:150-157`.  The proof\nuses the consistency-to-distance implication for `G_A,G_B`, then telescopes\nthrough the two completion-distance estimates for `Q_A` and `Q_B`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceRoleRegister.Completion",
+  "module_doc": "/-!\n# Source-Boundary Role-Register Handoff: Completion Lemmas\n\nThis module contains the completion and line-169 transport lemmas for the\ntwo-space source role-register route.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceRoleRegister/Completion.lean#L950-L1044",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceRoleRegister/Completion.lean",
+  "lines": [
+   950,
+   1044
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.simeqToApprox_heterogeneous",
+   "MIPStarRE.LDT.Preliminaries.stateDependentDistanceRel_triangle_three",
+   "MIPStarRE.LDT.Preliminaries.sddRel_symm"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 59,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterPointConsistency_ofSymConsistency",
+  "source_name": "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterPointConsistency_ofSymConsistency",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.sourceRoleRegisterPointConsistency_ofSymConsistency\n    (params : Parameters)\n    [FieldModel params.q]\n    {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA]\n    [Fintype ιB] [DecidableEq ιB]\n    (strategy : ProjStrat params ιA ιB)\n    (G : Measurement (Polynomial params) (RoleRegisterLocal ιA ιB))\n    (σ : Error)\n    (hsym :\n      ConsRel (strategy.roleRegisterSymmStrategy).state\n        (uniformDistribution (Point params))\n        (IdxProjMeas.toIdxSubMeas (strategy.roleRegisterSymmStrategy).pointMeasurement)\n        (polynomialEvaluationFamily params G.toSubMeas)\n        σ) :\n    ConsRel strategy.state (uniformDistribution (Point params))\n        (IdxProjMeas.toIdxSubMeas strategy.pointMeasurementA)\n        (polynomialEvaluationFamily params\n          (Measurement.extractRoleRegisterBob G).toSubMeas)\n        (2 * σ) ∧\n      ConsRel strategy.state (uniformDistribution (Point params))\n        (polynomialEvaluationFamily params\n          (Measurement.extractRoleRegisterAlice G).toSubMeas)\n        (IdxProjMeas.toIdxSubMeas strategy.pointMeasurementB)\n        (2 * σ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "Unsymmetrize the two point-consistency estimates obtained from a\nrole-register source-induction measurement.\n\nPaper origin: `references/ldt-paper/inductive_step.tex:84-109`.\n\nThis theorem is the quantitative part of the heterogeneous role-register\nreduction before the later projectivization and completion steps.  It starts\nfrom the consistency estimate produced on the role-register symmetrized\nstrategy and extracts the two occupied principal blocks of the polynomial\nmeasurement.  The factor `2` is exactly the factor coming from the two role\nsectors in the symmetrized state.\n\nThis statement is source-boundary infrastructure, not a replacement for\n`thm:main-formal`: the extracted measurements are complete measurements, not\nyet projective measurements, and the error has not yet been absorbed into\n`mainFormalError`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceRoleRegister.Core",
+  "module_doc": "/-!\n# Source-Boundary Role-Register Handoff: Core Reductions\n\nThis module contains the main-induction handoff, unsymmetrization, and the first\ntwo-space projectivization outputs for the source route toward `thm:main-formal`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceRoleRegister/Core.lean#L125-L290",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceRoleRegister/Core.lean",
+  "lines": [
+   125,
+   290
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_const_mul",
+   "MIPStarRE.LDT.QuantumState.IsNormalized.nonempty",
+   "MIPStarRE.LDT.SubMeas.ext",
+   "MIPStarRE.LDT.qBipartiteConsDefect_nonneg",
+   "MIPStarRE.LDT.ProjStrat.qBipartiteConsDefect_roleRegisterProjMeas_arbitrary_eq_average"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 125,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.pointAgreementFailureProbability_le_three_mul",
+  "source_name": "MIPStarRE.LDT.ProjStrat.pointAgreementFailureProbability_le_three_mul",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.pointAgreementFailureProbability_le_three_mul\n    (params : Parameters)\n    [FieldModel params.q]\n    {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA]\n    [Fintype ιB] [DecidableEq ιB]\n    {strategy : ProjStrat params ιA ιB}\n    {eps : Error}\n    (hpass : strategy.PassesLowIndividualDegreeTest eps) :\n    strategy.pointAgreementFailureProbability ≤ 3 * eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "Passing the two-space low individual degree test bounds the point-agreement\nbranch by `3ε`.\n\nIt follows because the point-agreement branch is one of the three nonnegative\nterms averaged in `ProjStrat.lowIndividualDegreeFailureProbability`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceRoleRegister.Core",
+  "module_doc": "/-!\n# Source-Boundary Role-Register Handoff: Core Reductions\n\nThis module contains the main-induction handoff, unsymmetrization, and the first\ntwo-space projectivization outputs for the source route toward `thm:main-formal`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceRoleRegister/Core.lean#L292-L318",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceRoleRegister/Core.lean",
+  "lines": [
+   292,
+   318
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.bipartiteConsError_nonneg",
+   "MIPStarRE.LDT.ProjStrat.axisParallelRoleAverage_nonneg",
+   "MIPStarRE.LDT.ProjStrat.diagonalRoleAverage_nonneg"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterFullPolynomialSelfConsistency_ofPointConsistency",
+  "source_name": "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterFullPolynomialSelfConsistency_ofPointConsistency",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.sourceRoleRegisterFullPolynomialSelfConsistency_ofPointConsistency\n    (params : Parameters)\n    [FieldModel params.q]\n    {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA]\n    [Fintype ιB] [DecidableEq ιB]\n    (strategy : ProjStrat params ιA ιB)\n    (eps σ : Error)\n    (hpass : strategy.PassesLowIndividualDegreeTest eps)\n    (G_A : Measurement (Polynomial params) ιA)\n    (G_B : Measurement (Polynomial params) ιB)\n    (hpointAGB :\n      ConsRel strategy.state (uniformDistribution (Point params))\n        (IdxProjMeas.toIdxSubMeas strategy.pointMeasurementA)\n        (polynomialEvaluationFamily params G_B.toSubMeas)\n        σ)\n    (hGApointB :\n      ConsRel strategy.state (uniformDistribution (Point params))\n        (polynomialEvaluationFamily params G_A.toSubMeas)\n        (IdxProjMeas.toIdxSubMeas strategy.pointMeasurementB)\n        σ) :\n    ConsRel strategy.state (uniformDistribution Unit)\n      (constSubMeasFamily G_A.toSubMeas)\n      (constSubMeasFamily G_B.toSubMeas)\n      (σ + 2 * Real.sqrt (3 * eps + σ) +\n        (params.m * params.d : Error) / params.q) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "The two-space Step 5 self-consistency calculation before projectivization.\n\nPaper origin: `references/ldt-paper/inductive_step.tex:111-133`.\n\nStarting from the two unsymmetrized estimates\n`G^A_[g(u)=a] \\otimes I \\simeq_\\sigma I \\otimes A^{B,u}_a` and\n`A^{A,u}_a \\otimes I \\simeq_\\sigma I \\otimes G^B_[g(u)=a]`,\nthe original point-agreement branch of the test gives the evaluated polynomial\nconsistency at error `σ + 2 sqrt(3ε + σ)`.  The heterogeneous\nSchwartz--Zippel Step 5 lemma then gives full-polynomial consistency with the\nadditional `md/q` loss.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceRoleRegister.Core",
+  "module_doc": "/-!\n# Source-Boundary Role-Register Handoff: Core Reductions\n\nThis module contains the main-induction handoff, unsymmetrization, and the first\ntwo-space projectivization outputs for the source route toward `thm:main-formal`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceRoleRegister/Core.lean#L320-L403",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceRoleRegister/Core.lean",
+  "lines": [
+   320,
+   403
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.simeqTriangleInequality_heterogeneous",
+   "MIPStarRE.LDT.ProjStrat.pointAgreementFailureProbability_le_three_mul",
+   "MIPStarRE.LDT.Test.mainFormalStep5_selfConsistency_ofExpansionBound_heterogeneous"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 47,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterTwoSidedProjectiveSubmeasurements",
+  "source_name": "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterTwoSidedProjectiveSubmeasurements",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.sourceRoleRegisterTwoSidedProjectiveSubmeasurements\n    (params : Parameters)\n    [FieldModel params.q]\n    {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA]\n    [Fintype ιB] [DecidableEq ιB]\n    (strategy : ProjStrat params ιA ιB)\n    (eps : Error)\n    (hpass : strategy.PassesLowIndividualDegreeTest eps)\n    (k : ℕ)\n    (hk : 400 * params.m * params.d ≤ k) :\n    ∃ G_A : Measurement (Polynomial params) ιA,\n      ∃ G_B : Measurement (Polynomial params) ιB,\n        ∃ P_A : ProjSubMeas (Polynomial params) ιA,\n          ∃ P_B : ProjSubMeas (Polynomial params) ιB,\n            ConsRel strategy.state (uniformDistribution (Point params))\n                (IdxProjMeas.toIdxSubMeas strategy.pointMeasurementA)\n                (polynomialEvaluationFamily params G_B.toSubMeas)\n                (2 * MainInductionStep.mainInductionError params k\n                  (3 * eps) (3 * eps) (3 * eps)) ∧\n              ConsRel strategy.state (uniformDistribution (Point params))\n                (polynomialEvaluationFamily params G_A.toSubMeas)\n                (IdxProjMeas.toIdxSubMeas strategy.pointMeasurementB)\n                (2 * MainInductionStep.mainInductionError params k\n                  (3 * eps) (3 * eps) (3 * eps)) ∧\n              ConsRel strategy.state (uniformDistribution Unit)\n                (constSubMeasFamily G_A.toSubMeas)\n                (constSubMeasFamily G_B.toSubMeas)\n                (2 * MainInductionStep.mainInductionError params k\n                    (3 * eps) (3 * eps) (3 * eps) +\n                  2 * Real.sqrt (3 * eps +\n                    2 * MainInductionStep.mainInductionError params k\n                      (3 * eps) (3 * eps) (3 * eps)) +\n                  (params.m * params.d : Error) / params.q) ∧\n              SDDRel strategy.state (uniformDistribution Unit)\n                (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) G_A.toSubMeas))\n                (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) P_A.toSubMeas))\n                (MakingMeasurementsProjective.orthonormalizationError\n                  (2 * MainInductionStep.mainInductionError params k\n                      (3 * eps) (3 * eps) (3 * eps) +\n                    2 * Real.sqrt (3 * eps +\n                      2 * MainInductionStep.mainInductionError params k\n                        (3 * eps) (3 * eps) (3 * eps)) +\n                    (params.m * params.d : Error) / params.q)) ∧\n              SDDRel strategy.state (uniformDistribution Unit)\n                (constSubMeasFamily (rightPlacedSubMeas (ιA := ιA) G_B.toSubMeas))\n                (constSubMeasFamily (rightPlacedSubMeas (ιA := ιA) P_B.toSubMeas))\n                (MakingMeasurementsProjective.orthonormalizationError\n                  (2 * MainInductionStep.mainInductionError params k\n                      (3 * eps) (3 * eps) (3 * eps) +\n                    2 * Real.sqrt (3 * eps +\n                      2 * MainInductionStep.mainInductionError params k\n                        (3 * eps) (3 * eps) (3 * eps)) +\n                    (params.m * params.d : Error) / params.q)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "Two-sided projective submeasurements from the source role-register route.\n\nThis theorem combines the source role-register Step 5 theorem with the\nheterogeneous orthonormalization lemmas on both tensor factors.  It is still not\nthe final theorem: it constructs projective submeasurements and the two\nstate-dependent-distance estimates.  Completion to projective measurements,\nline-169 transport, and scalar absorption remain separate work.  The\nrole-register input uses the confirmed large-`k` correction to\n`thm:main-induction`; this theorem itself adds no bridge, package, residual,\nrepair, producer, input, or generic hypothesis.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceRoleRegister.Final",
+  "module_doc": "/-!\n# Source-Boundary Role-Register Handoff: Final Point Consistency\n\nThis module contains the final completed-measurement and point-consistency\nstatements used by the paper-facing `thm:main-formal` route.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceRoleRegister/Final.lean#L126-L208",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceRoleRegister/Final.lean",
+  "lines": [
+   126,
+   208
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.MainInductionStep.mainInductionBaseCase",
+   "MIPStarRE.LDT.MainInductionStep.answerMainInduction",
+   "MIPStarRE.LDT.MainInductionStep.mainInductionSuccessorNext_ofAnswerCarrier",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalizationMeasurement_of_consistency_from_projectivizationRepair_heterogeneous",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalizationMeasurement_right_of_consistency_from_projectivizationRepair_heterogeneous",
+   "MIPStarRE.LDT.qBipartiteConsDefect_nonneg",
+   "MIPStarRE.LDT.qBipartiteConsDefect_le_one_of_isNormalized",
+   "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterFullPolynomialSelfConsistency_ofPointConsistency",
+   "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterPointConsistency_ofSymConsistency",
+   "MIPStarRE.LDT.ProjStrat.roleRegisterSymmStrategy_is_good_three_mul"
+  ],
+  "pasted_helpers": 16,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterCompletedProjectiveMeasurements",
+  "source_name": "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterCompletedProjectiveMeasurements",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.sourceRoleRegisterCompletedProjectiveMeasurements\n    (params : Parameters)\n    [FieldModel params.q]\n    {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA]\n    [Fintype ιB] [DecidableEq ιB]\n    (strategy : ProjStrat params ιA ιB)\n    (eps : Error)\n    (hpass : strategy.PassesLowIndividualDegreeTest eps)\n    (k : ℕ)\n    (hk : 400 * params.m * params.d ≤ k) :\n    let σ : Error :=\n      2 * MainInductionStep.mainInductionError params k (3 * eps) (3 * eps) (3 * eps)\n    let ζ₁ : Error :=\n      σ + 2 * Real.sqrt (3 * eps + σ) + (params.m * params.d : Error) / params.q\n    ∃ G_A : Measurement (Polynomial params) ιA,\n      ∃ G_B : Measurement (Polynomial params) ιB,\n        ∃ P_A : ProjSubMeas (Polynomial params) ιA,\n          ∃ P_B : ProjSubMeas (Polynomial params) ιB,\n            ∃ Q_A : ProjMeas (Polynomial params) ιA,\n              ∃ Q_B : ProjMeas (Polynomial params) ιB,\n                ConsRel strategy.state (uniformDistribution (Point params))\n                    (IdxProjMeas.toIdxSubMeas strategy.pointMeasurementA)\n                    (polynomialEvaluationFamily params G_B.toSubMeas)\n                    σ ∧\n                  ConsRel strategy.state (uniformDistribution (Point params))\n                    (polynomialEvaluationFamily params G_A.toSubMeas)\n                    (IdxProjMeas.toIdxSubMeas strategy.pointMeasurementB)\n                    σ ∧\n                  ConsRel strategy.state (uniformDistribution Unit)\n                    (constSubMeasFamily G_A.toSubMeas)\n                    (constSubMeasFamily G_B.toSubMeas)\n                    ζ₁ ∧\n                  SDDRel strategy.state (uniformDistribution Unit)\n                    (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) G_A.toSubMeas))\n                    (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) P_A.toSubMeas))\n                    (MakingMeasurementsProjective.orthonormalizationError ζ₁) ∧\n                  SDDRel strategy.state (uniformDistribution Unit)\n                    (constSubMeasFamily (rightPlacedSubMeas (ιA := ιA) G_B.toSubMeas))\n                    (constSubMeasFamily (rightPlacedSubMeas (ιA := ιA) P_B.toSubMeas))\n                    (MakingMeasurementsProjective.orthonormalizationError ζ₁) ∧\n                  SDDRel strategy.state (uniformDistribution Unit)\n                    (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) G_A.toSubMeas))\n                    (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) Q_A.toSubMeas))\n                    (MakingMeasurementsProjective.orthonormalizeAndCompleteError ζ₁) ∧\n                  SDDRel strategy.state (uniformDistribution Unit)\n                    (constSubMeasFamily (rightPlacedSubMeas (ιA := ιA) G_B.toSubMeas))\n                    (constSubMeasFamily (rightPlacedSubMeas (ιA := ιA) Q_B.toSubMeas))\n                    (MakingMeasurementsProjective.orthonormalizeAndCompleteError ζ₁) ∧\n                  ConsRel strategy.state (uniformDistribution Unit)\n                    (constSubMeasFamily Q_A.toSubMeas)\n                    (constSubMeasFamily G_B.toSubMeas)\n                    (ζ₁ + Real.sqrt\n                      (MakingMeasurementsProjective.orthonormalizationError ζ₁)) ∧\n                  ConsRel strategy.state (uniformDistribution Unit)\n                    (constSubMeasFamily G_A.toSubMeas)\n                    (constSubMeasFamily Q_B.toSubMeas)\n                    (ζ₁ + Real.sqrt\n                      (MakingMeasurementsProjective.orthonormalizationError ζ₁)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "Completed projective measurements from the source role-register route.\n\nThis theorem carries the heterogeneous role-register construction through the\ncompletion step in `references/ldt-paper/inductive_step.tex:143-149`.  Starting\nfrom the paper hypotheses for the two-space strategy, it constructs the\ncomplete polynomial measurements `G_A,G_B`, the projective submeasurements\n`P_A,P_B`, and the completed projective measurements `Q_A,Q_B`, together with\nthe two tensor-factor state-dependent-distance estimates at the literal\northonormalize-and-complete error.\n\nIt is still not `thm:main-formal`: the remaining source-route work is the\nline-169 transport from the polynomial measurements to the point measurements,\nand the scalar absorption into `mainFormalError`.  The role-register input uses\nthe confirmed large-`k` correction to `thm:main-induction`; the completion\nargument in this theorem itself adds no bridge, package, residual, repair,\nproducer, input, or generic hypothesis.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceRoleRegister.Final",
+  "module_doc": "/-!\n# Source-Boundary Role-Register Handoff: Final Point Consistency\n\nThis module contains the final completed-measurement and point-consistency\nstatements used by the paper-facing `thm:main-formal` route.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceRoleRegister/Final.lean#L210-L362",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceRoleRegister/Final.lean",
+  "lines": [
+   210,
+   362
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ProjStrat.completedProjectiveMeasurementsAndLine169_ofTwoSidedSubmeasurements",
+   "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterTwoSidedProjectiveSubmeasurements"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 78,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterFinalPointConsistency",
+  "source_name": "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterFinalPointConsistency",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.sourceRoleRegisterFinalPointConsistency\n    (params : Parameters)\n    [FieldModel params.q]\n    {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA]\n    [Fintype ιB] [DecidableEq ιB]\n    (strategy : ProjStrat params ιA ιB)\n    (eps : Error)\n    (hpass : strategy.PassesLowIndividualDegreeTest eps)\n    (k : ℕ)\n    (hk : 400 * params.m * params.d ≤ k) :\n    let σ : Error :=\n      2 * MainInductionStep.mainInductionError params k (3 * eps) (3 * eps) (3 * eps)\n    let ζ₁ : Error :=\n      σ + 2 * Real.sqrt (3 * eps + σ) + (params.m * params.d : Error) / params.q\n    let ζ₂ : Error := MakingMeasurementsProjective.orthonormalizeAndCompleteError ζ₁\n    let η : Error :=\n      ζ₁ + Real.sqrt (MakingMeasurementsProjective.orthonormalizationError ζ₁)\n    let ζ₃ : Error := 6 * ζ₁ + 6 * ζ₂\n    ∃ Q_A : ProjMeas (Polynomial params) ιA,\n      ∃ Q_B : ProjMeas (Polynomial params) ιB,\n        ConsRel strategy.state (uniformDistribution (Point params))\n            (IdxProjMeas.toIdxSubMeas strategy.pointMeasurementA)\n            (polynomialEvaluationFamily params Q_B.toSubMeas)\n            (σ + 2 * Real.sqrt (η + ζ₃ / 2)) ∧\n          ConsRel strategy.state (uniformDistribution (Point params))\n            (polynomialEvaluationFamily params Q_A.toSubMeas)\n            (IdxProjMeas.toIdxSubMeas strategy.pointMeasurementB)\n            (σ + 2 * Real.sqrt (η + ζ₃ / 2)) ∧\n          ConsRel strategy.state (uniformDistribution (Point params))\n            (polynomialEvaluationFamily params Q_A.toSubMeas)\n            (polynomialEvaluationFamily params Q_B.toSubMeas)\n            (ζ₃ / 2) ∧\n          ConsRel strategy.state (uniformDistribution Unit)\n            (constSubMeasFamily Q_A.toSubMeas)\n            (constSubMeasFamily Q_B.toSubMeas)\n            (ζ₃ / 2) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "Final point-consistency estimates obtained from the source role-register\nroute before scalar absorption.\n\nPaper origin: `references/ldt-paper/inductive_step.tex:158-185`.  This theorem\nderives the point-evaluation triangle estimates from the completed projective\nmeasurements.  No point-consistency estimate is assumed: the two line-169\npolynomial consistency relations are first postprocessed by evaluation, and the\n`Q_A,Q_B` estimate is derived from the original `G_A,G_B` consistency together\nwith the two completion-distance estimates.\n\nThe displayed errors are the literal errors produced by the heterogeneous\ntriangle inequalities used here.  Absorbing these scalar expressions into the\nsingle `mainFormalError` bound is a separate final step.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceRoleRegister.Final",
+  "module_doc": "/-!\n# Source-Boundary Role-Register Handoff: Final Point Consistency\n\nThis module contains the final completed-measurement and point-consistency\nstatements used by the paper-facing `thm:main-formal` route.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceRoleRegister/Final.lean#L364-L641",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceRoleRegister/Final.lean",
+  "lines": [
+   364,
+   641
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.simeqToApprox_heterogeneous",
+   "MIPStarRE.LDT.Preliminaries.approxToSimeq_heterogeneous",
+   "MIPStarRE.LDT.Preliminaries.stateDependentDistanceRel_triangle",
+   "MIPStarRE.LDT.Preliminaries.triangleSub_heterogeneous",
+   "MIPStarRE.LDT.Preliminaries.sddRel_symm",
+   "MIPStarRE.LDT.Preliminaries.simeqTriangleInequality_heterogeneous",
+   "MIPStarRE.LDT.bipartiteConsError_nonneg",
+   "MIPStarRE.LDT.Test.projectiveEvaluationConsistency_ofFullPolynomialConsistency_heterogeneous",
+   "MIPStarRE.LDT.Test.consRel_constPolynomialEvaluation_heterogeneous",
+   "MIPStarRE.LDT.ProjStrat.completedProjectiveConsistency_ofFullConsistency",
+   "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterCompletedProjectiveMeasurements"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 228,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.mainFormalInductionNu_nonneg",
+  "source_name": "MIPStarRE.LDT.Test.mainFormalInductionNu_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.mainFormalInductionNu_nonneg {params : Parameters} {k : ℕ} {eps : Error}\n    (h : CascadeHypotheses params k eps) :\n    0 ≤ mainFormalInductionNu params k eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Nonnegativity of the symmetrized main-induction `ν` under the standing\ncascade hypotheses.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceScalars",
+  "module_doc": "/-!\n# Main-formal scalar bounds\n\nScalar estimates for the two-space `mainFormal` theorem.  This module defines\nthe five scalars that appear in the paper's error calculation:\n\n* `σ` — the symmetrized induction consistency error\n* `ζ₁` — the cross-consistency error after unsymmetrization\n* `ζ₂` — the orthonormalize-and-complete closeness error\n* `ζ₃` — the projective self-consistency error\n* `ζ₄` — the final point-consistency error\n\nThe core structure `MainFormalScalarBounds` (Prop) bundles the three\nhypotheses needed to invoke the checked Step 8 bound\n`errorCascade_le_mainFormalError`:\n\n* `cascadeHypotheses` — the standing scalar regime (`q > 0`, `k ≥ 1`,\n  `m ≥ 1`, `0 ≤ ε ≤ 1`, `d ≤ q`).\n* `inductionNu_nonneg` — nonnegativity of the symmetrized main-induction\n  `ν` at `(3ε, 3ε, 3ε)`.\n* `inductionNu_bound` — the paper line 71–73 coarsening\n  `ν ≤ 10000 k² m² (ε^{1/1024} + (d/q)^{1/1024})`.\n\nThe cascade comparisons `ζ₁ ≤ …`, `ζ₃ ≤ 2·mainFormalError`, etc. are then\nderived in the private theorem `cascadeBounds` via\n`errorCascade_le_mainFormalError`, which calls the already-formalized\nscalar cascade estimates from `LDT.Test.MainTheorem.ScalarBounds`.  The module also\nprovides the vacuous-branch analysis (`mainFormalError_ge_one_of_*`) and\nthe coarsening lemma that absorbs `orthonormalizeAndCompleteError` into\n`ζ₂` (`orthonormalizeAndCompleteError_zeta1_le_zeta2`).\n\n## References\n\n* Paper: `references/ldt-paper/inductive_step.tex`,\n  error computations (lines 68–75, 186–234).\n* Blueprint: `blueprint/src/chapter/ch10_induction.tex`,\n  `\\label{def:main-formal-error-cascade}`,\n  `\\label{thm:sigma-bound-main-formal}`, and\n  `\\label{thm:zeta-bounds-main-formal}`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceScalars.lean#L138-L158",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceScalars.lean",
+  "lines": [
+   138,
+   158
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.mainFormalInductionNu_bound",
+  "source_name": "MIPStarRE.LDT.Test.mainFormalInductionNu_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.mainFormalInductionNu_bound {params : Parameters} {k : ℕ} {eps : Error}\n    (h : CascadeHypotheses params k eps) :\n    mainFormalInductionNu params k eps ≤\n      10000 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (2 : ℕ)) *\n        (Real.rpow eps (1 / (1024 : Error)) +\n          Real.rpow ((params.d : Error) / (params.q : Error)) (1 / (1024 : Error))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Paper lines 71--73: after applying main induction to the symmetrized strategy,\nthe resulting `ν` at errors `(3ε,3ε,3ε)` is bounded by the coarser Section 3\nquantity `10000 k² m² (ε^(1/1024) + (d/q)^(1/1024))`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceScalars",
+  "module_doc": "/-!\n# Main-formal scalar bounds\n\nScalar estimates for the two-space `mainFormal` theorem.  This module defines\nthe five scalars that appear in the paper's error calculation:\n\n* `σ` — the symmetrized induction consistency error\n* `ζ₁` — the cross-consistency error after unsymmetrization\n* `ζ₂` — the orthonormalize-and-complete closeness error\n* `ζ₃` — the projective self-consistency error\n* `ζ₄` — the final point-consistency error\n\nThe core structure `MainFormalScalarBounds` (Prop) bundles the three\nhypotheses needed to invoke the checked Step 8 bound\n`errorCascade_le_mainFormalError`:\n\n* `cascadeHypotheses` — the standing scalar regime (`q > 0`, `k ≥ 1`,\n  `m ≥ 1`, `0 ≤ ε ≤ 1`, `d ≤ q`).\n* `inductionNu_nonneg` — nonnegativity of the symmetrized main-induction\n  `ν` at `(3ε, 3ε, 3ε)`.\n* `inductionNu_bound` — the paper line 71–73 coarsening\n  `ν ≤ 10000 k² m² (ε^{1/1024} + (d/q)^{1/1024})`.\n\nThe cascade comparisons `ζ₁ ≤ …`, `ζ₃ ≤ 2·mainFormalError`, etc. are then\nderived in the private theorem `cascadeBounds` via\n`errorCascade_le_mainFormalError`, which calls the already-formalized\nscalar cascade estimates from `LDT.Test.MainTheorem.ScalarBounds`.  The module also\nprovides the vacuous-branch analysis (`mainFormalError_ge_one_of_*`) and\nthe coarsening lemma that absorbs `orthonormalizeAndCompleteError` into\n`ζ₂` (`orthonormalizeAndCompleteError_zeta1_le_zeta2`).\n\n## References\n\n* Paper: `references/ldt-paper/inductive_step.tex`,\n  error computations (lines 68–75, 186–234).\n* Blueprint: `blueprint/src/chapter/ch10_induction.tex`,\n  `\\label{def:main-formal-error-cascade}`,\n  `\\label{thm:sigma-bound-main-formal}`, and\n  `\\label{thm:zeta-bounds-main-formal}`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceScalars.lean#L160-L203",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceScalars.lean",
+  "lines": [
+   160,
+   203
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.mainFormalError_ge_one_of_one_le_envelope",
+  "source_name": "MIPStarRE.LDT.Test.mainFormalError_ge_one_of_one_le_envelope",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.mainFormalError_ge_one_of_one_le_envelope\n    (params : Parameters) (k : ℕ) (eps : Error)\n    (hk0 : 0 < k)\n    (henv : 1 ≤ mainFormalEnvelope params k eps) :\n    1 ≤ mainFormalError params k eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "If the unscaled Step 8 envelope is already at least `1`, then the public\n`mainFormalError` envelope is also at least `1`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceScalars",
+  "module_doc": "/-!\n# Main-formal scalar bounds\n\nScalar estimates for the two-space `mainFormal` theorem.  This module defines\nthe five scalars that appear in the paper's error calculation:\n\n* `σ` — the symmetrized induction consistency error\n* `ζ₁` — the cross-consistency error after unsymmetrization\n* `ζ₂` — the orthonormalize-and-complete closeness error\n* `ζ₃` — the projective self-consistency error\n* `ζ₄` — the final point-consistency error\n\nThe core structure `MainFormalScalarBounds` (Prop) bundles the three\nhypotheses needed to invoke the checked Step 8 bound\n`errorCascade_le_mainFormalError`:\n\n* `cascadeHypotheses` — the standing scalar regime (`q > 0`, `k ≥ 1`,\n  `m ≥ 1`, `0 ≤ ε ≤ 1`, `d ≤ q`).\n* `inductionNu_nonneg` — nonnegativity of the symmetrized main-induction\n  `ν` at `(3ε, 3ε, 3ε)`.\n* `inductionNu_bound` — the paper line 71–73 coarsening\n  `ν ≤ 10000 k² m² (ε^{1/1024} + (d/q)^{1/1024})`.\n\nThe cascade comparisons `ζ₁ ≤ …`, `ζ₃ ≤ 2·mainFormalError`, etc. are then\nderived in the private theorem `cascadeBounds` via\n`errorCascade_le_mainFormalError`, which calls the already-formalized\nscalar cascade estimates from `LDT.Test.MainTheorem.ScalarBounds`.  The module also\nprovides the vacuous-branch analysis (`mainFormalError_ge_one_of_*`) and\nthe coarsening lemma that absorbs `orthonormalizeAndCompleteError` into\n`ζ₂` (`orthonormalizeAndCompleteError_zeta1_le_zeta2`).\n\n## References\n\n* Paper: `references/ldt-paper/inductive_step.tex`,\n  error computations (lines 68–75, 186–234).\n* Blueprint: `blueprint/src/chapter/ch10_induction.tex`,\n  `\\label{def:main-formal-error-cascade}`,\n  `\\label{thm:sigma-bound-main-formal}`, and\n  `\\label{thm:zeta-bounds-main-formal}`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceScalars.lean#L205-L226",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceScalars.lean",
+  "lines": [
+   205,
+   226
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.mainFormalError_ge_one_of_one_lt_eps",
+  "source_name": "MIPStarRE.LDT.Test.mainFormalError_ge_one_of_one_lt_eps",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.mainFormalError_ge_one_of_one_lt_eps\n    (params : Parameters) (k : ℕ) {eps : Error}\n    (hk0 : 0 < k) (heps : 1 < eps) :\n    1 ≤ mainFormalError params k eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "If `ε > 1`, then the final error envelope has already saturated past `1`.\nThis discharges the non-paper regime before invoking the paper's Step 8 cascade,\nwhich assumes `ε ≤ 1`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceScalars",
+  "module_doc": "/-!\n# Main-formal scalar bounds\n\nScalar estimates for the two-space `mainFormal` theorem.  This module defines\nthe five scalars that appear in the paper's error calculation:\n\n* `σ` — the symmetrized induction consistency error\n* `ζ₁` — the cross-consistency error after unsymmetrization\n* `ζ₂` — the orthonormalize-and-complete closeness error\n* `ζ₃` — the projective self-consistency error\n* `ζ₄` — the final point-consistency error\n\nThe core structure `MainFormalScalarBounds` (Prop) bundles the three\nhypotheses needed to invoke the checked Step 8 bound\n`errorCascade_le_mainFormalError`:\n\n* `cascadeHypotheses` — the standing scalar regime (`q > 0`, `k ≥ 1`,\n  `m ≥ 1`, `0 ≤ ε ≤ 1`, `d ≤ q`).\n* `inductionNu_nonneg` — nonnegativity of the symmetrized main-induction\n  `ν` at `(3ε, 3ε, 3ε)`.\n* `inductionNu_bound` — the paper line 71–73 coarsening\n  `ν ≤ 10000 k² m² (ε^{1/1024} + (d/q)^{1/1024})`.\n\nThe cascade comparisons `ζ₁ ≤ …`, `ζ₃ ≤ 2·mainFormalError`, etc. are then\nderived in the private theorem `cascadeBounds` via\n`errorCascade_le_mainFormalError`, which calls the already-formalized\nscalar cascade estimates from `LDT.Test.MainTheorem.ScalarBounds`.  The module also\nprovides the vacuous-branch analysis (`mainFormalError_ge_one_of_*`) and\nthe coarsening lemma that absorbs `orthonormalizeAndCompleteError` into\n`ζ₂` (`orthonormalizeAndCompleteError_zeta1_le_zeta2`).\n\n## References\n\n* Paper: `references/ldt-paper/inductive_step.tex`,\n  error computations (lines 68–75, 186–234).\n* Blueprint: `blueprint/src/chapter/ch10_induction.tex`,\n  `\\label{def:main-formal-error-cascade}`,\n  `\\label{thm:sigma-bound-main-formal}`, and\n  `\\label{thm:zeta-bounds-main-formal}`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceScalars.lean#L228-L246",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceScalars.lean",
+  "lines": [
+   228,
+   246
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Test.mainFormalError_ge_one_of_one_le_envelope"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.mainFormalError_ge_one_of_q_lt_d",
+  "source_name": "MIPStarRE.LDT.Test.mainFormalError_ge_one_of_q_lt_d",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.mainFormalError_ge_one_of_q_lt_d\n    (params : Parameters) (k : ℕ) (eps : Error)\n    (hk0 : 0 < k) (hepsNN : 0 ≤ eps)\n    (hqd : (params.q : Error) < (params.d : Error)) :\n    1 ≤ mainFormalError params k eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "If `d > q`, then the final error envelope has already saturated past `1`.\nThus the nontrivial Step 8 branch may assume the paper's ambient `d/q ≤ 1`\nregime.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.SourceScalars",
+  "module_doc": "/-!\n# Main-formal scalar bounds\n\nScalar estimates for the two-space `mainFormal` theorem.  This module defines\nthe five scalars that appear in the paper's error calculation:\n\n* `σ` — the symmetrized induction consistency error\n* `ζ₁` — the cross-consistency error after unsymmetrization\n* `ζ₂` — the orthonormalize-and-complete closeness error\n* `ζ₃` — the projective self-consistency error\n* `ζ₄` — the final point-consistency error\n\nThe core structure `MainFormalScalarBounds` (Prop) bundles the three\nhypotheses needed to invoke the checked Step 8 bound\n`errorCascade_le_mainFormalError`:\n\n* `cascadeHypotheses` — the standing scalar regime (`q > 0`, `k ≥ 1`,\n  `m ≥ 1`, `0 ≤ ε ≤ 1`, `d ≤ q`).\n* `inductionNu_nonneg` — nonnegativity of the symmetrized main-induction\n  `ν` at `(3ε, 3ε, 3ε)`.\n* `inductionNu_bound` — the paper line 71–73 coarsening\n  `ν ≤ 10000 k² m² (ε^{1/1024} + (d/q)^{1/1024})`.\n\nThe cascade comparisons `ζ₁ ≤ …`, `ζ₃ ≤ 2·mainFormalError`, etc. are then\nderived in the private theorem `cascadeBounds` via\n`errorCascade_le_mainFormalError`, which calls the already-formalized\nscalar cascade estimates from `LDT.Test.MainTheorem.ScalarBounds`.  The module also\nprovides the vacuous-branch analysis (`mainFormalError_ge_one_of_*`) and\nthe coarsening lemma that absorbs `orthonormalizeAndCompleteError` into\n`ζ₂` (`orthonormalizeAndCompleteError_zeta1_le_zeta2`).\n\n## References\n\n* Paper: `references/ldt-paper/inductive_step.tex`,\n  error computations (lines 68–75, 186–234).\n* Blueprint: `blueprint/src/chapter/ch10_induction.tex`,\n  `\\label{def:main-formal-error-cascade}`,\n  `\\label{thm:sigma-bound-main-formal}`, and\n  `\\label{thm:zeta-bounds-main-formal}`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceScalars.lean#L248-L269",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/SourceScalars.lean",
+  "lines": [
+   248,
+   269
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Test.mainFormalError_ge_one_of_one_le_envelope"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 14,
+  "is_target": false
+ }
+]

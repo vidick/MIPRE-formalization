@@ -1,0 +1,648 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryDecision.check_sound",
+  "source_name": "MIPRE.Introspection.AuxiliaryDecision.check_sound",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryDecision.check_sound (U : ClockedUniversalMachine) (X Z : P)\n    (project : PolyTimeFun (Input P 7) BitStr) {lam n Q : ℕ}\n    (V : Verifier 7) (hV : V.IsBounded lam) (hn : 1 ≤ n)\n    (hs : V.sampler.dim (2 ^ n) ≤ Q) (hQ : 4 ≤ Q) (hR : 3 * ((2 ^ n)^lam) ≤ Q)\n    (π : BitStr → Fin Q → CL.𝔽₂) (DP : P → P → BitStr → BitStr → Bool)\n    (t u : QuestionType P 7) (a b : ParsedAnswer (Fin Q → CL.𝔽₂) BitStr BitStr)\n    (ha : TypedPredicate.fits t a = true) (hb : TypedPredicate.fits u b = true)\n    (hpa : ∀ p c, (p = X ∨ p = Z) → t = .inl p → a = .pauli c →\n      project (canonical V lam n Q ((2 ^ n)^lam) parameters t u (bits a) (bits b)) =\n        CL.toBits (π c))\n    (hpb : ∀ p c, (p = X ∨ p = Z) → u = .inl p → b = .pauli c →\n      project (canonical V lam n Q ((2 ^ n)^lam) parameters u t (bits b) (bits a)) =\n        CL.toBits (π c))\n    (hDP : ∀ p q x y, t = .inl p → u = .inl q → a = .pauli x → b = .pauli y →\n      DP p q x y = true)\n    (h : check U X Z project\n      (canonical V lam n Q ((2 ^ n)^lam) parameters t u (bits a) (bits b)) = true) :\n    AuxiliaryQuotient.check (padded V hs) X Z π (sourcePredicate V hs) DP t u a b = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryDecision",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.Introspection.AuxiliaryAnswer MIPRE.Introspection.AuxiliaryProgram MIPRE.Introspection.SourcePadding MIPRE.Introspection.SourcePadding.Program",
+   "open Classical",
+   "variable {P : Type*} [Fintype P] [DecidableEq P] [SizedEncoding P]",
+   "variable {parameters : Parameters}"
+  ],
+  "docstring": "The two executable orientations, formats and consistency together imply\nthe complete quotient predicate. Pauli acceptance is supplied by its parser.",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryDecisionSoundness",
+  "module_doc": "/-! # Semantic soundness of the executable auxiliary predicate\n\nCanonical byte answers accepted by the executable checks satisfy the full\nquotient predicate. The cross edge projects to the original bounded verifier.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryDecisionSoundness.lean#L99-L134",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryDecisionSoundness.lean",
+  "lines": [
+   99,
+   134
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.AuxiliaryDecision.check_iff",
+   "MIPRE.Introspection.AuxiliaryDecision.directed_sound"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryDecision.check_raw_sound",
+  "source_name": "MIPRE.Introspection.AuxiliaryDecision.check_raw_sound",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryDecision.check_raw_sound (U : ClockedUniversalMachine) (X Z : P)\n    (project : PolyTimeFun (Input P 7) BitStr) {lam n Q : ℕ}\n    (V : Verifier 7) (hV : V.IsBounded lam) (hn : 1 ≤ n)\n    (hs : V.sampler.dim (2 ^ n) ≤ Q) (hQ : 4 ≤ Q) (hR : 3 * ((2 ^ n)^lam) ≤ Q)\n    (π : BitStr → Fin Q → CL.𝔽₂) (DP : P → P → BitStr → BitStr → Bool)\n    (t u : QuestionType P 7) (a b : BitStr)\n    (hpa : ∀ p, (p = X ∨ p = Z) → t = .inl p →\n      project (canonical V lam n Q ((2 ^ n)^lam) parameters t u a b) = CL.toBits (π a))\n    (hpb : ∀ p, (p = X ∨ p = Z) → u = .inl p →\n      project (canonical V lam n Q ((2 ^ n)^lam) parameters u t b a) = CL.toBits (π b))\n    (hDP : ∀ p q, t = .inl p → u = .inl q → DP p q a b = true)\n    (h : check U X Z project\n      (canonical V lam n Q ((2 ^ n)^lam) parameters t u a b) = true) :\n    AuxiliaryQuotient.check (padded V hs) X Z π (sourcePredicate V hs) DP t u\n      (decode Q t a) (decode Q u b) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryDecision",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.Introspection.AuxiliaryAnswer MIPRE.Introspection.AuxiliaryProgram MIPRE.Introspection.SourcePadding MIPRE.Introspection.SourcePadding.Program",
+   "open Classical",
+   "variable {P : Type*} [Fintype P] [DecidableEq P] [SizedEncoding P]",
+   "variable {parameters : Parameters}"
+  ],
+  "docstring": "Soundness for every raw accepted answer, including the canonical parser\nround trip needed to interpret same-type byte equality.",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryDecisionSoundness",
+  "module_doc": "/-! # Semantic soundness of the executable auxiliary predicate\n\nCanonical byte answers accepted by the executable checks satisfy the full\nquotient predicate. The cross edge projects to the original bounded verifier.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryDecisionSoundness.lean#L136-L178",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryDecisionSoundness.lean",
+  "lines": [
+   136,
+   178
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-quotient-kernel",
+    "env": "lemma",
+    "title": "Executable quotient hiding and the finite decision kernel",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.AuxiliaryAnswer.bits_decode",
+   "MIPRE.Introspection.AuxiliaryDecision.format_apply",
+   "MIPRE.Introspection.AuxiliaryDecision.check_iff",
+   "MIPRE.Introspection.AuxiliaryDecision.check_sound"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryDual.proj_decodeDual",
+  "source_name": "MIPRE.Introspection.AuxiliaryDual.proj_decodeDual",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryDual.proj_decodeDual {P : CL.CLFun F (ι) ℓ} {T : Finset (ι)}\n    (hP : P.SupportedOn T) (y x : ι → F) {k : ℕ} (hk : k < ℓ) :\n    CL.proj (P.factorOfPrefix k y) (decodeDual P y x) = stageDual P k y x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryDual",
+   "open Finset MIPRE.Introspection.CLChecks",
+   "variable {F : Type*} [Field F] {ι : Type*} [Fintype ι] [DecidableEq ι] {ℓ : ℕ}"
+  ],
+  "docstring": "Projection of the decoded answer extracts exactly its selected dual block.",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryDualDecode",
+  "module_doc": "/-! # Decoding quotient-valued hiding answers\n\nThe executable dual check only compares cosets of a row space. Decode each\nreported register to the semantic canonical representative. This decoding is\nused to return soundness to the existing finite game; it is not part of the\nexecutable verifier and makes no computability claim about `Fintype.equivFin`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryDualDecode.lean#L69-L84",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryDualDecode.lean",
+  "lines": [
+   69,
+   84
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.CLChecks.stageFactor_subset_residual"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryDual.proj_prefix_decodeDual_congr",
+  "source_name": "MIPRE.Introspection.AuxiliaryDual.proj_prefix_decodeDual_congr",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryDual.proj_prefix_decodeDual_congr {P : CL.CLFun F (ι) ℓ} {T : Finset (ι)}\n    (hP : P.SupportedOn T) {k : ℕ} (hk : k + 1 ≤ ℓ)\n    {y z a b : ι → F} (hyz : P.outputPrefix k y = P.outputPrefix k z)\n    (hab : CL.proj (prefixRegister P (k + 1) z) a =\n      CL.proj (prefixRegister P (k + 1) z) b) :\n    CL.proj (prefixRegister P (k + 1) z) (decodeDual P y a) =\n      CL.proj (prefixRegister P (k + 1) z) (decodeDual P z b) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryDual",
+   "open Finset MIPRE.Introspection.CLChecks",
+   "variable {F : Type*} [Field F] {ι : Type*} [Fintype ι] [DecidableEq ι] {ℓ : ℕ}"
+  ],
+  "docstring": "Equal raw dual prefixes remain equal after decoding, even when the untested\ntails of the two claimed questions differ.",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryDualDecode",
+  "module_doc": "/-! # Decoding quotient-valued hiding answers\n\nThe executable dual check only compares cosets of a row space. Decode each\nreported register to the semantic canonical representative. This decoding is\nused to return soundness to the existing finite game; it is not part of the\nexecutable verifier and makes no computability claim about `Fintype.equivFin`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryDualDecode.lean#L105-L125",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryDualDecode.lean",
+  "lines": [
+   105,
+   125
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.CLChecks.stageFactor_subset_residual",
+   "MIPRE.Introspection.AuxiliaryDual.proj_decodeDual",
+   "MIPRE.Introspection.CLChecks.outputPrefix_outputPrefix",
+   "MIPRE.Introspection.CLChecks.proj_outputPrefix_cons"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryDual.registerDual_zero_iff_dot",
+  "source_name": "MIPRE.Introspection.AuxiliaryDual.registerDual_zero_iff_dot",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryDual.registerDual_zero_iff_dot (L : CL.RegLinear F S) (x : ι → F) :\n    registerDual L x = 0 ↔ ∀ y : ι → F, L y = 0 → ∑ i, y i * CL.proj S x i = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryDual",
+   "open Finset",
+   "variable {F ι : Type*} [Field F] [Fintype ι] [DecidableEq ι] {S : Finset ι}"
+  ],
+  "docstring": "Intrinsic kernel characterization on any finite ambient coordinate type.",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryDualKernel",
+  "module_doc": "/-! # Coordinate-independent kernel tests for auxiliary dual answers\n\nThe semantic dual uses a chosen local enumeration, but equality of its outputs\nis characterized intrinsically by the ambient dot product. The general finite\nindex API permits coordinate transport without transporting chosen complements.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryDualKernel.lean#L56-L70",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryDualKernel.lean",
+  "lines": [
+   56,
+   70
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 8,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryDual.perp_span_rows",
+  "source_name": "MIPRE.Introspection.AuxiliaryDual.perp_span_rows",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryDual.perp_span_rows (A : Matrix (Fin m) (Fin n) F) :\n    CL.perp (Submodule.span F (Set.range A)) = A.mulVecLin.ker := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryDual",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree.BinaryLinear",
+   "variable {F : Type*} [Field F] {m n : ℕ}"
+  ],
+  "docstring": "Orthogonality to all matrix rows is precisely the kernel condition.",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryDualProgram",
+  "module_doc": "/-! # Executable canonical dual of a binary linear map\n\nThe rows of a matrix span the dot-product orthogonal complement of its\nkernel. Canonical elimination of those rows therefore computes the exact\n`CL.lperp`, including for singular matrices and in dimension zero.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryDualProgram.lean#L33-L51",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryDualProgram.lean",
+  "lines": [
+   33,
+   51
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryDual.rowSpaceCheck_correct",
+  "source_name": "MIPRE.Introspection.AuxiliaryDual.rowSpaceCheck_correct",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryDual.rowSpaceCheck_correct (vs : List (Fin n → ZMod 2)) (v : Fin n → ZMod 2) :\n    rowSpaceCheck (vs.map vectorBits, vectorBits v) = true ↔\n      v ∈ Submodule.span (ZMod 2) {x | x ∈ vs} := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryDual",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree.BinaryLinear",
+   "variable {F : Type*} [Field F] {m n : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryDualProgram",
+  "module_doc": "/-! # Executable canonical dual of a binary linear map\n\nThe rows of a matrix span the dot-product orthogonal complement of its\nkernel. Canonical elimination of those rows therefore computes the exact\n`CL.lperp`, including for singular matrices and in dimension zero.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryDualProgram.lean#L81-L94",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryDualProgram.lean",
+  "lines": [
+   81,
+   94
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-quotient-kernel",
+    "env": "lemma",
+    "title": "Executable quotient hiding and the finite decision kernel",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.AuxiliaryCanonical.canonicalProg_correct"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryBoundary.last_correct",
+  "source_name": "MIPRE.Introspection.AuxiliaryBoundary.last_correct",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryBoundary.last_correct (f : PolyTimeFun AuxiliarySource.Context BitStr)\n    (m : PolyTimeFun AuxiliarySource.Context (List BitStr)) (ctx : AuxiliarySource.Context)\n    {n ℓ : ℕ} {P : CL.CLFun CL.𝔽₂ (Fin n) ℓ} {T : Finset (Fin n)} (hP : P.SupportedOn T)\n    (a b c v d : Fin n → CL.𝔽₂)\n    (hq : ∀ j < ℓ - 1, AuxiliaryScan.QueriesCorrectAt f m ctx P j) :\n    last f m ℓ (ctx, (CL.toBits a, CL.toBits b, CL.toBits c), (CL.toBits v, CL.toBits d)) = true ↔\n      (∃ x, (P.truncate (ℓ - 1)).eval x = P.outputPrefix (ℓ - 1) a) ∧\n      (∃ x, (P.truncate (ℓ - 1)).eval x = P.outputPrefix (ℓ - 1) v) ∧\n      CLChecks.hidingRead P (a, b, c) (v, d, ()) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryBoundary",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree.BinaryLinear MIPRE.Introspection.AuxiliaryProgram MIPRE.Introspection.CLChecks"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryHidingBoundaryProgram",
+  "module_doc": "/-! # Executable boundary edges of the hiding chain\n\nThe first edge compares the initial dual quotient and untouched tail. The\nlast edge scans both reported prefixes, then compares those prefixes and the\nfull dual answers. Query functions are parameters so the same programs use\nthe proved padded-source interface.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryHidingBoundaryProgram.lean#L105-L128",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryHidingBoundaryProgram.lean",
+  "lines": [
+   105,
+   128
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.AuxiliaryProgram.equal_iff",
+   "MIPRE.Introspection.AuxiliaryScan.program_sound",
+   "MIPRE.Introspection.AuxiliaryScan.program_complete"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryHiding.check_correct",
+  "source_name": "MIPRE.Introspection.AuxiliaryHiding.check_correct",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryHiding.check_correct (f : PolyTimeFun AuxiliarySource.Context BitStr)\n    (m : PolyTimeFun AuxiliarySource.Context (List BitStr)) (ctx : AuxiliarySource.Context)\n    {n ℓ : ℕ} {P : CL.CLFun CL.𝔽₂ (Fin n) ℓ} {T : Finset (Fin n)} (hP : P.SupportedOn T)\n    (k : ℕ) (y yp x z zp t : Fin n → CL.𝔽₂)\n    (hq : ∀ j ≤ k + 1, QueriesCorrectAt f m ctx P j) :\n    check f m k (ctx, (CL.toBits y, CL.toBits yp, CL.toBits x),\n      (CL.toBits z, CL.toBits zp, CL.toBits t)) = true ↔\n      (∃ a, (P.truncate k).eval a = P.outputPrefix k y) ∧\n      (∃ a, (P.truncate (k + 1)).eval a = P.outputPrefix (k + 1) z) ∧\n      AuxiliaryQuotient.hidingNext P k (y, yp, x) (z, zp, t) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryHiding",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.Introspection.CLChecks MIPRE.Introspection.AuxiliaryScan MIPRE.LowDegree.BinaryLinear",
+   "open MIPRE.Introspection.AuxiliaryProgram (andCheck andCheck_iff)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryHidingNextProgram",
+  "module_doc": "/-! # The complete executable interior hiding edge\n\nOnly the prefixes needed by the edge are scanned. On successful scans, all\nfactor and matrix queries are legal and the core inputs are exact. Acceptance\nis precisely prefix attainability together with the quotient hiding predicate.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryHidingNextProgram.lean#L90-L114",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryHidingNextProgram.lean",
+  "lines": [
+   90,
+   114
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.AuxiliaryBits.quotient_correct",
+   "MIPRE.Introspection.AuxiliaryProgram.equal_iff",
+   "MIPRE.Introspection.AuxiliaryScan.registers_correct",
+   "MIPRE.Introspection.AuxiliaryScan.program_sound",
+   "MIPRE.Introspection.AuxiliaryScan.program_complete",
+   "MIPRE.Introspection.CLChecks.outputPrefix_outputPrefix",
+   "MIPRE.Introspection.CLChecks.proj_outputPrefix_cons"
+  ],
+  "pasted_helpers": 22,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryPrefixGuard.scan_correct",
+  "source_name": "MIPRE.Introspection.AuxiliaryPrefixGuard.scan_correct",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryPrefixGuard.scan_correct (U : ClockedUniversalMachine) {lam n Q : ℕ}\n    (V : Verifier 7) (hV : V.IsBounded lam) (hn : 1 ≤ n)\n    (hQ : V.sampler.dim (2 ^ n) ≤ Q) (v w : Bool)\n    (initialLevel : ℕ) (initial y yp : Fin Q → CL.𝔽₂) (last : BitStr)\n    (t : QuestionType P 7) (k : ℕ) (hk : k ≤ 7) :\n    scan U w k (queryContext V lam n v initialLevel initial, Q, t,\n      AnswerParser.tripleBits (CL.toBits y) (CL.toBits yp) last) = true ↔\n      ∃ x, ((depthFamily (firstEmbedding hQ) (sourceFamily V n) w).truncate k).eval x =\n        (depthFamily (firstEmbedding hQ) (sourceFamily V n) w).outputPrefix k y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryPrefixGuard",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.Introspection.SourcePadding MIPRE.Introspection.SourcePadding.Program MIPRE.Introspection.AuxiliaryProgram",
+   "variable {P : Type*} [Fintype P] [DecidableEq P] [SizedEncoding P]"
+  ],
+  "docstring": "The scan flag is exactly prefix attainability for the actual bounded,\nsame-depth padded source. No query correctness assumption remains.",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryPrefixGuardProgram",
+  "module_doc": "/-! # Executable local prefix guards\n\nThe question type selects one of the seven fixed scan depths. The full\nregister width, source program, clock and raw answer remain runtime data.\nThe caller's format check validates the tuple; here its first field is scanned.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryPrefixGuardProgram.lean#L75-L99",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryPrefixGuardProgram.lean",
+  "lines": [
+   75,
+   99
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.CLFun.ExactlyOn.directSum",
+   "MIPRE.CL.CLFun.zeroOn_exactlyOn",
+   "MIPRE.CL.Detyping.Program.readBits_encode",
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Introspection.AuxiliaryProgram.toBits_push_first",
+   "MIPRE.Introspection.AuxiliaryProgram.ofBits_take_first",
+   "MIPRE.Introspection.AuxiliaryScan.program_sound",
+   "MIPRE.Introspection.AuxiliaryScan.program_complete",
+   "MIPRE.Introspection.SourceCompiler.bounded_dimensionResult",
+   "MIPRE.Introspection.SourcePadding.mapOfPrefix_embed_zeroOn",
+   "MIPRE.Introspection.SourcePadding.eval_truncate_embed_zeroOn",
+   "MIPRE.Introspection.SourcePadding.Program.factorFromContext_legal",
+   "MIPRE.Introspection.SourcePadding.Program.matrix_correct"
+  ],
+  "pasted_helpers": 30,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryQuotient.hidingNext_of_legacy",
+  "source_name": "MIPRE.Introspection.AuxiliaryQuotient.hidingNext_of_legacy",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryQuotient.hidingNext_of_legacy {P : CL.CLFun F (ι) ℓ} {T : Finset (ι)}\n    (hP : P.SupportedOn T) (k : ℕ) (u v : RegisterHideAnswer F ι)\n    (h : CLChecks.hidingNext P k u v) : hidingNext P k u v := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryQuotient",
+   "open Finset MIPRE.Introspection.CLChecks MIPRE.Introspection.AuxiliaryDual",
+   "variable {F : Type*} [Field F] {ι : Type*} [Fintype ι] [DecidableEq ι] {ℓ : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryQuotientChecks",
+  "module_doc": "/-! # Hiding tests using coordinate-independent quotient comparisons\n\nThe old exact dual comparison implies the quotient comparison, preserving\nhonest completeness. Conversely, quotient acceptance gives the old hiding\npredicate after deterministic answer decoding. Raw prefixes and tails retain\nthe original checks. Neither direction assumes that a claimed prefix is\nattainable; obtaining legal source queries is a separate executable obligation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryQuotientChecks.lean#L42-L56",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryQuotientChecks.lean",
+  "lines": [
+   42,
+   56
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.CLChecks.proj_outputPrefix_cons"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryBits.quotient_correct",
+  "source_name": "MIPRE.Introspection.AuxiliaryBits.quotient_correct",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryBits.quotient_correct {n : ℕ} (S : Finset (Fin n)) (L : CL.RegLinear CL.𝔽₂ S)\n    (x y : Fin n → CL.𝔽₂) :\n    quotient (CL.indicatorBits S, matrixBits (LinearMap.toMatrix' L.toLinearMap),\n      CL.toBits x, CL.toBits y) = true ↔\n      AuxiliaryDual.registerDual L x = AuxiliaryDual.registerDual L y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryBits",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree.BinaryLinear MIPRE.LowDegree.BinaryPolynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryQuotientProgram",
+  "module_doc": "/-! # The executable coordinate-independent hiding comparison -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryQuotientProgram.lean#L19-L36",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryQuotientProgram.lean",
+  "lines": [
+   19,
+   36
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.AuxiliaryDual.registerDual_zero_iff_dot",
+   "MIPRE.Introspection.AuxiliaryDual.perp_span_rows",
+   "MIPRE.Introspection.AuxiliaryDual.rowSpaceCheck_correct",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryQuotient.stageDual_reindex_eq_iff",
+  "source_name": "MIPRE.Introspection.AuxiliaryQuotient.stageDual_reindex_eq_iff",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryQuotient.stageDual_reindex_eq_iff (e : ι ≃ κ) (P : CLFun F ι ℓ)\n    (k : ℕ) (y x z : ι → F) :\n    stageDual (P.reindex e) k (reindexEquiv e y) (reindexEquiv e x) =\n      stageDual (P.reindex e) k (reindexEquiv e y) (reindexEquiv e z) ↔\n      stageDual P k y x = stageDual P k y z := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryQuotient",
+   "open Finset MIPRE.CL MIPRE.Introspection.CLChecks MIPRE.Introspection.AuxiliaryDual Classical",
+   "variable {F ι κ A PA PT : Type*} [Field F]"
+  ],
+  "docstring": "Equality of stage-dual outputs is intrinsic, despite their chosen labels.",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryQuotientReindex",
+  "module_doc": "/-! # Quotient hiding checks commute with coordinate permutations\n\nOnly equality of dual quotient classes is transported. The chosen canonical\nrepresentatives themselves need not commute with a permutation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryQuotientReindex.lean#L28-L48",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryQuotientReindex.lean",
+  "lines": [
+   28,
+   48
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.CLFun.factorOfPrefix_reindex",
+   "MIPRE.CL.CLFun.mapOfPrefix_reindex",
+   "MIPRE.Introspection.AuxiliaryDual.registerDual_zero_iff_dot"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryProgram.equal_iff",
+  "source_name": "MIPRE.Introspection.AuxiliaryProgram.equal_iff",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryProgram.equal_iff {α : Type*} [SizedEncoding α] {β : Type*} [SizedEncoding β]\n    (f g : PolyTimeFun α β) (x : α) : equal f g x = true ↔ f x = g x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program",
+   "open MIPRE.CL.Detyping.DeciderProgram (lengthNat lengthNat_apply)",
+   "open MIPRE.Introspection.SourceCompiler (GuardInput inputQ inputR inputLeft inputRight leftParts rightParts readInput)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryReadProgram",
+  "module_doc": "/-! # Executable full-register Introspect/Read comparison\n\nThe binary register length and original answer cutoff are input data. All\nregister fields have the full padded length. In particular the Read dual\nanswer is not required to vanish outside the original source register: the\nsame-depth padding puts those coordinates in the first zero-map factor.\nThe program checks canonical tuple syntax, the separate original answer\ncutoff, and the strict outer cutoff before comparing the two relevant fields.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryReadProgram.lean#L37-L40",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryReadProgram.lean",
+  "lines": [
+   37,
+   40
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.encode_injective"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryProgram.readingCheck_vectors",
+  "source_name": "MIPRE.Introspection.AuxiliaryProgram.readingCheck_vectors",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryProgram.readingCheck_vectors {Q R : ℕ} (hQ : 4 ≤ Q) (hR : 3 * R ≤ Q)\n    (n s : ℕ) (y z zp : Fin Q → CL.𝔽₂) (a b : BitStr) :\n    readingCheck (n,Q,R,s,AnswerParser.pairBits (CL.toBits y) a,\n      AnswerParser.tripleBits (CL.toBits z) (CL.toBits zp) b) = true ↔\n      a.length ≤ R ∧ b.length ≤ R ∧ CLChecks.reading (y,a) (z,zp,b) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program",
+   "open MIPRE.CL.Detyping.DeciderProgram (lengthNat lengthNat_apply)",
+   "open MIPRE.Introspection.SourceCompiler (GuardInput inputQ inputR inputLeft inputRight leftParts rightParts readInput)"
+  ],
+  "docstring": "Exact acceptance on full-register parsed answers, including arbitrary dual labels.",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryReadProgram",
+  "module_doc": "/-! # Executable full-register Introspect/Read comparison\n\nThe binary register length and original answer cutoff are input data. All\nregister fields have the full padded length. In particular the Read dual\nanswer is not required to vanish outside the original source register: the\nsame-depth padding puts those coordinates in the first zero-map factor.\nThe program checks canonical tuple syntax, the separate original answer\ncutoff, and the strict outer cutoff before comparing the two relevant fields.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryReadProgram.lean#L94-L119",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryReadProgram.lean",
+  "lines": [
+   94,
+   119
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.encode_injective",
+   "MIPRE.Introspection.AuxiliaryProgram.equal_iff",
+   "MIPRE.Introspection.AnswerParser.field_append_injective"
+  ],
+  "pasted_helpers": 16,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryProgram.ofBits_take_first",
+  "source_name": "MIPRE.Introspection.AuxiliaryProgram.ofBits_take_first",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryProgram.ofBits_take_first {s Q : ℕ} (h : s ≤ Q) (z : Fin Q → CL.𝔽₂) :\n    CL.ofBits s ((CL.toBits z).take s) = CL.pull (firstEmbedding h) z := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryProgram",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryRegisterBits",
+  "module_doc": "/-! # Exact binary projection for the full-register auxiliary checks -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryRegisterBits.lean#L17-L29",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryRegisterBits.lean",
+  "lines": [
+   17,
+   29
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryProgram.toBits_push_first",
+  "source_name": "MIPRE.Introspection.AuxiliaryProgram.toBits_push_first",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryProgram.toBits_push_first {s Q : ℕ} (h : s ≤ Q) (x : Fin s → CL.𝔽₂) :\n    CL.toBits (CL.push (firstEmbedding h) x) = CL.toBits x ++ List.replicate (Q-s) false := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryProgram",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryRegisterBits",
+  "module_doc": "/-! # Exact binary projection for the full-register auxiliary checks -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryRegisterBits.lean#L31-L51",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryRegisterBits.lean",
+  "lines": [
+   31,
+   51
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryScan.registers_correct",
+  "source_name": "MIPRE.Introspection.AuxiliaryScan.registers_correct",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryScan.registers_correct (f : PolyTimeFun AuxiliarySource.Context BitStr)\n    (m : PolyTimeFun AuxiliarySource.Context (List BitStr)) (ctx : AuxiliarySource.Context)\n    {n ℓ : ℕ} {P : CL.CLFun CL.𝔽₂ (Fin n) ℓ} {T : Finset (Fin n)} (hP : P.SupportedOn T)\n    (y : Fin n → CL.𝔽₂) (k : ℕ) (hq : ∀ j < k, QueriesCorrectAt f m ctx P j)\n    (ha : ∃ x, (P.truncate (k - 1)).eval x = P.outputPrefix (k - 1) y) :\n    registers f m k (ctx, CL.toBits y) = CL.indicatorBits (prefixRegister P k y) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryScan",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.Introspection.CLChecks"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryRegisterProgram",
+  "module_doc": "/-! # Executable adaptive register masks from legal source queries -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryRegisterProgram.lean#L51-L70",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryRegisterProgram.lean",
+  "lines": [
+   51,
+   70
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.AuxiliaryScan.program_sound",
+   "MIPRE.Introspection.AuxiliaryScan.program_complete",
+   "MIPRE.Introspection.CLChecks.outputPrefix_outputPrefix",
+   "MIPRE.Introspection.CLChecks.proj_outputPrefix_cons"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryProgram.samplingProg_depthFamily",
+  "source_name": "MIPRE.Introspection.AuxiliaryProgram.samplingProg_depthFamily",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryProgram.samplingProg_depthFamily {ℓ lam n Q R : ℕ} (U : ClockedUniversalMachine)\n    (V : Verifier ℓ) (hV : V.IsBounded lam) (hn : 1 ≤ n) (hℓ : 1 ≤ ℓ)\n    (hℓR : Nat.size ℓ ≤ (2^n)^lam) (hs : V.sampler.dim (2^n) ≤ Q)\n    (hQ : 4 ≤ Q) (hR : 3*R ≤ Q) (w : Bool) (y z : Fin Q → CL.𝔽₂) (a b : BitStr) :\n    (∃ t, (samplingProg 5 lam U V.sampler.prog).Runs\n      (encode (ℓ,w,n,Q,R,V.sampler.dim (2^n),AnswerParser.pairBits (CL.toBits y) a,\n        AnswerParser.pairBits (CL.toBits z) b)) (encode true) t) ↔\n      a.length ≤ R ∧ b.length ≤ R ∧\n      CLChecks.sampling (SourcePadding.depthFamily (firstEmbedding hs)\n        (fun w => V.sampler.cl (2^n) (Player.ofBool w)) w) (y,a) (z,b) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryProgram",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping MIPRE.CL.Detyping.Program",
+   "open MIPRE.Introspection.SourceCompiler (GuardInput inputIndex inputQ inputR inputDim inputLeft inputRight"
+  ],
+  "docstring": "The actual program accepts precisely the full-Q sampling relation for the\nsame-depth padded source CL, on the original answer cutoff. No restriction is\nplaced on the Sample seed's spectator coordinates.",
+  "module": "MIPRE.Foundations.Introspection.AuxiliarySamplingCorrect",
+  "module_doc": "/-! # Bounded-source correctness of the full-register sampling program -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliarySamplingCorrect.lean#L112-L143",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliarySamplingCorrect.lean",
+  "lines": [
+   112,
+   143
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-executable-padded-auxiliary",
+    "env": "lemma",
+    "title": "Full-register auxiliary programs",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.CLFun.SupportedOn.eval_directSum",
+   "MIPRE.CL.CLFun.zeroOn_exactlyOn",
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.CL.pull_proj_compl",
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Cost.encode_injective",
+   "MIPRE.Introspection.AuxiliaryProgram.toBits_push_first",
+   "MIPRE.Introspection.AuxiliaryProgram.ofBits_take_first",
+   "MIPRE.Introspection.AuxiliaryProgram.samplingProg_accepts_iff",
+   "MIPRE.Introspection.AnswerParser.field_append_injective"
+  ],
+  "pasted_helpers": 25,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryProgram.samplingProg_accepts_iff",
+  "source_name": "MIPRE.Introspection.AuxiliaryProgram.samplingProg_accepts_iff",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryProgram.samplingProg_accepts_iff (k lam : ℕ) (U : ClockedUniversalMachine) (S : Prog) (x : Data) :\n    (∃ t, (samplingProg k lam U S).Runs x (encode true) t) ↔\n      SamplingRawReady x ∧ samplingResult k lam S (readSamplingInput x) =\n        samplingExpected (readSamplingInput x) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryProgram",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program",
+   "open MIPRE.Introspection.SourceCompiler (GuardInput inputIndex inputQ inputR inputDim inputLeft inputRight"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.AuxiliarySamplingProgram",
+  "module_doc": "/-! # A total clocked full-register sampling check\n\nThe program reads `(level, role, n, Q, R, s, left, right)` with binary\nparameters. Both answers contain Q-bit registers; only the Introspect\nregister must vanish past s. The Sample seed is freely supported on the\nfull register. The actual source marginal query receives its first s bits\nat index 2^n. A timeout or malformed source result rejects.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliarySamplingProgram.lean#L143-L160",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliarySamplingProgram.lean",
+  "lines": [
+   143,
+   160
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.routeOneCall_closed",
+   "MIPRE.Cost.Prog.routeOneCall_direct",
+   "MIPRE.Cost.Prog.routeOneCall_indirect",
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Cost.encode_injective",
+   "MIPRE.Introspection.AuxiliaryProgram.equal_iff"
+  ],
+  "pasted_helpers": 16,
+  "prooflines": 14,
+  "is_target": false
+ }
+]

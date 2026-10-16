@@ -1,0 +1,728 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.shoupFrobeniusAction_injective",
+  "source_name": "MIPRE.SAT.shoupFrobeniusAction_injective",
+  "formal_statement": "theorem MIPRE.SAT.shoupFrobeniusAction_injective (k : ℕ) (hk : 1 ≤ k) [NeZero k] :\n    Function.Injective (shoupFrobeniusAction k hk) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear"
+  ],
+  "docstring": "Faithfulness follows from independence of the distinct Frobenius automorphisms.",
+  "module": "MIPRE.Foundations.SAT.FrobeniusAction",
+  "module_doc": "/-! # The faithful cyclic Frobenius representation -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/FrobeniusAction.lean#L50-L66",
+  "source_path": "MIPRE/Foundations/SAT/FrobeniusAction.lean",
+  "lines": [
+   50,
+   66
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-normal-element",
+    "env": "lemma",
+    "title": "Effective normal element by fixed-space projections",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.SAT.shoupBinField_finrank"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.shoupFrobeniusAction_exists_basis_image",
+  "source_name": "MIPRE.SAT.shoupFrobeniusAction_exists_basis_image",
+  "formal_statement": "theorem MIPRE.SAT.shoupFrobeniusAction_exists_basis_image (k : ℕ) (hk : 1 ≤ k) [NeZero k]\n    (z : AddMonoidAlgebra (ZMod 2) (Fin k)) (hz : z ≠ 0) :\n    ∃ j : Fin k, shoupFrobeniusAction k hk z (shoupPowerBasis k hk j) ≠ 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear"
+  ],
+  "docstring": "A nonzero cyclic operator has a nonzero image among the polynomial-basis vectors.",
+  "module": "MIPRE.Foundations.SAT.FrobeniusAction",
+  "module_doc": "/-! # The faithful cyclic Frobenius representation -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/FrobeniusAction.lean#L68-L76",
+  "source_path": "MIPRE/Foundations/SAT/FrobeniusAction.lean",
+  "lines": [
+   68,
+   76
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.shoupFrobeniusAction_injective"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.shoupActionProg_correct",
+  "source_name": "MIPRE.SAT.shoupActionProg_correct",
+  "formal_statement": "theorem MIPRE.SAT.shoupActionProg_correct (k : ℕ) (hk : 1 ≤ k) [NeZero k]\n    (z : AddMonoidAlgebra (ZMod 2) (Fin k)) (a : (shoupBinField k hk).carrier) :\n    shoupActionProg (unary k, vectorBits (groupCoordinates k z), (shoupBinField k hk).toBits a) =\n      (shoupBinField k hk).toBits (shoupFrobeniusAction k hk z a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear Polynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.FrobeniusActionProg",
+  "module_doc": "/-! # Uniform programs for Frobenius orbits and cyclic operators -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/FrobeniusActionProg.lean#L77-L100",
+  "source_path": "MIPRE/Foundations/SAT/FrobeniusActionProg.lean",
+  "lines": [
+   77,
+   100
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-normal-element",
+    "env": "lemma",
+    "title": "Effective normal element by fixed-space projections",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.transposeBits_matrixBits",
+   "MIPRE.SAT.shoupMulProg_encoding",
+   "MIPRE.SAT.shoupFrobeniusAction_apply"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.shoupNormalBasis_normal",
+  "source_name": "MIPRE.SAT.shoupNormalBasis_normal",
+  "formal_statement": "theorem MIPRE.SAT.shoupNormalBasis_normal (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k) :\n    IsNormalBasis (shoupNormalBasis k hk hodd) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.NormalElement",
+  "module_doc": "/-! # A normal element from primitive Frobenius projections -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/NormalElement.lean#L155-L158",
+  "source_path": "MIPRE/Foundations/SAT/NormalElement.lean",
+  "lines": [
+   155,
+   158
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-normal-element",
+    "env": "lemma",
+    "title": "Effective normal element by fixed-space projections",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.shoupTraceGram_normal_circulant",
+  "source_name": "MIPRE.SAT.shoupTraceGram_normal_circulant",
+  "formal_statement": "theorem MIPRE.SAT.shoupTraceGram_normal_circulant (k : ℕ) (hk : 1 ≤ k) [NeZero k]\n    (b : Module.Basis (Fin k) (ZMod 2) (shoupBinField k hk).carrier)\n    (hb : IsNormalBasis b) :\n    shoupTraceGram k hk b = Matrix.circulant (fun i => shoupTraceGram k hk b i 0) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear"
+  ],
+  "docstring": "A normal basis's Gram matrix is the circulant determined by its first column.",
+  "module": "MIPRE.Foundations.SAT.NormalGram",
+  "module_doc": "/-! # The circulant Gram matrix of a supplied normal basis -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/NormalGram.lean#L46-L68",
+  "source_path": "MIPRE/Foundations/SAT/NormalGram.lean",
+  "lines": [
+   46,
+   68
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-normal-selfdualization",
+    "env": "lemma",
+    "title": "Effective self-dualization of a supplied normal basis",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.shoupNormalGram_selfDualize",
+  "source_name": "MIPRE.SAT.shoupNormalGram_selfDualize",
+  "formal_statement": "theorem MIPRE.SAT.shoupNormalGram_selfDualize (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k)\n    (b : Module.Basis (Fin k) (ZMod 2) (shoupBinField k hk).carrier)\n    (hb : IsNormalBasis b) :\n    (inverseRootMatrix (shoupTraceGram k hk b)).transpose * shoupTraceGram k hk b *\n      inverseRootMatrix (shoupTraceGram k hk b) = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear"
+  ],
+  "docstring": "The doubled-index inverse square root gives the required Gram identity for any normal basis.",
+  "module": "MIPRE.Foundations.SAT.NormalGram",
+  "module_doc": "/-! # The circulant Gram matrix of a supplied normal basis -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/NormalGram.lean#L87-L100",
+  "source_path": "MIPRE/Foundations/SAT/NormalGram.lean",
+  "lines": [
+   87,
+   100
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-normal-selfdualization",
+    "env": "lemma",
+    "title": "Effective self-dualization of a supplied normal basis",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.insertRow_pivotBits",
+   "MIPRE.LowDegree.BinaryLinear.typedBasis_span",
+   "MIPRE.LowDegree.BinaryLinear.inverseMatrix_groupMatrix",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.append_reduced",
+   "MIPRE.LowDegree.BinaryLinear.binary_eq_zero_or_one",
+   "MIPRE.LowDegree.BinaryLinear.getD_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.coordinateRows_matrixBits",
+   "MIPRE.LowDegree.BinaryLinear.typedReduceStep_error",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.eq_zero_of_pivots_zero",
+   "MIPRE.LowDegree.add_self_injective",
+   "MIPRE.LowDegree.coeff_mul_self",
+   "MIPRE.SAT.shoupTraceGram_normal_circulant",
+   "MIPRE.SAT.shoupTraceGram_surjective"
+  ],
+  "pasted_helpers": 38,
+  "prooflines": 8,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.BinField.width_vecBits",
+  "source_name": "MIPRE.SAT.BinField.width_vecBits",
+  "formal_statement": "theorem MIPRE.SAT.BinField.width_vecBits {n : ℕ} (v : Fin n → E.carrier) {b : Cost.BitStr} (hb : b ∈ E.vecBits v) :\n    b.length = k := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.BinField",
+   "open MIPRE.Cost MIPRE.LowDegree MvPolynomial",
+   "variable {k : ℕ} (E : BinField k)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.Pcp",
+  "module_doc": "/-!\n# The bespoke PCP for deciders: the statement\n\n`MIPRE.SAT.PcpDecider` is blueprint `thm:pcp-decider` — the paper's theorem of the same name\nin `answer_reduction.tex` — the classical half of answer reduction: a verifier that, given a\ndecider specification and a *PCP view* (a point `z ∈ 𝔽_q^{m'}` and a claimed evaluation of the\nproof at `z`), accepts an honest low-degree proof with probability `1` and forces any\nlow-degree proof accepted with probability more than `1/2` to encode answers the decider\naccepts. It consumes `lem:decoupled-5sat` — the decoupled 5SAT description of the decider is\nwhat the proof's constraint polynomials arithmetize — and `lem:schwartz-zippel`.\n\nStated here, before anything is proved, so that the consumers in chapter 6 (`ld_compiler.tex`'s\ntyped PCP sampler, and `thm:answer-reduction` through it) can be written against it, exactly as\n`SuccinctCookLevin` and `DecoupledDescriber` were stated before being inhabited.\n\n## What the statement needs\n\n* `BinField k` — a field of size `2^k` with a fixed `k`-bit representation of its elements.\n  The paper's admissible field size is `q = 2^k` with `k` odd and the representation is the one\n  the self-dual normal basis of `lem:self-dual-basis` supplies; all the *statement* needs is the\n  size and the representation. `SAT.QuotientField.shoupAdmissibleField` supplies this\n  interface in the polynomial power basis, with uniform addition and multiplication\n  programs. Consumers requiring a self-dual normal basis still need `lem:self-dual-basis`.\n* `PcpParams` — `def:pcpparams`. Only `k, m, s` are data: `d = 7` and `m' = 5m + 5 + s` are\n  determined, and the paper's `q` is `2^k`.\n* `PcpProof` — `def:pcp-proof`: five `m`-variate polynomials and `m' + 1` `m'`-variate ones,\n  all of individual degree at most `d`.\n* `PcpProof.ev` — `def:pcp-eval`, the evaluation `(α₁ … α₅, β₀ … β_{m'})` at a point, with\n  `αᵢ = gᵢ(xᵢ)` reading the `i`-th of the five `m`-coordinate blocks of `z` (`PcpParams.block`).\n* `ViewFormat` — the format check item 1 requires the verifier to perform, and\n  `PcpProof.rawView` the honest view in the verifier's bit-level input format.\n\n## Two things this statement carries, and one it does not\n\nIt carries the blueprint's repair of a confirmed source defect (`rem:pcp-power-of-two`): both\n`m` and `m'` are required to be powers of two dividing `q`, where the source's padding\nguarantees it only for the outer `m'`. Without the inner one the conditionally linear functions\nof the `m`-variate test's lines are ill defined.\n\nIt does *not* carry the source's lower bound on `q` (`eq:pcp-q-choice`,\n`q ≥ (max\\{Q,2\\} · a'(d m'(m'+6))^{a'})^{1/b'}`), which is stated in terms of the universal\nconstants of `thm:lidt-cl-soundness` and is consumed not here but in `ld_compiler.tex`, where\nthe answer-reduced verifier's soundness error is assembled. The blueprint's statement of\n`thm:pcp-decider` does not state it either; when the consumer is written it will need to be\nadded here or re-derived the",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Pcp.lean#L107-L110",
+  "source_path": "MIPRE/Foundations/SAT/Pcp.lean",
+  "lines": [
+   107,
+   110
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.shoupTraceBitProg_correct",
+  "source_name": "MIPRE.SAT.shoupTraceBitProg_correct",
+  "formal_statement": "theorem MIPRE.SAT.shoupTraceBitProg_correct (k : ℕ) (hk : 1 ≤ k)\n    (a : (shoupBinField k hk).carrier) :\n    shoupTraceBitProg (unary k, (shoupBinField k hk).toBits a) =\n      bit (Algebra.trace (ZMod 2) (shoupBinField k hk).carrier a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear MIPRE.LowDegree.BinaryPolynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.TraceGram",
+  "module_doc": "/-! # Effective trace Gram matrices -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/TraceGram.lean#L32-L51",
+  "source_path": "MIPRE/Foundations/SAT/TraceGram.lean",
+  "lines": [
+   32,
+   51
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-field-matrices",
+    "env": "lemma",
+    "title": "Effective Frobenius, trace Gram matrices and table transport",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits",
+   "MIPRE.SAT.shoupTraceProg_correct",
+   "MIPRE.SAT.shoupRoot_eval_toBits",
+   "MIPRE.SAT.shoupRoot_eval_eq_iff"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.shoupTraceGramProg_correct",
+  "source_name": "MIPRE.SAT.shoupTraceGramProg_correct",
+  "formal_statement": "theorem MIPRE.SAT.shoupTraceGramProg_correct (k : ℕ) (hk : 1 ≤ k) {n : ℕ}\n    (v : Fin n → (shoupBinField k hk).carrier) :\n    shoupTraceGramProg (unary k, List.ofFn (fun i => (shoupBinField k hk).toBits (v i))) =\n      matrixBits (shoupTraceGram k hk v) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear MIPRE.LowDegree.BinaryPolynomial"
+  ],
+  "docstring": "Every printed entry is the algebraic trace of the corresponding product.",
+  "module": "MIPRE.Foundations.SAT.TraceGram",
+  "module_doc": "/-! # Effective trace Gram matrices -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/TraceGram.lean#L71-L89",
+  "source_path": "MIPRE/Foundations/SAT/TraceGram.lean",
+  "lines": [
+   71,
+   89
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-field-matrices",
+    "env": "lemma",
+    "title": "Effective Frobenius, trace Gram matrices and table transport",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.SAT.shoupMulProg_encoding",
+   "MIPRE.SAT.shoupTraceBitProg_correct"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.shoupTraceGram_surjective",
+  "source_name": "MIPRE.SAT.shoupTraceGram_surjective",
+  "formal_statement": "theorem MIPRE.SAT.shoupTraceGram_surjective (k : ℕ) (hk : 1 ≤ k)\n    (b : Module.Basis (Fin k) (ZMod 2) (shoupBinField k hk).carrier) :\n    Function.Surjective (shoupTraceGram k hk b).mulVec := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear MIPRE.LowDegree.BinaryPolynomial"
+  ],
+  "docstring": "A basis has a nonsingular trace Gram matrix.",
+  "module": "MIPRE.Foundations.SAT.TraceGram",
+  "module_doc": "/-! # Effective trace Gram matrices -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/TraceGram.lean#L91-L118",
+  "source_path": "MIPRE/Foundations/SAT/TraceGram.lean",
+  "lines": [
+   91,
+   118
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-field-matrices",
+    "env": "lemma",
+    "title": "Effective Frobenius, trace Gram matrices and table transport",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.one_sub_sum_bornProb_eq",
+  "source_name": "MIPRE.one_sub_sum_bornProb_eq",
+  "formal_statement": "theorem MIPRE.one_sub_sum_bornProb_eq {A : Type*} [Fintype A] [DecidableEq A] {ψ : dA × dB → ℂ}\n    (hψ : ‖evec ψ‖ = 1) {X : A → Matrix dA dA ℂ} {X' : A → Matrix dB dB ℂ}\n    (hX : IsPVM X) (hX' : IsPVM X') :\n    1 - ∑ a, bornProb ψ (X a) (X' a) = (∑ a, xSqNorm ψ (X a) (X' a)) / 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**The consistency of two projective measurements, as a defect from one.** With both families\nprojective the two diagonal sums are exactly one, so the agreement probability and the summed\ncross-party deviation determine each other.",
+  "module": "MIPRE.Foundations.Sandwich",
+  "module_doc": "/-!\n# The sandwich of two approximately commuting projective measurements\n\nTwo projective measurements `{X_a}` and `{Z_b}` on one party that *approximately commute* on a\nstate cannot in general be measured jointly. The **sandwich**\n\n`R_{a,b} = Z_b X_a Z_b`\n\nalways can: it is a POVM --- exactly, by projectivity of `Z` alone --- so its Naimark dilation is\na genuine *projective* joint measurement, and the dilation's compression identity carries every\nBorn-rule estimate about `R` to the dilated measurement unchanged.\n\nWhat has to be proved is that the sandwich is approximately self-consistent across the two\nparties, and that is the content of `one_sub_sum_bornProb_sand_le`: a five-link chain from\n\n`sum_{a,b} <psi| R_{a,b} (x) R'_{a,b} |psi>`  to  `1`,\n\nwhose links are, in order, the two parties' commutators (each paid for by one Cauchy--Schwarz\nagainst a family of squared norms summing to at most one), the two parties' `X`-consistency\ncollapsed by `sum_a X'_a = Id`, and the `Z`-consistency. The one thing the chain must *not* do is\nbound the `q^2` outcome pairs one at a time: that would cost a factor `q` and the conclusion has\nto be `q`-independent. Every link here is therefore an estimate on a single operator product ---\neither a sum that telescopes exactly, or one Cauchy--Schwarz over the whole outcome set.\n\nThe statement carries an index `iota` with weights, because that is how it is used: the two\nmeasurements come from a question and the bound is an average over questions, and averaging a\nsquare root would otherwise need a second Jensen step.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Sandwich.lean#L272-L291",
+  "source_path": "MIPRE/Foundations/Sandwich.lean",
+  "lines": [
+   272,
+   291
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.aOp_sum"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.abs_link1_le",
+  "source_name": "MIPRE.abs_link1_le",
+  "formal_statement": "theorem MIPRE.abs_link1_le (hZ : IsPVM Z) {S' : A × A → Matrix dB dB ℂ}\n    (hS' : ∀ p, (S' p)ᴴ = S' p) :\n    |(∑ p : A × A, qform ψ ((aOp (sand X Z p) : Matrix (dA × dB) _ ℂ) * bOp (S' p)))\n        - ∑ p : A × A, qform ψ ((aOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) * bOp (S' p))|\n      ≤ Real.sqrt (∑ p : A × A, stateSqNorm ψ (X p.1 * Z p.2 - Z p.2 * X p.1))\n        * Real.sqrt (∑ p : A × A, ‖stateVecB ψ (S' p)‖ ^ 2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {A : Type*} [Fintype A] [DecidableEq A]"
+  ],
+  "docstring": "**Link 1**: replacing each sandwich by the ordered product costs Alice's commutator.",
+  "module": "MIPRE.Foundations.Sandwich",
+  "module_doc": "/-!\n# The sandwich of two approximately commuting projective measurements\n\nTwo projective measurements `{X_a}` and `{Z_b}` on one party that *approximately commute* on a\nstate cannot in general be measured jointly. The **sandwich**\n\n`R_{a,b} = Z_b X_a Z_b`\n\nalways can: it is a POVM --- exactly, by projectivity of `Z` alone --- so its Naimark dilation is\na genuine *projective* joint measurement, and the dilation's compression identity carries every\nBorn-rule estimate about `R` to the dilated measurement unchanged.\n\nWhat has to be proved is that the sandwich is approximately self-consistent across the two\nparties, and that is the content of `one_sub_sum_bornProb_sand_le`: a five-link chain from\n\n`sum_{a,b} <psi| R_{a,b} (x) R'_{a,b} |psi>`  to  `1`,\n\nwhose links are, in order, the two parties' commutators (each paid for by one Cauchy--Schwarz\nagainst a family of squared norms summing to at most one), the two parties' `X`-consistency\ncollapsed by `sum_a X'_a = Id`, and the `Z`-consistency. The one thing the chain must *not* do is\nbound the `q^2` outcome pairs one at a time: that would cost a factor `q` and the conclusion has\nto be `q`-independent. Every link here is therefore an estimate on a single operator product ---\neither a sum that telescopes exactly, or one Cauchy--Schwarz over the whole outcome set.\n\nThe statement carries an index `iota` with weights, because that is how it is used: the two\nmeasurements come from a question and the bound is an average over questions, and averaging a\nsquare root would otherwise need a second Jensen step.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Sandwich.lean#L384-L413",
+  "source_path": "MIPRE/Foundations/Sandwich.lean",
+  "lines": [
+   384,
+   413
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_sub",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.bnd_one_of_conjTranspose_mul_self_le",
+   "MIPRE.sum_weighted_mul_le_sqrt"
+  ],
+  "pasted_helpers": 16,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.abs_link2_le",
+  "source_name": "MIPRE.abs_link2_le",
+  "formal_statement": "theorem MIPRE.abs_link2_le (hX : IsPVM X) (hZ : IsPVM Z) (hZ' : IsPVM Z') :\n    |(∑ p : A × A, qform ψ\n          ((aOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) * bOp (sand X' Z' p)))\n        - ∑ p : A × A, qform ψ\n          ((aOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) * bOp (Z' p.2 * X' p.1))|\n      ≤ Real.sqrt (∑ p : A × A, stateSqNorm ψ (X p.1 * Z p.2))\n        * Real.sqrt (∑ p : A × A, ‖stateVecB ψ (X' p.1 * Z' p.2 - Z' p.2 * X' p.1)‖ ^ 2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {A : Type*} [Fintype A] [DecidableEq A]"
+  ],
+  "docstring": "**Link 2**: replacing Bob's sandwich by his ordered product costs Bob's commutator.",
+  "module": "MIPRE.Foundations.Sandwich",
+  "module_doc": "/-!\n# The sandwich of two approximately commuting projective measurements\n\nTwo projective measurements `{X_a}` and `{Z_b}` on one party that *approximately commute* on a\nstate cannot in general be measured jointly. The **sandwich**\n\n`R_{a,b} = Z_b X_a Z_b`\n\nalways can: it is a POVM --- exactly, by projectivity of `Z` alone --- so its Naimark dilation is\na genuine *projective* joint measurement, and the dilation's compression identity carries every\nBorn-rule estimate about `R` to the dilated measurement unchanged.\n\nWhat has to be proved is that the sandwich is approximately self-consistent across the two\nparties, and that is the content of `one_sub_sum_bornProb_sand_le`: a five-link chain from\n\n`sum_{a,b} <psi| R_{a,b} (x) R'_{a,b} |psi>`  to  `1`,\n\nwhose links are, in order, the two parties' commutators (each paid for by one Cauchy--Schwarz\nagainst a family of squared norms summing to at most one), the two parties' `X`-consistency\ncollapsed by `sum_a X'_a = Id`, and the `Z`-consistency. The one thing the chain must *not* do is\nbound the `q^2` outcome pairs one at a time: that would cost a factor `q` and the conclusion has\nto be `q`-independent. Every link here is therefore an estimate on a single operator product ---\neither a sum that telescopes exactly, or one Cauchy--Schwarz over the whole outcome set.\n\nThe statement carries an index `iota` with weights, because that is how it is used: the two\nmeasurements come from a question and the bound is an average over questions, and averaging a\nsquare root would otherwise need a second Jensen step.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Sandwich.lean#L415-L448",
+  "source_path": "MIPRE/Foundations/Sandwich.lean",
+  "lines": [
+   415,
+   448
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.bnd_one_of_conjTranspose_mul_self_le",
+   "MIPRE.sum_weighted_mul_le_sqrt"
+  ],
+  "pasted_helpers": 20,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.abs_link3_le",
+  "source_name": "MIPRE.abs_link3_le",
+  "formal_statement": "theorem MIPRE.abs_link3_le (hψ : ‖evec ψ‖ = 1) (hX : IsPVM X) (hZ : IsPVM Z)\n    (hX' : IsPVM X') (hZ' : IsPVM Z') :\n    |(∑ p : A × A, qform ψ\n          ((aOp (Z p.2 * X p.1) : Matrix (dA × dB) _ ℂ) * bOp (Z' p.2 * X' p.1)))\n        - ∑ p : A × A, qform ψ\n          ((aOp (Z p.2) : Matrix (dA × dB) _ ℂ) * bOp (Z' p.2 * X' p.1))|\n      ≤ Real.sqrt ((∑ a : A, xSqNorm ψ (X a) (X' a)) / 2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {A : Type*} [Fintype A] [DecidableEq A]"
+  ],
+  "docstring": "**Link 3**: dropping Alice's `X`-outcome costs her `X`-consistency with Bob, and nothing that\ndepends on the number of outcomes: the whole outcome sum is one operator product.",
+  "module": "MIPRE.Foundations.Sandwich",
+  "module_doc": "/-!\n# The sandwich of two approximately commuting projective measurements\n\nTwo projective measurements `{X_a}` and `{Z_b}` on one party that *approximately commute* on a\nstate cannot in general be measured jointly. The **sandwich**\n\n`R_{a,b} = Z_b X_a Z_b`\n\nalways can: it is a POVM --- exactly, by projectivity of `Z` alone --- so its Naimark dilation is\na genuine *projective* joint measurement, and the dilation's compression identity carries every\nBorn-rule estimate about `R` to the dilated measurement unchanged.\n\nWhat has to be proved is that the sandwich is approximately self-consistent across the two\nparties, and that is the content of `one_sub_sum_bornProb_sand_le`: a five-link chain from\n\n`sum_{a,b} <psi| R_{a,b} (x) R'_{a,b} |psi>`  to  `1`,\n\nwhose links are, in order, the two parties' commutators (each paid for by one Cauchy--Schwarz\nagainst a family of squared norms summing to at most one), the two parties' `X`-consistency\ncollapsed by `sum_a X'_a = Id`, and the `Z`-consistency. The one thing the chain must *not* do is\nbound the `q^2` outcome pairs one at a time: that would cost a factor `q` and the conclusion has\nto be `q`-independent. Every link here is therefore an estimate on a single operator product ---\neither a sum that telescopes exactly, or one Cauchy--Schwarz over the whole outcome set.\n\nThe statement carries an index `iota` with weights, because that is how it is used: the two\nmeasurements come from a question and the bound is an average over questions, and averaging a\nsquare root would otherwise need a second Jensen step.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Sandwich.lean#L495-L543",
+  "source_path": "MIPRE/Foundations/Sandwich.lean",
+  "lines": [
+   495,
+   543
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_sub",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.one_sub_sum_bornProb_eq"
+  ],
+  "pasted_helpers": 26,
+  "prooflines": 40,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.one_sub_sum_bornProb_sand_le",
+  "source_name": "MIPRE.one_sub_sum_bornProb_sand_le",
+  "formal_statement": "theorem MIPRE.one_sub_sum_bornProb_sand_le {ι : Type*} [Fintype ι] {w : ι → ℝ}\n    (hw0 : ∀ i, 0 ≤ w i) (hw1 : ∑ i, w i = 1)\n    {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)\n    {X Z : ι → A → Matrix dA dA ℂ} {X' Z' : ι → A → Matrix dB dB ℂ}\n    (hX : ∀ i, IsPVM (X i)) (hZ : ∀ i, IsPVM (Z i))\n    (hX' : ∀ i, IsPVM (X' i)) (hZ' : ∀ i, IsPVM (Z' i))\n    {cA cB α β : ℝ}\n    (hcA : ∑ i, w i * ∑ p : A × A,\n        stateSqNorm ψ (X i p.1 * Z i p.2 - Z i p.2 * X i p.1) ≤ cA)\n    (hcB : ∑ i, w i * ∑ p : A × A,\n        ‖stateVecB ψ (X' i p.1 * Z' i p.2 - Z' i p.2 * X' i p.1)‖ ^ 2 ≤ cB)\n    (hα : ∑ i, w i * ∑ a : A, xSqNorm ψ (X i a) (X' i a) ≤ α)\n    (hβ : ∑ i, w i * ∑ b : A, xSqNorm ψ (Z i b) (Z' i b) ≤ β) :\n    1 - ∑ i, w i * ∑ p : A × A,\n          bornProb ψ (sand (X i) (Z i) p) (sand (X' i) (Z' i) p)\n      ≤ Real.sqrt cA + Real.sqrt cB + Real.sqrt (α / 2) + β / 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {A : Type*} [Fintype A] [DecidableEq A]"
+  ],
+  "docstring": "**The sandwich of two approximately commuting projective measurements is approximately\nself-consistent across the two parties.** The five links of the chain, added up. Every error term\nis `q`-independent: the two commutators enter under a square root through one Cauchy--Schwarz\neach, the `X`-consistency through a third, and the `Z`-consistency linearly.",
+  "module": "MIPRE.Foundations.Sandwich",
+  "module_doc": "/-!\n# The sandwich of two approximately commuting projective measurements\n\nTwo projective measurements `{X_a}` and `{Z_b}` on one party that *approximately commute* on a\nstate cannot in general be measured jointly. The **sandwich**\n\n`R_{a,b} = Z_b X_a Z_b`\n\nalways can: it is a POVM --- exactly, by projectivity of `Z` alone --- so its Naimark dilation is\na genuine *projective* joint measurement, and the dilation's compression identity carries every\nBorn-rule estimate about `R` to the dilated measurement unchanged.\n\nWhat has to be proved is that the sandwich is approximately self-consistent across the two\nparties, and that is the content of `one_sub_sum_bornProb_sand_le`: a five-link chain from\n\n`sum_{a,b} <psi| R_{a,b} (x) R'_{a,b} |psi>`  to  `1`,\n\nwhose links are, in order, the two parties' commutators (each paid for by one Cauchy--Schwarz\nagainst a family of squared norms summing to at most one), the two parties' `X`-consistency\ncollapsed by `sum_a X'_a = Id`, and the `Z`-consistency. The one thing the chain must *not* do is\nbound the `q^2` outcome pairs one at a time: that would cost a factor `q` and the conclusion has\nto be `q`-independent. Every link here is therefore an estimate on a single operator product ---\neither a sum that telescopes exactly, or one Cauchy--Schwarz over the whole outcome set.\n\nThe statement carries an index `iota` with weights, because that is how it is used: the two\nmeasurements come from a question and the bound is an average over questions, and averaging a\nsquare root would otherwise need a second Jensen step.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Sandwich.lean#L580-L696",
+  "source_path": "MIPRE/Foundations/Sandwich.lean",
+  "lines": [
+   580,
+   696
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_stateSqNorm_le_one",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.aOp_sum",
+   "MIPRE.one_sub_sum_bornProb_eq",
+   "MIPRE.abs_link1_le",
+   "MIPRE.abs_link2_le",
+   "MIPRE.sum_weighted_mul_le_sqrt",
+   "MIPRE.abs_link3_le",
+   "MIPRE.norm_stateVecB",
+   "MIPRE.swapVec_dotProduct"
+  ],
+  "pasted_helpers": 21,
+  "prooflines": 97,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.extVec2_unit",
+  "source_name": "MIPRE.extVec2_unit",
+  "formal_statement": "theorem MIPRE.extVec2_unit {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) (a₀ : Anc) (b₀ : Bnc) :\n    star (extVec2 ψ a₀ b₀) ⬝ᵥ extVec2 ψ a₀ b₀ = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {Anc Bnc : Type*} [Fintype Anc] [DecidableEq Anc] [Fintype Bnc] [DecidableEq Bnc]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Sandwich",
+  "module_doc": "/-!\n# The sandwich of two approximately commuting projective measurements\n\nTwo projective measurements `{X_a}` and `{Z_b}` on one party that *approximately commute* on a\nstate cannot in general be measured jointly. The **sandwich**\n\n`R_{a,b} = Z_b X_a Z_b`\n\nalways can: it is a POVM --- exactly, by projectivity of `Z` alone --- so its Naimark dilation is\na genuine *projective* joint measurement, and the dilation's compression identity carries every\nBorn-rule estimate about `R` to the dilated measurement unchanged.\n\nWhat has to be proved is that the sandwich is approximately self-consistent across the two\nparties, and that is the content of `one_sub_sum_bornProb_sand_le`: a five-link chain from\n\n`sum_{a,b} <psi| R_{a,b} (x) R'_{a,b} |psi>`  to  `1`,\n\nwhose links are, in order, the two parties' commutators (each paid for by one Cauchy--Schwarz\nagainst a family of squared norms summing to at most one), the two parties' `X`-consistency\ncollapsed by `sum_a X'_a = Id`, and the `Z`-consistency. The one thing the chain must *not* do is\nbound the `q^2` outcome pairs one at a time: that would cost a factor `q` and the conclusion has\nto be `q`-independent. Every link here is therefore an estimate on a single operator product ---\neither a sum that telescopes exactly, or one Cauchy--Schwarz over the whole outcome set.\n\nThe statement carries an index `iota` with weights, because that is how it is used: the two\nmeasurements come from a question and the bound is an average over questions, and averaging a\nsquare root would otherwise need a second Jensen step.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Sandwich.lean#L741-L743",
+  "source_path": "MIPRE/Foundations/Sandwich.lean",
+  "lines": [
+   741,
+   743
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.ancillaEmbed_isometry"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.normSq_stateVecB_extVec2_aOp",
+  "source_name": "MIPRE.normSq_stateVecB_extVec2_aOp",
+  "formal_statement": "theorem MIPRE.normSq_stateVecB_extVec2_aOp (ψ : dA × dB → ℂ) (a₀ : Anc) (b₀ : Bnc)\n    (N : Matrix dB dB ℂ) :\n    ‖stateVecB (extVec2 ψ a₀ b₀) (aOp N : Matrix (dB × Bnc) _ ℂ)‖ ^ 2\n      = ‖stateVecB ψ N‖ ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {Anc Bnc : Type*} [Fintype Anc] [DecidableEq Anc] [Fintype Bnc] [DecidableEq Bnc]"
+  ],
+  "docstring": "Bob's inert-ancilla operator has the same state norm on the extended state.",
+  "module": "MIPRE.Foundations.Sandwich",
+  "module_doc": "/-!\n# The sandwich of two approximately commuting projective measurements\n\nTwo projective measurements `{X_a}` and `{Z_b}` on one party that *approximately commute* on a\nstate cannot in general be measured jointly. The **sandwich**\n\n`R_{a,b} = Z_b X_a Z_b`\n\nalways can: it is a POVM --- exactly, by projectivity of `Z` alone --- so its Naimark dilation is\na genuine *projective* joint measurement, and the dilation's compression identity carries every\nBorn-rule estimate about `R` to the dilated measurement unchanged.\n\nWhat has to be proved is that the sandwich is approximately self-consistent across the two\nparties, and that is the content of `one_sub_sum_bornProb_sand_le`: a five-link chain from\n\n`sum_{a,b} <psi| R_{a,b} (x) R'_{a,b} |psi>`  to  `1`,\n\nwhose links are, in order, the two parties' commutators (each paid for by one Cauchy--Schwarz\nagainst a family of squared norms summing to at most one), the two parties' `X`-consistency\ncollapsed by `sum_a X'_a = Id`, and the `Z`-consistency. The one thing the chain must *not* do is\nbound the `q^2` outcome pairs one at a time: that would cost a factor `q` and the conclusion has\nto be `q`-independent. Every link here is therefore an estimate on a single operator product ---\neither a sum that telescopes exactly, or one Cauchy--Schwarz over the whole outcome set.\n\nThe statement carries an index `iota` with weights, because that is how it is used: the two\nmeasurements come from a question and the bound is an average over questions, and averaging a\nsquare root would otherwise need a second Jensen step.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Sandwich.lean#L782-L788",
+  "source_path": "MIPRE/Foundations/Sandwich.lean",
+  "lines": [
+   782,
+   788
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.ancillaEmbed_isometry",
+   "MIPRE.kron_one_mul_ancillaEmbed",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_xSqNorm_dilated_eq",
+  "source_name": "MIPRE.sum_xSqNorm_dilated_eq",
+  "formal_statement": "theorem MIPRE.sum_xSqNorm_dilated_eq (hψ : star ψ ⬝ᵥ ψ = 1) (a₀ : A × A)\n    (hQ : IsPVM Q) (hQ' : IsPVM Q')\n    (hkA : ∀ p, (ancillaEmbed dA a₀)ᴴ * (Q p * ancillaEmbed dA a₀) = R p)\n    (hkB : ∀ p, (ancillaEmbed dB a₀)ᴴ * (Q' p * ancillaEmbed dB a₀) = R' p)\n    (hR : ∑ p : A × A, R p = 1) (hR' : ∑ p : A × A, R' p = 1) :\n    ∑ p : A × A, xSqNorm (extVec2 ψ a₀ a₀) (Q p) (Q' p)\n      = 2 * (1 - ∑ p : A × A, bornProb ψ (R p) (R' p)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {A : Type*} [Fintype A] [DecidableEq A]",
+   "variable {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "**The dilated pair's self-consistency is the sandwiches' agreement defect**, exactly: the\ncompression identity transports the whole Born-rule expansion.",
+  "module": "MIPRE.Foundations.Sandwich",
+  "module_doc": "/-!\n# The sandwich of two approximately commuting projective measurements\n\nTwo projective measurements `{X_a}` and `{Z_b}` on one party that *approximately commute* on a\nstate cannot in general be measured jointly. The **sandwich**\n\n`R_{a,b} = Z_b X_a Z_b`\n\nalways can: it is a POVM --- exactly, by projectivity of `Z` alone --- so its Naimark dilation is\na genuine *projective* joint measurement, and the dilation's compression identity carries every\nBorn-rule estimate about `R` to the dilated measurement unchanged.\n\nWhat has to be proved is that the sandwich is approximately self-consistent across the two\nparties, and that is the content of `one_sub_sum_bornProb_sand_le`: a five-link chain from\n\n`sum_{a,b} <psi| R_{a,b} (x) R'_{a,b} |psi>`  to  `1`,\n\nwhose links are, in order, the two parties' commutators (each paid for by one Cauchy--Schwarz\nagainst a family of squared norms summing to at most one), the two parties' `X`-consistency\ncollapsed by `sum_a X'_a = Id`, and the `Z`-consistency. The one thing the chain must *not* do is\nbound the `q^2` outcome pairs one at a time: that would cost a factor `q` and the conclusion has\nto be `q`-independent. Every link here is therefore an estimate on a single operator product ---\neither a sum that telescopes exactly, or one Cauchy--Schwarz over the whole outcome set.\n\nThe statement carries an index `iota` with weights, because that is how it is used: the two\nmeasurements come from a question and the bound is an average over questions, and averaging a\nsquare root would otherwise need a second Jensen step.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Sandwich.lean#L823-L850",
+  "source_path": "MIPRE/Foundations/Sandwich.lean",
+  "lines": [
+   823,
+   850
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.ancillaEmbed_isometry",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.aOp_sum"
+  ],
+  "pasted_helpers": 24,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_xSqNorm_dilated_aOp_le",
+  "source_name": "MIPRE.sum_xSqNorm_dilated_aOp_le",
+  "formal_statement": "theorem MIPRE.sum_xSqNorm_dilated_aOp_le (hψ : star ψ ⬝ᵥ ψ = 1) (a₀ : A × A)\n    (hQ : IsPVM Q)\n    (hkA : ∀ p, (ancillaEmbed dA a₀)ᴴ * (Q p * ancillaEmbed dA a₀) = R p)\n    (hR : ∑ p : A × A, R p = 1) (hR'B : ∑ p : A × A, ‖stateVecB ψ (R' p)‖ ^ 2 ≤ 1) :\n    ∑ p : A × A, xSqNorm (extVec2 ψ a₀ a₀) (Q p) (aOp (R' p))\n      ≤ 2 * (1 - ∑ p : A × A, bornProb ψ (R p) (R' p)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {A : Type*} [Fintype A] [DecidableEq A]",
+   "variable {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "The same bound against the **undilated** sandwich on Bob's side, extended by identity on his\nancilla.",
+  "module": "MIPRE.Foundations.Sandwich",
+  "module_doc": "/-!\n# The sandwich of two approximately commuting projective measurements\n\nTwo projective measurements `{X_a}` and `{Z_b}` on one party that *approximately commute* on a\nstate cannot in general be measured jointly. The **sandwich**\n\n`R_{a,b} = Z_b X_a Z_b`\n\nalways can: it is a POVM --- exactly, by projectivity of `Z` alone --- so its Naimark dilation is\na genuine *projective* joint measurement, and the dilation's compression identity carries every\nBorn-rule estimate about `R` to the dilated measurement unchanged.\n\nWhat has to be proved is that the sandwich is approximately self-consistent across the two\nparties, and that is the content of `one_sub_sum_bornProb_sand_le`: a five-link chain from\n\n`sum_{a,b} <psi| R_{a,b} (x) R'_{a,b} |psi>`  to  `1`,\n\nwhose links are, in order, the two parties' commutators (each paid for by one Cauchy--Schwarz\nagainst a family of squared norms summing to at most one), the two parties' `X`-consistency\ncollapsed by `sum_a X'_a = Id`, and the `Z`-consistency. The one thing the chain must *not* do is\nbound the `q^2` outcome pairs one at a time: that would cost a factor `q` and the conclusion has\nto be `q`-independent. Every link here is therefore an estimate on a single operator product ---\neither a sum that telescopes exactly, or one Cauchy--Schwarz over the whole outcome set.\n\nThe statement carries an index `iota` with weights, because that is how it is used: the two\nmeasurements come from a question and the bound is an average over questions, and averaging a\nsquare root would otherwise need a second Jensen step.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Sandwich.lean#L852-L875",
+  "source_path": "MIPRE/Foundations/Sandwich.lean",
+  "lines": [
+   852,
+   875
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.ancillaEmbed_isometry",
+   "MIPRE.kron_one_mul_ancillaEmbed",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.aOp_sum",
+   "MIPRE.normSq_stateVecB_extVec2_aOp"
+  ],
+  "pasted_helpers": 18,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.exists_projective_joint",
+  "source_name": "MIPRE.exists_projective_joint",
+  "formal_statement": "theorem MIPRE.exists_projective_joint {ι : Type*} [Fintype ι] {w : ι → ℝ}\n    (hw0 : ∀ i, 0 ≤ w i) (hw1 : ∑ i, w i = 1)\n    {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) (a₀ : A × A)\n    {X Z : ι → A → Matrix dA dA ℂ} {X' Z' : ι → A → Matrix dB dB ℂ}\n    (hX : ∀ i, IsPVM (X i)) (hZ : ∀ i, IsPVM (Z i))\n    (hX' : ∀ i, IsPVM (X' i)) (hZ' : ∀ i, IsPVM (Z' i))\n    {cA cB α β : ℝ}\n    (hcA : ∑ i, w i * ∑ p : A × A,\n        stateSqNorm ψ (X i p.1 * Z i p.2 - Z i p.2 * X i p.1) ≤ cA)\n    (hcB : ∑ i, w i * ∑ p : A × A,\n        ‖stateVecB ψ (X' i p.1 * Z' i p.2 - Z' i p.2 * X' i p.1)‖ ^ 2 ≤ cB)\n    (hα : ∑ i, w i * ∑ a : A, xSqNorm ψ (X i a) (X' i a) ≤ α)\n    (hβ : ∑ i, w i * ∑ b : A, xSqNorm ψ (Z i b) (Z' i b) ≤ β) :\n    ∃ (QA : ι → (A × A) → Matrix (dA × (A × A)) (dA × (A × A)) ℂ)\n      (QB : ι → (A × A) → Matrix (dB × (A × A)) (dB × (A × A)) ℂ),\n      (∀ i, IsPVM (QA i)) ∧ (∀ i, IsPVM (QB i))\n      ∧ (∀ i p, (ancillaEmbed dA a₀)ᴴ * (QA i p * ancillaEmbed dA a₀) = sand (X i) (Z i) p)\n      ∧ (∀ i p, (ancillaEmbed dB a₀)ᴴ * (QB i p * ancillaEmbed dB a₀) = sand (X' i) (Z' i) p)\n      ∧ (∑ i, w i * ∑ p : A × A, xSqNorm (extVec2 ψ a₀ a₀) (QA i p) (QB i p)\n          ≤ 2 * (Real.sqrt cA + Real.sqrt cB + Real.sqrt (α / 2) + β / 2))\n      ∧ (∑ i, w i * ∑ p : A × A,\n            xSqNorm (extVec2 ψ a₀ a₀) (QA i p) (aOp (Z' i p.2 * X' i p.1))\n          ≤ 4 * (Real.sqrt cA + Real.sqrt cB + Real.sqrt (α / 2) + β / 2) + 2 * cB)\n      ∧ (∑ i, w i * ∑ p : A × A,\n            xSqNorm (extVec2 ψ a₀ a₀) (QA i p) (aOp (X' i p.1 * Z' i p.2))\n          ≤ 4 * (Real.sqrt cA + Real.sqrt cB + Real.sqrt (α / 2) + β / 2) + 8 * cB) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {A : Type*} [Fintype A] [DecidableEq A]"
+  ],
+  "docstring": "**Two approximately commuting projective measurements on each party admit a joint projective\nmeasurement**, on each party's space enlarged by one ancilla register, which is self-consistent\nacross the parties and consistent with *both* ordered products of the originals --- all at errors\nindependent of the number of outcomes.\n\nThe construction is the Naimark dilation of the sandwich `Z_b X_a Z_b`; `hkA` and `hkB` record\nthat the dilations compress back to it, which is what carries every estimate.",
+  "module": "MIPRE.Foundations.Sandwich",
+  "module_doc": "/-!\n# The sandwich of two approximately commuting projective measurements\n\nTwo projective measurements `{X_a}` and `{Z_b}` on one party that *approximately commute* on a\nstate cannot in general be measured jointly. The **sandwich**\n\n`R_{a,b} = Z_b X_a Z_b`\n\nalways can: it is a POVM --- exactly, by projectivity of `Z` alone --- so its Naimark dilation is\na genuine *projective* joint measurement, and the dilation's compression identity carries every\nBorn-rule estimate about `R` to the dilated measurement unchanged.\n\nWhat has to be proved is that the sandwich is approximately self-consistent across the two\nparties, and that is the content of `one_sub_sum_bornProb_sand_le`: a five-link chain from\n\n`sum_{a,b} <psi| R_{a,b} (x) R'_{a,b} |psi>`  to  `1`,\n\nwhose links are, in order, the two parties' commutators (each paid for by one Cauchy--Schwarz\nagainst a family of squared norms summing to at most one), the two parties' `X`-consistency\ncollapsed by `sum_a X'_a = Id`, and the `Z`-consistency. The one thing the chain must *not* do is\nbound the `q^2` outcome pairs one at a time: that would cost a factor `q` and the conclusion has\nto be `q`-independent. Every link here is therefore an estimate on a single operator product ---\neither a sum that telescopes exactly, or one Cauchy--Schwarz over the whole outcome set.\n\nThe statement carries an index `iota` with weights, because that is how it is used: the two\nmeasurements come from a question and the bound is an average over questions, and averaging a\nsquare root would otherwise need a second Jensen step.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Sandwich.lean#L886-L1069",
+  "source_path": "MIPRE/Foundations/Sandwich.lean",
+  "lines": [
+   886,
+   1069
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_stateSqNorm_le_one",
+   "MIPRE.exists_projective_dilation",
+   "MIPRE.aOp_sub",
+   "MIPRE.bnd_one_of_conjTranspose_mul_self_le",
+   "MIPRE.one_sub_sum_bornProb_sand_le",
+   "MIPRE.normSq_stateVecB_extVec2_aOp",
+   "MIPRE.sum_xSqNorm_dilated_eq",
+   "MIPRE.sum_xSqNorm_dilated_aOp_le",
+   "MIPRE.norm_stateVecB",
+   "MIPRE.swapVec_dotProduct"
+  ],
+  "pasted_helpers": 20,
+  "prooflines": 151,
+  "is_target": false
+ }
+]

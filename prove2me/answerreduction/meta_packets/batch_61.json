@@ -1,0 +1,634 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.indicatorBits_factorOfPrefix_prodCL",
+  "source_name": "MIPRE.CL.CLFun.indicatorBits_factorOfPrefix_prodCL",
+  "formal_statement": "theorem MIPRE.CL.CLFun.indicatorBits_factorOfPrefix_prodCL (k : ℕ) (u : Fin (a + b) → 𝔽₂) :\n    indicatorBits ((prodCL L P Q ha hb).factorOfPrefix k u)\n      = indicatorBits (P.factorOfPrefix k (leftPart u))\n          ++ indicatorBits (Q.factorOfPrefix k (rightPart u)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "open Finset MIPRE.Cost",
+   "variable {a b : ℕ}",
+   "variable {ℓa ℓb : ℕ}",
+   "variable (L : ℕ) {P : CLFun 𝔽₂ (Fin a) ℓa} {Q : CLFun 𝔽₂ (Fin b) ℓb} (hP : P.ExactlyOn univ)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.ProductSampler",
+  "module_doc": "/-!\n# The product of a typed sampler and a directly answered one: the presentations\n\nThe answer-reduced sampler (`sec:ar-verifier`, `ld_compiler.tex`) is the direct sum of the\noracularized sampler, whose queries are answered by a program, and the downsized PCP sampler,\nwhose queries a polynomial-time function answers outright. This file is the CL half of that\nconstruction, for any two families of presentations on `𝔽₂^a` and `𝔽₂^b`:\n\n* `prodCL L P Q` pads both to `L` levels and puts them side by side on `𝔽₂^{a + b}`, the first\n  `a` coordinates for `P`;\n* its three queries, in bits, are the two halves' queries concatenated (`toBits_eval_truncate_prodCL`,\n  `toBits_mapOfPrefix_prodCL`, `indicatorBits_factorOfPrefix_prodCL`);\n* beyond a presentation's own level its marginal is its full evaluation, its stage map zero and its\n  factor space empty (`eval_truncate_of_le`, `mapOfPrefix_of_le`, `factorOfPrefix_of_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/ProductSampler.lean#L196-L226",
+  "source_path": "MIPRE/Foundations/CL/ProductSampler.lean",
+  "lines": [
+   196,
+   226
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-typed-sampler",
+    "env": "lemma",
+    "title": "The typed answer-reduced sampler",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.CLFun.factorOfPrefix_reindex",
+   "MIPRE.CL.pull_proj_compl",
+   "MIPRE.CL.CLFun.SupportedOn.factorOfPrefix_proj"
+  ],
+  "pasted_helpers": 15,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.ProductSampler.size_queryA_le",
+  "source_name": "MIPRE.CL.ProductSampler.size_queryA_le",
+  "formal_statement": "theorem MIPRE.CL.ProductSampler.size_queryA_le (j : PolyTimeFun Data ℕ) (ap pp : Prog) (ℓa n : ℕ) (pdn q : Data)\n    (hj : j (.cons pdn (.cons (encode (ap, ℓa, pp)) (.cons (encode n) q))) ≤ ℓa) :\n    (queryA D j (.cons pdn (.cons (encode (ap, ℓa, pp)) (.cons (encode n) q)))).size ≤\n      esize n + 12 * q.size + 4 * ℓa + 20 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.ProductSampler",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Pipeline",
+   "variable (B : PolyTimeFun DirectInput BitStr) (D : PolyTimeFun Data Unary)"
+  ],
+  "docstring": "The size of `A`'s query at a level `j`, when `j ≤ ℓa`.",
+  "module": "MIPRE.Foundations.CL.ProductSamplerCost",
+  "module_doc": "/-!\n# The running time of the product sampler\n\n`CL.TypedSampler.prodDirect` runs the parameter routine of its direct half through the universal\nmachine, then routes the query: at most one call to the typed half's program, again through the\nuniversal machine, on a query at most linearly larger than the typed query (`route_call_size`),\nand polynomial-time work on the parameters around it. So its running time is dominated, in the\nsense of `MIPRE.Pipeline.PDom`, as soon as the parameter routine's is and the typed half runs\nwithin a monomial coefficient at degree `e (K + 1)` (`prog_time`), on every input, well formed\nor not.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/ProductSamplerCost.lean#L79-L109",
+  "source_path": "MIPRE/Foundations/CL/ProductSamplerCost.lean",
+  "lines": [
+   79,
+   109
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 8,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.ProductSampler.route_call_size",
+  "source_name": "MIPRE.CL.ProductSampler.route_call_size",
+  "formal_statement": "theorem MIPRE.CL.ProductSampler.route_call_size (ap pp : Prog) (ℓa n : ℕ) (pdn q payload : Data)\n    (h : route B D (.cons pdn (.cons (encode (ap, ℓa, pp)) (.cons (encode n) q))) =\n      (true, payload)) :\n    ∃ a ctx, payload = .cons (.cons (encode ap) a) ctx ∧\n      a.size ≤ esize n + 12 * q.size + 4 * ℓa + 20 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.ProductSampler",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Pipeline",
+   "variable (B : PolyTimeFun DirectInput BitStr) (D : PolyTimeFun Data Unary)"
+  ],
+  "docstring": "**A forwarded query is linear in the typed query**: the router calls `A`'s program on the\nindex and a query at most linearly larger than the typed query, whatever the input.",
+  "module": "MIPRE.Foundations.CL.ProductSamplerCost",
+  "module_doc": "/-!\n# The running time of the product sampler\n\n`CL.TypedSampler.prodDirect` runs the parameter routine of its direct half through the universal\nmachine, then routes the query: at most one call to the typed half's program, again through the\nuniversal machine, on a query at most linearly larger than the typed query (`route_call_size`),\nand polynomial-time work on the parameters around it. So its running time is dominated, in the\nsense of `MIPRE.Pipeline.PDom`, as soon as the parameter routine's is and the typed half runs\nwithin a monomial coefficient at degree `e (K + 1)` (`prog_time`), on every input, well formed\nor not.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/ProductSamplerCost.lean#L111-L148",
+  "source_path": "MIPRE/Foundations/CL/ProductSamplerCost.lean",
+  "lines": [
+   111,
+   148
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-typed-sampler",
+    "env": "lemma",
+    "title": "The typed answer-reduced sampler",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.CL.ProductSampler.size_queryA_le"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.ProductSampler.stage_time",
+  "source_name": "MIPRE.CL.ProductSampler.stage_time",
+  "formal_statement": "theorem MIPRE.CL.ProductSampler.stage_time (ap pp : Prog) (ℓa n : ℕ) (pdn q : Data) (BA k : ℕ)\n    (hA : ∀ d, HaltsWithin ap (.cons (encode n) d) (BA * (d.size + 1) ^ k)) :\n    ∃ r t, t ≤ stageBound B D ap ℓa n\n        (Data.cons pdn (.cons (encode (ap, ℓa, pp)) (.cons (encode n) q))).size q.size BA k ∧\n      (stage B D).Runs (.cons pdn (.cons (encode (ap, ℓa, pp)) (.cons (encode n) q))) r t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.ProductSampler",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Pipeline",
+   "variable (B : PolyTimeFun DirectInput BitStr) (D : PolyTimeFun Data Unary)"
+  ],
+  "docstring": "**The routed stage halts within `stageBound`** on every input, when `A`'s program runs within\n`BA (|d| + 1)^k` at the index.",
+  "module": "MIPRE.Foundations.CL.ProductSamplerCost",
+  "module_doc": "/-!\n# The running time of the product sampler\n\n`CL.TypedSampler.prodDirect` runs the parameter routine of its direct half through the universal\nmachine, then routes the query: at most one call to the typed half's program, again through the\nuniversal machine, on a query at most linearly larger than the typed query (`route_call_size`),\nand polynomial-time work on the parameters around it. So its running time is dominated, in the\nsense of `MIPRE.Pipeline.PDom`, as soon as the parameter routine's is and the typed half runs\nwithin a monomial coefficient at degree `e (K + 1)` (`prog_time`), on every input, well formed\nor not.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/ProductSamplerCost.lean#L159-L209",
+  "source_path": "MIPRE/Foundations/CL/ProductSamplerCost.lean",
+  "lines": [
+   159,
+   209
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.ProductSampler.route_call_size"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 44,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.ProductSampler.prog_time",
+  "source_name": "MIPRE.CL.ProductSampler.prog_time",
+  "formal_statement": "theorem MIPRE.CL.ProductSampler.prog_time (ℓa cp mp ep cs ms es cA mA eA : ℕ) : ∃ C M E, ∀ {W K : ℕ} (ap pp : Prog)\n    (n : ℕ) (pdn : Data) (BA : ℕ), n ≤ W →\n    (∀ {X : ℕ}, 1 ≤ X → PRuns W X K cp mp ep pp (encode n) pdn) →\n    (∀ {X : ℕ}, 1 ≤ X → PDom W X K cs ms es (esize ap + esize pp)) →\n    BA ≤ cA * (W + 1) ^ mA →\n    (∀ d, HaltsWithin ap (.cons (encode n) d) (BA * (d.size + 1) ^ (eA * (K + 1)))) →\n    ∀ q : Data, ∃ r t, PDom W (q.size + 1) K C M E t ∧\n      (prog B D ap ℓa pp).Runs (.cons (encode n) q) r t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.ProductSampler",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Pipeline",
+   "variable (B : PolyTimeFun DirectInput BitStr) (D : PolyTimeFun Data Unary)"
+  ],
+  "docstring": "**The running time of the product sampler's program**, on every input: dominated as soon as\nthe parameter routine runs within a dominated time, the two programs have dominated sizes, and\n`A`'s program runs within a monomial coefficient at degree `eA (K + 1)`.",
+  "module": "MIPRE.Foundations.CL.ProductSamplerCost",
+  "module_doc": "/-!\n# The running time of the product sampler\n\n`CL.TypedSampler.prodDirect` runs the parameter routine of its direct half through the universal\nmachine, then routes the query: at most one call to the typed half's program, again through the\nuniversal machine, on a query at most linearly larger than the typed query (`route_call_size`),\nand polynomial-time work on the parameters around it. So its running time is dominated, in the\nsense of `MIPRE.Pipeline.PDom`, as soon as the parameter routine's is and the typed half runs\nwithin a monomial coefficient at degree `e (K + 1)` (`prog_time`), on every input, well formed\nor not.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/ProductSamplerCost.lean#L211-L308",
+  "source_path": "MIPRE/Foundations/CL/ProductSamplerCost.lean",
+  "lines": [
+   211,
+   308
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-typed-sampler",
+    "env": "lemma",
+    "title": "The typed answer-reduced sampler",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.ProductSampler.stage_time",
+   "MIPRE.Cost.hardcode_time",
+   "MIPRE.Cost.seqProg_runs",
+   "MIPRE.Pipeline.PDom.poly",
+   "MIPRE.Pipeline.PDom.ofCallPow"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 87,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.proj_add_proj_compl",
+  "source_name": "MIPRE.CL.proj_add_proj_compl",
+  "formal_statement": "theorem MIPRE.CL.proj_add_proj_compl [Fintype ι] (S : Finset ι) (x : ι → F) :\n    proj S x + proj Sᶜ x = x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "variable {F : Type*} [Semiring F] {ι : Type*} [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.Register",
+  "module_doc": "/-!\n# Register subspaces\n\nThe linear spaces of the conditionally linear machinery (blueprint `sec:ps-cl`, paper\n`linear.tex`) are `V = F^ι` for a finite index type `ι`, and the subspaces that occur in it are\n*register subspaces*: spans of subsets of the standard basis, hence determined by a set\n`S : Finset ι` of coordinates (paper `preliminaries.tex`, \"Register subspace\"). This file fixes\nthe two pieces of vocabulary in which everything else is written.\n\n* `MIPRE.CL.proj S : (ι → F) →ₗ[F] (ι → F)` is the coordinate projection onto `V_S` along the\n  complementary register subspace `V_{Sᶜ}`: the paper's `x ↦ x^{V_S}`.\n* `MIPRE.CL.RegLinear F S` is a linear map \"on `V_S`\", presented as an endomorphism `L` of the\n  ambient space with `proj S ∘ L ∘ proj S = L`: it reads only the coordinates in `S` and writes\n  only there. This is how the paper's `L₁ : V₁ → V₁` and `L_{k,u} : V_{k,u} → V_{k,u}` are\n  handled, and it makes the paper's shorthand `x^{L} = L(x^{V_S})` literally `L x`\n  (`RegLinear.apply_proj`).\n\nEverything here is elementary; the point is to fix names and `simp` lemmas.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Register.lean#L73-L75",
+  "source_path": "MIPRE/Foundations/CL/Register.lean",
+  "lines": [
+   73,
+   75
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_snorm_sq_mul_le",
+  "source_name": "MIPRE.sum_snorm_sq_mul_le",
+  "formal_statement": "theorem MIPRE.sum_snorm_sq_mul_le {ι : Type*} [Fintype ι] (v : N → ℂ)\n    (F : ι → Matrix N N ℂ) (hF : ∑ i, (F i)ᴴ * F i ≤ (1 : Matrix N N ℂ))\n    (M : Matrix N N ℂ) :\n    ∑ i, snorm v (F i * M) ^ 2 ≤ snorm v M ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {N : Type*} [Fintype N] [DecidableEq N]"
+  ],
+  "docstring": "**A family of operators with `sum_i F_i^dag F_i <= Id` costs nothing in front.**",
+  "module": "MIPRE.Foundations.Commutation",
+  "module_doc": "/-!\n# The commutation analysis\n\nBlueprint `lem:commutation-analysis` (the paper's, in `games.tex`), and the two facts it runs on.\nIt is the step that turns *consistency with a joint measurement on the other side* into\n*approximate commutation on one side*, and it is the only place in the Pauli appendix where\nprojectivity of a measurement is genuinely used.\n\n## The shape\n\nAlice has two POVMs `A_b` and `C_c`; Bob has one **projective** measurement `P_{b,c}` whose\noutcome is the pair. If each of Alice's is cross-party close to the corresponding marginal of\nBob's, then Alice's two commute on the state:\n\n```\nA_b (x) Id ~ Id (x) P_b   and   C_c (x) Id ~ Id (x) P_c    =>    [A_b, C_c] (x) Id ~ 0 .\n```\n\nThe proof moves both products to the *same* operator on Bob's side, `Id (x) P_{b,c}`, and that is\nwhere projectivity enters: for a projective measurement with a product outcome set the two\nmarginals commute and multiply to the joint element (`IsPVM.marg_mul_marg`). Nothing else about\n`P` is used.\n\n## What the steps need\n\nEach step multiplies a known deviation by an operator *in front*. The fact that lets it is the\npaper's `fact:add-a-proj`: if `sum_i F_i^dag F_i <= Id` then `sum_i ||F_i v||^2 <= ||v||^2`, so\nputting a family in front of a deviation costs nothing and *adds* its index to the sum. For a\nPOVM that hypothesis is `A_b^2 <= A_b` and `sum_b A_b = Id`, with no projectivity\n(`sum_aOp_conjTranspose_mul_self_le_one`).\n\nThe constant is `16 delta`: each side of the commutator reaches `Id (x) P_{b,c}` in two steps\n(`4 delta` after one triangle inequality), and the commutator is one more triangle\n(`2 * 4 + 2 * 4`). No square root anywhere.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Commutation.lean#L86-L107",
+  "source_path": "MIPRE/Foundations/Commutation.lean",
+  "lines": [
+   86,
+   107
+  ],
+  "blueprint": [
+   {
+    "label": "lem:commutation-analysis",
+    "env": "lemma",
+    "title": "Commutation analysis",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 9,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_snorm_sq_triangle3",
+  "source_name": "MIPRE.sum_snorm_sq_triangle3",
+  "formal_statement": "theorem MIPRE.sum_snorm_sq_triangle3 {κ : Type*} [Fintype κ] (v : N → ℂ)\n    (P Q R T : κ → Matrix N N ℂ) :\n    ∑ o, snorm v (P o - T o) ^ 2\n      ≤ 3 * ∑ o, snorm v (P o - Q o) ^ 2 + 3 * ∑ o, snorm v (Q o - R o) ^ 2\n        + 3 * ∑ o, snorm v (R o - T o) ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {N : Type*} [Fintype N] [DecidableEq N]"
+  ],
+  "docstring": "The three-term triangle inequality for a family of deviations.",
+  "module": "MIPRE.Foundations.Commutation",
+  "module_doc": "/-!\n# The commutation analysis\n\nBlueprint `lem:commutation-analysis` (the paper's, in `games.tex`), and the two facts it runs on.\nIt is the step that turns *consistency with a joint measurement on the other side* into\n*approximate commutation on one side*, and it is the only place in the Pauli appendix where\nprojectivity of a measurement is genuinely used.\n\n## The shape\n\nAlice has two POVMs `A_b` and `C_c`; Bob has one **projective** measurement `P_{b,c}` whose\noutcome is the pair. If each of Alice's is cross-party close to the corresponding marginal of\nBob's, then Alice's two commute on the state:\n\n```\nA_b (x) Id ~ Id (x) P_b   and   C_c (x) Id ~ Id (x) P_c    =>    [A_b, C_c] (x) Id ~ 0 .\n```\n\nThe proof moves both products to the *same* operator on Bob's side, `Id (x) P_{b,c}`, and that is\nwhere projectivity enters: for a projective measurement with a product outcome set the two\nmarginals commute and multiply to the joint element (`IsPVM.marg_mul_marg`). Nothing else about\n`P` is used.\n\n## What the steps need\n\nEach step multiplies a known deviation by an operator *in front*. The fact that lets it is the\npaper's `fact:add-a-proj`: if `sum_i F_i^dag F_i <= Id` then `sum_i ||F_i v||^2 <= ||v||^2`, so\nputting a family in front of a deviation costs nothing and *adds* its index to the sum. For a\nPOVM that hypothesis is `A_b^2 <= A_b` and `sum_b A_b = Id`, with no projectivity\n(`sum_aOp_conjTranspose_mul_self_le_one`).\n\nThe constant is `16 delta`: each side of the commutator reaches `Id (x) P_{b,c}` in two steps\n(`4 delta` after one triangle inequality), and the commutator is one more triangle\n(`2 * 4 + 2 * 4`). No square root anywhere.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Commutation.lean#L197-L216",
+  "source_path": "MIPRE/Foundations/Commutation.lean",
+  "lines": [
+   197,
+   216
+  ],
+  "blueprint": [
+   {
+    "label": "lem:commutation-analysis",
+    "env": "lemma",
+    "title": "Commutation analysis",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.esize_list_reverse",
+  "source_name": "MIPRE.Cost.esize_list_reverse",
+  "formal_statement": "theorem MIPRE.Cost.esize_list_reverse (l : List α) : esize l.reverse = esize l := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open Polynomial",
+   "variable {α : Type*} [SizedEncoding α]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Cost.Fold",
+  "module_doc": "/-!\n# The closure library, part IV: folds over lists\n\nThe generic iteration combinator of the library, `PolyTimeFun.foldl`: a fold of a\npolynomial-time body over a list is polynomial-time provided the accumulator grows by at\nmost an additive polynomial in the element at each step (the Cobham condition\n`esize (F (s, a)) ≤ esize s + B (esize a)`), and from it `cons`, `casesList`, `map`, `zip`,\n`append`, `replicate` and `reverse` (`planning/succinct-cook-levin.md`, S3). Every\ncombinator's `toFun` is the corresponding `List` function, so that a program assembled\nfrom them is *defined* by its mathematical meaning and only its time bound is inherited.\n\nLists of an arbitrary encodable type encode as `cons`-chains of the encodings\n(`instSizedEncodingList`, at low priority so that the existing instances for bit strings\nand gate lists are still found first; they agree definitionally).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/Fold.lean#L70-L76",
+  "source_path": "MIPRE/Foundations/Cost/Fold.lean",
+  "lines": [
+   70,
+   76
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.unary_add",
+  "source_name": "MIPRE.Cost.unary_add",
+  "formal_statement": "theorem MIPRE.Cost.unary_add (a b : ℕ) : unary (a + b) = unary a ++ unary b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open Polynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Cost.Fold",
+  "module_doc": "/-!\n# The closure library, part IV: folds over lists\n\nThe generic iteration combinator of the library, `PolyTimeFun.foldl`: a fold of a\npolynomial-time body over a list is polynomial-time provided the accumulator grows by at\nmost an additive polynomial in the element at each step (the Cobham condition\n`esize (F (s, a)) ≤ esize s + B (esize a)`), and from it `cons`, `casesList`, `map`, `zip`,\n`append`, `replicate` and `reverse` (`planning/succinct-cook-levin.md`, S3). Every\ncombinator's `toFun` is the corresponding `List` function, so that a program assembled\nfrom them is *defined* by its mathematical meaning and only its time bound is inherited.\n\nLists of an arbitrary encodable type encode as `cons`-chains of the encodings\n(`instSizedEncodingList`, at low priority so that the existing instances for bit strings\nand gate lists are still found first; they agree definitionally).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/Fold.lean#L533-L534",
+  "source_path": "MIPRE/Foundations/Cost/Fold.lean",
+  "lines": [
+   533,
+   534
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.whileProg_runs",
+  "source_name": "MIPRE.Cost.whileProg_runs",
+  "formal_statement": "theorem MIPRE.Cost.whileProg_runs (f : PolyTimeFun Data (Bool × Data)) (N : ℕ) (s : ℕ → Data) (r : Data)\n    (hcont : ∀ i < N, f (s i) = (true, s (i + 1))) (hstop : f (s N) = (false, r)) :\n    ∃ t ≤ ∑ i ∈ Finset.range (N + 1), (f.timeBound.eval (s i).size + 1),\n      (whileProg f).Runs (s 0) r t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "**A run of the loop** through the states `s 0, …, s N`, stopping at `s N` with `r`.",
+  "module": "MIPRE.Foundations.Cost.While",
+  "module_doc": "/-!\n# Iterating a polynomial-time step, and running programs in sequence\n\nTwo program combinators for routines whose running time is not polynomial in the size of their\ninput, such as the computation of `(λn + 1)^μ` from binary `λ, n, μ`:\n\n* `whileProg f` iterates a total step `f : Data → Bool × Data` from a state, continuing on\n  `(true, s')` with the state `s'` and stopping on `(false, r)` with the result `r`; a run of\n  `N + 1` steps costs the sum of the steps' bounds (`whileProg_runs`);\n* `seqProg p q` runs `q` on the output of `p` (`seqProg_runs`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/While.lean#L30-L49",
+  "source_path": "MIPRE/Foundations/Cost/While.lean",
+  "lines": [
+   30,
+   49
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.seqProg_closed",
+  "source_name": "MIPRE.Cost.seqProg_closed",
+  "formal_statement": "theorem MIPRE.Cost.seqProg_closed {p q : Prog} (hp : p.WellScoped 1) (hq : q.WellScoped 1) :\n    (seqProg p q).WellScoped 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Cost.While",
+  "module_doc": "/-!\n# Iterating a polynomial-time step, and running programs in sequence\n\nTwo program combinators for routines whose running time is not polynomial in the size of their\ninput, such as the computation of `(λn + 1)^μ` from binary `λ, n, μ`:\n\n* `whileProg f` iterates a total step `f : Data → Bool × Data` from a state, continuing on\n  `(true, s')` with the state `s'` and stopping on `(false, r)` with the result `r`; a run of\n  `N + 1` steps costs the sum of the steps' bounds (`whileProg_runs`);\n* `seqProg p q` runs `q` on the output of `p` (`seqProg_runs`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/While.lean#L54-L56",
+  "source_path": "MIPRE/Foundations/Cost/While.lean",
+  "lines": [
+   54,
+   56
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.seqProg_runs",
+  "source_name": "MIPRE.Cost.seqProg_runs",
+  "formal_statement": "theorem MIPRE.Cost.seqProg_runs {p q : Prog} (hq : q.WellScoped 1) {x y r : Data} {s t : ℕ}\n    (hp : p.Runs x y s) (hq' : q.Runs y r t) : (seqProg p q).Runs x r (s + t + 1) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Cost.While",
+  "module_doc": "/-!\n# Iterating a polynomial-time step, and running programs in sequence\n\nTwo program combinators for routines whose running time is not polynomial in the size of their\ninput, such as the computation of `(λn + 1)^μ` from binary `λ, n, μ`:\n\n* `whileProg f` iterates a total step `f : Data → Bool × Data` from a state, continuing on\n  `(true, s')` with the state `s'` and stopping on `(false, r)` with the result `r`; a run of\n  `N + 1` steps costs the sum of the steps' bounds (`whileProg_runs`);\n* `seqProg p q` runs `q` on the output of `p` (`seqProg_runs`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/While.lean#L58-L60",
+  "source_path": "MIPRE/Foundations/Cost/While.lean",
+  "lines": [
+   58,
+   60
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_stateSqNorm_le_one",
+  "source_name": "MIPRE.sum_stateSqNorm_le_one",
+  "formal_statement": "theorem MIPRE.sum_stateSqNorm_le_one {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) (M : POVM A dA) :\n    ∑ a, stateSqNorm ψ (((M.mats a).val)) ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {X Y A B C dA dB : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "`∑_a ‖(A_a ⊗ Id)|ψ⟩‖² ≤ 1` for a POVM on a unit vector.",
+  "module": "MIPRE.Foundations.CrossConsistency",
+  "module_doc": "/-!\n# Cross-party consistency, and what winning a subtest buys\n\nThe Pauli appendix's `≃_δ` compares `A ⊗ Id` with `Id ⊗ B`: one player's operator against the\n*other* player's. `MIPRE.stateDist` of `def:state-distance` compares two families on the same\nside, which is what the orthonormalization step needs; this file is the cross-party form, and\nthe one lemma that produces it.\n\n## The engine\n\n`xSqNorm ψ A B = ‖(A ⊗ Id - Id ⊗ B)|ψ⟩‖²`, and `xPovmDist` averages its sum over outcomes\nagainst a question distribution. `xSqNorm_sum_le_two_mul` is the only analytic content:\n\n```\n∑_c ‖(A_c ⊗ Id - Id ⊗ B_c)|ψ⟩‖² ≤ 2 (1 - ∑_c ⟨ψ| A_c ⊗ B_c |ψ⟩)\n```\n\nfor any two POVMs indexed by the same outcome set. Expand each square; the two diagonal sums are\nat most one because a POVM element `A` has `A† A = A² ≤ A` and the elements sum to the identity,\nand the cross term is exactly the agreement probability. **No projectivity is used** --- which\nmatters, because the strategies this is applied to are arbitrary POVM strategies and the\nprojectivity only arrives later, through `cor:ortho-from-consistency`.\n\nPaired with `condFail_agree`, which says the right-hand side *is* twice the conditional failure\nof a subtest whose decider accepts iff two post-processings of the answers agree, this turns\neach item of `lem:qld-win` into an instance: name the two post-processings, check the decider,\nand the bound is `2 ε / μ`.\n\n## The weights\n\n`sum_mul_condFail_le` is the other half: the conditional failures of *any* set of question\npairs, weighted by their probabilities, add up to at most `ε`. `condFail_le_div` in\n`MIPRE/Foundations/POVMValue.lean` is its one-pair case. The useful corollary is\n`sum_condFail_le_of_le`: an auxiliary distribution `ν` on an index set that injects into the\nquestion pairs, with `c · ν i ≤ μ` at each, gives `∑_i ν i · condFail ≤ ε / c`. That is the\nblueprint's \"each item is the value of the corresponding subtest, divided by the probability\nthat the subtest is selected\", with `c` the selection probability and `ν` the conditional\nquestion distribution.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CrossConsistency.lean#L156-L185",
+  "source_path": "MIPRE/Foundations/CrossConsistency.lean",
+  "lines": [
+   156,
+   185
+  ],
+  "blueprint": [
+   {
+    "label": "def:cross-distance",
+    "env": "definition",
+    "title": "Cross-party state-dependent distance",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.POVM.sum_val",
+   "MIPRE.quadForm_eq"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.xSqNorm_sum_le_two_mul",
+  "source_name": "MIPRE.xSqNorm_sum_le_two_mul",
+  "formal_statement": "theorem MIPRE.xSqNorm_sum_le_two_mul {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)\n    (M : POVM C dA) (N : POVM C dB) :\n    ∑ c, xSqNorm ψ (((M.mats c).val)) (((N.mats c).val))\n      ≤ 2 * (1 - ∑ c, bornProb ψ (((M.mats c).val)) (((N.mats c).val))) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {X Y A B C dA dB : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "**From agreement to cross-party closeness.** For any two POVMs with the same outcome set,\nthe summed cross-party squared deviation is at most twice the disagreement probability. Expand\neach square: the two diagonal sums are at most one (`sum_stateSqNorm_le_one`), and the cross\nterm is the agreement probability.\n\nNo projectivity, and no hypothesis beyond `ψ` being a unit vector.",
+  "module": "MIPRE.Foundations.CrossConsistency",
+  "module_doc": "/-!\n# Cross-party consistency, and what winning a subtest buys\n\nThe Pauli appendix's `≃_δ` compares `A ⊗ Id` with `Id ⊗ B`: one player's operator against the\n*other* player's. `MIPRE.stateDist` of `def:state-distance` compares two families on the same\nside, which is what the orthonormalization step needs; this file is the cross-party form, and\nthe one lemma that produces it.\n\n## The engine\n\n`xSqNorm ψ A B = ‖(A ⊗ Id - Id ⊗ B)|ψ⟩‖²`, and `xPovmDist` averages its sum over outcomes\nagainst a question distribution. `xSqNorm_sum_le_two_mul` is the only analytic content:\n\n```\n∑_c ‖(A_c ⊗ Id - Id ⊗ B_c)|ψ⟩‖² ≤ 2 (1 - ∑_c ⟨ψ| A_c ⊗ B_c |ψ⟩)\n```\n\nfor any two POVMs indexed by the same outcome set. Expand each square; the two diagonal sums are\nat most one because a POVM element `A` has `A† A = A² ≤ A` and the elements sum to the identity,\nand the cross term is exactly the agreement probability. **No projectivity is used** --- which\nmatters, because the strategies this is applied to are arbitrary POVM strategies and the\nprojectivity only arrives later, through `cor:ortho-from-consistency`.\n\nPaired with `condFail_agree`, which says the right-hand side *is* twice the conditional failure\nof a subtest whose decider accepts iff two post-processings of the answers agree, this turns\neach item of `lem:qld-win` into an instance: name the two post-processings, check the decider,\nand the bound is `2 ε / μ`.\n\n## The weights\n\n`sum_mul_condFail_le` is the other half: the conditional failures of *any* set of question\npairs, weighted by their probabilities, add up to at most `ε`. `condFail_le_div` in\n`MIPRE/Foundations/POVMValue.lean` is its one-pair case. The useful corollary is\n`sum_condFail_le_of_le`: an auxiliary distribution `ν` on an index set that injects into the\nquestion pairs, with `c · ν i ≤ μ` at each, gives `∑_i ν i · condFail ≤ ε / c`. That is the\nblueprint's \"each item is the value of the corresponding subtest, divided by the probability\nthat the subtest is selected\", with `c` the selection probability and `ν` the conditional\nquestion distribution.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CrossConsistency.lean#L197-L223",
+  "source_path": "MIPRE/Foundations/CrossConsistency.lean",
+  "lines": [
+   197,
+   223
+  ],
+  "blueprint": [
+   {
+    "label": "def:cross-distance",
+    "env": "definition",
+    "title": "Cross-party state-dependent distance",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_stateSqNorm_le_one"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_bornProb_map",
+  "source_name": "MIPRE.sum_bornProb_map",
+  "formal_statement": "theorem MIPRE.sum_bornProb_map {x : X} {y : Y} (f : A → C) (g : B → C) :\n    ∑ c, bornProb ψ ((((MA x).map f).mats c).val) ((((MB y).map g).mats c).val)\n      = ∑ a, ∑ b, (if f a = g b then (1 : ℝ) else 0)\n          * bornProb ψ (((MA x).mats a).val) (((MB y).mats b).val) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {X Y A B C dA dB : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable {G : Game X Y A B} {ψ : dA × dB → ℂ} {MA : X → POVM A dA} {MB : Y → POVM B dB}"
+  ],
+  "docstring": "The agreement probability of the coarse-grained POVMs, as a sum over the original outcome\npairs.",
+  "module": "MIPRE.Foundations.CrossConsistency",
+  "module_doc": "/-!\n# Cross-party consistency, and what winning a subtest buys\n\nThe Pauli appendix's `≃_δ` compares `A ⊗ Id` with `Id ⊗ B`: one player's operator against the\n*other* player's. `MIPRE.stateDist` of `def:state-distance` compares two families on the same\nside, which is what the orthonormalization step needs; this file is the cross-party form, and\nthe one lemma that produces it.\n\n## The engine\n\n`xSqNorm ψ A B = ‖(A ⊗ Id - Id ⊗ B)|ψ⟩‖²`, and `xPovmDist` averages its sum over outcomes\nagainst a question distribution. `xSqNorm_sum_le_two_mul` is the only analytic content:\n\n```\n∑_c ‖(A_c ⊗ Id - Id ⊗ B_c)|ψ⟩‖² ≤ 2 (1 - ∑_c ⟨ψ| A_c ⊗ B_c |ψ⟩)\n```\n\nfor any two POVMs indexed by the same outcome set. Expand each square; the two diagonal sums are\nat most one because a POVM element `A` has `A† A = A² ≤ A` and the elements sum to the identity,\nand the cross term is exactly the agreement probability. **No projectivity is used** --- which\nmatters, because the strategies this is applied to are arbitrary POVM strategies and the\nprojectivity only arrives later, through `cor:ortho-from-consistency`.\n\nPaired with `condFail_agree`, which says the right-hand side *is* twice the conditional failure\nof a subtest whose decider accepts iff two post-processings of the answers agree, this turns\neach item of `lem:qld-win` into an instance: name the two post-processings, check the decider,\nand the bound is `2 ε / μ`.\n\n## The weights\n\n`sum_mul_condFail_le` is the other half: the conditional failures of *any* set of question\npairs, weighted by their probabilities, add up to at most `ε`. `condFail_le_div` in\n`MIPRE/Foundations/POVMValue.lean` is its one-pair case. The useful corollary is\n`sum_condFail_le_of_le`: an auxiliary distribution `ν` on an index set that injects into the\nquestion pairs, with `c · ν i ≤ μ` at each, gives `∑_i ν i · condFail ≤ ε / c`. That is the\nblueprint's \"each item is the value of the corresponding subtest, divided by the probability\nthat the subtest is selected\", with `c` the selection probability and `ν` the conditional\nquestion distribution.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CrossConsistency.lean#L235-L272",
+  "source_path": "MIPRE/Foundations/CrossConsistency.lean",
+  "lines": [
+   235,
+   272
+  ],
+  "blueprint": [
+   {
+    "label": "def:cross-distance",
+    "env": "definition",
+    "title": "Cross-party state-dependent distance",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_bornProb_mapB",
+  "source_name": "MIPRE.sum_bornProb_mapB",
+  "formal_statement": "theorem MIPRE.sum_bornProb_mapB {B' : Type*} [Fintype B'] [DecidableEq B'] (EA : Matrix dA dA ℂ)\n    (NB : POVM B dB) (φB : B → B') (w : B' → ℝ) :\n    ∑ b', w b' * bornProb ψ EA (((NB.map φB).mats b').val)\n      = ∑ b, w (φB b) * bornProb ψ EA ((NB.mats b).val) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {X Y A B C dA dB : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable {G : Game X Y A B} {ψ : dA × dB → ℂ} {MA : X → POVM A dA} {MB : Y → POVM B dB}"
+  ],
+  "docstring": "Relabelling Bob's outcomes is data processing: a weighted sum over the relabelled outcomes is\nthe same weighted sum over the original ones, with the weight pulled back.",
+  "module": "MIPRE.Foundations.CrossConsistency",
+  "module_doc": "/-!\n# Cross-party consistency, and what winning a subtest buys\n\nThe Pauli appendix's `≃_δ` compares `A ⊗ Id` with `Id ⊗ B`: one player's operator against the\n*other* player's. `MIPRE.stateDist` of `def:state-distance` compares two families on the same\nside, which is what the orthonormalization step needs; this file is the cross-party form, and\nthe one lemma that produces it.\n\n## The engine\n\n`xSqNorm ψ A B = ‖(A ⊗ Id - Id ⊗ B)|ψ⟩‖²`, and `xPovmDist` averages its sum over outcomes\nagainst a question distribution. `xSqNorm_sum_le_two_mul` is the only analytic content:\n\n```\n∑_c ‖(A_c ⊗ Id - Id ⊗ B_c)|ψ⟩‖² ≤ 2 (1 - ∑_c ⟨ψ| A_c ⊗ B_c |ψ⟩)\n```\n\nfor any two POVMs indexed by the same outcome set. Expand each square; the two diagonal sums are\nat most one because a POVM element `A` has `A† A = A² ≤ A` and the elements sum to the identity,\nand the cross term is exactly the agreement probability. **No projectivity is used** --- which\nmatters, because the strategies this is applied to are arbitrary POVM strategies and the\nprojectivity only arrives later, through `cor:ortho-from-consistency`.\n\nPaired with `condFail_agree`, which says the right-hand side *is* twice the conditional failure\nof a subtest whose decider accepts iff two post-processings of the answers agree, this turns\neach item of `lem:qld-win` into an instance: name the two post-processings, check the decider,\nand the bound is `2 ε / μ`.\n\n## The weights\n\n`sum_mul_condFail_le` is the other half: the conditional failures of *any* set of question\npairs, weighted by their probabilities, add up to at most `ε`. `condFail_le_div` in\n`MIPRE/Foundations/POVMValue.lean` is its one-pair case. The useful corollary is\n`sum_condFail_le_of_le`: an auxiliary distribution `ν` on an index set that injects into the\nquestion pairs, with `c · ν i ≤ μ` at each, gives `∑_i ν i · condFail ≤ ε / c`. That is the\nblueprint's \"each item is the value of the corresponding subtest, divided by the probability\nthat the subtest is selected\", with `c` the selection probability and `ν` the conditional\nquestion distribution.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CrossConsistency.lean#L274-L296",
+  "source_path": "MIPRE/Foundations/CrossConsistency.lean",
+  "lines": [
+   274,
+   296
+  ],
+  "blueprint": [
+   {
+    "label": "def:cross-distance",
+    "env": "definition",
+    "title": "Cross-party state-dependent distance",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_bornProb_mapA",
+  "source_name": "MIPRE.sum_bornProb_mapA",
+  "formal_statement": "theorem MIPRE.sum_bornProb_mapA {A' : Type*} [Fintype A'] [DecidableEq A'] (NA : POVM A dA)\n    (φA : A → A') (EB : Matrix dB dB ℂ) (w : A' → ℝ) :\n    ∑ a', w a' * bornProb ψ (((NA.map φA).mats a').val) EB\n      = ∑ a, w (φA a) * bornProb ψ ((NA.mats a).val) EB := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {X Y A B C dA dB : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable {G : Game X Y A B} {ψ : dA × dB → ℂ} {MA : X → POVM A dA} {MB : Y → POVM B dB}"
+  ],
+  "docstring": "Relabelling Alice's outcomes is data processing.",
+  "module": "MIPRE.Foundations.CrossConsistency",
+  "module_doc": "/-!\n# Cross-party consistency, and what winning a subtest buys\n\nThe Pauli appendix's `≃_δ` compares `A ⊗ Id` with `Id ⊗ B`: one player's operator against the\n*other* player's. `MIPRE.stateDist` of `def:state-distance` compares two families on the same\nside, which is what the orthonormalization step needs; this file is the cross-party form, and\nthe one lemma that produces it.\n\n## The engine\n\n`xSqNorm ψ A B = ‖(A ⊗ Id - Id ⊗ B)|ψ⟩‖²`, and `xPovmDist` averages its sum over outcomes\nagainst a question distribution. `xSqNorm_sum_le_two_mul` is the only analytic content:\n\n```\n∑_c ‖(A_c ⊗ Id - Id ⊗ B_c)|ψ⟩‖² ≤ 2 (1 - ∑_c ⟨ψ| A_c ⊗ B_c |ψ⟩)\n```\n\nfor any two POVMs indexed by the same outcome set. Expand each square; the two diagonal sums are\nat most one because a POVM element `A` has `A† A = A² ≤ A` and the elements sum to the identity,\nand the cross term is exactly the agreement probability. **No projectivity is used** --- which\nmatters, because the strategies this is applied to are arbitrary POVM strategies and the\nprojectivity only arrives later, through `cor:ortho-from-consistency`.\n\nPaired with `condFail_agree`, which says the right-hand side *is* twice the conditional failure\nof a subtest whose decider accepts iff two post-processings of the answers agree, this turns\neach item of `lem:qld-win` into an instance: name the two post-processings, check the decider,\nand the bound is `2 ε / μ`.\n\n## The weights\n\n`sum_mul_condFail_le` is the other half: the conditional failures of *any* set of question\npairs, weighted by their probabilities, add up to at most `ε`. `condFail_le_div` in\n`MIPRE/Foundations/POVMValue.lean` is its one-pair case. The useful corollary is\n`sum_condFail_le_of_le`: an auxiliary distribution `ν` on an index set that injects into the\nquestion pairs, with `c · ν i ≤ μ` at each, gives `∑_i ν i · condFail ≤ ε / c`. That is the\nblueprint's \"each item is the value of the corresponding subtest, divided by the probability\nthat the subtest is selected\", with `c` the selection probability and `ν` the conditional\nquestion distribution.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CrossConsistency.lean#L298-L319",
+  "source_path": "MIPRE/Foundations/CrossConsistency.lean",
+  "lines": [
+   298,
+   319
+  ],
+  "blueprint": [
+   {
+    "label": "def:cross-distance",
+    "env": "definition",
+    "title": "Cross-party state-dependent distance",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.one_sub_sum_bornProb_le_condFail",
+  "source_name": "MIPRE.one_sub_sum_bornProb_le_condFail",
+  "formal_statement": "theorem MIPRE.one_sub_sum_bornProb_le_condFail {x : X} {y : Y} (f : A → C) (g : B → C)\n    (hD : ∀ a b, G.D x y a b = true → f a = g b) :\n    1 - ∑ c, bornProb ψ ((((MA x).map f).mats c).val) ((((MB y).map g).mats c).val)\n      ≤ condFail G ψ MA MB x y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {X Y A B C dA dB : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable {G : Game X Y A B} {ψ : dA × dB → ℂ} {MA : X → POVM A dA} {MB : Y → POVM B dB}"
+  ],
+  "docstring": "**Accept implies agree bounds the disagreement of the coarse-grained POVMs by the\nconditional failure.**",
+  "module": "MIPRE.Foundations.CrossConsistency",
+  "module_doc": "/-!\n# Cross-party consistency, and what winning a subtest buys\n\nThe Pauli appendix's `≃_δ` compares `A ⊗ Id` with `Id ⊗ B`: one player's operator against the\n*other* player's. `MIPRE.stateDist` of `def:state-distance` compares two families on the same\nside, which is what the orthonormalization step needs; this file is the cross-party form, and\nthe one lemma that produces it.\n\n## The engine\n\n`xSqNorm ψ A B = ‖(A ⊗ Id - Id ⊗ B)|ψ⟩‖²`, and `xPovmDist` averages its sum over outcomes\nagainst a question distribution. `xSqNorm_sum_le_two_mul` is the only analytic content:\n\n```\n∑_c ‖(A_c ⊗ Id - Id ⊗ B_c)|ψ⟩‖² ≤ 2 (1 - ∑_c ⟨ψ| A_c ⊗ B_c |ψ⟩)\n```\n\nfor any two POVMs indexed by the same outcome set. Expand each square; the two diagonal sums are\nat most one because a POVM element `A` has `A† A = A² ≤ A` and the elements sum to the identity,\nand the cross term is exactly the agreement probability. **No projectivity is used** --- which\nmatters, because the strategies this is applied to are arbitrary POVM strategies and the\nprojectivity only arrives later, through `cor:ortho-from-consistency`.\n\nPaired with `condFail_agree`, which says the right-hand side *is* twice the conditional failure\nof a subtest whose decider accepts iff two post-processings of the answers agree, this turns\neach item of `lem:qld-win` into an instance: name the two post-processings, check the decider,\nand the bound is `2 ε / μ`.\n\n## The weights\n\n`sum_mul_condFail_le` is the other half: the conditional failures of *any* set of question\npairs, weighted by their probabilities, add up to at most `ε`. `condFail_le_div` in\n`MIPRE/Foundations/POVMValue.lean` is its one-pair case. The useful corollary is\n`sum_condFail_le_of_le`: an auxiliary distribution `ν` on an index set that injects into the\nquestion pairs, with `c · ν i ≤ μ` at each, gives `∑_i ν i · condFail ≤ ε / c`. That is the\nblueprint's \"each item is the value of the corresponding subtest, divided by the probability\nthat the subtest is selected\", with `c` the selection probability and `ν` the conditional\nquestion distribution.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CrossConsistency.lean#L339-L358",
+  "source_path": "MIPRE/Foundations/CrossConsistency.lean",
+  "lines": [
+   339,
+   358
+  ],
+  "blueprint": [
+   {
+    "label": "def:cross-distance",
+    "env": "definition",
+    "title": "Cross-party state-dependent distance",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb_map",
+   "MIPRE.POVM.posSemidef"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.ancillaEmbed_isometry",
+  "source_name": "MIPRE.ancillaEmbed_isometry",
+  "formal_statement": "theorem MIPRE.ancillaEmbed_isometry {d A : Type*} [Fintype d] [DecidableEq d]\n    [Fintype A] [DecidableEq A] (a₀ : A) :\n    (ancillaEmbed d a₀)ᴴ * ancillaEmbed d a₀ = (1 : Matrix d d ℂ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Matrix",
+   "open scoped ComplexOrder Kronecker MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Dilation",
+  "module_doc": "/-!\n# Naimark dilation against a fixed state\n\nA POVM is the compression of a projective measurement on a larger space. What the applications\nneed is more than that: a whole *question-indexed family* of POVMs must be the compression of a\nfamily of projective measurements by **one** question-independent isometry, because the state\nthe expectations are taken against is shared and must not depend on the question.\n`exists_projective_dilation` is that statement, and the unitary extension\n(`exists_unitary_extending`) is the step that buys it.\n\nThis file was extracted from `MIPRE/Background/Repetition/Entangled.lean`, where it was written\nfor the dilation direction of `lem:povm-value-eq`. It is generic mathematics --- matrices, an\nancilla register, and the completion of an orthonormal family to a basis --- and it reaches\nnone of the vendored trees, but `Entangled.lean` imports the 71k-line vendored\n`Repetition/TenProofs/QuantumParallelRepetition`, and `MIPRE/LCS/` may not import\n`MIPRE/Background/` at all. The second consumer is blueprint `lem:ms-direct-anticomm`, whose\nproof dilates each of the Magic Square's six constraint POVMs against one shared ancilla, so\nthe code has to live outside `MIPRE/Background/` to be usable at all.\n\nThe Born-rule transport lemmas at the end travel with it: they are how a dilated projective\nmeasurement is compressed back, and they say nothing about repetition either.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Dilation.lean#L123-L134",
+  "source_path": "MIPRE/Foundations/Dilation.lean",
+  "lines": [
+   123,
+   134
+  ],
+  "blueprint": [
+   {
+    "label": "lem:naimark-dilation",
+    "env": "lemma",
+    "title": "Naimark dilation of a question-indexed family",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 9,
+  "is_target": false
+ }
+]

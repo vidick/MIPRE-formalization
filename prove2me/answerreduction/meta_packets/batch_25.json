@@ -1,0 +1,629 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.AnswerSuccessorRestrictedProbabilitiesStatement.ofWeightedBounds",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.AnswerSuccessorRestrictedProbabilitiesStatement.ofWeightedBounds",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.AnswerSuccessorRestrictedProbabilitiesStatement.ofWeightedBounds\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : AnswerSymStrat params.next ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (haxisWeightedBound :\n      avgOver (uniformDistribution (Fq params))\n          (fun x => sliceTransverseDirectionWeight params *\n            (xRestrictedAnswerSymStratOfAnswer params strategy x).axisParallelFailureProbability)\n        ≤ eps)\n    (hdiagonalWeightedBound :\n      avgOver (uniformDistribution (Fq params))\n          (fun x => sliceTransverseDirectionWeight params *\n            (xRestrictedAnswerSymStratOfAnswer params strategy x).diagonalFailureProbability)\n        ≤ gamma) :\n    AnswerSuccessorRestrictedProbabilitiesStatement params strategy eps delta gamma := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open MIPStarRE.LDT.MainInductionStep.AnswerSuccessorRestrictedProbabilitiesStatement",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Assemble the weighted answer-valued successor restricted-probability bounds\ninto the averaged statement.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.AnswerValued",
+  "module_doc": "/-!\n# Section 6 -- Answer-Valued Restricted Probability Statement\n\nThis module contains the answer-valued form of the restricted-probability\nbookkeeping for the main induction step.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/AnswerValued.lean#L586-L635",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/AnswerValued.lean",
+  "lines": [
+   586,
+   635
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_const_mul",
+   "MIPStarRE.LDT.MainInductionStep.answerSuccessor_selfConsistencyRestrictedAverage_eq",
+   "MIPStarRE.LDT.MainInductionStep.weighted_bound_to_average"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.answerSuccessorRestrictedSliceConclusions",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.answerSuccessorRestrictedSliceConclusions",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.answerSuccessorRestrictedSliceConclusions\n    (params : Parameters)\n    [FieldModel.{uF} params.q]\n    (strategy : AnswerSymStrat params.next ι)\n    (eps delta gamma : Error)\n    (k : ℕ)\n    (hgood : strategy.IsGood eps delta gamma)\n    (hinduction : AnswerMainInductionHypothesis.{uF, uι} params)\n    (hk_next : 400 * params.next.m * params.next.d ≤ k)\n    (hsmall : mainInductionError params.next k eps delta gamma < 1) :\n    ∃ profile : AnswerSuccessorRestrictedFailureProfile params strategy,\n      averageAnswerSuccessorRestrictedAxisParallelError params profile ≤\n          sliceConditioningLoss params * eps ∧\n        averageAnswerSuccessorRestrictedSelfConsistencyError params profile ≤ delta ∧\n        averageAnswerSuccessorRestrictedDiagonalError params profile ≤\n          sliceConditioningLoss params * gamma ∧\n        ∀ x,\n          AnswerMainInductionConclusion params\n            (xRestrictedAnswerSymStratOfAnswer params strategy x)\n            (profile.axisParallel x)\n            (profile.selfConsistency x)\n            (profile.diagonal x)\n            k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Recursive predecessor conclusions for the answer-valued successor slices.\n\nPaper origin: `references/ldt-paper/inductive_step.tex:441-454`, in the\nanswer-valued successor interface used by the simultaneous induction route.\n\nThis theorem is the formal content of the recursive call: from the\nanswer-valued restricted-probabilities theorem and the predecessor\nanswer-valued induction hypothesis, it obtains the main-induction conclusion\nfor every restricted slice.  The hypotheses `k ≥ 1` and\n`400 * params.m * params.d ≤ k` are derived here from the nontrivial\nsuccessor branch, rather than being stored in a source theorem statement.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.AnswerValued",
+  "module_doc": "/-!\n# Section 6 -- Answer-Valued Restricted Probability Statement\n\nThis module contains the answer-valued form of the restricted-probability\nbookkeeping for the main induction step.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/AnswerValued.lean#L656-L706",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/AnswerValued.lean",
+  "lines": [
+   656,
+   706
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MainInductionStep.answerSuccessor_weighted_axisParallel_bound",
+   "MIPStarRE.LDT.MainInductionStep.answerSuccessor_weighted_diagonal_bound",
+   "MIPStarRE.LDT.MainInductionStep.AnswerSuccessorRestrictedProbabilitiesStatement.ofWeightedBounds"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.weighted_axisParallel_bound",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.weighted_axisParallel_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.weighted_axisParallel_bound\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma) :\n    avgOver (uniformDistribution (Fq params))\n        (fun x => sliceTransverseDirectionWeight params *\n          (xRestrictedStrategy params strategy x).axisParallelFailureProbability) ≤ eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The weighted average of the restricted axis-parallel slice errors is bounded\nby the ambient axis-parallel test error.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Axis",
+  "module_doc": "/-!\n# Section 6 -- Axis-Parallel Restricted Probability Bounds\n\nThis module contains the axis-parallel part of the restricted-probability\nbookkeeping for the main induction step.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/Axis.lean#L229-L281",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/Axis.lean",
+  "lines": [
+   229,
+   281
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_prod_swap",
+   "MIPStarRE.LDT.avgOver_nonneg",
+   "MIPStarRE.LDT.avgOver_const_mul",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.MainInductionStep.weighted_embedded_average_le_full_average",
+   "MIPStarRE.LDT.qBipartiteConsDefect_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 42,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.avgOver_uniform_pointAppend_prod",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.avgOver_uniform_pointAppend_prod",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.avgOver_uniform_pointAppend_prod\n    (params : Parameters)\n    [FieldModel params.q]\n    (β : Type*) [Fintype β] [DecidableEq β] [Nonempty β]\n    (g : Point params.next × β → Error) :\n    avgOver (uniformDistribution (Fq params × (Point params × β)))\n        (fun xs => g (appendPoint params xs.2.1 xs.1, xs.2.2)) =\n      avgOver (uniformDistribution (Point params.next × β)) g := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Reindex a uniform average over a restriction height and a point, retaining\nan auxiliary finite index, by appending the height as the final coordinate.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Base",
+  "module_doc": "/-!\n# Section 6 -- Restricted Probability Common Lemmas\n\nThis module contains the averaging and scalar normalization lemmas shared by the\naxis-parallel, diagonal, and answer-valued restricted-probability bounds.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/Base.lean#L107-L131",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/Base.lean",
+  "lines": [
+   107,
+   131
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_equiv",
+   "MIPStarRE.LDT.avgOver_congr"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.avgOver_uniform_restrictedDiagonalSample_append",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.avgOver_uniform_restrictedDiagonalSample_append",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.avgOver_uniform_restrictedDiagonalSample_append\n    (params : Parameters)\n    [FieldModel params.q]\n    (j : Fin params.m)\n    (g : RestrictedDiagonalSample params.next (embedCoord params j) → Error) :\n    avgOver (uniformDistribution (Fq params × RestrictedDiagonalSample params j))\n        (fun xs => g (appendPoint params xs.2.1 xs.1, xs.2.2)) =\n      avgOver (uniformDistribution\n        (RestrictedDiagonalSample params.next (embedCoord params j))) g := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Reindex a restricted diagonal sample together with a restriction height as\nthe corresponding embedded restricted diagonal sample in the successor\ndimension.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Base",
+  "module_doc": "/-!\n# Section 6 -- Restricted Probability Common Lemmas\n\nThis module contains the averaging and scalar normalization lemmas shared by the\naxis-parallel, diagonal, and answer-valued restricted-probability bounds.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/Base.lean#L133-L157",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/Base.lean",
+  "lines": [
+   133,
+   157
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MainInductionStep.avgOver_uniform_pointAppend_prod"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.selfConsistencyRestrictedAverage_eq",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.selfConsistencyRestrictedAverage_eq",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.selfConsistencyRestrictedAverage_eq\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι) :\n    avgOver (uniformDistribution (Fq params))\n        (fun x => (xRestrictedStrategy params strategy x).selfConsistencyFailureProbability) =\n      strategy.selfConsistencyFailureProbability := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Averaging the self-consistency defect over all horizontal restrictions\nrecovers the ambient self-consistency defect.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Base",
+  "module_doc": "/-!\n# Section 6 -- Restricted Probability Common Lemmas\n\nThis module contains the averaging and scalar normalization lemmas shared by the\naxis-parallel, diagonal, and answer-valued restricted-probability bounds.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/Base.lean#L159-L181",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/Base.lean",
+  "lines": [
+   159,
+   181
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.CommutativityPoints.avgOver_uniform_pointNext_decompose"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.weighted_embedded_average_le_full_average",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.weighted_embedded_average_le_full_average",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.weighted_embedded_average_le_full_average\n    (params : Parameters)\n    (f : Fin params.next.m → Error)\n    (hf : ∀ i, 0 ≤ f i) :\n    sliceTransverseDirectionWeight params *\n        avgOver (uniformDistribution (Fin params.m)) (fun i => f (embedCoord params i)) ≤\n      avgOver (uniformDistribution (Fin params.next.m)) f := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The weighted average over embedded transverse directions is bounded by the\nambient average over all directions.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Base",
+  "module_doc": "/-!\n# Section 6 -- Restricted Probability Common Lemmas\n\nThis module contains the averaging and scalar normalization lemmas shared by the\naxis-parallel, diagonal, and answer-valued restricted-probability bounds.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/Base.lean#L183-L247",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/Base.lean",
+  "lines": [
+   183,
+   247
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.embedCoord_injective"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 56,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.weighted_bound_to_average",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.weighted_bound_to_average",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.weighted_bound_to_average\n    (params : Parameters)\n    {a b : Error}\n    (h : sliceTransverseDirectionWeight params * a ≤ b) :\n    a ≤ sliceConditioningLoss params * b := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Remove the transverse-direction weight from an averaged restricted bound.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Base",
+  "module_doc": "/-!\n# Section 6 -- Restricted Probability Common Lemmas\n\nThis module contains the averaging and scalar normalization lemmas shared by the\naxis-parallel, diagonal, and answer-valued restricted-probability bounds.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/Base.lean#L249-L273",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/Base.lean",
+  "lines": [
+   249,
+   273
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.weighted_diagonal_bound",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.weighted_diagonal_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.weighted_diagonal_bound\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma) :\n    avgOver (uniformDistribution (Fq params))\n        (fun x => sliceTransverseDirectionWeight params *\n          (xRestrictedStrategy params strategy x).diagonalFailureProbability) ≤ gamma := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The weighted average of the restricted diagonal slice errors is bounded by\n the ambient diagonal-line test error.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.RestrictedProbabilities.Diagonal",
+  "module_doc": "/-!\n# Section 6 -- Diagonal Restricted Probability Bounds\n\nThis module contains the diagonal-line part of the restricted-probability\nbookkeeping for the main induction step.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/Diagonal.lean#L210-L270",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/RestrictedProbabilities/Diagonal.lean",
+  "lines": [
+   210,
+   270
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_const_mul",
+   "MIPStarRE.LDT.MainInductionStep.weighted_embedded_average_le_full_average",
+   "MIPStarRE.LDT.bipartiteConsError_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 50,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.selfImprovementInInductionSection_of_axisParallel_selfConsistency",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.selfImprovementInInductionSection_of_axisParallel_selfConsistency",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.selfImprovementInInductionSection_of_axisParallel_selfConsistency\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma nu : Error)\n    (haxis : strategy.axisParallelFailureProbability ≤ eps)\n    (hself : strategy.selfConsistencyFailureProbability ≤ delta)\n    (G : Measurement (Polynomial params) ι)\n    (hcons : ConsRel strategy.state (uniformDistribution (Point params))\n      (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)\n        (polynomialEvaluationFamily params G.toSubMeas) nu) :\n    ∃ H : ProjSubMeas (Polynomial params) ι, ∃ Z : MIPStarRE.Quantum.Op ι,\n      SelfImprovementInInductionSectionConclusion params strategy G.toSubMeas H Z\n        eps delta gamma nu := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Induction-section self-improvement using only the two strategy bounds\nconsumed by Section 9.\n\nPaper origin: `references/ldt-paper/self_improvement.tex:631-811`.\n\nThis is a formalization-only strengthening of\n`selfImprovementInInductionSection`.  The paper states the theorem in the\nstanding context of an `(eps, delta, gamma)`-good strategy, but the displayed\nself-improvement construction uses the axis-parallel and point\nself-consistency bounds and its conclusion is independent of the diagonal-line\nerror parameter.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.SelfImprovementAssembly.Core",
+  "module_doc": "/-!\n# Section 6 — Ordinary Self-Improvement Data\n\nCore public API for the ordinary self-improvement data: constructors for\n`SelfImprovementData`, the induction-section theorem\n`selfImprovementInInductionSection`, the monotone-witness cleanup\n`mainInductionOfWitness`, and the source-facing pasting theorem\n`ldPastingInInductionSection`.\n\nThe answer-valued slice-transport constructors are separated into\n`SelfImprovementAssembly.AnswerSlice`.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/SelfImprovementAssembly/Core.lean#L223-L253",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/SelfImprovementAssembly/Core.lean",
+  "lines": [
+   223,
+   253
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SelfImprovement.selfImprovement_of_axisParallel_selfConsistency"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.mainInductionFromStageData",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.mainInductionFromStageData",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.mainInductionFromStageData.{uι', uF}\n    {ι' : Type uι'} [Fintype ι'] [DecidableEq ι']\n    {_fieldUniverse : Type uF}\n    (_fieldPoint : _fieldUniverse)\n    (params : Parameters)\n    [FieldModel.{uF} params.q]\n    (strategy : SymStrat params.next ι')\n    (eps delta gamma : Error)\n    (k : ℕ)\n    (hgood : strategy.IsGood eps delta gamma)\n    (hrestrict : SliceRestrictionData.{uι', uF} params strategy eps delta gamma)\n    (hinduction : PerSliceInductionData.{uι', uF} params strategy eps delta gamma hrestrict k)\n    (hself : SelfImprovementData.{uι', uF} params strategy eps delta gamma k hrestrict\n      hinduction)\n    (hpaste : AveragedPastingData.{uι', uF} params strategy eps delta gamma k hself)\n    (hk : 400 * params.m * params.d ≤ k) :\n    ∃ H : Measurement (Polynomial params.next) ι',\n      ConsRel strategy.state (uniformDistribution (Point params.next))\n        (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)\n        (polynomialEvaluationFamily params.next H.toSubMeas)\n        (mainInductionError params.next k eps delta gamma) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Compose the four paper-faithful induction-step inputs\n`restrict → induct → self-improve → paste` into the main-induction conclusion in\none higher dimension.\n\nThe construction applies the unrestricted induction-section pasting theorem\nthrough `AveragedPastingData.invokeLdPasting`, so its stated hypotheses are\nonly the paper stage data and the large-`k` condition.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.StageDataConstructors",
+  "module_doc": "/-!\n# Section 6 — Stage-Data Constructors\n\nConstructors for the slice restriction, per-slice induction, self-improvement,\nand averaged pasting stage records: `SliceRestrictionData.ofRestrictedProbabilities`,\n`AnswerSliceRestrictionData.ofRestrictedProbabilities`,\n`SliceRestrictionData.ofAnswer`, `PerSliceInductionData.ofRecursion`,\n`AnswerPerSliceInductionData.*`, `SelfImprovementData.ofAnswerForPerSliceInductionData`,\n`SelfImprovementData.ofAnswer`, `AnswerSelfImprovementData.ofSelfImprovementData`,\n`AveragedPastingData.invokeLdPasting`, and `mainInductionFromStageData`.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/StageDataConstructors.lean#L561-L612",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/StageDataConstructors.lean",
+  "lines": [
+   561,
+   612
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.ldPasting"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.leftPlacedProjectivizationRepair_of_sourceAlmostProjective_two_mul",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.leftPlacedProjectivizationRepair_of_sourceAlmostProjective_two_mul",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.leftPlacedProjectivizationRepair_of_sourceAlmostProjective_two_mul\n    {Outcome : Type*} {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype Outcome]\n    (ψ : QuantumState (ιA × ιB)) (hψ : ψ.IsNormalized)\n    (A : Measurement Outcome ιA) (ζ : Error) (hζ : 0 ≤ ζ)\n    (hsource :\n      ∑ a, ev ψ\n        ((leftLiftedMeasurement (ιB := ιB) A).outcome a -\n          (leftLiftedMeasurement (ιB := ιB) A).outcome a *\n            (leftLiftedMeasurement (ιB := ιB) A).outcome a) ≤ 2 * ζ) :\n    ∃ P : ProjSubMeas Outcome ιA,\n      SDDRel ψ (uniformDistribution Unit)\n        (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) A.toSubMeas))\n        (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) P.toSubMeas))\n        (orthonormalizationMainLemmaError ζ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Locality-preserving `Q/X/XHat/P` repair for a left-lifted measurement at the\npaper's `2ζ` source-defect scale.\n\nThis is the sharp Section 5 repair route needed in the proof of\n`thm:orthonormalization`: if the left-lifted source almost-projective defect is\nbounded by `2 * ζ`, then the final local projective submeasurement is still\nobtained with the paper's `84 * ζ^(1/4)` envelope.\n\nPaper origin: `references/ldt-paper/orthonormalization.tex:862-1194`, recorded\nfor the scalar constant repair in\n`docs/paper-gaps/issue-1032-orthonormalization-constant.tex`.\n\n**Faithful encoding:** This is the paper's locality-preserving construction at\nthe `2ζ` scale needed by the completion-to-measurement proof of\n`thm:orthonormalization`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.LocalityPreservingRepair",
+  "module_doc": "/-!\n# Section 5 — Locality-preserving projectivization repair\n\nThis file proves the locality-preserving repair route for the late Section 5\n`Q/X/XHat/P` argument.\n\n## Scope\n\nThe **spectral-truncation stage** (the first part of the proof of rounding\nto projectors) is already proved by\n`spectralTruncationStatement_of_sourceAlmostProjective` in\n`MakingMeasurementsProjective/SpectralTruncation/ProjectiveNonMeasurement.lean`,\nwhich is fully proved via\n`projectiveNonMeasurement_of_sourceAlmostProjective_full`. Proofs that\nrequire the spectral truncation statement should call that declaration directly.\n\nThe main result recorded here:\n\n- **`leftLiftedProjectivizationRepair`** — paper origin\n  `references/ldt-paper/orthonormalization.tex` lines 534–860 (rank\n  reduction and the `Q`/`√Q` completeness setup) and 862–1194 (the\n  `X`/`X̂`/`P` algebra producing the lifted projective sub-measurement,\n  including the final triangle-inequality assembly).  The formal proof below\n  follows that local `Q/X/XHat/P` route by passing to the left marginal state,\n  constructing the local projective family there, and transporting the final\n  estimate back to left lifts.\n\nThe theorem proved here is the direct output of that route under a normalized\nbipartite state and the source almost-projective estimate for the left-lifted\nmeasurement. It is stated directly in terms of this estimate, rather than in\nterms of a separate repair-input assumption, and provides the unconditional\nrepair step used by the orthonormalization theorem.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/LocalityPreservingRepair.lean#L588-L733",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/LocalityPreservingRepair.lean",
+  "lines": [
+   588,
+   733
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.leftTensor_sub",
+   "MIPStarRE.LDT.QuantumState.IsNormalized.nonempty",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.qSDD_leftPlaced_zeroProjSubMeas_le_one",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_of_roundingWitness",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.RankReductionWitness.toSigmaRangeQLayer",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.exists_xHat_of_sigmaFinRangeEmbedding_positiveGram",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.pQApprox",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement_of_sourceAlmostProjective_two_mul_full",
+   "MIPStarRE.LDT.Preliminaries.stateDependentDistanceOpRel_triangle",
+   "MIPStarRE.LDT.Preliminaries.sddOpRel_leftPlaced_of_ev_eq"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 115,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.rightPlacedProjectivizationRepair_of_sourceAlmostProjective_two_mul",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.rightPlacedProjectivizationRepair_of_sourceAlmostProjective_two_mul",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.rightPlacedProjectivizationRepair_of_sourceAlmostProjective_two_mul\n    {Outcome : Type*} {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype Outcome]\n    (ψ : QuantumState (ιA × ιB)) (hψ : ψ.IsNormalized)\n    (B : Measurement Outcome ιB) (ζ : Error) (hζ : 0 ≤ ζ)\n    (hsource :\n      ∑ a, ev ψ\n        ((rightLiftedMeasurement (ιA := ιA) B).outcome a -\n          (rightLiftedMeasurement (ιA := ιA) B).outcome a *\n            (rightLiftedMeasurement (ιA := ιA) B).outcome a) ≤ 2 * ζ) :\n    ∃ P : ProjSubMeas Outcome ιB,\n      SDDRel ψ (uniformDistribution Unit)\n        (constSubMeasFamily (rightPlacedSubMeas (ιA := ιA) B.toSubMeas))\n        (constSubMeasFamily (rightPlacedSubMeas (ιA := ιA) P.toSubMeas))\n        (orthonormalizationMainLemmaError ζ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Right-register locality-preserving `Q/X/XHat/P` repair at the paper's\n`2ζ` source-defect scale.\n\nThis is the tensor-factor counterpart of\n`leftPlacedProjectivizationRepair_of_sourceAlmostProjective_two_mul`.\nIt uses the right marginal state and returns a local projective submeasurement\non Bob's space whose right placement is close to the given right-lifted\nmeasurement.\n\n**Faithful encoding:** Paper origin:\n`references/ldt-paper/projectivization.tex`; this is the right-register\ntwo-space form of the projectivization repair used by the source proof of\n`thm:main-formal`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.LocalityPreservingRepair",
+  "module_doc": "/-!\n# Section 5 — Locality-preserving projectivization repair\n\nThis file proves the locality-preserving repair route for the late Section 5\n`Q/X/XHat/P` argument.\n\n## Scope\n\nThe **spectral-truncation stage** (the first part of the proof of rounding\nto projectors) is already proved by\n`spectralTruncationStatement_of_sourceAlmostProjective` in\n`MakingMeasurementsProjective/SpectralTruncation/ProjectiveNonMeasurement.lean`,\nwhich is fully proved via\n`projectiveNonMeasurement_of_sourceAlmostProjective_full`. Proofs that\nrequire the spectral truncation statement should call that declaration directly.\n\nThe main result recorded here:\n\n- **`leftLiftedProjectivizationRepair`** — paper origin\n  `references/ldt-paper/orthonormalization.tex` lines 534–860 (rank\n  reduction and the `Q`/`√Q` completeness setup) and 862–1194 (the\n  `X`/`X̂`/`P` algebra producing the lifted projective sub-measurement,\n  including the final triangle-inequality assembly).  The formal proof below\n  follows that local `Q/X/XHat/P` route by passing to the left marginal state,\n  constructing the local projective family there, and transporting the final\n  estimate back to left lifts.\n\nThe theorem proved here is the direct output of that route under a normalized\nbipartite state and the source almost-projective estimate for the left-lifted\nmeasurement. It is stated directly in terms of this estimate, rather than in\nterms of a separate repair-input assumption, and provides the unconditional\nrepair step used by the orthonormalization theorem.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/LocalityPreservingRepair.lean#L735-L878",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/LocalityPreservingRepair.lean",
+  "lines": [
+   735,
+   878
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.rightTensor_mul_rightTensor",
+   "MIPStarRE.LDT.rightTensor_sub",
+   "MIPStarRE.LDT.QuantumState.IsNormalized.nonempty",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.qSDD_rightPlaced_zeroProjSubMeas_le_one",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_of_roundingWitness",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.RankReductionWitness.toSigmaRangeQLayer",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.exists_xHat_of_sigmaFinRangeEmbedding_positiveGram",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.pQApprox",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveNonMeasurement_of_sourceAlmostProjective_two_mul_full",
+   "MIPStarRE.LDT.Preliminaries.stateDependentDistanceOpRel_triangle"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 115,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalizationMainLemma",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalizationMainLemma",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalizationMainLemma {Outcome : Type*}\n    {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype Outcome]\n    (ψ : QuantumState (ιA × ιB))\n    (hψ : ψ.IsNormalized)\n    (A : Measurement Outcome ιA) (B : Measurement Outcome ιB) (ζ : Error)\n    (hζ : 0 ≤ ζ) :\n    ConsRel ψ (uniformDistribution Unit)\n      (constSubMeasFamily A.toSubMeas)\n      (constSubMeasFamily B.toSubMeas) ζ →\n      ∃ P : ProjSubMeas Outcome ιA,\n        SDDRel ψ (uniformDistribution Unit)\n          (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) A.toSubMeas))\n          (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) P.toSubMeas))\n      (orthonormalizationMainLemmaError ζ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`lem:orthonormalization-main-lemma`.\n\nPaper origin: `references/ldt-paper/orthonormalization.tex:282-310`\n(`\\label{lem:orthonormalization-main-lemma}`).\n\nThis is the source-facing orthogonalization lemma for complete measurements.\nThe theorem statement deliberately contains no spectral-truncation or repair\ninput: those are steps in the proof of the paper lemma, not hypotheses of the\nlemma. The proof uses the locality-preserving projectivization repair in its\nheterogeneous left-register form.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization",
+  "module_doc": "/-!\n# Section 5 — Orthonormalization\n\nThe orthonormalization theorem and scalar bookkeeping lemmas from Section 5.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Orthonormalization.lean#L79-L118",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Orthonormalization.lean",
+  "lines": [
+   79,
+   118
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.leftPlacedProjectivizationRepair_of_sourceAlmostProjective_two_mul",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.consistencyToAlmostProjective"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalizationMeasurement_of_consistency_from_projectivizationRepair_heterogeneous",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalizationMeasurement_of_consistency_from_projectivizationRepair_heterogeneous",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalizationMeasurement_of_consistency_from_projectivizationRepair_heterogeneous\n    {Outcome : Type*}\n    {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype Outcome]\n    (ψ : QuantumState (ιA × ιB))\n    (hψ : ψ.IsNormalized)\n    (A : Measurement Outcome ιA) (B : Measurement Outcome ιB) (ζ : Error)\n    (hζ : 0 ≤ ζ) :\n    ConsRel ψ (uniformDistribution Unit)\n      (constSubMeasFamily A.toSubMeas)\n      (constSubMeasFamily B.toSubMeas) ζ →\n      ∃ P : ProjSubMeas Outcome ιA,\n        SDDRel ψ (uniformDistribution Unit)\n          (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) A.toSubMeas))\n          (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) P.toSubMeas))\n          (orthonormalizationError ζ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Heterogeneous measurement-level orthonormalization from cross consistency.\n\nThis is the two-space form of `lem:orthonormalization-main-lemma` needed in the\nsource proof of `thm:main-formal`: if complete measurements `A` and `B` on\npossibly different local spaces are consistent on a bipartite state, then `A`\nhas a projective submeasurement close on Alice's tensor factor.  No\npermutation-invariance or same-space identification is used.\n\n**Faithful encoding:** Paper origin:\n`references/ldt-paper/test_definition.tex:180-202` and\n`references/ldt-paper/projectivization.tex`; the heterogeneous form is the\ntwo-space tensor-factor version needed by the source proof.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization",
+  "module_doc": "/-!\n# Section 5 — Orthonormalization\n\nThe orthonormalization theorem and scalar bookkeeping lemmas from Section 5.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Orthonormalization.lean#L281-L320",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Orthonormalization.lean",
+  "lines": [
+   281,
+   320
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalizationMainLemma"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalizationMeasurement_right_of_consistency_from_projectivizationRepair_heterogeneous",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalizationMeasurement_right_of_consistency_from_projectivizationRepair_heterogeneous",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalizationMeasurement_right_of_consistency_from_projectivizationRepair_heterogeneous\n    {Outcome : Type*}\n    {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype Outcome]\n    (ψ : QuantumState (ιA × ιB))\n    (hψ : ψ.IsNormalized)\n    (A : Measurement Outcome ιA) (B : Measurement Outcome ιB) (ζ : Error)\n    (hζ : 0 ≤ ζ) :\n    ConsRel ψ (uniformDistribution Unit)\n      (constSubMeasFamily A.toSubMeas)\n      (constSubMeasFamily B.toSubMeas) ζ →\n      ∃ P : ProjSubMeas Outcome ιB,\n        SDDRel ψ (uniformDistribution Unit)\n          (constSubMeasFamily (rightPlacedSubMeas (ιA := ιA) B.toSubMeas))\n          (constSubMeasFamily (rightPlacedSubMeas (ιA := ιA) P.toSubMeas))\n          (orthonormalizationError ζ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Heterogeneous measurement-level orthonormalization on Bob's tensor factor.\n\nThis is the right-register counterpart of\n`orthonormalizationMeasurement_of_consistency_from_projectivizationRepair_heterogeneous`.\nIf complete measurements `A` and `B` are consistent on a bipartite state, then\n`B` has a projective submeasurement close on Bob's tensor factor.  No\nsame-space identification or permutation-invariance hypothesis is used.\n\n**Faithful encoding:** Paper origin:\n`references/ldt-paper/test_definition.tex:180-202` and\n`references/ldt-paper/projectivization.tex`; the heterogeneous form is the\ntwo-space tensor-factor version needed by the source proof.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization",
+  "module_doc": "/-!\n# Section 5 — Orthonormalization\n\nThe orthonormalization theorem and scalar bookkeeping lemmas from Section 5.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Orthonormalization.lean#L322-L370",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Orthonormalization.lean",
+  "lines": [
+   322,
+   370
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.rightPlacedProjectivizationRepair_of_sourceAlmostProjective_two_mul",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.consistencyToAlmostProjective_right"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalization",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalization",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalization {Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState (ι × ι))\n    (hperm : PermInvState ψ)\n    (hψ : ψ.IsNormalized)\n    (A : SubMeas Outcome ι) (ζ : Error) :\n    BipartiteSSCRel ψ (uniformDistribution Unit)\n        (constSubMeasFamily A) ζ →\n      ∃ P : ProjSubMeas Outcome ι,\n        SDDRel ψ (uniformDistribution Unit)\n          (constSubMeasFamily A.liftLeft)\n          (constSubMeasFamily P.toSubMeas.liftLeft)\n          (orthonormalizationError ζ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`thm:orthonormalization`.\n\nA strongly self-consistent submeasurement on a permutation-invariant normalized\nstate admits a close projective submeasurement with the paper's\n`100 * ζ^(1/4)` error envelope.\n\nPaper origin: `references/ldt-paper/orthonormalization.tex:67-76`\n(`\\label{thm:orthonormalization}`).  The earlier proved completion-route\nconstruction remains available as `orthonormalizationCompletionRoute`, but its\n`120 * ζ^(1/4)` conclusion is weaker than this source theorem.  The proof below\nfollows the paper's completion-to-measurement reduction and then feeds the\ncompleted measurement's `2ζ` self-consistency estimate into the sharp\nlocality-preserving Section 5 repair route, recovering the paper's scalar\nconstant.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization",
+  "module_doc": "/-!\n# Section 5 — Orthonormalization\n\nThe orthonormalization theorem and scalar bookkeeping lemmas from Section 5.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Orthonormalization.lean#L457-L545",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Orthonormalization.lean",
+  "lines": [
+   457,
+   545
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_one",
+   "MIPStarRE.LDT.rightTensor_one",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.rightTensor_mul_rightTensor",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.leftPlacedProjectivizationRepair_of_sourceAlmostProjective_two_mul",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.Completion.optionCompletion_bipartiteSSCRel",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.Completion.qSDD_liftLeft_restrictSomeProjSubMeas_le",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.ErrorBounds.orthonormalizationMainLemmaError_two_mul_le_orthonormalizationError",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.consistencyToAlmostProjective",
+   "MIPStarRE.LDT.bipartiteSSCError_nonneg"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 61,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.Completion.optionCompletion_bipartiteSSCRel",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.Completion.optionCompletion_bipartiteSSCRel",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.Completion.optionCompletion_bipartiteSSCRel {Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome] [DecidableEq Outcome]\n    (ψ : QuantumState (ι × ι))\n    (hperm : PermInvState ψ) (hψ : ψ.IsNormalized)\n    (A : SubMeas Outcome ι) (ζ : Error) :\n    BipartiteSSCRel ψ (uniformDistribution Unit)\n        (constSubMeasFamily A) ζ →\n      BipartiteSSCRel ψ (uniformDistribution Unit)\n        (constSubMeasFamily (optionCompletion A).toSubMeas)\n        (2 * ζ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.Completion",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Completing a submeasurement by a fresh failure outcome preserves bipartite\nstrong self-consistency up to the paper's factor `2`: the original diagonal gap\ncontrols the original outcomes, and the same gap controls the residual `none`\noutcome after applying permutation invariance.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.Completion",
+  "module_doc": "/-!\n# Option Completion in the Orthonormalization Argument\n\nThis file contains the auxiliary algebra used when the orthonormalization\ntheorem is applied to the completion of a submeasurement by a fresh failure\noutcome.  The results compare the completed measurement with the restriction\nobtained by discarding this fresh outcome.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Orthonormalization/Completion.lean#L90-L205",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Orthonormalization/Completion.lean",
+  "lines": [
+   90,
+   205
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.leftTensor_one",
+   "MIPStarRE.LDT.rightTensor_one",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.rightTensor_mul_rightTensor",
+   "MIPStarRE.LDT.opTensor_sub_left",
+   "MIPStarRE.LDT.Preliminaries.qBipartiteSSCDefect_postprocess_le",
+   "MIPStarRE.LDT.bipartiteSSCError_nonneg"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 101,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.Completion.qSDD_liftLeft_restrictSomeProjSubMeas_le",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.Completion.qSDD_liftLeft_restrictSomeProjSubMeas_le",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.Completion.qSDD_liftLeft_restrictSomeProjSubMeas_le {Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome] [DecidableEq Outcome]\n    (ψ : QuantumState (ι × ι))\n    (A : SubMeas Outcome ι) (P : ProjSubMeas (Option Outcome) ι) :\n    qSDD ψ A.liftLeft (restrictSomeProjSubMeas P).toSubMeas.liftLeft ≤\n      qSDD ψ (optionCompletion A).toSubMeas.liftLeft P.toSubMeas.liftLeft := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.Completion",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Discarding the extra `none` outcome from the option-completed measurement can\nonly decrease the `qSDD` sum: one simply drops a nonnegative summand.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.Completion",
+  "module_doc": "/-!\n# Option Completion in the Orthonormalization Argument\n\nThis file contains the auxiliary algebra used when the orthonormalization\ntheorem is applied to the completion of a submeasurement by a fresh failure\noutcome.  The results compare the completed measurement with the restriction\nobtained by discarding this fresh outcome.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Orthonormalization/Completion.lean#L207-L258",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Orthonormalization/Completion.lean",
+  "lines": [
+   207,
+   258
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_adjoint_self_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 43,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.ErrorBounds.orthonormalizationMainLemmaError_two_mul_le_orthonormalizationError",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.ErrorBounds.orthonormalizationMainLemmaError_two_mul_le_orthonormalizationError",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.ErrorBounds.orthonormalizationMainLemmaError_two_mul_le_orthonormalizationError\n    (ζ : Error) (hζ : 0 ≤ ζ) :\n    orthonormalizationMainLemmaError (2 * ζ) ≤ orthonormalizationError ζ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.ErrorBounds",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Bookkeeping for the submeasurement version of the orthonormalization theorem:\nafter completing `A` by a fresh outcome, the local measurement lemma returns the\nerror `84·(2ζ)^{1/4}`, which is bounded by the paper's `100·ζ^{1/4}`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Orthonormalization.ErrorBounds",
+  "module_doc": "/-!\n# Error Bounds for Orthonormalization\n\nThis file records the scalar estimates which compare the intermediate error\nterms in the proof of the orthonormalization theorem with the paper's final\n`100 * ζ ^ (1/4)` envelope.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Orthonormalization/ErrorBounds.lean#L75-L126",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Orthonormalization/ErrorBounds.lean",
+  "lines": [
+   75,
+   126
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 46,
+  "is_target": false
+ }
+]

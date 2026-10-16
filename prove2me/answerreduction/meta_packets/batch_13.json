@@ -1,0 +1,539 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.opTensor_add_left_local",
+  "source_name": "MIPStarRE.LDT.opTensor_add_left_local",
+  "formal_statement": "theorem MIPStarRE.LDT.opTensor_add_left_local\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (A B : MIPStarRE.Quantum.Op ι₁) (C : MIPStarRE.Quantum.Op ι₂) :\n    opTensor (A + B) C = opTensor A C + opTensor B C := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`opTensor` is additive in the left factor.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L592-L598",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   592,
+   598
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.opTensor_add_right_local",
+  "source_name": "MIPStarRE.LDT.opTensor_add_right_local",
+  "formal_statement": "theorem MIPStarRE.LDT.opTensor_add_right_local\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (A : MIPStarRE.Quantum.Op ι₁) (B C : MIPStarRE.Quantum.Op ι₂) :\n    opTensor A (B + C) = opTensor A B + opTensor A C := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`opTensor` is additive in the right factor.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L600-L606",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   600,
+   606
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.opTensor_sum_left_finset",
+  "source_name": "MIPStarRE.LDT.opTensor_sum_left_finset",
+  "formal_statement": "theorem MIPStarRE.LDT.opTensor_sum_left_finset\n    {α ι₁ ι₂ : Type*}\n    [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (s : Finset α) (f : α → MIPStarRE.Quantum.Op ι₁) (B : MIPStarRE.Quantum.Op ι₂) :\n    opTensor (∑ a ∈ s, f a) B = ∑ a ∈ s, opTensor (f a) B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Pull a finite sum out of the left factor of `opTensor`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L608-L618",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   608,
+   618
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.opTensor_add_left_local"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.opTensor_sum_right_finset",
+  "source_name": "MIPStarRE.LDT.opTensor_sum_right_finset",
+  "formal_statement": "theorem MIPStarRE.LDT.opTensor_sum_right_finset\n    {α ι₁ ι₂ : Type*}\n    [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (A : MIPStarRE.Quantum.Op ι₁) (s : Finset α) (f : α → MIPStarRE.Quantum.Op ι₂) :\n    opTensor A (∑ a ∈ s, f a) = ∑ a ∈ s, opTensor A (f a) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Pull a finite sum out of the right factor of `opTensor`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L620-L630",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   620,
+   630
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.opTensor_add_right_local"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.opTensor_sum_left_univ",
+  "source_name": "MIPStarRE.LDT.opTensor_sum_left_univ",
+  "formal_statement": "theorem MIPStarRE.LDT.opTensor_sum_left_univ\n    {α ι₁ ι₂ : Type*} [Fintype α]\n    [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (f : α → MIPStarRE.Quantum.Op ι₁) (B : MIPStarRE.Quantum.Op ι₂) :\n    opTensor (∑ a : α, f a) B = ∑ a : α, opTensor (f a) B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Pull an unindexed finite-type sum out of the left factor of `opTensor`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L632-L639",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   632,
+   639
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.opTensor_sum_left_finset"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.opTensor_sum_right_univ",
+  "source_name": "MIPStarRE.LDT.opTensor_sum_right_univ",
+  "formal_statement": "theorem MIPStarRE.LDT.opTensor_sum_right_univ\n    {α ι₁ ι₂ : Type*} [Fintype α]\n    [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (A : MIPStarRE.Quantum.Op ι₁) (f : α → MIPStarRE.Quantum.Op ι₂) :\n    opTensor A (∑ a : α, f a) = ∑ a : α, opTensor A (f a) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Pull an unindexed finite-type sum out of the right factor of `opTensor`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L641-L648",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   641,
+   648
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.opTensor_sum_right_finset"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.sqrt_add3_le_add3_sqrt",
+  "source_name": "MIPStarRE.LDT.sqrt_add3_le_add3_sqrt",
+  "formal_statement": "theorem MIPStarRE.LDT.sqrt_add3_le_add3_sqrt {x y z : Error}\n    (hx : 0 ≤ x) (hy : 0 ≤ y) (hz : 0 ≤ z) :\n    Real.sqrt (x + y + z) ≤ Real.sqrt x + Real.sqrt y + Real.sqrt z := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT"
+  ],
+  "docstring": "Three-term subadditivity of the square root on nonnegative error terms.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SqrtBounds",
+  "module_doc": "/-!\n# Square-root bounds for error estimates\n\nSmall reusable inequalities for square roots of nonnegative error terms.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SqrtBounds.lean#L30-L38",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SqrtBounds.lean",
+  "lines": [
+   30,
+   38
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SubMeas.ext",
+  "source_name": "MIPStarRE.LDT.SubMeas.ext",
+  "formal_statement": "theorem MIPStarRE.LDT.SubMeas.ext {α : Type*} {ι : Type*}\n    [Fintype α] [Fintype ι] [DecidableEq ι]\n    {A B : SubMeas α ι}\n    (houtcome : ∀ a : α, A.outcome a = B.outcome a)\n    (htotal : A.total = B.total) :\n    A = B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SubMeas",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Two submeasurements are equal when they have the same outcome operators and\nthe same total operator.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementCore",
+  "module_doc": "/-!\n# Core submeasurement structures for the low individual degree test\n\nFoundational measurement, submeasurement, and projective-measurement structures.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean#L187-L207",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean",
+  "lines": [
+   187,
+   207
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Measurement.ext",
+  "source_name": "MIPStarRE.LDT.Measurement.ext",
+  "formal_statement": "theorem MIPStarRE.LDT.Measurement.ext {α : Type*} {ι : Type*}\n    [Fintype α] [Fintype ι] [DecidableEq ι]\n    {A B : Measurement α ι}\n    (houtcome : ∀ a : α, A.outcome a = B.outcome a) :\n    A = B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Measurement",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Two measurements are equal when they have the same outcome operators.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementCore",
+  "module_doc": "/-!\n# Core submeasurement structures for the low individual degree test\n\nFoundational measurement, submeasurement, and projective-measurement structures.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean#L209-L228",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean",
+  "lines": [
+   209,
+   228
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.ext"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjMeas.ext",
+  "source_name": "MIPStarRE.LDT.ProjMeas.ext",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjMeas.ext {α : Type*} {ι : Type*}\n    [Fintype α] [Fintype ι] [DecidableEq ι]\n    {A B : ProjMeas α ι}\n    (houtcome : ∀ a : α, A.outcome a = B.outcome a) :\n    A = B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjMeas",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Two projective measurements are equal when they have the same outcome\noperators.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementCore",
+  "module_doc": "/-!\n# Core submeasurement structures for the low individual degree test\n\nFoundational measurement, submeasurement, and projective-measurement structures.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean#L230-L247",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean",
+  "lines": [
+   230,
+   247
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Measurement.ext"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SubMeas.outcome_hermitian",
+  "source_name": "MIPStarRE.LDT.SubMeas.outcome_hermitian",
+  "formal_statement": "theorem MIPStarRE.LDT.SubMeas.outcome_hermitian {α : Type*} {ι : Type*}\n    [Fintype α] [Fintype ι] [DecidableEq ι]\n    (A : SubMeas α ι) (a : α) :\n    (A.outcome a)ᴴ = A.outcome a := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SubMeas",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "PSD outcomes are Hermitian.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementCore",
+  "module_doc": "/-!\n# Core submeasurement structures for the low individual degree test\n\nFoundational measurement, submeasurement, and projective-measurement structures.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean#L271-L276",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean",
+  "lines": [
+   271,
+   276
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Measurement.outcome_hermitian",
+  "source_name": "MIPStarRE.LDT.Measurement.outcome_hermitian",
+  "formal_statement": "theorem MIPStarRE.LDT.Measurement.outcome_hermitian {α : Type*} {ι : Type*}\n    [Fintype α] [Fintype ι] [DecidableEq ι]\n    (M : Measurement α ι) (a : α) :\n    (M.outcome a)ᴴ = M.outcome a := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Measurement",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "PSD outcomes are Hermitian.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementCore",
+  "module_doc": "/-!\n# Core submeasurement structures for the low individual degree test\n\nFoundational measurement, submeasurement, and projective-measurement structures.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean#L278-L283",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean",
+  "lines": [
+   278,
+   283
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.outcome_hermitian"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Measurement.outcome_le_one",
+  "source_name": "MIPStarRE.LDT.Measurement.outcome_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.Measurement.outcome_le_one {α : Type*} {ι : Type*}\n    [Fintype α] [Fintype ι] [DecidableEq ι]\n    (M : Measurement α ι) (a : α) :\n    M.outcome a ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Measurement",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Each POVM element is bounded by the identity: `outcome a ≤ 1`.\nProof: `outcome a = 1 - ∑_{b ≠ a} outcome b ≤ 1` since all terms are PSD.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementCore",
+  "module_doc": "/-!\n# Core submeasurement structures for the low individual degree test\n\nFoundational measurement, submeasurement, and projective-measurement structures.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean#L285-L295",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean",
+  "lines": [
+   285,
+   295
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Measurement.sum_eq",
+  "source_name": "MIPStarRE.LDT.Measurement.sum_eq",
+  "formal_statement": "theorem MIPStarRE.LDT.Measurement.sum_eq {α : Type*} {ι : Type*}\n    [Fintype α] [Fintype ι] [DecidableEq ι]\n    (M : Measurement α ι) :\n    ∑ a, M.outcome a = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Measurement",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The outcome operators of a measurement sum to the identity.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementCore",
+  "module_doc": "/-!\n# Core submeasurement structures for the low individual degree test\n\nFoundational measurement, submeasurement, and projective-measurement structures.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean#L297-L302",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean",
+  "lines": [
+   297,
+   302
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SubMeas.outcome_le_total",
+  "source_name": "MIPStarRE.LDT.SubMeas.outcome_le_total",
+  "formal_statement": "theorem MIPStarRE.LDT.SubMeas.outcome_le_total {α : Type*} {ι : Type*}\n    [Fintype α] [Fintype ι] [DecidableEq ι]\n    (A : SubMeas α ι) (a : α) :\n    A.outcome a ≤ A.total := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SubMeas",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Every submeasurement outcome is bounded by the total operator.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementCore",
+  "module_doc": "/-!\n# Core submeasurement structures for the low individual degree test\n\nFoundational measurement, submeasurement, and projective-measurement structures.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean#L335-L343",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean",
+  "lines": [
+   335,
+   343
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SubMeas.outcome_le_one",
+  "source_name": "MIPStarRE.LDT.SubMeas.outcome_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.SubMeas.outcome_le_one {α : Type*} {ι : Type*}\n    [Fintype α] [Fintype ι] [DecidableEq ι]\n    (A : SubMeas α ι) (a : α) :\n    A.outcome a ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SubMeas",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Every submeasurement outcome is bounded by the identity.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementCore",
+  "module_doc": "/-!\n# Core submeasurement structures for the low individual degree test\n\nFoundational measurement, submeasurement, and projective-measurement structures.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean#L345-L350",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean",
+  "lines": [
+   345,
+   350
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.outcome_le_total"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SubMeas.total_nonneg",
+  "source_name": "MIPStarRE.LDT.SubMeas.total_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.SubMeas.total_nonneg {α : Type*} {ι : Type*}\n    [Fintype α] [Fintype ι] [DecidableEq ι]\n    (A : SubMeas α ι) : 0 ≤ A.total := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SubMeas",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The total operator of a submeasurement is PSD.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementCore",
+  "module_doc": "/-!\n# Core submeasurement structures for the low individual degree test\n\nFoundational measurement, submeasurement, and projective-measurement structures.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean#L352-L357",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean",
+  "lines": [
+   352,
+   357
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjSubMeas.outcome_hermitian",
+  "source_name": "MIPStarRE.LDT.ProjSubMeas.outcome_hermitian",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjSubMeas.outcome_hermitian {α : Type*} {ι : Type*}\n    [Fintype α] [Fintype ι] [DecidableEq ι]\n    (P : ProjSubMeas α ι) (a : α) :\n    (P.outcome a)ᴴ = P.outcome a := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjSubMeas",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Projective submeasurement outcomes are Hermitian (PSD from idempotence).",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementCore",
+  "module_doc": "/-!\n# Core submeasurement structures for the low individual degree test\n\nFoundational measurement, submeasurement, and projective-measurement structures.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean#L359-L364",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean",
+  "lines": [
+   359,
+   364
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.outcome_hermitian"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjSubMeas.outcome_mul_total_eq_outcome",
+  "source_name": "MIPStarRE.LDT.ProjSubMeas.outcome_mul_total_eq_outcome",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjSubMeas.outcome_mul_total_eq_outcome {α : Type*} {ι : Type*}\n    [Fintype α] [Fintype ι] [DecidableEq ι]\n    (P : ProjSubMeas α ι) (a : α) :\n    P.outcome a * P.total = P.outcome a := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjSubMeas",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Each projective outcome is absorbed by the total operator.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementCore",
+  "module_doc": "/-!\n# Core submeasurement structures for the low individual degree test\n\nFoundational measurement, submeasurement, and projective-measurement structures.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean#L366-L428",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean",
+  "lines": [
+   366,
+   428
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.outcome_le_total",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.ProjSubMeas.outcome_hermitian",
+   "MIPStarRE.Quantum.sq_le_self"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 58,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjSubMeas.outcome_orthogonal",
+  "source_name": "MIPStarRE.LDT.ProjSubMeas.outcome_orthogonal",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjSubMeas.outcome_orthogonal {α : Type*}\n    {ι : Type*} [Fintype α] [Fintype ι]\n    [DecidableEq ι]\n    (P : ProjSubMeas α ι) (a b : α) (hab : a ≠ b) :\n    P.outcome a * P.outcome b = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjSubMeas",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Distinct outcomes of a projective submeasurement are orthogonal.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementCore",
+  "module_doc": "/-!\n# Core submeasurement structures for the low individual degree test\n\nFoundational measurement, submeasurement, and projective-measurement structures.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean#L444-L497",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean",
+  "lines": [
+   444,
+   497
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ProjSubMeas.outcome_hermitian"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 48,
+  "is_target": false
+ }
+]

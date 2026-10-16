@@ -1,0 +1,678 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.CL.card_chi_fiber",
+  "source_name": "MIPRE.LIDT.CL.card_chi_fiber",
+  "formal_statement": "theorem MIPRE.LIDT.CL.card_chi_fiber [NeZero m] (hm : m ∣ Fintype.card F) (i : Fin m) :\n    #{s : F | chi hm s = i} = Fintype.card F / m := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.CL",
+   "open Finset MIPRE.LIDT",
+   "variable (F : Type*) [Field F] [Fintype F] [DecidableEq F] (m d ldc : ℕ)",
+   "variable {F m}"
+  ],
+  "docstring": "**Each seed block has exactly `q / m` elements.** This is what makes the axis-parallel\nline distribution the seeded test induces uniform over lines, and it is the input\n`lem:lidt-test-transfer` consumes: `q/m` seeds describe each line, so a uniform seed gives a\nuniform direction index. It is where `m ∣ q` earns its place among the hypotheses.",
+  "module": "MIPRE.Background.LIDT.CLGame",
+  "module_doc": "/-!\n# The seeded CL low individual degree test\n\nBlueprint `def:lidt-cl`, the paper's typed low-degree game `game^ld` (`ldt.tex`,\n`sec:ld-game` and `fig:ld-decider`), with parameters `(q, m, d, ldc)`, `q = #F` admissible\nand `m ∣ q`. This is the test the paper's padded and simultaneous Pauli uses, and it is *not*\nthe canonical-line test `MIPRE.LIDT.lidtGame` whose soundness is formalized: the two differ in\nwhich lines they sample and in how they label answers, which is the whole content of\n`lem:lidt-reduction-setup`.\n\n## What makes it \"seeded\"\n\nA question of type `ALine` is a pair `(u₀, s) ∈ F^m × F`, not a line. The seed `s` selects the\ndirection `e_{χ(s)}`, where `χ(s)` reads off which of the `m` equal blocks of `F` (there are\n`q/m` elements each, using `m ∣ q`) the element `s` falls into. So `q/m` seeds describe the\nsame geometric line, **and they remain different questions**: a strategy is free to answer\ndifferently on two descriptions of one line, which is exactly why the reduction to the\ncanonical-line test needs a choice or averaging argument.\n\n`DLine` questions are triples `(u₀, s, v')` where `v'` is `v` with its first `χ(s)` coordinates\nzeroed. Base points are the canonical representatives `u₀ = L^Ln_w(u)` of\n`MIPRE.CL.canonLin` (blueprint `def:cl-canonical`), `w` being the direction.\n\n## The distribution\n\nThe verifier samples the ordered type pair uniformly from the nine possibilities and\n`(u, s, v)` uniformly from `F^m × F × F^m`, then hands each player the content its type\nprescribes. Every sample has the same weight, so normalization is one division rather than the\nsubtest bookkeeping the canonical-line game needs.\n\n## The decision predicate\n\n`fig:ld-decider` is a format check and then three numbered subtests. The check is the table at\nthe top of the figure, and the text around it is explicit that it *rejects*: \"If the answers\nreturned by the players do not fit this format the decision procedure rejects.\" The subtests\nare: equal types, accept iff the answers agree; a line type against `Point`, accept iff every\none of the `ldc` polynomials evaluated at the parameter of the point gives the corresponding\ncoordinate of the point answer; and \"in all cases where no action is indicated, accept\".\n\n`Question.fmtOk` is the check and `subtests` the rest, with `accepts` their conjunction. The\nseparation matters because the two clauses that look alike are not: an answer of the wrong\nformat for its question type is *rejected*, while a well-formatted answer to one of the two\ncross type pairs `(ALine, DLine)` and `(DLine, ALine)` is *accepted* --- that is the `2/9` of\nthe question mass on which this test checks nothing.\n\nLeaving the format check out makes the test vacuous, and an earlier version of this file did\nleave it out. The constant strategy answering `values 0` to *every* question, the two line\ntypes included, then passes every subtest through the catch-all, so the game has a value-`1`\nstrategy whose point measurements are an arbitrary functio",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/CLGame.lean#L110-L159",
+  "source_path": "MIPRE/Background/LIDT/CLGame.lean",
+  "lines": [
+   110,
+   159
+  ],
+  "blueprint": [
+   {
+    "label": "def:lidt-cl",
+    "env": "definition",
+    "title": "Seeded CL low individual degree test",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.CL.card_div_pos",
+   "MIPRE.LIDT.CL.chi_val"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 43,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.CL.accepts_honest",
+  "source_name": "MIPRE.LIDT.CL.accepts_honest",
+  "formal_statement": "theorem MIPRE.LIDT.CL.accepts_honest {G : Fin ldc → MvPolynomial (Fin m) F}\n    (hG : ∀ j i, (G j).degreeOf i ≤ d) (sm : Sample F m) (τ τ' : Ty) :\n    accepts hm (sm.question hm τ) (sm.question hm τ')\n      (honest hm (d := d) G (sm.question hm τ)) (honest hm (d := d) G (sm.question hm τ'))\n      = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.CL",
+   "open Finset MIPRE.CL MIPRE.LowDegree",
+   "variable {F : Type*} [Field F] {m : ℕ}",
+   "variable [Fintype F] [DecidableEq F] [NeZero m] (hm : m ∣ Fintype.card F) {d ldc : ℕ}",
+   "variable {hm}"
+  ],
+  "docstring": "**The seeded CL test accepts honest answers** to the two questions of a sample, for any tuple\nof polynomials of individual degree at most `d`.",
+  "module": "MIPRE.Background.LIDT.CLHonest",
+  "module_doc": "/-!\n# Honest answers in the seeded CL low-degree test\n\nPiece AR-4 of `planning/answer-reduction.md` needs the completeness of the seeded CL test\n(`def:lidt-cl`, `MIPRE.LIDT.CL.accepts`): a tuple of polynomials of individual degree at most `d`,\nanswered honestly — its values at a point, its restrictions to a line — passes the test on any\ntwo questions of one sample.\n\n* `honest` — the honest answer of a tuple `G` of `ldc` polynomials to a question: the values at\n  a point, the coefficients of the restrictions (`MIPRE.LowDegree.lineRestrict`) to an axis-parallel\n  or diagonal line.\n* `accepts_honest` — the test accepts the honest answers to the two questions of a sample.\n* `Regs.sampleOf_eval_question` — reading a sample back off the presentation's output gives the\n  question the presentation computes: the base points it outputs are already canonical, so the\n  decider's re-derivation of the base point (`rep`) changes nothing. This is what lets a decider\n  that reads the sample off a question vector be fed the presentation's questions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/CLHonest.lean#L127-L147",
+  "source_path": "MIPRE/Background/LIDT/CLHonest.lean",
+  "lines": [
+   127,
+   147
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-completeness",
+    "env": "lemma",
+    "title": "Answer-reduction completeness",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.natDegree_lineRestrict_le",
+   "MIPRE.LowDegree.natDegree_lineRestrict_single_le"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.LowIndDegPoly.degreeOf_toMv_le",
+  "source_name": "MIPRE.LIDT.LowIndDegPoly.degreeOf_toMv_le",
+  "formal_statement": "theorem MIPRE.LIDT.LowIndDegPoly.degreeOf_toMv_le (g : LowIndDegPoly (F := F) (m := n) (d := d))\n    (i : Fin n) : g.toMv.degreeOf i ≤ d := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.LowIndDegPoly",
+   "open Finset MvPolynomial",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {n d : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.Coefficients",
+  "module_doc": "/-!\n# Coefficient vectors of low-individual-degree polynomials\n\n`LowIndDegPoly F n d` is a coefficient vector indexed by exponent vectors with entries at most `d`.\nThis file is the algebra of those vectors that more than one analysis needs, moved here from the\nPauli basis test's `Dummy.lean` and `Linear.lean` (where it was first written) so that the\nsimultaneous low-degree test, which sits below the Pauli test in the import graph, can use it.\nThe names are unchanged.\n\n* **Schwartz--Zippel for any finite variable type** (`prob_agreeOn_le_individualDegree`), and the\n  bridge `LowIndDegPoly.toMv` to `MvPolynomial` with its evaluation, coefficient and\n  individual-degree facts; `card_eval_eq_zero_le` is the form a nonzero coefficient vector needs.\n* **Coefficients of a monomial pattern.** `LowIndDegPoly.coef g T t` is the coefficient vector, in\n  the variables outside `T`, of the monomial `∏_{k ∈ T} u_k^{t k}`, and `eval_eq_sum_coef` is the\n  decomposition `g(u) = ∑_t u^t_T · (coef g T t)(u)`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Coefficients.lean#L109-L120",
+  "source_path": "MIPRE/Background/LIDT/Coefficients.lean",
+  "lines": [
+   109,
+   120
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-extraction",
+    "env": "lemma",
+    "title": "Extracting exactly linear combined codewords",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 9,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.card_eval_eq_zero_le",
+  "source_name": "MIPRE.LIDT.card_eval_eq_zero_le",
+  "formal_statement": "theorem MIPRE.LIDT.card_eval_eq_zero_le [Fintype F] [DecidableEq F]\n    {G : LowIndDegPoly (F := F) (m := n) (d := d)} (hG : G ≠ 0) :\n    ((univ.filter fun u : Point F n => G.eval u = 0).card : ℝ) / (Fintype.card F : ℝ) ^ n\n      ≤ (n : ℝ) * d / Fintype.card F := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open Finset",
+   "variable {F : Type*} [Field F] {n d : ℕ}"
+  ],
+  "docstring": "**Schwartz--Zippel for a nonzero coefficient vector**: it vanishes at a uniform point with\nprobability at most `n d / q`.",
+  "module": "MIPRE.Background.LIDT.Coefficients",
+  "module_doc": "/-!\n# Coefficient vectors of low-individual-degree polynomials\n\n`LowIndDegPoly F n d` is a coefficient vector indexed by exponent vectors with entries at most `d`.\nThis file is the algebra of those vectors that more than one analysis needs, moved here from the\nPauli basis test's `Dummy.lean` and `Linear.lean` (where it was first written) so that the\nsimultaneous low-degree test, which sits below the Pauli test in the import graph, can use it.\nThe names are unchanged.\n\n* **Schwartz--Zippel for any finite variable type** (`prob_agreeOn_le_individualDegree`), and the\n  bridge `LowIndDegPoly.toMv` to `MvPolynomial` with its evaluation, coefficient and\n  individual-degree facts; `card_eval_eq_zero_le` is the form a nonzero coefficient vector needs.\n* **Coefficients of a monomial pattern.** `LowIndDegPoly.coef g T t` is the coefficient vector, in\n  the variables outside `T`, of the monomial `∏_{k ∈ T} u_k^{t k}`, and `eval_eq_sum_coef` is the\n  decomposition `g(u) = ∑_t u^t_T · (coef g T t)(u)`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Coefficients.lean#L302-L322",
+  "source_path": "MIPRE/Background/LIDT/Coefficients.lean",
+  "lines": [
+   302,
+   322
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-extraction",
+    "env": "lemma",
+    "title": "Extracting exactly linear combined codewords",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.LowIndDegPoly.degreeOf_toMv_le",
+   "MIPRE.LowDegree.prob_agree_le_individualDegree"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.eval_pevY",
+  "source_name": "MIPRE.LIDT.Simul.eval_pevY",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.eval_pevY (g : LowIndDegPoly (F := F) (m := K + m) (d := d)) (x : Point F K)\n    (y : Point F m) : (pevY g y).eval x = g.eval (Fin.append x y) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] {K m d r : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.Extraction",
+  "module_doc": "/-!\n# Extracting exactly linear combined codewords\n\nBlueprint `lem:lidt-ldc-extraction`, the paper's Step 4 of the proof of `lem:ld-soundness` for\ngeneral `ldc` (`ldt.tex`, Claims 4 and 5 and the measurements `H`, `G`). The simultaneous test with\n`r` codewords is reduced to the single-codeword test in `K + m` variables by *combining*: a point\n`(x, y) ∈ F^K × F^m` is answered by `∑_{j < r} x_j b_j`, where `b ∈ F^r` is the original point\nanswer at `y`. The single-codeword theorem then returns a measurement `R` of polynomials `g` in the\n`K + m` variables, consistent with the combined point answers. This file turns `R` back into a\nmeasurement of `r`-tuples of polynomials in the `m` original variables.\n\n## The extraction\n\nA polynomial `g(x, y)` is **exactly `x`-linear** (`IsXLin`) if it is `∑_i x_i g_i(y)`: every\nmonomial has exactly one `x`-variable, to the first power. `extract` reads off `(g_1, …, g_r)` from\nsuch a `g` and returns `0` otherwise; it is a deterministic relabelling of outcomes, so applied to a\nprojective measurement it gives a projective measurement.\n\n## The estimate\n\n`inconsistency_extract_right_le` (and `_left_le`, the extracted measurement on the other\nparty): the extracted tuple, evaluated at a uniform `y`, disagrees with\nthe original point answer at most `(K + m) d / q` more often than `g(x, y)` disagrees with the\ncombined answer at a uniform `(x, y)`. Fix `y`, the original answer `b` and the outcome `g`, and\naverage over `x` alone --- the Born probabilities do not see `x`, since the original point\nmeasurement is asked `y` only and `R` is asked nothing:\n\n* if `g` is exactly `x`-linear and its extracted tuple is `b` at `y`, there is nothing to prove;\n* if `g` is exactly `x`-linear and the tuple differs from `b`, then `x ↦ g(x, y)` and the combined\n  answer are two different linear forms, so they agree at a uniform `x` with probability at most\n  `K d / q` (`pevY_eq_linPoly`, then Schwartz--Zippel in `K` variables, `card_agree_le`);\n* if `g` is not exactly `x`-linear, a monomial with a forbidden `x`-part has a nonzero coefficient\n  `Q_g`, a polynomial in `y` alone. Where `Q_g(y) ≠ 0` the same Schwartz--Zippel step applies; and\n  `Q_g(y) = 0` has probability at most `m d / q` over `y`, which is paid once per outcome `g`,\n  weighted by `g`'s total Born weight, because summing the Born probabilities over `b` removes `y`\n  (`sum_agreeX_le`, `sum_uniform_badInd_le`).\n\nThe paper splits the last case the same way (its Claims 4 and 5). The linear-forms case costs\n`K d / q` here rather than the paper's `1 / q`: the same Schwartz--Zippel lemma serves all three\ncases, and the difference is absorbed by the final constants.\n\n## The partial evaluation\n\n`pevY g y` is the coefficient vector, in the `K` combining variables, of `x ↦ g(x, y)`\n(`eval_pevY`). It is what lets Schwartz--Zippel in `K` variables be applied with `y` fixed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Extraction.lean#L77-L90",
+  "source_path": "MIPRE/Background/LIDT/Extraction.lean",
+  "lines": [
+   77,
+   90
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-extraction",
+    "env": "lemma",
+    "title": "Extracting exactly linear combined codewords",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.agreeX_le",
+  "source_name": "MIPRE.LIDT.Simul.agreeX_le",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.agreeX_le (hd : 1 ≤ d) (hr : r ≤ K) (g : LowIndDegPoly (F := F) (m := K + m) (d := d))\n    (y : Point F m) (b : Fin r → F) :\n    agreeX hd g y b\n      ≤ (if extEval hd hr g y = b then 1 else 0) + K * d / Fintype.card F + badInd hd g y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {K m d r : ℕ}"
+  ],
+  "docstring": "**The pointwise bound.** At a fixed `y`, answer `b` and outcome `g`, the combined answer and\n`g(·, y)` agree at a uniform `x` with probability at most: one if the extracted tuple is `b`; one\nif `g` is not exactly `x`-linear and its forbidden coefficient vanishes at `y`; and `K d / q`\notherwise.",
+  "module": "MIPRE.Background.LIDT.Extraction",
+  "module_doc": "/-!\n# Extracting exactly linear combined codewords\n\nBlueprint `lem:lidt-ldc-extraction`, the paper's Step 4 of the proof of `lem:ld-soundness` for\ngeneral `ldc` (`ldt.tex`, Claims 4 and 5 and the measurements `H`, `G`). The simultaneous test with\n`r` codewords is reduced to the single-codeword test in `K + m` variables by *combining*: a point\n`(x, y) ∈ F^K × F^m` is answered by `∑_{j < r} x_j b_j`, where `b ∈ F^r` is the original point\nanswer at `y`. The single-codeword theorem then returns a measurement `R` of polynomials `g` in the\n`K + m` variables, consistent with the combined point answers. This file turns `R` back into a\nmeasurement of `r`-tuples of polynomials in the `m` original variables.\n\n## The extraction\n\nA polynomial `g(x, y)` is **exactly `x`-linear** (`IsXLin`) if it is `∑_i x_i g_i(y)`: every\nmonomial has exactly one `x`-variable, to the first power. `extract` reads off `(g_1, …, g_r)` from\nsuch a `g` and returns `0` otherwise; it is a deterministic relabelling of outcomes, so applied to a\nprojective measurement it gives a projective measurement.\n\n## The estimate\n\n`inconsistency_extract_right_le` (and `_left_le`, the extracted measurement on the other\nparty): the extracted tuple, evaluated at a uniform `y`, disagrees with\nthe original point answer at most `(K + m) d / q` more often than `g(x, y)` disagrees with the\ncombined answer at a uniform `(x, y)`. Fix `y`, the original answer `b` and the outcome `g`, and\naverage over `x` alone --- the Born probabilities do not see `x`, since the original point\nmeasurement is asked `y` only and `R` is asked nothing:\n\n* if `g` is exactly `x`-linear and its extracted tuple is `b` at `y`, there is nothing to prove;\n* if `g` is exactly `x`-linear and the tuple differs from `b`, then `x ↦ g(x, y)` and the combined\n  answer are two different linear forms, so they agree at a uniform `x` with probability at most\n  `K d / q` (`pevY_eq_linPoly`, then Schwartz--Zippel in `K` variables, `card_agree_le`);\n* if `g` is not exactly `x`-linear, a monomial with a forbidden `x`-part has a nonzero coefficient\n  `Q_g`, a polynomial in `y` alone. Where `Q_g(y) ≠ 0` the same Schwartz--Zippel step applies; and\n  `Q_g(y) = 0` has probability at most `m d / q` over `y`, which is paid once per outcome `g`,\n  weighted by `g`'s total Born weight, because summing the Born probabilities over `b` removes `y`\n  (`sum_agreeX_le`, `sum_uniform_badInd_le`).\n\nThe paper splits the last case the same way (its Claims 4 and 5). The linear-forms case costs\n`K d / q` here rather than the paper's `1 / q`: the same Schwartz--Zippel lemma serves all three\ncases, and the difference is absorbed by the final constants.\n\n## The partial evaluation\n\n`pevY g y` is the coefficient vector, in the `K` combining variables, of `x ↦ g(x, y)`\n(`eval_pevY`). It is what lets Schwartz--Zippel in `K` variables be applied with `y` fixed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Extraction.lean#L272-L318",
+  "source_path": "MIPRE/Background/LIDT/Extraction.lean",
+  "lines": [
+   272,
+   318
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-extraction",
+    "env": "lemma",
+    "title": "Extracting exactly linear combined codewords",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.card_eval_eq_zero_le",
+   "MIPRE.LIDT.Simul.eval_pevY"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 39,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.sum_agreeX_le",
+  "source_name": "MIPRE.LIDT.Simul.sum_agreeX_le",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.sum_agreeX_le (hd : 1 ≤ d) (hr : r ≤ K)\n    (β : Point F m → (Fin r → F) → LowIndDegPoly (F := F) (m := K + m) (d := d) → ℝ)\n    (hβ0 : ∀ y b g, 0 ≤ β y b g) (w : LowIndDegPoly (F := F) (m := K + m) (d := d) → ℝ)\n    (hw : ∀ y g, ∑ b, β y b g = w g) (hw1 : ∑ g, w g = 1) :\n    ∑ y : Point F m, uniform (Point F m) y * ∑ b, ∑ g, β y b g * agreeX hd g y b\n      ≤ ∑ y : Point F m, uniform (Point F m) y *\n          ∑ b, ∑ g, β y b g * (if extEval hd hr g y = b then 1 else 0)\n        + (K + m) * d / Fintype.card F := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {K m d r : ℕ}"
+  ],
+  "docstring": "**The weighted bound.** For nonnegative weights `β y b g` whose sum over the answer `b` does\nnot depend on `y` and totals one over the outcomes, the average agreement of the combined answer\nexceeds the average agreement of the extracted tuple by at most `(K + m) d / q`.",
+  "module": "MIPRE.Background.LIDT.Extraction",
+  "module_doc": "/-!\n# Extracting exactly linear combined codewords\n\nBlueprint `lem:lidt-ldc-extraction`, the paper's Step 4 of the proof of `lem:ld-soundness` for\ngeneral `ldc` (`ldt.tex`, Claims 4 and 5 and the measurements `H`, `G`). The simultaneous test with\n`r` codewords is reduced to the single-codeword test in `K + m` variables by *combining*: a point\n`(x, y) ∈ F^K × F^m` is answered by `∑_{j < r} x_j b_j`, where `b ∈ F^r` is the original point\nanswer at `y`. The single-codeword theorem then returns a measurement `R` of polynomials `g` in the\n`K + m` variables, consistent with the combined point answers. This file turns `R` back into a\nmeasurement of `r`-tuples of polynomials in the `m` original variables.\n\n## The extraction\n\nA polynomial `g(x, y)` is **exactly `x`-linear** (`IsXLin`) if it is `∑_i x_i g_i(y)`: every\nmonomial has exactly one `x`-variable, to the first power. `extract` reads off `(g_1, …, g_r)` from\nsuch a `g` and returns `0` otherwise; it is a deterministic relabelling of outcomes, so applied to a\nprojective measurement it gives a projective measurement.\n\n## The estimate\n\n`inconsistency_extract_right_le` (and `_left_le`, the extracted measurement on the other\nparty): the extracted tuple, evaluated at a uniform `y`, disagrees with\nthe original point answer at most `(K + m) d / q` more often than `g(x, y)` disagrees with the\ncombined answer at a uniform `(x, y)`. Fix `y`, the original answer `b` and the outcome `g`, and\naverage over `x` alone --- the Born probabilities do not see `x`, since the original point\nmeasurement is asked `y` only and `R` is asked nothing:\n\n* if `g` is exactly `x`-linear and its extracted tuple is `b` at `y`, there is nothing to prove;\n* if `g` is exactly `x`-linear and the tuple differs from `b`, then `x ↦ g(x, y)` and the combined\n  answer are two different linear forms, so they agree at a uniform `x` with probability at most\n  `K d / q` (`pevY_eq_linPoly`, then Schwartz--Zippel in `K` variables, `card_agree_le`);\n* if `g` is not exactly `x`-linear, a monomial with a forbidden `x`-part has a nonzero coefficient\n  `Q_g`, a polynomial in `y` alone. Where `Q_g(y) ≠ 0` the same Schwartz--Zippel step applies; and\n  `Q_g(y) = 0` has probability at most `m d / q` over `y`, which is paid once per outcome `g`,\n  weighted by `g`'s total Born weight, because summing the Born probabilities over `b` removes `y`\n  (`sum_agreeX_le`, `sum_uniform_badInd_le`).\n\nThe paper splits the last case the same way (its Claims 4 and 5). The linear-forms case costs\n`K d / q` here rather than the paper's `1 / q`: the same Schwartz--Zippel lemma serves all three\ncases, and the difference is absorbed by the final constants.\n\n## The partial evaluation\n\n`pevY g y` is the coefficient vector, in the `K` combining variables, of `x ↦ g(x, y)`\n(`eval_pevY`). It is what lets Schwartz--Zippel in `K` variables be applied with `y` fixed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Extraction.lean#L337-L402",
+  "source_path": "MIPRE/Background/LIDT/Extraction.lean",
+  "lines": [
+   337,
+   402
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-extraction",
+    "env": "lemma",
+    "title": "Extracting exactly linear combined codewords",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.card_eval_eq_zero_le",
+   "MIPRE.LIDT.Simul.agreeX_le"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 55,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.inconsistency_eq_one_sub",
+  "source_name": "MIPRE.LIDT.Simul.inconsistency_eq_one_sub",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.inconsistency_eq_one_sub {X A : Type*} [Fintype X] [Fintype A] [DecidableEq A]\n    {μ : X → ℝ} (hμ1 : ∑ x, μ x = 1) {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)\n    (M : X → POVM A dA) (N : X → POVM A dB) :\n    inconsistency μ ψ M N\n      = 1 - ∑ x, μ x * ∑ a, bornProb ψ (((M x).mats a).val) (((N x).mats a).val) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT",
+   "open scoped Kronecker",
+   "open Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {K m d r : ℕ}"
+  ],
+  "docstring": "**`inconsistency` is one minus the average agreement**, for POVMs on a unit vector and a\nprobability distribution on the questions.",
+  "module": "MIPRE.Background.LIDT.Extraction",
+  "module_doc": "/-!\n# Extracting exactly linear combined codewords\n\nBlueprint `lem:lidt-ldc-extraction`, the paper's Step 4 of the proof of `lem:ld-soundness` for\ngeneral `ldc` (`ldt.tex`, Claims 4 and 5 and the measurements `H`, `G`). The simultaneous test with\n`r` codewords is reduced to the single-codeword test in `K + m` variables by *combining*: a point\n`(x, y) ∈ F^K × F^m` is answered by `∑_{j < r} x_j b_j`, where `b ∈ F^r` is the original point\nanswer at `y`. The single-codeword theorem then returns a measurement `R` of polynomials `g` in the\n`K + m` variables, consistent with the combined point answers. This file turns `R` back into a\nmeasurement of `r`-tuples of polynomials in the `m` original variables.\n\n## The extraction\n\nA polynomial `g(x, y)` is **exactly `x`-linear** (`IsXLin`) if it is `∑_i x_i g_i(y)`: every\nmonomial has exactly one `x`-variable, to the first power. `extract` reads off `(g_1, …, g_r)` from\nsuch a `g` and returns `0` otherwise; it is a deterministic relabelling of outcomes, so applied to a\nprojective measurement it gives a projective measurement.\n\n## The estimate\n\n`inconsistency_extract_right_le` (and `_left_le`, the extracted measurement on the other\nparty): the extracted tuple, evaluated at a uniform `y`, disagrees with\nthe original point answer at most `(K + m) d / q` more often than `g(x, y)` disagrees with the\ncombined answer at a uniform `(x, y)`. Fix `y`, the original answer `b` and the outcome `g`, and\naverage over `x` alone --- the Born probabilities do not see `x`, since the original point\nmeasurement is asked `y` only and `R` is asked nothing:\n\n* if `g` is exactly `x`-linear and its extracted tuple is `b` at `y`, there is nothing to prove;\n* if `g` is exactly `x`-linear and the tuple differs from `b`, then `x ↦ g(x, y)` and the combined\n  answer are two different linear forms, so they agree at a uniform `x` with probability at most\n  `K d / q` (`pevY_eq_linPoly`, then Schwartz--Zippel in `K` variables, `card_agree_le`);\n* if `g` is not exactly `x`-linear, a monomial with a forbidden `x`-part has a nonzero coefficient\n  `Q_g`, a polynomial in `y` alone. Where `Q_g(y) ≠ 0` the same Schwartz--Zippel step applies; and\n  `Q_g(y) = 0` has probability at most `m d / q` over `y`, which is paid once per outcome `g`,\n  weighted by `g`'s total Born weight, because summing the Born probabilities over `b` removes `y`\n  (`sum_agreeX_le`, `sum_uniform_badInd_le`).\n\nThe paper splits the last case the same way (its Claims 4 and 5). The linear-forms case costs\n`K d / q` here rather than the paper's `1 / q`: the same Schwartz--Zippel lemma serves all three\ncases, and the difference is absorbed by the final constants.\n\n## The partial evaluation\n\n`pevY g y` is the coefficient vector, in the `K` combining variables, of `x ↦ g(x, y)`\n(`eval_pevY`). It is what lets Schwartz--Zippel in `K` variables be applied with `y` fixed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Extraction.lean#L415-L444",
+  "source_path": "MIPRE/Background/LIDT/Extraction.lean",
+  "lines": [
+   415,
+   444
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-extraction",
+    "env": "lemma",
+    "title": "Extracting exactly linear combined codewords",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.sum_uniform_pad",
+  "source_name": "MIPRE.LIDT.Simul.sum_uniform_pad",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.sum_uniform_pad (f : Point F K → Point F m → ℝ) :\n    ∑ u : Point F (K + m), uniform (Point F (K + m)) u * f (xOf u) (yOf u)\n      = ∑ y : Point F m, uniform (Point F m) y *\n          ∑ x : Point F K, uniform (Point F K) x * f x y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT",
+   "open scoped Kronecker",
+   "open Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {K m d r : ℕ}"
+  ],
+  "docstring": "**The uniform padded point is a uniform pair.**",
+  "module": "MIPRE.Background.LIDT.Extraction",
+  "module_doc": "/-!\n# Extracting exactly linear combined codewords\n\nBlueprint `lem:lidt-ldc-extraction`, the paper's Step 4 of the proof of `lem:ld-soundness` for\ngeneral `ldc` (`ldt.tex`, Claims 4 and 5 and the measurements `H`, `G`). The simultaneous test with\n`r` codewords is reduced to the single-codeword test in `K + m` variables by *combining*: a point\n`(x, y) ∈ F^K × F^m` is answered by `∑_{j < r} x_j b_j`, where `b ∈ F^r` is the original point\nanswer at `y`. The single-codeword theorem then returns a measurement `R` of polynomials `g` in the\n`K + m` variables, consistent with the combined point answers. This file turns `R` back into a\nmeasurement of `r`-tuples of polynomials in the `m` original variables.\n\n## The extraction\n\nA polynomial `g(x, y)` is **exactly `x`-linear** (`IsXLin`) if it is `∑_i x_i g_i(y)`: every\nmonomial has exactly one `x`-variable, to the first power. `extract` reads off `(g_1, …, g_r)` from\nsuch a `g` and returns `0` otherwise; it is a deterministic relabelling of outcomes, so applied to a\nprojective measurement it gives a projective measurement.\n\n## The estimate\n\n`inconsistency_extract_right_le` (and `_left_le`, the extracted measurement on the other\nparty): the extracted tuple, evaluated at a uniform `y`, disagrees with\nthe original point answer at most `(K + m) d / q` more often than `g(x, y)` disagrees with the\ncombined answer at a uniform `(x, y)`. Fix `y`, the original answer `b` and the outcome `g`, and\naverage over `x` alone --- the Born probabilities do not see `x`, since the original point\nmeasurement is asked `y` only and `R` is asked nothing:\n\n* if `g` is exactly `x`-linear and its extracted tuple is `b` at `y`, there is nothing to prove;\n* if `g` is exactly `x`-linear and the tuple differs from `b`, then `x ↦ g(x, y)` and the combined\n  answer are two different linear forms, so they agree at a uniform `x` with probability at most\n  `K d / q` (`pevY_eq_linPoly`, then Schwartz--Zippel in `K` variables, `card_agree_le`);\n* if `g` is not exactly `x`-linear, a monomial with a forbidden `x`-part has a nonzero coefficient\n  `Q_g`, a polynomial in `y` alone. Where `Q_g(y) ≠ 0` the same Schwartz--Zippel step applies; and\n  `Q_g(y) = 0` has probability at most `m d / q` over `y`, which is paid once per outcome `g`,\n  weighted by `g`'s total Born weight, because summing the Born probabilities over `b` removes `y`\n  (`sum_agreeX_le`, `sum_uniform_badInd_le`).\n\nThe paper splits the last case the same way (its Claims 4 and 5). The linear-forms case costs\n`K d / q` here rather than the paper's `1 / q`: the same Schwartz--Zippel lemma serves all three\ncases, and the difference is absorbed by the final constants.\n\n## The partial evaluation\n\n`pevY g y` is the coefficient vector, in the `K` combining variables, of `x ↦ g(x, y)`\n(`eval_pevY`). It is what lets Schwartz--Zippel in `K` variables be applied with `y` fixed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Extraction.lean#L474-L494",
+  "source_path": "MIPRE/Background/LIDT/Extraction.lean",
+  "lines": [
+   474,
+   494
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-extraction",
+    "env": "lemma",
+    "title": "Extracting exactly linear combined codewords",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.inconsistency_extract_right_le",
+  "source_name": "MIPRE.LIDT.Simul.inconsistency_extract_right_le",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.inconsistency_extract_right_le (hd : 1 ≤ d) (hr : r ≤ K) {ψ : dA × dB → ℂ}\n    (hψ : star ψ ⬝ᵥ ψ = 1) (A : Point F m → POVM (Fin r → F) dA)\n    (R : POVM (LowIndDegPoly (F := F) (m := K + m) (d := d)) dB) :\n    inconsistency (uniform (Point F m)) ψ A (fun y => R.map fun g => extEval hd hr g y)\n      ≤ inconsistency (uniform (Point F (K + m))) ψ\n          (fun u => (A (yOf u)).map fun b => (linPoly hd (padB b)).eval (xOf u))\n          (fun u => R.map fun g => g.eval u)\n        + (K + m) * d / Fintype.card F := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT",
+   "open scoped Kronecker",
+   "open Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {K m d r : ℕ}"
+  ],
+  "docstring": "**The extraction bound, the extracted measurement on the second party.**",
+  "module": "MIPRE.Background.LIDT.Extraction",
+  "module_doc": "/-!\n# Extracting exactly linear combined codewords\n\nBlueprint `lem:lidt-ldc-extraction`, the paper's Step 4 of the proof of `lem:ld-soundness` for\ngeneral `ldc` (`ldt.tex`, Claims 4 and 5 and the measurements `H`, `G`). The simultaneous test with\n`r` codewords is reduced to the single-codeword test in `K + m` variables by *combining*: a point\n`(x, y) ∈ F^K × F^m` is answered by `∑_{j < r} x_j b_j`, where `b ∈ F^r` is the original point\nanswer at `y`. The single-codeword theorem then returns a measurement `R` of polynomials `g` in the\n`K + m` variables, consistent with the combined point answers. This file turns `R` back into a\nmeasurement of `r`-tuples of polynomials in the `m` original variables.\n\n## The extraction\n\nA polynomial `g(x, y)` is **exactly `x`-linear** (`IsXLin`) if it is `∑_i x_i g_i(y)`: every\nmonomial has exactly one `x`-variable, to the first power. `extract` reads off `(g_1, …, g_r)` from\nsuch a `g` and returns `0` otherwise; it is a deterministic relabelling of outcomes, so applied to a\nprojective measurement it gives a projective measurement.\n\n## The estimate\n\n`inconsistency_extract_right_le` (and `_left_le`, the extracted measurement on the other\nparty): the extracted tuple, evaluated at a uniform `y`, disagrees with\nthe original point answer at most `(K + m) d / q` more often than `g(x, y)` disagrees with the\ncombined answer at a uniform `(x, y)`. Fix `y`, the original answer `b` and the outcome `g`, and\naverage over `x` alone --- the Born probabilities do not see `x`, since the original point\nmeasurement is asked `y` only and `R` is asked nothing:\n\n* if `g` is exactly `x`-linear and its extracted tuple is `b` at `y`, there is nothing to prove;\n* if `g` is exactly `x`-linear and the tuple differs from `b`, then `x ↦ g(x, y)` and the combined\n  answer are two different linear forms, so they agree at a uniform `x` with probability at most\n  `K d / q` (`pevY_eq_linPoly`, then Schwartz--Zippel in `K` variables, `card_agree_le`);\n* if `g` is not exactly `x`-linear, a monomial with a forbidden `x`-part has a nonzero coefficient\n  `Q_g`, a polynomial in `y` alone. Where `Q_g(y) ≠ 0` the same Schwartz--Zippel step applies; and\n  `Q_g(y) = 0` has probability at most `m d / q` over `y`, which is paid once per outcome `g`,\n  weighted by `g`'s total Born weight, because summing the Born probabilities over `b` removes `y`\n  (`sum_agreeX_le`, `sum_uniform_badInd_le`).\n\nThe paper splits the last case the same way (its Claims 4 and 5). The linear-forms case costs\n`K d / q` here rather than the paper's `1 / q`: the same Schwartz--Zippel lemma serves all three\ncases, and the difference is absorbed by the final constants.\n\n## The partial evaluation\n\n`pevY g y` is the coefficient vector, in the `K` combining variables, of `x ↦ g(x, y)`\n(`eval_pevY`). It is what lets Schwartz--Zippel in `K` variables be applied with `y` fixed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Extraction.lean#L508-L570",
+  "source_path": "MIPRE/Background/LIDT/Extraction.lean",
+  "lines": [
+   508,
+   570
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-extraction",
+    "env": "lemma",
+    "title": "Extracting exactly linear combined codewords",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.Simul.sum_agreeX_le",
+   "MIPRE.LIDT.Simul.inconsistency_eq_one_sub",
+   "MIPRE.LIDT.Simul.sum_uniform_pad",
+   "MIPRE.sum_bornProb_map",
+   "MIPRE.aOp_sum",
+   "MIPRE.POVM.sum_val",
+   "MIPRE.POVM.posSemidef"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 54,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.inconsistency_extract_left_le",
+  "source_name": "MIPRE.LIDT.Simul.inconsistency_extract_left_le",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.inconsistency_extract_left_le (hd : 1 ≤ d) (hr : r ≤ K) {ψ : dA × dB → ℂ}\n    (hψ : star ψ ⬝ᵥ ψ = 1) (R : POVM (LowIndDegPoly (F := F) (m := K + m) (d := d)) dA)\n    (B : Point F m → POVM (Fin r → F) dB) :\n    inconsistency (uniform (Point F m)) ψ (fun y => R.map fun g => extEval hd hr g y) B\n      ≤ inconsistency (uniform (Point F (K + m))) ψ\n          (fun u => R.map fun g => g.eval u)\n          (fun u => (B (yOf u)).map fun b => (linPoly hd (padB b)).eval (xOf u))\n        + (K + m) * d / Fintype.card F := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT",
+   "open scoped Kronecker",
+   "open Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {K m d r : ℕ}"
+  ],
+  "docstring": "**The extraction bound, the extracted measurement on the first party.**",
+  "module": "MIPRE.Background.LIDT.Extraction",
+  "module_doc": "/-!\n# Extracting exactly linear combined codewords\n\nBlueprint `lem:lidt-ldc-extraction`, the paper's Step 4 of the proof of `lem:ld-soundness` for\ngeneral `ldc` (`ldt.tex`, Claims 4 and 5 and the measurements `H`, `G`). The simultaneous test with\n`r` codewords is reduced to the single-codeword test in `K + m` variables by *combining*: a point\n`(x, y) ∈ F^K × F^m` is answered by `∑_{j < r} x_j b_j`, where `b ∈ F^r` is the original point\nanswer at `y`. The single-codeword theorem then returns a measurement `R` of polynomials `g` in the\n`K + m` variables, consistent with the combined point answers. This file turns `R` back into a\nmeasurement of `r`-tuples of polynomials in the `m` original variables.\n\n## The extraction\n\nA polynomial `g(x, y)` is **exactly `x`-linear** (`IsXLin`) if it is `∑_i x_i g_i(y)`: every\nmonomial has exactly one `x`-variable, to the first power. `extract` reads off `(g_1, …, g_r)` from\nsuch a `g` and returns `0` otherwise; it is a deterministic relabelling of outcomes, so applied to a\nprojective measurement it gives a projective measurement.\n\n## The estimate\n\n`inconsistency_extract_right_le` (and `_left_le`, the extracted measurement on the other\nparty): the extracted tuple, evaluated at a uniform `y`, disagrees with\nthe original point answer at most `(K + m) d / q` more often than `g(x, y)` disagrees with the\ncombined answer at a uniform `(x, y)`. Fix `y`, the original answer `b` and the outcome `g`, and\naverage over `x` alone --- the Born probabilities do not see `x`, since the original point\nmeasurement is asked `y` only and `R` is asked nothing:\n\n* if `g` is exactly `x`-linear and its extracted tuple is `b` at `y`, there is nothing to prove;\n* if `g` is exactly `x`-linear and the tuple differs from `b`, then `x ↦ g(x, y)` and the combined\n  answer are two different linear forms, so they agree at a uniform `x` with probability at most\n  `K d / q` (`pevY_eq_linPoly`, then Schwartz--Zippel in `K` variables, `card_agree_le`);\n* if `g` is not exactly `x`-linear, a monomial with a forbidden `x`-part has a nonzero coefficient\n  `Q_g`, a polynomial in `y` alone. Where `Q_g(y) ≠ 0` the same Schwartz--Zippel step applies; and\n  `Q_g(y) = 0` has probability at most `m d / q` over `y`, which is paid once per outcome `g`,\n  weighted by `g`'s total Born weight, because summing the Born probabilities over `b` removes `y`\n  (`sum_agreeX_le`, `sum_uniform_badInd_le`).\n\nThe paper splits the last case the same way (its Claims 4 and 5). The linear-forms case costs\n`K d / q` here rather than the paper's `1 / q`: the same Schwartz--Zippel lemma serves all three\ncases, and the difference is absorbed by the final constants.\n\n## The partial evaluation\n\n`pevY g y` is the coefficient vector, in the `K` combining variables, of `x ↦ g(x, y)`\n(`eval_pevY`). It is what lets Schwartz--Zippel in `K` variables be applied with `y` fixed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Extraction.lean#L572-L633",
+  "source_path": "MIPRE/Background/LIDT/Extraction.lean",
+  "lines": [
+   572,
+   633
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-extraction",
+    "env": "lemma",
+    "title": "Extracting exactly linear combined codewords",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.Simul.sum_agreeX_le",
+   "MIPRE.LIDT.Simul.inconsistency_eq_one_sub",
+   "MIPRE.LIDT.Simul.sum_uniform_pad",
+   "MIPRE.sum_bornProb_map",
+   "MIPRE.aOp_sum",
+   "MIPRE.POVM.sum_val",
+   "MIPRE.POVM.posSemidef"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 53,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.inconsistency_map_le",
+  "source_name": "MIPRE.LIDT.Simul.inconsistency_map_le",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.inconsistency_map_le {X A C : Type*} [Fintype X] [Fintype A] [DecidableEq A] [Fintype C]\n    [DecidableEq C] {μ : X → ℝ} (hμ0 : ∀ x, 0 ≤ μ x) (hμ1 : ∑ x, μ x = 1) {ψ : dA × dB → ℂ}\n    (hψ : star ψ ⬝ᵥ ψ = 1) (M : X → POVM A dA) (N : X → POVM A dB) (f : A → C) :\n    inconsistency μ ψ (fun x => (M x).map f) (fun x => (N x).map f) ≤ inconsistency μ ψ M N := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {K m d r : ℕ}"
+  ],
+  "docstring": "**Data processing for `inconsistency`**: relabelling both families' outcomes the same way can\nonly decrease the disagreement.",
+  "module": "MIPRE.Background.LIDT.Extraction",
+  "module_doc": "/-!\n# Extracting exactly linear combined codewords\n\nBlueprint `lem:lidt-ldc-extraction`, the paper's Step 4 of the proof of `lem:ld-soundness` for\ngeneral `ldc` (`ldt.tex`, Claims 4 and 5 and the measurements `H`, `G`). The simultaneous test with\n`r` codewords is reduced to the single-codeword test in `K + m` variables by *combining*: a point\n`(x, y) ∈ F^K × F^m` is answered by `∑_{j < r} x_j b_j`, where `b ∈ F^r` is the original point\nanswer at `y`. The single-codeword theorem then returns a measurement `R` of polynomials `g` in the\n`K + m` variables, consistent with the combined point answers. This file turns `R` back into a\nmeasurement of `r`-tuples of polynomials in the `m` original variables.\n\n## The extraction\n\nA polynomial `g(x, y)` is **exactly `x`-linear** (`IsXLin`) if it is `∑_i x_i g_i(y)`: every\nmonomial has exactly one `x`-variable, to the first power. `extract` reads off `(g_1, …, g_r)` from\nsuch a `g` and returns `0` otherwise; it is a deterministic relabelling of outcomes, so applied to a\nprojective measurement it gives a projective measurement.\n\n## The estimate\n\n`inconsistency_extract_right_le` (and `_left_le`, the extracted measurement on the other\nparty): the extracted tuple, evaluated at a uniform `y`, disagrees with\nthe original point answer at most `(K + m) d / q` more often than `g(x, y)` disagrees with the\ncombined answer at a uniform `(x, y)`. Fix `y`, the original answer `b` and the outcome `g`, and\naverage over `x` alone --- the Born probabilities do not see `x`, since the original point\nmeasurement is asked `y` only and `R` is asked nothing:\n\n* if `g` is exactly `x`-linear and its extracted tuple is `b` at `y`, there is nothing to prove;\n* if `g` is exactly `x`-linear and the tuple differs from `b`, then `x ↦ g(x, y)` and the combined\n  answer are two different linear forms, so they agree at a uniform `x` with probability at most\n  `K d / q` (`pevY_eq_linPoly`, then Schwartz--Zippel in `K` variables, `card_agree_le`);\n* if `g` is not exactly `x`-linear, a monomial with a forbidden `x`-part has a nonzero coefficient\n  `Q_g`, a polynomial in `y` alone. Where `Q_g(y) ≠ 0` the same Schwartz--Zippel step applies; and\n  `Q_g(y) = 0` has probability at most `m d / q` over `y`, which is paid once per outcome `g`,\n  weighted by `g`'s total Born weight, because summing the Born probabilities over `b` removes `y`\n  (`sum_agreeX_le`, `sum_uniform_badInd_le`).\n\nThe paper splits the last case the same way (its Claims 4 and 5). The linear-forms case costs\n`K d / q` here rather than the paper's `1 / q`: the same Schwartz--Zippel lemma serves all three\ncases, and the difference is absorbed by the final constants.\n\n## The partial evaluation\n\n`pevY g y` is the coefficient vector, in the `K` combining variables, of `x ↦ g(x, y)`\n(`eval_pevY`). It is what lets Schwartz--Zippel in `K` variables be applied with `y` fixed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Extraction.lean#L644-L665",
+  "source_path": "MIPRE/Background/LIDT/Extraction.lean",
+  "lines": [
+   644,
+   665
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-extraction",
+    "env": "lemma",
+    "title": "Extracting exactly linear combined codewords",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.Simul.inconsistency_eq_one_sub",
+   "MIPRE.sum_bornProb_map",
+   "MIPRE.POVM.posSemidef"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.extracted_conclusions",
+  "source_name": "MIPRE.LIDT.Simul.extracted_conclusions",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.extracted_conclusions (hd : 1 ≤ d) (hr : r ≤ K) {ψ : dA × dB → ℂ}\n    (hψ : star ψ ⬝ᵥ ψ = 1) (A : Point F m → POVM (Fin r → F) dA)\n    (B : Point F m → POVM (Fin r → F) dB)\n    (RA : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := K + m) (d := d))\n      (Matrix dA dA ℂ))\n    (RB : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := K + m) (d := d))\n      (Matrix dB dB ℂ)) {δ : ℝ}\n    (h1 : inconsistency (uniform (Point F (K + m))) ψ (combPOVM hd A) (evalPOVM RB) ≤ δ)\n    (h2 : inconsistency (uniform (Point F (K + m))) ψ (evalPOVM RA) (combPOVM hd B) ≤ δ)\n    (h3 : inconsistency (uniform Unit) ψ (fun _ => RA.toPOVM ()) (fun _ => RB.toPOVM ()) ≤ δ) :\n    inconsistency (uniform (Point F m)) ψ A (evalTuplePOVM (extractPM hd hr RB))\n        ≤ δ + (K + m) * d / Fintype.card F ∧\n      inconsistency (uniform (Point F m)) ψ (evalTuplePOVM (extractPM hd hr RA)) B\n        ≤ δ + (K + m) * d / Fintype.card F ∧\n      inconsistency (uniform Unit) ψ (fun _ => (extractPM hd hr RA).toPOVM ())\n        (fun _ => (extractPM hd hr RB).toPOVM ()) ≤ δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {K m d r : ℕ}"
+  ],
+  "docstring": "**From the single-codeword conclusions to the simultaneous ones** (the paper's Step 4). If the\ntwo players' measurements `RA`, `RB` of polynomials in the `K + m` variables satisfy the three\nconclusions of the single-codeword theorem against the combined point measurements, with error\n`δ`, then their extractions satisfy the three conclusions of the simultaneous theorem against the\noriginal point measurements, with error `δ + (K + m) d / q` for the two point conclusions and `δ`\nfor the full-tuple one.",
+  "module": "MIPRE.Background.LIDT.Extraction",
+  "module_doc": "/-!\n# Extracting exactly linear combined codewords\n\nBlueprint `lem:lidt-ldc-extraction`, the paper's Step 4 of the proof of `lem:ld-soundness` for\ngeneral `ldc` (`ldt.tex`, Claims 4 and 5 and the measurements `H`, `G`). The simultaneous test with\n`r` codewords is reduced to the single-codeword test in `K + m` variables by *combining*: a point\n`(x, y) ∈ F^K × F^m` is answered by `∑_{j < r} x_j b_j`, where `b ∈ F^r` is the original point\nanswer at `y`. The single-codeword theorem then returns a measurement `R` of polynomials `g` in the\n`K + m` variables, consistent with the combined point answers. This file turns `R` back into a\nmeasurement of `r`-tuples of polynomials in the `m` original variables.\n\n## The extraction\n\nA polynomial `g(x, y)` is **exactly `x`-linear** (`IsXLin`) if it is `∑_i x_i g_i(y)`: every\nmonomial has exactly one `x`-variable, to the first power. `extract` reads off `(g_1, …, g_r)` from\nsuch a `g` and returns `0` otherwise; it is a deterministic relabelling of outcomes, so applied to a\nprojective measurement it gives a projective measurement.\n\n## The estimate\n\n`inconsistency_extract_right_le` (and `_left_le`, the extracted measurement on the other\nparty): the extracted tuple, evaluated at a uniform `y`, disagrees with\nthe original point answer at most `(K + m) d / q` more often than `g(x, y)` disagrees with the\ncombined answer at a uniform `(x, y)`. Fix `y`, the original answer `b` and the outcome `g`, and\naverage over `x` alone --- the Born probabilities do not see `x`, since the original point\nmeasurement is asked `y` only and `R` is asked nothing:\n\n* if `g` is exactly `x`-linear and its extracted tuple is `b` at `y`, there is nothing to prove;\n* if `g` is exactly `x`-linear and the tuple differs from `b`, then `x ↦ g(x, y)` and the combined\n  answer are two different linear forms, so they agree at a uniform `x` with probability at most\n  `K d / q` (`pevY_eq_linPoly`, then Schwartz--Zippel in `K` variables, `card_agree_le`);\n* if `g` is not exactly `x`-linear, a monomial with a forbidden `x`-part has a nonzero coefficient\n  `Q_g`, a polynomial in `y` alone. Where `Q_g(y) ≠ 0` the same Schwartz--Zippel step applies; and\n  `Q_g(y) = 0` has probability at most `m d / q` over `y`, which is paid once per outcome `g`,\n  weighted by `g`'s total Born weight, because summing the Born probabilities over `b` removes `y`\n  (`sum_agreeX_le`, `sum_uniform_badInd_le`).\n\nThe paper splits the last case the same way (its Claims 4 and 5). The linear-forms case costs\n`K d / q` here rather than the paper's `1 / q`: the same Schwartz--Zippel lemma serves all three\ncases, and the difference is absorbed by the final constants.\n\n## The partial evaluation\n\n`pevY g y` is the coefficient vector, in the `K` combining variables, of `x ↦ g(x, y)`\n(`eval_pevY`). It is what lets Schwartz--Zippel in `K` variables be applied with `y` fixed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Extraction.lean#L716-L757",
+  "source_path": "MIPRE/Background/LIDT/Extraction.lean",
+  "lines": [
+   716,
+   757
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-extraction",
+    "env": "lemma",
+    "title": "Extracting exactly linear combined codewords",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.Simul.inconsistency_extract_right_le",
+   "MIPRE.LIDT.Simul.inconsistency_extract_left_le",
+   "MIPRE.LIDT.Simul.inconsistency_map_le",
+   "MIPRE.POVM.map_map",
+   "MIPRE.IsPVM.coarse"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.AxisParallelLine.appendAtHeight_rebaseAt",
+  "source_name": "MIPStarRE.LDT.AxisParallelLine.appendAtHeight_rebaseAt",
+  "formal_statement": "theorem MIPStarRE.LDT.AxisParallelLine.appendAtHeight_rebaseAt {params : Parameters} [FieldModel params.q]\n    (ℓ : AxisParallelLine params) (t x : Fq params) :\n    appendAtHeight params (rebaseAt ℓ t) x =\n      rebaseAt (appendAtHeight params ℓ x) t := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.AxisParallelLine"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.AxisParallelLine",
+  "module_doc": "/-!\n# Axis-parallel lines for the low individual degree test\n\nAxis-parallel line geometry on top of the core parameter infrastructure:\n`AxisParallelLine` records a base point and a coordinate direction, with\ncanonical parameterization, rebasing, and slice-embedding operations.\n\n## References\n\n- `references/ldt-paper/test_definition.tex`\n- `blueprint/src/chapter/ch02_test.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/AxisParallelLine.lean#L129-L158",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/AxisParallelLine.lean",
+  "lines": [
+   129,
+   158
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.DiagonalLine.rebaseAt_rebase",
+  "source_name": "MIPStarRE.LDT.DiagonalLine.rebaseAt_rebase",
+  "formal_statement": "theorem MIPStarRE.LDT.DiagonalLine.rebaseAt_rebase {params : Parameters} [FieldModel params.q]\n    (ℓ : DiagonalLine params) (t s : Fq params) :\n    rebaseAt (rebaseAt ℓ t) s = rebaseAt ℓ (addCoord t s) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.DiagonalLine"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DiagonalLine",
+  "module_doc": "/-!\n# Diagonal lines for the low individual degree test\n\nDiagonal-line geometry and rebasing operations.\n\n## References\n\n- `references/ldt-paper/test_definition.tex`\n- `blueprint/src/chapter/ch02_test.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DiagonalLine.lean#L147-L163",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DiagonalLine.lean",
+  "lines": [
+   147,
+   163
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.DiagonalLine.appendAtHeight_rebaseAt",
+  "source_name": "MIPStarRE.LDT.DiagonalLine.appendAtHeight_rebaseAt",
+  "formal_statement": "theorem MIPStarRE.LDT.DiagonalLine.appendAtHeight_rebaseAt {params : Parameters} [FieldModel params.q]\n    (ℓ : DiagonalLine params) (t x : Fq params) :\n    appendAtHeight params (rebaseAt ℓ t) x =\n      rebaseAt (appendAtHeight params ℓ x) t := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.DiagonalLine"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DiagonalLine",
+  "module_doc": "/-!\n# Diagonal lines for the low individual degree test\n\nDiagonal-line geometry and rebasing operations.\n\n## References\n\n- `references/ldt-paper/test_definition.tex`\n- `blueprint/src/chapter/ch02_test.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DiagonalLine.lean#L171-L199",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DiagonalLine.lean",
+  "lines": [
+   171,
+   199
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Distribution.map_sum_smul",
+  "source_name": "MIPStarRE.LDT.Distribution.map_sum_smul",
+  "formal_statement": "theorem MIPStarRE.LDT.Distribution.map_sum_smul {α β M : Type*} [DecidableEq β]\n    [AddCommMonoid M] [Module Error M]\n    (𝒟 : Distribution α) (e : α → β) (f : β → M) :\n    ∑ b ∈ (𝒟.map e).support, (𝒟.map e).weight b • f b =\n      ∑ a ∈ 𝒟.support, 𝒟.weight a • f (e a) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Distribution",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "A finite weighted sum over a push-forward distribution is the corresponding\nweighted sum of the pulled-back family.  This is the `Distribution` analogue of\nthe finite-sum form of `PMF.map`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution",
+  "module_doc": "/-!\n# Distribution infrastructure for the low individual degree test\n\nShared distribution definitions: finite-support weighted distributions,\na probability predicate, push-forward distributions, weighted-sum linear maps,\naveraging, uniform distribution, and outcome summation.\n\nNote: this module contributes declarations to the comparator statement closure\nof `mainFormal`, which must elaborate in the same environment as the\nMathlib-only `Challenge.lean`.  Keep the full `import Mathlib`; do not narrow\nit.  See `docs/comparator.md`, \"Environment alignment\".\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/Distribution.lean#L164-L188",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/Distribution.lean",
+  "lines": [
+   164,
+   188
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.averageOperatorOverDistribution_congr",
+  "source_name": "MIPStarRE.LDT.averageOperatorOverDistribution_congr",
+  "formal_statement": "theorem MIPStarRE.LDT.averageOperatorOverDistribution_congr {α : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (𝒟 : Distribution α) (A B : α → MIPStarRE.Quantum.Op ι)\n    (h : ∀ a, A a = B a) :\n    averageOperatorOverDistribution 𝒟 A = averageOperatorOverDistribution 𝒟 B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "If two operator-valued families agree pointwise, their averages agree.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution",
+  "module_doc": "/-!\n# Distribution infrastructure for the low individual degree test\n\nShared distribution definitions: finite-support weighted distributions,\na probability predicate, push-forward distributions, weighted-sum linear maps,\naveraging, uniform distribution, and outcome summation.\n\nNote: this module contributes declarations to the comparator statement closure\nof `mainFormal`, which must elaborate in the same environment as the\nMathlib-only `Challenge.lean`.  Keep the full `import Mathlib`; do not narrow\nit.  See `docs/comparator.md`, \"Environment alignment\".\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/Distribution.lean#L396-L402",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/Distribution.lean",
+  "lines": [
+   396,
+   402
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.averageOperatorOverDistribution_sum",
+  "source_name": "MIPStarRE.LDT.averageOperatorOverDistribution_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.averageOperatorOverDistribution_sum {α β : Type*} [Fintype β]\n    (𝒟 : Distribution α)\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (f : α → β → MIPStarRE.Quantum.Op ι) :\n    averageOperatorOverDistribution 𝒟 (fun a => ∑ b : β, f a b) =\n      ∑ b : β, averageOperatorOverDistribution 𝒟 (fun a => f a b) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Pull a finite outcome sum through an operator-valued average.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution",
+  "module_doc": "/-!\n# Distribution infrastructure for the low individual degree test\n\nShared distribution definitions: finite-support weighted distributions,\na probability predicate, push-forward distributions, weighted-sum linear maps,\naveraging, uniform distribution, and outcome summation.\n\nNote: this module contributes declarations to the comparator statement closure\nof `mainFormal`, which must elaborate in the same environment as the\nMathlib-only `Challenge.lean`.  Keep the full `import Mathlib`; do not narrow\nit.  See `docs/comparator.md`, \"Environment alignment\".\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/Distribution.lean#L404-L414",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/Distribution.lean",
+  "lines": [
+   404,
+   414
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.averageOperatorOverDistribution_nonneg",
+  "source_name": "MIPStarRE.LDT.averageOperatorOverDistribution_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.averageOperatorOverDistribution_nonneg {α : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (𝒟 : Distribution α) (f : α → MIPStarRE.Quantum.Op ι)\n    (hf : ∀ a, 0 ≤ f a) :\n    0 ≤ averageOperatorOverDistribution 𝒟 f := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Operator averages preserve positivity.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution",
+  "module_doc": "/-!\n# Distribution infrastructure for the low individual degree test\n\nShared distribution definitions: finite-support weighted distributions,\na probability predicate, push-forward distributions, weighted-sum linear maps,\naveraging, uniform distribution, and outcome summation.\n\nNote: this module contributes declarations to the comparator statement closure\nof `mainFormal`, which must elaborate in the same environment as the\nMathlib-only `Challenge.lean`.  Keep the full `import Mathlib`; do not narrow\nit.  See `docs/comparator.md`, \"Environment alignment\".\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/Distribution.lean#L428-L435",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/Distribution.lean",
+  "lines": [
+   428,
+   435
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ }
+]

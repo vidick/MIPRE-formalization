@@ -1,0 +1,3703 @@
+[
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+  "module": "MIPRE.Foundations.LowDegree.BinaryPrimePowerDispatch",
+  "module_doc": "/-! # Uniform dispatch and prime-power polynomial decomposition -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryPrimePowerDispatch.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryPrimePowerDispatch.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryPolynomial.degreePolynomials",
+   "MIPRE.LowDegree.BinaryPolynomial.degreePolynomialsProg",
+   "MIPRE.LowDegree.BinaryPolynomial.primePowerBits",
+   "MIPRE.LowDegree.BinaryPolynomial.primePowerBitsProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryPolynomial.degreePolynomialsProg_apply",
+   "MIPRE.LowDegree.BinaryPolynomial.primePowerBitsProg_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.degreePolynomials",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     75,
+     77
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.degreePolynomialsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     79,
+     81
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.degreePolynomialsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     83,
+     84
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.primePowerBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     22,
+     26
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.primePowerBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     28,
+     39
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.primePowerBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     41,
+     42
+    ]
+   }
+  ],
+  "lines": 157,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryPolynomial.degreePolynomials": [
+    "/-- The supplied degree is decomposed into a fixed ordered list of irreducible polynomials. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.degreePolynomialsProg": [
+    "/-- One polynomial-time program prints the entire prime-power polynomial list. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.primePowerBits": [
+    "/-- Dispatch degree one, powers of two, and odd-prime powers by raw unary inputs. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.primePowerBitsProg": [
+    "/-- The dispatch is one fixed total polynomial-time program. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly",
+  "module": "MIPRE.Foundations.LowDegree.BinaryIrreducibleAssembly",
+  "module_doc": "/-! # A globally bounded assembly of coprime prime-power irreducibles -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryIrreducibleAssembly.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryIrreducibleAssembly.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryPolynomial.AssemblyState",
+   "MIPRE.LowDegree.BinaryPolynomial.assembleBitsProg",
+   "MIPRE.LowDegree.BinaryPolynomial.assemblyStep",
+   "MIPRE.LowDegree.BinaryPolynomial.composedLowerBits",
+   "_private.MIPRE.Foundations.LowDegree.BinaryIrreducibleAssembly.0.MIPRE.LowDegree.BinaryPolynomial.assemblyStepProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryPolynomial.fold_assemblyStep_shape",
+   "_private.MIPRE.Foundations.LowDegree.BinaryIrreducibleAssembly.0.MIPRE.LowDegree.BinaryPolynomial.assemblyStepProg_apply",
+   "_private.MIPRE.Foundations.LowDegree.BinaryIrreducibleAssembly.0.MIPRE.LowDegree.BinaryPolynomial.assemblyStep_bounded",
+   "_private.MIPRE.Foundations.LowDegree.BinaryIrreducibleAssembly.0.MIPRE.LowDegree.BinaryPolynomial.degree_prod_pos"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.AssemblyState",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     43,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.assembleBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     154,
+     156
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.assemblyStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     46,
+     48
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.composedLowerBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     16,
+     18
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.fold_assemblyStep_shape",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     63,
+     73
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryIrreducibleAssembly.0.MIPRE.LowDegree.BinaryPolynomial.assemblyStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     126,
+     130
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryIrreducibleAssembly.0.MIPRE.LowDegree.BinaryPolynomial.assemblyStepProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     132,
+     136
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryIrreducibleAssembly.0.MIPRE.LowDegree.BinaryPolynomial.assemblyStep_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     138,
+     152
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryIrreducibleAssembly.0.MIPRE.LowDegree.BinaryPolynomial.degree_prod_pos",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     75,
+     82
+    ]
+   }
+  ],
+  "lines": 190,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryPolynomial.AssemblyState": [
+    "/-- The unary target-degree cap and the current monic lower coefficients. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.assembleBitsProg": [
+    "/-- One uniform program assembles the supplied polynomial list with a global width cap. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.assemblyStep": [
+    "/-- Every step clips its new modulus to the original unary target-degree cap. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.composedLowerBits": [
+    "/-- Lower coefficients of the normalized composed-sum polynomial. -/"
+   ],
+   "_private.MIPRE.Foundations.LowDegree.BinaryIrreducibleAssembly.0.MIPRE.LowDegree.BinaryPolynomial.assemblyStepProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryIrreducibleConstructor",
+  "module": "MIPRE.Foundations.LowDegree.BinaryIrreducibleConstructor",
+  "module_doc": "/-! # A specified polynomial-time irreducible polynomial of every positive binary degree -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryIrreducibleConstructor.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryIrreducibleConstructor.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryPolynomial.irreducibleBits",
+   "MIPRE.LowDegree.BinaryPolynomial.irreducibleBitsProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryPolynomial.irreducibleBitsProg_apply",
+   "MIPRE.LowDegree.BinaryPolynomial.irreducibleBits_zero"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.irreducibleBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     15,
+     18
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.irreducibleBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     20,
+     30
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.irreducibleBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     32,
+     32
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.irreducibleBits_zero",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     34,
+     35
+    ]
+   }
+  ],
+  "lines": 150,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly"
+  ],
+  "blueprint": [
+   "lem:binary-uniform-irreducible"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryPolynomial.irreducibleBits": [
+    "/-- The complete constructor, with a fixed constant output at degree zero. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.irreducibleBitsProg": [
+    "/-- One globally polynomial-time program constructs every positive binary degree. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_Shoup",
+  "module": "MIPRE.Foundations.LowDegree.Shoup",
+  "module_doc": "/-!\n# Deterministic irreducible polynomials over the binary field\n\nThis file exposes the proved fixed-characteristic construction of Shoup 1990,\nTheorem 3.2. The specified program factors squarefree binary polynomials, constructs\nodd-prime auxiliary nonresidues and trace generators, builds the characteristic-two\nArtin–Schreier tower, and combines coprime prime-power degrees by composed sums.\n\nThe input is the unary requested degree. Every arithmetic operation and bounded loop\nis compiled into the ambient cost model, including coefficient printing and a fixed\nconstant output at degree zero. `BinaryPolynomial.irreducibleBitsProg_time_le` gives\nthe resulting polynomial runtime bound in the degree. The public names below retain\nthe interfaces used by the quotient-field and self-dual-normal-basis consumers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/Shoup.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/Shoup.lean",
+  "defmat": [
+   "MIPRE.LowDegree.shoupIrreducible"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.shoupIrreducible",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     29,
+     31
+    ]
+   }
+  ],
+  "lines": 149,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleConstructor"
+  ],
+  "blueprint": [
+   "lem:binary-uniform-irreducible"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.shoupIrreducible": [
+    "/-- The specified deterministic polynomial-time irreducible-polynomial constructor. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_ShoupCoefficients",
+  "module": "MIPRE.Foundations.LowDegree.ShoupCoefficients",
+  "module_doc": "/-!\n# Coefficient interface to Shoup's construction\n\nThe field consumers use the lower coefficients of the monic polynomial.\nKeeping this adapter separate lets generic arithmetic and the future constructor\nuse the same coefficient algorithms without importing the Shoup interface.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/ShoupCoefficients.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/ShoupCoefficients.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryPolynomial.shoupLowerCoeffs"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.shoupLowerCoeffs",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     20,
+     23
+    ]
+   }
+  ],
+  "lines": 136,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleConstructor",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Shoup"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryPolynomial.shoupLowerCoeffs": [
+    "/-- Shoup's output normalized to the `k` lower coefficients; the leading monic",
+    "coefficient is implicit. This construction retains Shoup's unary input bound. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_SAT_QuotientField",
+  "module": "MIPRE.Foundations.SAT.QuotientField",
+  "module_doc": "/-!\n# Binary fields represented in the polynomial power basis\n\nUnlike an arbitrary basis of a Galois field, the power basis of `F₂[X]/(f)`\nconnects directly to the uniform coefficient-list programs. This is the field\nrepresentation needed for the classical PCP's arithmetic. A self-dual normal\nrepresentation and its change-of-basis algorithm remain separate constructions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/QuotientField.lean",
+  "source_path": "MIPRE/Foundations/SAT/QuotientField.lean",
+  "defmat": [
+   "MIPRE.SAT.quotientBinField",
+   "MIPRE.SAT.shoupAdmissibleField",
+   "MIPRE.SAT.shoupBinField",
+   "MIPRE.SAT.shoupFieldModel",
+   "MIPRE.SAT.shoupMulProg",
+   "MIPRE.SAT.shoupRoot",
+   "_private.MIPRE.Foundations.SAT.QuotientField.0.MIPRE.SAT.bitOfCoeff"
+  ],
+  "embedded": [
+   "MIPRE.SAT.instFactPrimeOfNatNat_mIPRE",
+   "_private.MIPRE.Foundations.SAT.QuotientField.0.MIPRE.SAT.bitOfCoeff_ofBool",
+   "_private.MIPRE.Foundations.SAT.QuotientField.0.MIPRE.SAT.ofBool_bitOfCoeff"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.SAT.instFactPrimeOfNatNat_mIPRE",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     26,
+     26
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.quotientBinField",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     44,
+     65
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.shoupAdmissibleField",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     182,
+     184
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.shoupBinField",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     154,
+     165
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.shoupFieldModel",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     147,
+     152
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.shoupMulProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     217,
+     220
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.shoupRoot",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     186,
+     188
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.SAT.QuotientField.0.MIPRE.SAT.bitOfCoeff",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     28,
+     28
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.SAT.QuotientField.0.MIPRE.SAT.bitOfCoeff_ofBool",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     34,
+     35
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.SAT.QuotientField.0.MIPRE.SAT.ofBool_bitOfCoeff",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     30,
+     32
+    ]
+   }
+  ],
+  "lines": 236,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleConstructor",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Shoup",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_ShoupCoefficients"
+  ],
+  "blueprint": [
+   "lem:effective-binary-field-arithmetic"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.SAT.quotientBinField": [
+    "/-- A binary field with coefficient bits in the power basis of a monic irreducible",
+    "polynomial. The basis is specified, rather than chosen by abstract finite-field existence. -/"
+   ],
+   "MIPRE.SAT.shoupAdmissibleField": [
+    "/-- The admissible field family with exactly the domain required by `PcpDecider.fld`. -/"
+   ],
+   "MIPRE.SAT.shoupBinField": [
+    "/-- A field of size `2^k` in the polynomial basis supplied by Shoup's algorithm. -/"
+   ],
+   "MIPRE.SAT.shoupFieldModel": [
+    "/-- Shoup's concrete quotient model, before transporting the degree equality. -/"
+   ],
+   "MIPRE.SAT.shoupMulProg": [
+    "/-- Compute the modulus from unary `k`, then multiply the two coefficient vectors.",
+    "This is one uniform ambient program, with a polynomial bound in its input size. -/"
+   ],
+   "MIPRE.SAT.shoupRoot": [
+    "/-- The distinguished root in the explicit Shoup field carrier. -/"
+   ],
+   "_private.MIPRE.Foundations.SAT.QuotientField.0.MIPRE.SAT.bitOfCoeff": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_SAT_FieldTrace",
+  "module": "MIPRE.Foundations.SAT.FieldTrace",
+  "module_doc": "/-! # Frobenius and trace in the effective Shoup field -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/FieldTrace.lean",
+  "source_path": "MIPRE/Foundations/SAT/FieldTrace.lean",
+  "defmat": [
+   "MIPRE.SAT.shoupBinField_algebra"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.SAT.shoupBinField_algebra",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     16,
+     19
+    ]
+   }
+  ],
+  "lines": 161,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleConstructor",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Shoup",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_ShoupCoefficients",
+   "import Definitions.Def_MIPRE_Foundations_SAT_QuotientField"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.SAT.shoupBinField_algebra": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_SAT_FieldCoordinates",
+  "module": "MIPRE.Foundations.SAT.FieldCoordinates",
+  "module_doc": "/-! # Canonical binary linear coordinates for the effective field -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/FieldCoordinates.lean",
+  "source_path": "MIPRE/Foundations/SAT/FieldCoordinates.lean",
+  "defmat": [
+   "MIPRE.SAT.shoupCoordinateEquiv",
+   "MIPRE.SAT.shoupPowerBasis"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryLinear.vectorBits_vectorValue",
+   "MIPRE.SAT.instFactPrimeOfNatNat_mIPRE_1",
+   "MIPRE.SAT.shoupBinField_ofBits",
+   "MIPRE.SAT.shoupCoordinateEquiv_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.vectorBits_vectorValue",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     14,
+     21
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.instFactPrimeOfNatNat_mIPRE_1",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     29,
+     29
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.shoupBinField_ofBits",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     31,
+     37
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.shoupCoordinateEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     39,
+     69
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.shoupCoordinateEquiv_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     71,
+     73
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.shoupPowerBasis",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     81,
+     84
+    ]
+   }
+  ],
+  "lines": 230,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleConstructor",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Shoup",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_ShoupCoefficients",
+   "import Definitions.Def_MIPRE_Foundations_SAT_QuotientField",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldTrace"
+  ],
+  "blueprint": [
+   "lem:effective-field-matrices"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.SAT.shoupCoordinateEquiv": [
+    "/-- The canonical bit representation is also a binary linear equivalence. -/"
+   ],
+   "MIPRE.SAT.shoupPowerBasis": [
+    "/-- The basis associated to the actual polynomial-time field representation. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_AnswerReduction_Layout",
+  "module": "MIPRE.Background.AnswerReduction.Layout",
+  "module_doc": "/-!\n# The layout of the PCP coordinates\n\nPiece AR-3d of `planning/answer-reduction.md`: how a program reads a vector of `V^pcp`.\n\n* The coordinates are numbered in three runs (`coordIndex`): the concatenated point register\n  `V_{6,pt}` (`pt6`, `m'` coordinates), the concatenated direction register `V_{6,dir}` (`dir6`),\n  and the six seeds. A vector of `V^pcp` is thus the three lists `ptOf6`, `dirOf6`, `seedsOf`.\n* Each copy of the test is a contiguous run of `V_{6,pt}` and of `V_{6,dir}` with its own seed\n  (`regsAt`): copy `i ≤ 5` at offset `i·m` and length `m` (`regs_eq`), copy `6` at offset `0` and\n  length `m'` (`regs6_eq`).\n* The bits of the downsized vector, numbered by `bitIndex`, are the field elements' Shoup bits in\n  that order (`toBits_pcp`), so a program reads them by cutting `k`-bit blocks.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/Layout.lean",
+  "source_path": "MIPRE/Background/AnswerReduction/Layout.lean",
+  "defmat": [
+   "MIPRE.AnswerReduction.Pcp.bitIndex",
+   "MIPRE.AnswerReduction.Pcp.coordIndex",
+   "MIPRE.AnswerReduction.Pcp.dirOf6",
+   "MIPRE.AnswerReduction.Pcp.flatBits",
+   "MIPRE.AnswerReduction.Pcp.layout",
+   "MIPRE.AnswerReduction.Pcp.pcpDim",
+   "MIPRE.AnswerReduction.Pcp.ptOf6",
+   "MIPRE.AnswerReduction.Pcp.regsAt",
+   "MIPRE.AnswerReduction.Pcp.seedsOf"
+  ],
+  "embedded": [
+   "MIPRE.AnswerReduction.Pcp.coordIndex_symm_castAdd",
+   "MIPRE.AnswerReduction.Pcp.coordIndex_symm_natAdd_castAdd",
+   "MIPRE.AnswerReduction.Pcp.coordIndex_symm_natAdd_natAdd",
+   "MIPRE.AnswerReduction.Pcp.dir6_aux",
+   "MIPRE.AnswerReduction.Pcp.dir6_block",
+   "MIPRE.AnswerReduction.Pcp.dir6_ne_coord",
+   "MIPRE.AnswerReduction.Pcp.layout_coord",
+   "MIPRE.AnswerReduction.Pcp.layout_dir6",
+   "MIPRE.AnswerReduction.Pcp.layout_pt6",
+   "MIPRE.AnswerReduction.Pcp.pt6_aux",
+   "MIPRE.AnswerReduction.Pcp.pt6_ne_coord",
+   "MIPRE.AnswerReduction.Pcp.regs_le"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.bitIndex",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     207,
+     209
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.coordIndex",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     162,
+     164
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.coordIndex_symm_castAdd",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     174,
+     177
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.coordIndex_symm_natAdd_castAdd",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     179,
+     182
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.coordIndex_symm_natAdd_natAdd",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     184,
+     187
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.dir6_aux",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     63,
+     67
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.dir6_block",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     36,
+     55
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.dir6_ne_coord",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     72,
+     73
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.dirOf6",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     115,
+     116
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.flatBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     211,
+     213
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.layout",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     121,
+     154
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.layout_coord",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     172,
+     172
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.layout_dir6",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     169,
+     170
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.layout_pt6",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     166,
+     167
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.pcpDim",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     156,
+     157
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.pt6_aux",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     57,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.pt6_ne_coord",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     69,
+     70
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.ptOf6",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     112,
+     113
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.regsAt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     77,
+     91
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.regs_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     93,
+     97
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.seedsOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     118,
+     119
+    ]
+   }
+  ],
+  "lines": 346,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_Presentation",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_PcpPresentation",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Product",
+   "import Definitions.Def_MIPRE_Foundations_CL_Downsize",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_ProductSampler",
+   "import Definitions.Def_MIPRE_Background_LIDT_PresentationQueries",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleConstructor",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Shoup",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_ShoupCoefficients",
+   "import Definitions.Def_MIPRE_Foundations_SAT_QuotientField",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldTrace",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldCoordinates"
+  ],
+  "blueprint": [
+   "def:ar-typed-game"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.AnswerReduction.Pcp.bitIndex": [
+    "/-- The numbering of the bits: coordinate by coordinate, `k` bits each. -/"
+   ],
+   "MIPRE.AnswerReduction.Pcp.coordIndex": [
+    "/-- The numbering of the coordinates: `V_{6,pt}`, then `V_{6,dir}`, then the seeds. -/"
+   ],
+   "MIPRE.AnswerReduction.Pcp.dirOf6": [
+    "/-- The concatenated direction register of a vector. -/"
+   ],
+   "MIPRE.AnswerReduction.Pcp.flatBits": [
+    "/-- The Shoup bits of a vector of `V^pcp`, in the numbering. -/"
+   ],
+   "MIPRE.AnswerReduction.Pcp.layout": [
+    "/-- The three runs of the coordinates. -/"
+   ],
+   "MIPRE.AnswerReduction.Pcp.pcpDim": [
+    "/-- The number of coordinates of `V^pcp`, in the three runs. -/"
+   ],
+   "MIPRE.AnswerReduction.Pcp.ptOf6": [
+    "/-- The concatenated point register of a vector. -/"
+   ],
+   "MIPRE.AnswerReduction.Pcp.regsAt": [
+    "/-- The registers of a copy at offset `o` and length `sz` of the concatenated registers, with",
+    "the seed `c`. -/"
+   ],
+   "MIPRE.AnswerReduction.Pcp.seedsOf": [
+    "/-- The six seeds of a vector. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_AnswerReduction_Family",
+  "module": "MIPRE.Background.AnswerReduction.Family",
+  "module_doc": "/-!\n# The binary CL family of the answer-reduced sampler\n\nPiece AR-3c of `planning/answer-reduction.md`: the typed CL functions of the answer-reduced\nsampler `Ŝ^ar` (`sec:ar-verifier`, `ld_compiler.tex`), over `𝔽₂`, one for each type\n`(r, t) ∈ Role × PcpTy`.\n\n* **The PCP half is downsized along the Shoup polynomial basis** (`pcpBin`), whose coordinates\n  are the field elements' bits `fld.toBits`, the representation the PCP verifier reads\n  (`shoupCoordinateEquiv_encoding`). This is finding 1 of the plan: questions need no change of\n  basis before the PCP verifier sees them. Its bits are numbered by `Pcp.bitIndex` (`pcpCl`).\n* **The oracle half** is the oracularized sampler's `roleFamily` of the input sampler.\n* Both are padded to `L = max (ℓ + 1) 3` levels and put side by side, the oracle half first\n  (`cl`, the product `CLFun.prodCL` of `MIPRE/Foundations/CL/ProductSampler`).\n\n`cl_exactlyOn` is the exactness a `CL.TypedSampler` asks for, and `oraclePart_eval`,\n`pcpPart_eval` say what the question of a type carries: the oracle's question in the oracle\ncoordinates, the downsized PCP question in the others.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/Family.lean",
+  "source_path": "MIPRE/Background/AnswerReduction/Family.lean",
+  "defmat": [
+   "MIPRE.AnswerReduction.Fq",
+   "MIPRE.AnswerReduction.basis",
+   "MIPRE.AnswerReduction.cl",
+   "MIPRE.AnswerReduction.dim",
+   "MIPRE.AnswerReduction.level",
+   "MIPRE.AnswerReduction.oraclePart",
+   "MIPRE.AnswerReduction.pcpBin",
+   "MIPRE.AnswerReduction.pcpCl",
+   "MIPRE.AnswerReduction.pcpPart"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.AnswerReduction.Fq",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     40,
+     41
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.basis",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     43,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.cl",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     63,
+     67
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.dim",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     49,
+     50
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.level",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     46,
+     47
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.oraclePart",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     89,
+     90
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.pcpBin",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     55,
+     57
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.pcpCl",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     59,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.pcpPart",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     92,
+     94
+    ]
+   }
+  ],
+  "lines": 277,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_Presentation",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_PcpPresentation",
+   "import Definitions.Def_MIPRE_Foundations_OracularGame",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_PerfectStrategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_OracularSound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_OracularTensor",
+   "import Definitions.Def_MIPRE_Foundations_OracularComplete",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_OracularTyped",
+   "import Definitions.Def_MIPRE_Foundations_CL_Product",
+   "import Definitions.Def_MIPRE_Foundations_CL_Downsize",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_ProductSampler",
+   "import Definitions.Def_MIPRE_Background_LIDT_PresentationQueries",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleConstructor",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Shoup",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_ShoupCoefficients",
+   "import Definitions.Def_MIPRE_Foundations_SAT_QuotientField",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldTrace",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldCoordinates",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Layout"
+  ],
+  "blueprint": [
+   "def:ar-typed-game"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.AnswerReduction.Fq": [
+    "/-- The field of the PCP, `F_q` with `q = 2^k`, in its Shoup representation. -/"
+   ],
+   "MIPRE.AnswerReduction.basis": [
+    "/-- The Shoup polynomial basis of `F_q` over `𝔽₂`: its coordinates are the bits of an element. -/"
+   ],
+   "MIPRE.AnswerReduction.cl": [
+    "/-- **The typed CL function** of the answer-reduced sampler at the type `rt`: the oracle half on",
+    "the first coordinates, the PCP half on the rest, at the common level. -/"
+   ],
+   "MIPRE.AnswerReduction.dim": [
+    "/-- The dimension of the answer-reduced sampler at index `n`. -/"
+   ],
+   "MIPRE.AnswerReduction.level": [
+    "/-- The common level `max (ℓ + 1) 3`. -/"
+   ],
+   "MIPRE.AnswerReduction.oraclePart": [
+    "/-- The oracle coordinates of a vector. -/"
+   ],
+   "MIPRE.AnswerReduction.pcpBin": [
+    "/-- The downsized PCP presentation of a PCP type. -/"
+   ],
+   "MIPRE.AnswerReduction.pcpCl": [
+    "/-- The downsized PCP presentation, on the numbered bits. -/"
+   ],
+   "MIPRE.AnswerReduction.pcpPart": [
+    "/-- The PCP coordinates of a vector, read back as a vector of `V^pcp`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_AnswerReduction_TypedGame",
+  "module": "MIPRE.Background.AnswerReduction.TypedGame",
+  "module_doc": "/-!\n# The typed answer-reduced game\n\nPiece AR-3c of `planning/answer-reduction.md`, concluded: the game of the typed answer-reduced\nverifier `V̂^ar` at one index, in the vocabulary the detyping compiler consumes\n(`MIPRE.CL.Detyping.typedGame`), with bit-string answers.\n\n* The types are `Role × PcpTy`, on the complete type graph with loops (`graph`), as for the\n  oracularized verifier.\n* The CL functions are the binary family `cl` of `MIPRE/Background/AnswerReduction/Family`, the\n  same for both players.\n* The predicate (`typedPred`) parses both answers by their types (`parse`), rejects a failed\n  parse, and otherwise decides by the answer-reduced predicate `accepts` on the decoded questions\n  (`decodeQ`: the type, the oracle half, and the PCP half read back over `F_q`).\n* The game check (`gameCheck`) runs the PCP verifier of a `SAT.PcpDecider` on the input verifier's\n  question pair, read off the oracle half by the input sampler's two CL functions, and the view\n  `(z, α)` in the `k`-bit representation the PCP reads.\n\n`accepts_of_typedPred` and `typedPred_enc` are the two directions AR-4 and AR-5 need: acceptance of\nthe bit-string predicate is acceptance of `accepts` after the parse, and `accepts` on answers of\nthe right format is acceptance of their honest encodings.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/TypedGame.lean",
+  "source_path": "MIPRE/Background/AnswerReduction/TypedGame.lean",
+  "defmat": [
+   "MIPRE.AnswerReduction.ArTy",
+   "MIPRE.AnswerReduction.decodeQ",
+   "MIPRE.AnswerReduction.fld",
+   "MIPRE.AnswerReduction.gameCheck",
+   "MIPRE.AnswerReduction.graph",
+   "MIPRE.AnswerReduction.instDecidableRelArTyGraph",
+   "MIPRE.AnswerReduction.typedGame",
+   "MIPRE.AnswerReduction.typedPred"
+  ],
+  "embedded": [
+   "MIPRE.AnswerReduction.graph_nonempty",
+   "MIPRE.AnswerReduction.instNonemptyTy",
+   "MIPRE.AnswerReduction.mem_graph_edges"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.AnswerReduction.ArTy",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     38,
+     39
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.decodeQ",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     63,
+     67
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.fld",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     60,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.gameCheck",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     69,
+     74
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.graph",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     41,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.graph_nonempty",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     54,
+     56
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.instDecidableRelArTyGraph",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     44,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.instNonemptyTy",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     50,
+     50
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.mem_graph_edges",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     46,
+     48
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.typedGame",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     88,
+     91
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.typedPred",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     81,
+     86
+    ]
+   }
+  ],
+  "lines": 296,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_Presentation",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_PcpPresentation",
+   "import Definitions.Def_MIPRE_Foundations_OracularGame",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Predicate",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_PerfectStrategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_OracularSound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_OracularTensor",
+   "import Definitions.Def_MIPRE_Foundations_OracularComplete",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_OracularTyped",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_AnswerFormat",
+   "import Definitions.Def_MIPRE_Foundations_CL_Product",
+   "import Definitions.Def_MIPRE_Foundations_CL_Downsize",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_ProductSampler",
+   "import Definitions.Def_MIPRE_Background_LIDT_PresentationQueries",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleConstructor",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Shoup",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_ShoupCoefficients",
+   "import Definitions.Def_MIPRE_Foundations_SAT_QuotientField",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldTrace",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldCoordinates",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Layout",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Family"
+  ],
+  "blueprint": [
+   "def:ar-typed-game"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.AnswerReduction.ArTy": [
+    "/-- The types of the answer-reduced verifier. -/"
+   ],
+   "MIPRE.AnswerReduction.decodeQ": [
+    "/-- A typed question of the answer-reduced verifier, decoded: the type, the oracle half and the",
+    "PCP half. -/"
+   ],
+   "MIPRE.AnswerReduction.fld": [
+    "/-- The field of the PCP with its `k`-bit representation. -/"
+   ],
+   "MIPRE.AnswerReduction.gameCheck": [
+    "/-- **The game check**: the PCP verifier of `PD`, with the input decider `D` and the parameters",
+    "`(n, T, Q, σ)`, on the input question pair read off the oracle half and the view `(z, α)`. -/"
+   ],
+   "MIPRE.AnswerReduction.graph": [
+    "/-- The complete type graph on the answer-reduced types, loops included. -/"
+   ],
+   "MIPRE.AnswerReduction.instDecidableRelArTyGraph": null,
+   "MIPRE.AnswerReduction.typedGame": [
+    "/-- **The typed answer-reduced game** at index `n`, with answers of length at most `B`. -/"
+   ],
+   "MIPRE.AnswerReduction.typedPred": [
+    "/-- **The typed answer-reduced predicate** on bit-string answers of length at most `B`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_AnswerReduction_Stages",
+  "module": "MIPRE.Background.AnswerReduction.Stages",
+  "module_doc": "/-!\n# The queries of a copy of the PCP sampler, run by run\n\nPiece AR-3d of `planning/answer-reduction.md`. A copy of the seeded test in the PCP sampler is a\nrun `[o, o + sz)` of the concatenated registers with a seed `c` (`regsAt`). This file writes\nwhat its presentation's queries return in the three runs of `MIPRE/Background/AnswerReduction/\nLayout` (`ptOf6`, `dirOf6`, `seedsOf`), which is the form a program computes:\n\n* the marginals (`comps_marginal`): the seed on the seed run, the cut-down direction placed at\n  `o` on the direction run for a diagonal line, the line's base point placed at `o` on the point\n  run;\n* the stage maps from a prefix (`comps_map_zero`, `comps_map_one`, `comps_map_two`);\n* the factor spaces, run by run (`mem_coordSet_*`, `mem_dirSet_*`, `mem_finalSet_*`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/Stages.lean",
+  "source_path": "MIPRE/Background/AnswerReduction/Stages.lean",
+  "defmat": [
+   "MIPRE.AnswerReduction.Pcp.comps",
+   "MIPRE.AnswerReduction.Pcp.dirPart",
+   "MIPRE.AnswerReduction.Pcp.placeV",
+   "MIPRE.AnswerReduction.Pcp.seedPart",
+   "MIPRE.AnswerReduction.Pcp.sliceV"
+  ],
+  "embedded": [
+   "MIPRE.AnswerReduction.Pcp.dirOf6_add",
+   "MIPRE.AnswerReduction.Pcp.dirOf6_zero",
+   "MIPRE.AnswerReduction.Pcp.ptOf6_add",
+   "MIPRE.AnswerReduction.Pcp.ptOf6_zero",
+   "MIPRE.AnswerReduction.Pcp.seedsOf_add",
+   "MIPRE.AnswerReduction.Pcp.seedsOf_zero"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.comps",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     202,
+     204
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.dirOf6_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     50,
+     51
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.dirOf6_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     55,
+     55
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.dirPart",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     224,
+     226
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.placeV",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     35,
+     37
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.ptOf6_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     49,
+     49
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.ptOf6_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     54,
+     54
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.seedPart",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     221,
+     222
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.seedsOf_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     52,
+     53
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.seedsOf_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     56,
+     56
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.sliceV",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     39,
+     41
+    ]
+   }
+  ],
+  "lines": 235,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_Presentation",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_PcpPresentation",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Product",
+   "import Definitions.Def_MIPRE_Foundations_CL_Downsize",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_ProductSampler",
+   "import Definitions.Def_MIPRE_Background_LIDT_PresentationQueries",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleConstructor",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Shoup",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_ShoupCoefficients",
+   "import Definitions.Def_MIPRE_Foundations_SAT_QuotientField",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldTrace",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldCoordinates",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Layout"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.AnswerReduction.Pcp.comps": [
+    "/-- The three runs of a vector. -/"
+   ],
+   "MIPRE.AnswerReduction.Pcp.dirPart": [
+    "/-- The direction a diagonal line type's second stage writes, before placing. -/"
+   ],
+   "MIPRE.AnswerReduction.Pcp.placeV": [
+    "/-- A vector of length `sz` placed at offset `o` of `Fin N`, zero elsewhere. -/"
+   ],
+   "MIPRE.AnswerReduction.Pcp.seedPart": [
+    "/-- The seed run of a line type's first stage. -/"
+   ],
+   "MIPRE.AnswerReduction.Pcp.sliceV": [
+    "/-- The run `[o, o + sz)` of a vector of length `N`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_AnswerReduction_StageLists",
+  "module": "MIPRE.Background.AnswerReduction.StageLists",
+  "module_doc": "/-!\n# Placing and slicing, on lists\n\nPiece AR-3d of `planning/answer-reduction.md`: the list operations a program uses for the\nvector operations of `MIPRE/Background/AnswerReduction/Stages` — `placeL` for `placeV` and\n`sliceL` for `sliceV` — and their agreement on the lists of a vector's entries\n(`ofFn_placeV`, `ofFn_sliceV`, `ofFn_single`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/StageLists.lean",
+  "source_path": "MIPRE/Background/AnswerReduction/StageLists.lean",
+  "defmat": [
+   "MIPRE.AnswerReduction.Pcp.placeL",
+   "MIPRE.AnswerReduction.Pcp.sliceL"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.placeL",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     21,
+     23
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.Pcp.sliceL",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     25,
+     26
+    ]
+   }
+  ],
+  "lines": 189,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_Presentation",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_PcpPresentation",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Product",
+   "import Definitions.Def_MIPRE_Foundations_CL_Downsize",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_ProductSampler",
+   "import Definitions.Def_MIPRE_Background_LIDT_PresentationQueries",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleConstructor",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Shoup",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_ShoupCoefficients",
+   "import Definitions.Def_MIPRE_Foundations_SAT_QuotientField",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldTrace",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldCoordinates",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Layout",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Stages"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.AnswerReduction.Pcp.placeL": [
+    "/-- Replace the run of `l` starting at `o` by `w`, and everything else by `fill`. -/"
+   ],
+   "MIPRE.AnswerReduction.Pcp.sliceL": [
+    "/-- The run of `l` of length `sz` starting at `o`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_SeedSelectorProg",
+  "module": "MIPRE.Foundations.Introspection.SeedSelectorProg",
+  "module_doc": "/-! # The executable seed enumeration for Pauli sampling\n\nField elements are numbered by their canonical little-endian bit strings.\nFor `m = 2^j` and a field of size `2^k`, the selector keeps the highest `j`\nbits. This is the paper's equal-block selector for this explicit enumeration;\nit does not identify the enumeration with `Fintype.equivFin`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SeedSelectorProg.lean",
+  "source_path": "MIPRE/Foundations/Introspection/SeedSelectorProg.lean",
+  "defmat": [
+   "MIPRE.Introspection.SeedProgram.fieldEnumeration",
+   "MIPRE.Introspection.SeedProgram.fieldIndex",
+   "MIPRE.Introspection.SeedProgram.seedCoordinates",
+   "MIPRE.Introspection.SeedProgram.selector",
+   "MIPRE.Introspection.SeedProgram.selectorProg"
+  ],
+  "embedded": [
+   "MIPRE.Introspection.SeedProgram.fieldIndex_injective"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.SeedProgram.fieldEnumeration",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     31,
+     36
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SeedProgram.fieldIndex",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     21,
+     22
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SeedProgram.fieldIndex_injective",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     24,
+     29
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SeedProgram.seedCoordinates",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     68,
+     71
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SeedProgram.selector",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     41,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SeedProgram.selectorProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     97,
+     101
+    ]
+   }
+  ],
+  "lines": 105,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.SeedProgram.fieldEnumeration": [
+    "/-- A genuine field enumeration, with forward direction given by canonical",
+    "binary rank. Only its inverse uses finite choice. -/"
+   ],
+   "MIPRE.Introspection.SeedProgram.fieldIndex": null,
+   "MIPRE.Introspection.SeedProgram.seedCoordinates": null,
+   "MIPRE.Introspection.SeedProgram.selector": null,
+   "MIPRE.Introspection.SeedProgram.selectorProg": [
+    "/-- `k`, `j`, and the raw seed are supplied explicitly. The computation never",
+    "constructs a unary representation of the field size. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryFold",
+  "module": "MIPRE.Foundations.LowDegree.BinaryFold",
+  "module_doc": "/-! # Uniform sums and products of coefficient vectors -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryFold.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryFold.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryPolynomial.arithmeticFold",
+   "MIPRE.LowDegree.BinaryPolynomial.arithmeticFoldProg",
+   "MIPRE.LowDegree.BinaryPolynomial.arithmeticStep",
+   "_private.MIPRE.Foundations.LowDegree.BinaryFold.0.MIPRE.LowDegree.BinaryPolynomial.arithmeticStepProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryPolynomial.arithmeticFoldProg_apply",
+   "MIPRE.LowDegree.BinaryPolynomial.arithmeticStep_width",
+   "MIPRE.LowDegree.BinaryPolynomial.fold_arithmeticStep",
+   "_private.MIPRE.Foundations.LowDegree.BinaryFold.0.MIPRE.LowDegree.BinaryPolynomial.arithmeticStep_bounded"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.arithmeticFold",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     33,
+     35
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.arithmeticFoldProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     106,
+     113
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.arithmeticFoldProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     115,
+     116
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.arithmeticStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     13,
+     14
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.arithmeticStep_width",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     16,
+     22
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.fold_arithmeticStep",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     24,
+     31
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryFold.0.MIPRE.LowDegree.BinaryPolynomial.arithmeticStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     84,
+     88
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryFold.0.MIPRE.LowDegree.BinaryPolynomial.arithmeticStep_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     93,
+     104
+    ]
+   }
+  ],
+  "lines": 92,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryPolynomial.arithmeticFold": [
+    "/-- Sum or product, starting from a supplied coefficient vector. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.arithmeticFoldProg": [
+    "/-- Globally polynomial-time summation or multiplication of coefficient vectors.",
+    "The modulus and initial accumulator are explicit inputs. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.arithmeticStep": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryFold.0.MIPRE.LowDegree.BinaryPolynomial.arithmeticStepProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_SAT_NormalElementProg",
+  "module": "MIPRE.Foundations.SAT.NormalElementProg",
+  "module_doc": "/-! # A polynomial-time constructor of a normal basis -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/NormalElementProg.lean",
+  "source_path": "MIPRE/Foundations/SAT/NormalElementProg.lean",
+  "defmat": [
+   "MIPRE.SAT.shoupZeroProg"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.SAT.shoupZeroProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     19,
+     19
+    ]
+   }
+  ],
+  "lines": 163,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleConstructor",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Shoup",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_ShoupCoefficients",
+   "import Definitions.Def_MIPRE_Foundations_SAT_QuotientField",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldTrace",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFold"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.SAT.shoupZeroProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryInverse",
+  "module": "MIPRE.Foundations.LowDegree.BinaryInverse",
+  "module_doc": "/-! # Uniform inversion in the Shoup polynomial-basis field -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryInverse.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryInverse.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryPolynomial.inverseBits",
+   "MIPRE.LowDegree.BinaryPolynomial.inverseBitsProg",
+   "MIPRE.LowDegree.BinaryPolynomial.inverseExponent",
+   "MIPRE.LowDegree.BinaryPolynomial.inverseExponentProg",
+   "MIPRE.SAT.shoupInvProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryPolynomial.inverseBitsProg_apply",
+   "MIPRE.LowDegree.BinaryPolynomial.inverseExponentProg_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.inverseBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     37,
+     38
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.inverseBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     63,
+     66
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.inverseBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     68,
+     69
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.inverseExponent",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     16,
+     17
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.inverseExponentProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     57,
+     58
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.inverseExponentProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     60,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.shoupInvProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     77,
+     79
+    ]
+   }
+  ],
+  "lines": 181,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleConstructor",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Shoup",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_ShoupCoefficients",
+   "import Definitions.Def_MIPRE_Foundations_SAT_QuotientField"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryPolynomial.inverseBits": [
+    "/-- Inversion by binary exponentiation. Its specification requires a nonzero operand. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.inverseBitsProg": [
+    "/-- Globally polynomial-time inversion routine, uniform in the supplied modulus. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.inverseExponent": [
+    "/-- The exponent `2^k - 2`, written directly in `k` bits rather than expanded in unary. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.inverseExponentProg": null,
+   "MIPRE.SAT.shoupInvProg": [
+    "/-- Construct the Shoup modulus and invert a nonzero field element in its power basis. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_LineRepresentativeProg",
+  "module": "MIPRE.Foundations.Introspection.LineRepresentativeProg",
+  "module_doc": "/-! # Uniform executable line representatives\n\nThe program selects the first nonzero direction coordinate, divides the point\ncoordinate by it, and subtracts that multiple of the direction. Selection,\ninversion, multiplication and the coordinate scan are actual ambient programs.\nThe raw program is polynomial-time and total on every input; correctness is\nstated on canonical encodings in the constructed Shoup field.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/LineRepresentativeProg.lean",
+  "source_path": "MIPRE/Foundations/Introspection/LineRepresentativeProg.lean",
+  "defmat": [
+   "MIPRE.Introspection.LineProgram.coefficient",
+   "MIPRE.Introspection.LineProgram.coefficientBitsProg",
+   "MIPRE.Introspection.LineProgram.firstPair",
+   "MIPRE.Introspection.LineProgram.firstPairBitsProg",
+   "MIPRE.Introspection.LineProgram.lineRepresentativeProg",
+   "MIPRE.Introspection.LineProgram.representative",
+   "_private.MIPRE.Foundations.Introspection.LineRepresentativeProg.0.MIPRE.Introspection.LineProgram.coefficientOfPairProg",
+   "_private.MIPRE.Foundations.Introspection.LineRepresentativeProg.0.MIPRE.Introspection.LineProgram.selectPairStep",
+   "_private.MIPRE.Foundations.Introspection.LineRepresentativeProg.0.MIPRE.Introspection.LineProgram.subtractStepProg"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.LineProgram.coefficient",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     61,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.LineProgram.coefficientBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     128,
+     133
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.LineProgram.firstPair",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     21,
+     22
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.LineProgram.firstPairBitsProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     80,
+     90
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.LineProgram.lineRepresentativeProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     152,
+     156
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.LineProgram.representative",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     65,
+     67
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.LineRepresentativeProg.0.MIPRE.Introspection.LineProgram.coefficientOfPairProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     106,
+     110
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.LineRepresentativeProg.0.MIPRE.Introspection.LineProgram.selectPairStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     76,
+     78
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.LineRepresentativeProg.0.MIPRE.Introspection.LineProgram.subtractStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     147,
+     150
+    ]
+   }
+  ],
+  "lines": 218,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleConstructor",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Shoup",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_ShoupCoefficients",
+   "import Definitions.Def_MIPRE_Foundations_SAT_QuotientField",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldTrace",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFold",
+   "import Definitions.Def_MIPRE_Foundations_SAT_NormalElementProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryInverse"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.LineProgram.coefficient": null,
+   "MIPRE.Introspection.LineProgram.coefficientBitsProg": [
+    "/-- Select a pivot and compute its point/direction ratio; the all-zero direction",
+    "has coefficient zero. -/"
+   ],
+   "MIPRE.Introspection.LineProgram.firstPair": null,
+   "MIPRE.Introspection.LineProgram.firstPairBitsProg": null,
+   "MIPRE.Introspection.LineProgram.lineRepresentativeProg": [
+    "/-- One uniform program for arbitrary field widths and vector lengths. -/"
+   ],
+   "MIPRE.Introspection.LineProgram.representative": null,
+   "_private.MIPRE.Foundations.Introspection.LineRepresentativeProg.0.MIPRE.Introspection.LineProgram.coefficientOfPairProg": null,
+   "_private.MIPRE.Foundations.Introspection.LineRepresentativeProg.0.MIPRE.Introspection.LineProgram.selectPairStep": null,
+   "_private.MIPRE.Foundations.Introspection.LineRepresentativeProg.0.MIPRE.Introspection.LineProgram.subtractStepProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_SeededLineProg",
+  "module": "MIPRE.Foundations.Introspection.SeededLineProg",
+  "module_doc": "/-! # Uniform programs for the seeded axis and diagonal stages\n\nThe field width, selector width, seed and vector data are all inputs of fixed\nprograms. Indices stay binary. The bounded vector scan masks the selected\ndirection or axis coordinate, and the diagonal stage invokes the actual Shoup\nline-representative program. Malformed inputs still halt in polynomial time.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SeededLineProg.lean",
+  "source_path": "MIPRE/Foundations/Introspection/SeededLineProg.lean",
+  "defmat": [
+   "MIPRE.Introspection.SeededLineProgram.axisRepresentativeProg",
+   "MIPRE.Introspection.SeededLineProgram.maskBeforeProg",
+   "MIPRE.Introspection.SeededLineProgram.selectedDirectionProg",
+   "MIPRE.Introspection.SeededLineProgram.zeroCoordinateProg",
+   "_private.MIPRE.Foundations.Introspection.SeededLineProg.0.MIPRE.Introspection.SeededLineProgram.indexedRows",
+   "_private.MIPRE.Foundations.Introspection.SeededLineProg.0.MIPRE.Introspection.SeededLineProgram.maskBeforeStep",
+   "_private.MIPRE.Foundations.Introspection.SeededLineProg.0.MIPRE.Introspection.SeededLineProgram.zeroCoordinateStep"
+  ],
+  "embedded": [
+   "_private.MIPRE.Foundations.Introspection.SeededLineProg.0.MIPRE.Introspection.SeededLineProgram.indexedRows_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.SeededLineProgram.axisRepresentativeProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     87,
+     91
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SeededLineProgram.maskBeforeProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     33,
+     36
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SeededLineProgram.selectedDirectionProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     104,
+     106
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SeededLineProgram.zeroCoordinateProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     62,
+     65
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.SeededLineProg.0.MIPRE.Introspection.SeededLineProgram.indexedRows",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     22,
+     23
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.SeededLineProg.0.MIPRE.Introspection.SeededLineProgram.indexedRows_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     25,
+     27
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.SeededLineProg.0.MIPRE.Introspection.SeededLineProgram.maskBeforeStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     29,
+     31
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.SeededLineProg.0.MIPRE.Introspection.SeededLineProgram.zeroCoordinateStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     58,
+     60
+    ]
+   }
+  ],
+  "lines": 205,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleConstructor",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Shoup",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_ShoupCoefficients",
+   "import Definitions.Def_MIPRE_Foundations_SAT_QuotientField",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldTrace",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SeedSelectorProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFold",
+   "import Definitions.Def_MIPRE_Foundations_SAT_NormalElementProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryInverse",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LineRepresentativeProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.SeededLineProgram.axisRepresentativeProg": [
+    "/-- Raw input contains the unary field and selector widths, followed by the",
+    "canonical seed and the point vector. -/"
+   ],
+   "MIPRE.Introspection.SeededLineProgram.maskBeforeProg": [
+    "/-- Zero all coordinates strictly before the supplied binary index. -/"
+   ],
+   "MIPRE.Introspection.SeededLineProgram.selectedDirectionProg": null,
+   "MIPRE.Introspection.SeededLineProgram.zeroCoordinateProg": [
+    "/-- Zero only the selected axis coordinate. -/"
+   ],
+   "_private.MIPRE.Foundations.Introspection.SeededLineProg.0.MIPRE.Introspection.SeededLineProgram.indexedRows": null,
+   "_private.MIPRE.Foundations.Introspection.SeededLineProg.0.MIPRE.Introspection.SeededLineProgram.maskBeforeStep": null,
+   "_private.MIPRE.Foundations.Introspection.SeededLineProg.0.MIPRE.Introspection.SeededLineProgram.zeroCoordinateStep": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Cost_TreeBits",
+  "module": "MIPRE.Foundations.Cost.TreeBits",
+  "module_doc": "/-!\n# The closure library, part VI: the bits of a tree\n\nThe preorder serialization `Data.toBits` of a tree, as a program (`toBitsProg`, a\nstack-driven traversal after `sizeProg`) and as a polynomial-time function\n(`PolyTimeFun.toBits`). This is how the describer of the succinct Cook–Levin theorem obtains\nthe symbol strings of the interpreter machine's fixed input tapes — `S d = bits d.toBits` —\nfrom the data `d` (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/TreeBits.lean",
+  "source_path": "MIPRE/Foundations/Cost/TreeBits.lean",
+  "defmat": [
+   "MIPRE.Cost.PolyTimeFun.toBits",
+   "MIPRE.Cost.Prog.tbCons",
+   "MIPRE.Cost.Prog.tbNil",
+   "MIPRE.Cost.Prog.tbStop",
+   "MIPRE.Cost.Prog.toBitsBody",
+   "MIPRE.Cost.Prog.toBitsInv",
+   "MIPRE.Cost.Prog.toBitsProg"
+  ],
+  "embedded": [
+   "MIPRE.Cost.PolyTimeFun.toBits_apply",
+   "MIPRE.Cost.Prog.toBitsBody_step_cons",
+   "MIPRE.Cost.Prog.toBitsBody_step_nil",
+   "MIPRE.Cost.Prog.toBitsBody_stop",
+   "MIPRE.Cost.Prog.toBitsBody_wellScoped",
+   "MIPRE.Cost.Prog.toBitsLoop_runs",
+   "MIPRE.Cost.Prog.toBitsProg_runs",
+   "MIPRE.Cost.Prog.toBitsProg_wellScoped"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.toBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     172,
+     180
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.toBits_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     182,
+     182
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.tbCons",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     33,
+     36
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.tbNil",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     30,
+     31
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.tbStop",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     25,
+     28
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.toBitsBody",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     38,
+     39
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.toBitsBody_step_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     67,
+     83
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.toBitsBody_step_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     53,
+     65
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.toBitsBody_stop",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     44,
+     51
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.toBitsBody_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     41,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.toBitsInv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     85,
+     89
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.toBitsLoop_runs",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     91,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.toBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     133,
+     135
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.toBitsProg_runs",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     141,
+     168
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.toBitsProg_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     137,
+     139
+    ]
+   }
+  ],
+  "lines": 199,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Cost.PolyTimeFun.toBits": [
+    "/-- The bits of a tree, in polynomial time. -/"
+   ],
+   "MIPRE.Cost.Prog.tbCons": [
+    "/-- The step on a `cons` subtree: emit `1` and push the children. -/"
+   ],
+   "MIPRE.Cost.Prog.tbNil": [
+    "/-- The step on a `nil` subtree: emit `0`. -/"
+   ],
+   "MIPRE.Cost.Prog.tbStop": [
+    "/-- Body of `toBitsProg`: the state is `cons stack acc`, `stack` a list of pending subtrees",
+    "and `acc` the bits produced so far, reversed. Pop a subtree: `nil` emits `0`; `cons a b` emits",
+    "`1` and pushes `a` then `b`. Stop with `acc` when the stack is empty. -/"
+   ],
+   "MIPRE.Cost.Prog.toBitsBody": [
+    "/-- The body of the serialization loop. -/"
+   ],
+   "MIPRE.Cost.Prog.toBitsInv": [
+    "/-- The invariant of the serialization loop for the target bits `target`: the state is",
+    "`cons stack acc` with `reverse acc ++ toBits stack₁ ++ … = target`. -/"
+   ],
+   "MIPRE.Cost.Prog.toBitsProg": [
+    "/-- The bits of a tree: `toBitsProg` on `d` computes `encode d.toBits`. -/"
+   ]
+  }
+ }
+]

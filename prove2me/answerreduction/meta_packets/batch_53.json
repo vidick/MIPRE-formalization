@@ -1,0 +1,585 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.mainFormalStep5_expansionBound",
+  "source_name": "MIPStarRE.LDT.Test.mainFormalStep5_expansionBound",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.mainFormalStep5_expansionBound\n    {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    (params : Parameters) [FieldModel params.q]\n    (ψ : QuantumState (ιA × ιB))\n    (Left : SubMeas (Polynomial params) ιA) (Right : SubMeas (Polynomial params) ιB) :\n    MainFormalStep5ExpansionBound params ψ Left Right := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The algebraic Step 5 expansion bound: the full-polynomial consistency\nerror is bounded by the evaluated consistency error plus the collision mass.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.SchwartzZippelStep",
+  "module_doc": "/-!\n# `mainFormal` Step 5 — Schwartz--Zippel self-consistency handoff\n\nThis file isolates the paper's Step 5 bridge in\n`references/ldt-paper/inductive_step.tex`, lines 119--133.  The algebraic\nexpansion/reindexing from evaluated consistency to the full-polynomial\nconsistency defect is proved here, and the genuinely Schwartz--Zippel part is\nprovided by the shared tensor bound\n`Preliminaries.polynomialCollisionMass_le_mdq`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/SchwartzZippelStep.lean#L303-L344",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/SchwartzZippelStep.lean",
+  "lines": [
+   303,
+   344
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_const",
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_add"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.mainFormalStep5_selfConsistency_ofExpansionBound_heterogeneous",
+  "source_name": "MIPStarRE.LDT.Test.mainFormalStep5_selfConsistency_ofExpansionBound_heterogeneous",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.mainFormalStep5_selfConsistency_ofExpansionBound_heterogeneous\n    {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    (params : Parameters) [FieldModel params.q]\n    (ψ : QuantumState (ιA × ιB)) (hnorm : ψ.IsNormalized)\n    (Left : SubMeas (Polynomial params) ιA) (Right : SubMeas (Polynomial params) ιB)\n    (ζ : Error)\n    (hevaluated : ConsRel ψ (uniformDistribution (Point params))\n      (polynomialEvaluationFamily params Left)\n      (polynomialEvaluationFamily params Right) ζ) :\n    ConsRel ψ (uniformDistribution Unit)\n      (constSubMeasFamily Left) (constSubMeasFamily Right)\n      (ζ + (params.m * params.d : Error) / params.q) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Heterogeneous Step 5 packaging for `mainFormal` using the proved algebraic\nexpansion bound.\n\nGiven evaluated consistency at error `ζ` (paper line 116) and the exact\nline-122--125 expansion recorded by `MainFormalStep5ExpansionBound`, the\nproved tensor Schwartz--Zippel bound contributes the paper's `md/q` loss and\nreturns full-polynomial consistency at error `ζ + md/q` (paper lines 126--133).",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.SchwartzZippelStep",
+  "module_doc": "/-!\n# `mainFormal` Step 5 — Schwartz--Zippel self-consistency handoff\n\nThis file isolates the paper's Step 5 bridge in\n`references/ldt-paper/inductive_step.tex`, lines 119--133.  The algebraic\nexpansion/reindexing from evaluated consistency to the full-polynomial\nconsistency defect is proved here, and the genuinely Schwartz--Zippel part is\nprovided by the shared tensor bound\n`Preliminaries.polynomialCollisionMass_le_mdq`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/SchwartzZippelStep.lean#L346-L377",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/SchwartzZippelStep.lean",
+  "lines": [
+   346,
+   377
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.Preliminaries.polynomialCollision_sandwichTensor_le_mdq",
+   "MIPStarRE.LDT.Test.mainFormalStep5_expansionBound"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.normalizedTrace_localPairABBlock",
+  "source_name": "MIPStarRE.LDT.ProjStrat.normalizedTrace_localPairABBlock",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.normalizedTrace_localPairABBlock {ιA ιB : Type*}\n    [Fintype ιA] [Nonempty ιA] [Fintype ιB] [Nonempty ιB]\n    (X : MIPStarRE.Quantum.Op (ιA × ιB)) :\n    MIPStarRE.Quantum.normalizedTrace (localPairABBlock X) =\n      ((Fintype.card ιA : ℂ) * (Fintype.card ιB : ℂ) /\n        ((Fintype.card (LocalCarrierSum ιA ιB) : ℂ) ^ (2 : ℕ))) *\n          MIPStarRE.Quantum.normalizedTrace X := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProj.DirectSum",
+  "module_doc": "/-!\n# Two-Space Projective Strategies: Direct-Sum State Blocks\n\nThis module contains the role-register direct-sum carriers and block-state\nconstruction used to symmetrize a heterogeneous projective strategy.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean#L378-L394",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean",
+  "lines": [
+   378,
+   394
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 10,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.normalizedTrace_localPairBABlock",
+  "source_name": "MIPStarRE.LDT.ProjStrat.normalizedTrace_localPairBABlock",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.normalizedTrace_localPairBABlock {ιA ιB : Type*}\n    [Fintype ιA] [Nonempty ιA] [Fintype ιB] [Nonempty ιB]\n    (X : MIPStarRE.Quantum.Op (ιB × ιA)) :\n    MIPStarRE.Quantum.normalizedTrace (localPairBABlock X) =\n      ((Fintype.card ιA : ℂ) * (Fintype.card ιB : ℂ) /\n        ((Fintype.card (LocalCarrierSum ιA ιB) : ℂ) ^ (2 : ℕ))) *\n          MIPStarRE.Quantum.normalizedTrace X := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProj.DirectSum",
+  "module_doc": "/-!\n# Two-Space Projective Strategies: Direct-Sum State Blocks\n\nThis module contains the role-register direct-sum carriers and block-state\nconstruction used to symmetrize a heterogeneous projective strategy.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean#L396-L412",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean",
+  "lines": [
+   396,
+   412
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 10,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.normalizedTrace_heterogeneousSwapDensity",
+  "source_name": "MIPStarRE.LDT.ProjStrat.normalizedTrace_heterogeneousSwapDensity",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.normalizedTrace_heterogeneousSwapDensity {ιA ιB : Type*}\n    [Fintype ιA] [Fintype ιB] (X : MIPStarRE.Quantum.Op (ιA × ιB)) :\n    MIPStarRE.Quantum.normalizedTrace (heterogeneousSwapDensity X) =\n      MIPStarRE.Quantum.normalizedTrace X := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProj.DirectSum",
+  "module_doc": "/-!\n# Two-Space Projective Strategies: Direct-Sum State Blocks\n\nThis module contains the role-register direct-sum carriers and block-state\nconstruction used to symmetrize a heterogeneous projective strategy.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean#L414-L418",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean",
+  "lines": [
+   414,
+   418
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "Matrix.trace_reindex"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.normalizedTrace_rolePairDirectSumCond",
+  "source_name": "MIPStarRE.LDT.ProjStrat.normalizedTrace_rolePairDirectSumCond",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.normalizedTrace_rolePairDirectSumCond {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA] [Nonempty ιA]\n    [Fintype ιB] [DecidableEq ιB]\n    (rL rR : Role)\n    (X : MIPStarRE.Quantum.Op\n      (LocalCarrierSum ιA ιB × LocalCarrierSum ιA ιB)) :\n    MIPStarRE.Quantum.normalizedTrace (rolePairDirectSumCond rL rR X) =\n      (1 / 4 : ℂ) * MIPStarRE.Quantum.normalizedTrace X := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProj.DirectSum",
+  "module_doc": "/-!\n# Two-Space Projective Strategies: Direct-Sum State Blocks\n\nThis module contains the role-register direct-sum carriers and block-state\nconstruction used to symmetrize a heterogeneous projective strategy.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean#L448-L469",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean",
+  "lines": [
+   448,
+   469
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "Matrix.trace_reindex"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.roleRegisterSymmState_density_fixed",
+  "source_name": "MIPStarRE.LDT.ProjStrat.roleRegisterSymmState_density_fixed",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.roleRegisterSymmState_density_fixed {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    (ψ : QuantumState (ιA × ιB)) :\n    swapDensity (roleRegisterSymmState ψ).density =\n      (roleRegisterSymmState ψ).density := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProj.DirectSum",
+  "module_doc": "/-!\n# Two-Space Projective Strategies: Direct-Sum State Blocks\n\nThis module contains the role-register direct-sum carriers and block-state\nconstruction used to symmetrize a heterogeneous projective strategy.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean#L567-L596",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean",
+  "lines": [
+   567,
+   596
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.roleRegisterSymmState_permInvState",
+  "source_name": "MIPStarRE.LDT.ProjStrat.roleRegisterSymmState_permInvState",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.roleRegisterSymmState_permInvState {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    (ψ : QuantumState (ιA × ιB)) :\n    PermInvState (roleRegisterSymmState ψ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProj.DirectSum",
+  "module_doc": "/-!\n# Two-Space Projective Strategies: Direct-Sum State Blocks\n\nThis module contains the role-register direct-sum carriers and block-state\nconstruction used to symmetrize a heterogeneous projective strategy.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean#L598-L603",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean",
+  "lines": [
+   598,
+   603
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ProjStrat.roleRegisterSymmState_density_fixed",
+   "MIPStarRE.LDT.permInvState_of_density_fixed"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.roleRegisterSymmState_isNormalized",
+  "source_name": "MIPStarRE.LDT.ProjStrat.roleRegisterSymmState_isNormalized",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.roleRegisterSymmState_isNormalized {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA] [Nonempty ιA]\n    [Fintype ιB] [DecidableEq ιB] [Nonempty ιB]\n    (ψ : QuantumState (ιA × ιB)) (hψ : ψ.IsNormalized) :\n    (roleRegisterSymmState ψ).IsNormalized := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProj.DirectSum",
+  "module_doc": "/-!\n# Two-Space Projective Strategies: Direct-Sum State Blocks\n\nThis module contains the role-register direct-sum carriers and block-state\nconstruction used to symmetrize a heterogeneous projective strategy.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean#L605-L635",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean",
+  "lines": [
+   605,
+   635
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ProjStrat.normalizedTrace_localPairABBlock",
+   "MIPStarRE.LDT.ProjStrat.normalizedTrace_localPairBABlock",
+   "MIPStarRE.LDT.ProjStrat.normalizedTrace_heterogeneousSwapDensity",
+   "MIPStarRE.LDT.ProjStrat.normalizedTrace_rolePairDirectSumCond",
+   "MIPStarRE.Quantum.normalizedTrace_add",
+   "MIPStarRE.Quantum.normalizedTrace_smul"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.localDirectSumBlock_nonneg",
+  "source_name": "MIPStarRE.LDT.ProjStrat.localDirectSumBlock_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.localDirectSumBlock_nonneg {ιA ιB : Type*} [Finite ιA] [Finite ιB]\n    {A : MIPStarRE.Quantum.Op ιA} {B : MIPStarRE.Quantum.Op ιB}\n    (hA : 0 ≤ A) (hB : 0 ≤ B) : 0 ≤ localDirectSumBlock A B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "A direct sum of positive semidefinite operators is positive semidefinite.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProj.DirectSum",
+  "module_doc": "/-!\n# Two-Space Projective Strategies: Direct-Sum State Blocks\n\nThis module contains the role-register direct-sum carriers and block-state\nconstruction used to symmetrize a heterogeneous projective strategy.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean#L696-L710",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean",
+  "lines": [
+   696,
+   710
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.localDirectSumBlock_finset_sum",
+  "source_name": "MIPStarRE.LDT.ProjStrat.localDirectSumBlock_finset_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.localDirectSumBlock_finset_sum {α ιA ιB : Type*} (s : Finset α)\n    (A : α → MIPStarRE.Quantum.Op ιA) (B : α → MIPStarRE.Quantum.Op ιB) :\n    ∑ a ∈ s, localDirectSumBlock (A a) (B a) =\n      localDirectSumBlock (∑ a ∈ s, A a) (∑ a ∈ s, B a) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "Finite sums commute through direct-sum blocks.\n\nThis is the completeness calculation for block-diagonal measurements: if\nAlice's and Bob's effects each sum to their local totals, then the direct-sum\neffects sum to the direct sum of those totals.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProj.DirectSum",
+  "module_doc": "/-!\n# Two-Space Projective Strategies: Direct-Sum State Blocks\n\nThis module contains the role-register direct-sum carriers and block-state\nconstruction used to symmetrize a heterogeneous projective strategy.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean#L712-L726",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean",
+  "lines": [
+   712,
+   726
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.roleBlock_nonneg",
+  "source_name": "MIPStarRE.LDT.ProjStrat.roleBlock_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.roleBlock_nonneg {ιA ιB : Type*} [Finite ιA] [Finite ιB]\n    {A B : MIPStarRE.Quantum.Op (LocalCarrierSum ιA ιB)}\n    (hA : 0 ≤ A) (hB : 0 ≤ B) : 0 ≤ roleBlock A B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "A role block of positive semidefinite operators is positive semidefinite.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProj.DirectSum",
+  "module_doc": "/-!\n# Two-Space Projective Strategies: Direct-Sum State Blocks\n\nThis module contains the role-register direct-sum carriers and block-state\nconstruction used to symmetrize a heterogeneous projective strategy.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean#L827-L841",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean",
+  "lines": [
+   827,
+   841
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.roleBlock_finset_sum",
+  "source_name": "MIPStarRE.LDT.ProjStrat.roleBlock_finset_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.roleBlock_finset_sum {α ιA ιB : Type*} (s : Finset α)\n    (A B : α → MIPStarRE.Quantum.Op (LocalCarrierSum ιA ιB)) :\n    ∑ a ∈ s, roleBlock (A a) (B a) =\n      roleBlock (∑ a ∈ s, A a) (∑ a ∈ s, B a) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "Finite sums commute through role-register blocks.\n\nThis is the role-sector analogue of `localDirectSumBlock_finset_sum` and is the main\ncompleteness calculation for role-blocked measurements.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProj.DirectSum",
+  "module_doc": "/-!\n# Two-Space Projective Strategies: Direct-Sum State Blocks\n\nThis module contains the role-register direct-sum carriers and block-state\nconstruction used to symmetrize a heterogeneous projective strategy.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean#L843-L856",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProj/DirectSum.lean",
+  "lines": [
+   843,
+   856
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.roleRegisterSymmStrategy_axisParallel_eq_roleAverage",
+  "source_name": "MIPStarRE.LDT.ProjStrat.roleRegisterSymmStrategy_axisParallel_eq_roleAverage",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.roleRegisterSymmStrategy_axisParallel_eq_roleAverage\n    {params : Parameters} [FieldModel params.q]\n    {ιA : Type*} [Fintype ιA] [DecidableEq ιA]\n    {ιB : Type*} [Fintype ιB] [DecidableEq ιB]\n    (strategy : ProjStrat params ιA ιB) :\n    (strategy.roleRegisterSymmStrategy).axisParallelFailureProbability =\n      strategy.axisParallelRoleAverage := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "The axis-parallel branch of the heterogeneous role-register symmetrization\nis exactly the axis-parallel role average of the original two-space strategy.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProjRoleAverage.Core",
+  "module_doc": "/-!\n# Role-Register Averaging: Branch Equalities\n\nThis module proves the role-register branch equalities for heterogeneous\nprojective strategies.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProjRoleAverage/Core.lean#L778-L830",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProjRoleAverage/Core.lean",
+  "lines": [
+   778,
+   830
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.avgOver_const_mul",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.QuantumState.IsNormalized.nonempty"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 44,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.roleRegisterSymmStrategy_diagonal_eq_roleAverage",
+  "source_name": "MIPStarRE.LDT.ProjStrat.roleRegisterSymmStrategy_diagonal_eq_roleAverage",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.roleRegisterSymmStrategy_diagonal_eq_roleAverage\n    {params : Parameters} [FieldModel params.q]\n    {ιA : Type*} [Fintype ιA] [DecidableEq ιA]\n    {ιB : Type*} [Fintype ιB] [DecidableEq ιB]\n    (strategy : ProjStrat params ιA ιB) :\n    (strategy.roleRegisterSymmStrategy).diagonalFailureProbability =\n      strategy.diagonalRoleAverage := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "The diagonal branch of the heterogeneous role-register symmetrization is\nexactly the diagonal role average of the original two-space strategy.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProjRoleAverage.Core",
+  "module_doc": "/-!\n# Role-Register Averaging: Branch Equalities\n\nThis module proves the role-register branch equalities for heterogeneous\nprojective strategies.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProjRoleAverage/Core.lean#L861-L969",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProjRoleAverage/Core.lean",
+  "lines": [
+   861,
+   969
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.avgOver_const_mul",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.QuantumState.IsNormalized.nonempty"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 100,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.axisParallelRoleAverage_nonneg",
+  "source_name": "MIPStarRE.LDT.ProjStrat.axisParallelRoleAverage_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.axisParallelRoleAverage_nonneg\n    {params : Parameters} [FieldModel params.q]\n    {ιA : Type*} [Fintype ιA] [DecidableEq ιA]\n    {ιB : Type*} [Fintype ιB] [DecidableEq ιB]\n    (strategy : ProjStrat params ιA ιB) :\n    0 ≤ strategy.axisParallelRoleAverage := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "The axis-parallel role-average branch of a two-space projective strategy is\nnonnegative.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProjRoleAverage.Final",
+  "module_doc": "/-!\n# Role-Register Averaging: Goodness Bound\n\nThis module packages the branch equalities into the three-times-error goodness\nbound for the role-register symmetric strategy.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProjRoleAverage/Final.lean#L73-L96",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProjRoleAverage/Final.lean",
+  "lines": [
+   73,
+   96
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.bipartiteConsError_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.diagonalRoleAverage_nonneg",
+  "source_name": "MIPStarRE.LDT.ProjStrat.diagonalRoleAverage_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.diagonalRoleAverage_nonneg\n    {params : Parameters} [FieldModel params.q]\n    {ιA : Type*} [Fintype ιA] [DecidableEq ιA]\n    {ιB : Type*} [Fintype ιB] [DecidableEq ιB]\n    (strategy : ProjStrat params ιA ιB) :\n    0 ≤ strategy.diagonalRoleAverage := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "The diagonal role-average branch of a two-space projective strategy is\nnonnegative.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProjRoleAverage.Final",
+  "module_doc": "/-!\n# Role-Register Averaging: Goodness Bound\n\nThis module packages the branch equalities into the three-times-error goodness\nbound for the role-register symmetric strategy.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProjRoleAverage/Final.lean#L111-L154",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProjRoleAverage/Final.lean",
+  "lines": [
+   111,
+   154
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.bipartiteConsError_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 36,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.roleRegisterSymmStrategy_is_good_three_mul",
+  "source_name": "MIPStarRE.LDT.ProjStrat.roleRegisterSymmStrategy_is_good_three_mul",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.roleRegisterSymmStrategy_is_good_three_mul\n    {params : Parameters} [FieldModel params.q]\n    {ιA : Type*} [Fintype ιA] [DecidableEq ιA]\n    {ιB : Type*} [Fintype ιB] [DecidableEq ιB]\n    {strategy : ProjStrat params ιA ιB} {eps : Error}\n    (hpass : strategy.PassesLowIndividualDegreeTest eps) :\n    (strategy.roleRegisterSymmStrategy).IsGood (3 * eps) (3 * eps) (3 * eps) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "The heterogeneous role-register symmetrization of a two-space projective\nstrategy is `(3ε, 3ε, 3ε)`-good whenever the original strategy passes the full\nlow individual degree test with error `ε`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProjRoleAverage.Final",
+  "module_doc": "/-!\n# Role-Register Averaging: Goodness Bound\n\nThis module packages the branch equalities into the three-times-error goodness\nbound for the role-register symmetric strategy.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProjRoleAverage/Final.lean#L184-L220",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProjRoleAverage/Final.lean",
+  "lines": [
+   184,
+   220
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.QuantumState.IsNormalized.nonempty",
+   "MIPStarRE.LDT.bipartiteConsError_nonneg",
+   "MIPStarRE.LDT.ProjStrat.roleRegisterSymmStrategy_axisParallel_eq_roleAverage",
+   "MIPStarRE.LDT.ProjStrat.roleRegisterSymmStrategy_diagonal_eq_roleAverage",
+   "MIPStarRE.LDT.ProjStrat.axisParallelRoleAverage_nonneg",
+   "MIPStarRE.LDT.ProjStrat.diagonalRoleAverage_nonneg"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.qBipartiteMatchMass_roleRegisterProjMeas_arbitrary_eq_average",
+  "source_name": "MIPStarRE.LDT.ProjStrat.qBipartiteMatchMass_roleRegisterProjMeas_arbitrary_eq_average",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.qBipartiteMatchMass_roleRegisterProjMeas_arbitrary_eq_average\n    {Outcome ιA ιB : Type*}\n    [Inhabited Outcome] [Fintype Outcome]\n    [Fintype ιA] [DecidableEq ιA] [Nonempty ιA]\n    [Fintype ιB] [DecidableEq ιB] [Nonempty ιB]\n    (ψ : QuantumState (ιA × ιB))\n    (MA : ProjMeas Outcome ιA) (MB : ProjMeas Outcome ιB)\n    (G : Measurement Outcome (RoleRegisterLocal ιA ιB)) :\n    qBipartiteMatchMass (roleRegisterSymmState ψ)\n        (roleRegisterProjMeas MA MB).toSubMeas G.toSubMeas =\n      (qBipartiteMatchMass ψ MA.toSubMeas (G.extractRoleRegisterBob).toSubMeas +\n        qBipartiteMatchMass ψ (G.extractRoleRegisterAlice).toSubMeas MB.toSubMeas) / 2 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Match-mass identity for a heterogeneous role-register measurement against an\narbitrary measurement on the role-register space.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProjUnsymmetrization",
+  "module_doc": "/-!\n# Heterogeneous role-register measurement extraction\n\nThis file contains the principal-block extraction used to unsymmetrize a\nmeasurement on the heterogeneous role-register space\n`Role × (ιA ⊕ ιB)`.  The Alice extraction is the block indexed by\n`(Role.A, Sum.inl _)`; the Bob extraction is the block indexed by\n`(Role.B, Sum.inr _)`.\n\nThese are the two-space analogues of the same-space extractions in\n`MIPStarRE.LDT.Test.Unsymmetrization`.  They preserve POVM completeness, but\nthey do not assert that arbitrary principal blocks of a projective measurement\nremain projective.  As in the paper proof, projectivity is restored later by\nthe projectivization step.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 84--109.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProjUnsymmetrization.lean#L712-L748",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProjUnsymmetrization.lean",
+  "lines": [
+   712,
+   748
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjStrat.qBipartiteConsDefect_roleRegisterProjMeas_arbitrary_eq_average",
+  "source_name": "MIPStarRE.LDT.ProjStrat.qBipartiteConsDefect_roleRegisterProjMeas_arbitrary_eq_average",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjStrat.qBipartiteConsDefect_roleRegisterProjMeas_arbitrary_eq_average\n    {Outcome ιA ιB : Type*}\n    [Inhabited Outcome] [Fintype Outcome]\n    [Fintype ιA] [DecidableEq ιA] [Nonempty ιA]\n    [Fintype ιB] [DecidableEq ιB] [Nonempty ιB]\n    (ψ : QuantumState (ιA × ιB)) (hψ : ψ.IsNormalized)\n    (MA : ProjMeas Outcome ιA) (MB : ProjMeas Outcome ιB)\n    (G : Measurement Outcome (RoleRegisterLocal ιA ιB)) :\n    qBipartiteConsDefect (roleRegisterSymmState ψ)\n        (roleRegisterProjMeas MA MB).toSubMeas G.toSubMeas =\n      (qBipartiteConsDefect ψ MA.toSubMeas (G.extractRoleRegisterBob).toSubMeas +\n        qBipartiteConsDefect ψ (G.extractRoleRegisterAlice).toSubMeas MB.toSubMeas) / 2 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjStrat",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Questionwise consistency identity for extracting the two occupied principal\nblocks from an arbitrary heterogeneous role-register measurement.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyBiProjUnsymmetrization",
+  "module_doc": "/-!\n# Heterogeneous role-register measurement extraction\n\nThis file contains the principal-block extraction used to unsymmetrize a\nmeasurement on the heterogeneous role-register space\n`Role × (ιA ⊕ ιB)`.  The Alice extraction is the block indexed by\n`(Role.A, Sum.inl _)`; the Bob extraction is the block indexed by\n`(Role.B, Sum.inr _)`.\n\nThese are the two-space analogues of the same-space extractions in\n`MIPStarRE.LDT.Test.Unsymmetrization`.  They preserve POVM completeness, but\nthey do not assert that arbitrary principal blocks of a projective measurement\nremain projective.  As in the paper proof, projectivity is restored later by\nthe projectivization step.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 84--109.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProjUnsymmetrization.lean#L750-L793",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyBiProjUnsymmetrization.lean",
+  "lines": [
+   750,
+   793
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ProjStrat.roleRegisterSymmState_isNormalized",
+   "MIPStarRE.LDT.ProjStrat.qBipartiteMatchMass_roleRegisterProjMeas_arbitrary_eq_average",
+   "MIPStarRE.LDT.qBipartiteConsDefect_of_measurements"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 30,
+  "is_target": false
+ }
+]

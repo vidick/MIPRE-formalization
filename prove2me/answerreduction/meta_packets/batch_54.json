@@ -1,0 +1,537 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.swapDensity_opTensor",
+  "source_name": "MIPStarRE.LDT.swapDensity_opTensor",
+  "formal_statement": "theorem MIPStarRE.LDT.swapDensity_opTensor {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (X Y : MIPStarRE.Quantum.Op ι) :\n    swapDensity (opTensor X Y) = opTensor Y X := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore",
+  "module_doc": "/-!\n# Section 3 — Strategy core\n\nBase state-invariance and strategy structures for the low individual degree test.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyCore.lean#L109-L115",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyCore.lean",
+  "lines": [
+   109,
+   115
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ev_opTensor_swap_of_density_fixed",
+  "source_name": "MIPStarRE.LDT.ev_opTensor_swap_of_density_fixed",
+  "formal_statement": "theorem MIPStarRE.LDT.ev_opTensor_swap_of_density_fixed {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState (ι × ι))\n    (hfix : swapDensity ψ.density = ψ.density)\n    (X Y : MIPStarRE.Quantum.Op ι) :\n    ev ψ (opTensor X Y) = ev ψ (opTensor Y X) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore",
+  "module_doc": "/-!\n# Section 3 — Strategy core\n\nBase state-invariance and strategy structures for the low individual degree test.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyCore.lean#L138-L145",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyCore.lean",
+  "lines": [
+   138,
+   145
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.swapDensity_opTensor",
+   "Matrix.trace_reindex"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.consRel_symm_of_density_fixed",
+  "source_name": "MIPStarRE.LDT.consRel_symm_of_density_fixed",
+  "formal_statement": "theorem MIPStarRE.LDT.consRel_symm_of_density_fixed {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState (ι × ι))\n    (hfix : swapDensity ψ.density = ψ.density)\n    {Question Outcome : Type*} [Fintype Outcome]\n    (𝒟 : Distribution Question)\n    (A B : IdxSubMeas Question Outcome ι)\n    (δ : Error) :\n    ConsRel ψ 𝒟 A B δ → ConsRel ψ 𝒟 B A δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore",
+  "module_doc": "/-!\n# Section 3 — Strategy core\n\nBase state-invariance and strategy structures for the low individual degree test.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyCore.lean#L168-L186",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyCore.lean",
+  "lines": [
+   168,
+   186
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_opTensor_swap_of_density_fixed"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.AxisParallelMeasurementReparamInvariant.toTransportInvariant",
+  "source_name": "MIPStarRE.LDT.AxisParallelMeasurementReparamInvariant.toTransportInvariant",
+  "formal_statement": "theorem MIPStarRE.LDT.AxisParallelMeasurementReparamInvariant.toTransportInvariant\n    {params : Parameters} [FieldModel params.q] {ι : Type*} [Fintype ι] [DecidableEq ι]\n    {M : IdxProjMeas (AxisParallelLine params) (AxisLinePolynomial params) ι}\n    (hM : AxisParallelMeasurementReparamInvariant params M) :\n    AxisParallelMeasurementTransportInvariant params M := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.AxisParallelMeasurementReparamInvariant",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Direct axis-parallel outcome covariance implies transport-level covariance.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore",
+  "module_doc": "/-!\n# Section 3 — Strategy core\n\nBase state-invariance and strategy structures for the low individual degree test.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyCore.lean#L361-L374",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyCore.lean",
+  "lines": [
+   361,
+   374
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ProjMeas.ext"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 8,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.DiagonalMeasurementReparamInvariant.toTransportInvariant",
+  "source_name": "MIPStarRE.LDT.DiagonalMeasurementReparamInvariant.toTransportInvariant",
+  "formal_statement": "theorem MIPStarRE.LDT.DiagonalMeasurementReparamInvariant.toTransportInvariant\n    {params : Parameters} [FieldModel params.q] {ι : Type*} [Fintype ι] [DecidableEq ι]\n    {M : IdxProjMeas (DiagonalLine params) (DiagonalLinePolynomial params) ι}\n    (hM : DiagonalMeasurementReparamInvariant params M) :\n    DiagonalMeasurementTransportInvariant params M := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.DiagonalMeasurementReparamInvariant",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Direct diagonal outcome covariance implies transport-level covariance.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore",
+  "module_doc": "/-!\n# Section 3 — Strategy core\n\nBase state-invariance and strategy structures for the low individual degree test.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyCore.lean#L376-L389",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyCore.lean",
+  "lines": [
+   376,
+   389
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ProjMeas.ext"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 8,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.AxisParallelCovariantMeasurement.reparamInvariant",
+  "source_name": "MIPStarRE.LDT.AxisParallelCovariantMeasurement.reparamInvariant",
+  "formal_statement": "theorem MIPStarRE.LDT.AxisParallelCovariantMeasurement.reparamInvariant {params : Parameters} [FieldModel params.q]\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (M : AxisParallelCovariantMeasurement params ι) :\n    AxisParallelEvaluationReparamInvariant params M.toIdxProjMeas := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.AxisParallelCovariantMeasurement",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "A covariant wrapper automatically satisfies the older evaluation-level\nrebasing invariant.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyCore",
+  "module_doc": "/-!\n# Section 3 — Strategy core\n\nBase state-invariance and strategy structures for the low individual degree test.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyCore.lean#L452-L458",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyCore.lean",
+  "lines": [
+   452,
+   458
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.postprocess_transport"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.eps_nonneg_of_isGood",
+  "source_name": "MIPStarRE.LDT.eps_nonneg_of_isGood",
+  "formal_statement": "theorem MIPStarRE.LDT.eps_nonneg_of_isGood\n    (params : Parameters)\n    [FieldModel params.q]\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (strategy : SymStrat params ι)\n    {eps delta gamma : Error}\n    (hgood : strategy.IsGood eps delta gamma) :\n    0 ≤ eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "A good symmetric strategy has a nonnegative axis-parallel error parameter\n`ε`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures",
+  "module_doc": "/-!\n# Symmetrized-strategy failure probabilities and test bounds\n\nFailure-probability surrogates and basic low-individual-degree test bounds for\nthe split strategy interface.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyFailures.lean#L143-L158",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyFailures.lean",
+  "lines": [
+   143,
+   158
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.bipartiteConsError_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.delta_nonneg_of_isGood",
+  "source_name": "MIPStarRE.LDT.delta_nonneg_of_isGood",
+  "formal_statement": "theorem MIPStarRE.LDT.delta_nonneg_of_isGood\n    (params : Parameters)\n    [FieldModel params.q]\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (strategy : SymStrat params ι)\n    {eps delta gamma : Error}\n    (hgood : strategy.IsGood eps delta gamma) :\n    0 ≤ delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "A good symmetric strategy has a nonnegative self-consistency error\nparameter `δ`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures",
+  "module_doc": "/-!\n# Symmetrized-strategy failure probabilities and test bounds\n\nFailure-probability surrogates and basic low-individual-degree test bounds for\nthe split strategy interface.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyFailures.lean#L160-L174",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyFailures.lean",
+  "lines": [
+   160,
+   174
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.bipartiteSSCError_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.gamma_nonneg_of_isGood",
+  "source_name": "MIPStarRE.LDT.gamma_nonneg_of_isGood",
+  "formal_statement": "theorem MIPStarRE.LDT.gamma_nonneg_of_isGood\n    (params : Parameters)\n    [FieldModel params.q]\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (strategy : SymStrat params ι)\n    {eps delta gamma : Error}\n    (hgood : strategy.IsGood eps delta gamma) :\n    0 ≤ gamma := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "A good symmetric strategy has a nonnegative diagonal-lines error parameter\n`γ`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures",
+  "module_doc": "/-!\n# Symmetrized-strategy failure probabilities and test bounds\n\nFailure-probability surrogates and basic low-individual-degree test bounds for\nthe split strategy interface.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyFailures.lean#L176-L187",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyFailures.lean",
+  "lines": [
+   176,
+   187
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.bipartiteConsError_nonneg"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.answer_eps_nonneg_of_isGood",
+  "source_name": "MIPStarRE.LDT.answer_eps_nonneg_of_isGood",
+  "formal_statement": "theorem MIPStarRE.LDT.answer_eps_nonneg_of_isGood\n    (params : Parameters)\n    [FieldModel params.q]\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (strategy : AnswerSymStrat params ι)\n    {eps delta gamma : Error}\n    (hgood : strategy.IsGood eps delta gamma) :\n    0 ≤ eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "A good answer-valued symmetric strategy has a nonnegative axis-parallel\nerror parameter `ε`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures",
+  "module_doc": "/-!\n# Symmetrized-strategy failure probabilities and test bounds\n\nFailure-probability surrogates and basic low-individual-degree test bounds for\nthe split strategy interface.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyFailures.lean#L207-L222",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyFailures.lean",
+  "lines": [
+   207,
+   222
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.bipartiteConsError_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.answer_delta_nonneg_of_isGood",
+  "source_name": "MIPStarRE.LDT.answer_delta_nonneg_of_isGood",
+  "formal_statement": "theorem MIPStarRE.LDT.answer_delta_nonneg_of_isGood\n    (params : Parameters)\n    [FieldModel params.q]\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (strategy : AnswerSymStrat params ι)\n    {eps delta gamma : Error}\n    (hgood : strategy.IsGood eps delta gamma) :\n    0 ≤ delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "A good answer-valued symmetric strategy has a nonnegative self-consistency\nerror parameter `δ`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures",
+  "module_doc": "/-!\n# Symmetrized-strategy failure probabilities and test bounds\n\nFailure-probability surrogates and basic low-individual-degree test bounds for\nthe split strategy interface.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyFailures.lean#L224-L238",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyFailures.lean",
+  "lines": [
+   224,
+   238
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.bipartiteSSCError_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.answer_gamma_nonneg_of_isGood",
+  "source_name": "MIPStarRE.LDT.answer_gamma_nonneg_of_isGood",
+  "formal_statement": "theorem MIPStarRE.LDT.answer_gamma_nonneg_of_isGood\n    (params : Parameters)\n    [FieldModel params.q]\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (strategy : AnswerSymStrat params ι)\n    {eps delta gamma : Error}\n    (hgood : strategy.IsGood eps delta gamma) :\n    0 ≤ gamma := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "A good answer-valued symmetric strategy has a nonnegative diagonal-lines\nerror parameter `γ`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyFailures",
+  "module_doc": "/-!\n# Symmetrized-strategy failure probabilities and test bounds\n\nFailure-probability surrogates and basic low-individual-degree test bounds for\nthe split strategy interface.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyFailures.lean#L240-L251",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyFailures.lean",
+  "lines": [
+   240,
+   251
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.bipartiteConsError_nonneg"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.IdxPolyFamily.SliceBoundednessInput.averagedPoint_le_witness",
+  "source_name": "MIPStarRE.LDT.IdxPolyFamily.SliceBoundednessInput.averagedPoint_le_witness",
+  "formal_statement": "theorem MIPStarRE.LDT.IdxPolyFamily.SliceBoundednessInput.averagedPoint_le_witness {params : Parameters} [FieldModel params.q]\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    {strategy : SymStrat params.next ι}\n    {family : IdxPolyFamily params ι} {zeta : Error}\n    (hbound : SliceBoundednessInput strategy family zeta) :\n    ∀ x : Fq params, ∀ g : Polynomial params,\n      averagedSlicePointEvaluationOperator strategy x g ≤ family.witness x := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.IdxPolyFamily",
+   "open MIPStarRE.LDT.IdxPolyFamily.SliceBoundednessInput",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Paper-faithful domination half of the boundedness hypothesis.\n\nThis is the line `Z^x ≥ E_u A^{u,x}_{g(u)}` from\n`references/ldt-paper/commutativity-G.tex`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyPolynomialFamilies",
+  "module_doc": "/-!\n# Polynomial-family interfaces for the low individual degree test\n\nPackaged slice-indexed polynomial-family interfaces extracted from\n`MIPStarRE.LDT.Test.Strategy`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyPolynomialFamilies.lean#L340-L351",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyPolynomialFamilies.lean",
+  "lines": [
+   340,
+   351
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.qBipartiteConsDefect_of_measurements",
+  "source_name": "MIPStarRE.LDT.qBipartiteConsDefect_of_measurements",
+  "formal_statement": "theorem MIPStarRE.LDT.qBipartiteConsDefect_of_measurements {Outcome : Type*} {ιA ιB : Type*}\n    [Fintype Outcome]\n    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    (ψ : QuantumState (ιA × ιB))\n    (A : Measurement Outcome ιA) (B : Measurement Outcome ιB) :\n    qBipartiteConsDefect ψ A.toSubMeas B.toSubMeas =\n      ev ψ (1 : MIPStarRE.Quantum.Op (ιA × ιB)) -\n        qBipartiteMatchMass ψ A.toSubMeas B.toSubMeas := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "For complete measurements, the bipartite consistency defect is the total\nexpectation minus the matching mass.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyRole.Algebra",
+  "module_doc": "/-!\n# Role-register algebraic identities for the low individual degree test\n\nRole-pair projection algebra, symmetrized measurement definitions, and expectation\nidentities for the classical role-register symmetrized state.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyRole/Algebra.lean#L167-L199",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyRole/Algebra.lean",
+  "lines": [
+   167,
+   199
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.opTensor_le_leftTensor",
+   "MIPStarRE.LDT.Measurement.outcome_le_one",
+   "MIPStarRE.LDT.leftTensor_finset_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.roleCond_nonneg",
+  "source_name": "MIPStarRE.LDT.roleCond_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.roleCond_nonneg {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (r : Role) {X : MIPStarRE.Quantum.Op ι} (hX : 0 ≤ X) :\n    0 ≤ roleCond r X := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyRole.Core",
+  "module_doc": "/-!\n# Role-register tensor algebra for the low individual degree test\n\nRole-register operators and strategy symmetrization infrastructure extracted from\n`MIPStarRE.LDT.Test.Strategy`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyRole/Core.lean#L157-L160",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyRole/Core.lean",
+  "lines": [
+   157,
+   160
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.roleCond_finset_sum",
+  "source_name": "MIPStarRE.LDT.roleCond_finset_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.roleCond_finset_sum {α ι : Type*}\n    [Fintype ι] [DecidableEq ι]\n    (r : Role) (s : Finset α) (f : α → MIPStarRE.Quantum.Op ι) :\n    Finset.sum s (fun a => roleCond r (f a)) = roleCond r (Finset.sum s f) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyRole.Core",
+  "module_doc": "/-!\n# Role-register tensor algebra for the low individual degree test\n\nRole-register operators and strategy symmetrization infrastructure extracted from\n`MIPStarRE.LDT.Test.Strategy`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyRole/Core.lean#L179-L189",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyRole/Core.lean",
+  "lines": [
+   179,
+   189
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.rolePairProj_nonneg",
+  "source_name": "MIPStarRE.LDT.rolePairProj_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.rolePairProj_nonneg (rL rR : Role) : 0 ≤ rolePairProj rL rR := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The projection onto a pair of role sectors is positive semidefinite.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyRole.Core",
+  "module_doc": "/-!\n# Role-register tensor algebra for the low individual degree test\n\nRole-register operators and strategy symmetrization infrastructure extracted from\n`MIPStarRE.LDT.Test.Strategy`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyRole/Core.lean#L236-L238",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyRole/Core.lean",
+  "lines": [
+   236,
+   238
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.permInvState_of_density_fixed",
+  "source_name": "MIPStarRE.LDT.permInvState_of_density_fixed",
+  "formal_statement": "theorem MIPStarRE.LDT.permInvState_of_density_fixed {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState (ι × ι))\n    (hfix : swapDensity ψ.density = ψ.density) :\n    PermInvState ψ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.StrategyRole.Core",
+  "module_doc": "/-!\n# Role-register tensor algebra for the low individual degree test\n\nRole-register operators and strategy symmetrization infrastructure extracted from\n`MIPStarRE.LDT.Test.Strategy`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyRole/Core.lean#L371-L389",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/StrategyRole/Core.lean",
+  "lines": [
+   371,
+   389
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "Matrix.trace_reindex"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.conicSeparatorObjectiveCoefficient_neg_of_above",
+  "source_name": "MIPStarRE.Quantum.conicSeparatorObjectiveCoefficient_neg_of_above",
+  "formal_statement": "theorem MIPStarRE.Quantum.conicSeparatorObjectiveCoefficient_neg_of_above\n    {E : Type*} [TopologicalSpace E] [AddCommMonoid E] [Module ℝ E]\n    {C : Set (E × ℝ)}\n    (φ : StrongDual ℝ (E × ℝ))\n    {y : E} {s t : ℝ}\n    (hφ : ∀ z ∈ C, 0 ≤ φ z)\n    (hys : (y, s) ∈ C)\n    (hyt : φ (y, t) < 0)\n    (hst : s < t) :\n    conicSeparatorObjectiveCoefficient φ < 0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "If a separator is nonnegative on a conic image point `(y, s)` and negative\nat `(y, t)` with `s < t`, then its objective-coordinate coefficient is\nnegative.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteConicDuality",
+  "module_doc": "/-!\n# Finite conic-duality separation lemmas\n\nThis module contains the product-space part of the finite-dimensional conic\nduality argument used by the Section 9 SDP.  A separator on a product space\n`E × ℝ` decomposes into a constraint-coordinate functional and an objective\ncoefficient.  If the separator is nonnegative on a conic image and negative at\na point with the same constraint coordinate but larger objective coordinate,\nthen the objective coefficient is negative.  After normalizing by this negative\ncoefficient one obtains the functional dual bound.\n\nThe matrix trace-pairing representation and the paper-form SDP witness remain\nin the Section 9 matrix-realization layer.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n- `docs/reports/issue-2386-finite-sdp-duality-theorem-design.md`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteConicDuality.lean#L65-L95",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteConicDuality.lean",
+  "lines": [
+   65,
+   95
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.conicFunctionalDualFeasible_normalizedSeparator",
+  "source_name": "MIPStarRE.Quantum.conicFunctionalDualFeasible_normalizedSeparator",
+  "formal_statement": "theorem MIPStarRE.Quantum.conicFunctionalDualFeasible_normalizedSeparator\n    {F : Type*} [TopologicalSpace F] [AddCommMonoid F] [Module ℝ F]\n    {C : Set (F × ℝ)}\n    (φ : StrongDual ℝ (F × ℝ))\n    (hφ : ∀ z ∈ C, 0 ≤ φ z)\n    (hcoeff : conicSeparatorObjectiveCoefficient φ < 0) :\n    ∀ z ∈ C, z.2 ≤ conicNormalizedSeparatorFunctional φ z.1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "The normalized constraint functional associated to a separator is feasible\nfor the functional dual problem of the conic image.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteConicDuality",
+  "module_doc": "/-!\n# Finite conic-duality separation lemmas\n\nThis module contains the product-space part of the finite-dimensional conic\nduality argument used by the Section 9 SDP.  A separator on a product space\n`E × ℝ` decomposes into a constraint-coordinate functional and an objective\ncoefficient.  If the separator is nonnegative on a conic image and negative at\na point with the same constraint coordinate but larger objective coordinate,\nthen the objective coefficient is negative.  After normalizing by this negative\ncoefficient one obtains the functional dual bound.\n\nThe matrix trace-pairing representation and the paper-form SDP witness remain\nin the Section 9 matrix-realization layer.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n- `docs/reports/issue-2386-finite-sdp-duality-theorem-design.md`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteConicDuality.lean#L146-L168",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteConicDuality.lean",
+  "lines": [
+   146,
+   168
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 14,
+  "is_target": false
+ }
+]

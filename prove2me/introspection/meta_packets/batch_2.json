@@ -1,0 +1,748 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.ExplicitGame.game_D",
+  "source_name": "MIPRE.Introspection.ExplicitGame.game_D",
+  "formal_statement": "theorem MIPRE.Introspection.ExplicitGame.game_D (q r : Question m t ℓ)\n    (a a' : ParsedAnswer (ι → F₀) A (QLD.Answer F m d)) :\n    (game hm χ π b L project D).D q r a a' =\n      (PauliRestriction.fullGame hm b L project D).D\n        (questionEquiv π b q) (questionEquiv π b r) a a' := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.ExplicitGame",
+   "open Finset Classical",
+   "open MIPRE.QLD.PauliCL",
+   "open MIPRE.QLD.PauliCL.ExplicitSeed",
+   "variable {F F₀ ι A : Type*} [Field F] [Fintype F] [DecidableEq F]",
+   "variable (hm : m ∣ Fintype.card F) (χ : F → Fin m) (π : F ≃ F)"
+  ],
+  "docstring": "Exact decision equality on all raw questions and all parsed answers.",
+  "module": "MIPRE.Background.Introspection.ExplicitGame",
+  "module_doc": "/-! # Full typed introspection under an explicit Pauli seed enumeration\n\nThe equivalence acts on all raw questions, preserves the type, and fixes the\nauxiliary questions and both distinguished Pauli measurements. A permutation\nof the common random content proves equality of the full question-pair law,\nincluding mixed Pauli/auxiliary edges. The parsed predicate is intertwined on\nevery question and every answer, including malformed answers and loops.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/ExplicitGame.lean#L132-L149",
+  "source_path": "MIPRE/Background/Introspection/ExplicitGame.lean",
+  "lines": [
+   132,
+   149
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-numbered-transport",
+    "env": "lemma",
+    "title": "Full question transport and actual QLD extraction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.Honest.fibre_comp",
+  "source_name": "MIPRE.QLD.Honest.fibre_comp",
+  "formal_statement": "theorem MIPRE.QLD.Honest.fibre_comp [Fintype A] (P : X → Matrix I I ℂ) (f : X → A) (g : A → B) (b : B) :\n    fibSum (fibSum P f) g b = fibSum P (fun x => g (f x)) b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.Honest",
+   "open Matrix Finset MIPRE.Introspection Classical",
+   "open scoped Kronecker",
+   "variable {I X Y A B : Type*} [Fintype I] [DecidableEq I]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.HonestPauliCoarse",
+  "module_doc": "/-! # Exact coarse-measurement algebra for honest Pauli edges -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/HonestPauliCoarse.lean#L73-L92",
+  "source_path": "MIPRE/Background/Introspection/HonestPauliCoarse.lean",
+  "lines": [
+   73,
+   92
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.Honest.answerOp_point_var_reject",
+  "source_name": "MIPRE.QLD.Honest.answerOp_point_var_reject",
+  "formal_statement": "theorem MIPRE.QLD.Honest.answerOp_point_var_reject (hm : m ∣ Fintype.card F)\n    (ω : Omega F m) (W : Bas) (a b : Answer F m d)\n    (hr : accepts hm (.point W (ω.pt W)) (.var (distinguished W) ω) a b = false) :\n    answerOp hm (.point W (ω.pt W)) a * answerOp hm (.var (distinguished W) ω) b = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.Honest",
+   "open Matrix Finset MIPRE.Weyl MIPRE.LCS MIPRE.Introspection Classical",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.HonestPauliEdges",
+  "module_doc": "/-! # The commuting and Magic Square edges of the honest Pauli strategy -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/HonestPauliEdges.lean#L77-L91",
+  "source_path": "MIPRE/Background/Introspection/HonestPauliEdges.lean",
+  "lines": [
+   77,
+   91
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-honest-pauli-measurements",
+    "env": "lemma",
+    "title": "All honest Pauli measurements and their tested edge identities",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.Honest.fibre_comp",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj",
+   "MIPRE.Weyl.eq_sum_proj",
+   "MIPRE.LCS.zmod_two_eq_zero_or_one",
+   "MIPRE.LCS.binary_measurement_eq_projector"
+  ],
+  "pasted_helpers": 23,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.Honest.answerOp_con_var_reject",
+  "source_name": "MIPRE.QLD.Honest.answerOp_con_var_reject",
+  "formal_statement": "theorem MIPRE.QLD.Honest.answerOp_con_var_reject (hm : m ∣ Fintype.card F) (ω : Omega F m)\n    (c : Fin LCS.MagicSquare.layout.r) (j : Fin LCS.MagicSquare.layout.s)\n    (hj : j ∈ LCS.MagicSquare.layout.V c) (a b : Answer F m d)\n    (hr : accepts hm (.con c ω) (.var j ω) a b = false) :\n    answerOp hm (.con c ω) a * answerOp hm (.var j ω) b = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.Honest",
+   "open Matrix Finset MIPRE.Weyl MIPRE.LCS MIPRE.Introspection Classical",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.HonestPauliEdges",
+  "module_doc": "/-! # The commuting and Magic Square edges of the honest Pauli strategy -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/HonestPauliEdges.lean#L108-L129",
+  "source_path": "MIPRE/Background/Introspection/HonestPauliEdges.lean",
+  "lines": [
+   108,
+   129
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-honest-pauli-measurements",
+    "env": "lemma",
+    "title": "All honest Pauli measurements and their tested edge identities",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.HonestMagicSquare.constraint_wrong_parity",
+   "MIPRE.Introspection.HonestMagicSquare.constraint_disagreement",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj",
+   "MIPRE.Weyl.eq_sum_proj",
+   "MIPRE.Weyl.wX_mul_wZ",
+   "MIPRE.LCS.zmod_two_eq_zero_or_one"
+  ],
+  "pasted_helpers": 19,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.Honest.answerOp_pairB_pair_reject",
+  "source_name": "MIPRE.QLD.Honest.answerOp_pairB_pair_reject",
+  "formal_statement": "theorem MIPRE.QLD.Honest.answerOp_pairB_pair_reject (hm : m ∣ Fintype.card F)\n    (ω : Omega F m) (W : Bas) (a b : Answer F m d)\n    (hr : accepts hm (.pairB W ω) (.pair ω) a b = false) :\n    answerOp hm (.pairB W ω) a * answerOp hm (.pair ω) b = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.Honest",
+   "open Matrix Finset MIPRE.Weyl MIPRE.LCS MIPRE.Introspection Classical",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.HonestPauliEdges",
+  "module_doc": "/-! # The commuting and Magic Square edges of the honest Pauli strategy -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/HonestPauliEdges.lean#L159-L173",
+  "source_path": "MIPRE/Background/Introspection/HonestPauliEdges.lean",
+  "lines": [
+   159,
+   173
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-honest-pauli-measurements",
+    "env": "lemma",
+    "title": "All honest Pauli measurements and their tested edge identities",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.Honest.fibre_comp"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.Honest.answerOp_adjRaw_reject",
+  "source_name": "MIPRE.QLD.Honest.answerOp_adjRaw_reject",
+  "formal_statement": "theorem MIPRE.QLD.Honest.answerOp_adjRaw_reject (hm : m ∣ Fintype.card F) (hd : 1 ≤ d)\n    (c : Content F m) (t u : Ty) (h : adjRaw t u = true) (a b : Answer F m d)\n    (hr : accepts hm (c.question hm t) (c.question hm u) a b = false) :\n    answerOp hm (c.question hm t) a * answerOp hm (c.question hm u) b = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.Honest",
+   "open Matrix Finset MIPRE.Weyl MIPRE.LCS MIPRE.Introspection Classical",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "Rejected effects vanish on every forward non-loop edge.",
+  "module": "MIPRE.Background.Introspection.HonestPauliGame",
+  "module_doc": "/-! # Perfect PCC play of the full Pauli basis game\n\nAll question types use the actual honest field-register measurements and a\nsingle extra qubit. The sampler's support supplies one common content for\nboth questions; every graph edge is handled, including its reverse and every\nself-loop. Wrong-format answers retain zero effects throughout.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/HonestPauliGame.lean#L114-L130",
+  "source_path": "MIPRE/Background/Introspection/HonestPauliGame.lean",
+  "lines": [
+   114,
+   130
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.Honest.fibre_comp",
+   "MIPRE.QLD.Honest.answerOp_point_var_reject",
+   "MIPRE.QLD.Honest.answerOp_con_var_reject",
+   "MIPRE.QLD.Honest.answerOp_pairB_pair_reject",
+   "MIPRE.LIDT.CL.rep_add_lineParam_smul",
+   "MIPRE.LowDegree.degreeOf_ind_le",
+   "MIPRE.LowDegree.totalDegree_ind_le",
+   "MIPRE.LowDegree.natDegree_lineRestrict_le",
+   "MIPRE.LowDegree.natDegree_lineRestrict_single_le",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj"
+  ],
+  "pasted_helpers": 24,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.Honest.probeLift_isPVM",
+  "source_name": "MIPRE.QLD.Honest.probeLift_isPVM",
+  "formal_statement": "theorem MIPRE.QLD.Honest.probeLift_isPVM (ω : Omega F m) (W : Bas) : IsPVM (probeLift ω W) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.Honest",
+   "open Matrix Finset MIPRE.Weyl MIPRE.LCS MIPRE.Introspection Classical",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.HonestPauliMeasurements",
+  "module_doc": "/-! # The honest measurements for all twenty-six Pauli question types\n\nEvery measurement uses the same field register tensor one qubit. The low-degree\nquestions read functions of a Pauli outcome; the commuting and anticommuting\nbranches use the actual verifier phase. All answer constructors and inactive\nbranches are explicit.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/HonestPauliMeasurements.lean#L50-L51",
+  "source_path": "MIPRE/Background/Introspection/HonestPauliMeasurements.lean",
+  "lines": [
+   50,
+   51
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.Honest.probeLift_commute",
+  "source_name": "MIPRE.QLD.Honest.probeLift_commute",
+  "formal_statement": "theorem MIPRE.QLD.Honest.probeLift_commute (ω : Omega F m) (h : gam ω = 0) (a b : ZMod 2) :\n    Commute (probeLift ω .X a) (probeLift ω .Z b) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.Honest",
+   "open Matrix Finset MIPRE.Weyl MIPRE.LCS MIPRE.Introspection Classical",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.HonestPauliMeasurements",
+  "module_doc": "/-! # The honest measurements for all twenty-six Pauli question types\n\nEvery measurement uses the same field register tensor one qubit. The low-degree\nquestions read functions of a Pauli outcome; the commuting and anticommuting\nbranches use the actual verifier phase. All answer constructors and inactive\nbranches are explicit.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/HonestPauliMeasurements.lean#L65-L69",
+  "source_path": "MIPRE/Background/Introspection/HonestPauliMeasurements.lean",
+  "lines": [
+   65,
+   69
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj",
+   "MIPRE.Weyl.eq_sum_proj",
+   "MIPRE.Weyl.wX_mul_wZ",
+   "MIPRE.LCS.zmod_two_eq_zero_or_one",
+   "MIPRE.LCS.binary_measurement_eq_projector"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.NumberedComplete.coordinate_exists_perfectPCC_with_format",
+  "source_name": "MIPRE.Introspection.NumberedComplete.coordinate_exists_perfectPCC_with_format",
+  "formal_statement": "theorem MIPRE.Introspection.NumberedComplete.coordinate_exists_perfectPCC_with_format\n    (R : SyncStrategy (Honest.sourceGame L D).doubled)\n    (hb : LowDegree.IsSelfDualBasis b) (hχ : ∀ s, LIDT.CL.chi hm (π s) = χ s)\n    (hd : 1 ≤ d) (hL : ∀ w, (L w).SupportedOn univ) (hR : R.IsPCC) (hv : R.value = 1) :\n    ∃ Q : SyncStrategy (AuxiliaryQuotient.reindexedGame e QLD.adj (.pauli .X) (.pauli .Z)\n        (QLD.PauliCL.ExplicitSeed.binaryPresentation χ b) L (project (d := d) e b) D\n        (ExplicitGame.pauliCheck hm π b)).doubled,\n      Q.IsPCC ∧ Q.value = 1 ∧ Q.d = 2 * Fintype.card (Seed m t) * R.d ∧\n      (∀ q a, Q.P.M q a ≠ 0 →\n        PrefixGuard.holds (SourceReindex.family e L) q.2.1 a) ∧\n      (∀ side w payload y a,\n        Q.P.M (side, .inr (.introspect,w), payload) (.pair y a) ≠ 0 →\n        ∃ x, (SourceReindex.family e L w).eval x = y) ∧\n      (∀ side p payload a, Q.P.M (side,.inl p,payload) (.pauli a) ≠ 0 →\n        (QLD.PauliCL.ExplicitSeed.binaryDecode π b p payload).fmtOk a = true) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.NumberedComplete",
+   "open Finset MIPRE.CL Classical MIPRE.Introspection.BinaryComplete",
+   "variable {F A I : Type*} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "The temporary coordinate game has a perfect honest PCC strategy, including\nthe exact support facts needed after transporting back to the finite register.",
+  "module": "MIPRE.Background.Introspection.NumberedComplete",
+  "module_doc": "/-! # Honest guarded quotient completeness with the actual register numbering\n\nThe source CL family remains on its given coordinate type. Only its honest\nconstruction is expressed temporarily in the binary Weyl coordinates. Quotient\ntransport then returns the strategy to the original coordinates, with exact\ndimension and with support certificates for both kinds of executable guards.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/NumberedComplete.lean#L39-L86",
+  "source_path": "MIPRE/Background/Introspection/NumberedComplete.lean",
+  "lines": [
+   39,
+   86
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.BinaryComplete.game_positive_content",
+   "MIPRE.Introspection.BinaryComplete.strategy_value",
+   "MIPRE.Introspection.BinaryComplete.sampleOp_commute",
+   "MIPRE.Introspection.ExplicitGame.game_D",
+   "MIPRE.QLD.PauliCL.ExplicitSeed.binaryOutputPermutation_presentation",
+   "MIPRE.CL.CLFun.eval_reindex",
+   "MIPRE.SyncStrategy.value_relabel",
+   "MIPRE.SyncStrategy.isPCC_relabel",
+   "MIPRE.SyncStrategy.value_le_copy",
+   "MIPRE.tracialValue_le_one",
+   "MIPRE.Introspection.AuxiliaryQuotient.hidingNext_of_legacy",
+   "MIPRE.Introspection.CLChecks.outputPrefix_outputPrefix",
+   "MIPRE.Introspection.Honest.hideRegister_entry_nonzero",
+   "MIPRE.Introspection.Honest.readRegister_entry_nonzero",
+   "MIPRE.aOp_zero"
+  ],
+  "pasted_helpers": 73,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.NumberedComplete.exists_perfectPCC_with_format",
+  "source_name": "MIPRE.Introspection.NumberedComplete.exists_perfectPCC_with_format",
+  "formal_statement": "theorem MIPRE.Introspection.NumberedComplete.exists_perfectPCC_with_format\n    (R : SyncStrategy (Honest.sourceGame L D).doubled)\n    (hb : LowDegree.IsSelfDualBasis b) (hχ : ∀ s, LIDT.CL.chi hm (π s) = χ s)\n    (hd : 1 ≤ d) (hL : ∀ w, (L w).SupportedOn univ) (hR : R.IsPCC) (hv : R.value = 1) :\n    ∃ Q : SyncStrategy (guardedGame (d := d) e L D hm b χ π).doubled,\n      Q.IsPCC ∧ Q.value = 1 ∧ Q.d = 2 * Fintype.card (Seed m t) * R.d ∧\n      (∀ q a, Q.P.M q a ≠ 0 → PrefixGuard.holds L q.2.1 a) ∧\n      (∀ side w payload y a,\n        Q.P.M (side, .inr (.introspect,w), payload) (.pair y a) ≠ 0 →\n        ∃ x, (L w).eval x = y) ∧\n      (∀ side p payload a, Q.P.M (side,.inl p,payload) (.pauli a) ≠ 0 →\n        (QLD.PauliCL.ExplicitSeed.binaryDecode π b p payload).fmtOk a = true) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.NumberedComplete",
+   "open Finset MIPRE.CL Classical MIPRE.Introspection.BinaryComplete",
+   "variable {F A I : Type*} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "Perfect PCC completeness after coordinate transport and executable prefix\nguards. Introspect labels still lie in the actual original source-output range.",
+  "module": "MIPRE.Background.Introspection.NumberedComplete",
+  "module_doc": "/-! # Honest guarded quotient completeness with the actual register numbering\n\nThe source CL family remains on its given coordinate type. Only its honest\nconstruction is expressed temporarily in the binary Weyl coordinates. Quotient\ntransport then returns the strategy to the original coordinates, with exact\ndimension and with support certificates for both kinds of executable guards.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/NumberedComplete.lean#L88-L122",
+  "source_path": "MIPRE/Background/Introspection/NumberedComplete.lean",
+  "lines": [
+   88,
+   122
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-numbered-transport",
+    "env": "lemma",
+    "title": "Full question transport and actual QLD extraction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.NumberedComplete.coordinate_exists_perfectPCC_with_format",
+   "MIPRE.CL.CLFun.truncate_reindex",
+   "MIPRE.CL.CLFun.eval_reindex",
+   "MIPRE.CL.CLFun.factorOfPrefix_reindex",
+   "MIPRE.SyncStrategy.value_relabel",
+   "MIPRE.SyncStrategy.isPCC_relabel",
+   "MIPRE.Introspection.AuxiliaryQuotient.stageDual_reindex_eq_iff",
+   "MIPRE.SyncStrategy.value_copy_of_nonzero"
+  ],
+  "pasted_helpers": 20,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.NumberedSoundness.canonical_quantumValue_ge",
+  "source_name": "MIPRE.Introspection.NumberedSoundness.canonical_quantumValue_ge",
+  "formal_statement": "theorem MIPRE.Introspection.NumberedSoundness.canonical_quantumValue_ge\n    (c lam n : ℕ) (hc : 2 ≤ c)\n    (hcb : 2 * qldCoefficient + 2 ≤ (c : ℝ) * qldExponent)\n    (hx : 2 ≤ lam * n) (hq : Fintype.card F = 2 ^ fieldBits c lam n)\n    (hm : registerPower c lam n ∣ Fintype.card F)\n    (b : Module.Basis (Fin (fieldBits c lam n)) (ZMod 2) F)\n    (hb : LowDegree.IsSelfDualBasis b)\n    (e : I ≃ Coord (registerPower c lam n) (fieldBits c lam n))\n    (L : Bool → CLFun (ZMod 2) I ℓ)\n    (D : (I → ZMod 2) → (I → ZMod 2) → A → A → Bool)\n    (hL : ∀ w, (L w).ExactlyOn univ)\n    (χ : F → Fin (registerPower c lam n)) (π : F ≃ F)\n    (hχ : ∀ s, LIDT.CL.chi hm (π s) = χ s)\n    (S : TensorProductStrategy (NumberedComplete.game (d := 1) e L D hm b χ π))\n    (hA : ParsedPauliSupported S.PA.toPOVM) (hB : ParsedPauliSupported S.PB.toPOVM)\n    {ε : ℝ} (hε : 0 ≤ ε) (hS : 1 - S.value ≤ ε) :\n    1 - errorProfile\n      (profileCoefficient ℓ (PauliErrorParameters.profileCoefficient qldCoefficient c) qldExponent)\n      (qldExponent * rootExponent (6 * ℓ + 2)) (lam * n) ε ≤\n      quantumValue (Honest.sourceGame L D) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.NumberedSoundness",
+   "open Matrix Finset MIPRE.CL Classical MIPRE.Introspection.BinaryComplete MIPRE.Introspection.RestrictedSoundness",
+   "open MIPRE.Introspection.SourceCompiler MIPRE.Introspection.PauliSamplerParameters",
+   "variable {F A I : Type} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "Uniform soundness for the actual canonical field and register parameters,\non the source's original coordinate type. All QLD tails are absorbed.",
+  "module": "MIPRE.Background.Introspection.NumberedSoundness",
+  "module_doc": "/-! # Source soundness with the actual finite register numbering\n\nCoordinate relabeling is performed on the intrinsic quotient predicate. Dual\nanswers are only canonicalized afterwards in binary coordinates. Thus no\nequivariance of the chosen canonical complement is used.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/NumberedSoundness.lean#L239-L274",
+  "source_path": "MIPRE/Background/Introspection/NumberedSoundness.lean",
+  "lines": [
+   239,
+   274
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-numbered-transport",
+    "env": "lemma",
+    "title": "Full question transport and actual QLD extraction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.ExplicitGame.game_D",
+   "MIPRE.Introspection.PauliRestriction.binaryStrategy_failure_le",
+   "MIPRE.Introspection.RestrictedSoundness.qldExponent_pos",
+   "MIPRE.Introspection.RestrictedSoundness.quantumValue_ge_of_extraction",
+   "MIPRE.QLD.PauliCL.ExplicitSeed.binaryOutputPermutation_presentation",
+   "MIPRE.QLD.PauliCL.pullbackStrategy_value",
+   "MIPRE.CL.CLFun.eval_reindex",
+   "MIPRE.CL.CLFun.factorOfPrefix_reindex",
+   "MIPRE.quantumValue_eq_of_equiv",
+   "MIPRE.TensorProductStrategy.value_le_mergeAnswersByQuestion",
+   "MIPRE.Introspection.AuxiliaryQuotient.stageDual_reindex_eq_iff",
+   "MIPRE.Introspection.PauliErrorParameters.qldError_le_profile",
+   "MIPRE.Introspection.errorProfile_of_restricted_bound",
+   "MIPRE.Introspection.TypeGraph.edges_nonempty",
+   "MIPRE.Introspection.AuxiliaryQuotient.check_sound"
+  ],
+  "pasted_helpers": 72,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliRestriction.binaryStrategy_failure_le",
+  "source_name": "MIPRE.Introspection.PauliRestriction.binaryStrategy_failure_le",
+  "formal_statement": "theorem MIPRE.Introspection.PauliRestriction.binaryStrategy_failure_le (a₀ b₀ : QLD.Answer F m d) {ε : ℝ}\n    (hS : 1 - S.value ≤ ε) :\n    1 - (binaryStrategy hm b L project D S a₀ b₀).value ≤\n      (TypeGraph.edges QLD.adj (.pauli .X) (.pauli .Z) ℓ).card * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliRestriction",
+   "open Matrix Finset Classical",
+   "variable {F F₀ ι A : Type*} [Field F] [Fintype F] [DecidableEq F]",
+   "variable (hm : m ∣ Fintype.card F) (b : Module.Basis (Fin t) (ZMod 2) F)"
+  ],
+  "docstring": "The full ordered-edge count is a uniform soundness factor for restriction.",
+  "module": "MIPRE.Background.Introspection.PauliRestriction",
+  "module_doc": "/-! # Actual Pauli strategies extracted by restricting introspection\n\nThe strategy is built on exactly the original finite registers and state.\nOuter malformed answers are completed at fixed answers; the binary CL\nstrategy then pulls back to the actual QLD game along canonical encodings.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/PauliRestriction.lean#L79-L127",
+  "source_path": "MIPRE/Background/Introspection/PauliRestriction.lean",
+  "lines": [
+   79,
+   127
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.adj_symm",
+   "MIPRE.Introspection.TypedEstimates.completed_pauli_condFail_le",
+   "MIPRE.Introspection.TypedEstimates.typed_edge_mean_failure_le",
+   "MIPRE.Introspection.TypeGraph.adj_pauli",
+   "MIPRE.TensorProductStrategy.value_eq_povmValue"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 43,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliSampler.coefficient_le_majorant",
+  "source_name": "MIPRE.Introspection.PauliSampler.coefficient_le_majorant",
+  "formal_statement": "theorem MIPRE.Introspection.PauliSampler.coefficient_le_majorant {c lam n v : ℕ} (hc : 1 ≤ c)\n    (hl : lam ≤ v) (hn : n ≤ v) (hu : lam * n ≤ v) :\n    coefficient c lam n ≤ coefficientMajorant c v := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliSampler",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program Polynomial",
+   "open MIPRE.Introspection.PauliSamplerParameters"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.PauliSamplerCost",
+  "module_doc": "/-! # Polynomial query time of the canonical Pauli sampler\n\nThe query degree is independent of the index and of the boundedness\nparameter. The coefficient includes the explicit canonical-parameter cost;\nno halting or complexity assumption on a supplied program is used.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/PauliSamplerCost.lean#L114-L136",
+  "source_path": "MIPRE/Background/Introspection/PauliSamplerCost.lean",
+  "lines": [
+   114,
+   136
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.PauliSamplerParameters.selectorBits_le_fieldBits",
+   "MIPRE.Introspection.PauliSamplerParameters.cost_le_majorant"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliSampler.fullSampler_dim",
+  "source_name": "MIPRE.Introspection.PauliSampler.fullSampler_dim",
+  "formal_statement": "theorem MIPRE.Introspection.PauliSampler.fullSampler_dim (c : ℕ) (hc : 1 ≤ c) (he : Even c) (ℓ lam n : ℕ) :\n    (fullSampler c hc he ℓ lam).dim n =\n      4 * (Fintype.card QLD.Ty + 2 * ℓ + 6) + dimension c lam n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliSampler",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL Polynomial",
+   "open MIPRE.Introspection.PauliSamplerParameters"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.PauliSamplerExtension",
+  "module_doc": "/-! # The executable five-level introspection sampler\n\nThe canonical Pauli sampler extends to all introspection types and is then\ndetyped along the actual type graph. The program is uniformly compiled from\nthe binary boundedness parameter. Its positive-index budget includes both\nrouters and the graph register; the final verifier handles zero separately.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/PauliSamplerExtension.lean#L27-L30",
+  "source_path": "MIPRE/Background/Introspection/PauliSamplerExtension.lean",
+  "lines": [
+   27,
+   30
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.QuestionType.card"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliSampler.fullSampler_uniform_bound",
+  "source_name": "MIPRE.Introspection.PauliSampler.fullSampler_uniform_bound",
+  "formal_statement": "theorem MIPRE.Introspection.PauliSampler.fullSampler_uniform_bound (c : ℕ) (hc : 1 ≤ c) (he : Even c) (ℓ : ℕ) :\n    ∃ C, ∀ lam n, 1 ≤ lam → 1 ≤ n →\n      (fullSampler c hc he ℓ lam).TimeBoundAt n ((lam * n + 1) ^ C) C ∧\n      (fullSampler c hc he ℓ lam).dim n ≤ (lam * n + 1) ^ C := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliSampler",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL Polynomial",
+   "open MIPRE.Introspection.PauliSamplerParameters"
+  ],
+  "docstring": "Both routers preserve the single uniform positive-index budget.",
+  "module": "MIPRE.Background.Introspection.PauliSamplerExtension",
+  "module_doc": "/-! # The executable five-level introspection sampler\n\nThe canonical Pauli sampler extends to all introspection types and is then\ndetyped along the actual type graph. The program is uniformly compiled from\nthe binary boundedness parameter. Its positive-index budget includes both\nrouters and the graph register; the final verifier handles zero separately.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/PauliSamplerExtension.lean#L134-L154",
+  "source_path": "MIPRE/Background/Introspection/PauliSamplerExtension.lean",
+  "lines": [
+   134,
+   154
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.PauliSampler.coefficient_le_majorant",
+   "MIPRE.Introspection.PauliSampler.fullSampler_dim",
+   "MIPRE.Cost.Prog.routeCost_natDegree_le",
+   "MIPRE.Cost.Prog.routeOneCall_haltsWithin",
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.CL.Detyping.Program.route_preserves",
+   "MIPRE.Cost.hardcode_wellScoped",
+   "MIPRE.Cost.hardcode_time",
+   "MIPRE.Introspection.PauliSamplerParameters.selectorBits_le_fieldBits",
+   "MIPRE.Introspection.PauliSamplerParameters.prog_closed",
+   "MIPRE.Introspection.PauliSamplerParameters.costMajorant_polyBounded",
+   "MIPRE.Introspection.PauliSamplerParameters.prog_runs_cost"
+  ],
+  "pasted_helpers": 25,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliSampler.finalCompiler_apply",
+  "source_name": "MIPRE.Introspection.PauliSampler.finalCompiler_apply",
+  "formal_statement": "theorem MIPRE.Introspection.PauliSampler.finalCompiler_apply (c : ℕ) (hc : 1 ≤ c) (he : Even c) (ℓ lam : ℕ) :\n    finalCompiler c ℓ lam = (finalSampler c hc he ℓ lam).prog := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliSampler",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.PauliSamplerTotal",
+  "module_doc": "/-! # The uniformly bounded sampler at every index\n\nThe positive-index sampler is unchanged. The exceptional branches have no\nquestion coordinates and execute without inspecting the source description.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/PauliSamplerTotal.lean#L26-L30",
+  "source_path": "MIPRE/Background/Introspection/PauliSamplerTotal.lean",
+  "lines": [
+   26,
+   30
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-canonical-sampler",
+    "env": "lemma",
+    "title": "The canonical sampler at every index",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.CLFun.zeroOn_exactlyOn"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliSampler.finalSampler_dim_zero",
+  "source_name": "MIPRE.Introspection.PauliSampler.finalSampler_dim_zero",
+  "formal_statement": "theorem MIPRE.Introspection.PauliSampler.finalSampler_dim_zero (c : ℕ) (hc : 1 ≤ c) (he : Even c) (ℓ lam n : ℕ)\n    (h : lam * n = 0) : (finalSampler c hc he ℓ lam).dim n = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliSampler",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.PauliSamplerTotal",
+  "module_doc": "/-! # The uniformly bounded sampler at every index\n\nThe positive-index sampler is unchanged. The exceptional branches have no\nquestion coordinates and execute without inspecting the source description.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/PauliSamplerTotal.lean#L39-L43",
+  "source_path": "MIPRE/Background/Introspection/PauliSamplerTotal.lean",
+  "lines": [
+   39,
+   43
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-canonical-sampler",
+    "env": "lemma",
+    "title": "The canonical sampler at every index",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliSampler.finalSampler_dim_pos",
+  "source_name": "MIPRE.Introspection.PauliSampler.finalSampler_dim_pos",
+  "formal_statement": "theorem MIPRE.Introspection.PauliSampler.finalSampler_dim_pos (c : ℕ) (hc : 1 ≤ c) (he : Even c) (ℓ lam n : ℕ)\n    (hl : lam ≠ 0) (hn : n ≠ 0) :\n    (finalSampler c hc he ℓ lam).dim n = (fullSampler c hc he ℓ lam).dim n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliSampler",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.PauliSamplerTotal",
+  "module_doc": "/-! # The uniformly bounded sampler at every index\n\nThe positive-index sampler is unchanged. The exceptional branches have no\nquestion coordinates and execute without inspecting the source description.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/PauliSamplerTotal.lean#L45-L49",
+  "source_path": "MIPRE/Background/Introspection/PauliSamplerTotal.lean",
+  "lines": [
+   45,
+   49
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.PauliSampler.finalSampler_uniform_bound",
+  "source_name": "MIPRE.Introspection.PauliSampler.finalSampler_uniform_bound",
+  "formal_statement": "theorem MIPRE.Introspection.PauliSampler.finalSampler_uniform_bound (c : ℕ) (hc : 1 ≤ c) (he : Even c) (ℓ : ℕ) :\n    ∃ C, ∀ lam n,\n      (finalSampler c hc he ℓ lam).TimeBoundAt n ((lam * n + 1) ^ C) C ∧\n      (finalSampler c hc he ℓ lam).dim n ≤ (lam * n + 1) ^ C := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.PauliSampler",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL"
+  ],
+  "docstring": "One exponent controls all indices, including both exceptional zero cases.",
+  "module": "MIPRE.Background.Introspection.PauliSamplerTotal",
+  "module_doc": "/-! # The uniformly bounded sampler at every index\n\nThe positive-index sampler is unchanged. The exceptional branches have no\nquestion coordinates and execute without inspecting the source description.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/PauliSamplerTotal.lean#L61-L99",
+  "source_path": "MIPRE/Background/Introspection/PauliSamplerTotal.lean",
+  "lines": [
+   61,
+   99
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-canonical-sampler",
+    "env": "lemma",
+    "title": "The canonical sampler at every index",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.PauliSampler.fullSampler_uniform_bound",
+   "MIPRE.Introspection.PauliSampler.finalSampler_dim_pos",
+   "MIPRE.Introspection.ZeroIndexSampler.atZero_timeBound_pos",
+   "MIPRE.CL.CLFun.zeroOn_exactlyOn"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.ZeroIndexSampler.atZero_timeBound_pos",
+  "source_name": "MIPRE.Introspection.ZeroIndexSampler.atZero_timeBound_pos",
+  "formal_statement": "theorem MIPRE.Introspection.ZeroIndexSampler.atZero_timeBound_pos {ℓ n B k : ℕ} (S : CL.Sampler ℓ) (hn : n ≠ 0)\n    (h : S.TimeBoundAt n B k) :\n    (atZero S).TimeBoundAt n (B + esize n + 5) (max k 1) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.ZeroIndexSampler",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL"
+  ],
+  "docstring": "The positive branch only copies the original input once before running the sampler.",
+  "module": "MIPRE.Background.Introspection.PauliSamplerZero",
+  "module_doc": "/-! # A zero-dimensional sampler at the exceptional index\n\nThe branch inspects the index in place. At zero it returns the empty answer\nwithout copying the query or reading the underlying sampler description.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/PauliSamplerZero.lean#L134-L151",
+  "source_path": "MIPRE/Background/Introspection/PauliSamplerZero.lean",
+  "lines": [
+   134,
+   151
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ }
+]

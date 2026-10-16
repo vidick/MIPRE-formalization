@@ -1,0 +1,703 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_headTail_adjoint_qSDDCore_bound",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_headTail_adjoint_qSDDCore_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_headTail_adjoint_qSDDCore_bound\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error)\n    (hgamma_nonneg : 0 ≤ gamma) (hzeta_nonneg : 0 ≤ zeta)\n    (hhalf : ∀ j : ℕ, 2 ≤ j →\n      CommuteGHalfSandwichStatement params ψbi family gamma zeta j)\n    {n k : ℕ} (hn : 2 ≤ n + 1) (hnk : n + 1 ≤ k) :\n    avgOver (uniformDistribution (Fq params × PointTuple params n)) (fun q =>\n      qSDDCore ψbi\n        (fun ogs : GHatOutcome params × GHatTupleOutcome params n =>\n          leftTensor (ι₂ := ι)\n            ((gHatHalfProductOutcomeOperator params family n q.2 ogs.2)ᴴ *\n              (gHatIdxMeas params family q.1).outcome ogs.1))\n        (fun ogs : GHatOutcome params × GHatTupleOutcome params n =>\n          leftTensor (ι₂ := ι)\n            ((gHatIdxMeas params family q.1).outcome ogs.1 *\n              (gHatHalfProductOutcomeOperator params family n q.2 ogs.2)ᴴ))) ≤\n      commuteGHalfSandwichError params gamma zeta k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Adjoint-oriented raw `qSDDCore` form of the half-sandwich commutation\nhypothesis.  This is the orientation used by the paper's Cauchy--Schwarz\ndecompositions in `eq:call-this-later` and `eq:call-again-later-part-dos`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.PaperBounds",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G collapsed bounds\n\nCollapses the paper endpoint `M₄` to the next Lean stage and records the scalar\nbounds used by the final telescope.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/PaperBounds.lean#L326-L509",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/PaperBounds.lean",
+  "lines": [
+   326,
+   509
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_equiv",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.Pasting.fromHToG_gHatHalfProduct_reverse_eq_adjoint",
+   "MIPStarRE.LDT.Pasting.fromHToG_qSDDCore_symm",
+   "MIPStarRE.LDT.Pasting.fromHToG_headTail_qSDDCore_bound"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 161,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_ev_sum_isSome_sandwich_weight",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_ev_sum_isSome_sandwich_weight",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_ev_sum_isSome_sandwich_weight\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι) (x : Fq params)\n    (b : Bool) (A S : MIPStarRE.Quantum.Op ι) :\n    (∑ g ∈ (Finset.univ : Finset (GHatOutcome params)) with g.isSome = b,\n        ev ψbi (leftTensor (ι₂ := ι) A *\n          rightTensor (ι₁ := ι)\n            (S * (gHatIdxMeas params family x).outcome g * S))) =\n      ev ψbi (leftTensor (ι₂ := ι) A *\n        rightTensor (ι₁ := ι)\n          (S * (if b then (completePartSubMeas params family x).total\n            else (incompletePartSubMeas params family x).total) * S)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Expectation-level branch sum with an `S · U · S` sandwich.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.PaperBounds.SandwichContext",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G S U S context-average bounds\n\nSandwich-sum identities and the `S U S` context-average bound used in the\nsecond half-sandwich and final move-right Cauchy--Schwarz steps.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/PaperBounds/SandwichContext.lean#L92-L175",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/PaperBounds/SandwichContext.lean",
+  "lines": [
+   92,
+   175
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.rightTensor_finset_sum",
+   "MIPStarRE.LDT.Pasting.fromHToG_gHatIdxMeas_sum_isSome_false",
+   "MIPStarRE.LDT.Pasting.fromHToG_gHatIdxMeas_sum_isSome_true"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 70,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_avgOver_head_ev_sandwich",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_avgOver_head_ev_sandwich",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_avgOver_head_ev_sandwich\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (A S : MIPStarRE.Quantum.Op ι) (F : Fq params → MIPStarRE.Quantum.Op ι) :\n    avgOver (uniformDistribution (Fq params)) (fun x =>\n      ev ψbi (leftTensor (ι₂ := ι) A * rightTensor (ι₁ := ι) (S * F x * S))) =\n      ev ψbi (leftTensor (ι₂ := ι) A *\n        rightTensor (ι₁ := ι)\n          (S * averageOperatorOverDistribution (uniformDistribution (Fq params)) F * S)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Fold a head-point scalar average with an `S · F x · S` sandwich into the\nright tensor factor.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.PaperBounds.SandwichContext",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G S U S context-average bounds\n\nSandwich-sum identities and the `S U S` context-average bound used in the\nsecond half-sandwich and final move-right Cauchy--Schwarz steps.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/PaperBounds/SandwichContext.lean#L177-L210",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/PaperBounds/SandwichContext.lean",
+  "lines": [
+   177,
+   210
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.averageOperatorOverDistribution_mul_left_right",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_scale",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_real_smul_right",
+   "MIPStarRE.LDT.rightTensor_finset_sum"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_sum_averagedSandwichByType_total_eq_one",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_sum_averagedSandwichByType_total_eq_one",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_sum_averagedSandwichByType_total_eq_one\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι) (n : ℕ) :\n    (∑ τ : GHatType n,\n      (averagedSandwichByTypeSubMeas params family n τ).total) = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Summing the per-type averaged sandwich totals gives the full tail sandwich\ntotal, hence the identity.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.PaperBounds.SandwichContext",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G S U S context-average bounds\n\nSandwich-sum identities and the `S U S` context-average bound used in the\nsecond half-sandwich and final move-right Cauchy--Schwarz steps.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/PaperBounds/SandwichContext.lean#L241-L294",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/PaperBounds/SandwichContext.lean",
+  "lines": [
+   241,
+   294
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.averageOperatorOverDistribution_congr",
+   "MIPStarRE.LDT.averageOperatorOverDistribution_sum",
+   "MIPStarRE.LDT.averageOperatorOverDistribution_nonneg",
+   "MIPStarRE.LDT.averageOperatorOverDistribution_le_one_of_weight_sum_le_one",
+   "MIPStarRE.LDT.Measurement.outcome_hermitian",
+   "MIPStarRE.LDT.Pasting.fromHToG_type_filtered_outcome_sum",
+   "MIPStarRE.LDT.Pasting.gHatIdxMeas_proj",
+   "MIPStarRE.LDT.Pasting.gHatHalfProductTotalOperator_eq_one"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 47,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_SUS_context_avg_le_one",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_SUS_context_avg_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_SUS_context_avg_le_one\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι)) (hnorm : ψbi.IsNormalized)\n    (family : IdxPolyFamily params ι)\n    (hcomplete : averageOperatorOverDistribution (uniformDistribution (Fq params))\n      (fun x => (completePartSubMeas params family x).total) =\n        family.averagedSubMeas.total)\n    (hincomplete : averageOperatorOverDistribution (uniformDistribution (Fq params))\n      (fun x => (incompletePartSubMeas params family x).total) =\n        1 - family.averagedSubMeas.total)\n    (ℓ n : ℕ) :\n    avgOver (uniformDistribution (Fq params × PointTuple params n)) (fun q =>\n      ∑ ogs : GHatOutcome params × GHatTupleOutcome params n,\n        let S := fromHToGRecurrenceWeight params family ℓ\n          (prependTypeBit ogs.1.isSome (gHatTupleType ogs.2))\n        let U := (gHatIdxMeas params family q.1).outcome ogs.1\n        let T := gHatHalfProductOutcomeOperator params family n q.2 ogs.2\n        ev ψbi\n          ((leftTensor (ι₂ := ι) T * rightTensor (ι₁ := ι) (S * U)) *\n            (leftTensor (ι₂ := ι) T * rightTensor (ι₁ := ι) (S * U))ᴴ)) ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Averaged first-root context bound for the `S U S` sandwich used in the\nsecond half-sandwich and final move-right Cauchy--Schwarz steps.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.PaperBounds.SandwichContext",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G S U S context-average bounds\n\nSandwich-sum identities and the `S U S` context-average bound used in the\nsecond half-sandwich and final move-right Cauchy--Schwarz steps.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/PaperBounds/SandwichContext.lean#L296-L584",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/PaperBounds/SandwichContext.lean",
+  "lines": [
+   296,
+   584
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_prod",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.ev_add",
+   "MIPStarRE.LDT.rightTensor_one",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.opTensor_mono_right",
+   "MIPStarRE.LDT.opTensor_mul",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.leftTensor_finset_sum",
+   "MIPStarRE.LDT.rightTensor_finset_sum",
+   "MIPStarRE.LDT.Pasting.fromHToG_avgOver_tail_type_ev",
+   "MIPStarRE.LDT.Pasting.fromHToG_bool_type_filtered_outcome_sum",
+   "MIPStarRE.LDT.Pasting.fromHToG_sum₂_avgOver₂",
+   "MIPStarRE.LDT.Pasting.psd_contraction_comm_sandwich_le",
+   "MIPStarRE.LDT.Pasting.fromHToG_sum_averagedSandwichByType_total_eq_one",
+   "MIPStarRE.LDT.Pasting.fromHToG_ev_sum_isSome_sandwich_weight",
+   "MIPStarRE.LDT.Pasting.fromHToG_avgOver_head_ev_sandwich",
+   "MIPStarRE.LDT.Pasting.gHatIdxMeas_proj"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 265,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2M3_paperMove",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2M3_paperMove",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2M3_paperMove\n    (params : Parameters)\n    [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (hnorm : ψbi.IsNormalized)\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error)\n    (hgamma_nonneg : 0 ≤ gamma) (hzeta_nonneg : 0 ≤ zeta)\n    (hhalf : ∀ j : ℕ, 2 ≤ j →\n      CommuteGHalfSandwichStatement params ψbi family gamma zeta j)\n    (hstageExact : FromHToGAdjacentStageExactFacts params ψbi family)\n    (k ℓ : ℕ) :\n    |fromHToGAdjacentStageM2 params ψbi family k ℓ -\n        fromHToGAdjacentStageM3 params ψbi family k ℓ| ≤\n      Real.sqrt (commuteGHalfSandwichError params gamma zeta k) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The second half-sandwich commutation move `M₂ → M₃` in the paper chain.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.PaperMoveChain.Moves",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G paper moves\n\nThis file contains the two analytic moves in the adjacent-stage paper chain:\n`M₂ → M₃` and `M₃ → E`.  They are the Cauchy--Schwarz and collapse steps in\n`ld-pasting.tex`, immediately before the adjacent-stage recurrence is assembled.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/PaperMoveChain/Moves.lean#L72-L266",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/PaperMoveChain/Moves.lean",
+  "lines": [
+   72,
+   266
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_eq_halfSandwichRightAdjointLeftActionShape",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_eq_halfSandwichLeftAdjointLeftActionShape",
+   "MIPStarRE.LDT.Pasting.fromHToG_closenessOfIP_avgContext",
+   "MIPStarRE.LDT.Pasting.fromHToG_SUS_context_avg_le_one",
+   "MIPStarRE.LDT.Pasting.fromHToG_headTail_adjoint_qSDDCore_bound"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 179,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3E_paperMove",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3E_paperMove",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3E_paperMove\n    (params : Parameters)\n    [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (hnorm : ψbi.IsNormalized)\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error)\n    (hfacts : GHatFactsStatement params ψbi family gamma zeta)\n    (hstageExact : FromHToGAdjacentStageExactFacts params ψbi family)\n    (k ℓ : ℕ) :\n    |fromHToGAdjacentStageM3 params ψbi family k ℓ -\n        fromHToGStageMass params ψbi family k (ℓ + 1)| ≤ Real.sqrt (2 * zeta) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The final analytic/collapse move `M₃ → E` in the paper chain.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.PaperMoveChain.Moves",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G paper moves\n\nThis file contains the two analytic moves in the adjacent-stage paper chain:\n`M₂ → M₃` and `M₃ → E`.  They are the Cauchy--Schwarz and collapse steps in\n`ld-pasting.tex`, immediately before the adjacent-stage recurrence is assembled.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/PaperMoveChain/Moves.lean#L268-L437",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/PaperMoveChain/Moves.lean",
+  "lines": [
+   268,
+   437
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.opTensor_mul",
+   "MIPStarRE.LDT.Measurement.outcome_hermitian",
+   "MIPStarRE.LDT.leftTensor_finset_sum",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_eq_finalLeftShape",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM4_eq_finalRightShape",
+   "MIPStarRE.LDT.Pasting.fromHToG_closenessOfIP_avgContext",
+   "MIPStarRE.LDT.Pasting.fromHToG_SUS_context_avg_le_one",
+   "MIPStarRE.LDT.Pasting.fromHToG_selfConsistency_qSDDCore_bound",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM4_eq_collapsed",
+   "MIPStarRE.LDT.Pasting.gHatIdxMeas_proj",
+   "MIPStarRE.LDT.Pasting.gHatHalfProductTotalOperator_eq_one",
+   "MIPStarRE.LDT.Preliminaries.cabApproxDelta"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 157,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStage_paperMoveChain",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStage_paperMoveChain",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStage_paperMoveChain\n    (params : Parameters)\n    [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (hnorm : ψbi.IsNormalized)\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error)\n    (hgamma_nonneg : 0 ≤ gamma) (hzeta_nonneg : 0 ≤ zeta)\n    (hfacts : GHatFactsStatement params ψbi family gamma zeta)\n    (hhalf : ∀ j : ℕ, 2 ≤ j →\n      CommuteGHalfSandwichStatement params ψbi family gamma zeta j)\n    (hstageExact : FromHToGAdjacentStageExactFacts params ψbi family)\n    (k ℓ : ℕ) (hℓ : ℓ < k) :\n    |fromHToGStageMass params ψbi family k ℓ -\n        fromHToGStageMass params ψbi family k (ℓ + 1)| ≤\n      fromHToGRecurrenceError params gamma zeta k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "One adjacent `fromHToG` paper step.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.PaperMoveChain.Telescope",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G paper telescope\n\nThis file assembles the adjacent-stage paper move chain and records the final\nstage-mass telescope for the `fromHToG` reduction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/PaperMoveChain/Telescope.lean#L115-L665",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/PaperMoveChain/Telescope.lean",
+  "lines": [
+   115,
+   665
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.opTensor_mono_right",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.opTensor_mul",
+   "MIPStarRE.LDT.Measurement.outcome_hermitian",
+   "MIPStarRE.LDT.Measurement.outcome_le_one",
+   "MIPStarRE.LDT.leftTensor_nonneg",
+   "MIPStarRE.LDT.leftTensor_le_one",
+   "MIPStarRE.LDT.leftTensor_finset_sum",
+   "MIPStarRE.LDT.rightTensor_finset_sum",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_eq_halfSandwichLeftShape",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_eq_halfSandwichRightShape",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageA0_eq_leftShape",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_eq_rightShape",
+   "MIPStarRE.LDT.Pasting.fromHToGStageMass_eq_adjacentStageA0",
+   "MIPStarRE.LDT.Pasting.fromHToG_selfConsistency_qSDDCore_bound",
+   "MIPStarRE.LDT.Pasting.fromHToG_headTail_adjoint_qSDDCore_bound",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3E_paperMove",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2M3_paperMove",
+   "MIPStarRE.LDT.Pasting.gHatIdxMeas_proj",
+   "MIPStarRE.LDT.Pasting.gHatHalfProductTotalOperator_eq_one",
+   "MIPStarRE.LDT.Preliminaries.closenessOfIP",
+   "MIPStarRE.LDT.Preliminaries.closenessOfInnerProduct_right",
+   "MIPStarRE.Quantum.kronecker_nonneg",
+   "MIPStarRE.Quantum.sq_le_self"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 534,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.chernoffBernoulliMatrix",
+  "source_name": "MIPStarRE.LDT.Pasting.chernoffBernoulliMatrix",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.chernoffBernoulliMatrix {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι)\n    (hnorm : ψ.IsNormalized)\n    (theta : Error) (k degree : ℕ) (X : MIPStarRE.Quantum.Op ι) (kappa : Error)\n    (hθ0 : 0 < theta) (hθ1 : theta < 1)\n    (hk : (2 * (degree : Error)) / theta ≤ (k : Error))\n    (hXpsd : 0 ≤ X)\n    (hXleOne : X ≤ 1)\n    (hcomplete : CompletenessAtLeast ψ\n      ({ outcome := fun _ => X\n         total := X\n         outcome_pos := fun _ => hXpsd\n         sum_eq_total := Fintype.sum_unique fun _ => X\n         total_le_one := hXleOne } : SubMeas Unit ι)\n      (1 - kappa)) :\n    ChernoffBernoulliMatrixStatement ψ theta k degree X kappa hXpsd hXleOne := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "`lem:chernoff-bernoulli-matrix`.\n\nThe operator-level reduction is now fully internal: continuous functional\ncalculus compares the Bernoulli-tail polynomial `F(X)` against an affine lower\nenvelope, and the scalar Hoeffding estimate is proved locally in\n`Bernoulli/Scalar.lean`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.MatrixChernoff",
+  "module_doc": "/-!\n# Section 12 pasting: matrix Chernoff comparison\n\nContinuous-functional-calculus form of the Bernoulli matrix Chernoff lemma.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/MatrixChernoff.lean#L174-L253",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/MatrixChernoff.lean",
+  "lines": [
+   174,
+   253
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.ev_scale",
+   "MIPStarRE.LDT.Pasting.bernoulliTailLowerAffine_le_scalarBernoulliTail"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 58,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.bernoulliTailLowerAffine_le_scalarBernoulliTail",
+  "source_name": "MIPStarRE.LDT.Pasting.bernoulliTailLowerAffine_le_scalarBernoulliTail",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.bernoulliTailLowerAffine_le_scalarBernoulliTail\n    (theta : Error) (k degree : ℕ)\n    (hθ0 : 0 < theta) (hθ1 : theta < 1)\n    (hk : (2 * (degree : Error)) / theta ≤ (k : Error))\n    {p : Error} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :\n    bernoulliTailLowerAffine theta\n      (Real.exp (-((theta ^ (2 : ℕ)) * (k : Error)) / 2)) p ≤\n        scalarBernoulliTail k degree p := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MeasureTheory ProbabilityTheory",
+   "open scoped BigOperators"
+  ],
+  "docstring": "Pointwise lower bound on `[0,1]` combining the scalar Hoeffding estimate with\n`k ≥ 2d/θ`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.Scalar",
+  "module_doc": "/-!\n# Scalar Bernoulli polynomial helpers for pasting\n\nPurely scalar inequalities used by the matrix Chernoff comparison.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/Scalar.lean#L570-L641",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/Scalar.lean",
+  "lines": [
+   570,
+   641
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 62,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldPasting_degreeRatio_nonneg",
+  "source_name": "MIPStarRE.LDT.Pasting.ldPasting_degreeRatio_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldPasting_degreeRatio_nonneg\n    (params : Parameters)\n    [FieldModel params.q] :\n    0 ≤ ((params.d : Error) / (params.q : Error)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open scoped MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The ratio `d / q` is nonnegative in the error scalar field.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.ScalarBounds",
+  "module_doc": "/-!\n# Section 12 pasting: scalar bounds for complementary Bernoulli branches\n\nThis file collects the elementary scalar estimates used by the complementary\nbranches of `thm:ld-pasting`.  These estimates correspond to the large-error\nreduction in `references/ldt-paper/ld-pasting.tex`, lines 52--55.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/ScalarBounds.lean#L112-L117",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/ScalarBounds.lean",
+  "lines": [
+   112,
+   117
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_one_le_sum",
+  "source_name": "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_one_le_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_one_le_sum\n    (params : Parameters)\n    (k : ℕ)\n    (eps delta gamma zeta : Error)\n    (hk_pos : 1 ≤ k)\n    (hsum :\n      1 ≤ Real.rpow eps (1 / (32 : Error)) +\n        Real.rpow delta (1 / (32 : Error)) +\n        Real.rpow gamma (1 / (32 : Error)) +\n        Real.rpow zeta (1 / (32 : Error)) +\n        Real.rpow (((params.d : Error) / (params.q : Error))) (1 / (32 : Error))) :\n    1 ≤ MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open scoped MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "A unit lower bound on the five-term scalar sum gives a unit lower bound on\nthe section-local pasting parameter `ν`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.ScalarBounds",
+  "module_doc": "/-!\n# Section 12 pasting: scalar bounds for complementary Bernoulli branches\n\nThis file collects the elementary scalar estimates used by the complementary\nbranches of `thm:ld-pasting`.  These estimates correspond to the large-error\nreduction in `references/ldt-paper/ld-pasting.tex`, lines 52--55.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/ScalarBounds.lean#L130-L166",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/ScalarBounds.lean",
+  "lines": [
+   130,
+   166
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.one_le_ldPastingError_of_one_le_nu",
+  "source_name": "MIPStarRE.LDT.Pasting.one_le_ldPastingError_of_one_le_nu",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.one_le_ldPastingError_of_one_le_nu\n    (params : Parameters)\n    (k : ℕ)\n    (eps delta gamma kappa zeta : Error)\n    (hkappa_nonneg : 0 ≤ kappa)\n    (hnu :\n      1 ≤ MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta) :\n    1 ≤ MainInductionStep.ldPastingInInductionError params k\n      eps delta gamma kappa zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open scoped MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "A unit lower bound on `ν` gives a unit lower bound on the final pasting error.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.ScalarBounds",
+  "module_doc": "/-!\n# Section 12 pasting: scalar bounds for complementary Bernoulli branches\n\nThis file collects the elementary scalar estimates used by the complementary\nbranches of `thm:ld-pasting`.  These estimates correspond to the large-error\nreduction in `references/ldt-paper/ld-pasting.tex`, lines 52--55.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/ScalarBounds.lean#L168-L188",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/ScalarBounds.lean",
+  "lines": [
+   168,
+   188
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_large_gamma",
+  "source_name": "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_large_gamma",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_large_gamma\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma zeta : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (family : IdxPolyFamily params ι)\n    (hcons : family.ConsistentWithPoints strategy zeta)\n    (k : ℕ)\n    (hk_pos : 1 ≤ k)\n    (hgamma : 1 < gamma) :\n    1 ≤ MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open scoped MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The `ν` term is at least one when `γ > 1` and `k ≥ 1`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.ScalarBounds",
+  "module_doc": "/-!\n# Section 12 pasting: scalar bounds for complementary Bernoulli branches\n\nThis file collects the elementary scalar estimates used by the complementary\nbranches of `thm:ld-pasting`.  These estimates correspond to the large-error\nreduction in `references/ldt-paper/ld-pasting.tex`, lines 52--55.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/ScalarBounds.lean#L210-L239",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/ScalarBounds.lean",
+  "lines": [
+   210,
+   239
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.ldPasting_degreeRatio_nonneg",
+   "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_one_le_sum",
+   "MIPStarRE.LDT.bipartiteConsError_nonneg",
+   "MIPStarRE.LDT.eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.delta_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_large_zeta",
+  "source_name": "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_large_zeta",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_large_zeta\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma zeta : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (k : ℕ)\n    (hk_pos : 1 ≤ k)\n    (hzeta : 1 < zeta) :\n    1 ≤ MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open scoped MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The `ν` term is at least one when `ζ > 1` and `k ≥ 1`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.ScalarBounds",
+  "module_doc": "/-!\n# Section 12 pasting: scalar bounds for complementary Bernoulli branches\n\nThis file collects the elementary scalar estimates used by the complementary\nbranches of `thm:ld-pasting`.  These estimates correspond to the large-error\nreduction in `references/ldt-paper/ld-pasting.tex`, lines 52--55.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/ScalarBounds.lean#L241-L267",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/ScalarBounds.lean",
+  "lines": [
+   241,
+   267
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.ldPasting_degreeRatio_nonneg",
+   "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_one_le_sum",
+   "MIPStarRE.LDT.eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.delta_nonneg_of_isGood",
+   "MIPStarRE.LDT.gamma_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_large_degreeRatio",
+  "source_name": "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_large_degreeRatio",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_large_degreeRatio\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma zeta : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (family : IdxPolyFamily params ι)\n    (hcons : family.ConsistentWithPoints strategy zeta)\n    (k : ℕ)\n    (hk_pos : 1 ≤ k)\n    (hdq : params.q < params.d) :\n    1 ≤ MainInductionStep.ldPastingInInductionNu params k eps delta gamma zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open scoped MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The `ν` term is at least one when `d / q > 1` and `k ≥ 1`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.ScalarBounds",
+  "module_doc": "/-!\n# Section 12 pasting: scalar bounds for complementary Bernoulli branches\n\nThis file collects the elementary scalar estimates used by the complementary\nbranches of `thm:ld-pasting`.  These estimates correspond to the large-error\nreduction in `references/ldt-paper/ld-pasting.tex`, lines 52--55.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/ScalarBounds.lean#L269-L302",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/ScalarBounds.lean",
+  "lines": [
+   269,
+   302
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_one_le_sum",
+   "MIPStarRE.LDT.bipartiteConsError_nonneg",
+   "MIPStarRE.LDT.eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.delta_nonneg_of_isGood",
+   "MIPStarRE.LDT.gamma_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.truncatedTypeSumRecurrence",
+  "source_name": "MIPStarRE.LDT.Pasting.truncatedTypeSumRecurrence",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.truncatedTypeSumRecurrence\n    (G : MIPStarRE.Quantum.Op ι)\n    (hGpsd : 0 ≤ G)\n    (hGleOne : G ≤ 1)\n    (d prefixLen : ℕ)\n    {tailLen : ℕ} (τtail : GHatType tailLen) :\n    (truncatedTypeSums G d prefixLen τtail)ᴴ = truncatedTypeSums G d prefixLen τtail ∧\n      0 ≤ truncatedTypeSums G d prefixLen τtail ∧\n      truncatedTypeSums G d prefixLen τtail ≤ 1 ∧\n      truncatedTypeSums G d (prefixLen + 1) τtail =\n        truncatedTypeSums G d prefixLen (prependTypeBit true τtail) * G +\n          truncatedTypeSums G d prefixLen (prependTypeBit false τtail) * (1 - G) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "`lem:truncated-type-sum-recurrence`.\n\nThis records the Hermitian, positivity, boundedness, and one-step recurrence\nproperties of the truncated type sums used in the `fromHToG` reduction.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.TruncatedSums",
+  "module_doc": "/-!\n# Section 12 pasting: Bernoulli truncated sums\n\nTruncated type sums and their one-step recurrence.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/TruncatedSums.lean#L298-L487",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/TruncatedSums.lean",
+  "lines": [
+   298,
+   487
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 174,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.commutingWithGComplete_ofComMainAndSelfConsistency",
+  "source_name": "MIPStarRE.LDT.Pasting.commutingWithGComplete_ofComMainAndSelfConsistency",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.commutingWithGComplete_ofComMainAndSelfConsistency\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error)\n    (hgamma_nonneg : 0 ≤ gamma) (hgamma : gamma ≤ 1)\n    (hzeta_nonneg : 0 ≤ zeta) (hzeta : zeta ≤ 1)\n    (hd_le_q : params.d ≤ params.q)\n    (hcom : Commutativity.ComMainConclusion params strategy family gamma zeta)\n    (hself : GCompleteSelfConsistencyStatement params strategy.state family zeta) :\n    CommutingWithGCompleteStatement params strategy.state family gamma zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Internal form of `cor:commuting-with-G-complete` after applying\n`thm:com-main` and `lem:g-complete-self-consistency`.\n\n**Source:** The proof in `references/ldt-paper/ld-pasting.tex:721-774`\nuses `thm:com-main`, `lem:commutativity-switcheroo`, and\n`lem:g-complete-self-consistency` internally.  The paper-facing theorem\n`commutingWithGComplete` below derives the first and third inputs from the\nsource hypotheses rather than exposing them as public hypotheses.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.CommutingWithG.Complete",
+  "module_doc": "/-!\n# Section 12 pasting: commuting-with-G complete part\n\nComplete-part commuting-with-`G` bounds.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/CommutingWithG/Complete.lean#L262-L385",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/CommutingWithG/Complete.lean",
+  "lines": [
+   262,
+   385
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.firstSwitcherooError_le_commutingWithGCompleteError",
+   "MIPStarRE.LDT.Pasting.completePartAggregateCommutation_as_total",
+   "MIPStarRE.LDT.Pasting.completePartProjFamily_selfConsistency_generic",
+   "MIPStarRE.LDT.Pasting.sddOpRel_swap_questions",
+   "MIPStarRE.LDT.Pasting.pointWithCompletePart_as_switcheroo_input",
+   "MIPStarRE.LDT.Pasting.commutativitySwitcheroo_ofCompleteSelfConsistency",
+   "MIPStarRE.LDT.Preliminaries.qSDDOp_symm"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 104,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.commutingWithGIncomplete_ofComplete",
+  "source_name": "MIPStarRE.LDT.Pasting.commutingWithGIncomplete_ofComplete",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.commutingWithGIncomplete_ofComplete\n    (params : Parameters)\n    [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error)\n    (hcomm : CommutingWithGCompleteStatement params ψbi family gamma zeta) :\n    CommutingWithGIncompleteStatement params ψbi family gamma zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Internal form of `cor:commuting-with-G-incomplete` after applying\n`cor:commuting-with-G-complete`.\n\n**Source:** The proof in `references/ldt-paper/ld-pasting.tex:775-816`\nuses `cor:commuting-with-G-complete` internally.  The paper-facing theorem\n`commutingWithGIncomplete` below derives that complete-part commutation\nstatement from the source hypotheses rather than exposing it as a public\nhypothesis.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.CommutingWithG.Incomplete",
+  "module_doc": "/-!\n# Section 12 pasting: commuting-with-G incomplete part\n\nIncomplete-part commuting-with-`G` bounds.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/CommutingWithG/Incomplete.lean#L59-L217",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/CommutingWithG/Incomplete.lean",
+  "lines": [
+   59,
+   217
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.SubMeas.total_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 143,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.postprocess_hRestrictionToVerticalLine_eq_evaluateAt",
+  "source_name": "MIPStarRE.LDT.Pasting.postprocess_hRestrictionToVerticalLine_eq_evaluateAt",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.postprocess_hRestrictionToVerticalLine_eq_evaluateAt\n    (params : Parameters) [FieldModel params.q]\n    (H : SubMeas (Polynomial params.next) ι) (u : Point params.next) :\n    postprocess\n      (hRestrictionToVerticalLine params H (truncatePoint params u))\n      (fun f => f (pointHeight params u)) =\n    evaluateAt params.next u H := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.Common",
+  "module_doc": "/-!\n# Section 12 pasting: comparison common helpers\n\nShared postprocessing, symmetry, distribution, boundedness, and arithmetic helpers for the Section\n12 comparison lemmas.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/Common.lean#L114-L155",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/Common.lean",
+  "lines": [
+   114,
+   155
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Polynomial.restrictToAxisParallelLine_apply",
+   "MIPStarRE.LDT.SubMeas.ext",
+   "MIPStarRE.LDT.SubMeas.postprocess_comp",
+   "MIPStarRE.LDT.Pasting.verticalLine_pointAt_appendPoint",
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 35,
+  "is_target": false
+ }
+]

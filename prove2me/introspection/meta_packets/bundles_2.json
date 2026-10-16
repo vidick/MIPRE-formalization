@@ -1,0 +1,3753 @@
+[
+ {
+  "kind": "bundle-delta",
+  "definition_name": "MIPRE_Foundations_Introspection_PauliStageProg_B",
+  "module": "MIPRE.Foundations.Introspection.PauliStageProg",
+  "module_doc": "/-! # Uniform programs for all three Pauli sampling stages\n\nThe field width, selector width and point dimension are inputs, as are the\ntype tag, prefix and vector. The five computational branches cover point,\naxis line, diagonal line, Pauli and the remaining Pauli-test types. In\nparticular, neither a finite table of field elements nor a dimension-dependent\nprogram is used.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliStageProg.lean",
+  "source_path": "MIPRE/Foundations/Introspection/PauliStageProg.lean",
+  "defmat": [
+   "MIPRE.Introspection.PauliStageProgram.Input",
+   "MIPRE.Introspection.PauliStageProgram.Parameters",
+   "MIPRE.Introspection.PauliStageProgram.Tag",
+   "MIPRE.Introspection.PauliStageProgram.allThree",
+   "MIPRE.Introspection.PauliStageProgram.assemble",
+   "MIPRE.Introspection.PauliStageProgram.basis",
+   "MIPRE.Introspection.PauliStageProgram.dimension",
+   "MIPRE.Introspection.PauliStageProgram.direction",
+   "MIPRE.Introspection.PauliStageProgram.fieldWidth",
+   "MIPRE.Introspection.PauliStageProgram.finalPoint",
+   "MIPRE.Introspection.PauliStageProgram.firstTwo",
+   "MIPRE.Introspection.PauliStageProgram.fullFields",
+   "MIPRE.Introspection.PauliStageProgram.isKind",
+   "MIPRE.Introspection.PauliStageProgram.kind",
+   "MIPRE.Introspection.PauliStageProgram.linear",
+   "MIPRE.Introspection.PauliStageProgram.marginal",
+   "MIPRE.Introspection.PauliStageProgram.pack",
+   "MIPRE.Introspection.PauliStageProgram.pointFields",
+   "MIPRE.Introspection.PauliStageProgram.prefixData",
+   "MIPRE.Introspection.PauliStageProgram.seed",
+   "MIPRE.Introspection.PauliStageProgram.selectedPoint",
+   "MIPRE.Introspection.PauliStageProgram.selectorWidth",
+   "MIPRE.Introspection.PauliStageProgram.stageOne",
+   "MIPRE.Introspection.PauliStageProgram.stageThree",
+   "MIPRE.Introspection.PauliStageProgram.stageTwo",
+   "MIPRE.Introspection.PauliStageProgram.vector",
+   "MIPRE.Introspection.PauliStageProgram.withPrefix",
+   "MIPRE.Introspection.PauliStageProgram.zeroField",
+   "MIPRE.Introspection.PauliStageProgram.zeroPoint",
+   "MIPRE.Introspection.PauliStageProgram.zeros"
+  ],
+  "embedded": [
+   "MIPRE.Introspection.PauliStageProgram.linear_one",
+   "MIPRE.Introspection.PauliStageProgram.linear_three",
+   "MIPRE.Introspection.PauliStageProgram.linear_two",
+   "MIPRE.Introspection.PauliStageProgram.marginal_one",
+   "MIPRE.Introspection.PauliStageProgram.marginal_three",
+   "MIPRE.Introspection.PauliStageProgram.marginal_two"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.Input",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     25,
+     25
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.Parameters",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     22,
+     22
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.Tag",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     23,
+     24
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.allThree",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     117,
+     119
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.assemble",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     102,
+     106
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.basis",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     31,
+     31
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.dimension",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     29,
+     29
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.direction",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     38,
+     38
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.fieldWidth",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     27,
+     27
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.finalPoint",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     67,
+     73
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.firstTwo",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     112,
+     115
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.fullFields",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     79,
+     81
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.isKind",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     50,
+     50
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.kind",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     30,
+     30
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.linear",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     88,
+     92
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.linear_one",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     94,
+     94
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.linear_three",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     96,
+     96
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.linear_two",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     95,
+     95
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.marginal",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     121,
+     125
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.marginal_one",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     127,
+     127
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.marginal_three",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     129,
+     129
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.marginal_two",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     128,
+     128
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.pack",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     44,
+     47
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.pointFields",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     75,
+     77
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.prefixData",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     32,
+     32
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.seed",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     37,
+     37
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.selectedPoint",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     64,
+     65
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.selectorWidth",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     28,
+     28
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.stageOne",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     52,
+     55
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.stageThree",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     83,
+     86
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.stageTwo",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     57,
+     62
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.vector",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     33,
+     33
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.withPrefix",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     108,
+     110
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.zeroField",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     42,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.zeroPoint",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     43,
+     43
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliStageProgram.zeros",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     48,
+     49
+    ]
+   }
+  ],
+  "lines": 295,
+  "published_bundle": "MIPRE_Foundations_Introspection_PauliStageProg",
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixInverse",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SelfDualize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySquareRoot",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculant",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleConstructor",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Shoup",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_ShoupCoefficients",
+   "import Definitions.Def_MIPRE_Foundations_SAT_QuotientField",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldTrace",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldTrace_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SeedSelectorProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_TraceGram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SelfDual",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_NormalBasis",
+   "import Definitions.Def_MIPRE_Foundations_SAT_NormalGram",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FrobeniusAction",
+   "import Definitions.Def_MIPRE_Foundations_SAT_NormalElement",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FrobeniusMatrix",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FrobeniusActionProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFold",
+   "import Definitions.Def_MIPRE_Foundations_SAT_NormalElementProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_NormalElementProg_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryInverse",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LineRepresentativeProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SeededLineProg",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliStageProg"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.PauliStageProgram.Input": null,
+   "MIPRE.Introspection.PauliStageProgram.Parameters": null,
+   "MIPRE.Introspection.PauliStageProgram.Tag": [
+    "/-- Kind and basis: `0` point, `1` axis, `2` diagonal, `3` Pauli, `4` full. -/"
+   ],
+   "MIPRE.Introspection.PauliStageProgram.allThree": null,
+   "MIPRE.Introspection.PauliStageProgram.assemble": [
+    "/-- Assemble three disjoint output registers without performing field arithmetic. -/"
+   ],
+   "MIPRE.Introspection.PauliStageProgram.basis": null,
+   "MIPRE.Introspection.PauliStageProgram.dimension": null,
+   "MIPRE.Introspection.PauliStageProgram.direction": null,
+   "MIPRE.Introspection.PauliStageProgram.fieldWidth": null,
+   "MIPRE.Introspection.PauliStageProgram.finalPoint": null,
+   "MIPRE.Introspection.PauliStageProgram.firstTwo": null,
+   "MIPRE.Introspection.PauliStageProgram.fullFields": null,
+   "MIPRE.Introspection.PauliStageProgram.isKind": null,
+   "MIPRE.Introspection.PauliStageProgram.kind": null,
+   "MIPRE.Introspection.PauliStageProgram.linear": [
+    "/-- A single program selects the requested stage; out-of-range stages return zero. -/"
+   ],
+   "MIPRE.Introspection.PauliStageProgram.marginal": [
+    "/-- Uniform evaluation of each legal marginal, including both prefix-dependent stages. -/"
+   ],
+   "MIPRE.Introspection.PauliStageProgram.pack": null,
+   "MIPRE.Introspection.PauliStageProgram.pointFields": null,
+   "MIPRE.Introspection.PauliStageProgram.prefixData": null,
+   "MIPRE.Introspection.PauliStageProgram.seed": null,
+   "MIPRE.Introspection.PauliStageProgram.selectedPoint": null,
+   "MIPRE.Introspection.PauliStageProgram.selectorWidth": null,
+   "MIPRE.Introspection.PauliStageProgram.stageOne": null,
+   "MIPRE.Introspection.PauliStageProgram.stageThree": null,
+   "MIPRE.Introspection.PauliStageProgram.stageTwo": null,
+   "MIPRE.Introspection.PauliStageProgram.vector": null,
+   "MIPRE.Introspection.PauliStageProgram.withPrefix": null,
+   "MIPRE.Introspection.PauliStageProgram.zeroField": null,
+   "MIPRE.Introspection.PauliStageProgram.zeroPoint": null,
+   "MIPRE.Introspection.PauliStageProgram.zeros": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Cost_FiniteChoice",
+  "module": "MIPRE.Foundations.Cost.FiniteChoice",
+  "module_doc": "/-! # Finite choice of polynomial-time programs\n\nOnly the fixed finite control alphabet is enumerated. Every selected branch\nstill executes its own uniform program on the complete runtime input.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Cost/FiniteChoice.lean",
+  "source_path": "MIPRE/Foundations/Cost/FiniteChoice.lean",
+  "defmat": [
+   "MIPRE.Cost.PolyTimeFun.choose",
+   "MIPRE.Cost.PolyTimeFun.chooseList"
+  ],
+  "embedded": [
+   "MIPRE.Cost.PolyTimeFun.chooseList_apply",
+   "MIPRE.Cost.PolyTimeFun.choose_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.choose",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     37,
+     41
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.chooseList",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     18,
+     23
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.chooseList_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     25,
+     35
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.PolyTimeFun.choose_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     43,
+     46
+    ]
+   }
+  ],
+  "lines": 76,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Cost.PolyTimeFun.choose": [
+    "/-- Select a program over a fixed finite alphabet. The fallback is unreachable",
+    "on encoded inputs and does not add any computability assumption. -/"
+   ],
+   "MIPRE.Cost.PolyTimeFun.chooseList": [
+    "/-- A finite decision chain, with a specified default outside its domain. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-delta",
+  "definition_name": "MIPRE_Foundations_Halting_Arith_B",
+  "module": "MIPRE.Foundations.Halting.Arith",
+  "module_doc": "/-!\n# Arithmetic in the ambient model: increment, unary conversion, multiplication, polynomials\n\nThe arithmetic the wrapper decider (`Halting/Wrapper.lean`) and the compressor's decider\n(`Halting/Compressor.lean`) need, each with its cost:\n\n* `Prog.incProg`: the successor of a canonical binary numeral (`Data.inc`, with\n  `Data.inc_bits : inc n.bits = (n + 1).bits`), used to enumerate the bit queries;\n* `Prog.toUnaryProg`: a binary numeral to unary (`encode n ↦ ofNat n`), by the fold\n  `k ↦ 2k + b` over the bits from the most significant one, doubling the unary accumulator with\n  `revOntoProg`;\n* `Prog.mulProg`: multiplication of unary numerals, by repeated `addProg`;\n* `Prog.polyProg cs`: the Horner evaluation `c₀ + m (c₁ + m (…))` of a polynomial given by its\n  coefficient list, on a unary input; `hornerCoeffs` and `Data.polyEval_hornerCoeffs` connect it\n  to `Polynomial.eval`, so that the wrapper can compute the paper's `poly(n, λ)` bounds.\n\nCosts are polynomial in the *values* (the unary numerals are as long as the values); the\npolynomial evaluation is bounded by an explicit `Polynomial ℕ` in the argument\n(`Prog.polyProg_runs`), which is what the time accounting downstream composes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Arith.lean",
+  "source_path": "MIPRE/Foundations/Halting/Arith.lean",
+  "defmat": [
+   "MIPRE.Cost.Prog.mulBody",
+   "MIPRE.Cost.Prog.mulProg",
+   "MIPRE.Cost.Prog.polyProg"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Cost.Prog.mulBody",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     500,
+     506
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.mulProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     508,
+     509
+    ]
+   },
+   {
+    "name": "MIPRE.Cost.Prog.polyProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     596,
+     603
+    ]
+   }
+  ],
+  "lines": 109,
+  "published_bundle": "MIPRE_Foundations_Halting_Arith",
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Cost.Prog.mulBody": [
+    "/-- Body of the multiplication loop, on the state `cons bRest acc`, with the first factor `a`",
+    "one variable further out: at the end stop with `acc`, otherwise add `a` to `acc`. -/"
+   ],
+   "MIPRE.Cost.Prog.mulProg": [
+    "/-- `mulProg` on `cons (ofNat a) (ofNat b)` computes `ofNat (a * b)`. -/"
+   ],
+   "MIPRE.Cost.Prog.polyProg": [
+    "/-- Horner evaluation of the coefficient list `cs` on a unary input `m`:",
+    "`polyProg (c :: cs)` computes `c + m · polyProg cs`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_CL_DetypingClock",
+  "module": "MIPRE.Foundations.CL.DetypingClock",
+  "module_doc": "/-! # Total clocking of arbitrary typed decision programs\n\nAn executable index clock writes a unary cost budget. The clocked universal\nmachine simulates the arbitrary source program under that budget, and the\nwrapper accepts exactly an in-budget return of `encode true`. No termination\nor well-scopedness assumption is imposed on the source program.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingClock.lean",
+  "source_path": "MIPRE/Foundations/CL/DetypingClock.lean",
+  "defmat": [
+   "MIPRE.CL.Detyping.ClockProgram",
+   "MIPRE.CL.Detyping.ClockProgram.clockRoute"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.CL.Detyping.ClockProgram",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     23,
+     28
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Detyping.ClockProgram.clockRoute",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     79,
+     81
+    ]
+   }
+  ],
+  "lines": 118,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCost",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderProg"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.CL.Detyping.ClockProgram": [
+    "/-- An actual index routine that supplies a unary simulation budget. -/"
+   ],
+   "MIPRE.CL.Detyping.ClockProgram.clockRoute": null
+  }
+ },
+ {
+  "kind": "bundle-delta",
+  "definition_name": "MIPRE_Background_LIDT_Coefficients_B",
+  "module": "MIPRE.Background.LIDT.Coefficients",
+  "module_doc": "/-!\n# Coefficient vectors of low-individual-degree polynomials\n\n`LowIndDegPoly F n d` is a coefficient vector indexed by exponent vectors with entries at most `d`.\nThis file is the algebra of those vectors that more than one analysis needs, moved here from the\nPauli basis test's `Dummy.lean` and `Linear.lean` (where it was first written) so that the\nsimultaneous low-degree test, which sits below the Pauli test in the import graph, can use it.\nThe names are unchanged.\n\n* **Schwartz--Zippel for any finite variable type** (`prob_agreeOn_le_individualDegree`), and the\n  bridge `LowIndDegPoly.toMv` to `MvPolynomial` with its evaluation, coefficient and\n  individual-degree facts; `card_eval_eq_zero_le` is the form a nonzero coefficient vector needs.\n* **Coefficients of a monomial pattern.** `LowIndDegPoly.coef g T t` is the coefficient vector, in\n  the variables outside `T`, of the monomial `∏_{k ∈ T} u_k^{t k}`, and `eval_eq_sum_coef` is the\n  decomposition `g(u) = ∑_t u^t_T · (coef g T t)(u)`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Coefficients.lean",
+  "source_path": "MIPRE/Background/LIDT/Coefficients.lean",
+  "defmat": [
+   "MIPRE.LIDT.LowIndDegPoly.coef",
+   "MIPRE.LIDT.maskOff",
+   "MIPRE.LIDT.maskOn",
+   "MIPRE.LIDT.patch"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.LIDT.LowIndDegPoly.coef",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     204,
+     208
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.maskOff",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     160,
+     162
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.maskOn",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     156,
+     158
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.patch",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     152,
+     154
+    ]
+   }
+  ],
+  "lines": 94,
+  "published_bundle": "MIPRE_Background_LIDT_Coefficients",
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients"
+  ],
+  "blueprint": [
+   "lem:lidt-ldc-extraction"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LIDT.LowIndDegPoly.coef": [
+    "/-- **The coefficient of a monomial pattern**: the coefficient vector, in the variables outside",
+    "`T`, of the monomial `∏_{k ∈ T} u_k^{t k}` in `g`; zero unless the pattern is supported in `T`. -/"
+   ],
+   "MIPRE.LIDT.maskOff": [
+    "/-- The part of an exponent vector off `T`. -/"
+   ],
+   "MIPRE.LIDT.maskOn": [
+    "/-- The part of an exponent vector on `T`. -/"
+   ],
+   "MIPRE.LIDT.patch": [
+    "/-- The exponent vector `e` with its coordinates in `T` replaced by those of the pattern `t`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_ClockArithmetic",
+  "module": "MIPRE.Foundations.Introspection.ClockArithmetic",
+  "module_doc": "/-! # Executable arithmetic for the introspection clock\n\nOne fixed program, for each constant exponent, reads binary `λ` and `n` and\nwrites the unary budget `2^((λ*n+1)^k)`. The large output is constructed by\nproved unary arithmetic programs; it is never embedded in the program text.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ClockArithmetic.lean",
+  "source_path": "MIPRE/Foundations/Introspection/ClockArithmetic.lean",
+  "defmat": [
+   "MIPRE.Introspection.ClockArithmetic.bothUnary",
+   "MIPRE.Introspection.ClockArithmetic.mulCost",
+   "MIPRE.Introspection.ClockArithmetic.powerBound",
+   "MIPRE.Introspection.ClockArithmetic.powerCoeffs",
+   "MIPRE.Introspection.ClockArithmetic.unaryCost",
+   "MIPRE.Introspection.ClockArithmetic.uniformCost",
+   "MIPRE.Introspection.ClockArithmetic.uniformProg"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.ClockArithmetic.bothUnary",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     25,
+     27
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ClockArithmetic.mulCost",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     66,
+     68
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ClockArithmetic.powerBound",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     59,
+     59
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ClockArithmetic.powerCoeffs",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     50,
+     50
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ClockArithmetic.unaryCost",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     22,
+     23
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ClockArithmetic.uniformCost",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     79,
+     84
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ClockArithmetic.uniformProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     70,
+     72
+    ]
+   }
+  ],
+  "lines": 140,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith_B",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCost",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderProg",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingClock",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Introspection",
+   "import Definitions.Def_MIPRE_Foundations_Halting_PolyBounded"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.ClockArithmetic.bothUnary": null,
+   "MIPRE.Introspection.ClockArithmetic.mulCost": null,
+   "MIPRE.Introspection.ClockArithmetic.powerBound": null,
+   "MIPRE.Introspection.ClockArithmetic.powerCoeffs": null,
+   "MIPRE.Introspection.ClockArithmetic.unaryCost": null,
+   "MIPRE.Introspection.ClockArithmetic.uniformCost": null,
+   "MIPRE.Introspection.ClockArithmetic.uniformProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_ParserBits",
+  "module": "MIPRE.Foundations.Introspection.ParserBits",
+  "module_doc": "/-! # The paper's binary tuple encoding\n\nThese are binary strings inside answers, distinct from ambient `Data` encodings.\nEach payload bit `b` is written `false,b`; each field ends in `true,false`.\nThe polynomial-time candidate reader is deliberately permissive. The answer\nparser checks exact re-encoding before using any candidate.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ParserBits.lean",
+  "source_path": "MIPRE/Foundations/Introspection/ParserBits.lean",
+  "defmat": [
+   "MIPRE.Introspection.AnswerParser.doubleBits",
+   "MIPRE.Introspection.AnswerParser.doubleProg",
+   "MIPRE.Introspection.AnswerParser.field",
+   "MIPRE.Introspection.AnswerParser.fieldProg",
+   "MIPRE.Introspection.AnswerParser.payload",
+   "MIPRE.Introspection.AnswerParser.payloadProg",
+   "MIPRE.Introspection.AnswerParser.undouble",
+   "MIPRE.Introspection.AnswerParser.undoubleProg",
+   "_private.MIPRE.Foundations.Introspection.ParserBits.0.MIPRE.Introspection.AnswerParser.doubleStep",
+   "_private.MIPRE.Foundations.Introspection.ParserBits.0.MIPRE.Introspection.AnswerParser.readStep",
+   "_private.MIPRE.Foundations.Introspection.ParserBits.0.MIPRE.Introspection.AnswerParser.readStepFun"
+  ],
+  "embedded": [
+   "MIPRE.Introspection.AnswerParser.doubleBits_length",
+   "MIPRE.Introspection.AnswerParser.doubleProg_apply",
+   "MIPRE.Introspection.AnswerParser.fieldProg_apply",
+   "MIPRE.Introspection.AnswerParser.field_length",
+   "MIPRE.Introspection.AnswerParser.payloadProg_apply",
+   "MIPRE.Introspection.AnswerParser.payload_field",
+   "MIPRE.Introspection.AnswerParser.undoubleProg_apply",
+   "MIPRE.Introspection.AnswerParser.undouble_doubleBits",
+   "_private.MIPRE.Foundations.Introspection.ParserBits.0.MIPRE.Introspection.AnswerParser.doubleStep_size",
+   "_private.MIPRE.Foundations.Introspection.ParserBits.0.MIPRE.Introspection.AnswerParser.double_fold",
+   "_private.MIPRE.Foundations.Introspection.ParserBits.0.MIPRE.Introspection.AnswerParser.readStep_apply",
+   "_private.MIPRE.Foundations.Introspection.ParserBits.0.MIPRE.Introspection.AnswerParser.readStep_size",
+   "_private.MIPRE.Foundations.Introspection.ParserBits.0.MIPRE.Introspection.AnswerParser.read_double_fold"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.AnswerParser.doubleBits",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     21,
+     23
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.doubleBits_length",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     27,
+     31
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.doubleProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     68,
+     73
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.doubleProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     75,
+     75
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.field",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     25,
+     25
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.fieldProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     77,
+     78
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.fieldProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     80,
+     80
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.field_length",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     33,
+     34
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.payload",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     122,
+     123
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.payloadProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     125,
+     127
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.payloadProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     129,
+     130
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.payload_field",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     132,
+     135
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.undouble",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     101,
+     103
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.undoubleProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     114,
+     118
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.undoubleProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     120,
+     120
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.undouble_doubleBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     111,
+     112
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.ParserBits.0.MIPRE.Introspection.AnswerParser.doubleStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     52,
+     53
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.ParserBits.0.MIPRE.Introspection.AnswerParser.doubleStep_size",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     55,
+     57
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.ParserBits.0.MIPRE.Introspection.AnswerParser.double_fold",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     59,
+     66
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.ParserBits.0.MIPRE.Introspection.AnswerParser.readStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     85,
+     88
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.ParserBits.0.MIPRE.Introspection.AnswerParser.readStepFun",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     82,
+     83
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.ParserBits.0.MIPRE.Introspection.AnswerParser.readStep_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     90,
+     93
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.ParserBits.0.MIPRE.Introspection.AnswerParser.readStep_size",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     95,
+     99
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.ParserBits.0.MIPRE.Introspection.AnswerParser.read_double_fold",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     105,
+     109
+    ]
+   }
+  ],
+  "lines": 186,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.AnswerParser.doubleBits": null,
+   "MIPRE.Introspection.AnswerParser.doubleProg": [
+    "/-- An actual ambient polynomial-time implementation of bit doubling. -/"
+   ],
+   "MIPRE.Introspection.AnswerParser.field": null,
+   "MIPRE.Introspection.AnswerParser.fieldProg": null,
+   "MIPRE.Introspection.AnswerParser.payload": [
+    "/-- Candidate payload obtained by removing the presumed last delimiter pair. -/"
+   ],
+   "MIPRE.Introspection.AnswerParser.payloadProg": null,
+   "MIPRE.Introspection.AnswerParser.undouble": [
+    "/-- Read the second bit of each pair, discarding a trailing unmatched bit. -/"
+   ],
+   "MIPRE.Introspection.AnswerParser.undoubleProg": null,
+   "_private.MIPRE.Foundations.Introspection.ParserBits.0.MIPRE.Introspection.AnswerParser.doubleStep": null,
+   "_private.MIPRE.Foundations.Introspection.ParserBits.0.MIPRE.Introspection.AnswerParser.readStep": null,
+   "_private.MIPRE.Foundations.Introspection.ParserBits.0.MIPRE.Introspection.AnswerParser.readStepFun": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_ParserAnswers",
+  "module": "MIPRE.Foundations.Introspection.ParserAnswers",
+  "module_doc": "/-! # Executable introspection answer format and internal-cutoff checks\n\nThe register length `Q` and original-answer bound `R` are supplied constants.\nIntrospect and Sample use `pairCheck`; Read uses `tripleCheck Q R false`;\nHide uses `tripleCheck Q Q true`. Exact binary tuple re-encoding rejects all\nmalformed delimiters, extra fields, and trailing bits. The bound on the\noriginal answer is checked here, independently of any outer tuple cutoff.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ParserAnswers.lean",
+  "source_path": "MIPRE/Foundations/Introspection/ParserAnswers.lean",
+  "defmat": [
+   "MIPRE.Introspection.AnswerParser.instDecidablePairValid",
+   "MIPRE.Introspection.AnswerParser.instDecidableTripleValid",
+   "MIPRE.Introspection.AnswerParser.pairBits",
+   "MIPRE.Introspection.AnswerParser.pairBitsProg",
+   "MIPRE.Introspection.AnswerParser.pairCheck",
+   "MIPRE.Introspection.AnswerParser.pairParts",
+   "MIPRE.Introspection.AnswerParser.pairPartsProg",
+   "MIPRE.Introspection.AnswerParser.pairValid",
+   "MIPRE.Introspection.AnswerParser.tripleBits",
+   "MIPRE.Introspection.AnswerParser.tripleBitsProg",
+   "MIPRE.Introspection.AnswerParser.tripleCheck",
+   "MIPRE.Introspection.AnswerParser.tripleParts",
+   "MIPRE.Introspection.AnswerParser.triplePartsProg",
+   "MIPRE.Introspection.AnswerParser.tripleValid"
+  ],
+  "embedded": [
+   "MIPRE.Introspection.AnswerParser.pairBitsProg_apply",
+   "MIPRE.Introspection.AnswerParser.pairBits_length",
+   "MIPRE.Introspection.AnswerParser.pairPartsProg_apply",
+   "MIPRE.Introspection.AnswerParser.pairParts_pairBits",
+   "MIPRE.Introspection.AnswerParser.tripleBitsProg_apply",
+   "MIPRE.Introspection.AnswerParser.tripleBits_length",
+   "MIPRE.Introspection.AnswerParser.triplePartsProg_apply",
+   "MIPRE.Introspection.AnswerParser.tripleParts_tripleBits",
+   "_private.MIPRE.Foundations.Introspection.ParserAnswers.0.MIPRE.Introspection.AnswerParser.decide_and_if"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.AnswerParser.instDecidablePairValid",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     100,
+     101
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.instDecidableTripleValid",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     103,
+     104
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.pairBits",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     23,
+     23
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.pairBitsProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     79,
+     80
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.pairBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     82,
+     83
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.pairBits_length",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     27,
+     29
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.pairCheck",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     110,
+     115
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.pairParts",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     45,
+     46
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.pairPartsProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     64,
+     66
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.pairPartsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     68,
+     69
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.pairParts_pairBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     51,
+     54
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.pairValid",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     91,
+     93
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.tripleBits",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     25,
+     25
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.tripleBitsProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     85,
+     86
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.tripleBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     88,
+     89
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.tripleBits_length",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     31,
+     33
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.tripleCheck",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     126,
+     135
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.tripleParts",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     48,
+     49
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.triplePartsProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     71,
+     73
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.triplePartsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     75,
+     77
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.tripleParts_tripleBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     56,
+     62
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AnswerParser.tripleValid",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     95,
+     98
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.ParserAnswers.0.MIPRE.Introspection.AnswerParser.decide_and_if",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     106,
+     108
+    ]
+   }
+  ],
+  "lines": 185,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ParserBits"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.AnswerParser.instDecidablePairValid": null,
+   "MIPRE.Introspection.AnswerParser.instDecidableTripleValid": null,
+   "MIPRE.Introspection.AnswerParser.pairBits": null,
+   "MIPRE.Introspection.AnswerParser.pairBitsProg": null,
+   "MIPRE.Introspection.AnswerParser.pairCheck": [
+    "/-- Concrete format and internal original-answer-cutoff check for Introspect/Sample. -/"
+   ],
+   "MIPRE.Introspection.AnswerParser.pairParts": null,
+   "MIPRE.Introspection.AnswerParser.pairPartsProg": null,
+   "MIPRE.Introspection.AnswerParser.pairValid": null,
+   "MIPRE.Introspection.AnswerParser.tripleBits": null,
+   "MIPRE.Introspection.AnswerParser.tripleBitsProg": null,
+   "MIPRE.Introspection.AnswerParser.tripleCheck": [
+    "/-- Concrete format check for Read (`exactLast=false`) or Hide (`exactLast=true`). -/"
+   ],
+   "MIPRE.Introspection.AnswerParser.tripleParts": null,
+   "MIPRE.Introspection.AnswerParser.triplePartsProg": null,
+   "MIPRE.Introspection.AnswerParser.tripleValid": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_DynamicParserSlice",
+  "module": "MIPRE.Foundations.Introspection.DynamicParserSlice",
+  "module_doc": "/-! # Polynomial-time slicing at binary offsets\n\nThe requested offset is capped by the actual input length before it is\nmaterialized as a unary scan. In particular a large binary bound does not\ncause an exponentially large intermediate allocation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/DynamicParserSlice.lean",
+  "source_path": "MIPRE/Foundations/Introspection/DynamicParserSlice.lean",
+  "defmat": [
+   "MIPRE.Introspection.DynamicParser.boundedOffset",
+   "MIPRE.Introspection.DynamicParser.dropBits",
+   "MIPRE.Introspection.DynamicParser.takeBits",
+   "_private.MIPRE.Foundations.Introspection.DynamicParserSlice.0.MIPRE.Introspection.DynamicParser.capStep",
+   "_private.MIPRE.Foundations.Introspection.DynamicParserSlice.0.MIPRE.Introspection.DynamicParser.capStepFun"
+  ],
+  "embedded": [
+   "MIPRE.Introspection.DynamicParser.boundedOffset_apply",
+   "MIPRE.Introspection.DynamicParser.dropBits_apply",
+   "MIPRE.Introspection.DynamicParser.takeBits_apply",
+   "_private.MIPRE.Foundations.Introspection.DynamicParserSlice.0.MIPRE.Introspection.DynamicParser.capStep_apply",
+   "_private.MIPRE.Foundations.Introspection.DynamicParserSlice.0.MIPRE.Introspection.DynamicParser.capStep_size",
+   "_private.MIPRE.Foundations.Introspection.DynamicParserSlice.0.MIPRE.Introspection.DynamicParser.cap_fold"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.DynamicParser.boundedOffset",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     57,
+     65
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.DynamicParser.boundedOffset_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     67,
+     68
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.DynamicParser.dropBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     82,
+     83
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.DynamicParser.dropBits_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     85,
+     89
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.DynamicParser.takeBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     73,
+     74
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.DynamicParser.takeBits_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     76,
+     80
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.DynamicParserSlice.0.MIPRE.Introspection.DynamicParser.capStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     23,
+     28
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.DynamicParserSlice.0.MIPRE.Introspection.DynamicParser.capStepFun",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     20,
+     21
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.DynamicParserSlice.0.MIPRE.Introspection.DynamicParser.capStep_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     30,
+     32
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.DynamicParserSlice.0.MIPRE.Introspection.DynamicParser.capStep_size",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     34,
+     40
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.DynamicParserSlice.0.MIPRE.Introspection.DynamicParser.cap_fold",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     42,
+     55
+    ]
+   }
+  ],
+  "lines": 155,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ParserBits",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ParserAnswers"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.DynamicParser.boundedOffset": [
+    "/-- A uniform binary offset reader, outputting at most one unit per input bit. -/"
+   ],
+   "MIPRE.Introspection.DynamicParser.dropBits": [
+    "/-- Dropping a prefix with a binary index uses the same bounded scan. -/"
+   ],
+   "MIPRE.Introspection.DynamicParser.takeBits": [
+    "/-- Taking a prefix with a binary index is polynomial in the input encoding size. -/"
+   ],
+   "_private.MIPRE.Foundations.Introspection.DynamicParserSlice.0.MIPRE.Introspection.DynamicParser.capStep": null,
+   "_private.MIPRE.Foundations.Introspection.DynamicParserSlice.0.MIPRE.Introspection.DynamicParser.capStepFun": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_DynamicParser",
+  "module": "MIPRE.Foundations.Introspection.DynamicParser",
+  "module_doc": "/-! # Uniform introspection tuple parsing with binary bounds\n\nOne fixed program reads its register length and original-answer cutoff in\nbinary. All format and cutoff specifications are exactly those of the fixed\nparser, but no parameter value is embedded as a unary program constant.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/DynamicParser.lean",
+  "source_path": "MIPRE/Foundations/Introspection/DynamicParser.lean",
+  "defmat": [
+   "MIPRE.Introspection.DynamicParser.fieldOffset",
+   "MIPRE.Introspection.DynamicParser.pairCheck",
+   "MIPRE.Introspection.DynamicParser.pairParts",
+   "MIPRE.Introspection.DynamicParser.tripleCheck",
+   "MIPRE.Introspection.DynamicParser.tripleParts"
+  ],
+  "embedded": [
+   "MIPRE.Introspection.DynamicParser.fieldOffset_apply",
+   "MIPRE.Introspection.DynamicParser.pairParts_apply",
+   "MIPRE.Introspection.DynamicParser.tripleParts_apply",
+   "_private.MIPRE.Foundations.Introspection.DynamicParser.0.MIPRE.Introspection.DynamicParser.decide_and_if"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.DynamicParser.fieldOffset",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     21,
+     21
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.DynamicParser.fieldOffset_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     23,
+     24
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.DynamicParser.pairCheck",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     48,
+     55
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.DynamicParser.pairParts",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     26,
+     30
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.DynamicParser.pairParts_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     32,
+     34
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.DynamicParser.tripleCheck",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     67,
+     77
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.DynamicParser.tripleParts",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     36,
+     38
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.DynamicParser.tripleParts_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     40,
+     42
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.DynamicParser.0.MIPRE.Introspection.DynamicParser.decide_and_if",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     44,
+     46
+    ]
+   }
+  ],
+  "lines": 138,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ParserBits",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ParserAnswers",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_DynamicParserSlice"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.DynamicParser.fieldOffset": null,
+   "MIPRE.Introspection.DynamicParser.pairCheck": [
+    "/-- Introspect/Sample validation, uniformly in the binary bounds `Q` and `R`. -/"
+   ],
+   "MIPRE.Introspection.DynamicParser.pairParts": [
+    "/-- Candidate pair fields, using the runtime binary register dimension. -/"
+   ],
+   "MIPRE.Introspection.DynamicParser.tripleCheck": [
+    "/-- Read or Hide validation, with all numeric parameters supplied in binary. -/"
+   ],
+   "MIPRE.Introspection.DynamicParser.tripleParts": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_SourceCompilerParams",
+  "module": "MIPRE.Foundations.Introspection.SourceCompilerParams",
+  "module_doc": "/-! # Executable canonical register and answer bounds\n\nFor `R = 2^(lambda*n)`, the paper uses `t = max 2 (lambda*n)`,\n`m = 2^(size(c*t+1)-1)`, and `log q = c*size(t-1)+1`.\nHere `size(t-1)` is the integer ceiling of `log₂ t`. The universal even\nconstant `c` is fixed; `lambda` and `n` are binary program inputs.\nThe output is the binary pair `(Q,R)` with `Q = 2^m * log q`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SourceCompilerParams.lean",
+  "source_path": "MIPRE/Foundations/Introspection/SourceCompilerParams.lean",
+  "defmat": [
+   "MIPRE.Introspection.SourceCompiler.affineUnary",
+   "MIPRE.Introspection.SourceCompiler.boundsPost",
+   "MIPRE.Introspection.SourceCompiler.boundsProg",
+   "MIPRE.Introspection.SourceCompiler.canonicalLog",
+   "MIPRE.Introspection.SourceCompiler.clampLog",
+   "MIPRE.Introspection.SourceCompiler.fieldBits",
+   "MIPRE.Introspection.SourceCompiler.originalBound",
+   "MIPRE.Introspection.SourceCompiler.parameterPost",
+   "MIPRE.Introspection.SourceCompiler.parameterSeed",
+   "MIPRE.Introspection.SourceCompiler.powerUnaryProg",
+   "MIPRE.Introspection.SourceCompiler.readUnary",
+   "MIPRE.Introspection.SourceCompiler.registerBits",
+   "MIPRE.Introspection.SourceCompiler.registerPower",
+   "MIPRE.Introspection.SourceCompiler.registerSizeProg",
+   "MIPRE.Introspection.SourceCompiler.unarySize"
+  ],
+  "embedded": [
+   "MIPRE.Introspection.SourceCompiler.affineUnary_apply",
+   "_private.MIPRE.Foundations.Introspection.SourceCompilerParams.0.MIPRE.Introspection.SourceCompiler.bitsVal_zeros"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.affineUnary",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     32,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.affineUnary_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     44,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.boundsPost",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     110,
+     111
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.boundsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     113,
+     117
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.canonicalLog",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     23,
+     23
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.clampLog",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     47,
+     48
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.fieldBits",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     25,
+     25
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.originalBound",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     27,
+     27
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.parameterPost",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     91,
+     92
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.parameterSeed",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     60,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.powerUnaryProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     70,
+     70
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.readUnary",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     81,
+     82
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.registerBits",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     26,
+     26
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.registerPower",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     24,
+     24
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.registerSizeProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     94,
+     98
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.unarySize",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     55,
+     55
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.SourceCompilerParams.0.MIPRE.Introspection.SourceCompiler.bitsVal_zeros",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     100,
+     104
+    ]
+   }
+  ],
+  "lines": 184,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith_B",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCost",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderProg",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingClock",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Introspection",
+   "import Definitions.Def_MIPRE_Foundations_Halting_PolyBounded",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ParserBits",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ParserAnswers",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_DynamicParserSlice",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_DynamicParser"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.SourceCompiler.affineUnary": null,
+   "MIPRE.Introspection.SourceCompiler.boundsPost": null,
+   "MIPRE.Introspection.SourceCompiler.boundsProg": [
+    "/-- A fixed program computes the paper's binary `(Q,R)` from binary `(lambda,n)`. -/"
+   ],
+   "MIPRE.Introspection.SourceCompiler.canonicalLog": null,
+   "MIPRE.Introspection.SourceCompiler.clampLog": null,
+   "MIPRE.Introspection.SourceCompiler.fieldBits": null,
+   "MIPRE.Introspection.SourceCompiler.originalBound": null,
+   "MIPRE.Introspection.SourceCompiler.parameterPost": null,
+   "MIPRE.Introspection.SourceCompiler.parameterSeed": [
+    "/-- Prepare the binary-power exponent, the original logarithm, and the field bit length. -/"
+   ],
+   "MIPRE.Introspection.SourceCompiler.powerUnaryProg": null,
+   "MIPRE.Introspection.SourceCompiler.readUnary": [
+    "/-- Read a raw unary chain by its length; total on arbitrary data. -/"
+   ],
+   "MIPRE.Introspection.SourceCompiler.registerBits": null,
+   "MIPRE.Introspection.SourceCompiler.registerPower": null,
+   "MIPRE.Introspection.SourceCompiler.registerSizeProg": [
+    "/-- Shift the binary field bit length by the computed unary register power. -/"
+   ],
+   "MIPRE.Introspection.SourceCompiler.unarySize": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_PauliSamplerParams",
+  "module": "MIPRE.Foundations.Introspection.PauliSamplerParams",
+  "module_doc": "/-! # Canonical parameters for the executable Pauli sampler\n\nThe selector width, field width and point dimension are computed from the\nsame canonical parameters as the source compiler. The program returns unary\nparameters, which are the input format of the uniform field algorithms.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliSamplerParams.lean",
+  "source_path": "MIPRE/Foundations/Introspection/PauliSamplerParams.lean",
+  "defmat": [
+   "MIPRE.Introspection.PauliSamplerParameters.Parameters",
+   "MIPRE.Introspection.PauliSamplerParameters.parameters",
+   "MIPRE.Introspection.PauliSamplerParameters.powerInput",
+   "MIPRE.Introspection.PauliSamplerParameters.powerPost",
+   "MIPRE.Introspection.PauliSamplerParameters.prog",
+   "MIPRE.Introspection.PauliSamplerParameters.selectorBits"
+  ],
+  "embedded": [
+   "MIPRE.Introspection.PauliSamplerParameters.fieldBits_neZero",
+   "MIPRE.Introspection.PauliSamplerParameters.fieldBits_odd",
+   "MIPRE.Introspection.PauliSamplerParameters.fieldBits_pos"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.PauliSamplerParameters.Parameters",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     116,
+     116
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliSamplerParameters.fieldBits_neZero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     27,
+     28
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliSamplerParameters.fieldBits_odd",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     30,
+     35
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliSamplerParameters.fieldBits_pos",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     23,
+     25
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliSamplerParameters.parameters",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     118,
+     119
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliSamplerParameters.powerInput",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     121,
+     124
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliSamplerParameters.powerPost",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     126,
+     127
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliSamplerParameters.prog",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     129,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliSamplerParameters.selectorBits",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     18,
+     18
+    ]
+   }
+  ],
+  "lines": 151,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith_B",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCost",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderProg",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingClock",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Introspection",
+   "import Definitions.Def_MIPRE_Foundations_Halting_PolyBounded",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ParserBits",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ParserAnswers",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_DynamicParserSlice",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_DynamicParser",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SourceCompilerParams"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.PauliSamplerParameters.Parameters": null,
+   "MIPRE.Introspection.PauliSamplerParameters.parameters": null,
+   "MIPRE.Introspection.PauliSamplerParameters.powerInput": [
+    "/-- Retain the selector width while its power of two is computed. -/"
+   ],
+   "MIPRE.Introspection.PauliSamplerParameters.powerPost": null,
+   "MIPRE.Introspection.PauliSamplerParameters.prog": null,
+   "MIPRE.Introspection.PauliSamplerParameters.selectorBits": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_Clock",
+  "module": "MIPRE.Foundations.Introspection.Clock",
+  "module_doc": "/-! # The actual growing introspection clock\n\nThe closed clock program writes the exact repaired introspection budget in\nunary. Hardwiring the binary parameter has linear description overhead, and\nthe compiler itself is an actual polynomial-time ambient program.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/Clock.lean",
+  "source_path": "MIPRE/Foundations/Introspection/Clock.lean",
+  "defmat": [
+   "MIPRE.Introspection.growingClock"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.growingClock",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     20,
+     27
+    ]
+   }
+  ],
+  "lines": 127,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith_B",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCost",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderProg",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingClock",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Introspection",
+   "import Definitions.Def_MIPRE_Foundations_Halting_PolyBounded",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockArithmetic"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.growingClock": [
+    "/-- The executable polynomial-exponent clock, with the parameter stored in binary. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_ClockCost",
+  "module": "MIPRE.Foundations.Introspection.ClockCost",
+  "module_doc": "/-! # Uniform runtime bounds for the growing introspection clock\n\nFor each fixed positive exponent, clock construction runs in polynomial time\nin its unary output budget, uniformly in the parameter and index. The existing\npolynomial-exponent absorption lemma then gives another introspection budget.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ClockCost.lean",
+  "source_path": "MIPRE/Foundations/Introspection/ClockCost.lean",
+  "defmat": [
+   "MIPRE.Introspection.ClockArithmetic.clockCostPoly",
+   "MIPRE.Introspection.ClockArithmetic.mulCostPoly",
+   "MIPRE.Introspection.ClockArithmetic.unaryCostPoly"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.ClockArithmetic.clockCostPoly",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     44,
+     47
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ClockArithmetic.mulCostPoly",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     34,
+     36
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ClockArithmetic.unaryCostPoly",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     20,
+     21
+    ]
+   }
+  ],
+  "lines": 133,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith_B",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCost",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderProg",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingClock",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Introspection",
+   "import Definitions.Def_MIPRE_Foundations_Halting_PolyBounded",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Clock"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.ClockArithmetic.clockCostPoly": null,
+   "MIPRE.Introspection.ClockArithmetic.mulCostPoly": null,
+   "MIPRE.Introspection.ClockArithmetic.unaryCostPoly": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_ClockSimulation",
+  "module": "MIPRE.Foundations.Introspection.ClockSimulation",
+  "module_doc": "/-! # Executable clocked simulation at the original exponential index\n\nThe clock is computed at index `n`; the source program receives index `2^n`.\nBoth transformations are actual programs. The repaired exponent-five bound\npreserves the original bounded decider on its legal question and answer cut.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ClockSimulation.lean",
+  "source_path": "MIPRE/Foundations/Introspection/ClockSimulation.lean",
+  "defmat": [
+   "MIPRE.Introspection.ClockSimulation.clockStage",
+   "MIPRE.Introspection.ClockSimulation.indexReader",
+   "MIPRE.Introspection.ClockSimulation.prog",
+   "MIPRE.Introspection.ClockSimulation.reindexProg",
+   "MIPRE.Introspection.ClockSimulation.reindexStage",
+   "MIPRE.Introspection.ClockSimulation.reindexed",
+   "MIPRE.Introspection.ClockSimulation.simulationInput"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.ClockSimulation.clockStage",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     48,
+     49
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ClockSimulation.indexReader",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     20,
+     20
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ClockSimulation.prog",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     86,
+     88
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ClockSimulation.reindexProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     24,
+     26
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ClockSimulation.reindexStage",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     74,
+     74
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ClockSimulation.reindexed",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     22,
+     22
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ClockSimulation.simulationInput",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     60,
+     72
+    ]
+   }
+  ],
+  "lines": 150,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith_B",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCost",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderProg",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingClock",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Introspection",
+   "import Definitions.Def_MIPRE_Foundations_Halting_PolyBounded",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Clock",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockCost"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.ClockSimulation.clockStage": null,
+   "MIPRE.Introspection.ClockSimulation.indexReader": null,
+   "MIPRE.Introspection.ClockSimulation.prog": [
+    "/-- This program computes the growing budget, changes the source index, and simulates. -/"
+   ],
+   "MIPRE.Introspection.ClockSimulation.reindexProg": null,
+   "MIPRE.Introspection.ClockSimulation.reindexStage": null,
+   "MIPRE.Introspection.ClockSimulation.reindexed": null,
+   "MIPRE.Introspection.ClockSimulation.simulationInput": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_ClockCompiler",
+  "module": "MIPRE.Foundations.Introspection.ClockCompiler",
+  "module_doc": "/-! # A binary compiler for the complete clocked source decider\n\nThe compiler constructs the actual program syntax from the source description\nand binary parameter. Both compilation time and output description size are\npolynomial in their encoded lengths, for fixed exponent and universal machine.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ClockCompiler.lean",
+  "source_path": "MIPRE/Foundations/Introspection/ClockCompiler.lean",
+  "defmat": [
+   "MIPRE.Introspection.ClockSimulation.codeCall",
+   "MIPRE.Introspection.ClockSimulation.codeContext",
+   "MIPRE.Introspection.ClockSimulation.codeElim",
+   "MIPRE.Introspection.ClockSimulation.codeLet",
+   "MIPRE.Introspection.ClockSimulation.codeRoute"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.ClockSimulation.codeCall",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     38,
+     39
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ClockSimulation.codeContext",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     41,
+     43
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ClockSimulation.codeElim",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     33,
+     36
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ClockSimulation.codeLet",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     28,
+     31
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ClockSimulation.codeRoute",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     48,
+     52
+    ]
+   }
+  ],
+  "lines": 140,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith_B",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCost",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderProg",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingClock",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Introspection",
+   "import Definitions.Def_MIPRE_Foundations_Halting_PolyBounded",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Clock",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockCost",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockSimulation"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.ClockSimulation.codeCall": null,
+   "MIPRE.Introspection.ClockSimulation.codeContext": null,
+   "MIPRE.Introspection.ClockSimulation.codeElim": null,
+   "MIPRE.Introspection.ClockSimulation.codeLet": null,
+   "MIPRE.Introspection.ClockSimulation.codeRoute": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_ClockSimulationCost",
+  "module": "MIPRE.Foundations.Introspection.ClockSimulationCost",
+  "module_doc": "/-! # Runtime of the complete clocked exponential-index simulation -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ClockSimulationCost.lean",
+  "source_path": "MIPRE/Foundations/Introspection/ClockSimulationCost.lean",
+  "defmat": [
+   "MIPRE.Introspection.ClockSimulation.reindexCost",
+   "MIPRE.Introspection.ClockSimulation.reindexCostPoly"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.ClockSimulation.reindexCost",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     15,
+     18
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.ClockSimulation.reindexCostPoly",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     100,
+     103
+    ]
+   }
+  ],
+  "lines": 123,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith_B",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCost",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderProg",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingClock",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Introspection",
+   "import Definitions.Def_MIPRE_Foundations_Halting_PolyBounded",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Clock",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockCost",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockSimulation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockCompiler"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.ClockSimulation.reindexCost": null,
+   "MIPRE.Introspection.ClockSimulation.reindexCostPoly": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_SourceCompilerParamsCost",
+  "module": "MIPRE.Foundations.Introspection.SourceCompilerParamsCost",
+  "module_doc": "/-! # Explicit runtime of canonical parameter generation -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SourceCompilerParamsCost.lean",
+  "source_path": "MIPRE/Foundations/Introspection/SourceCompilerParamsCost.lean",
+  "defmat": [
+   "MIPRE.Introspection.SourceCompiler.boundsCost",
+   "MIPRE.Introspection.SourceCompiler.contextCost",
+   "MIPRE.Introspection.SourceCompiler.exponentBitsCost",
+   "MIPRE.Introspection.SourceCompiler.powerUnaryCost"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.boundsCost",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     31,
+     41
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.contextCost",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     28,
+     29
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.exponentBitsCost",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     16,
+     16
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.powerUnaryCost",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     17,
+     17
+    ]
+   }
+  ],
+  "lines": 139,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith_B",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCost",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderProg",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingClock",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Introspection",
+   "import Definitions.Def_MIPRE_Foundations_Halting_PolyBounded",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ParserBits",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ParserAnswers",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_DynamicParserSlice",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_DynamicParser",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SourceCompilerParams",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Clock",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockCost",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockSimulation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockCompiler",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockSimulationCost"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.SourceCompiler.boundsCost": null,
+   "MIPRE.Introspection.SourceCompiler.contextCost": null,
+   "MIPRE.Introspection.SourceCompiler.exponentBitsCost": null,
+   "MIPRE.Introspection.SourceCompiler.powerUnaryCost": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_PauliSamplerParamsCost",
+  "module": "MIPRE.Foundations.Introspection.PauliSamplerParamsCost",
+  "module_doc": "/-! # Execution cost of the canonical Pauli parameters -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PauliSamplerParamsCost.lean",
+  "source_path": "MIPRE/Foundations/Introspection/PauliSamplerParamsCost.lean",
+  "defmat": [
+   "MIPRE.Introspection.PauliSamplerParameters.cost",
+   "MIPRE.Introspection.PauliSamplerParameters.costMajorant",
+   "MIPRE.Introspection.PauliSamplerParameters.unaryMajorant",
+   "MIPRE.Introspection.PauliSamplerParameters.widthBound"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.PauliSamplerParameters.cost",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     14,
+     23
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliSamplerParameters.costMajorant",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     85,
+     92
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliSamplerParameters.unaryMajorant",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     73,
+     75
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.PauliSamplerParameters.widthBound",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     83,
+     83
+    ]
+   }
+  ],
+  "lines": 146,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith_B",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCost",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderProg",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingClock",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Introspection",
+   "import Definitions.Def_MIPRE_Foundations_Halting_PolyBounded",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ParserBits",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ParserAnswers",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_DynamicParserSlice",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_DynamicParser",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SourceCompilerParams",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliSamplerParams",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Clock",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockCost",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockSimulation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockCompiler",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockSimulationCost",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SourceCompilerParamsCost"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.PauliSamplerParameters.cost": null,
+   "MIPRE.Introspection.PauliSamplerParameters.costMajorant": null,
+   "MIPRE.Introspection.PauliSamplerParameters.unaryMajorant": [
+    "/-- A polynomial upper bound for binary-to-unary conversion. -/"
+   ],
+   "MIPRE.Introspection.PauliSamplerParameters.widthBound": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_SourceCompilerGuard",
+  "module": "MIPRE.Foundations.Introspection.SourceCompilerGuard",
+  "module_doc": "/-! # Dynamic source-question projection and internal answer cutoff\n\nThe input carries `(n,Q,R,s,answerA,answerB)` with all four numbers in binary.\nThe guard validates the paper's tuple encoding, the separate original-answer\ncutoff, and membership of both register strings in the zero-padded source\nquestion space. Only then does it invoke the source on the first `s` bits.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SourceCompilerGuard.lean",
+  "source_path": "MIPRE/Foundations/Introspection/SourceCompilerGuard.lean",
+  "defmat": [
+   "MIPRE.Introspection.SourceCompiler.GuardInput",
+   "MIPRE.Introspection.SourceCompiler.GuardReady",
+   "MIPRE.Introspection.SourceCompiler.InSource",
+   "MIPRE.Introspection.SourceCompiler.RawReady",
+   "MIPRE.Introspection.SourceCompiler.eight",
+   "MIPRE.Introspection.SourceCompiler.guardCheck",
+   "MIPRE.Introspection.SourceCompiler.inputDim",
+   "MIPRE.Introspection.SourceCompiler.inputIndex",
+   "MIPRE.Introspection.SourceCompiler.inputLeft",
+   "MIPRE.Introspection.SourceCompiler.inputQ",
+   "MIPRE.Introspection.SourceCompiler.inputR",
+   "MIPRE.Introspection.SourceCompiler.inputRight",
+   "MIPRE.Introspection.SourceCompiler.instDecidableGuardReady",
+   "MIPRE.Introspection.SourceCompiler.instDecidableInSource",
+   "MIPRE.Introspection.SourceCompiler.instDecidableRawReady",
+   "MIPRE.Introspection.SourceCompiler.leftParts",
+   "MIPRE.Introspection.SourceCompiler.projectedCall",
+   "MIPRE.Introspection.SourceCompiler.readInput",
+   "MIPRE.Introspection.SourceCompiler.rightParts",
+   "MIPRE.Introspection.SourceCompiler.sourceCheck",
+   "_private.MIPRE.Foundations.Introspection.SourceCompilerGuard.0.MIPRE.Introspection.SourceCompiler.andCheck"
+  ],
+  "embedded": [
+   "MIPRE.Introspection.SourceCompiler.eight_apply",
+   "MIPRE.Introspection.SourceCompiler.readInput_encode",
+   "_private.MIPRE.Foundations.Introspection.SourceCompilerGuard.0.MIPRE.Introspection.SourceCompiler.andCheck_iff"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.GuardInput",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     23,
+     23
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.GuardReady",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     73,
+     78
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.InSource",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     37,
+     38
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.RawReady",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     151,
+     151
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.eight",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     58,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.eight_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     63,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.guardCheck",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     82,
+     90
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.inputDim",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     28,
+     28
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.inputIndex",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     25,
+     25
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.inputLeft",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     29,
+     29
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.inputQ",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     26,
+     26
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.inputR",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     27,
+     27
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.inputRight",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     30,
+     30
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.instDecidableGuardReady",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     80,
+     80
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.instDecidableInSource",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     40,
+     40
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.instDecidableRawReady",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     152,
+     152
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.leftParts",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     32,
+     33
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.projectedCall",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     97,
+     101
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.readInput",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     139,
+     145
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.readInput_encode",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     147,
+     149
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.rightParts",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     34,
+     35
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.SourceCompiler.sourceCheck",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     42,
+     45
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.SourceCompilerGuard.0.MIPRE.Introspection.SourceCompiler.andCheck",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     65,
+     66
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.SourceCompilerGuard.0.MIPRE.Introspection.SourceCompiler.andCheck_iff",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     68,
+     71
+    ]
+   }
+  ],
+  "lines": 207,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith_B",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCost",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderProg",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingClock",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Introspection",
+   "import Definitions.Def_MIPRE_Foundations_Halting_PolyBounded",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ParserBits",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ParserAnswers",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_DynamicParserSlice",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_DynamicParser",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Clock",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockCost",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockSimulation"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.SourceCompiler.GuardInput": null,
+   "MIPRE.Introspection.SourceCompiler.GuardReady": null,
+   "MIPRE.Introspection.SourceCompiler.InSource": null,
+   "MIPRE.Introspection.SourceCompiler.RawReady": null,
+   "MIPRE.Introspection.SourceCompiler.eight": null,
+   "MIPRE.Introspection.SourceCompiler.guardCheck": null,
+   "MIPRE.Introspection.SourceCompiler.inputDim": null,
+   "MIPRE.Introspection.SourceCompiler.inputIndex": null,
+   "MIPRE.Introspection.SourceCompiler.inputLeft": null,
+   "MIPRE.Introspection.SourceCompiler.inputQ": null,
+   "MIPRE.Introspection.SourceCompiler.inputR": null,
+   "MIPRE.Introspection.SourceCompiler.inputRight": null,
+   "MIPRE.Introspection.SourceCompiler.instDecidableGuardReady": null,
+   "MIPRE.Introspection.SourceCompiler.instDecidableInSource": null,
+   "MIPRE.Introspection.SourceCompiler.instDecidableRawReady": null,
+   "MIPRE.Introspection.SourceCompiler.leftParts": null,
+   "MIPRE.Introspection.SourceCompiler.projectedCall": null,
+   "MIPRE.Introspection.SourceCompiler.readInput": null,
+   "MIPRE.Introspection.SourceCompiler.rightParts": null,
+   "MIPRE.Introspection.SourceCompiler.sourceCheck": null,
+   "_private.MIPRE.Foundations.Introspection.SourceCompilerGuard.0.MIPRE.Introspection.SourceCompiler.andCheck": null
+  }
+ }
+]

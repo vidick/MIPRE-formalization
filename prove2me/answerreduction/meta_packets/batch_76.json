@@ -1,0 +1,593 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.eval_winMatchN",
+  "source_name": "MIPRE.TM.CookLevin.Desc.eval_winMatchN",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.eval_winMatchN (wv : WinVar 7 6 Sym Ctl) :\n    (winMatchN e Fa A (wvDesc wv)).eval x = true ↔ WinMatch e (evalFields Fa x) wv (evalFields A x) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost Fml",
+   "variable (e G : ℕ)",
+   "variable (e G : ℕ)",
+   "variable {Fa A : FieldsF} (hFa : Fa.Lengths e G) (hA : A.Lengths e G) (x : ℕ → Bool)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.FamilyFml",
+  "module_doc": "/-!\n# The clause families as formulas\n\nFor each family predicate of `Families.lean` and `Window.lean`, the formula computing it on a\ncandidate of field formulas (`CandF`: three `FieldsF` and three sign formulas), with its\nexact semantics (`eval_startF`, …, `eval_windowF`) and its input bound. The fixed input\ntapes enter through value formulas (`cellValF` for a listed string, `unaryValF` for the\nunary time bound), tied to `fixed` by `TapeSpec`; the free tapes through the list of their\nindices (`FreeSpec`) (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/FamilyFml.lean#L1481-L1534",
+  "source_path": "MIPRE/TM/CookLevin/FamilyFml.lean",
+  "lines": [
+   1481,
+   1534
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Fml.eval_addConstRel_iff",
+   "MIPRE.SAT.bitsVal_injective",
+   "MIPRE.TM.CookLevin.Desc.bitsVal_bitsOfNat"
+  ],
+  "pasted_helpers": 51,
+  "prooflines": 52,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.evalFields_litFields",
+  "source_name": "MIPRE.TM.CookLevin.Desc.evalFields_litFields",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.evalFields_litFields (hT : T ≤ Sof e) :\n    evalFields (litFields e G T b) x = fieldsOf e G T (ibOf b (mOf e G) x) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.SAT MIPRE.Cost Fml",
+   "variable (e G T b : ℕ)",
+   "variable (x : ℕ → Bool)"
+  ],
+  "docstring": "**The field formulas compute the fields of the index.**",
+  "module": "MIPRE.TM.CookLevin.FieldFml",
+  "module_doc": "/-!\n# The fields of a literal, as formulas\n\nFor a literal whose `m` index bits are the input bits `b .. b + m`, the formulas computing\nits fields (`litFields`): the flag, the structured fields as slices of the input, and the\nanswer decoding (`j < 2T`, `r = j` or `j - 2T`, `p = r / 2 + 3`, `v` from the parity of\n`r`), multiplexed by the flag. `evalFields_litFields` says that they compute exactly\n`fieldsOf` on the index (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/FieldFml.lean#L232-L320",
+  "source_path": "MIPRE/TM/CookLevin/FieldFml.lean",
+  "lines": [
+   232,
+   320
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.bitsVal_lt",
+   "MIPRE.SAT.Fml.val_addBits",
+   "MIPRE.SAT.bitsVal_take",
+   "MIPRE.TM.CookLevin.Desc.bitsVal_bitsOfNat"
+  ],
+  "pasted_helpers": 47,
+  "prooflines": 86,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.nbitsR_const",
+  "source_name": "MIPRE.TM.CookLevin.Desc.nbitsR_const",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.nbitsR_const (w : PolyTimeFun ι Unary) (k : ℕ) (i : ι) :\n    nbitsR w (bitsR k) i = nbits (w i).length k := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun",
+   "variable {ι : Type*} [SizedEncoding ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.FieldProg",
+  "module_doc": "/-!\n# The fields of a literal, as programs\n\n`FieldsR ι` is a record of *readers*: one program per field of `FieldsF`, all of them reading\nthe same input `ι`. `FieldsR.ev A i` is the field record its programs produce on the input\n`i`, and it is a structure literal whose components are, definitionally, the values of those\nprograms — so every formula built from a `FieldsR` matches the same formula built from\n`FieldsR.ev` by `rfl`, and the whole family of programs of `FamilyProg.lean` costs one `rfl`\neach.\n\n`litFieldsR` is the record of programs for `litFields`: the one place where the constants of\nthe layout have to be produced, and the only proof in the program layer that is not\ndefinitional (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/FieldProg.lean#L69-L70",
+  "source_path": "MIPRE/TM/CookLevin/FieldProg.lean",
+  "lines": [
+   69,
+   70
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.nbitsR_apply"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.dblR_spec",
+  "source_name": "MIPRE.TM.CookLevin.Desc.dblR_spec",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.dblR_spec (T : PolyTimeFun ι ℕ) (i : ι) :\n    ∀ j, (dblR T i).getD j false = (2 * T i).testBit j := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun",
+   "variable {ι : Type*} [SizedEncoding ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.FieldProg",
+  "module_doc": "/-!\n# The fields of a literal, as programs\n\n`FieldsR ι` is a record of *readers*: one program per field of `FieldsF`, all of them reading\nthe same input `ι`. `FieldsR.ev A i` is the field record its programs produce on the input\n`i`, and it is a structure literal whose components are, definitionally, the values of those\nprograms — so every formula built from a `FieldsR` matches the same formula built from\n`FieldsR.ev` by `rfl`, and the whole family of programs of `FamilyProg.lean` costs one `rfl`\neach.\n\n`litFieldsR` is the record of programs for `litFields`: the one place where the constants of\nthe layout have to be produced, and the only proof in the program layer that is not\ndefinitional (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/FieldProg.lean#L76-L78",
+  "source_path": "MIPRE/TM/CookLevin/FieldProg.lean",
+  "lines": [
+   76,
+   78
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.litFieldsR_ev",
+  "source_name": "MIPRE.TM.CookLevin.Desc.litFieldsR_ev",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.litFieldsR_ev (i : ι) :\n    (litFieldsR eu TR b).ev i = litFields (eu i).length Gc (TR i) (b i).length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun",
+   "variable {ι : Type*} [SizedEncoding ι]",
+   "variable (eu : PolyTimeFun ι Unary) (TR : PolyTimeFun ι ℕ) (b : PolyTimeFun ι Unary)"
+  ],
+  "docstring": "**The field programs are the field formulas**: the record of programs for `litFields`\nproduces `litFields`.",
+  "module": "MIPRE.TM.CookLevin.FieldProg",
+  "module_doc": "/-!\n# The fields of a literal, as programs\n\n`FieldsR ι` is a record of *readers*: one program per field of `FieldsF`, all of them reading\nthe same input `ι`. `FieldsR.ev A i` is the field record its programs produce on the input\n`i`, and it is a structure literal whose components are, definitionally, the values of those\nprograms — so every formula built from a `FieldsR` matches the same formula built from\n`FieldsR.ev` by `rfl`, and the whole family of programs of `FamilyProg.lean` costs one `rfl`\neach.\n\n`litFieldsR` is the record of programs for `litFields`: the one place where the constants of\nthe layout have to be produced, and the only proof in the program layer that is not\ndefinitional (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/FieldProg.lean#L263-L270",
+  "source_path": "MIPRE/TM/CookLevin/FieldProg.lean",
+  "lines": [
+   263,
+   270
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.nbitsR_const",
+   "MIPRE.TM.CookLevin.Desc.dblR_spec",
+   "MIPRE.TM.CookLevin.Desc.nbitsR_apply"
+  ],
+  "pasted_helpers": 22,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.decodeVar_ans",
+  "source_name": "MIPRE.TM.CookLevin.Desc.decodeVar_ans",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.decodeVar_ans (hT : T ≤ Sof e) {j : ℕ} (hj : j < 4 * T) :\n    ∃ (jt : Fin 7) (p : Pos (Sof e)), (jt : ℕ) = tapeIdx T j ∧ (p : ℕ) = rOf T j / 2 + 3 ∧\n      decodeVar e G (fieldsOf e G T (bitsOfNat (mOf e G) j)) =\n        some (.cell 0 (.inl jt) p (valOf T j)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost",
+   "variable (e G T : ℕ)"
+  ],
+  "docstring": "**Every index below `4T` decodes to the answer variable it stands for.**",
+  "module": "MIPRE.TM.CookLevin.Index",
+  "module_doc": "/-!\n# The canonical index of a tableau variable\n\n`idxOf e G T v` is the index of the variable `v` in the described 3SAT formula: the *answer\nindex* `j < 4T` for a cell of one of the two free tapes inside the answer block — tape `5`\nfor `j < 2T` and tape `6` otherwise, position `r / 2 + 3` for `r = j mod 2T`, the value `1`\nfor `r` odd and the blank for `r` even — and the structured index (`encodeVar`) for every\nother variable. So the first `4T` variables of the formula are exactly the two answer blocks,\nwhich is what item 1 of `thm:succinct-sat` needs, and `decodeVar_fieldsOf_idxOf` says that\ndecoding the canonical index returns the variable. `decodeVar_ans` is the other half: every\nindex below `4T` decodes to the answer variable it stands for\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Index.lean#L72-L105",
+  "source_path": "MIPRE/TM/CookLevin/Index.lean",
+  "lines": [
+   72,
+   105
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.bitsVal_take",
+   "MIPRE.TM.CookLevin.Desc.bitsVal_bitsOfNat"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.decodeVar_fieldsOf_idxOf",
+  "source_name": "MIPRE.TM.CookLevin.Desc.decodeVar_fieldsOf_idxOf",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.decodeVar_fieldsOf_idxOf (hT : T ≤ Sof e) (v : TabVar 7 6 Sym Ctl (Sof e) G) :\n    decodeVar e G (fieldsOf e G T (bitsOfNat (mOf e G) (idxOf e G T v))) = some v := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost",
+   "variable (e G T : ℕ)"
+  ],
+  "docstring": "**Decoding the canonical index returns the variable.**",
+  "module": "MIPRE.TM.CookLevin.Index",
+  "module_doc": "/-!\n# The canonical index of a tableau variable\n\n`idxOf e G T v` is the index of the variable `v` in the described 3SAT formula: the *answer\nindex* `j < 4T` for a cell of one of the two free tapes inside the answer block — tape `5`\nfor `j < 2T` and tape `6` otherwise, position `r / 2 + 3` for `r = j mod 2T`, the value `1`\nfor `r` odd and the blank for `r` even — and the structured index (`encodeVar`) for every\nother variable. So the first `4T` variables of the formula are exactly the two answer blocks,\nwhich is what item 1 of `thm:succinct-sat` needs, and `decodeVar_fieldsOf_idxOf` says that\ndecoding the canonical index returns the variable. `decodeVar_ans` is the other half: every\nindex below `4T` decodes to the answer variable it stands for\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Index.lean#L170-L235",
+  "source_path": "MIPRE/TM/CookLevin/Index.lean",
+  "lines": [
+   170,
+   235
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.decodeVar_ans",
+   "MIPRE.TM.CookLevin.Desc.length_encodeVar",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_encodeVar",
+   "MIPRE.TM.CookLevin.Desc.bitsOfNat_bitsVal"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 63,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.idxOf_ans",
+  "source_name": "MIPRE.TM.CookLevin.Desc.idxOf_ans",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.idxOf_ans (hT : T ≤ Sof e) {j : ℕ} (hj : j < 4 * T) {jt : Fin 7} {p : Pos (Sof e)}\n    (hjt : (jt : ℕ) = tapeIdx T j) (hp : (p : ℕ) = rOf T j / 2 + 3) :\n    idxOf e G T (.cell 0 (.inl jt) p (valOf T j)) = j := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost",
+   "variable (e G T : ℕ)"
+  ],
+  "docstring": "The canonical index of the answer variable of `j` is `j`.",
+  "module": "MIPRE.TM.CookLevin.Index",
+  "module_doc": "/-!\n# The canonical index of a tableau variable\n\n`idxOf e G T v` is the index of the variable `v` in the described 3SAT formula: the *answer\nindex* `j < 4T` for a cell of one of the two free tapes inside the answer block — tape `5`\nfor `j < 2T` and tape `6` otherwise, position `r / 2 + 3` for `r = j mod 2T`, the value `1`\nfor `r` odd and the blank for `r` even — and the structured index (`encodeVar`) for every\nother variable. So the first `4T` variables of the formula are exactly the two answer blocks,\nwhich is what item 1 of `thm:succinct-sat` needs, and `decodeVar_fieldsOf_idxOf` says that\ndecoding the canonical index returns the variable. `decodeVar_ans` is the other half: every\nindex below `4T` decodes to the answer variable it stands for\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Index.lean#L237-L272",
+  "source_path": "MIPRE/TM/CookLevin/Index.lean",
+  "lines": [
+   237,
+   272
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.decodeVar_cell_iff",
+  "source_name": "MIPRE.TM.CookLevin.Desc.decodeVar_cell_iff",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.decodeVar_cell_iff (F : Fields) (t : Fin (Sof e + 1)) (d : Tape 7 6) (p : Pos (Sof e))\n    (v : CellVal Interp.Sym) :\n    decodeVar e G F = some (.cell t d p v) ↔\n      IsCell e F ∧ F.t = t ∧ F.d = tapeCode d ∧ F.p = p ∧ F.v = symCode v := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.SAT MIPRE.Cost Fml",
+   "variable (e G : ℕ)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Kinds",
+  "module_doc": "/-!\n# The kinds of variables, on fields and as formulas\n\nFor the fields `F` of an index, the predicates `IsCell`, `IsHead`, … saying that `F` denotes a\nvariable of that kind (with its range checks), the characterization of `decodeVar` by them\n(`decodeVar_cell_iff`, …), the numeric equality of two fields records (`Fields.numEq`, the\nsame variable up to the aliasing of unused fields), and the formulas computing all of these\non the field formulas of a literal (`isCellF`, `numEqF`, …) with their semantics\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Kinds.lean#L128-L180",
+  "source_path": "MIPRE/TM/CookLevin/Kinds.lean",
+  "lines": [
+   128,
+   180
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 6,
+  "prooflines": 49,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.decodeVar_head_iff",
+  "source_name": "MIPRE.TM.CookLevin.Desc.decodeVar_head_iff",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.decodeVar_head_iff (F : Fields) (t : Fin (Sof e + 1)) (d : Tape 7 6) (p : Pos (Sof e)) :\n    decodeVar e G F = some (.head t d p) ↔\n      IsHead e F ∧ F.t = t ∧ F.d = tapeCode d ∧ F.p = p := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.SAT MIPRE.Cost Fml",
+   "variable (e G : ℕ)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Kinds",
+  "module_doc": "/-!\n# The kinds of variables, on fields and as formulas\n\nFor the fields `F` of an index, the predicates `IsCell`, `IsHead`, … saying that `F` denotes a\nvariable of that kind (with its range checks), the characterization of `decodeVar` by them\n(`decodeVar_cell_iff`, …), the numeric equality of two fields records (`Fields.numEq`, the\nsame variable up to the aliasing of unused fields), and the formulas computing all of these\non the field formulas of a literal (`isCellF`, `numEqF`, …) with their semantics\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Kinds.lean#L182-L209",
+  "source_path": "MIPRE/TM/CookLevin/Kinds.lean",
+  "lines": [
+   182,
+   209
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.decodeVar_state_iff",
+  "source_name": "MIPRE.TM.CookLevin.Desc.decodeVar_state_iff",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.decodeVar_state_iff (F : Fields) (t : Fin (Sof e + 1)) (q : Option Interp.Ctl) :\n    decodeVar e G F = some (.state t q) ↔ IsState e F ∧ F.t = t ∧ F.q = qCode q := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.SAT MIPRE.Cost Fml",
+   "variable (e G : ℕ)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Kinds",
+  "module_doc": "/-!\n# The kinds of variables, on fields and as formulas\n\nFor the fields `F` of an index, the predicates `IsCell`, `IsHead`, … saying that `F` denotes a\nvariable of that kind (with its range checks), the characterization of `decodeVar` by them\n(`decodeVar_cell_iff`, …), the numeric equality of two fields records (`Fields.numEq`, the\nsame variable up to the aliasing of unused fields), and the formulas computing all of these\non the field formulas of a literal (`isCellF`, `numEqF`, …) with their semantics\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Kinds.lean#L211-L240",
+  "source_path": "MIPRE/TM/CookLevin/Kinds.lean",
+  "lines": [
+   211,
+   240
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.decodeVar_emitOne_iff",
+  "source_name": "MIPRE.TM.CookLevin.Desc.decodeVar_emitOne_iff",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.decodeVar_emitOne_iff (F : Fields) (t : Fin (Sof e)) :\n    decodeVar e G F = some (.emitOne t) ↔ IsEmitOne e F ∧ F.t = t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.SAT MIPRE.Cost Fml",
+   "variable (e G : ℕ)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Kinds",
+  "module_doc": "/-!\n# The kinds of variables, on fields and as formulas\n\nFor the fields `F` of an index, the predicates `IsCell`, `IsHead`, … saying that `F` denotes a\nvariable of that kind (with its range checks), the characterization of `decodeVar` by them\n(`decodeVar_cell_iff`, …), the numeric equality of two fields records (`Fields.numEq`, the\nsame variable up to the aliasing of unused fields), and the formulas computing all of these\non the field formulas of a literal (`isCellF`, `numEqF`, …) with their semantics\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Kinds.lean#L242-L269",
+  "source_path": "MIPRE/TM/CookLevin/Kinds.lean",
+  "lines": [
+   242,
+   269
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.decodeVar_emitBad_iff",
+  "source_name": "MIPRE.TM.CookLevin.Desc.decodeVar_emitBad_iff",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.decodeVar_emitBad_iff (F : Fields) (t : Fin (Sof e)) :\n    decodeVar e G F = some (.emitBad t) ↔ IsEmitBad e F ∧ F.t = t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.SAT MIPRE.Cost Fml",
+   "variable (e G : ℕ)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Kinds",
+  "module_doc": "/-!\n# The kinds of variables, on fields and as formulas\n\nFor the fields `F` of an index, the predicates `IsCell`, `IsHead`, … saying that `F` denotes a\nvariable of that kind (with its range checks), the characterization of `decodeVar` by them\n(`decodeVar_cell_iff`, …), the numeric equality of two fields records (`Fields.numEq`, the\nsame variable up to the aliasing of unused fields), and the formulas computing all of these\non the field formulas of a literal (`isCellF`, `numEqF`, …) with their semantics\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Kinds.lean#L271-L300",
+  "source_path": "MIPRE/TM/CookLevin/Kinds.lean",
+  "lines": [
+   271,
+   300
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.decodeVar_emitted_iff",
+  "source_name": "MIPRE.TM.CookLevin.Desc.decodeVar_emitted_iff",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.decodeVar_emitted_iff (F : Fields) (t : Fin (Sof e + 1)) :\n    decodeVar e G F = some (.emitted t) ↔ IsEmitted e F ∧ F.t = t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.SAT MIPRE.Cost Fml",
+   "variable (e G : ℕ)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Kinds",
+  "module_doc": "/-!\n# The kinds of variables, on fields and as formulas\n\nFor the fields `F` of an index, the predicates `IsCell`, `IsHead`, … saying that `F` denotes a\nvariable of that kind (with its range checks), the characterization of `decodeVar` by them\n(`decodeVar_cell_iff`, …), the numeric equality of two fields records (`Fields.numEq`, the\nsame variable up to the aliasing of unused fields), and the formulas computing all of these\non the field formulas of a literal (`isCellF`, `numEqF`, …) with their semantics\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Kinds.lean#L302-L334",
+  "source_path": "MIPRE/TM/CookLevin/Kinds.lean",
+  "lines": [
+   302,
+   334
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.decodeVar_aux_iff",
+  "source_name": "MIPRE.TM.CookLevin.Desc.decodeVar_aux_iff",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.decodeVar_aux_iff (F : Fields) (t : Fin (Sof e)) (js : Tape 7 6 → Center (Sof e)) (g : Fin G) :\n    decodeVar e G F = some (.aux t js g) ↔\n      IsAux e G F ∧ F.t = t ∧ (∀ d, F.js ⟨tapeCode d, tapeCode_lt d⟩ = js d) ∧ F.g = g := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.SAT MIPRE.Cost Fml",
+   "variable (e G : ℕ)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Kinds",
+  "module_doc": "/-!\n# The kinds of variables, on fields and as formulas\n\nFor the fields `F` of an index, the predicates `IsCell`, `IsHead`, … saying that `F` denotes a\nvariable of that kind (with its range checks), the characterization of `decodeVar` by them\n(`decodeVar_cell_iff`, …), the numeric equality of two fields records (`Fields.numEq`, the\nsame variable up to the aliasing of unused fields), and the formulas computing all of these\non the field formulas of a literal (`isCellF`, `numEqF`, …) with their semantics\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Kinds.lean#L336-L374",
+  "source_path": "MIPRE/TM/CookLevin/Kinds.lean",
+  "lines": [
+   336,
+   374
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 36,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.eval_isAuxF",
+  "source_name": "MIPRE.TM.CookLevin.Desc.eval_isAuxF",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.eval_isAuxF : (isAuxF e G A).eval x = true ↔ IsAux e G (evalFields A x) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.SAT MIPRE.Cost Fml",
+   "variable (e G : ℕ)",
+   "variable {A : FieldsF} (hA : A.Lengths e G) (x : ℕ → Bool)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Kinds",
+  "module_doc": "/-!\n# The kinds of variables, on fields and as formulas\n\nFor the fields `F` of an index, the predicates `IsCell`, `IsHead`, … saying that `F` denotes a\nvariable of that kind (with its range checks), the characterization of `decodeVar` by them\n(`decodeVar_cell_iff`, …), the numeric equality of two fields records (`Fields.numEq`, the\nsame variable up to the aliasing of unused fields), and the formulas computing all of these\non the field formulas of a literal (`isCellF`, `numEqF`, …) with their semantics\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Kinds.lean#L482-L505",
+  "source_path": "MIPRE/TM/CookLevin/Kinds.lean",
+  "lines": [
+   482,
+   505
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.bitsVal_injective",
+   "MIPRE.TM.CookLevin.Desc.bitsVal_bitsOfNat"
+  ],
+  "pasted_helpers": 18,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.bitsVal_bitsOfNat",
+  "source_name": "MIPRE.TM.CookLevin.Desc.bitsVal_bitsOfNat",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.bitsVal_bitsOfNat (m i : ℕ) : bitsVal (bitsOfNat m i) = i % 2 ^ m := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Layout",
+  "module_doc": "/-!\n# The variable format of the describer\n\nThe binary format of the variables of the Cook–Levin tableau of the interpreter machine\n`U` (`planning/succinct-cook-levin.md`, S3). An index is a list of `m` bits, least\nsignificant first. With its top bit set it is *structured*: a tag (3 bits), the time `t`\n(`W` bits), the tape `d` (4), the position `p` (`W`), the cell value `v` (3), the state `q`\n(`Qb`), the thirteen window centers (`13 W`) and the gate `g` (`Gb`); tags `0..6` are\n`cell`, `head`, `state`, `emitOne`, `emitBad`, `emitted`, `aux`. With its top bit clear and\nvalue `j < 4T` it is an *answer* variable: the cell at position `j' / 2 + 3` of tape `A` (for\n`j < 2T`, `j' = j`) or `B` (`j' = j - 2T`), with the value blank for `j'` even and `1` for `j'`\nodd, so that the first `4T` variables are the `tapeBits` of the two answers.\n\n`fieldsOf` reads the fields of an index, `decodeVar` the tableau variable they denote (if\nany), and `encodeVar` is the structured index of a variable; `decodeVar_encodeVar` is the\nround trip. The circuit computes exactly `fieldsOf` on its input bits (`FieldFml.lean`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Layout.lean#L178-L196",
+  "source_path": "MIPRE/TM/CookLevin/Layout.lean",
+  "lines": [
+   178,
+   196
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.bitsOfNat_bitsVal",
+  "source_name": "MIPRE.TM.CookLevin.Desc.bitsOfNat_bitsVal",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.bitsOfNat_bitsVal (l : BitStr) : bitsOfNat l.length (bitsVal l) = l := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Layout",
+  "module_doc": "/-!\n# The variable format of the describer\n\nThe binary format of the variables of the Cook–Levin tableau of the interpreter machine\n`U` (`planning/succinct-cook-levin.md`, S3). An index is a list of `m` bits, least\nsignificant first. With its top bit set it is *structured*: a tag (3 bits), the time `t`\n(`W` bits), the tape `d` (4), the position `p` (`W`), the cell value `v` (3), the state `q`\n(`Qb`), the thirteen window centers (`13 W`) and the gate `g` (`Gb`); tags `0..6` are\n`cell`, `head`, `state`, `emitOne`, `emitBad`, `emitted`, `aux`. With its top bit clear and\nvalue `j < 4T` it is an *answer* variable: the cell at position `j' / 2 + 3` of tape `A` (for\n`j < 2T`, `j' = j`) or `B` (`j' = j - 2T`), with the value blank for `j'` even and `1` for `j'`\nodd, so that the first `4T` variables are the `tapeBits` of the two answers.\n\n`fieldsOf` reads the fields of an index, `decodeVar` the tableau variable they denote (if\nany), and `encodeVar` is the structured index of a variable; `decodeVar_encodeVar` is the\nround trip. The circuit computes exactly `fieldsOf` on its input bits (`FieldFml.lean`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Layout.lean#L198-L205",
+  "source_path": "MIPRE/TM/CookLevin/Layout.lean",
+  "lines": [
+   198,
+   205
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.length_encodeVar",
+  "source_name": "MIPRE.TM.CookLevin.Desc.length_encodeVar",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.length_encodeVar (v : TabVar 7 6 Sym Ctl (Sof e) G) : (encodeVar e G v).length = mOf e G := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost",
+   "variable (e G : ℕ)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Layout",
+  "module_doc": "/-!\n# The variable format of the describer\n\nThe binary format of the variables of the Cook–Levin tableau of the interpreter machine\n`U` (`planning/succinct-cook-levin.md`, S3). An index is a list of `m` bits, least\nsignificant first. With its top bit set it is *structured*: a tag (3 bits), the time `t`\n(`W` bits), the tape `d` (4), the position `p` (`W`), the cell value `v` (3), the state `q`\n(`Qb`), the thirteen window centers (`13 W`) and the gate `g` (`Gb`); tags `0..6` are\n`cell`, `head`, `state`, `emitOne`, `emitBad`, `emitted`, `aux`. With its top bit clear and\nvalue `j < 4T` it is an *answer* variable: the cell at position `j' / 2 + 3` of tape `A` (for\n`j < 2T`, `j' = j`) or `B` (`j' = j - 2T`), with the value blank for `j'` even and `1` for `j'`\nodd, so that the first `4T` variables are the `tapeBits` of the two answers.\n\n`fieldsOf` reads the fields of an index, `decodeVar` the tableau variable they denote (if\nany), and `encodeVar` is the structured index of a variable; `decodeVar_encodeVar` is the\nround trip. The circuit computes exactly `fieldsOf` on its input bits (`FieldFml.lean`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Layout.lean#L438-L439",
+  "source_path": "MIPRE/TM/CookLevin/Layout.lean",
+  "lines": [
+   438,
+   439
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.decodeVar_encodeVar",
+  "source_name": "MIPRE.TM.CookLevin.Desc.decodeVar_encodeVar",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.decodeVar_encodeVar (T : ℕ) (v : TabVar 7 6 Sym Ctl (Sof e) G) :\n    decodeVar e G (fieldsOf e G T (encodeVar e G v)) = some v := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost",
+   "variable (e G : ℕ)"
+  ],
+  "docstring": "**Decoding inverts encoding.**",
+  "module": "MIPRE.TM.CookLevin.Layout",
+  "module_doc": "/-!\n# The variable format of the describer\n\nThe binary format of the variables of the Cook–Levin tableau of the interpreter machine\n`U` (`planning/succinct-cook-levin.md`, S3). An index is a list of `m` bits, least\nsignificant first. With its top bit set it is *structured*: a tag (3 bits), the time `t`\n(`W` bits), the tape `d` (4), the position `p` (`W`), the cell value `v` (3), the state `q`\n(`Qb`), the thirteen window centers (`13 W`) and the gate `g` (`Gb`); tags `0..6` are\n`cell`, `head`, `state`, `emitOne`, `emitBad`, `emitted`, `aux`. With its top bit clear and\nvalue `j < 4T` it is an *answer* variable: the cell at position `j' / 2 + 3` of tape `A` (for\n`j < 2T`, `j' = j`) or `B` (`j' = j - 2T`), with the value blank for `j'` even and `1` for `j'`\nodd, so that the first `4T` variables are the `tapeBits` of the two answers.\n\n`fieldsOf` reads the fields of an index, `decodeVar` the tableau variable they denote (if\nany), and `encodeVar` is the structured index of a variable; `decodeVar_encodeVar` is the\nround trip. The circuit computes exactly `fieldsOf` on its input bits (`FieldFml.lean`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Layout.lean#L451-L523",
+  "source_path": "MIPRE/TM/CookLevin/Layout.lean",
+  "lines": [
+   451,
+   523
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.bitsVal_bitsOfNat"
+  ],
+  "pasted_helpers": 24,
+  "prooflines": 70,
+  "is_target": false
+ }
+]

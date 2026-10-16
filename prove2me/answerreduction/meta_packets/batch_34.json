@@ -1,0 +1,674 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.gHatHalfSandwichRight_split_outcome",
+  "source_name": "MIPStarRE.LDT.Pasting.gHatHalfSandwichRight_split_outcome",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.gHatHalfSandwichRight_split_outcome\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι) (k : ℕ)\n    (xs : PointTuple params (k + 1))\n    (gs : GHatTupleOutcome params (k + 1)) :\n    (gHatHalfSandwichRight params family (k + 1) xs).outcome gs =\n      (headTailRotatedFamily params family k ((pointTupleConsEquiv params k) xs)).outcome\n        ((gHatTupleOutcomeConsEquiv' params k) gs) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.Definitions",
+  "module_doc": "/-!\n# Section 12 pasting: commute G half-sandwich setup — definitions\n\nTuple equivalences, operator definitions, and family constructions for the half-sandwich\ncommutation chain. This module contains all `def`/`noncomputable def` declarations and small\nhelper lemmas used by the sum-bound and step-commutation submodules.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/Definitions.lean#L213-L224",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/Definitions.lean",
+  "lines": [
+   213,
+   224
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.sddOpRel_uniform_equiv",
+  "source_name": "MIPStarRE.LDT.Pasting.sddOpRel_uniform_equiv",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.sddOpRel_uniform_equiv\n    {α β Outcome : Type*}\n    [Fintype α] [DecidableEq α] [Nonempty α]\n    [Fintype β] [DecidableEq β] [Nonempty β]\n    [Fintype Outcome]\n    (e : α ≃ β)\n    (ψ : QuantumState (ι × ι))\n    (A B : IdxOpFamily α Outcome (ι × ι))\n    (δ : Error) :\n    SDDOpRel ψ (uniformDistribution α) A B δ ↔\n      SDDOpRel ψ (uniformDistribution β)\n        (fun b => A (e.symm b))\n        (fun b => B (e.symm b))\n        δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.Definitions",
+  "module_doc": "/-!\n# Section 12 pasting: commute G half-sandwich setup — definitions\n\nTuple equivalences, operator definitions, and family constructions for the half-sandwich\ncommutation chain. This module contains all `def`/`noncomputable def` declarations and small\nhelper lemmas used by the sum-bound and step-commutation submodules.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/Definitions.lean#L236-L266",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/Definitions.lean",
+  "lines": [
+   236,
+   266
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_equiv"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.gHatPairProduct_sddOpRel_triple",
+  "source_name": "MIPStarRE.LDT.Pasting.gHatPairProduct_sddOpRel_triple",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.gHatPairProduct_sddOpRel_triple\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error) (r : ℕ)\n    (hcom : SDDOpRel ψbi\n      (uniformDistribution (SlicePairQuestion params))\n      (gHatPairProductLeft params family)\n      (gHatPairProductRight params family)\n      (gHatCommutationError params gamma zeta)) :\n    SDDOpRel ψbi\n      (uniformDistribution (SliceQuestion params × SliceQuestion params × PointTuple params r))\n      (fun q => gHatPairProductLeft params family (q.1, q.2.1))\n      (fun q => gHatPairProductRight params family (q.1, q.2.1))\n      (gHatCommutationError params gamma zeta) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.Definitions",
+  "module_doc": "/-!\n# Section 12 pasting: commute G half-sandwich setup — definitions\n\nTuple equivalences, operator definitions, and family constructions for the half-sandwich\ncommutation chain. This module contains all `def`/`noncomputable def` declarations and small\nhelper lemmas used by the sum-bound and step-commutation submodules.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/Definitions.lean#L312-L345",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/Definitions.lean",
+  "lines": [
+   312,
+   345
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_fst",
+   "MIPStarRE.LDT.Pasting.sddOpRel_uniform_equiv"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_moveSource_eq_split",
+  "source_name": "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_moveSource_eq_split",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.commuteGHalfSandwich_moveSource_eq_split\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι) (r : ℕ)\n    (q : SliceQuestion params × SliceQuestion params × PointTuple params r)\n    (ogs : GHatOutcome params × GHatOutcome params × GHatTupleOutcome params r) :\n    (commuteGHalfSandwich_moveSourceFamily params family r q).outcome ogs =\n      (headTailOrderedFamily params family (r + 1) (q.1, Fin.cons q.2.1 q.2.2)).outcome\n        (ogs.1, Fin.cons ogs.2.1 ogs.2.2) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.Definitions",
+  "module_doc": "/-!\n# Section 12 pasting: commute G half-sandwich setup — definitions\n\nTuple equivalences, operator definitions, and family constructions for the half-sandwich\ncommutation chain. This module contains all `def`/`noncomputable def` declarations and small\nhelper lemmas used by the sum-bound and step-commutation submodules.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/Definitions.lean#L599-L630",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/Definitions.lean",
+  "lines": [
+   599,
+   630
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_step_commute",
+  "source_name": "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_step_commute",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.commuteGHalfSandwich_step_commute\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error) (r : ℕ)\n    (hcom : SDDOpRel ψbi\n      (uniformDistribution (SlicePairQuestion params))\n      (gHatPairProductLeft params family)\n      (gHatPairProductRight params family)\n      (gHatCommutationError params gamma zeta)) :\n    SDDOpRel ψbi\n      (uniformDistribution (SliceQuestion params × SliceQuestion params × PointTuple params r))\n      (commuteGHalfSandwich_moveFamily params family r)\n      (commuteGHalfSandwich_commuteFamily params family r)\n      (gHatCommutationError params gamma zeta) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.StepLemmas.Move",
+  "module_doc": "/-!\n# Section 12 pasting: commute G half-sandwich move lemmas\n\nThis module contains the move-chain lemmas for the half-sandwich commutation\nchain.  The split reindexing lemmas and the two-term base case are kept in\n`StepLemmas.Split`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/StepLemmas/Move.lean#L99-L234",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/StepLemmas/Move.lean",
+  "lines": [
+   99,
+   234
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.rightTensor_mul_rightTensor",
+   "MIPStarRE.LDT.rightTensor_le_one",
+   "MIPStarRE.LDT.rightTensor_finset_sum",
+   "MIPStarRE.LDT.CommutativityPoints.sddOpRel_reindex",
+   "MIPStarRE.LDT.CommutativityPoints.sddOpRel_congr_outcome",
+   "MIPStarRE.LDT.Pasting.gHatPairProduct_sddOpRel_triple",
+   "MIPStarRE.LDT.Pasting.gHatReverseHalfProduct_sum_adjoint_mul_le_one",
+   "MIPStarRE.LDT.Preliminaries.cabApproxDelta_raw"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 121,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_moveStepMid_toTarget",
+  "source_name": "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_moveStepMid_toTarget",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.commuteGHalfSandwich_moveStepMid_toTarget\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (zeta : Error) (r : ℕ)\n    (hsc : SDDRel ψbi\n      (uniformDistribution (SliceQuestion params))\n      (gHatSelfConsistencyLeftFamily params family)\n      (gHatSelfConsistencyRightFamily params family)\n      (gHatSelfConsistencyError zeta)) :\n    SDDOpRel ψbi\n      (uniformDistribution\n        (SliceQuestion params × SliceQuestion params × SliceQuestion params × PointTuple params r))\n      (commuteGHalfSandwich_moveStepMidFamily params family r)\n      (commuteGHalfSandwich_moveStepTargetFamily params family r)\n      (gHatSelfConsistencyError zeta) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.StepLemmas.Move",
+  "module_doc": "/-!\n# Section 12 pasting: commute G half-sandwich move lemmas\n\nThis module contains the move-chain lemmas for the half-sandwich commutation\nchain.  The split reindexing lemmas and the two-term base case are kept in\n`StepLemmas.Split`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/StepLemmas/Move.lean#L433-L603",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/StepLemmas/Move.lean",
+  "lines": [
+   433,
+   603
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_fst",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.rightTensor_mul_rightTensor",
+   "MIPStarRE.LDT.CommutativityPoints.sddOpRel_reindex",
+   "MIPStarRE.LDT.CommutativityPoints.sddOpRel_congr_outcome",
+   "MIPStarRE.LDT.Pasting.sddOpRel_uniform_equiv",
+   "MIPStarRE.LDT.Pasting.gHatPairPrefix_sum_adjoint_mul_le_one",
+   "MIPStarRE.LDT.Pasting.leftTensor_rightTensor_sum_adjoint_mul_le_one",
+   "MIPStarRE.LDT.Pasting.gHatReverseHalfProduct_sum_adjoint_mul_le_one",
+   "MIPStarRE.LDT.Preliminaries.cabApproxDelta_raw"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 155,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_split_iff",
+  "source_name": "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_split_iff",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.commuteGHalfSandwich_split_iff\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι) (k : ℕ) (δ : Error) :\n    SDDOpRel ψbi\n      (uniformDistribution (PointTuple params (k + 1)))\n      (gHatHalfSandwichLeft params family (k + 1))\n      (gHatHalfSandwichRight params family (k + 1))\n      δ ↔\n    SDDOpRel ψbi\n      (uniformDistribution (SliceQuestion params × PointTuple params k))\n      (headTailOrderedFamily params family k)\n      (headTailRotatedFamily params family k)\n      δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.StepLemmas.Split",
+  "module_doc": "/-!\n# Section 12 pasting: commute G half-sandwich split lemmas\n\nThis module contains the split reindexing lemmas and the two-term base case for\nthe half-sandwich commutation chain.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/StepLemmas/Split.lean#L156-L215",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/StepLemmas/Split.lean",
+  "lines": [
+   156,
+   215
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.CommutativityPoints.sddOpRel_reindex",
+   "MIPStarRE.LDT.CommutativityPoints.sddOpRel_congr_outcome",
+   "MIPStarRE.LDT.Pasting.sddOpRel_uniform_equiv"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 46,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_split_one_iff",
+  "source_name": "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_split_one_iff",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.commuteGHalfSandwich_split_one_iff\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι) (δ : Error) :\n    SDDOpRel ψbi\n      (uniformDistribution (SliceQuestion params × PointTuple params 1))\n      (headTailOrderedFamily params family 1)\n      (headTailRotatedFamily params family 1)\n      δ ↔\n    SDDOpRel ψbi\n      (uniformDistribution (SlicePairQuestion params))\n      (gHatPairProductLeft params family)\n      (gHatPairProductRight params family)\n      δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.StepLemmas.Split",
+  "module_doc": "/-!\n# Section 12 pasting: commute G half-sandwich split lemmas\n\nThis module contains the split reindexing lemmas and the two-term base case for\nthe half-sandwich commutation chain.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/StepLemmas/Split.lean#L217-L276",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/StepLemmas/Split.lean",
+  "lines": [
+   217,
+   276
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.CommutativityPoints.sddOpRel_reindex",
+   "MIPStarRE.LDT.CommutativityPoints.sddOpRel_congr_outcome",
+   "MIPStarRE.LDT.Pasting.sddOpRel_uniform_equiv"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 46,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_core_two",
+  "source_name": "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_core_two",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.commuteGHalfSandwich_core_two\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error)\n    (hcom : SDDOpRel ψbi\n      (uniformDistribution (SlicePairQuestion params))\n      (gHatPairProductLeft params family)\n      (gHatPairProductRight params family)\n      (gHatCommutationError params gamma zeta)) :\n    SDDOpRel ψbi\n      (uniformDistribution (PointTuple params 2))\n      (gHatHalfSandwichLeft params family 2)\n      (gHatHalfSandwichRight params family 2)\n      (commuteGHalfSandwichError params gamma zeta 2) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.StepLemmas.Split",
+  "module_doc": "/-!\n# Section 12 pasting: commute G half-sandwich split lemmas\n\nThis module contains the split reindexing lemmas and the two-term base case for\nthe half-sandwich commutation chain.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/StepLemmas/Split.lean#L278-L343",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/StepLemmas/Split.lean",
+  "lines": [
+   278,
+   343
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_nonneg",
+   "MIPStarRE.LDT.ev_adjoint_self_nonneg",
+   "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_split_iff",
+   "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_split_one_iff"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 51,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.gHatHalfProduct_sum_adjoint_mul_le_one",
+  "source_name": "MIPStarRE.LDT.Pasting.gHatHalfProduct_sum_adjoint_mul_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.gHatHalfProduct_sum_adjoint_mul_le_one\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι) :\n    ∀ r (xs : PointTuple params r),\n      ∑ gs : GHatTupleOutcome params r,\n          (gHatHalfProductOutcomeOperator params family r xs gs)ᴴ *\n            gHatHalfProductOutcomeOperator params family r xs gs ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.SumBounds",
+  "module_doc": "/-!\n# Section 12 pasting: commute G half-sandwich setup — sum bounds\n\nSum-of-adjoint-products `≤ 1` bounds for the half-product, reverse-half-product,\npair-prefix, and bipartite tensor families. Also contains the error-envelope bound\n`commuteGHalfSandwich_error_bound` and its helper `rpow_oneSixteenth_nonneg`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/SumBounds.lean#L148-L213",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/SumBounds.lean",
+  "lines": [
+   148,
+   213
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Measurement.outcome_hermitian",
+   "MIPStarRE.LDT.Pasting.gHatIdxMeas_proj"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 59,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.gHatReverseHalfProduct_sum_adjoint_mul_le_one",
+  "source_name": "MIPStarRE.LDT.Pasting.gHatReverseHalfProduct_sum_adjoint_mul_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.gHatReverseHalfProduct_sum_adjoint_mul_le_one\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι) :\n    ∀ r (xs : PointTuple params r),\n      ∑ gs : GHatTupleOutcome params r,\n          (gHatReverseHalfProductOutcomeOperator params family r xs gs)ᴴ *\n            gHatReverseHalfProductOutcomeOperator params family r xs gs ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.SumBounds",
+  "module_doc": "/-!\n# Section 12 pasting: commute G half-sandwich setup — sum bounds\n\nSum-of-adjoint-products `≤ 1` bounds for the half-product, reverse-half-product,\npair-prefix, and bipartite tensor families. Also contains the error-envelope bound\n`commuteGHalfSandwich_error_bound` and its helper `rpow_oneSixteenth_nonneg`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/SumBounds.lean#L215-L292",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/SumBounds.lean",
+  "lines": [
+   215,
+   292
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Measurement.outcome_hermitian",
+   "MIPStarRE.LDT.Pasting.gHatIdxMeas_proj"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 71,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.rpow_oneSixteenth_nonneg",
+  "source_name": "MIPStarRE.LDT.Pasting.rpow_oneSixteenth_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.rpow_oneSixteenth_nonneg (x : Error) :\n    0 ≤ Real.rpow x (1 / (16 : Error)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The fixed paper exponent `1/16` keeps `Real.rpow` nonnegative even on the\nnegative branch, because `cos (π / 16) > 0`. This lets the `commuteGHalfSandwich`\nerror envelopes avoid threading an extra `0 ≤ gamma` hypothesis.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.SumBounds",
+  "module_doc": "/-!\n# Section 12 pasting: commute G half-sandwich setup — sum bounds\n\nSum-of-adjoint-products `≤ 1` bounds for the half-product, reverse-half-product,\npair-prefix, and bipartite tensor families. Also contains the error-envelope bound\n`commuteGHalfSandwich_error_bound` and its helper `rpow_oneSixteenth_nonneg`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/SumBounds.lean#L297-L312",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/SumBounds.lean",
+  "lines": [
+   297,
+   312
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_error_bound",
+  "source_name": "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_error_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.commuteGHalfSandwich_error_bound\n    (params : Parameters) [FieldModel params.q]\n    (gamma zeta : Error) (k : ℕ)\n    (hzeta_nonneg : 0 ≤ zeta)\n    (hzeta_le : zeta ≤ 1) :\n    3 * (k : Error) *\n      (4 * (k : Error) * zeta + (k : Error) * gHatCommutationError params gamma zeta)\n      ≤ commuteGHalfSandwichError params gamma zeta k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.SumBounds",
+  "module_doc": "/-!\n# Section 12 pasting: commute G half-sandwich setup — sum bounds\n\nSum-of-adjoint-products `≤ 1` bounds for the half-product, reverse-half-product,\npair-prefix, and bipartite tensor families. Also contains the error-envelope bound\n`commuteGHalfSandwich_error_bound` and its helper `rpow_oneSixteenth_nonneg`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/SumBounds.lean#L314-L375",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/SumBounds.lean",
+  "lines": [
+   314,
+   375
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.rpow_oneSixteenth_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 54,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.gHatPairPrefix_sum_adjoint_mul_le_one",
+  "source_name": "MIPStarRE.LDT.Pasting.gHatPairPrefix_sum_adjoint_mul_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.gHatPairPrefix_sum_adjoint_mul_le_one\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι) (q : SlicePairQuestion params) :\n    ∑ og : GHatOutcome params × GHatOutcome params,\n        ((((gHatIdxMeas params family q.1).outcome og.1) *\n            ((gHatIdxMeas params family q.2).outcome og.2))ᴴ) *\n          (((gHatIdxMeas params family q.1).outcome og.1) *\n            ((gHatIdxMeas params family q.2).outcome og.2)) ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.SumBounds",
+  "module_doc": "/-!\n# Section 12 pasting: commute G half-sandwich setup — sum bounds\n\nSum-of-adjoint-products `≤ 1` bounds for the half-product, reverse-half-product,\npair-prefix, and bipartite tensor families. Also contains the error-envelope bound\n`commuteGHalfSandwich_error_bound` and its helper `rpow_oneSixteenth_nonneg`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/SumBounds.lean#L379-L414",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/SumBounds.lean",
+  "lines": [
+   379,
+   414
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.gHatHalfProduct_sum_adjoint_mul_le_one"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.leftTensor_rightTensor_sum_adjoint_mul_le_one",
+  "source_name": "MIPStarRE.LDT.Pasting.leftTensor_rightTensor_sum_adjoint_mul_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.leftTensor_rightTensor_sum_adjoint_mul_le_one\n    {α β : Type*}\n    [Fintype α]\n    [Fintype β]\n    (prefixOp : α → MIPStarRE.Quantum.Op ι)\n    (tailOp : β → MIPStarRE.Quantum.Op ι)\n    (hprefix : ∑ a : α, (prefixOp a)ᴴ * prefixOp a ≤ 1)\n    (htail : ∑ b : β, (tailOp b)ᴴ * tailOp b ≤ 1) :\n    ∑ ag : α × β,\n        (leftTensor (ι₂ := ι) (prefixOp ag.1) *\n            rightTensor (ι₁ := ι) (tailOp ag.2))ᴴ *\n          (leftTensor (ι₂ := ι) (prefixOp ag.1) *\n            rightTensor (ι₁ := ι) (tailOp ag.2)) ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Generic tensor-contraction bound: if `prefixOp : α → Op ι` and\n`tailOp : β → Op ι` each satisfy `∑ (·)ᴴ * (·) ≤ 1`, then the joint family\n`leftTensor (prefixOp a) * rightTensor (tailOp b)` on `α × β` also satisfies\n`∑ (·)ᴴ * (·) ≤ 1` on the bipartite space.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.CommuteGHalfSandwich.Setup.SumBounds",
+  "module_doc": "/-!\n# Section 12 pasting: commute G half-sandwich setup — sum bounds\n\nSum-of-adjoint-products `≤ 1` bounds for the half-product, reverse-half-product,\npair-prefix, and bipartite tensor families. Also contains the error-envelope bound\n`commuteGHalfSandwich_error_bound` and its helper `rpow_oneSixteenth_nonneg`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/SumBounds.lean#L416-L494",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/CommuteGHalfSandwich/Setup/SumBounds.lean",
+  "lines": [
+   416,
+   494
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.opTensor_le_leftTensor",
+   "MIPStarRE.LDT.opTensor_mul",
+   "MIPStarRE.LDT.leftTensor_le_one",
+   "MIPStarRE.LDT.leftTensor_finset_sum",
+   "MIPStarRE.LDT.rightTensor_finset_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 62,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.hAConsistency_submeas",
+  "source_name": "MIPStarRE.LDT.Pasting.hAConsistency_submeas",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.hAConsistency_submeas\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma zeta : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (hgamma_le : gamma ≤ 1)\n    (hzeta_le : zeta ≤ 1)\n    (hdq_le : params.d ≤ params.q)\n    (hd : 0 < params.d)\n    (family : IdxPolyFamily params ι)\n    (hcons : family.ConsistentWithPoints strategy zeta)\n    (hself : family.StronglySelfConsistent strategy.state zeta)\n    (hbound : IdxPolyFamily.SliceBoundednessInput strategy family zeta)\n    (k : ℕ)\n    (hk_pos : 1 ≤ k) :\n    ConsRel strategy.state (uniformDistribution (Point params.next))\n        (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)\n        (polynomialEvaluationFamily params.next\n          (constructedPastedSubMeas params family k))\n        (MainInductionStep.ldPastingInInductionNu params k\n          eps delta gamma zeta) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "`cor:h-a-consistency`.\n\nThis is the point-consistency part of the pasted-submeasurement chain.  The\ncompleted-measurement consistency is deliberately separated as\n`hAConsistency_completed`, since the paper proves it only after\n`cor:ld-pasting-N-completeness`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.HAConsistency",
+  "module_doc": "/-!\n# Section 12 pasting: H-A consistency\n\nVertical-line to point-consistency transport and completed-measurement statement for\n`cor:h-a-consistency`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/HAConsistency.lean#L461-L506",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/HAConsistency.lean",
+  "lines": [
+   461,
+   506
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_core",
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_core_of_axis_self",
+   "MIPStarRE.LDT.Pasting.gHatFacts",
+   "MIPStarRE.LDT.bipartiteConsError_nonneg",
+   "MIPStarRE.LDT.gamma_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.hAConsistency_completed_from_submeas",
+  "source_name": "MIPStarRE.LDT.Pasting.hAConsistency_completed_from_submeas",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.hAConsistency_completed_from_submeas\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma kappa zeta : Error)\n    (H : SubMeas (Polynomial params.next) ι)\n    (k : ℕ)\n    (hsubmeas :\n      ConsRel strategy.state (uniformDistribution (Point params.next))\n        (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)\n        (polynomialEvaluationFamily params.next H)\n        (MainInductionStep.ldPastingInInductionNu params k\n          eps delta gamma zeta))\n    (hcomplete :\n      CompletenessAtLeast strategy.state H.liftLeft\n        (ldPastingCompletenessLowerBound params kappa\n          (MainInductionStep.ldPastingInInductionNu params k\n            eps delta gamma zeta) k)) :\n    ConsRel strategy.state (uniformDistribution (Point params.next))\n      (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)\n      (polynomialEvaluationFamily params.next\n        (Preliminaries.completeAtOutcome H (pastedFallbackOutcome params)).toSubMeas)\n      (MainInductionStep.ldPastingInInductionError params k\n        eps delta gamma kappa zeta) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Complete a polynomial submeasurement after its point consistency and mass\nlower bound have been proved.\n\nThis is the completion step in `cor:h-a-consistency`, stated for an arbitrary\nsubmeasurement `H`.  The source argument first proves point consistency for a\nsubmeasurement and then completes it by adding the missing mass to a fixed\nfallback polynomial.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.HAConsistency",
+  "module_doc": "/-!\n# Section 12 pasting: H-A consistency\n\nVertical-line to point-consistency transport and completed-measurement statement for\n`cor:h-a-consistency`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/HAConsistency.lean#L508-L629",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/HAConsistency.lean",
+  "lines": [
+   508,
+   629
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_const",
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.Preliminaries.evaluateAt_completeAtOutcome",
+   "MIPStarRE.LDT.Preliminaries.qBipartiteConsDefect_completeAtOutcome_right_le",
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 91,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.qBipartiteLinearConsDefect_option_eq_sum_some_complement",
+  "source_name": "MIPStarRE.LDT.Pasting.qBipartiteLinearConsDefect_option_eq_sum_some_complement",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.qBipartiteLinearConsDefect_option_eq_sum_some_complement\n    {α ιA ιB : Type*}\n    [Fintype α] [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    (ψ : QuantumState (ιA × ιB))\n    (A : SubMeas (Option α) ιA) (B : SubMeas (Option α) ιB)\n    (hBtotal : B.total = 1)\n    (hAnone : A.outcome none = 0) (hBnone : B.outcome none = 0) :\n    qBipartiteLinearConsDefect ψ A B =\n      ∑ a : α, ev ψ (opTensor (A.outcome (some a)) (1 - B.outcome (some a))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "For option-valued families with no `none` mass, the linear bipartite\nconsistency defect is the paper's sum against the complementary right outcome.\n\nThis is the bookkeeping step that rewrites\n`⟨ψ|A_total ⊗ B_total|ψ⟩ - Σ_o ⟨ψ|A_o ⊗ B_o|ψ⟩` as\n`Σ_a ⟨ψ|A_a ⊗ (I - B_a)|ψ⟩` when Bob's family is a measurement and both\n`none` outcomes vanish.\n\nInternal helper for the `LdSandwichLineOnePoint` Cauchy--Schwarz setup;\nexposed for a future file-split (`#1127`).",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.CSSetup",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — Cauchy-Schwarz setup\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CSSetup.lean#L90-L143",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CSSetup.lean",
+  "lines": [
+   90,
+   143
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.ev_zero",
+   "MIPStarRE.LDT.opTensor_sum_left_univ"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.qBipartiteLinearConsDefect_nonneg_of_right_total_one",
+  "source_name": "MIPStarRE.LDT.Pasting.qBipartiteLinearConsDefect_nonneg_of_right_total_one",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.qBipartiteLinearConsDefect_nonneg_of_right_total_one\n    {Outcome : Type*}\n    {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype Outcome]\n    (ψ : QuantumState (ιA × ιB))\n    (A : SubMeas Outcome ιA) (B : SubMeas Outcome ιB)\n    (hBtotal : B.total = 1) :\n    0 ≤ qBipartiteLinearConsDefect ψ A B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The linear consistency defect is nonnegative when the right-hand family is a\nmeasurement.  This lets the paper's averaged linear estimate feed the `max 0`\n`qBipartiteConsDefect` maximum form without needing a pointwise absolute-value gap.\n\nInternal helper for the `LdSandwichLineOnePoint` Cauchy--Schwarz setup;\nexposed for a future file-split (`#1127`).",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.CSSetup",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — Cauchy-Schwarz setup\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CSSetup.lean#L145-L178",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CSSetup.lean",
+  "lines": [
+   145,
+   178
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.opTensor_le_leftTensor",
+   "MIPStarRE.LDT.SubMeas.outcome_le_one",
+   "MIPStarRE.LDT.leftTensor_finset_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.bipartiteConsError_le_of_linearDefect_average_bound",
+  "source_name": "MIPStarRE.LDT.Pasting.bipartiteConsError_le_of_linearDefect_average_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.bipartiteConsError_le_of_linearDefect_average_bound\n    {Question Outcome : Type*}\n    {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype Outcome]\n    (ψ : QuantumState (ιA × ιB)) (𝒟 : Distribution Question)\n    (A B : IdxSubMeas Question Outcome ιA)\n    (C : IdxSubMeas Question Outcome ιB)\n    (η : Error)\n    (hCtotal : ∀ q, (C q).total = 1)\n    (hgap :\n      avgOver 𝒟 (fun q => qBipartiteLinearConsDefect ψ (A q) (C q)) ≤\n        avgOver 𝒟 (fun q => qBipartiteLinearConsDefect ψ (B q) (C q)) + η) :\n    bipartiteConsError ψ 𝒟 A C ≤ bipartiteConsError ψ 𝒟 B C + η := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "If the averaged linear consistency-defect comparison holds and the right\nfamily is measurement-valued, then the averaged `max 0` bipartite consistency\nerror comparison follows.\n\nThis is the paper-faithful formulation of `lem:ld-sandwich-line-one-point`: the\nCauchy--Schwarz argument controls an averaged linear expression, not an average\nof pointwise absolute values.  Nonnegativity of the linear defects removes the\nouter `max 0`.\n\nInternal helper for the `LdSandwichLineOnePoint` Cauchy--Schwarz setup;\nexposed for a future file-split (`#1127`).",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.CSSetup",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — Cauchy-Schwarz setup\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CSSetup.lean#L180-L222",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CSSetup.lean",
+  "lines": [
+   180,
+   222
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.Pasting.qBipartiteLinearConsDefect_nonneg_of_right_total_one"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ }
+]

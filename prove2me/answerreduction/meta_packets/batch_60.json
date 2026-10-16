@@ -1,0 +1,635 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.truncate_reindex",
+  "source_name": "MIPRE.CL.CLFun.truncate_reindex",
+  "formal_statement": "theorem MIPRE.CL.CLFun.truncate_reindex (e : ι ≃ ι') (k : ℕ) (P : CLFun F ι ℓ) :\n    (P.reindex e).truncate k = (P.truncate k).reindex e := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "variable {K : Type*} [Field K] {F : Type*} [Field F] [Algebra K F]",
+   "variable {ι ι' : Type*} {κ : Type*} [Fintype κ]",
+   "variable [DecidableEq ι] [DecidableEq κ]",
+   "variable [DecidableEq ι']",
+   "variable {ℓ : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.Downsize",
+  "module_doc": "/-!\n# Downsizing conditionally linear functions, and reindexing\n\nPaper `linear.tex`, `def:cl-downsize`, `lem:cl-downsize` and `lem:downsize-cl-dist`; blueprint\n`lem:cl-downsize`. The CL functions of the pipeline are native to `𝔽_{2^t}` (the low-degree\ntests, the introspection sampler), while samplers of normal form verifiers are over `𝔽₂`\n(`def:sampler`). *Downsizing* bridges the two: a basis `b` of a field `F` over a subfield `K`\ngives the `K`-linear bijection `↓ : F^ι ≃ K^{ι × κ}` reading off coordinates entry by entry\n(`downsizeEquiv`), and `L ↦ ↓ ∘ L ∘ ↓⁻¹` carries `ℓ`-level CL functions on `F^ι` to `ℓ`-level CL\nfunctions on `K^{ι × κ}` — on presentations, `CLFun.downsize`, whose decomposition data are\nthe downsized data of the original: register subspaces `S` become `S × κ`, stage maps are\nconjugated by `↓`, and the marginals, factor spaces and stage maps of `lem:cl-kth` correspond\n(`eval_truncate_downsize`, `factorOfPrefix_downsize`, `mapOfPrefix_downsize`). Exactness is\npreserved, and the CL distribution is pushed forward along `↓` (`clDist_downsize`).\n\nThe paper states this for admissible field sizes `q = 2^t`, `t` odd, with the self-dual\nnormal basis of blueprint `lem:self-dual-basis`. Nothing here depends on the choice of basis:\nthe self-duality matters for the *arithmetic* of `𝔽_{2^t}` to be computable from `𝔽₂`-data\nby the programs that use it, which is a matter for the efficient-computability toolkit. The\npaper's downsized *sampler* (`def:downsize_sampler`), a machine wrapping a sampler over\n`𝔽_{2^t}`, has no counterpart: samplers are over `𝔽₂` by definition, and a construction native\nto `𝔽_{2^t}` is to present the downsized CL functions directly.\n\nThe second half of the file is the transport of presentations along a bijection of\ncoordinates `e : ι ≃ ι'` (`reindexEquiv`, `CLFun.reindex`), with the same list of lemmas; it is\nthe identification `K^{ι × κ} = K^{|ι| · |κ|}` the paper leaves implicit, and it is what puts a\ndownsized presentation on the coordinates `Fin (s · t)` of a sampler.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Downsize.lean#L278-L291",
+  "source_path": "MIPRE/Foundations/CL/Downsize.lean",
+  "lines": [
+   278,
+   291
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.eval_truncate_downsize",
+  "source_name": "MIPRE.CL.CLFun.eval_truncate_downsize",
+  "formal_statement": "theorem MIPRE.CL.CLFun.eval_truncate_downsize (b : Module.Basis κ K F) (k : ℕ) (P : CLFun F ι ℓ) (x : ι → F) :\n    ((P.downsize b).truncate k).eval (downsizeEquiv b x) =\n      downsizeEquiv b ((P.truncate k).eval x) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "variable {K : Type*} [Field K] {F : Type*} [Field F] [Algebra K F]",
+   "variable {ι ι' : Type*} {κ : Type*} [Fintype κ]",
+   "variable [DecidableEq ι] [DecidableEq κ]",
+   "variable [Fintype ι]",
+   "variable {ℓ : ℕ}"
+  ],
+  "docstring": "Item 1 of `lem:cl-downsize`: the marginals of `L^↓` are the downsized marginals of `L`.",
+  "module": "MIPRE.Foundations.CL.Downsize",
+  "module_doc": "/-!\n# Downsizing conditionally linear functions, and reindexing\n\nPaper `linear.tex`, `def:cl-downsize`, `lem:cl-downsize` and `lem:downsize-cl-dist`; blueprint\n`lem:cl-downsize`. The CL functions of the pipeline are native to `𝔽_{2^t}` (the low-degree\ntests, the introspection sampler), while samplers of normal form verifiers are over `𝔽₂`\n(`def:sampler`). *Downsizing* bridges the two: a basis `b` of a field `F` over a subfield `K`\ngives the `K`-linear bijection `↓ : F^ι ≃ K^{ι × κ}` reading off coordinates entry by entry\n(`downsizeEquiv`), and `L ↦ ↓ ∘ L ∘ ↓⁻¹` carries `ℓ`-level CL functions on `F^ι` to `ℓ`-level CL\nfunctions on `K^{ι × κ}` — on presentations, `CLFun.downsize`, whose decomposition data are\nthe downsized data of the original: register subspaces `S` become `S × κ`, stage maps are\nconjugated by `↓`, and the marginals, factor spaces and stage maps of `lem:cl-kth` correspond\n(`eval_truncate_downsize`, `factorOfPrefix_downsize`, `mapOfPrefix_downsize`). Exactness is\npreserved, and the CL distribution is pushed forward along `↓` (`clDist_downsize`).\n\nThe paper states this for admissible field sizes `q = 2^t`, `t` odd, with the self-dual\nnormal basis of blueprint `lem:self-dual-basis`. Nothing here depends on the choice of basis:\nthe self-duality matters for the *arithmetic* of `𝔽_{2^t}` to be computable from `𝔽₂`-data\nby the programs that use it, which is a matter for the efficient-computability toolkit. The\npaper's downsized *sampler* (`def:downsize_sampler`), a machine wrapping a sampler over\n`𝔽_{2^t}`, has no counterpart: samplers are over `𝔽₂` by definition, and a construction native\nto `𝔽_{2^t}` is to present the downsized CL functions directly.\n\nThe second half of the file is the transport of presentations along a bijection of\ncoordinates `e : ι ≃ ι'` (`reindexEquiv`, `CLFun.reindex`), with the same list of lemmas; it is\nthe identification `K^{ι × κ} = K^{|ι| · |κ|}` the paper leaves implicit, and it is what puts a\ndownsized presentation on the coordinates `Fin (s · t)` of a sampler.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Downsize.lean#L324-L328",
+  "source_path": "MIPRE/Foundations/CL/Downsize.lean",
+  "lines": [
+   324,
+   328
+  ],
+  "blueprint": [
+   {
+    "label": "lem:cl-downsize",
+    "env": "lemma",
+    "title": "Downsizing",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 5,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.factorOfPrefix_downsize",
+  "source_name": "MIPRE.CL.CLFun.factorOfPrefix_downsize",
+  "formal_statement": "theorem MIPRE.CL.CLFun.factorOfPrefix_downsize (b : Module.Basis κ K F) (P : CLFun F ι ℓ) (k : ℕ)\n    (u : ι → F) :\n    (P.downsize b).factorOfPrefix k (downsizeEquiv b u) =\n      P.factorOfPrefix k u ×ˢ Finset.univ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "variable {K : Type*} [Field K] {F : Type*} [Field F] [Algebra K F]",
+   "variable {ι ι' : Type*} {κ : Type*} [Fintype κ]",
+   "variable [DecidableEq ι] [DecidableEq κ]",
+   "variable [Fintype ι]",
+   "variable {ℓ : ℕ}"
+  ],
+  "docstring": "Item 2 of `lem:cl-downsize`, factor spaces: `V^↓_{k, ↓u} = V_{k,u} × κ`.",
+  "module": "MIPRE.Foundations.CL.Downsize",
+  "module_doc": "/-!\n# Downsizing conditionally linear functions, and reindexing\n\nPaper `linear.tex`, `def:cl-downsize`, `lem:cl-downsize` and `lem:downsize-cl-dist`; blueprint\n`lem:cl-downsize`. The CL functions of the pipeline are native to `𝔽_{2^t}` (the low-degree\ntests, the introspection sampler), while samplers of normal form verifiers are over `𝔽₂`\n(`def:sampler`). *Downsizing* bridges the two: a basis `b` of a field `F` over a subfield `K`\ngives the `K`-linear bijection `↓ : F^ι ≃ K^{ι × κ}` reading off coordinates entry by entry\n(`downsizeEquiv`), and `L ↦ ↓ ∘ L ∘ ↓⁻¹` carries `ℓ`-level CL functions on `F^ι` to `ℓ`-level CL\nfunctions on `K^{ι × κ}` — on presentations, `CLFun.downsize`, whose decomposition data are\nthe downsized data of the original: register subspaces `S` become `S × κ`, stage maps are\nconjugated by `↓`, and the marginals, factor spaces and stage maps of `lem:cl-kth` correspond\n(`eval_truncate_downsize`, `factorOfPrefix_downsize`, `mapOfPrefix_downsize`). Exactness is\npreserved, and the CL distribution is pushed forward along `↓` (`clDist_downsize`).\n\nThe paper states this for admissible field sizes `q = 2^t`, `t` odd, with the self-dual\nnormal basis of blueprint `lem:self-dual-basis`. Nothing here depends on the choice of basis:\nthe self-duality matters for the *arithmetic* of `𝔽_{2^t}` to be computable from `𝔽₂`-data\nby the programs that use it, which is a matter for the efficient-computability toolkit. The\npaper's downsized *sampler* (`def:downsize_sampler`), a machine wrapping a sampler over\n`𝔽_{2^t}`, has no counterpart: samplers are over `𝔽₂` by definition, and a construction native\nto `𝔽_{2^t}` is to present the downsized CL functions directly.\n\nThe second half of the file is the transport of presentations along a bijection of\ncoordinates `e : ι ≃ ι'` (`reindexEquiv`, `CLFun.reindex`), with the same list of lemmas; it is\nthe identification `K^{ι × κ} = K^{|ι| · |κ|}` the paper leaves implicit, and it is what puts a\ndownsized presentation on the coordinates `Fin (s · t)` of a sampler.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Downsize.lean#L330-L342",
+  "source_path": "MIPRE/Foundations/CL/Downsize.lean",
+  "lines": [
+   330,
+   342
+  ],
+  "blueprint": [
+   {
+    "label": "lem:cl-downsize",
+    "env": "lemma",
+    "title": "Downsizing",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 8,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.mapOfPrefix_downsize",
+  "source_name": "MIPRE.CL.CLFun.mapOfPrefix_downsize",
+  "formal_statement": "theorem MIPRE.CL.CLFun.mapOfPrefix_downsize (b : Module.Basis κ K F) (P : CLFun F ι ℓ) (k : ℕ) (u : ι → F) :\n    (P.downsize b).mapOfPrefix k (downsizeEquiv b u) =\n      (downsizeEquiv (ι := ι) b).toLinearMap ∘ₗ (P.mapOfPrefix k u).restrictScalars K ∘ₗ\n        (downsizeEquiv (ι := ι) b).symm.toLinearMap := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "variable {K : Type*} [Field K] {F : Type*} [Field F] [Algebra K F]",
+   "variable {ι ι' : Type*} {κ : Type*} [Fintype κ]",
+   "variable [DecidableEq ι] [DecidableEq κ]",
+   "variable [Fintype ι]",
+   "variable {ℓ : ℕ}"
+  ],
+  "docstring": "Item 2 of `lem:cl-downsize`, linear maps: `L^↓_{k, ↓u} = ↓ ∘ L_{k,u} ∘ ↓⁻¹`.",
+  "module": "MIPRE.Foundations.CL.Downsize",
+  "module_doc": "/-!\n# Downsizing conditionally linear functions, and reindexing\n\nPaper `linear.tex`, `def:cl-downsize`, `lem:cl-downsize` and `lem:downsize-cl-dist`; blueprint\n`lem:cl-downsize`. The CL functions of the pipeline are native to `𝔽_{2^t}` (the low-degree\ntests, the introspection sampler), while samplers of normal form verifiers are over `𝔽₂`\n(`def:sampler`). *Downsizing* bridges the two: a basis `b` of a field `F` over a subfield `K`\ngives the `K`-linear bijection `↓ : F^ι ≃ K^{ι × κ}` reading off coordinates entry by entry\n(`downsizeEquiv`), and `L ↦ ↓ ∘ L ∘ ↓⁻¹` carries `ℓ`-level CL functions on `F^ι` to `ℓ`-level CL\nfunctions on `K^{ι × κ}` — on presentations, `CLFun.downsize`, whose decomposition data are\nthe downsized data of the original: register subspaces `S` become `S × κ`, stage maps are\nconjugated by `↓`, and the marginals, factor spaces and stage maps of `lem:cl-kth` correspond\n(`eval_truncate_downsize`, `factorOfPrefix_downsize`, `mapOfPrefix_downsize`). Exactness is\npreserved, and the CL distribution is pushed forward along `↓` (`clDist_downsize`).\n\nThe paper states this for admissible field sizes `q = 2^t`, `t` odd, with the self-dual\nnormal basis of blueprint `lem:self-dual-basis`. Nothing here depends on the choice of basis:\nthe self-duality matters for the *arithmetic* of `𝔽_{2^t}` to be computable from `𝔽₂`-data\nby the programs that use it, which is a matter for the efficient-computability toolkit. The\npaper's downsized *sampler* (`def:downsize_sampler`), a machine wrapping a sampler over\n`𝔽_{2^t}`, has no counterpart: samplers are over `𝔽₂` by definition, and a construction native\nto `𝔽_{2^t}` is to present the downsized CL functions directly.\n\nThe second half of the file is the transport of presentations along a bijection of\ncoordinates `e : ι ≃ ι'` (`reindexEquiv`, `CLFun.reindex`), with the same list of lemmas; it is\nthe identification `K^{ι × κ} = K^{|ι| · |κ|}` the paper leaves implicit, and it is what puts a\ndownsized presentation on the coordinates `Fin (s · t)` of a sampler.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Downsize.lean#L344-L356",
+  "source_path": "MIPRE/Foundations/CL/Downsize.lean",
+  "lines": [
+   344,
+   356
+  ],
+  "blueprint": [
+   {
+    "label": "lem:cl-downsize",
+    "env": "lemma",
+    "title": "Downsizing",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 8,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.eval_reindex",
+  "source_name": "MIPRE.CL.CLFun.eval_reindex",
+  "formal_statement": "theorem MIPRE.CL.CLFun.eval_reindex (e : ι ≃ ι') (P : CLFun F ι ℓ) (x : ι → F) :\n    (P.reindex e).eval (reindexEquiv e x) = reindexEquiv e (P.eval x) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "variable {K : Type*} [Field K] {F : Type*} [Field F] [Algebra K F]",
+   "variable {ι ι' : Type*} {κ : Type*} [Fintype κ]",
+   "variable [DecidableEq ι] [DecidableEq κ]",
+   "variable [Fintype ι]",
+   "variable [DecidableEq ι'] [Fintype ι']",
+   "variable {ℓ : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.Downsize",
+  "module_doc": "/-!\n# Downsizing conditionally linear functions, and reindexing\n\nPaper `linear.tex`, `def:cl-downsize`, `lem:cl-downsize` and `lem:downsize-cl-dist`; blueprint\n`lem:cl-downsize`. The CL functions of the pipeline are native to `𝔽_{2^t}` (the low-degree\ntests, the introspection sampler), while samplers of normal form verifiers are over `𝔽₂`\n(`def:sampler`). *Downsizing* bridges the two: a basis `b` of a field `F` over a subfield `K`\ngives the `K`-linear bijection `↓ : F^ι ≃ K^{ι × κ}` reading off coordinates entry by entry\n(`downsizeEquiv`), and `L ↦ ↓ ∘ L ∘ ↓⁻¹` carries `ℓ`-level CL functions on `F^ι` to `ℓ`-level CL\nfunctions on `K^{ι × κ}` — on presentations, `CLFun.downsize`, whose decomposition data are\nthe downsized data of the original: register subspaces `S` become `S × κ`, stage maps are\nconjugated by `↓`, and the marginals, factor spaces and stage maps of `lem:cl-kth` correspond\n(`eval_truncate_downsize`, `factorOfPrefix_downsize`, `mapOfPrefix_downsize`). Exactness is\npreserved, and the CL distribution is pushed forward along `↓` (`clDist_downsize`).\n\nThe paper states this for admissible field sizes `q = 2^t`, `t` odd, with the self-dual\nnormal basis of blueprint `lem:self-dual-basis`. Nothing here depends on the choice of basis:\nthe self-duality matters for the *arithmetic* of `𝔽_{2^t}` to be computable from `𝔽₂`-data\nby the programs that use it, which is a matter for the efficient-computability toolkit. The\npaper's downsized *sampler* (`def:downsize_sampler`), a machine wrapping a sampler over\n`𝔽_{2^t}`, has no counterpart: samplers are over `𝔽₂` by definition, and a construction native\nto `𝔽_{2^t}` is to present the downsized CL functions directly.\n\nThe second half of the file is the transport of presentations along a bijection of\ncoordinates `e : ι ≃ ι'` (`reindexEquiv`, `CLFun.reindex`), with the same list of lemmas; it is\nthe identification `K^{ι × κ} = K^{|ι| · |κ|}` the paper leaves implicit, and it is what puts a\ndownsized presentation on the coordinates `Fin (s · t)` of a sampler.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Downsize.lean#L379-L385",
+  "source_path": "MIPRE/Foundations/CL/Downsize.lean",
+  "lines": [
+   379,
+   385
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.factorOfPrefix_reindex",
+  "source_name": "MIPRE.CL.CLFun.factorOfPrefix_reindex",
+  "formal_statement": "theorem MIPRE.CL.CLFun.factorOfPrefix_reindex (e : ι ≃ ι') (P : CLFun F ι ℓ) (k : ℕ) (u : ι → F) :\n    (P.reindex e).factorOfPrefix k (reindexEquiv e u) =\n      (P.factorOfPrefix k u).map e.toEmbedding := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "variable {K : Type*} [Field K] {F : Type*} [Field F] [Algebra K F]",
+   "variable {ι ι' : Type*} {κ : Type*} [Fintype κ]",
+   "variable [DecidableEq ι] [DecidableEq κ]",
+   "variable [Fintype ι]",
+   "variable [DecidableEq ι'] [Fintype ι']",
+   "variable {ℓ : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.Downsize",
+  "module_doc": "/-!\n# Downsizing conditionally linear functions, and reindexing\n\nPaper `linear.tex`, `def:cl-downsize`, `lem:cl-downsize` and `lem:downsize-cl-dist`; blueprint\n`lem:cl-downsize`. The CL functions of the pipeline are native to `𝔽_{2^t}` (the low-degree\ntests, the introspection sampler), while samplers of normal form verifiers are over `𝔽₂`\n(`def:sampler`). *Downsizing* bridges the two: a basis `b` of a field `F` over a subfield `K`\ngives the `K`-linear bijection `↓ : F^ι ≃ K^{ι × κ}` reading off coordinates entry by entry\n(`downsizeEquiv`), and `L ↦ ↓ ∘ L ∘ ↓⁻¹` carries `ℓ`-level CL functions on `F^ι` to `ℓ`-level CL\nfunctions on `K^{ι × κ}` — on presentations, `CLFun.downsize`, whose decomposition data are\nthe downsized data of the original: register subspaces `S` become `S × κ`, stage maps are\nconjugated by `↓`, and the marginals, factor spaces and stage maps of `lem:cl-kth` correspond\n(`eval_truncate_downsize`, `factorOfPrefix_downsize`, `mapOfPrefix_downsize`). Exactness is\npreserved, and the CL distribution is pushed forward along `↓` (`clDist_downsize`).\n\nThe paper states this for admissible field sizes `q = 2^t`, `t` odd, with the self-dual\nnormal basis of blueprint `lem:self-dual-basis`. Nothing here depends on the choice of basis:\nthe self-duality matters for the *arithmetic* of `𝔽_{2^t}` to be computable from `𝔽₂`-data\nby the programs that use it, which is a matter for the efficient-computability toolkit. The\npaper's downsized *sampler* (`def:downsize_sampler`), a machine wrapping a sampler over\n`𝔽_{2^t}`, has no counterpart: samplers are over `𝔽₂` by definition, and a construction native\nto `𝔽_{2^t}` is to present the downsized CL functions directly.\n\nThe second half of the file is the transport of presentations along a bijection of\ncoordinates `e : ι ≃ ι'` (`reindexEquiv`, `CLFun.reindex`), with the same list of lemmas; it is\nthe identification `K^{ι × κ} = K^{|ι| · |κ|}` the paper leaves implicit, and it is what puts a\ndownsized presentation on the coordinates `Fin (s · t)` of a sampler.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Downsize.lean#L392-L402",
+  "source_path": "MIPRE/Foundations/CL/Downsize.lean",
+  "lines": [
+   392,
+   402
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 8,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.mapOfPrefix_reindex",
+  "source_name": "MIPRE.CL.CLFun.mapOfPrefix_reindex",
+  "formal_statement": "theorem MIPRE.CL.CLFun.mapOfPrefix_reindex (e : ι ≃ ι') (P : CLFun F ι ℓ) (k : ℕ) (u : ι → F) :\n    (P.reindex e).mapOfPrefix k (reindexEquiv e u) =\n      (reindexEquiv e).toLinearMap ∘ₗ P.mapOfPrefix k u ∘ₗ (reindexEquiv e).symm.toLinearMap := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "variable {K : Type*} [Field K] {F : Type*} [Field F] [Algebra K F]",
+   "variable {ι ι' : Type*} {κ : Type*} [Fintype κ]",
+   "variable [DecidableEq ι] [DecidableEq κ]",
+   "variable [Fintype ι]",
+   "variable [DecidableEq ι'] [Fintype ι']",
+   "variable {ℓ : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.Downsize",
+  "module_doc": "/-!\n# Downsizing conditionally linear functions, and reindexing\n\nPaper `linear.tex`, `def:cl-downsize`, `lem:cl-downsize` and `lem:downsize-cl-dist`; blueprint\n`lem:cl-downsize`. The CL functions of the pipeline are native to `𝔽_{2^t}` (the low-degree\ntests, the introspection sampler), while samplers of normal form verifiers are over `𝔽₂`\n(`def:sampler`). *Downsizing* bridges the two: a basis `b` of a field `F` over a subfield `K`\ngives the `K`-linear bijection `↓ : F^ι ≃ K^{ι × κ}` reading off coordinates entry by entry\n(`downsizeEquiv`), and `L ↦ ↓ ∘ L ∘ ↓⁻¹` carries `ℓ`-level CL functions on `F^ι` to `ℓ`-level CL\nfunctions on `K^{ι × κ}` — on presentations, `CLFun.downsize`, whose decomposition data are\nthe downsized data of the original: register subspaces `S` become `S × κ`, stage maps are\nconjugated by `↓`, and the marginals, factor spaces and stage maps of `lem:cl-kth` correspond\n(`eval_truncate_downsize`, `factorOfPrefix_downsize`, `mapOfPrefix_downsize`). Exactness is\npreserved, and the CL distribution is pushed forward along `↓` (`clDist_downsize`).\n\nThe paper states this for admissible field sizes `q = 2^t`, `t` odd, with the self-dual\nnormal basis of blueprint `lem:self-dual-basis`. Nothing here depends on the choice of basis:\nthe self-duality matters for the *arithmetic* of `𝔽_{2^t}` to be computable from `𝔽₂`-data\nby the programs that use it, which is a matter for the efficient-computability toolkit. The\npaper's downsized *sampler* (`def:downsize_sampler`), a machine wrapping a sampler over\n`𝔽_{2^t}`, has no counterpart: samplers are over `𝔽₂` by definition, and a construction native\nto `𝔽_{2^t}` is to present the downsized CL functions directly.\n\nThe second half of the file is the transport of presentations along a bijection of\ncoordinates `e : ι ≃ ι'` (`reindexEquiv`, `CLFun.reindex`), with the same list of lemmas; it is\nthe identification `K^{ι × κ} = K^{|ι| · |κ|}` the paper leaves implicit, and it is what puts a\ndownsized presentation on the coordinates `Fin (s · t)` of a sampler.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Downsize.lean#L404-L414",
+  "source_path": "MIPRE/Foundations/CL/Downsize.lean",
+  "lines": [
+   404,
+   414
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 8,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.pull_proj_compl",
+  "source_name": "MIPRE.CL.pull_proj_compl",
+  "formal_statement": "theorem MIPRE.CL.pull_proj_compl [Fintype ι] [Fintype κ] (e : ι ↪ κ) (S : Finset ι)\n    (x : κ → F) : pull e (proj (S.map e)ᶜ x) = proj Sᶜ (pull e x) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open Classical",
+   "variable {F ι κ : Type*} [Semiring F] [DecidableEq ι] [DecidableEq κ]"
+  ],
+  "docstring": "Restriction of the projection onto the remaining registers.",
+  "module": "MIPRE.Foundations.CL.Embedding",
+  "module_doc": "/-! # Embedding conditionally linear presentations in a larger register\n\nExtending a presentation by zero along an injection preserves its evaluation,\nmarginal, factor and linear-map queries. This puts the graph and content parts\nof detyping on disjoint registers without changing their query interfaces.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Embedding.lean#L75-L79",
+  "source_path": "MIPRE/Foundations/CL/Embedding.lean",
+  "lines": [
+   75,
+   79
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Graph.decode_eq_some_iff",
+  "source_name": "MIPRE.CL.Graph.decode_eq_some_iff",
+  "formal_statement": "theorem MIPRE.CL.Graph.decode_eq_some_iff (E : T → T → Prop) [DecidableRel E]\n    (x : Bool × T → ZMod 2) (u : T) : decode E x = some u ↔ x = encode E u := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Graph",
+   "open Finset Classical",
+   "variable {T : Type*} [Fintype T] [DecidableEq T]"
+  ],
+  "docstring": "Successful decoding means equality with the whole vertex-and-neighbor encoding.",
+  "module": "MIPRE.Foundations.CL.Graph",
+  "module_doc": "/-! # The two-level graph sampler\n\nThe graph may have loops. Its law is uniform on ordered adjacent pairs, so each\nloop is counted once. This file supplies the semantic CL presentations; compiling\ntheir finite graph table into an ambient sampler program is a separate obligation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Graph.lean#L44-L60",
+  "source_path": "MIPRE/Foundations/CL/Graph.lean",
+  "lines": [
+   44,
+   60
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Graph.localValid_both_iff",
+  "source_name": "MIPRE.CL.Graph.localValid_both_iff",
+  "formal_statement": "theorem MIPRE.CL.Graph.localValid_both_iff (E : T → T → Prop) [DecidableRel E]\n    (hE : ∀ u v, E u v → E v u) (z : Coord T → ZMod 2) :\n    localValid E false z ∧ localValid E true z ↔\n      ∃ uv : T × T, E uv.1 uv.2 ∧ z = pairSeed E uv := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Graph",
+   "open Finset Classical",
+   "variable {T : Type*} [Fintype T] [DecidableEq T]"
+  ],
+  "docstring": "Both local valid views are exactly the encodings of adjacent ordered pairs.",
+  "module": "MIPRE.Foundations.CL.Graph",
+  "module_doc": "/-! # The two-level graph sampler\n\nThe graph may have loops. Its law is uniform on ordered adjacent pairs, so each\nloop is counted once. This file supplies the semantic CL presentations; compiling\ntheir finite graph table into an ambient sampler program is a separate obligation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Graph.lean#L199-L222",
+  "source_path": "MIPRE/Foundations/CL/Graph.lean",
+  "lines": [
+   199,
+   222
+  ],
+  "blueprint": [
+   {
+    "label": "lem:detype-graph",
+    "env": "lemma",
+    "title": "Graph rejection sampling",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.SupportedOn.factorOfPrefix_proj",
+  "source_name": "MIPRE.CL.CLFun.SupportedOn.factorOfPrefix_proj",
+  "formal_statement": "theorem MIPRE.CL.CLFun.SupportedOn.factorOfPrefix_proj {P : CLFun F ι ℓ} {T U : Finset ι} (hP : P.SupportedOn T)\n    (h : T ⊆ U) (j : ℕ) (u : ι → F) : P.factorOfPrefix j (proj U u) = P.factorOfPrefix j u := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "open MIPRE.CL.CLFun.SupportedOn",
+   "open Finset",
+   "variable {F : Type*} [Semiring F] {ι κ : Type*} [DecidableEq ι] [DecidableEq κ]",
+   "variable {ℓ : ℕ}",
+   "variable [Fintype ι]"
+  ],
+  "docstring": "A presentation on `V_T` reads its prefix only on `T`.",
+  "module": "MIPRE.Foundations.CL.Product",
+  "module_doc": "/-!\n# Padding to a given level, and the product of two presentations\n\nTwo constructions the answer-reduced sampler needs (`sec:ar-verifier`, `ld_compiler.tex`): its\nCL functions are the direct sums of the oracularized sampler's, with `ℓ` levels, and the\ndownsized PCP sampler's, with three, on disjoint registers, at the common level `max ℓ 3`.\n\n* `CLFun.liftTo T L h P` pads `P` with trivial levels to exactly `L ≥ ℓ` levels (`liftN` pads by\n  a number of levels, and `ℓ + (L - ℓ)` is not `L` by definition, so the level is cast along\n  `castLevel`). Evaluation and exactness are unchanged (`eval_liftTo`, `ExactlyOn.liftTo`).\n* `CLFun.prod P Q` is the presentation on `ι ⊕ κ` running `P` on the left coordinates and `Q` on\n  the right: the paper's direct sum on `V₁ ⊕ V₂`, as `directSum` of the two embeddings. It is\n  exact on everything when both are (`ExactlyOn.prod`), and evaluates componentwise\n  (`eval_prod`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Product.lean#L117-L132",
+  "source_path": "MIPRE/Foundations/CL/Product.lean",
+  "lines": [
+   117,
+   132
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.SupportedOn.mapOfPrefix_proj",
+  "source_name": "MIPRE.CL.CLFun.SupportedOn.mapOfPrefix_proj",
+  "formal_statement": "theorem MIPRE.CL.CLFun.SupportedOn.mapOfPrefix_proj {P : CLFun F ι ℓ} {T U : Finset ι} (hP : P.SupportedOn T)\n    (h : T ⊆ U) (j : ℕ) (u : ι → F) : P.mapOfPrefix j (proj U u) = P.mapOfPrefix j u := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "open MIPRE.CL.CLFun.SupportedOn",
+   "open Finset",
+   "variable {F : Type*} [Semiring F] {ι κ : Type*} [DecidableEq ι] [DecidableEq κ]",
+   "variable {ℓ : ℕ}",
+   "variable [Fintype ι]"
+  ],
+  "docstring": "A presentation on `V_T` reads its prefix only on `T`.",
+  "module": "MIPRE.Foundations.CL.Product",
+  "module_doc": "/-!\n# Padding to a given level, and the product of two presentations\n\nTwo constructions the answer-reduced sampler needs (`sec:ar-verifier`, `ld_compiler.tex`): its\nCL functions are the direct sums of the oracularized sampler's, with `ℓ` levels, and the\ndownsized PCP sampler's, with three, on disjoint registers, at the common level `max ℓ 3`.\n\n* `CLFun.liftTo T L h P` pads `P` with trivial levels to exactly `L ≥ ℓ` levels (`liftN` pads by\n  a number of levels, and `ℓ + (L - ℓ)` is not `L` by definition, so the level is cast along\n  `castLevel`). Evaluation and exactness are unchanged (`eval_liftTo`, `ExactlyOn.liftTo`).\n* `CLFun.prod P Q` is the presentation on `ι ⊕ κ` running `P` on the left coordinates and `Q` on\n  the right: the paper's direct sum on `V₁ ⊕ V₂`, as `directSum` of the two embeddings. It is\n  exact on everything when both are (`ExactlyOn.prod`), and evaluates componentwise\n  (`eval_prod`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Product.lean#L134-L149",
+  "source_path": "MIPRE/Foundations/CL/Product.lean",
+  "lines": [
+   134,
+   149
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.eval_truncate_of_le",
+  "source_name": "MIPRE.CL.CLFun.eval_truncate_of_le",
+  "formal_statement": "theorem MIPRE.CL.CLFun.eval_truncate_of_le {ℓ : ℕ} (P : CLFun F ι ℓ) {j : ℕ} (h : ℓ ≤ j)\n    (x : ι → F) : (P.truncate j).eval x = P.eval x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "open Finset MIPRE.Cost",
+   "variable {F : Type*} [Semiring F] {ι : Type*} [DecidableEq ι] [Fintype ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.ProductSampler",
+  "module_doc": "/-!\n# The product of a typed sampler and a directly answered one: the presentations\n\nThe answer-reduced sampler (`sec:ar-verifier`, `ld_compiler.tex`) is the direct sum of the\noracularized sampler, whose queries are answered by a program, and the downsized PCP sampler,\nwhose queries a polynomial-time function answers outright. This file is the CL half of that\nconstruction, for any two families of presentations on `𝔽₂^a` and `𝔽₂^b`:\n\n* `prodCL L P Q` pads both to `L` levels and puts them side by side on `𝔽₂^{a + b}`, the first\n  `a` coordinates for `P`;\n* its three queries, in bits, are the two halves' queries concatenated (`toBits_eval_truncate_prodCL`,\n  `toBits_mapOfPrefix_prodCL`, `indicatorBits_factorOfPrefix_prodCL`);\n* beyond a presentation's own level its marginal is its full evaluation, its stage map zero and its\n  factor space empty (`eval_truncate_of_le`, `mapOfPrefix_of_le`, `factorOfPrefix_of_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/ProductSampler.lean#L39-L46",
+  "source_path": "MIPRE/Foundations/CL/ProductSampler.lean",
+  "lines": [
+   39,
+   46
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.mapOfPrefix_of_le",
+  "source_name": "MIPRE.CL.CLFun.mapOfPrefix_of_le",
+  "formal_statement": "theorem MIPRE.CL.CLFun.mapOfPrefix_of_le {ℓ : ℕ} (P : CLFun F ι ℓ) {k : ℕ} (h : ℓ ≤ k) (u : ι → F) :\n    P.mapOfPrefix k u = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "open Finset MIPRE.Cost",
+   "variable {F : Type*} [Semiring F] {ι : Type*} [DecidableEq ι] [Fintype ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.ProductSampler",
+  "module_doc": "/-!\n# The product of a typed sampler and a directly answered one: the presentations\n\nThe answer-reduced sampler (`sec:ar-verifier`, `ld_compiler.tex`) is the direct sum of the\noracularized sampler, whose queries are answered by a program, and the downsized PCP sampler,\nwhose queries a polynomial-time function answers outright. This file is the CL half of that\nconstruction, for any two families of presentations on `𝔽₂^a` and `𝔽₂^b`:\n\n* `prodCL L P Q` pads both to `L` levels and puts them side by side on `𝔽₂^{a + b}`, the first\n  `a` coordinates for `P`;\n* its three queries, in bits, are the two halves' queries concatenated (`toBits_eval_truncate_prodCL`,\n  `toBits_mapOfPrefix_prodCL`, `indicatorBits_factorOfPrefix_prodCL`);\n* beyond a presentation's own level its marginal is its full evaluation, its stage map zero and its\n  factor space empty (`eval_truncate_of_le`, `mapOfPrefix_of_le`, `factorOfPrefix_of_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/ProductSampler.lean#L48-L54",
+  "source_path": "MIPRE/Foundations/CL/ProductSampler.lean",
+  "lines": [
+   48,
+   54
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.factorOfPrefix_of_le",
+  "source_name": "MIPRE.CL.CLFun.factorOfPrefix_of_le",
+  "formal_statement": "theorem MIPRE.CL.CLFun.factorOfPrefix_of_le {ℓ : ℕ} (P : CLFun F ι ℓ) {k : ℕ} (h : ℓ ≤ k) (u : ι → F) :\n    P.factorOfPrefix k u = ∅ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "open Finset MIPRE.Cost",
+   "variable {F : Type*} [Semiring F] {ι : Type*} [DecidableEq ι] [Fintype ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.ProductSampler",
+  "module_doc": "/-!\n# The product of a typed sampler and a directly answered one: the presentations\n\nThe answer-reduced sampler (`sec:ar-verifier`, `ld_compiler.tex`) is the direct sum of the\noracularized sampler, whose queries are answered by a program, and the downsized PCP sampler,\nwhose queries a polynomial-time function answers outright. This file is the CL half of that\nconstruction, for any two families of presentations on `𝔽₂^a` and `𝔽₂^b`:\n\n* `prodCL L P Q` pads both to `L` levels and puts them side by side on `𝔽₂^{a + b}`, the first\n  `a` coordinates for `P`;\n* its three queries, in bits, are the two halves' queries concatenated (`toBits_eval_truncate_prodCL`,\n  `toBits_mapOfPrefix_prodCL`, `indicatorBits_factorOfPrefix_prodCL`);\n* beyond a presentation's own level its marginal is its full evaluation, its stage map zero and its\n  factor space empty (`eval_truncate_of_le`, `mapOfPrefix_of_le`, `factorOfPrefix_of_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/ProductSampler.lean#L56-L62",
+  "source_path": "MIPRE/Foundations/CL/ProductSampler.lean",
+  "lines": [
+   56,
+   62
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.leftPart_ofBits",
+  "source_name": "MIPRE.CL.leftPart_ofBits",
+  "formal_statement": "theorem MIPRE.CL.leftPart_ofBits (l : BitStr) :\n    leftPart (ofBits (a + b) l) = ofBits a (l.take a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open Finset MIPRE.Cost",
+   "variable {a b : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.ProductSampler",
+  "module_doc": "/-!\n# The product of a typed sampler and a directly answered one: the presentations\n\nThe answer-reduced sampler (`sec:ar-verifier`, `ld_compiler.tex`) is the direct sum of the\noracularized sampler, whose queries are answered by a program, and the downsized PCP sampler,\nwhose queries a polynomial-time function answers outright. This file is the CL half of that\nconstruction, for any two families of presentations on `𝔽₂^a` and `𝔽₂^b`:\n\n* `prodCL L P Q` pads both to `L` levels and puts them side by side on `𝔽₂^{a + b}`, the first\n  `a` coordinates for `P`;\n* its three queries, in bits, are the two halves' queries concatenated (`toBits_eval_truncate_prodCL`,\n  `toBits_mapOfPrefix_prodCL`, `indicatorBits_factorOfPrefix_prodCL`);\n* beyond a presentation's own level its marginal is its full evaluation, its stage map zero and its\n  factor space empty (`eval_truncate_of_le`, `mapOfPrefix_of_le`, `factorOfPrefix_of_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/ProductSampler.lean#L102-L106",
+  "source_path": "MIPRE/Foundations/CL/ProductSampler.lean",
+  "lines": [
+   102,
+   106
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.rightPart_ofBits",
+  "source_name": "MIPRE.CL.rightPart_ofBits",
+  "formal_statement": "theorem MIPRE.CL.rightPart_ofBits (l : BitStr) :\n    rightPart (ofBits (a + b) l) = ofBits b (l.drop a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open Finset MIPRE.Cost",
+   "variable {a b : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.ProductSampler",
+  "module_doc": "/-!\n# The product of a typed sampler and a directly answered one: the presentations\n\nThe answer-reduced sampler (`sec:ar-verifier`, `ld_compiler.tex`) is the direct sum of the\noracularized sampler, whose queries are answered by a program, and the downsized PCP sampler,\nwhose queries a polynomial-time function answers outright. This file is the CL half of that\nconstruction, for any two families of presentations on `𝔽₂^a` and `𝔽₂^b`:\n\n* `prodCL L P Q` pads both to `L` levels and puts them side by side on `𝔽₂^{a + b}`, the first\n  `a` coordinates for `P`;\n* its three queries, in bits, are the two halves' queries concatenated (`toBits_eval_truncate_prodCL`,\n  `toBits_mapOfPrefix_prodCL`, `indicatorBits_factorOfPrefix_prodCL`);\n* beyond a presentation's own level its marginal is its full evaluation, its stage map zero and its\n  factor space empty (`eval_truncate_of_le`, `mapOfPrefix_of_le`, `factorOfPrefix_of_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/ProductSampler.lean#L108-L111",
+  "source_path": "MIPRE/Foundations/CL/ProductSampler.lean",
+  "lines": [
+   108,
+   111
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.ExactlyOn.prodCL",
+  "source_name": "MIPRE.CL.CLFun.ExactlyOn.prodCL",
+  "formal_statement": "theorem MIPRE.CL.CLFun.ExactlyOn.prodCL : (prodCL L P Q ha hb).ExactlyOn univ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "open MIPRE.CL.CLFun.ExactlyOn",
+   "open Finset MIPRE.Cost",
+   "variable {a b : ℕ}",
+   "variable {ℓa ℓb : ℕ}",
+   "variable (L : ℕ) {P : CLFun 𝔽₂ (Fin a) ℓa} {Q : CLFun 𝔽₂ (Fin b) ℓb} (hP : P.ExactlyOn univ)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.ProductSampler",
+  "module_doc": "/-!\n# The product of a typed sampler and a directly answered one: the presentations\n\nThe answer-reduced sampler (`sec:ar-verifier`, `ld_compiler.tex`) is the direct sum of the\noracularized sampler, whose queries are answered by a program, and the downsized PCP sampler,\nwhose queries a polynomial-time function answers outright. This file is the CL half of that\nconstruction, for any two families of presentations on `𝔽₂^a` and `𝔽₂^b`:\n\n* `prodCL L P Q` pads both to `L` levels and puts them side by side on `𝔽₂^{a + b}`, the first\n  `a` coordinates for `P`;\n* its three queries, in bits, are the two halves' queries concatenated (`toBits_eval_truncate_prodCL`,\n  `toBits_mapOfPrefix_prodCL`, `indicatorBits_factorOfPrefix_prodCL`);\n* beyond a presentation's own level its marginal is its full evaluation, its stage map zero and its\n  factor space empty (`eval_truncate_of_le`, `mapOfPrefix_of_le`, `factorOfPrefix_of_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/ProductSampler.lean#L134-L137",
+  "source_path": "MIPRE/Foundations/CL/ProductSampler.lean",
+  "lines": [
+   134,
+   137
+  ],
+  "blueprint": [
+   {
+    "label": "def:ar-typed-game",
+    "env": "definition",
+    "title": "The typed answer-reduced game",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.CLFun.ExactlyOn.directSum"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.toBits_eval_truncate_prodCL",
+  "source_name": "MIPRE.CL.CLFun.toBits_eval_truncate_prodCL",
+  "formal_statement": "theorem MIPRE.CL.CLFun.toBits_eval_truncate_prodCL (j : ℕ) (x : Fin (a + b) → 𝔽₂) :\n    toBits (((prodCL L P Q ha hb).truncate j).eval x)\n      = toBits ((P.truncate j).eval (leftPart x)) ++ toBits ((Q.truncate j).eval (rightPart x)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "open Finset MIPRE.Cost",
+   "variable {a b : ℕ}",
+   "variable {ℓa ℓb : ℕ}",
+   "variable (L : ℕ) {P : CLFun 𝔽₂ (Fin a) ℓa} {Q : CLFun 𝔽₂ (Fin b) ℓb} (hP : P.ExactlyOn univ)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.ProductSampler",
+  "module_doc": "/-!\n# The product of a typed sampler and a directly answered one: the presentations\n\nThe answer-reduced sampler (`sec:ar-verifier`, `ld_compiler.tex`) is the direct sum of the\noracularized sampler, whose queries are answered by a program, and the downsized PCP sampler,\nwhose queries a polynomial-time function answers outright. This file is the CL half of that\nconstruction, for any two families of presentations on `𝔽₂^a` and `𝔽₂^b`:\n\n* `prodCL L P Q` pads both to `L` levels and puts them side by side on `𝔽₂^{a + b}`, the first\n  `a` coordinates for `P`;\n* its three queries, in bits, are the two halves' queries concatenated (`toBits_eval_truncate_prodCL`,\n  `toBits_mapOfPrefix_prodCL`, `indicatorBits_factorOfPrefix_prodCL`);\n* beyond a presentation's own level its marginal is its full evaluation, its stage map zero and its\n  factor space empty (`eval_truncate_of_le`, `mapOfPrefix_of_le`, `factorOfPrefix_of_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/ProductSampler.lean#L157-L161",
+  "source_path": "MIPRE/Foundations/CL/ProductSampler.lean",
+  "lines": [
+   157,
+   161
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-typed-sampler",
+    "env": "lemma",
+    "title": "The typed answer-reduced sampler",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.CLFun.truncate_reindex",
+   "MIPRE.CL.CLFun.eval_reindex",
+   "MIPRE.CL.pull_proj_compl"
+  ],
+  "pasted_helpers": 18,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.toBits_mapOfPrefix_prodCL",
+  "source_name": "MIPRE.CL.CLFun.toBits_mapOfPrefix_prodCL",
+  "formal_statement": "theorem MIPRE.CL.CLFun.toBits_mapOfPrefix_prodCL (k : ℕ) (u y : Fin (a + b) → 𝔽₂) :\n    toBits ((prodCL L P Q ha hb).mapOfPrefix k u y)\n      = toBits (P.mapOfPrefix k (leftPart u) (leftPart y))\n          ++ toBits (Q.mapOfPrefix k (rightPart u) (rightPart y)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "open Finset MIPRE.Cost",
+   "variable {a b : ℕ}",
+   "variable {ℓa ℓb : ℕ}",
+   "variable (L : ℕ) {P : CLFun 𝔽₂ (Fin a) ℓa} {Q : CLFun 𝔽₂ (Fin b) ℓb} (hP : P.ExactlyOn univ)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.ProductSampler",
+  "module_doc": "/-!\n# The product of a typed sampler and a directly answered one: the presentations\n\nThe answer-reduced sampler (`sec:ar-verifier`, `ld_compiler.tex`) is the direct sum of the\noracularized sampler, whose queries are answered by a program, and the downsized PCP sampler,\nwhose queries a polynomial-time function answers outright. This file is the CL half of that\nconstruction, for any two families of presentations on `𝔽₂^a` and `𝔽₂^b`:\n\n* `prodCL L P Q` pads both to `L` levels and puts them side by side on `𝔽₂^{a + b}`, the first\n  `a` coordinates for `P`;\n* its three queries, in bits, are the two halves' queries concatenated (`toBits_eval_truncate_prodCL`,\n  `toBits_mapOfPrefix_prodCL`, `indicatorBits_factorOfPrefix_prodCL`);\n* beyond a presentation's own level its marginal is its full evaluation, its stage map zero and its\n  factor space empty (`eval_truncate_of_le`, `mapOfPrefix_of_le`, `factorOfPrefix_of_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/ProductSampler.lean#L176-L181",
+  "source_path": "MIPRE/Foundations/CL/ProductSampler.lean",
+  "lines": [
+   176,
+   181
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-typed-sampler",
+    "env": "lemma",
+    "title": "The typed answer-reduced sampler",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.CLFun.mapOfPrefix_reindex",
+   "MIPRE.CL.pull_proj_compl",
+   "MIPRE.CL.CLFun.SupportedOn.mapOfPrefix_proj"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 1,
+  "is_target": false
+ }
+]

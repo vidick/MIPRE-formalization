@@ -1,0 +1,531 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ev_sum",
+  "source_name": "MIPStarRE.LDT.ev_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.ev_sum {ι : Type*} [Fintype ι] [DecidableEq ι]\n    {α : Type*} [Fintype α] (ψ : QuantumState ι)\n    (f : α → MIPStarRE.Quantum.Op ι) :\n    ev ψ (∑ a, f a) = ∑ a, ev ψ (f a) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`ev` distributes over univ sums.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations",
+  "module_doc": "/-!\n# Operator expectation infrastructure for the low individual degree test\n\nExpectation-value and normalized-trace lemmas for quantum operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean#L360-L365",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean",
+  "lines": [
+   360,
+   365
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_finset_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ev_mono",
+  "source_name": "MIPStarRE.LDT.ev_mono",
+  "formal_statement": "theorem MIPStarRE.LDT.ev_mono {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι) (X Y : MIPStarRE.Quantum.Op ι) (h : X ≤ Y) :\n    ev ψ X ≤ ev ψ Y := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`ev` is monotone under the matrix order.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations",
+  "module_doc": "/-!\n# Operator expectation infrastructure for the low individual degree test\n\nExpectation-value and normalized-trace lemmas for quantum operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean#L400-L405",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean",
+  "lines": [
+   400,
+   405
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_sub"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ev_mul_comm_of_psd",
+  "source_name": "MIPStarRE.LDT.ev_mul_comm_of_psd",
+  "formal_statement": "theorem MIPStarRE.LDT.ev_mul_comm_of_psd {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι) (A B : MIPStarRE.Quantum.Op ι)\n    (hA : 0 ≤ A) (hB : 0 ≤ B) :\n    ev ψ (A * B) = ev ψ (B * A) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`ev` commutes on PSD operators (convenience wrapper).",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations",
+  "module_doc": "/-!\n# Operator expectation infrastructure for the low individual degree test\n\nExpectation-value and normalized-trace lemmas for quantum operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean#L448-L455",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean",
+  "lines": [
+   448,
+   455
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.Quantum.normalizedTrace_mul_comm"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ev_cauchy_schwarz",
+  "source_name": "MIPStarRE.LDT.ev_cauchy_schwarz",
+  "formal_statement": "theorem MIPStarRE.LDT.ev_cauchy_schwarz {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι) (A B : MIPStarRE.Quantum.Op ι) :\n    (ev ψ (Aᴴ * B)) ^ 2 ≤ ev ψ (Aᴴ * A) * ev ψ (Bᴴ * B) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Cauchy-Schwarz for the state-weighted inner product:\n`(ev ψ (Aᴴ * B))² ≤ ev ψ (Aᴴ * A) * ev ψ (Bᴴ * B)`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations",
+  "module_doc": "/-!\n# Operator expectation infrastructure for the low individual degree test\n\nExpectation-value and normalized-trace lemmas for quantum operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean#L464-L507",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean",
+  "lines": [
+   464,
+   507
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_add",
+   "MIPStarRE.LDT.ev_scale",
+   "MIPStarRE.LDT.ev_adjoint_self_nonneg",
+   "MIPStarRE.Quantum.normalizedTrace_mul_comm"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 39,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ev_abs_mul_le_sqrt",
+  "source_name": "MIPStarRE.LDT.ev_abs_mul_le_sqrt",
+  "formal_statement": "theorem MIPStarRE.LDT.ev_abs_mul_le_sqrt\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι) (A B : MIPStarRE.Quantum.Op ι) :\n    |ev ψ (A * B)| ≤\n      Real.sqrt (ev ψ (A * Aᴴ)) * Real.sqrt (ev ψ (Bᴴ * B)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Absolute-value form of Cauchy-Schwarz for `ev`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations",
+  "module_doc": "/-!\n# Operator expectation infrastructure for the low individual degree test\n\nExpectation-value and normalized-trace lemmas for quantum operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean#L509-L528",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean",
+  "lines": [
+   509,
+   528
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_cauchy_schwarz",
+   "MIPStarRE.LDT.ev_adjoint_self_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ev_sum_conjTranspose_mul_sum_le",
+  "source_name": "MIPStarRE.LDT.ev_sum_conjTranspose_mul_sum_le",
+  "formal_statement": "theorem MIPStarRE.LDT.ev_sum_conjTranspose_mul_sum_le {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι) {α : Type*} [Fintype α]\n    (X : α → MIPStarRE.Quantum.Op ι) :\n    ev ψ ((∑ a, X a)ᴴ * (∑ a, X a)) ≤\n      (Fintype.card α : ℝ) * ∑ a, ev ψ ((X a)ᴴ * X a) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Jensen inequality for the quadratic form: for a finite family of operators,\n`ev ψ ((∑ Xᵢ)ᴴ * (∑ Xᵢ)) ≤ n * ∑ ev ψ (XᵢᴴXᵢ)`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations",
+  "module_doc": "/-!\n# Operator expectation infrastructure for the low individual degree test\n\nExpectation-value and normalized-trace lemmas for quantum operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean#L545-L581",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean",
+  "lines": [
+   545,
+   581
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.ev_adjoint_self_nonneg",
+   "MIPStarRE.Quantum.normalizedTrace_mul_comm"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 30,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ev_opTensor_sandwich_cauchy_schwarz",
+  "source_name": "MIPStarRE.LDT.ev_opTensor_sandwich_cauchy_schwarz",
+  "formal_statement": "theorem MIPStarRE.LDT.ev_opTensor_sandwich_cauchy_schwarz\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (ψ : QuantumState (ι₁ × ι₂))\n    (X Y M : MIPStarRE.Quantum.Op ι₁)\n    (T : MIPStarRE.Quantum.Op ι₂)\n    (hM : 0 ≤ M) (hT : 0 ≤ T) :\n    (ev ψ (opTensor (Xᴴ * M * Y) T)) ^ 2 ≤\n      ev ψ (opTensor (Xᴴ * M * X) T) * ev ψ (opTensor (Yᴴ * M * Y) T) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Bipartite-tensor Cauchy–Schwarz for state expectations.\n\nFor PSD operators `M`, `T` and arbitrary operators `X`, `Y`,\n`(ev ψ (opTensor (Xᴴ M Y) T))² ≤ ev ψ (opTensor (Xᴴ M X) T) *\nev ψ (opTensor (Yᴴ M Y) T)`.\n\nThe proof factors `M = √M · √M`, `T = √T · √T` (continuous functional calculus\nsquare roots) and applies `ev_cauchy_schwarz` to\n`opTensor (√M · X) √T` and `opTensor (√M · Y) √T`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations",
+  "module_doc": "/-!\n# Operator expectation infrastructure for the low individual degree test\n\nExpectation-value and normalized-trace lemmas for quantum operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean#L593-L645",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean",
+  "lines": [
+   593,
+   645
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_cauchy_schwarz",
+   "MIPStarRE.LDT.opTensor_mul"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 36,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ev_opTensor_sandwich_abs_le_sqrt",
+  "source_name": "MIPStarRE.LDT.ev_opTensor_sandwich_abs_le_sqrt",
+  "formal_statement": "theorem MIPStarRE.LDT.ev_opTensor_sandwich_abs_le_sqrt\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (ψ : QuantumState (ι₁ × ι₂))\n    (X Y M : MIPStarRE.Quantum.Op ι₁)\n    (T : MIPStarRE.Quantum.Op ι₂)\n    (hM : 0 ≤ M) (hT : 0 ≤ T) :\n    |ev ψ (opTensor (Xᴴ * M * Y) T)| ≤\n      Real.sqrt (ev ψ (opTensor (Xᴴ * M * X) T)) *\n        Real.sqrt (ev ψ (opTensor (Yᴴ * M * Y) T)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Absolute-value form of the bipartite-tensor sandwich Cauchy–Schwarz.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations",
+  "module_doc": "/-!\n# Operator expectation infrastructure for the low individual degree test\n\nExpectation-value and normalized-trace lemmas for quantum operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean#L663-L685",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean",
+  "lines": [
+   663,
+   685
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_opTensor_sandwich_cauchy_schwarz"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "PMF.map_apply_toReal",
+  "source_name": "PMF.map_apply_toReal",
+  "formal_statement": "theorem PMF.map_apply_toReal {α β : Type*} [Fintype α]\n    (p : PMF α) (e : α → β) (b : β) :\n    ((p.map e) b).toReal = ∑ a : α, (if b = e a then (p a).toReal else 0) := by sorry",
+  "preamble_opens": [
+   "open PMF",
+   "open scoped BigOperators",
+   "open Classical"
+  ],
+  "docstring": "Pointwise real-weight formula for a finite push-forward probability mass\nfunction.  This is the finite real-valued form of `PMF.map_apply`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.PMFAverages",
+  "module_doc": "/-!\n# PMF-weighted finite expectation identities\n\nThis module contains finite expectation identities stated directly for\nMathlib probability mass functions.  They connect `PMF.map` and\n`PMF.bind` to the real-weighted finite sums used by the\nlow individual degree test averaging layer.\n\n## Main declarations\n\n* `PMF.map_apply_toReal`\n* `PMF.realWeightedSum`\n* `PMF.realWeightedSumLinearMap`\n* `PMF.realWeightedSum_map`\n* `PMF.realWeightedSum_bind`\n* `PMF.map_sum_smul`\n* `PMF.bind_apply_toReal`\n* `PMF.bind_sum_smul`\n* `PMF.sum_toReal_eq_one`\n* `PMF.sum_const_smul`\n* `PMF.totalVariationDistance`\n* `PMF.totalVariationDistance_eq_sum_max_sub`\n* `PMF.totalVariationDistance_uniformOfFintype_uniformOfFinset_eq`\n* `PMF.sum_le_sum_add_totalVariationDistance`\n* `PMF.sum_rpow_one_div_le_rpow_sum`\n* `PMF.realWeightedSum_rpow_one_div_le_rpow`\n* `PMF.uniformOfFintype_map_equiv`\n* `PMF.uniformOfFintype_prod_apply_toReal`\n* `PMF.uniformOfFintype_prod_eq_bind`\n* `PMF.uniformOfFintype_sum_equiv_smul`\n* `PMF.uniformOfFintype_prod_sum_smul`\n* `PMF.uniformOfFintype_sum_equiv_fst_smul`\n* `PMF.uniformOfFintype_sum_equiv_snd_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_fst_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_snd_smul`\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFAverages.lean#L203-L221",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFAverages.lean",
+  "lines": [
+   203,
+   221
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "PMF.map_sum_smul",
+  "source_name": "PMF.map_sum_smul",
+  "formal_statement": "theorem PMF.map_sum_smul {α β M : Type*}\n    [Fintype α] [Fintype β]\n    [AddCommMonoid M] [Module MIPStarRE.LDT.Error M]\n    (p : PMF α) (e : α → β) (f : β → M) :\n    ∑ b : β, ((p.map e) b).toReal • f b =\n      ∑ a : α, (p a).toReal • f (e a) := by sorry",
+  "preamble_opens": [
+   "open PMF",
+   "open scoped BigOperators"
+  ],
+  "docstring": "A finite PMF-weighted sum against a push-forward is the corresponding\nPMF-weighted sum of the pulled-back family.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.PMFAverages",
+  "module_doc": "/-!\n# PMF-weighted finite expectation identities\n\nThis module contains finite expectation identities stated directly for\nMathlib probability mass functions.  They connect `PMF.map` and\n`PMF.bind` to the real-weighted finite sums used by the\nlow individual degree test averaging layer.\n\n## Main declarations\n\n* `PMF.map_apply_toReal`\n* `PMF.realWeightedSum`\n* `PMF.realWeightedSumLinearMap`\n* `PMF.realWeightedSum_map`\n* `PMF.realWeightedSum_bind`\n* `PMF.map_sum_smul`\n* `PMF.bind_apply_toReal`\n* `PMF.bind_sum_smul`\n* `PMF.sum_toReal_eq_one`\n* `PMF.sum_const_smul`\n* `PMF.totalVariationDistance`\n* `PMF.totalVariationDistance_eq_sum_max_sub`\n* `PMF.totalVariationDistance_uniformOfFintype_uniformOfFinset_eq`\n* `PMF.sum_le_sum_add_totalVariationDistance`\n* `PMF.sum_rpow_one_div_le_rpow_sum`\n* `PMF.realWeightedSum_rpow_one_div_le_rpow`\n* `PMF.uniformOfFintype_map_equiv`\n* `PMF.uniformOfFintype_prod_apply_toReal`\n* `PMF.uniformOfFintype_prod_eq_bind`\n* `PMF.uniformOfFintype_sum_equiv_smul`\n* `PMF.uniformOfFintype_prod_sum_smul`\n* `PMF.uniformOfFintype_sum_equiv_fst_smul`\n* `PMF.uniformOfFintype_sum_equiv_snd_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_fst_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_snd_smul`\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFAverages.lean#L223-L250",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFAverages.lean",
+  "lines": [
+   223,
+   250
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "PMF.map_apply_toReal"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "PMF.bind_sum_smul",
+  "source_name": "PMF.bind_sum_smul",
+  "formal_statement": "theorem PMF.bind_sum_smul {α β M : Type*}\n    [Fintype α] [Fintype β]\n    [AddCommMonoid M] [Module MIPStarRE.LDT.Error M]\n    (p : PMF α) (q : α → PMF β) (f : β → M) :\n    ∑ b : β, ((p.bind q) b).toReal • f b =\n      ∑ a : α, (p a).toReal • ∑ b : β, (q a b).toReal • f b := by sorry",
+  "preamble_opens": [
+   "open PMF",
+   "open scoped BigOperators"
+  ],
+  "docstring": "A finite PMF-weighted sum against a monadic composition is the iterated\nPMF-weighted sum.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.PMFAverages",
+  "module_doc": "/-!\n# PMF-weighted finite expectation identities\n\nThis module contains finite expectation identities stated directly for\nMathlib probability mass functions.  They connect `PMF.map` and\n`PMF.bind` to the real-weighted finite sums used by the\nlow individual degree test averaging layer.\n\n## Main declarations\n\n* `PMF.map_apply_toReal`\n* `PMF.realWeightedSum`\n* `PMF.realWeightedSumLinearMap`\n* `PMF.realWeightedSum_map`\n* `PMF.realWeightedSum_bind`\n* `PMF.map_sum_smul`\n* `PMF.bind_apply_toReal`\n* `PMF.bind_sum_smul`\n* `PMF.sum_toReal_eq_one`\n* `PMF.sum_const_smul`\n* `PMF.totalVariationDistance`\n* `PMF.totalVariationDistance_eq_sum_max_sub`\n* `PMF.totalVariationDistance_uniformOfFintype_uniformOfFinset_eq`\n* `PMF.sum_le_sum_add_totalVariationDistance`\n* `PMF.sum_rpow_one_div_le_rpow_sum`\n* `PMF.realWeightedSum_rpow_one_div_le_rpow`\n* `PMF.uniformOfFintype_map_equiv`\n* `PMF.uniformOfFintype_prod_apply_toReal`\n* `PMF.uniformOfFintype_prod_eq_bind`\n* `PMF.uniformOfFintype_sum_equiv_smul`\n* `PMF.uniformOfFintype_prod_sum_smul`\n* `PMF.uniformOfFintype_sum_equiv_fst_smul`\n* `PMF.uniformOfFintype_sum_equiv_snd_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_fst_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_snd_smul`\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFAverages.lean#L267-L296",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFAverages.lean",
+  "lines": [
+   267,
+   296
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "PMF.uniformOfFintype_prod_eq_bind",
+  "source_name": "PMF.uniformOfFintype_prod_eq_bind",
+  "formal_statement": "theorem PMF.uniformOfFintype_prod_eq_bind\n    {α β : Type*} [Fintype α] [Nonempty α] [Fintype β] [Nonempty β] :\n    PMF.uniformOfFintype (α × β) =\n      (PMF.uniformOfFintype α).bind\n        (fun a => (PMF.uniformOfFintype β).map fun b => (a, b)) := by sorry",
+  "preamble_opens": [
+   "open PMF",
+   "open scoped BigOperators"
+  ],
+  "docstring": "The uniform probability mass function on a product is the monadic\ncomposition of the two coordinate-uniform probability mass functions.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.PMFAverages",
+  "module_doc": "/-!\n# PMF-weighted finite expectation identities\n\nThis module contains finite expectation identities stated directly for\nMathlib probability mass functions.  They connect `PMF.map` and\n`PMF.bind` to the real-weighted finite sums used by the\nlow individual degree test averaging layer.\n\n## Main declarations\n\n* `PMF.map_apply_toReal`\n* `PMF.realWeightedSum`\n* `PMF.realWeightedSumLinearMap`\n* `PMF.realWeightedSum_map`\n* `PMF.realWeightedSum_bind`\n* `PMF.map_sum_smul`\n* `PMF.bind_apply_toReal`\n* `PMF.bind_sum_smul`\n* `PMF.sum_toReal_eq_one`\n* `PMF.sum_const_smul`\n* `PMF.totalVariationDistance`\n* `PMF.totalVariationDistance_eq_sum_max_sub`\n* `PMF.totalVariationDistance_uniformOfFintype_uniformOfFinset_eq`\n* `PMF.sum_le_sum_add_totalVariationDistance`\n* `PMF.sum_rpow_one_div_le_rpow_sum`\n* `PMF.realWeightedSum_rpow_one_div_le_rpow`\n* `PMF.uniformOfFintype_map_equiv`\n* `PMF.uniformOfFintype_prod_apply_toReal`\n* `PMF.uniformOfFintype_prod_eq_bind`\n* `PMF.uniformOfFintype_sum_equiv_smul`\n* `PMF.uniformOfFintype_prod_sum_smul`\n* `PMF.uniformOfFintype_sum_equiv_fst_smul`\n* `PMF.uniformOfFintype_sum_equiv_snd_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_fst_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_snd_smul`\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFAverages.lean#L313-L348",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFAverages.lean",
+  "lines": [
+   313,
+   348
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "PMF.sum_rpow_one_div_le_rpow_sum",
+  "source_name": "PMF.sum_rpow_one_div_le_rpow_sum",
+  "formal_statement": "theorem PMF.sum_rpow_one_div_le_rpow_sum {α : Type*}\n    [Fintype α]\n    (p : PMF α) (f : α → MIPStarRE.LDT.Error) (n : ℕ)\n    (hn : 1 ≤ n) (hf : ∀ a, 0 ≤ f a) :\n    ∑ a : α, (p a).toReal * Real.rpow (f a) (1 / (n : MIPStarRE.LDT.Error)) ≤\n      Real.rpow (∑ a : α, (p a).toReal * f a) (1 / (n : MIPStarRE.LDT.Error)) := by sorry",
+  "preamble_opens": [
+   "open PMF",
+   "open scoped BigOperators"
+  ],
+  "docstring": "Jensen's inequality for the concave power `x ↦ x ^ (1 / n)`, stated for a\nfinite probability mass function.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.PMFAverages",
+  "module_doc": "/-!\n# PMF-weighted finite expectation identities\n\nThis module contains finite expectation identities stated directly for\nMathlib probability mass functions.  They connect `PMF.map` and\n`PMF.bind` to the real-weighted finite sums used by the\nlow individual degree test averaging layer.\n\n## Main declarations\n\n* `PMF.map_apply_toReal`\n* `PMF.realWeightedSum`\n* `PMF.realWeightedSumLinearMap`\n* `PMF.realWeightedSum_map`\n* `PMF.realWeightedSum_bind`\n* `PMF.map_sum_smul`\n* `PMF.bind_apply_toReal`\n* `PMF.bind_sum_smul`\n* `PMF.sum_toReal_eq_one`\n* `PMF.sum_const_smul`\n* `PMF.totalVariationDistance`\n* `PMF.totalVariationDistance_eq_sum_max_sub`\n* `PMF.totalVariationDistance_uniformOfFintype_uniformOfFinset_eq`\n* `PMF.sum_le_sum_add_totalVariationDistance`\n* `PMF.sum_rpow_one_div_le_rpow_sum`\n* `PMF.realWeightedSum_rpow_one_div_le_rpow`\n* `PMF.uniformOfFintype_map_equiv`\n* `PMF.uniformOfFintype_prod_apply_toReal`\n* `PMF.uniformOfFintype_prod_eq_bind`\n* `PMF.uniformOfFintype_sum_equiv_smul`\n* `PMF.uniformOfFintype_prod_sum_smul`\n* `PMF.uniformOfFintype_sum_equiv_fst_smul`\n* `PMF.uniformOfFintype_sum_equiv_snd_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_fst_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_snd_smul`\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFAverages.lean#L377-L425",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFAverages.lean",
+  "lines": [
+   377,
+   425
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 41,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "PMF.uniformOfFintype_map_equiv",
+  "source_name": "PMF.uniformOfFintype_map_equiv",
+  "formal_statement": "theorem PMF.uniformOfFintype_map_equiv\n    {α β : Type*} [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]\n    (e : α ≃ β) :\n    (PMF.uniformOfFintype α).map e = PMF.uniformOfFintype β := by sorry",
+  "preamble_opens": [
+   "open PMF",
+   "open scoped BigOperators"
+  ],
+  "docstring": "The uniform probability mass function is invariant under transport by an\nequivalence.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.PMFAverages",
+  "module_doc": "/-!\n# PMF-weighted finite expectation identities\n\nThis module contains finite expectation identities stated directly for\nMathlib probability mass functions.  They connect `PMF.map` and\n`PMF.bind` to the real-weighted finite sums used by the\nlow individual degree test averaging layer.\n\n## Main declarations\n\n* `PMF.map_apply_toReal`\n* `PMF.realWeightedSum`\n* `PMF.realWeightedSumLinearMap`\n* `PMF.realWeightedSum_map`\n* `PMF.realWeightedSum_bind`\n* `PMF.map_sum_smul`\n* `PMF.bind_apply_toReal`\n* `PMF.bind_sum_smul`\n* `PMF.sum_toReal_eq_one`\n* `PMF.sum_const_smul`\n* `PMF.totalVariationDistance`\n* `PMF.totalVariationDistance_eq_sum_max_sub`\n* `PMF.totalVariationDistance_uniformOfFintype_uniformOfFinset_eq`\n* `PMF.sum_le_sum_add_totalVariationDistance`\n* `PMF.sum_rpow_one_div_le_rpow_sum`\n* `PMF.realWeightedSum_rpow_one_div_le_rpow`\n* `PMF.uniformOfFintype_map_equiv`\n* `PMF.uniformOfFintype_prod_apply_toReal`\n* `PMF.uniformOfFintype_prod_eq_bind`\n* `PMF.uniformOfFintype_sum_equiv_smul`\n* `PMF.uniformOfFintype_prod_sum_smul`\n* `PMF.uniformOfFintype_sum_equiv_fst_smul`\n* `PMF.uniformOfFintype_sum_equiv_snd_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_fst_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_snd_smul`\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFAverages.lean#L427-L444",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFAverages.lean",
+  "lines": [
+   427,
+   444
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "PMF.uniformOfFintype_sum_equiv_fst_smul",
+  "source_name": "PMF.uniformOfFintype_sum_equiv_fst_smul",
+  "formal_statement": "theorem PMF.uniformOfFintype_sum_equiv_fst_smul {γ α β M : Type*}\n    [Fintype γ] [Nonempty γ]\n    [Fintype α] [Nonempty α]\n    [Finite β] [Nonempty β]\n    [AddCommMonoid M] [Module MIPStarRE.LDT.Error M]\n    (e : γ ≃ α × β) (f : α → M) :\n    ∑ x : γ, (PMF.uniformOfFintype γ x).toReal • f (e x).1 =\n      ∑ a : α, (PMF.uniformOfFintype α a).toReal • f a := by sorry",
+  "preamble_opens": [
+   "open PMF",
+   "open scoped BigOperators"
+  ],
+  "docstring": "Marginalize a uniform PMF-weighted sum along the first coordinate of a\nproduct equivalence.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.PMFAverages",
+  "module_doc": "/-!\n# PMF-weighted finite expectation identities\n\nThis module contains finite expectation identities stated directly for\nMathlib probability mass functions.  They connect `PMF.map` and\n`PMF.bind` to the real-weighted finite sums used by the\nlow individual degree test averaging layer.\n\n## Main declarations\n\n* `PMF.map_apply_toReal`\n* `PMF.realWeightedSum`\n* `PMF.realWeightedSumLinearMap`\n* `PMF.realWeightedSum_map`\n* `PMF.realWeightedSum_bind`\n* `PMF.map_sum_smul`\n* `PMF.bind_apply_toReal`\n* `PMF.bind_sum_smul`\n* `PMF.sum_toReal_eq_one`\n* `PMF.sum_const_smul`\n* `PMF.totalVariationDistance`\n* `PMF.totalVariationDistance_eq_sum_max_sub`\n* `PMF.totalVariationDistance_uniformOfFintype_uniformOfFinset_eq`\n* `PMF.sum_le_sum_add_totalVariationDistance`\n* `PMF.sum_rpow_one_div_le_rpow_sum`\n* `PMF.realWeightedSum_rpow_one_div_le_rpow`\n* `PMF.uniformOfFintype_map_equiv`\n* `PMF.uniformOfFintype_prod_apply_toReal`\n* `PMF.uniformOfFintype_prod_eq_bind`\n* `PMF.uniformOfFintype_sum_equiv_smul`\n* `PMF.uniformOfFintype_prod_sum_smul`\n* `PMF.uniformOfFintype_sum_equiv_fst_smul`\n* `PMF.uniformOfFintype_sum_equiv_snd_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_fst_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_snd_smul`\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFAverages.lean#L478-L503",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFAverages.lean",
+  "lines": [
+   478,
+   503
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "PMF.bind_sum_smul",
+   "PMF.uniformOfFintype_prod_eq_bind",
+   "PMF.uniformOfFintype_map_equiv",
+   "PMF.map_sum_smul"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "PMF.totalVariationDistance_eq_sum_max_sub",
+  "source_name": "PMF.totalVariationDistance_eq_sum_max_sub",
+  "formal_statement": "theorem PMF.totalVariationDistance_eq_sum_max_sub {α : Type*}\n    [Fintype α] (p q : PMF α) :\n    totalVariationDistance p q =\n      ∑ a : α, max 0 ((q a).toReal - (p a).toReal) := by sorry",
+  "preamble_opens": [
+   "open PMF",
+   "open scoped BigOperators"
+  ],
+  "docstring": "For finite probability mass functions, total variation is the total positive\npart of the signed weight difference `q - p`.\n\nThis is the finite PMF form of the elementary total-variation calculation used\nin Proposition `prop:ld-dnoteq` of `references/ldt-paper/ld-pasting.tex`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.PMFAverages",
+  "module_doc": "/-!\n# PMF-weighted finite expectation identities\n\nThis module contains finite expectation identities stated directly for\nMathlib probability mass functions.  They connect `PMF.map` and\n`PMF.bind` to the real-weighted finite sums used by the\nlow individual degree test averaging layer.\n\n## Main declarations\n\n* `PMF.map_apply_toReal`\n* `PMF.realWeightedSum`\n* `PMF.realWeightedSumLinearMap`\n* `PMF.realWeightedSum_map`\n* `PMF.realWeightedSum_bind`\n* `PMF.map_sum_smul`\n* `PMF.bind_apply_toReal`\n* `PMF.bind_sum_smul`\n* `PMF.sum_toReal_eq_one`\n* `PMF.sum_const_smul`\n* `PMF.totalVariationDistance`\n* `PMF.totalVariationDistance_eq_sum_max_sub`\n* `PMF.totalVariationDistance_uniformOfFintype_uniformOfFinset_eq`\n* `PMF.sum_le_sum_add_totalVariationDistance`\n* `PMF.sum_rpow_one_div_le_rpow_sum`\n* `PMF.realWeightedSum_rpow_one_div_le_rpow`\n* `PMF.uniformOfFintype_map_equiv`\n* `PMF.uniformOfFintype_prod_apply_toReal`\n* `PMF.uniformOfFintype_prod_eq_bind`\n* `PMF.uniformOfFintype_sum_equiv_smul`\n* `PMF.uniformOfFintype_prod_sum_smul`\n* `PMF.uniformOfFintype_sum_equiv_fst_smul`\n* `PMF.uniformOfFintype_sum_equiv_snd_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_fst_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_snd_smul`\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFAverages.lean#L682-L736",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFAverages.lean",
+  "lines": [
+   682,
+   736
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 46,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "PMF.totalVariationDistance_uniformOfFintype_uniformOfFinset_eq",
+  "source_name": "PMF.totalVariationDistance_uniformOfFintype_uniformOfFinset_eq",
+  "formal_statement": "theorem PMF.totalVariationDistance_uniformOfFintype_uniformOfFinset_eq\n    {α : Type*} [Fintype α] [Nonempty α]\n    (s : Finset α) (hs : s.Nonempty) :\n    totalVariationDistance (PMF.uniformOfFintype α) (PMF.uniformOfFinset s hs) =\n      1 - (s.card : MIPStarRE.LDT.Error) / (Fintype.card α : MIPStarRE.LDT.Error) := by sorry",
+  "preamble_opens": [
+   "open PMF",
+   "open scoped BigOperators"
+  ],
+  "docstring": "Total variation between the uniform probability mass function on a finite\nambient type and the uniform probability mass function on a nonempty finite\nsubset.\n\nThis is the PMF form of the uniform-versus-conditioned-uniform calculation in\nProposition `prop:ld-dnoteq` of `references/ldt-paper/ld-pasting.tex`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.PMFAverages",
+  "module_doc": "/-!\n# PMF-weighted finite expectation identities\n\nThis module contains finite expectation identities stated directly for\nMathlib probability mass functions.  They connect `PMF.map` and\n`PMF.bind` to the real-weighted finite sums used by the\nlow individual degree test averaging layer.\n\n## Main declarations\n\n* `PMF.map_apply_toReal`\n* `PMF.realWeightedSum`\n* `PMF.realWeightedSumLinearMap`\n* `PMF.realWeightedSum_map`\n* `PMF.realWeightedSum_bind`\n* `PMF.map_sum_smul`\n* `PMF.bind_apply_toReal`\n* `PMF.bind_sum_smul`\n* `PMF.sum_toReal_eq_one`\n* `PMF.sum_const_smul`\n* `PMF.totalVariationDistance`\n* `PMF.totalVariationDistance_eq_sum_max_sub`\n* `PMF.totalVariationDistance_uniformOfFintype_uniformOfFinset_eq`\n* `PMF.sum_le_sum_add_totalVariationDistance`\n* `PMF.sum_rpow_one_div_le_rpow_sum`\n* `PMF.realWeightedSum_rpow_one_div_le_rpow`\n* `PMF.uniformOfFintype_map_equiv`\n* `PMF.uniformOfFintype_prod_apply_toReal`\n* `PMF.uniformOfFintype_prod_eq_bind`\n* `PMF.uniformOfFintype_sum_equiv_smul`\n* `PMF.uniformOfFintype_prod_sum_smul`\n* `PMF.uniformOfFintype_sum_equiv_fst_smul`\n* `PMF.uniformOfFintype_sum_equiv_snd_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_fst_smul`\n* `PMF.uniformOfFintype_sum_factor_equiv_snd_smul`\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFAverages.lean#L738-L799",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFAverages.lean",
+  "lines": [
+   738,
+   799
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "PMF.totalVariationDistance_eq_sum_max_sub"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 51,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "PMF.realWeightedSum_uniformOfFintype_comm",
+  "source_name": "PMF.realWeightedSum_uniformOfFintype_comm",
+  "formal_statement": "theorem PMF.realWeightedSum_uniformOfFintype_comm {α β M : Type*}\n    [Fintype α] [Nonempty α] [Fintype β] [Nonempty β]\n    [AddCommMonoid M] [Module MIPStarRE.LDT.Error M]\n    (f : α → β → M) :\n    realWeightedSum (PMF.uniformOfFintype α)\n        (fun a => realWeightedSum (PMF.uniformOfFintype β) (fun b => f a b)) =\n      realWeightedSum (PMF.uniformOfFintype β)\n        (fun b => realWeightedSum (PMF.uniformOfFintype α) (fun a => f a b)) := by sorry",
+  "preamble_opens": [
+   "open PMF",
+   "open scoped BigOperators"
+  ],
+  "docstring": "Swap two nested finite expectations against uniform probability mass\nfunctions.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.PMFUniformAverages",
+  "module_doc": "/-!\n# Uniform PMF finite-expectation identities\n\nThis module contains high-level uniform-expectation identities for Mathlib\nprobability mass functions.  The statements are phrased in terms of\n`PMF.realWeightedSum`, rather than finite sums, so that product,\nmarginalization, equivalence-transport, and finite push-forward arguments can\nbe carried out directly in the probability-mass-function language.\n\n## Main declarations\n\n* `PMF.realWeightedSum_uniformOfFintype_comm`\n* `PMF.realWeightedSum_uniformOfFintype_prod_swap`\n* `PMF.realWeightedSum_uniformOfFintype_equiv_prod`\n* `PMF.realWeightedSum_uniformOfFintype_equiv_prod_swap`\n* `PMF.realWeightedSum_uniformOfFintype_equiv_fst`\n* `PMF.realWeightedSum_uniformOfFintype_equiv_snd`\n* `PMF.realWeightedSum_uniformOfFintype_fst`\n* `PMF.realWeightedSum_uniformOfFintype_snd`\n* `PMF.realWeightedSum_map_uniformOfFintype_factor_equiv`\n* `PMF.realWeightedSum_map_uniformOfFintype_factor_equiv_fst`\n* `PMF.realWeightedSum_map_uniformOfFintype_factor_equiv_snd`\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFUniformAverages.lean#L71-L94",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/PMFUniformAverages.lean",
+  "lines": [
+   71,
+   94
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "PMF.bind_sum_smul",
+   "PMF.uniformOfFintype_prod_eq_bind",
+   "PMF.uniformOfFintype_map_equiv",
+   "PMF.map_sum_smul"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.embedCoord_injective",
+  "source_name": "MIPStarRE.LDT.embedCoord_injective",
+  "formal_statement": "theorem MIPStarRE.LDT.embedCoord_injective (params : Parameters) :\n    Function.Injective (embedCoord params) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The old-coordinate inclusion into the appended coordinate space is injective.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.ParametersBase",
+  "module_doc": "/-!\n# Basic parameters and scalar infrastructure for the low individual degree test\n\nCore parameter data, finite-field models, and coordinate arithmetic.\n\nNote: this module contributes declarations to the comparator statement closure\nof `mainFormal`, which must elaborate in the same environment as the\nMathlib-only `Challenge.lean`.  Keep the full `import Mathlib`; do not narrow\nit.  See `docs/comparator.md`, \"Environment alignment\".\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/ParametersBase.lean#L417-L422",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/ParametersBase.lean",
+  "lines": [
+   417,
+   422
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.embedCoord_ne_lastCoord",
+  "source_name": "MIPStarRE.LDT.embedCoord_ne_lastCoord",
+  "formal_statement": "theorem MIPStarRE.LDT.embedCoord_ne_lastCoord (params : Parameters) (i : Fin params.m) :\n    embedCoord params i ≠ lastCoord params := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "No old coordinate is the appended last coordinate.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.ParametersBase",
+  "module_doc": "/-!\n# Basic parameters and scalar infrastructure for the low individual degree test\n\nCore parameter data, finite-field models, and coordinate arithmetic.\n\nNote: this module contributes declarations to the comparator statement closure\nof `mainFormal`, which must elaborate in the same environment as the\nMathlib-only `Challenge.lean`.  Keep the full `import Mathlib`; do not narrow\nit.  See `docs/comparator.md`, \"Environment alignment\".\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/ParametersBase.lean#L428-L434",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/ParametersBase.lean",
+  "lines": [
+   428,
+   434
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ }
+]

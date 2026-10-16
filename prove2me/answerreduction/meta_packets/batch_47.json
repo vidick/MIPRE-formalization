@@ -1,0 +1,716 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.add_in_u_selected_transfer_of_cs_chain",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.add_in_u_selected_transfer_of_cs_chain",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.add_in_u_selected_transfer_of_cs_chain\n    {Outcome : Type*} [Fintype Outcome]\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta : Error)\n    (M : IdxSubMeas (Point params) Outcome ι)\n    (T : SubMeas (Polynomial params) ι)\n    (S : AddInUSelection params Outcome)\n    (η01 η12 η23 η34 : Error)\n    (h01 :\n      |addInUSelectedCSChainQ0 params strategy M T S -\n        addInUSelectedCSChainQ1 params strategy M T S| ≤ η01)\n    (h12 :\n      |addInUSelectedCSChainQ1 params strategy M T S -\n        addInUSelectedCSChainQ2 params strategy M T S| ≤ η12)\n    (h23 :\n      |addInUSelectedCSChainQ2 params strategy M T S -\n        addInUSelectedCSChainQ3 params strategy M T S| ≤ η23)\n    (h34 :\n      |addInUSelectedCSChainQ3 params strategy M T S -\n        addInUSelectedCSChainQ4 params strategy M T S| ≤ η34)\n    (hsum : η01 + η12 + η23 + η34 ≤ addInUError params eps delta) :\n    |addInULeftQuantity params strategy M\n        (averagedSandwichedPolynomialSubMeas params strategy T) S -\n      addInURightQuantity params strategy M T S| ≤ addInUError params eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Assemble the selected add-in-`u` scalar transfer from the four selected\nscalar chain moves.\n\nThis is the selection-parametrized counterpart of\n`add_in_u_simplified_transfer_of_cs_chain`.  The endpoints are the theorem-side\ngeneric add-in-u quantities rather than the diagonal match-mass and simplified\nrelease quantities.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Transfer",
+  "module_doc": "/-!\n# Add-in-u scalar transfer and off-diagonal expansion\n\nAssembly of the four add-in-u scalar moves, the elementary arithmetic\nabsorption from the paper, and the residual off-diagonal expansion used by the\nhelper strong self-consistency argument.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 341--343\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Transfer.lean#L150-L207",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Transfer.lean",
+  "lines": [
+   150,
+   207
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SelfImprovement.addInUSelectedCSChainQ0_eq_leftQuantity_averagedSandwiched",
+   "MIPStarRE.LDT.SelfImprovement.addInUSelectedCSChainQ4_eq_rightQuantity"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.two_mul_delta_le_selfImprovementVarianceError",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.two_mul_delta_le_selfImprovementVarianceError",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.two_mul_delta_le_selfImprovementVarianceError\n    (params : Parameters)\n    [FieldModel params.q]\n    (eps delta : Error)\n    (heps : 0 ≤ eps) (hdelta : 0 ≤ delta) :\n    2 * delta ≤ selfImprovementVarianceError params eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Paper-side comparison `2 δ ≤ ζ_variance` from the closing line of the proof\nof `lem:add-in-u` (`self_improvement.tex:342`,\n`blueprint/src/chapter/ch07_self_improvement.tex:494`). Since\n`ζ_variance = 24 m (ε + δ + m d / q)` and `m ≥ 1`, the term `24 m δ` already\nexceeds `2 δ` whenever `eps, delta ≥ 0`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Transfer",
+  "module_doc": "/-!\n# Add-in-u scalar transfer and off-diagonal expansion\n\nAssembly of the four add-in-u scalar moves, the elementary arithmetic\nabsorption from the paper, and the residual off-diagonal expansion used by the\nhelper strong self-consistency argument.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 341--343\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Transfer.lean#L219-L253",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Transfer.lean",
+  "lines": [
+   219,
+   253
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.add_in_u_simplified_transfer_of_cs_chain_sqrt_form",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.add_in_u_simplified_transfer_of_cs_chain_sqrt_form",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.add_in_u_simplified_transfer_of_cs_chain_sqrt_form\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta : Error)\n    (heps : 0 ≤ eps) (hdelta : 0 ≤ delta)\n    (T : SubMeas (Polynomial params) ι)\n    (h01 :\n      |addInUCSChainQ0 params strategy T - addInUCSChainQ1 params strategy T| ≤\n        Real.sqrt (2 * delta))\n    (h12 :\n      |addInUCSChainQ1 params strategy T - addInUCSChainQ2 params strategy T| ≤\n        Real.sqrt (2 * delta))\n    (h23 :\n      |addInUCSChainQ2 params strategy T - addInUCSChainQ3 params strategy T| ≤\n        Real.sqrt (selfImprovementVarianceError params eps delta))\n    (h34 :\n      |addInUCSChainQ3 params strategy T - addInUCSChainQ4 params strategy T| ≤\n        Real.sqrt (selfImprovementVarianceError params eps delta)) :\n    |qBipartiteMatchMass strategy.state\n        (averagedSandwichedPolynomialSubMeas params strategy T)\n        (averagedSandwichedPolynomialSubMeas params strategy T) -\n      avgOver (uniformDistribution (Point params)) (fun u =>\n        ∑ h : Polynomial params,\n          ev strategy.state\n            (opTensor ((sandwichedPolynomialSubMeasAt params strategy T u).outcome h)\n              (T.outcome h)))| ≤ addInUError params eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Wrapper composing `add_in_u_simplified_transfer_of_cs_chain` with the\narithmetic absorption: when the four chain step bounds have the paper-faithful\nshapes `√(2 δ)`, `√(2 δ)`, `√(ζ_variance)`, `√(ζ_variance)`, the\nprojection-simplified transfer holds with the displayed\n`addInUError = 4 ζ_variance^{1/2}`. The four hypotheses match the targets of\ncompanion issues #1089 (Step 1/2) and #1083/#1088/#1090 (Step 3/4).",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Transfer",
+  "module_doc": "/-!\n# Add-in-u scalar transfer and off-diagonal expansion\n\nAssembly of the four add-in-u scalar moves, the elementary arithmetic\nabsorption from the paper, and the residual off-diagonal expansion used by the\nhelper strong self-consistency argument.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 341--343\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Transfer.lean#L275-L320",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Transfer.lean",
+  "lines": [
+   275,
+   320
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SelfImprovement.add_in_u_simplified_transfer_of_cs_chain",
+   "MIPStarRE.LDT.SelfImprovement.two_mul_delta_le_selfImprovementVarianceError"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.selfConsistencyDiagonalAddInU_of_simplifiedTransfer",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.selfConsistencyDiagonalAddInU_of_simplifiedTransfer",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.selfConsistencyDiagonalAddInU_of_simplifiedTransfer\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta : Error)\n    (T : SubMeas (Polynomial params) ι)\n    (htransfer :\n      |qBipartiteMatchMass strategy.state\n          (averagedSandwichedPolynomialSubMeas params strategy T)\n          (averagedSandwichedPolynomialSubMeas params strategy T) -\n        avgOver (uniformDistribution (Point params)) (fun u =>\n          ∑ h : Polynomial params,\n            ev strategy.state\n              (opTensor ((sandwichedPolynomialSubMeasAt params strategy T u).outcome h)\n                (T.outcome h)))| ≤ addInUError params eps delta) :\n    |qBipartiteMatchMass strategy.state\n        (averagedSandwichedPolynomialSubMeas params strategy T)\n        (averagedSandwichedPolynomialSubMeas params strategy T) -\n      avgOver (uniformDistribution (Point params)) (fun u =>\n        ∑ h : Polynomial params,\n          let Au := pointConditionedOutcomeOperatorAtPolynomial params strategy h u\n          ev strategy.state\n            (opTensor (Au * (sandwichedPolynomialSubMeasAt params strategy T u).outcome h * Au)\n              (T.outcome h)))| ≤ addInUError params eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Specialization of `selfConsistencyDiagonalAddInU_of_transfer` to the\nprojection-simplified scalar transfer hypothesis.\n\nCompared to `selfConsistencyDiagonalAddInU_of_transfer`, the hypothesis is\nstated against the cleaner right-hand side `E_u Σ_h ⟨ψ, H^u_h ⊗ T_h ψ⟩`\nobtained after collapsing the outer projection factors of\n`eq:release-the-kraken` via `proj_outer_sandwich_eq`. The conclusion is\nidentical and can therefore feed the same diagonal helper-SSC application;\nthe simplification reduces the Cauchy--Schwarz/global-variance comparison\n(`self_improvement.tex:247--343`) to a transfer in the simpler shape.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Transfer",
+  "module_doc": "/-!\n# Add-in-u scalar transfer and off-diagonal expansion\n\nAssembly of the four add-in-u scalar moves, the elementary arithmetic\nabsorption from the paper, and the residual off-diagonal expansion used by the\nhelper strong self-consistency argument.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 341--343\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Transfer.lean#L391-L444",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Transfer.lean",
+  "lines": [
+   391,
+   444
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_sum"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.helper_mass_sub_release_eq_polynomial_off_diagonal",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.helper_mass_sub_release_eq_polynomial_off_diagonal",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.helper_mass_sub_release_eq_polynomial_off_diagonal\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (T : Measurement (Polynomial params) ι) :\n    subMeasMass strategy.state\n        (averagedSandwichedPolynomialSubMeas params strategy T.toSubMeas).liftLeft -\n      addInURightQuantity params strategy\n        (sandwichedPolynomialSubMeasAt params strategy T.toSubMeas)\n        T.toSubMeas\n        (selfConsistencyAddInUSelection params) =\n      avgOver (uniformDistribution (Point params)) (fun u =>\n        ∑ h : Polynomial params,\n          ∑ h' ∈ (Finset.univ : Finset (Polynomial params)).erase h,\n            ev strategy.state\n              (opTensor\n                ((sandwichedPolynomialSubMeasAt params strategy T.toSubMeas u).outcome h')\n                (T.toSubMeas.outcome h))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Exact residual-side expansion for the helper strong self-consistency proof.\n\nFor the averaged helper `Hhat = E_u H^u` produced from the primal measurement\n`T`, the difference between the helper left mass and the released diagonal\nadd-in-`u` right-hand side is precisely the contribution of the off-diagonal\npolynomial pairs `(h',h)` with `h' ≠ h`:\n\n`E_u \\sum_h \\sum_{h'≠h} ⟨ψ, H^u_{h'} ⊗ T_h ψ⟩`.\n\nThis is the exact algebraic opening of the Lean residual\n`helper_left_mass - release-the-kraken`; the later Cauchy--Schwarz,\nSchwartz--Zippel, point-consistency, and self-consistency estimates are the\nremaining inequalities that bound this off-diagonal expression in the proof of\n`item:self-improvement-self`.\n\nThis Lean identity expands the helper left mass minus the released diagonal\nright-hand side directly.  It therefore differs from the paper's intermediate\n``threw-in-`h'`'' expression, where the off-diagonal helper operator is still\nsandwiched by `A^u_{h(u)}`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Transfer",
+  "module_doc": "/-!\n# Add-in-u scalar transfer and off-diagonal expansion\n\nAssembly of the four add-in-u scalar moves, the elementary arithmetic\nabsorption from the paper, and the residual off-diagonal expansion used by the\nhelper strong self-consistency argument.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 341--343\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Transfer.lean#L446-L581",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Transfer.lean",
+  "lines": [
+   446,
+   581
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.opTensor_sum_right_univ",
+   "MIPStarRE.LDT.SelfImprovement.helper_mass_eq_avg_pointwise_sandwich_sum"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 100,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.add_in_u_cs_chain_q3_q4_self_energy_factor_le_one",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.add_in_u_cs_chain_q3_q4_self_energy_factor_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.add_in_u_cs_chain_q3_q4_self_energy_factor_le_one\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (T : SubMeas (Polynomial params) ι) :\n    avgOver (uniformDistribution (Point params × Point params)) (fun uv =>\n      ∑ h : Polynomial params,\n        let Au := pointConditionedOutcomeOperatorAtPolynomial params strategy h uv.1\n        let Mh := (sandwichedPolynomialSubMeasAt params strategy T uv.1).outcome h\n        ev strategy.state (opTensor (Au * Mh * Au) (T.outcome h))) ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Self-energy factor `≤ 1` for the `Q₃ → Q₄` factored Cauchy--Schwarz.\n\nThe first square-root factor `D₁` produced by `add_in_u_cs_chain_q3_q4_factored_cs`\nis bounded by `1`. The proof collapses the outer projection `A^u_{h(u)}` around\nthe sandwiched submeasurement `H^u_h = A^u_{h(u)} · T_h · A^u_{h(u)}` via\nprojectivity, then bounds the per-point sum of `opTensor (H^u_h) (T_h)` by\nthe submeasurement-opTensor-sum lemma, lifts to expectation via `ev ψ`,\nand averages over `(u, v)` with the `v`-average collapsing to unity.\n\nThis supplies the `hD₁_le_one` hypothesis required by\n`add_in_u_cs_chain_q3_q4_le_sqrt_of_factor_bounds`.  The proof is\nfully symmetric in `u` ↔ `v` up to projection renaming, so the same\npattern directly supplies `hD₂_le_one` for the `Q₂ → Q₃` factored\n`add_in_u_cs_chain_q2_q3_le_sqrt_of_factor_bounds` analogue.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Variance",
+  "module_doc": "/-!\n# Unselected add-in-u Step 3/4 global-variance bounds\n\nUnselected self-energy estimates, variance-factor comparisons, and the\ncombined global-variance bridges for the projection-simplified add-in-u chain.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 299--340\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Variance.lean#L73-L157",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Variance.lean",
+  "lines": [
+   73,
+   157
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_le_const",
+   "MIPStarRE.LDT.avgOver_uniform_fst",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.SubMeas.opTensor_sum_filter_le_one"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 62,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.add_in_u_cs_chain_q2_q3_self_energy_factor_le_one",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.add_in_u_cs_chain_q2_q3_self_energy_factor_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.add_in_u_cs_chain_q2_q3_self_energy_factor_le_one\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (T : SubMeas (Polynomial params) ι) :\n    avgOver (uniformDistribution (Point params × Point params)) (fun uv =>\n      ∑ h : Polynomial params,\n        let Av := pointConditionedOutcomeOperatorAtPolynomial params strategy h uv.2\n        let Mh := (sandwichedPolynomialSubMeasAt params strategy T uv.1).outcome h\n        ev strategy.state (opTensor (Av * Mh * Av) (T.outcome h))) ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Self-energy factor `≤ 1` for the `Q₂ → Q₃` factored Cauchy--Schwarz.\n\nThe second square-root factor produced by `add_in_u_cs_chain_q2_q3_factored_cs`\nis bounded by `1`. For fixed `(u,v)`, the diagonal summand is one summand of the\nnonnegative residual tensor sum\n`Σ_{i,r,o} A^v_o H^u_i A^v_o ⊗ T_r`.  The residual sum is at most `1` by\n`sandwichTensor_residual_sum_le_one`, applied to the point measurement at `v`,\nthe sandwiched polynomial submeasurement at `u`, and the original\nsubmeasurement `T`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Variance",
+  "module_doc": "/-!\n# Unselected add-in-u Step 3/4 global-variance bounds\n\nUnselected self-energy estimates, variance-factor comparisons, and the\ncombined global-variance bridges for the projection-simplified add-in-u chain.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 299--340\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Variance.lean#L159-L241",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Variance.lean",
+  "lines": [
+   159,
+   241
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_le_const",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.sandwichTensorSummand_nonneg",
+   "MIPStarRE.LDT.sandwichTensor_residual_sum_le_one"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 65,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.add_in_u_cs_chain_q2_q3_variance_factor_le_globalVarianceDeviation_sum",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.add_in_u_cs_chain_q2_q3_variance_factor_le_globalVarianceDeviation_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.add_in_u_cs_chain_q2_q3_variance_factor_le_globalVarianceDeviation_sum\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (T : SubMeas (Polynomial params) ι) :\n    avgOver (uniformDistribution (Point params × Point params)) (fun uv =>\n      ∑ h : Polynomial params,\n        let Au := pointConditionedOutcomeOperatorAtPolynomial params strategy h uv.1\n        let Av := pointConditionedOutcomeOperatorAtPolynomial params strategy h uv.2\n        let Mh := (sandwichedPolynomialSubMeasAt params strategy T uv.1).outcome h\n        ev strategy.state\n          (opTensor ((Av - Au) * Mh * (Av - Au)) (T.outcome h))) ≤\n      ∑ g : Polynomial params,\n        globalVarianceDeviationAtPolynomial params strategy strategy.state T g := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The variance factor in the `Q₂ → Q₃` factored Cauchy--Schwarz estimate is\nbounded by the polynomial sum of the global-variance deviations.\n\nFor each polynomial `h`, the sandwiched operator `H^u_h` is bounded by `1`.\nThus the summand\n`(A^v_{h(v)} - A^u_{h(u)}) H^u_h (A^v_{h(v)} - A^u_{h(u)}) ⊗ T_h`\nis dominated by the squared point-operator difference tensored with `T_h`.\nThe latter is exactly the integrand defining\n`globalVarianceDeviationAtPolynomial`, after expanding the weighted\npoint-conditioned operator.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUStep34AndTransfer.Variance",
+  "module_doc": "/-!\n# Unselected add-in-u Step 3/4 global-variance bounds\n\nUnselected self-energy estimates, variance-factor comparisons, and the\ncombined global-variance bridges for the projection-simplified add-in-u chain.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 299--340\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Variance.lean#L243-L349",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUStep34AndTransfer/Variance.lean",
+  "lines": [
+   243,
+   349
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_sum",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.opTensor_mono_left",
+   "MIPStarRE.LDT.SubMeas.outcome_hermitian",
+   "MIPStarRE.LDT.SubMeas.outcome_le_one",
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.avgOver_independentPointPair_eq_uniform_prod"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 84,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.helper_boundedness_gap_eq_upper_gap_add_off_diagonal_avg",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.helper_boundedness_gap_eq_upper_gap_add_off_diagonal_avg",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.helper_boundedness_gap_eq_upper_gap_add_off_diagonal_avg\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (H : SubMeas (Polynomial params) ι)\n    (Z : MIPStarRE.Quantum.Op ι) :\n    helperBoundednessGap params strategy H Z =\n      (ev strategy.state (helperUpperOperator params Z) -\n          ev strategy.state (rightTensor (ι₁ := ι) H.total)) +\n        avgOver (uniformDistribution (Point params)) (fun u =>\n          ∑ h : Polynomial params,\n            ∑ a ∈ (Finset.univ : Finset (Fq params)).erase (h u),\n              ev strategy.state\n                (opTensor ((strategy.pointMeasurement u).outcome a)\n                  (H.outcome h))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Algebraic decomposition of the helper boundedness gap.\n\nThe scalar gap\n`⟨Z ⊗ I - helperAgreementAverageOperator⟩` is the sum of\n`⟨Z ⊗ I⟩ - ⟨I ⊗ H.total⟩` and the off-diagonal average produced by\n`helper_boundedness_slack_average_ev_eq_off_diagonal_avg`.  This is the\nformal algebraic bridge between the reindexing calculation and the final\nboundedness estimate in the proof of self-improvement.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.BoundednessTransport.BoundednessGap",
+  "module_doc": "/-!\n# Boundedness transport boundedness-gap estimates\n\nThis file contains the helper boundedness-gap decomposition, its\ndata-processing transport, and the final projective-residual boundedness\nconstructors used in the self-improvement proof.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 612--613 and 742--755\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/BoundednessGap.lean#L84-L117",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/BoundednessGap.lean",
+  "lines": [
+   84,
+   117
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.SelfImprovement.helper_boundedness_slack_average_ev_eq_off_diagonal_avg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.helper_boundedness_gap_le_selfImprovementHelperError",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.helper_boundedness_gap_le_selfImprovementHelperError",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.helper_boundedness_gap_le_selfImprovementHelperError\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta : Error)\n    (heps : 0 ≤ eps) (hdelta : 0 ≤ delta)\n    {Hhat : SubMeas (Polynomial params) ι}\n    {Z : MIPStarRE.Quantum.Op ι}\n    (hZ_vs_H :\n      ev strategy.state (helperUpperOperator params Z) -\n          ev strategy.state (rightTensor (ι₁ := ι) Hhat.total) ≤\n        3 * Real.sqrt delta)\n    (hoffdiag :\n      avgOver (uniformDistribution (Point params)) (fun u =>\n        ∑ h : Polynomial params,\n          ∑ a ∈ (Finset.univ : Finset (Fq params)).erase (h u),\n            ev strategy.state\n              (opTensor ((strategy.pointMeasurement u).outcome a)\n                (Hhat.outcome h))) ≤\n        4 * Real.sqrt (selfImprovementVarianceError params eps delta)) :\n    helperBoundednessGap params strategy Hhat Z ≤\n      selfImprovementHelperError params eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Helper-stage boundedness from the scalar comparison and the off-diagonal\nestimate.\n\nThe helper boundedness gap decomposes as\n`⟨Z ⊗ I⟩ - ⟨I ⊗ Hhat.total⟩` plus the off-diagonal average from\n`helper_boundedness_slack_average_ev_eq_off_diagonal_avg`.  Thus the comparison\n`⟨Z ⊗ I⟩ - ⟨I ⊗ Hhat.total⟩ ≤ 3 √δ`, together with the off-diagonal estimate\n`≤ 4 √ζ_variance`, gives the helper threshold after applying\n`helper_boundedness_error_le_selfImprovementHelperError`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.BoundednessTransport.BoundednessGap",
+  "module_doc": "/-!\n# Boundedness transport boundedness-gap estimates\n\nThis file contains the helper boundedness-gap decomposition, its\ndata-processing transport, and the final projective-residual boundedness\nconstructors used in the self-improvement proof.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 612--613 and 742--755\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/BoundednessGap.lean#L119-L164",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/BoundednessGap.lean",
+  "lines": [
+   119,
+   164
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SelfImprovement.helper_boundedness_gap_eq_upper_gap_add_off_diagonal_avg",
+   "MIPStarRE.LDT.SelfImprovement.helper_boundedness_error_le_selfImprovementHelperError"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.helper_boundedness_gap_le_selfImprovementHelperError_of_pointConsistencyAddInU_transfer",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.helper_boundedness_gap_le_selfImprovementHelperError_of_pointConsistencyAddInU_transfer",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.helper_boundedness_gap_le_selfImprovementHelperError_of_pointConsistencyAddInU_transfer\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta : Error)\n    (heps : 0 ≤ eps) (hdelta : 0 ≤ delta)\n    {T Hhat : SubMeas (Polynomial params) ι}\n    {Z : MIPStarRE.Quantum.Op ι}\n    (hZ_vs_H :\n      ev strategy.state (helperUpperOperator params Z) -\n          ev strategy.state (rightTensor (ι₁ := ι) Hhat.total) ≤\n        3 * Real.sqrt delta)\n    (htransfer :\n      |addInULeftQuantity params strategy\n          (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)\n          Hhat\n          (pointConsistencyAddInUSelection params) -\n        addInURightQuantity params strategy\n          (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)\n          T\n          (pointConsistencyAddInUSelection params)| ≤ addInUError params eps delta) :\n    helperBoundednessGap params strategy Hhat Z ≤\n      selfImprovementHelperError params eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Helper-stage boundedness from the scalar comparison and the\npoint-consistency `add-in-u` transfer.\n\nThis theorem composes the off-diagonal estimate supplied by\n`pointConsistencyAddInUSelection` with\n`helper_boundedness_gap_le_selfImprovementHelperError`.  It is the formal\nstatement of the sentence \"combined with the explicit `A`-consistency bound\" in the\nboundedness paragraph of the self-improvement proof.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.BoundednessTransport.BoundednessGap",
+  "module_doc": "/-!\n# Boundedness transport boundedness-gap estimates\n\nThis file contains the helper boundedness-gap decomposition, its\ndata-processing transport, and the final projective-residual boundedness\nconstructors used in the self-improvement proof.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 612--613 and 742--755\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/BoundednessGap.lean#L168-L218",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/BoundednessGap.lean",
+  "lines": [
+   168,
+   218
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SelfImprovement.addInULeftQuantity_pointConsistencySelection_eq_off_diagonal_avg",
+   "MIPStarRE.LDT.SelfImprovement.addInURightQuantity_pointConsistencySelection_eq_zero",
+   "MIPStarRE.LDT.SelfImprovement.helper_boundedness_gap_le_selfImprovementHelperError"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.helper_upper_gap_rightTensor_le_three_sqrt_delta_of_helper_outputs",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.helper_upper_gap_rightTensor_le_three_sqrt_delta_of_helper_outputs",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.helper_upper_gap_rightTensor_le_three_sqrt_delta_of_helper_outputs\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta : Error)\n    {T : Measurement (Polynomial params) ι}\n    {Hhat : SubMeas (Polynomial params) ι}\n    {Z : MIPStarRE.Quantum.Op ι}\n    (hhelper : SelfImprovementHelperConclusion params strategy T Hhat Z eps delta)\n    (hssc : BipartiteSSCRel strategy.state (uniformDistribution (Point params))\n      (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement) delta)\n    (hslack :\n      ∀ h : Polynomial params,\n        T.toSubMeas.outcome h * averagedPointOperator params strategy h =\n          T.toSubMeas.outcome h * Z) :\n    ev strategy.state (helperUpperOperator params Z) -\n        ev strategy.state (rightTensor (ι₁ := ι) Hhat.total) ≤\n      3 * Real.sqrt delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Convert the helper-completeness `Hhat`-versus-`Z` comparison to the\nright-placed total comparison used in the boundedness gap.\n\nThe helper-completeness paragraph naturally proves\n`⟨ψ, Z ⊗ I⟩ - 3√δ ≤ subMeasMass ψ Hhat.liftLeft`. The boundedness decomposition,\nhowever, uses the right-placed total `⟨ψ, I ⊗ Hhat.total⟩`. On the\npermutation-invariant strategy state these scalars agree, so the comparison\nbecomes `⟨ψ, Z ⊗ I⟩ - ⟨ψ, I ⊗ Hhat.total⟩ ≤ 3√δ`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.BoundednessTransport.BoundednessGap",
+  "module_doc": "/-!\n# Boundedness transport boundedness-gap estimates\n\nThis file contains the helper boundedness-gap decomposition, its\ndata-processing transport, and the final projective-residual boundedness\nconstructors used in the self-improvement proof.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 612--613 and 742--755\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/BoundednessGap.lean#L222-L261",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/BoundednessGap.lean",
+  "lines": [
+   222,
+   261
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.SelfImprovement.helper_mass_eq_avg_pointwise_sandwich_sum",
+   "MIPStarRE.LDT.SelfImprovement.helper_pointwise_sandwich_sum_eq_bracketed",
+   "MIPStarRE.LDT.SelfImprovement.helper_second_move_abs_sub_first_moved_le_sqrt_delta",
+   "MIPStarRE.LDT.SelfImprovement.helper_first_move_abs_sub_bracketed_le_two_sqrt_delta",
+   "MIPStarRE.LDT.SelfImprovement.helper_hhat_vs_z_of_cauchy_schwarz_and_complementary_slackness"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.helper_boundedness_gap_transport_through_data_processing",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.helper_boundedness_gap_transport_through_data_processing",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.helper_boundedness_gap_transport_through_data_processing\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (Hhat : SubMeas (Polynomial params) ι)\n    (H : ProjSubMeas (Polynomial params) ι)\n    (Z : MIPStarRE.Quantum.Op ι)\n    (ε : Error)\n    (hdata :\n      SDDRel strategy.state (uniformDistribution (Point params))\n        ((polynomialEvaluationFamily params Hhat).liftLeft)\n        ((polynomialEvaluationFamily params H.toSubMeas).liftLeft)\n        ε) :\n    helperBoundednessGap params strategy H.toSubMeas Z ≤\n      helperBoundednessGap params strategy Hhat Z + Real.sqrt ε := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Transport the helper boundedness gap through the data-processing\napproximation between `Hhat` and `H`.\n\nThe input `hdata` is exactly the data-processing SDD bound already produced\ninside `selfImprovement`. The conclusion says that replacing the helper\npolynomial family in the point-agreement average by the projective family costs\nat most `sqrt ε`, matching Proposition `easy-approx-from-approx-delta` in the\nboundedness paragraph of the paper.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.BoundednessTransport.BoundednessGap",
+  "module_doc": "/-!\n# Boundedness transport boundedness-gap estimates\n\nThis file contains the helper boundedness-gap decomposition, its\ndata-processing transport, and the final projective-residual boundedness\nconstructors used in the self-improvement proof.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 612--613 and 742--755\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/BoundednessGap.lean#L308-L364",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/BoundednessGap.lean",
+  "lines": [
+   308,
+   364
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.ev_real_smul",
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.sddRel_liftRight_of_liftLeft_permInv",
+   "MIPStarRE.LDT.Preliminaries.easyApproxFromApproxDelta"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.projective_boundedness_gap_le_helper_boundedness_gap",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.projective_boundedness_gap_le_helper_boundedness_gap",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.projective_boundedness_gap_le_helper_boundedness_gap\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (H : ProjSubMeas (Polynomial params) ι)\n    (Z : MIPStarRE.Quantum.Op ι)\n    (hdual :\n      ∀ h : Polynomial params,\n        0 ≤ sdpDualSlackOperator params strategy Z h) :\n    projectiveBoundednessGap params strategy H Z ≤\n      helperBoundednessGap params strategy H.toSubMeas Z := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Compare the final projective residual with the helper boundedness gap for the\nsame projective family.\n\nThis is the SDP dual-slack step in the projective boundedness paragraph of\n`thm:self-improvement` (`references/ldt-paper/self_improvement.tex`, lines\n742--749): the term `Z ⊗ H_h` in the projective residual dominates\n`(E_u A^u_{h(u)}) ⊗ H_h` for each polynomial `h`, and summing these inequalities\nturns `Z ⊗ (I - H)` into the helper-stage defect\n`Z ⊗ I - E_u Σ_a A^u_a ⊗ H_[h(u)=a]`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.BoundednessTransport.BoundednessGap",
+  "module_doc": "/-!\n# Boundedness transport boundedness-gap estimates\n\nThis file contains the helper boundedness-gap decomposition, its\ndata-processing transport, and the final projective-residual boundedness\nconstructors used in the self-improvement proof.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 612--613 and 742--755\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/BoundednessGap.lean#L367-L457",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/BoundednessGap.lean",
+  "lines": [
+   367,
+   457
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_sum",
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.ev_real_smul",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.opTensor_mono_left",
+   "MIPStarRE.LDT.opTensor_sum_left_finset",
+   "MIPStarRE.LDT.opTensor_sum_right_univ",
+   "MIPStarRE.LDT.SelfImprovement.helper_agreement_average_ev_eq_polynomial_sum"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 72,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.helperAgreementOperatorAtPoint_eq_sum_polynomial",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.helperAgreementOperatorAtPoint_eq_sum_polynomial",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.helperAgreementOperatorAtPoint_eq_sum_polynomial\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (H : SubMeas (Polynomial params) ι)\n    (u : Point params) :\n    helperAgreementOperatorAtPoint params strategy H u =\n      ∑ h : Polynomial params,\n        opTensor ((strategy.pointMeasurement u).outcome (h u))\n          (H.outcome h) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Reindexing identity for the pointwise helper-agreement operator.\n\nThe fiberwise definition `H_{[h(u)=a]} := ∑_{h : h(u)=a} H_h` collapses the\n`a`-summed expression `∑_a A^u_a ⊗ H_{[h(u)=a]}` to the polynomial-indexed sum\n`∑_h A^u_{h(u)} ⊗ H_h`, by expanding the tensor product fiberwise and applying\n`Finset.sum_fiberwise` along `h ↦ h u`.\n\nThis is the first equality of the boundedness display in the proof of\n`\\ref{item:self-improvement-boundedness}`:\n`references/ldt-paper/self_improvement.tex` line 612, mirrored at\n`blueprint/src/chapter/ch07_self_improvement.tex` lines 274--282\n(\"Reindexing the sum by~$h$\"). It is a purely algebraic identity — no estimate,\nno measurement structure used beyond the postprocess fiber decomposition built\ninto `evaluateAt`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.BoundednessTransport.Decomposition",
+  "module_doc": "/-!\n# Boundedness transport decomposition identities\n\nThis file contains the algebraic reindexing and off-diagonal decompositions used\nin the final-fields boundedness and point-consistency arguments.  The identities\ncome from the helper-stage agreement average in the proof of self-improvement.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 435 and 612--613\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/Decomposition.lean#L92-L163",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/Decomposition.lean",
+  "lines": [
+   92,
+   163
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.polynomial_sum_fiberwise",
+   "MIPStarRE.LDT.opTensor_sum_right_finset"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 49,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.helper_agreement_average_ev_eq_polynomial_sum",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.helper_agreement_average_ev_eq_polynomial_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.helper_agreement_average_ev_eq_polynomial_sum\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (H : SubMeas (Polynomial params) ι) :\n    ev strategy.state (helperAgreementAverageOperator params strategy H) =\n      avgOver (uniformDistribution (Point params)) (fun u =>\n        ∑ h : Polynomial params,\n          ev strategy.state\n            (opTensor ((strategy.pointMeasurement u).outcome (h u))\n              (H.outcome h))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Reindexed expansion of the averaged helper-agreement operator.\n\nCombining the pointwise reindexing identity\n`helperAgreementOperatorAtPoint_eq_sum_polynomial` with\n`helper_agreement_average_ev_eq_avg`, the scalar\n`⟨ψ| E_u Σ_a A^u_a ⊗ H_{[h(u)=a]} |ψ⟩` equals the polynomial-indexed expectation\n`E_u Σ_h ⟨ψ| A^u_{h(u)} ⊗ H_h |ψ⟩` from the second line of the boundedness\ndisplay in the proof of `\\ref{item:self-improvement-boundedness}`\n(`references/ldt-paper/self_improvement.tex` line 612;\n`blueprint/src/chapter/ch07_self_improvement.tex` lines 274--282).",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.BoundednessTransport.Decomposition",
+  "module_doc": "/-!\n# Boundedness transport decomposition identities\n\nThis file contains the algebraic reindexing and off-diagonal decompositions used\nin the final-fields boundedness and point-consistency arguments.  The identities\ncome from the helper-stage agreement average in the proof of self-improvement.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 435 and 612--613\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/Decomposition.lean#L165-L202",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/Decomposition.lean",
+  "lines": [
+   165,
+   202
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.ev_real_smul",
+   "MIPStarRE.LDT.SelfImprovement.helperAgreementOperatorAtPoint_eq_sum_polynomial"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.helperAgreementOperatorAtPoint_off_diagonal_decomposition",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.helperAgreementOperatorAtPoint_off_diagonal_decomposition",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.helperAgreementOperatorAtPoint_off_diagonal_decomposition\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (H : SubMeas (Polynomial params) ι)\n    (u : Point params) :\n    rightTensor (ι₁ := ι) H.total -\n        helperAgreementOperatorAtPoint params strategy H u =\n      ∑ h : Polynomial params,\n        ∑ a ∈ (Finset.univ : Finset (Fq params)).erase (h u),\n          opTensor ((strategy.pointMeasurement u).outcome a) (H.outcome h) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Off-diagonal decomposition of the pointwise helper boundedness slack.\n\nFor each point `u`, the difference between the right-placed total\n`I ⊗ H.total = ∑_h I ⊗ H_h` and the pointwise helper-agreement operator\n`helperAgreementOperatorAtPoint params strategy H u = ∑_a A^u_a ⊗ H_{[h(u)=a]}`\nequals the off-diagonal sum\n`∑_h ∑_{a ≠ h(u)} A^u_a ⊗ H_h`,\nby combining the polynomial-indexed reindexing of `helperAgreementOperatorAtPoint`\nfrom #1124 (`helperAgreementOperatorAtPoint_eq_sum_polynomial`) with\n`∑_a A^u_a = 1` (since `pointMeasurement u` is a measurement) and the bilinearity\nof `opTensor`.\n\nThis is the operator-level form of the second algebraic identity in the\nboundedness display in `\\ref{item:self-improvement-boundedness}`\n(`references/ldt-paper/self_improvement.tex` line 613, mirrored at\n`blueprint/src/chapter/ch07_self_improvement.tex` lines 296--300, the step\n\"Combined with $\\sum_a A_a^u = I$ and~\\eqref{eq:explicit-bound-for-A-consistency}\nthis gives ...\"). The averaged scalar form of the off-diagonal sum on the right\nis the LHS of `eq:explicit-bound-for-A-consistency` (line 435), which the paper\nbounds by `4 √ζ_variance`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.BoundednessTransport.Decomposition",
+  "module_doc": "/-!\n# Boundedness transport decomposition identities\n\nThis file contains the algebraic reindexing and off-diagonal decompositions used\nin the final-fields boundedness and point-consistency arguments.  The identities\ncome from the helper-stage agreement average in the proof of self-improvement.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 435 and 612--613\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/Decomposition.lean#L204-L271",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/Decomposition.lean",
+  "lines": [
+   204,
+   271
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.opTensor_sub_left",
+   "MIPStarRE.LDT.opTensor_sum_left_finset",
+   "MIPStarRE.LDT.opTensor_sum_right_univ",
+   "MIPStarRE.LDT.Measurement.sum_eq",
+   "MIPStarRE.LDT.SelfImprovement.helperAgreementOperatorAtPoint_eq_sum_polynomial"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 38,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.helper_boundedness_slack_average_ev_eq_off_diagonal_avg",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.helper_boundedness_slack_average_ev_eq_off_diagonal_avg",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.helper_boundedness_slack_average_ev_eq_off_diagonal_avg\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (H : SubMeas (Polynomial params) ι) :\n    ev strategy.state (rightTensor (ι₁ := ι) H.total) -\n        ev strategy.state (helperAgreementAverageOperator params strategy H) =\n      avgOver (uniformDistribution (Point params)) (fun u =>\n        ∑ h : Polynomial params,\n          ∑ a ∈ (Finset.univ : Finset (Fq params)).erase (h u),\n            ev strategy.state\n              (opTensor ((strategy.pointMeasurement u).outcome a)\n                (H.outcome h))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Averaged scalar form of the off-diagonal decomposition.\n\nComposed from `helperAgreementOperatorAtPoint_off_diagonal_decomposition` by\napplying the bilinearity of `ev`/`avgOver` over subtraction and averaging via\n`avgOver_uniform_const`.  The difference\n`⟨ψ, I ⊗ H.total, ψ⟩ - ⟨ψ, helperAgreementAverageOperator, ψ⟩` equals the\naveraged off-diagonal scalar sum\n`E_u ∑_h ∑_{a ≠ h(u)} ⟨ψ, A^u_a ⊗ H_h, ψ⟩`,\nwhich is the LHS of `eq:explicit-bound-for-A-consistency`\n(`references/ldt-paper/self_improvement.tex` line 435; blueprint\n`ch07_self_improvement.tex` lines 153--168).",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.BoundednessTransport.Decomposition",
+  "module_doc": "/-!\n# Boundedness transport decomposition identities\n\nThis file contains the algebraic reindexing and off-diagonal decompositions used\nin the final-fields boundedness and point-consistency arguments.  The identities\ncome from the helper-stage agreement average in the proof of self-improvement.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 435 and 612--613\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/Decomposition.lean#L295-L355",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/Decomposition.lean",
+  "lines": [
+   295,
+   355
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_const",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.ev_real_smul",
+   "MIPStarRE.LDT.SelfImprovement.helperAgreementOperatorAtPoint_off_diagonal_decomposition"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 38,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.helper_point_consistency_error_eq_off_diagonal_avg",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.helper_point_consistency_error_eq_off_diagonal_avg",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.helper_point_consistency_error_eq_off_diagonal_avg\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (H : SubMeas (Polynomial params) ι) :\n    bipartiteConsError strategy.state (uniformDistribution (Point params))\n      (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)\n      (polynomialEvaluationFamily params H) =\n      avgOver (uniformDistribution (Point params)) (fun u =>\n        ∑ h : Polynomial params,\n          ∑ a ∈ (Finset.univ : Finset (Fq params)).erase (h u),\n            ev strategy.state\n              (opTensor ((strategy.pointMeasurement u).outcome a)\n                (H.outcome h))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The helper-stage consistency defect is exactly the averaged off-diagonal\nmass appearing in the point-consistency `add-in-u` calculation.\n\nThis is the same algebraic identity as\n`helper_boundedness_slack_average_ev_eq_off_diagonal_avg`, read as a\n`ConsRel` defect for the point measurement against the polynomial-evaluation\nfamily of `H`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.BoundednessTransport.PointConsistency",
+  "module_doc": "/-!\n# Boundedness transport point-consistency estimates\n\nThis file contains the point-consistency consequences of the helper-agreement\noff-diagonal decomposition and the natural-error transports through the final\nprojective fields.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 435 and 747--755\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/PointConsistency.lean#L126-L185",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/PointConsistency.lean",
+  "lines": [
+   126,
+   185
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.SelfImprovement.helperAgreementOperatorAtPoint_off_diagonal_decomposition",
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 40,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.final_fields_point_consistency_totalGap_natural",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.final_fields_point_consistency_totalGap_natural",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.final_fields_point_consistency_totalGap_natural\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta η : Error)\n    {Hhat : SubMeas (Polynomial params) ι}\n    {H : ProjSubMeas (Polynomial params) ι}\n    (hhelperPoint :\n      ConsRel strategy.state (uniformDistribution (Point params))\n        (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)\n        (polynomialEvaluationFamily params Hhat)\n        (selfImprovementHelperError params eps delta))\n    (hdata :\n      SDDRel strategy.state (uniformDistribution (Point params))\n        ((polynomialEvaluationFamily params Hhat).liftLeft)\n        ((polynomialEvaluationFamily params H.toSubMeas).liftLeft)\n        (selfImprovementDataProcessingError params eps delta))\n    (hTotal :\n      avgOver (uniformDistribution (Point params)) (fun u =>\n        |ev strategy.state\n            (leftTensor (ι₂ := ι)\n              (((IdxProjMeas.toIdxSubMeas strategy.pointMeasurement) u).total) *\n              rightTensor (ι₁ := ι)\n                (((polynomialEvaluationFamily params H.toSubMeas) u).total)) -\n          ev strategy.state\n            (leftTensor (ι₂ := ι)\n              (((IdxProjMeas.toIdxSubMeas strategy.pointMeasurement) u).total) *\n              rightTensor (ι₁ := ι)\n                (((polynomialEvaluationFamily params Hhat) u).total))|) ≤ η) :\n    ConsRel strategy.state (uniformDistribution (Point params))\n      (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)\n      (polynomialEvaluationFamily params H.toSubMeas)\n      (selfImprovementHelperError params eps delta +\n        Real.sqrt (selfImprovementDataProcessingError params eps delta) + η) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Natural-error transport of point consistency from the helper output to the\nprojective output, with the submeasurement total-overlap displacement stated\nexplicitly.\n\nThe measurement-valued right-register triangle lemma has no total-overlap term:\nboth right-register totals are the identity.  In the present application\n`polynomialEvaluationFamily params Hhat` and\n`polynomialEvaluationFamily params H.toSubMeas` are only submeasurements, so\nthe total-overlap term\n`⟨ψ, A^u_{\\mathrm{tot}} ⊗ H^u_{\\mathrm{tot}} ψ⟩` must also be transported.\nThis theorem separates that displacement as the parameter `η`; the remaining\ncontribution is exactly the square root of the data-processing SDD error.  The\nnote `docs/paper-gaps/issue-1093-submeasurement-triangle-total-overlap.tex`\nrecords the corresponding discrepancy with the measurement-valued paper step.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.BoundednessTransport.PointConsistency",
+  "module_doc": "/-!\n# Boundedness transport point-consistency estimates\n\nThis file contains the point-consistency consequences of the helper-agreement\noff-diagonal decomposition and the natural-error transports through the final\nprojective fields.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 435 and 747--755\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/PointConsistency.lean#L261-L329",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/BoundednessTransport/PointConsistency.lean",
+  "lines": [
+   261,
+   329
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.sddRel_liftRight_of_liftLeft_permInv",
+   "MIPStarRE.LDT.Preliminaries.triangleSub_right_subMeas_totalGap"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 22,
+  "is_target": false
+ }
+]

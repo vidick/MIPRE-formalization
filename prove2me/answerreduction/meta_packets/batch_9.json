@@ -1,0 +1,520 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.averageOperatorOverDistribution_le_one_of_weight_sum_le_one",
+  "source_name": "MIPStarRE.LDT.averageOperatorOverDistribution_le_one_of_weight_sum_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.averageOperatorOverDistribution_le_one_of_weight_sum_le_one {α : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (𝒟 : Distribution α) (f : α → MIPStarRE.Quantum.Op ι)\n    (h𝒟 : ∑ a ∈ 𝒟.support, 𝒟.weight a ≤ 1)\n    (hf : ∀ a, f a ≤ 1) :\n    averageOperatorOverDistribution 𝒟 f ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "An average of effects against a sub-probability distribution is again bounded\nabove by the identity operator.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.Distribution",
+  "module_doc": "/-!\n# Distribution infrastructure for the low individual degree test\n\nShared distribution definitions: finite-support weighted distributions,\na probability predicate, push-forward distributions, weighted-sum linear maps,\naveraging, uniform distribution, and outcome summation.\n\nNote: this module contributes declarations to the comparator statement closure\nof `mainFormal`, which must elaborate in the same environment as the\nMathlib-only `Challenge.lean`.  Keep the full `import Mathlib`; do not narrow\nit.  See `docs/comparator.md`, \"Environment alignment\".\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/Distribution.lean#L465-L481",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/Distribution.lean",
+  "lines": [
+   465,
+   481
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 9,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.avgOver_zero",
+  "source_name": "MIPStarRE.LDT.avgOver_zero",
+  "formal_statement": "theorem MIPStarRE.LDT.avgOver_zero {α : Type*} (𝒟 : Distribution α) :\n    avgOver 𝒟 (fun _ => 0) = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Averaging the zero function gives zero.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L137-L140",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   137,
+   140
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.avgOver_mono",
+  "source_name": "MIPStarRE.LDT.avgOver_mono",
+  "formal_statement": "theorem MIPStarRE.LDT.avgOver_mono {α : Type*} (𝒟 : Distribution α) (f g : α → Error)\n    (hfg : ∀ a, f a ≤ g a) :\n    avgOver 𝒟 f ≤ avgOver 𝒟 g := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Averaging preserves order when weights are nonneg.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L142-L147",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   142,
+   147
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.avgOver_nonneg",
+  "source_name": "MIPStarRE.LDT.avgOver_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.avgOver_nonneg {α : Type*} (𝒟 : Distribution α) (f : α → Error)\n    (hf : ∀ a, 0 ≤ f a) :\n    0 ≤ avgOver 𝒟 f := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Averaging a nonneg function with nonneg weights gives a nonneg result.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L149-L153",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   149,
+   153
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_zero",
+   "MIPStarRE.LDT.avgOver_mono"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.avgOver_add",
+  "source_name": "MIPStarRE.LDT.avgOver_add",
+  "formal_statement": "theorem MIPStarRE.LDT.avgOver_add {α : Type*} (𝒟 : Distribution α) (f g : α → Error) :\n    avgOver 𝒟 (fun a => f a + g a) =\n      avgOver 𝒟 f + avgOver 𝒟 g := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Averaging distributes over addition.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L155-L161",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   155,
+   161
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.avgOver_const_mul",
+  "source_name": "MIPStarRE.LDT.avgOver_const_mul",
+  "formal_statement": "theorem MIPStarRE.LDT.avgOver_const_mul {α : Type*} (𝒟 : Distribution α)\n    (c : Error) (f : α → Error) :\n    avgOver 𝒟 (fun a => c * f a) =\n      c * avgOver 𝒟 f := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Averaging commutes with scalar multiplication.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L171-L177",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   171,
+   177
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.avgOver_mul_const",
+  "source_name": "MIPStarRE.LDT.avgOver_mul_const",
+  "formal_statement": "theorem MIPStarRE.LDT.avgOver_mul_const {α : Type*} (𝒟 : Distribution α)\n    (f : α → Error) (c : Error) :\n    avgOver 𝒟 (fun a => f a * c) = avgOver 𝒟 f * c := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Averaging commutes with scalar multiplication on the right.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L179-L191",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   179,
+   191
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 9,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.avgOver_sum",
+  "source_name": "MIPStarRE.LDT.avgOver_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.avgOver_sum {α β : Type*} [Fintype β]\n    (𝒟 : Distribution α) (f : α → β → Error) :\n    avgOver 𝒟 (fun a => ∑ b : β, f a b) =\n      ∑ b : β, avgOver 𝒟 (fun a => f a b) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Pull a finite outcome sum through an average.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L193-L201",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   193,
+   201
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.avgOver_comm",
+  "source_name": "MIPStarRE.LDT.avgOver_comm",
+  "formal_statement": "theorem MIPStarRE.LDT.avgOver_comm {α β : Type*} (𝒟α : Distribution α) (𝒟β : Distribution β)\n    (f : α → β → Error) :\n    avgOver 𝒟α (fun a => avgOver 𝒟β (f a)) =\n      avgOver 𝒟β (fun b => avgOver 𝒟α (fun a => f a b)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Fubini swap for two nested finite-support distribution averages.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L213-L225",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   213,
+   225
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 8,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.avgOver_congr",
+  "source_name": "MIPStarRE.LDT.avgOver_congr",
+  "formal_statement": "theorem MIPStarRE.LDT.avgOver_congr {α : Type*} (𝒟 : Distribution α)\n    (f g : α → Error) (h : ∀ a, f a = g a) :\n    avgOver 𝒟 f = avgOver 𝒟 g := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "If `f = g` pointwise, their averages agree.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L227-L231",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   227,
+   231
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.avgOver_mono_on_support",
+  "source_name": "MIPStarRE.LDT.avgOver_mono_on_support",
+  "formal_statement": "theorem MIPStarRE.LDT.avgOver_mono_on_support {α : Type*} (𝒟 : Distribution α)\n    (f g : α → Error) (h : ∀ a, a ∈ 𝒟.support → f a ≤ g a) :\n    avgOver 𝒟 f ≤ avgOver 𝒟 g := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Averaging preserves supportwise order when weights are nonnegative.  This is\nthe support-restricted analogue of `avgOver_mono`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L242-L249",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   242,
+   249
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.averageOperatorOverDistribution_mul_left_right",
+  "source_name": "MIPStarRE.LDT.averageOperatorOverDistribution_mul_left_right",
+  "formal_statement": "theorem MIPStarRE.LDT.averageOperatorOverDistribution_mul_left_right {α : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (𝒟 : Distribution α) (L R : MIPStarRE.Quantum.Op ι)\n    (A : α → MIPStarRE.Quantum.Op ι) :\n    averageOperatorOverDistribution 𝒟 (fun a => L * A a * R) =\n      L * averageOperatorOverDistribution 𝒟 A * R := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Fixed left and right multiplications factor through an operator average.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L279-L290",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   279,
+   290
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.totalVariationDistance_eq_sum_max_sub",
+  "source_name": "MIPStarRE.LDT.totalVariationDistance_eq_sum_max_sub",
+  "formal_statement": "theorem MIPStarRE.LDT.totalVariationDistance_eq_sum_max_sub {α : Type*} [DecidableEq α]\n    (μ ν : Distribution α) (hμ : μ.IsProbability) (hν : ν.IsProbability) :\n    totalVariationDistance μ ν =\n      ∑ a ∈ μ.support ∪ ν.support, max 0 (ν.weight a - μ.weight a) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "For two probability distributions, total variation is the total positive\npart of the signed weight difference `ν - μ`.\n\nThis is the finite-distribution identity\n`(1 / 2) * ∑ |μ(a)-ν(a)| = ∑ max 0 (ν(a)-μ(a))`, written for the\nproject `Distribution` representation.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L360-L428",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   360,
+   428
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 59,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.avgOver_le_avgOver_add_totalVariationDistance",
+  "source_name": "MIPStarRE.LDT.avgOver_le_avgOver_add_totalVariationDistance",
+  "formal_statement": "theorem MIPStarRE.LDT.avgOver_le_avgOver_add_totalVariationDistance {α : Type*} [DecidableEq α]\n    (μ ν : Distribution α) (hμ : μ.IsProbability) (hν : ν.IsProbability)\n    (f : α → Error)\n    (hf_nonneg : ∀ a, 0 ≤ f a)\n    (hf_le_one : ∀ a, f a ≤ 1) :\n    avgOver ν f ≤ avgOver μ f + totalVariationDistance μ ν := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "A `[0,1]`-valued function has expectations over two probability\ndistributions differing by at most their total variation distance.\n\nThe statement is oriented for replacement estimates: averaging against `ν` is\nbounded by averaging against `μ`, plus the finite total-variation distance\nbetween the two distributions.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L430-L500",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   430,
+   500
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.totalVariationDistance_eq_sum_max_sub"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 59,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.avgOver_uniform_const",
+  "source_name": "MIPStarRE.LDT.avgOver_uniform_const",
+  "formal_statement": "theorem MIPStarRE.LDT.avgOver_uniform_const {α : Type*}\n    [Fintype α] [DecidableEq α] [Nonempty α] (c : Error) :\n    avgOver (uniformDistribution α) (fun _ : α => c) = c := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Averaging a constant against the uniform distribution on a nonempty finite type\nreturns that constant.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L502-L508",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   502,
+   508
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.averageOperatorOverDistribution_uniform_le_one",
+  "source_name": "MIPStarRE.LDT.averageOperatorOverDistribution_uniform_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.averageOperatorOverDistribution_uniform_le_one {α : Type*}\n    [Fintype α] [DecidableEq α] [Nonempty α]\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (f : α → MIPStarRE.Quantum.Op ι) (hf : ∀ a, f a ≤ 1) :\n    averageOperatorOverDistribution (uniformDistribution α) f ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "A uniform average of effects is again bounded above by the identity operator.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L654-L661",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   654,
+   661
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.averageOperatorOverDistribution_le_one_of_weight_sum_le_one"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.avgOver_uniform_le_const",
+  "source_name": "MIPStarRE.LDT.avgOver_uniform_le_const",
+  "formal_statement": "theorem MIPStarRE.LDT.avgOver_uniform_le_const {α : Type*}\n    [Fintype α] [DecidableEq α] [Nonempty α]\n    (f : α → Error) (δ : Error) (hf : ∀ a, f a ≤ δ) :\n    avgOver (uniformDistribution α) f ≤ δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "A uniform average is bounded by any pointwise upper bound.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L672-L677",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   672,
+   677
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono_on_support"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.avgOver_uniform_equiv",
+  "source_name": "MIPStarRE.LDT.avgOver_uniform_equiv",
+  "formal_statement": "theorem MIPStarRE.LDT.avgOver_uniform_equiv\n    {α β : Type*}\n    [Fintype α] [DecidableEq α] [Nonempty α]\n    [Fintype β] [DecidableEq β] [Nonempty β]\n    (e : α ≃ β) (f : α → Error) :\n    avgOver (uniformDistribution α) f =\n      avgOver (uniformDistribution β) (fun b => f (e.symm b)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Reindexing a uniform average along an equivalence preserves its value.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L679-L688",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   679,
+   688
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "PMF.uniformOfFintype_map_equiv",
+   "PMF.map_sum_smul"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.avgOver_uniform_prod",
+  "source_name": "MIPStarRE.LDT.avgOver_uniform_prod",
+  "formal_statement": "theorem MIPStarRE.LDT.avgOver_uniform_prod\n    {α β : Type*}\n    [Fintype α] [DecidableEq α] [Nonempty α]\n    [Fintype β] [DecidableEq β] [Nonempty β]\n    (f : α → β → Error) :\n    avgOver (uniformDistribution (α × β)) (fun ab => f ab.1 ab.2) =\n      avgOver (uniformDistribution α)\n        (fun a => avgOver (uniformDistribution β) (fun b => f a b)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Split a uniform average over a product into iterated uniform averages.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L721-L731",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   721,
+   731
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "PMF.bind_sum_smul",
+   "PMF.uniformOfFintype_prod_eq_bind",
+   "PMF.map_sum_smul"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.avgOver_uniform_comm",
+  "source_name": "MIPStarRE.LDT.avgOver_uniform_comm",
+  "formal_statement": "theorem MIPStarRE.LDT.avgOver_uniform_comm\n    {α β : Type*}\n    [Fintype α] [DecidableEq α] [Nonempty α]\n    [Fintype β] [DecidableEq β] [Nonempty β]\n    (f : α → β → Error) :\n    avgOver (uniformDistribution α) (fun a => avgOver (uniformDistribution β) (f a)) =\n      avgOver (uniformDistribution β) (fun b => avgOver (uniformDistribution α)\n        (fun a => f a b)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Swap two nested uniform averages over finite nonempty types.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L733-L743",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   733,
+   743
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "PMF.realWeightedSum_uniformOfFintype_comm"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 2,
+  "is_target": false
+ }
+]

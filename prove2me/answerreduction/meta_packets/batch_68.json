@@ -1,0 +1,602 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.square_injective",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.square_injective",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.square_injective (hs : Squarefree f) :\n    Function.Injective (fun x : AdjoinRoot f => x * x) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "variable (f : Polynomial (ZMod 2))"
+  ],
+  "docstring": "Squarefree divisibility rules out nilpotents in the binary quotient.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientReduced",
+  "module_doc": "/-! # Squarefree binary quotients have bijective squaring -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientReduced.lean#L14-L28",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientReduced.lean",
+  "lines": [
+   14,
+   28
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.translateBits_width_le",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.translateBits_width_le",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.translateBits_width_le (p a g : BitStr) :\n    ∀ c ∈ translateBits p a g, c.length ≤ p.length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree.BinaryPolynomial Polynomial"
+  ],
+  "docstring": "Translation bounds coefficient width on every raw input, irrespective of the root width.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientTranslation",
+  "module_doc": "/-! # Translating binary polynomials in a supplied polynomial quotient -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientTranslation.lean#L24-L31",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientTranslation.lean",
+  "lines": [
+   24,
+   31
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryPolynomial.normalize_monic",
+  "source_name": "MIPRE.LowDegree.BinaryPolynomial.normalize_monic",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryPolynomial.normalize_monic (l : BitStr) (h : (polyOfBits l).Monic) :\n    polyOfBits (l.take (polyOfBits l).natDegree ++ [true]) = polyOfBits l := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryPolynomial",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "Remove trailing zero coefficients and separate the leading monic coefficient.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryRepresentation",
+  "module_doc": "/-!\n# Binary coefficient representations\n\nThe coefficient interpretation used by the public Shoup contract and by the\nindependent polynomial algorithms. This module does not assume that an\nirreducible polynomial has already been constructed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryRepresentation.lean#L52-L76",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryRepresentation.lean",
+  "lines": [
+   52,
+   76
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-binary-field-arithmetic",
+    "env": "lemma",
+    "title": "Effective polynomial-basis field arithmetic",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryPolynomial.comp_dvd_card_sub_one_of_residue",
+  "source_name": "MIPRE.LowDegree.BinaryPolynomial.comp_dvd_card_sub_one_of_residue",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryPolynomial.comp_dvd_card_sub_one_of_residue {F K : Type*} [Field F] [Field K]\n    [Algebra F K] [Fintype K] (f : Polynomial F) (hi : Irreducible f)\n    (a b : K) (ha : aeval a f = 0) (ha0 : a ≠ 0) (q : ℕ)\n    (hq : q ∣ Fintype.card K - 1) (hb : b ^ q = a) :\n    f.comp (X ^ q) ∣ X ^ (Fintype.card K - 1) - 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryPolynomial",
+   "open Polynomial"
+  ],
+  "docstring": "A residue root forces the substituted polynomial to divide the multiplicative\nfield polynomial. This exponentially large polynomial is only a proof device.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryResidueFactors",
+  "module_doc": "/-! # Equal-degree factors in a successful auxiliary root lift -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryResidueFactors.lean#L14-L37",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryResidueFactors.lean",
+  "lines": [
+   14,
+   37
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryPolynomial.natDegree_le_of_dvd_comp_power",
+  "source_name": "MIPRE.LowDegree.BinaryPolynomial.natDegree_le_of_dvd_comp_power",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryPolynomial.natDegree_le_of_dvd_comp_power {F : Type*} [Field F]\n    (f g : Polynomial F) (hf : f.Monic) (hi : Irreducible f) (hg : Irreducible g)\n    (q : ℕ) (hd : g ∣ f.comp (X ^ q)) : f.natDegree ≤ g.natDegree := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryPolynomial",
+   "open Polynomial"
+  ],
+  "docstring": "A factor of a power substitution has at least the original irreducible degree.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryResidueFactors",
+  "module_doc": "/-! # Equal-degree factors in a successful auxiliary root lift -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryResidueFactors.lean#L39-L53",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryResidueFactors.lean",
+  "lines": [
+   39,
+   53
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryPolynomial.residue_factor_natDegree",
+  "source_name": "MIPRE.LowDegree.BinaryPolynomial.residue_factor_natDegree",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryPolynomial.residue_factor_natDegree {F K : Type*} [Field F] [Finite F] [Field K]\n    [Algebra F K] [Fintype K] (f g : Polynomial F) (hf : f.Monic)\n    (hi : Irreducible f) (hg : Irreducible g)\n    (hcard : Fintype.card K = Nat.card F ^ f.natDegree)\n    (a b : K) (ha : aeval a f = 0) (ha0 : a ≠ 0) (q : ℕ)\n    (hq : q ∣ Fintype.card K - 1) (hb : b ^ q = a)\n    (hd : g ∣ f.comp (X ^ q)) : g.natDegree = f.natDegree := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryPolynomial",
+   "open Polynomial"
+  ],
+  "docstring": "Every irreducible factor in a residue lift has exactly the old degree.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryResidueFactors",
+  "module_doc": "/-! # Equal-degree factors in a successful auxiliary root lift -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryResidueFactors.lean#L55-L73",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryResidueFactors.lean",
+  "lines": [
+   55,
+   73
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.natDegree_le_of_dvd_comp_power",
+   "MIPRE.LowDegree.BinaryPolynomial.comp_dvd_card_sub_one_of_residue"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.eq_zero_of_pivots_zero",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.eq_zero_of_pivots_zero",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.IsPivotBasis.eq_zero_of_pivots_zero {b : List (Pivot n t)} (hb : IsPivotBasis b)\n    (v : Fin n → ZMod 2) (hv : v ∈ pivotSpan b) (hz : ∀ p ∈ b, v p.1 = 0) : v = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "open MIPRE.LowDegree.BinaryLinear.IsPivotBasis",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun",
+   "variable {n t : ℕ}"
+  ],
+  "docstring": "Within the span of a triangular basis, its pivot coordinates determine the vector.",
+  "module": "MIPRE.Foundations.LowDegree.BinarySolve",
+  "module_doc": "/-! # Solving binary linear systems with certified elimination -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinarySolve.lean#L28-L50",
+  "source_path": "MIPRE/Foundations/LowDegree/BinarySolve.lean",
+  "lines": [
+   28,
+   50
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.evalBits_fold_traceStep",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.evalBits_fold_traceStep",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.evalBits_fold_traceStep {R : Type*} [CommRing R] [CharP R 2]\n    (z : R) (u r : Unary) (p c a : BitStr) (hz : z ^ p.length = evalBits z p)\n    (hc : c.length = p.length) (ha : a.length = p.length) :\n    evalBits z (u.foldl traceStep (r, p, c, a)).2.2.1 =\n      evalBits z c + ∑ i ∈ Finset.range u.length, evalBits z a ^ (2 ^ (r.length * i)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree.BinaryPolynomial Polynomial"
+  ],
+  "docstring": "The loop computes the trace-shaped sum, with the supplied initial accumulator.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryTraceBits",
+  "module_doc": "/-! # Explicit polynomial-time Frobenius-stride traces -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryTraceBits.lean#L99-L122",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryTraceBits.lean",
+  "lines": [
+   99,
+   122
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_xor",
+   "MIPRE.LowDegree.BinaryPolynomial.length_mulReduce",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_mulReduce"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.degreeOf_ind_le",
+  "source_name": "MIPRE.LowDegree.degreeOf_ind_le",
+  "formal_statement": "theorem MIPRE.LowDegree.degreeOf_ind_le [Nontrivial F] (y : Fin m → Bool) (i : Fin m) :\n    (ind y : MvPolynomial (Fin m) F).degreeOf i ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open Finset MvPolynomial",
+   "variable {F : Type*} [CommRing F] {m : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.LowDegree.Encoding",
+  "module_doc": "/-!\n# The low-degree code\n\nThe paper's `sec:ld-encoding`: the multilinear indicator polynomials of the Boolean subcube,\nthe *low-degree encoding* `g_a` of a vector indexed by the subcube, and the decoding map\n`Coded_H`. This is the code the PCP of `thm:pcp-decider` commits to, and the `a = Coded(g₁)`\nof its soundness conclusion.\n\n* `ind y = ∏_{i : yᵢ = 1} Xᵢ · ∏_{i : yᵢ = 0} (1 - Xᵢ)` — on the subcube, `1` at `y` and `0`\n  elsewhere (`eval_ind`);\n* `pt y` is the subcube point of `y : Fin m → Bool`, identifying `{0,1}` with `{0, 1} ⊆ F`;\n* `ldEnc a = ∑_y a y · ind y` — the multilinear polynomial with `g_a(y) = a y`\n  (`eval_ldEnc`), of individual degree at most `1` (`degreeOf_ldEnc_le`);\n* `codedOn H g` reads `g` back off the subcube, replacing a value outside `H` by `0`. It is a\n  left inverse of `ldEnc` on `H`-valued vectors (`codedOn_ldEnc`), and `coded = codedOn {0,1}`\n  is the Boolean decoding map, which always returns a `{0,1}`-valued vector (`coded_eq`).\n\nNothing here is about the cost model: these are polynomials, and the verifier's arithmetic on\ntheir bit representations is a separate matter (the admissible field of `lem:self-dual-basis`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/Encoding.lean#L67-L84",
+  "source_path": "MIPRE/Foundations/LowDegree/Encoding.lean",
+  "lines": [
+   67,
+   84
+  ],
+  "blueprint": [
+   {
+    "label": "def:ld-encoding",
+    "env": "definition",
+    "title": "The low-degree code",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.exists_pow_succ_eq_self_of_square_bijective",
+  "source_name": "MIPRE.LowDegree.exists_pow_succ_eq_self_of_square_bijective",
+  "formal_statement": "theorem MIPRE.LowDegree.exists_pow_succ_eq_self_of_square_bijective\n    (hsq : Function.Bijective (fun x : R => x * x)) (x : R) :\n    ∃ n : ℕ, 0 < n ∧ x ^ (n + 1) = x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "variable {R : Type*} [CommRing R] [Finite R]"
+  ],
+  "docstring": "Bijective squaring on a finite ring makes every element periodic under squaring.",
+  "module": "MIPRE.Foundations.LowDegree.FiniteReducedComponents",
+  "module_doc": "/-!\n# Primitive components of a finite ring with bijective squaring\n\nThis supplies the algebraic justification for splitting the binary cyclic group\nalgebra by its fixed vectors. The computations need only multiplication and\nlinear algebra; the finite permutation argument below is a correctness proof,\nnot an enumeration performed by the algorithm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/FiniteReducedComponents.lean#L21-L43",
+  "source_path": "MIPRE/Foundations/LowDegree/FiniteReducedComponents.lean",
+  "lines": [
+   21,
+   43
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.PrimitiveBinaryComponent.exists_mul_eq",
+  "source_name": "MIPRE.LowDegree.PrimitiveBinaryComponent.exists_mul_eq",
+  "formal_statement": "theorem MIPRE.LowDegree.PrimitiveBinaryComponent.exists_mul_eq\n    (hsq : Function.Bijective (fun x : R => x * x)) {e : R}\n    (he : PrimitiveBinaryComponent e) (x : R) (hx : x ≠ 0) (hex : e * x = x) :\n    ∃ y : R, x * y = e := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.PrimitiveBinaryComponent",
+   "variable {R : Type*} [CommRing R] [Finite R]"
+  ],
+  "docstring": "Every nonzero element supported on a primitive component has an inverse in that component.",
+  "module": "MIPRE.Foundations.LowDegree.FiniteReducedComponents",
+  "module_doc": "/-!\n# Primitive components of a finite ring with bijective squaring\n\nThis supplies the algebraic justification for splitting the binary cyclic group\nalgebra by its fixed vectors. The computations need only multiplication and\nlinear algebra; the finite permutation argument below is a correctness proof,\nnot an enumeration performed by the algorithm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/FiniteReducedComponents.lean#L49-L80",
+  "source_path": "MIPRE/Foundations/LowDegree/FiniteReducedComponents.lean",
+  "lines": [
+   49,
+   80
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-normal-element",
+    "env": "lemma",
+    "title": "Effective normal element by fixed-space projections",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.exists_pow_succ_eq_self_of_square_bijective"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.ComponentFamily.split",
+  "source_name": "MIPRE.LowDegree.ComponentFamily.split",
+  "formal_statement": "theorem MIPRE.LowDegree.ComponentFamily.split {l : List R} (hl : ComponentFamily l) {b : R} (hb : b * b = b) :\n    ComponentFamily (splitComponents l b) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.ComponentFamily",
+   "variable {R : Type*} [CommRing R] [DecidableEq R]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.LowDegree.IdempotentSplit",
+  "module_doc": "/-! # Deterministic refinement by binary idempotents -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/IdempotentSplit.lean#L71-L94",
+  "source_path": "MIPRE/Foundations/LowDegree/IdempotentSplit.lean",
+  "lines": [
+   71,
+   94
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 7,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.decidesComponent_of_mem_span",
+  "source_name": "MIPRE.LowDegree.decidesComponent_of_mem_span",
+  "formal_statement": "theorem MIPRE.LowDegree.decidesComponent_of_mem_span (e : R) (bs : List R)\n    (hb : ∀ b ∈ bs, DecidesComponent e b) (z : R)\n    (hz : z ∈ Submodule.span (ZMod 2) {b | b ∈ bs}) : DecidesComponent e z := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "variable {R : Type*} [CommRing R] [DecidableEq R]",
+   "variable [Algebra (ZMod 2) R]"
+  ],
+  "docstring": "Deciding each generator means deciding every binary linear combination.",
+  "module": "MIPRE.Foundations.LowDegree.IdempotentSplit",
+  "module_doc": "/-! # Deterministic refinement by binary idempotents -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/IdempotentSplit.lean#L160-L184",
+  "source_path": "MIPRE/Foundations/LowDegree/IdempotentSplit.lean",
+  "lines": [
+   160,
+   184
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.binary_eq_zero_or_one"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.ComponentFamily.linearIndependent",
+  "source_name": "MIPRE.LowDegree.ComponentFamily.linearIndependent",
+  "formal_statement": "theorem MIPRE.LowDegree.ComponentFamily.linearIndependent {l : List R} (hl : ComponentFamily l) :\n    LinearIndependent (ZMod 2) (fun i : Fin l.length => l.get i) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.ComponentFamily",
+   "variable {R : Type*} [CommRing R] [DecidableEq R]",
+   "variable [Algebra (ZMod 2) R]"
+  ],
+  "docstring": "Nonzero orthogonal idempotents are linearly independent over the binary base field.",
+  "module": "MIPRE.Foundations.LowDegree.IdempotentSplit",
+  "module_doc": "/-! # Deterministic refinement by binary idempotents -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/IdempotentSplit.lean#L196-L214",
+  "source_path": "MIPRE/Foundations/LowDegree/IdempotentSplit.lean",
+  "lines": [
+   196,
+   214
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.natDegree_lineRestrict_le",
+  "source_name": "MIPRE.LowDegree.natDegree_lineRestrict_le",
+  "formal_statement": "theorem MIPRE.LowDegree.natDegree_lineRestrict_le (u₀ w : Fin m → F) (p : MvPolynomial (Fin m) F) :\n    (lineRestrict u₀ w p).natDegree ≤ p.totalDegree := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open Finset",
+   "variable {F : Type*} [Field F] {m : ℕ}"
+  ],
+  "docstring": "**The restriction has degree at most the total degree.**",
+  "module": "MIPRE.Foundations.LowDegree.LineRestrict",
+  "module_doc": "/-!\n# Restricting a polynomial to a line\n\nThe expansion stage's line measurements are indexed by the *restriction to a line* of the\nlow-degree encoding of the ancilla's measurement outcome. This file is that operation: substitute\nthe affine parametrization `t -> u0 + t . w` into a multivariate polynomial and read off the\nunivariate coefficients.\n\nTwo facts are all the consumers need:\n\n* `eval_lineRestrict` --- evaluating the restriction at `t` is evaluating the polynomial at the\n  point `u0 + t . w`, so the restriction carries the same information along the line;\n* `natDegree_lineRestrict_le` --- the restriction has degree at most the total degree, so a\n  multilinear polynomial in `m` variables restricts to degree at most `m` and the coefficient\n  vector fits in a `LinePoly F m`.\n\n`lineCoeffs` packages the coefficients as the `LinePoly` the games use, and `eval_lineCoeffs`\nis the composite of the two.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/LineRestrict.lean#L62-L81",
+  "source_path": "MIPRE/Foundations/LowDegree/LineRestrict.lean",
+  "lines": [
+   62,
+   81
+  ],
+  "blueprint": [
+   {
+    "label": "def:line-restriction",
+    "env": "definition",
+    "title": "Restriction to a line",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.natDegree_lineRestrict_single_le",
+  "source_name": "MIPRE.LowDegree.natDegree_lineRestrict_single_le",
+  "formal_statement": "theorem MIPRE.LowDegree.natDegree_lineRestrict_single_le (u₀ : Fin m → F) (j : Fin m)\n    (p : MvPolynomial (Fin m) F) :\n    (lineRestrict u₀ (Pi.single j 1) p).natDegree ≤ p.degreeOf j := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open Finset",
+   "variable {F : Type*} [Field F] {m : ℕ}"
+  ],
+  "docstring": "**On an axis-parallel line the restriction has degree at most the individual degree in that\ncoordinate.** Along `u_0 + t e_j` only the `j`-th variable moves, so every other substitution is a\nconstant and the degree in `t` is the degree of `p` in `X_j`. This is what makes a *multilinear*\nencoding restrict to an affine function of the line parameter.",
+  "module": "MIPRE.Foundations.LowDegree.LineRestrict",
+  "module_doc": "/-!\n# Restricting a polynomial to a line\n\nThe expansion stage's line measurements are indexed by the *restriction to a line* of the\nlow-degree encoding of the ancilla's measurement outcome. This file is that operation: substitute\nthe affine parametrization `t -> u0 + t . w` into a multivariate polynomial and read off the\nunivariate coefficients.\n\nTwo facts are all the consumers need:\n\n* `eval_lineRestrict` --- evaluating the restriction at `t` is evaluating the polynomial at the\n  point `u0 + t . w`, so the restriction carries the same information along the line;\n* `natDegree_lineRestrict_le` --- the restriction has degree at most the total degree, so a\n  multilinear polynomial in `m` variables restricts to degree at most `m` and the coefficient\n  vector fits in a `LinePoly F m`.\n\n`lineCoeffs` packages the coefficients as the `LinePoly` the games use, and `eval_lineCoeffs`\nis the composite of the two.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/LineRestrict.lean#L83-L118",
+  "source_path": "MIPRE/Foundations/LowDegree/LineRestrict.lean",
+  "lines": [
+   83,
+   118
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-axis-degree",
+    "env": "lemma",
+    "title": "Axis degree for expanded line measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.prob_agree_le_individualDegree",
+  "source_name": "MIPRE.LowDegree.prob_agree_le_individualDegree",
+  "formal_statement": "theorem MIPRE.LowDegree.prob_agree_le_individualDegree {f g : MvPolynomial (Fin m) F} (hfg : f ≠ g) {d : ℕ}\n    (hf : ∀ i, f.degreeOf i ≤ d) (hg : ∀ i, g.degreeOf i ≤ d) :\n    ((agree f g).card : ℝ) / (Fintype.card F : ℝ) ^ m ≤ (m : ℝ) * d / Fintype.card F := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open Finset MvPolynomial",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ}"
+  ],
+  "docstring": "The individual-degree variant: if `f ≠ g` and both have degree at most `d` in each of\nthe `m` variables separately, they agree with probability at most `m * d / q`.",
+  "module": "MIPRE.Foundations.LowDegree.SchwartzZippel",
+  "module_doc": "/-!\n# The Schwartz–Zippel lemma, in the form the low-degree machinery uses\n\nBlueprint `lem:schwartz-zippel`: two *unequal* polynomials `f, g : 𝔽_q^m → 𝔽_q` of total\ndegree at most `d` agree at a uniformly random point with probability at most `d / q`.\n\nMathlib proves the lemma for a single nonzero polynomial and a product of arbitrary finite\nsubsets (`MvPolynomial.schwartz_zippel_totalDegree`, `schwartz_zippel_sum_degreeOf`).\nEverything here is the specialization the paper and the blueprint actually quote:\n\n* the subsets are all of `F`, so the denominator is `q ^ m` rather than `∏ #(S i)`;\n* the event is `f = g` rather than `f - g = 0`;\n* the bound is stated over `ℝ`, which is where the low-degree machinery's error terms live.\n\nThree forms, because three different consumers want three different shapes:\n\n* `prob_agree_le_totalDegree` — the blueprint's statement, a probability over `ℝ`;\n* `prob_agree_le_individualDegree` — the individual-degree variant the blueprint asks for\n  alongside it (`m * d / q`, since a polynomial of individual degree `d` in `m` variables\n  has total degree at most `m * d`, and this route avoids that lossy step);\n* `card_agree_le_of_natDegree` — the univariate case as a count rather than a probability,\n  which is the form `lem:lidt-sync-transfer` uses (\"two distinct univariate polynomials of\n  degree `d` agree at no more than `d` of the `q` points\").\n\nThe `ℚ≥0`-valued intermediate is kept private: it is Mathlib's shape, not ours.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/SchwartzZippel.lean#L83-L106",
+  "source_path": "MIPRE/Foundations/LowDegree/SchwartzZippel.lean",
+  "lines": [
+   83,
+   106
+  ],
+  "blueprint": [
+   {
+    "label": "lem:schwartz-zippel",
+    "env": "lemma",
+    "title": "Schwartz--Zippel",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.eq_of_majority_agree",
+  "source_name": "MIPRE.LowDegree.eq_of_majority_agree",
+  "formal_statement": "theorem MIPRE.LowDegree.eq_of_majority_agree {f g : MvPolynomial (Fin m) F} {d : ℕ}\n    (hf : ∀ i, f.degreeOf i ≤ d) (hg : ∀ i, g.degreeOf i ≤ d)\n    (hsize : 2 * (m * d) ≤ Fintype.card F)\n    (hmajority : Fintype.card F ^ m < 2 * (agree f g).card) : f = g := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open Finset MvPolynomial",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ}"
+  ],
+  "docstring": "**The majority test used by the classical PCP.** If the field has at least\n`2 * m * d` elements, agreement at more than half the points forces polynomial equality.\nThe strict acceptance threshold is essential when the field-size bound is an equality.",
+  "module": "MIPRE.Foundations.LowDegree.SchwartzZippel",
+  "module_doc": "/-!\n# The Schwartz–Zippel lemma, in the form the low-degree machinery uses\n\nBlueprint `lem:schwartz-zippel`: two *unequal* polynomials `f, g : 𝔽_q^m → 𝔽_q` of total\ndegree at most `d` agree at a uniformly random point with probability at most `d / q`.\n\nMathlib proves the lemma for a single nonzero polynomial and a product of arbitrary finite\nsubsets (`MvPolynomial.schwartz_zippel_totalDegree`, `schwartz_zippel_sum_degreeOf`).\nEverything here is the specialization the paper and the blueprint actually quote:\n\n* the subsets are all of `F`, so the denominator is `q ^ m` rather than `∏ #(S i)`;\n* the event is `f = g` rather than `f - g = 0`;\n* the bound is stated over `ℝ`, which is where the low-degree machinery's error terms live.\n\nThree forms, because three different consumers want three different shapes:\n\n* `prob_agree_le_totalDegree` — the blueprint's statement, a probability over `ℝ`;\n* `prob_agree_le_individualDegree` — the individual-degree variant the blueprint asks for\n  alongside it (`m * d / q`, since a polynomial of individual degree `d` in `m` variables\n  has total degree at most `m * d`, and this route avoids that lossy step);\n* `card_agree_le_of_natDegree` — the univariate case as a count rather than a probability,\n  which is the form `lem:lidt-sync-transfer` uses (\"two distinct univariate polynomials of\n  degree `d` agree at no more than `d` of the `q` points\").\n\nThe `ℚ≥0`-valued intermediate is kept private: it is Mathlib's shape, not ours.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/SchwartzZippel.lean#L108-L127",
+  "source_path": "MIPRE/Foundations/LowDegree/SchwartzZippel.lean",
+  "lines": [
+   108,
+   127
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-algebra-tests",
+    "env": "lemma",
+    "title": "The algebraic PCP tests",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.prob_agree_le_individualDegree"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.shoupIrreducible_monic",
+  "source_name": "MIPRE.LowDegree.shoupIrreducible_monic",
+  "formal_statement": "theorem MIPRE.LowDegree.shoupIrreducible_monic (k : ℕ) (hk : 1 ≤ k) :\n    (polyOfBits (shoupIrreducible (unary k))).Monic := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "The constructed polynomial is monic at every positive degree.",
+  "module": "MIPRE.Foundations.LowDegree.Shoup",
+  "module_doc": "/-!\n# Deterministic irreducible polynomials over the binary field\n\nThis file exposes the proved fixed-characteristic construction of Shoup 1990,\nTheorem 3.2. The specified program factors squarefree binary polynomials, constructs\nodd-prime auxiliary nonresidues and trace generators, builds the characteristic-two\nArtin–Schreier tower, and combines coprime prime-power degrees by composed sums.\n\nThe input is the unary requested degree. Every arithmetic operation and bounded loop\nis compiled into the ambient cost model, including coefficient printing and a fixed\nconstant output at degree zero. `BinaryPolynomial.irreducibleBitsProg_time_le` gives\nthe resulting polynomial runtime bound in the degree. The public names below retain\nthe interfaces used by the quotient-field and self-dual-normal-basis consumers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/Shoup.lean#L46-L49",
+  "source_path": "MIPRE/Foundations/LowDegree/Shoup.lean",
+  "lines": [
+   46,
+   49
+  ],
+  "blueprint": [
+   {
+    "label": "lem:binary-uniform-irreducible",
+    "env": "lemma",
+    "title": "Uniform deterministic binary irreducible polynomials",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.irreducibleBits_correct"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.shoupIrreducible_irreducible",
+  "source_name": "MIPRE.LowDegree.shoupIrreducible_irreducible",
+  "formal_statement": "theorem MIPRE.LowDegree.shoupIrreducible_irreducible (k : ℕ) (hk : 1 ≤ k) :\n    Irreducible (polyOfBits (shoupIrreducible (unary k))) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "The constructed polynomial is irreducible at every positive degree.",
+  "module": "MIPRE.Foundations.LowDegree.Shoup",
+  "module_doc": "/-!\n# Deterministic irreducible polynomials over the binary field\n\nThis file exposes the proved fixed-characteristic construction of Shoup 1990,\nTheorem 3.2. The specified program factors squarefree binary polynomials, constructs\nodd-prime auxiliary nonresidues and trace generators, builds the characteristic-two\nArtin–Schreier tower, and combines coprime prime-power degrees by composed sums.\n\nThe input is the unary requested degree. Every arithmetic operation and bounded loop\nis compiled into the ambient cost model, including coefficient printing and a fixed\nconstant output at degree zero. `BinaryPolynomial.irreducibleBitsProg_time_le` gives\nthe resulting polynomial runtime bound in the degree. The public names below retain\nthe interfaces used by the quotient-field and self-dual-normal-basis consumers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/Shoup.lean#L51-L54",
+  "source_path": "MIPRE/Foundations/LowDegree/Shoup.lean",
+  "lines": [
+   51,
+   54
+  ],
+  "blueprint": [
+   {
+    "label": "lem:binary-uniform-irreducible",
+    "env": "lemma",
+    "title": "Uniform deterministic binary irreducible polynomials",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.irreducibleBits_correct"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ }
+]

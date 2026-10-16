@@ -1,0 +1,650 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.axisParallelPointLineConsistency_weighted_rightToLeftLineQuestion_sum",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.axisParallelPointLineConsistency_weighted_rightToLeftLineQuestion_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.axisParallelPointLineConsistency_weighted_rightToLeftLineQuestion_sum\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (G : SubMeas (Polynomial params) ι) :\n    (∑ g : Polynomial params,\n      avgOver (axisParallelLineQuestionDistribution params)\n        (fun qu =>\n          let D := weightedPointConditionedRightOperatorAtPolynomial params strategy G g qu.2 -\n            weightedGeneralizeBLeftOperatorAtPolynomial params strategy G g qu\n          ev strategy.state (Dᴴ * D))) ≤\n      2 * eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Sum-level form of the reverse weighted point-to-line approximation\n(`expansion.tex:306--307`, paper step 2) on the\n`axisParallelLineQuestionDistribution` distribution.\n\nThis is the polynomial-sum analogue of\n`axisParallelPointLineConsistency_weighted_rightToLeftLineQuestion`.  Each\nsummand is unchanged after swapping the two endpoint operators, so this reduces\nto `axisParallelPointLineConsistency_weighted_leftToRightLineQuestion_sum`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransportSum",
+  "module_doc": "/-! ## Sum-form (cardinality-free) `2ε` axis-parallel consistency endpoints\n\nThe lemmas below are the polynomial-sum (i.e. unnormalized `∑_g`) analogues of\nthe per-`g` `2ε` endpoints above.  They keep the answer space at `Fq params`\nrather than postprocessing to the per-`g` `Option Unit` event, then group\npolynomials by the common value `g(u)` via the `cabApproxDelta` multiplier\n`if a = g s.1 then rightTensor (G_g)^{1/2} else 0`.  Combined with the\nsubmeasurement contraction `∑_{g : g(u) = a} G_g ≤ I` from\n`rightPolynomialWeightSqrt_grouped_contraction`, this gives `2ε` for the full\npolynomial sum, with no polynomial-cardinality loss.  These are the steps 2 and\n5 sum-level inputs to `eq:equivalent-local-variance`\n(`references/ldt-paper/expansion.tex:317--321`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransportSum.lean#L317-L361",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransportSum.lean",
+  "lines": [
+   317,
+   361
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.GlobalVariance.ev_adjoint_sub_swap",
+   "MIPStarRE.LDT.GlobalVariance.axisParallelPointLineConsistency_weighted_leftToRightLineQuestion_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.avgOver_transport_pointPair",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.avgOver_transport_pointPair",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.avgOver_transport_pointPair\n    (params : Parameters) [FieldModel params.q]\n    (f : Point params × Point params → Error) :\n    avgOver (uniformDistribution (TransportQuestion params))\n      (fun q => f (q.1.1.pointAt q.1.2, q.1.1.pointAt q.2)) =\n    avgOver (uniformDistribution (AxisParallelTestSample params × Fq params))\n      (fun sx => f (sx.1.1, Function.update sx.1.1 sx.1.2 sx.2)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.Core",
+  "module_doc": "/-! # Six-step local-variance transport-chain assembly\n\nThis module assembles the six steps of `lem:local-variance-of-points`\n(`expansion.tex`, lines 305--311) into a single triangle-inequality bound\non the hypercube-edge distribution, producing the main transport estimate\n`localVarianceTransportChainBound`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/TransportChain/Core.lean#L232-L308",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/TransportChain/Core.lean",
+  "lines": [
+   232,
+   308
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_equiv",
+   "MIPStarRE.LDT.avgOver_uniform_prod",
+   "MIPStarRE.LDT.avgOver_uniform_fst",
+   "MIPStarRE.LDT.avgOver_congr"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 70,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.generalizeBReversePointwiseBound_polysum_le_error",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.generalizeBReversePointwiseBound_polysum_le_error",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.generalizeBReversePointwiseBound_polysum_le_error\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (G : SubMeas (Polynomial params) ι) :\n    (∑ g : Polynomial params,\n      avgOver (axisParallelLineQuestionDistribution params)\n        (fun qu =>\n          let D := weightedGeneralizeBRightOperatorAtPolynomial params strategy G g qu -\n            weightedGeneralizeBLeftOperatorAtPolynomial params strategy G g qu\n          ev strategy.state (Dᴴ * D))) ≤\n      generalizeBError params := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Reverse generalize-B bound summed over all polynomials.\n\nThe reverse squared distance equals the forward one by `ev_adjoint_sub_swap`;\ntherefore the polynomial-sum bound follows from the forward version\n`generalizeBDeviationAtPolynomial_polysum_le_error`.  This supplies the\nsum-form Step 4 bound (the `md/q` reverse direction) for the six-step\nlocal-variance chain.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.SumForm",
+  "module_doc": "/-! ## Sum-form local-variance chain (complete)\n\nThis section supplies the polynomial-sum reverse generalize-B bound\n(the last individual step bound) and the full chain-assembly lemma\n`localVarianceDeviation_sum_le_localVarianceOfPointsError`, which\ncloses `eq:equivalent-local-variance`.\n\n### Individual sum-form step bounds (all available)\n\n1. `pointConditionedEventSelfConsistency_weighted_leftEdge_sum` (2δ, Step 1)\n2. `axisParallelPointLineConsistency_weighted_rightToLeftLineQuestion_sum` (2ε, Step 2)\n3. `generalizeBDeviationAtPolynomial_polysum_le_error` (md/q forward, Step 3)\n4. `generalizeBReversePointwiseBound_polysum_le_error` (md/q reverse, Step 4) — **below**\n5. `axisParallelPointLineConsistency_weighted_leftToRightLineQuestion_sum` (2ε, Step 5)\n6. `pointConditionedEventSelfConsistency_weighted_rightEdge_sum` (2δ, Step 6)\n\n### Six-step chain assembly\n\nThe chain assembly lemma `localVarianceDeviation_sum_le_localVarianceOfPointsError`\n(**below**) telescopes the six operator differences via\n`ev_sum_conjTranspose_mul_sum_le`, sums over `g`, swaps outer sums, and\napplies the six `_sum` bounds.  The proof follows the sketch originally\ndocumented here (and tracked in #1137):\n\n```\nFor each g, q:  A0_g(q) − A6_g(q) = Σ_{i=0}^5 (Ai_g(q) − A_{i+1}_g(q)).\nBy ev_sum_conjTranspose_mul_sum_le:\n  ‖A0−A6‖² ≤ 6·Σ_i ‖Ai−A_{i+1}‖²   (pointwise).\nAveraging over 𝒟 and summing over g:\n  Σ_g avgOver ‖A0−A6‖² ≤ 6·Σ_i Σ_g avgOver ‖Ai−A_{i+1}‖².\nReindex each inner sum to a native distribution and apply the _sum bound.\nFinally reindex the left side from 𝒟 to rerandomizeCoord.\n```\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/TransportChain/SumForm.lean#L105-L142",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/TransportChain/SumForm.lean",
+  "lines": [
+   105,
+   142
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.GlobalVariance.generalizeBDeviationAtPolynomial_polysum_le_error",
+   "MIPStarRE.LDT.GlobalVariance.ev_adjoint_sub_swap"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.localVarianceDeviation_sum_le_localVarianceOfPointsError",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.localVarianceDeviation_sum_le_localVarianceOfPointsError",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.localVarianceDeviation_sum_le_localVarianceOfPointsError\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (G : SubMeas (Polynomial params) ι) :\n    (∑ g : Polynomial params,\n      localVarianceDeviationAtPolynomial params strategy strategy.state G g) ≤\n      localVarianceOfPointsError params eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "**Chain assembly for `eq:equivalent-local-variance`**.\n\nThis theorem closes the six-step sum-form local-variance chain.  For each\ntransport question `q` and polynomial `g`, the six operator differences\ntelescope via `ev_sum_conjTranspose_mul_sum_le`, giving the pointwise\ninequality `‖A₀ − A₆‖² ≤ 6·Σᵢ ‖Aᵢ − Aᵢ₊₁‖²`.  Summing over `g` and\naveraging over the uniform transport-question distribution and then swapping\nouter sums yields\n\n  `Σ_g avgOver ‖A₀−A₆‖² ≤ 6·Σᵢ Σ_g avgOver ‖Aᵢ−Aᵢ₊₁‖²`.\n\nEach inner term `Σ_g avgOver ‖Aᵢ−Aᵢ₊₁‖²` is reindexed to its native\ndistribution and bounded by the corresponding `_sum` lemma (all six are now\navailable on `main`).  Finally the left side is reindexed from the\ntransport-question distribution to `rerandomizeCoord`, and the\n`localVarianceTransportChainError` is absorbed into\n`localVarianceOfPointsError`.\n\nThis is the main theorem requested in #1088 and tracked in #1137.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.SumForm",
+  "module_doc": "/-! ## Sum-form local-variance chain (complete)\n\nThis section supplies the polynomial-sum reverse generalize-B bound\n(the last individual step bound) and the full chain-assembly lemma\n`localVarianceDeviation_sum_le_localVarianceOfPointsError`, which\ncloses `eq:equivalent-local-variance`.\n\n### Individual sum-form step bounds (all available)\n\n1. `pointConditionedEventSelfConsistency_weighted_leftEdge_sum` (2δ, Step 1)\n2. `axisParallelPointLineConsistency_weighted_rightToLeftLineQuestion_sum` (2ε, Step 2)\n3. `generalizeBDeviationAtPolynomial_polysum_le_error` (md/q forward, Step 3)\n4. `generalizeBReversePointwiseBound_polysum_le_error` (md/q reverse, Step 4) — **below**\n5. `axisParallelPointLineConsistency_weighted_leftToRightLineQuestion_sum` (2ε, Step 5)\n6. `pointConditionedEventSelfConsistency_weighted_rightEdge_sum` (2δ, Step 6)\n\n### Six-step chain assembly\n\nThe chain assembly lemma `localVarianceDeviation_sum_le_localVarianceOfPointsError`\n(**below**) telescopes the six operator differences via\n`ev_sum_conjTranspose_mul_sum_le`, sums over `g`, swaps outer sums, and\napplies the six `_sum` bounds.  The proof follows the sketch originally\ndocumented here (and tracked in #1137):\n\n```\nFor each g, q:  A0_g(q) − A6_g(q) = Σ_{i=0}^5 (Ai_g(q) − A_{i+1}_g(q)).\nBy ev_sum_conjTranspose_mul_sum_le:\n  ‖A0−A6‖² ≤ 6·Σ_i ‖Ai−A_{i+1}‖²   (pointwise).\nAveraging over 𝒟 and summing over g:\n  Σ_g avgOver ‖A0−A6‖² ≤ 6·Σ_i Σ_g avgOver ‖Ai−A_{i+1}‖².\nReindex each inner sum to a native distribution and apply the _sum bound.\nFinally reindex the left side from 𝒟 to rerandomizeCoord.\n```\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/TransportChain/SumForm.lean#L145-L506",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/TransportChain/SumForm.lean",
+  "lines": [
+   145,
+   506
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Distribution.map_sum_smul",
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.avgOver_const_mul",
+   "MIPStarRE.LDT.avgOver_sum",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_sum_conjTranspose_mul_sum_le",
+   "MIPStarRE.LDT.GlobalVariance.generalizeBDeviationAtPolynomial_polysum_le_error",
+   "MIPStarRE.LDT.GlobalVariance.pointConditionedEventSelfConsistency_weighted_point_sum",
+   "MIPStarRE.LDT.GlobalVariance.ev_adjoint_sub_swap",
+   "MIPStarRE.LDT.GlobalVariance.axisParallelPointLineConsistency_weighted_leftToRightLineQuestion_sum",
+   "MIPStarRE.LDT.GlobalVariance.axisParallelPointLineConsistency_weighted_rightToLeftLineQuestion_sum",
+   "MIPStarRE.LDT.GlobalVariance.avgOver_transport_pointPair",
+   "MIPStarRE.LDT.GlobalVariance.generalizeBReversePointwiseBound_polysum_le_error",
+   "MIPStarRE.LDT.eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.delta_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 333,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.average_sliceSelfImprovementError_le",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.average_sliceSelfImprovementError_le",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.average_sliceSelfImprovementError_le\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (hrestrict : SliceRestrictionData params strategy eps delta gamma) :\n    avgOver (uniformDistribution (Fq params))\n        (fun x => sliceSelfImprovementError params hrestrict x) ≤\n      selfImprovementInInductionError params.next eps delta gamma := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Averaging the slice self-improvement errors gives the paper's displayed\nbound on `\\mathbb{E}_x[\\zeta_x]`, i.e. the first inequality from\n`inductive_step.tex:555-567`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.AvgSliceErrors.Core",
+  "module_doc": "/-!\n# Section 6 — Averaged Slice Error Bounds: Core Estimates\n\nThis module contains the Jensen and averaging estimates for ordinary and\nanswer-valued restricted slice errors.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/AvgSliceErrors/Core.lean#L198-L309",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/AvgSliceErrors/Core.lean",
+  "lines": [
+   198,
+   309
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_const",
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.avgOver_const_mul",
+   "MIPStarRE.LDT.MainInductionStep.m_mul_sliceConditioningLoss_rpow_le_next_m_mul_rpow",
+   "MIPStarRE.LDT.eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.delta_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 99,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.average_sliceError_le",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.average_sliceError_le",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.average_sliceError_le\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma : Error)\n    (k : ℕ)\n    (hgood : strategy.IsGood eps delta gamma)\n    (hrestrict : SliceRestrictionData params strategy eps delta gamma)\n    (hinduction : PerSliceInductionData params strategy eps delta gamma hrestrict k) :\n    avgOver (uniformDistribution (Fq params)) hinduction.sliceError ≤\n      ((params.m : Error) ^ (2 : ℕ)) *\n        (mainInductionNu params.next k eps delta gamma +\n          Real.exp (-((k : Error) / (80000 * ((params.m : Error) ^ (2 : ℕ)))))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Averaging the recursive slice errors `\\sigma_x` and telescoping the slice\nmain-induction bound yields the paper's `\\mathbb{E}_x[\\sigma_x]` estimate used\nin the final pasting-data record error calculation.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.AvgSliceErrors.Core",
+  "module_doc": "/-!\n# Section 6 — Averaged Slice Error Bounds: Core Estimates\n\nThis module contains the Jensen and averaging estimates for ordinary and\nanswer-valued restricted slice errors.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/AvgSliceErrors/Core.lean#L468-L505",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/AvgSliceErrors/Core.lean",
+  "lines": [
+   468,
+   505
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_const",
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.avgOver_const_mul"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.average_answerSuccessorSliceSelfImprovementError_le",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.average_answerSuccessorSliceSelfImprovementError_le",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.average_answerSuccessorSliceSelfImprovementError_le\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : AnswerSymStrat params.next ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (profile : AnswerSuccessorRestrictedFailureProfile params strategy)\n    (haxis :\n      averageAnswerSuccessorRestrictedAxisParallelError params profile ≤\n        sliceConditioningLoss params * eps)\n    (hself :\n      averageAnswerSuccessorRestrictedSelfConsistencyError params profile ≤ delta) :\n    avgOver (uniformDistribution (Fq params))\n        (fun x =>\n          selfImprovementInInductionError params\n            (profile.axisParallel x)\n            (profile.selfConsistency x)\n            (profile.diagonal x)) ≤\n      selfImprovementInInductionError params.next eps delta gamma := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Answer-valued successor analogue of the averaged self-improvement error\nestimate.\n\nFor the restricted profiles of an ambient `AnswerSymStrat` successor, the\naverage of the slice errors `\\zeta_x` is bounded by the next-dimensional\nquantity `\\zeta`.  This is the scalar part of the answer-valued self-improvement\naveraging in `inductive_step.tex:486-551`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.AvgSliceErrors.Core",
+  "module_doc": "/-!\n# Section 6 — Averaged Slice Error Bounds: Core Estimates\n\nThis module contains the Jensen and averaging estimates for ordinary and\nanswer-valued restricted slice errors.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/AvgSliceErrors/Core.lean#L507-L639",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/AvgSliceErrors/Core.lean",
+  "lines": [
+   507,
+   639
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_const",
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.avgOver_const_mul",
+   "MIPStarRE.LDT.MainInductionStep.m_mul_sliceConditioningLoss_rpow_le_next_m_mul_rpow",
+   "MIPStarRE.LDT.answer_eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.answer_delta_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 107,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.average_answerSuccessorSliceMainInductionNu_le",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.average_answerSuccessorSliceMainInductionNu_le",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.average_answerSuccessorSliceMainInductionNu_le\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : AnswerSymStrat params.next ι)\n    (eps delta gamma : Error)\n    (k : ℕ)\n    (hgood : strategy.IsGood eps delta gamma)\n    (profile : AnswerSuccessorRestrictedFailureProfile params strategy)\n    (haxis :\n      averageAnswerSuccessorRestrictedAxisParallelError params profile ≤\n        sliceConditioningLoss params * eps)\n    (hself :\n      averageAnswerSuccessorRestrictedSelfConsistencyError params profile ≤ delta)\n    (hdiag :\n      averageAnswerSuccessorRestrictedDiagonalError params profile ≤\n        sliceConditioningLoss params * gamma) :\n    avgOver (uniformDistribution (Fq params))\n        (fun x =>\n          mainInductionNu params k\n            (profile.axisParallel x)\n            (profile.selfConsistency x)\n            (profile.diagonal x)) ≤\n      mainInductionNu params.next k eps delta gamma := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Answer-valued successor analogue of the averaged recursive induction\nparameter estimate.\n\nFor an ambient `AnswerSymStrat` in dimension `m + 1`, the restricted\nanswer-valued slice profile satisfies the same Jensen and conditioning estimate\nas in the ordinary successor route.  This is the scalar calculation needed after\nthe recursive answer-valued predecessor calls.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.AvgSliceErrors.Core",
+  "module_doc": "/-!\n# Section 6 — Averaged Slice Error Bounds: Core Estimates\n\nThis module contains the Jensen and averaging estimates for ordinary and\nanswer-valued restricted slice errors.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/AvgSliceErrors/Core.lean#L641-L816",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/AvgSliceErrors/Core.lean",
+  "lines": [
+   641,
+   816
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_const",
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.avgOver_const_mul",
+   "MIPStarRE.LDT.MainInductionStep.m_sq_mul_sliceConditioningLoss_rpow_le_next_sq_mul_rpow",
+   "MIPStarRE.LDT.answer_eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.answer_delta_nonneg_of_isGood",
+   "MIPStarRE.LDT.answer_gamma_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 146,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.average_answerSuccessorSliceMainInductionError_le",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.average_answerSuccessorSliceMainInductionError_le",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.average_answerSuccessorSliceMainInductionError_le\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : AnswerSymStrat params.next ι)\n    (eps delta gamma : Error)\n    (k : ℕ)\n    (hgood : strategy.IsGood eps delta gamma)\n    (profile : AnswerSuccessorRestrictedFailureProfile params strategy)\n    (haxis :\n      averageAnswerSuccessorRestrictedAxisParallelError params profile ≤\n        sliceConditioningLoss params * eps)\n    (hself :\n      averageAnswerSuccessorRestrictedSelfConsistencyError params profile ≤ delta)\n    (hdiag :\n      averageAnswerSuccessorRestrictedDiagonalError params profile ≤\n        sliceConditioningLoss params * gamma) :\n    avgOver (uniformDistribution (Fq params))\n        (fun x =>\n          mainInductionError params k\n            (profile.axisParallel x)\n            (profile.selfConsistency x)\n            (profile.diagonal x)) ≤\n      ((params.m : Error) ^ (2 : ℕ)) *\n        (mainInductionNu params.next k eps delta gamma +\n          Real.exp (-((k : Error) / (80000 * ((params.m : Error) ^ (2 : ℕ)))))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Average of the recursive main-induction errors for answer-valued successor\nslices.\n\nThis is the scalar estimate used after applying the predecessor answer-valued\ninduction hypothesis to each restricted successor slice.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.AvgSliceErrors.Core",
+  "module_doc": "/-!\n# Section 6 — Averaged Slice Error Bounds: Core Estimates\n\nThis module contains the Jensen and averaging estimates for ordinary and\nanswer-valued restricted slice errors.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/AvgSliceErrors/Core.lean#L818-L868",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/AvgSliceErrors/Core.lean",
+  "lines": [
+   818,
+   868
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_const",
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.avgOver_const_mul",
+   "MIPStarRE.LDT.MainInductionStep.average_answerSuccessorSliceMainInductionNu_le"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.answerSuccessorRecursiveSliceMeasurements_ofMainInductionHypothesis",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.answerSuccessorRecursiveSliceMeasurements_ofMainInductionHypothesis",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.answerSuccessorRecursiveSliceMeasurements_ofMainInductionHypothesis\n    (params : Parameters)\n    [FieldModel.{uF} params.q]\n    (strategy : AnswerSymStrat params.next ι)\n    (eps delta gamma : Error)\n    (k : ℕ)\n    (hgood : strategy.IsGood eps delta gamma)\n    (hinduction : AnswerMainInductionHypothesis.{uF, uι} params)\n    (hk_next : 400 * params.next.m * params.next.d ≤ k)\n    (hsmall : mainInductionError params.next k eps delta gamma < 1) :\n    ∃ profile : AnswerSuccessorRestrictedFailureProfile params strategy,\n      ∃ sliceError : Fq params → Error,\n        ∃ sliceMeasurement : Fq params → Measurement (Polynomial params) ι,\n          averageAnswerSuccessorRestrictedAxisParallelError params profile ≤\n              sliceConditioningLoss params * eps ∧\n            averageAnswerSuccessorRestrictedSelfConsistencyError params profile ≤ delta ∧\n            averageAnswerSuccessorRestrictedDiagonalError params profile ≤\n              sliceConditioningLoss params * gamma ∧\n            (∀ x,\n              ConsRel strategy.state (uniformDistribution (Point params))\n                (IdxProjMeas.toIdxSubMeas\n                  (xRestrictedAnswerSymStratOfAnswer params strategy x).pointMeasurement)\n                (polynomialEvaluationFamily params (sliceMeasurement x).toSubMeas)\n                (sliceError x)) ∧\n            (∀ x,\n              sliceError x ≤\n                mainInductionError params k\n                  (profile.axisParallel x)\n                  (profile.selfConsistency x)\n                  (profile.diagonal x)) ∧\n            avgOver (uniformDistribution (Fq params)) sliceError ≤\n              ((params.m : Error) ^ (2 : ℕ)) *\n                (mainInductionNu params.next k eps delta gamma +\n                  Real.exp (-((k : Error) / (80000 * ((params.m : Error) ^ (2 : ℕ)))))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Extract the recursive answer-valued slice measurements and their averaged\nmain-induction error bound.\n\nPaper origin: `references/ldt-paper/inductive_step.tex:441-551`.  After the\nrestricted-probabilities theorem and the predecessor answer-valued induction\nhypothesis are applied to the restricted slices, this theorem packages the\nresulting measurements `G^x` and proves the displayed bound\n`\\mathbb E_x \\sigma_x \\leq \\sigma`.\n\n**Lean-only:** This is an internal construction theorem for the simultaneous\nanswer-valued successor route tracked in issue #1507; it does not add a\npredecessor conclusion as an assumption to any source-facing theorem.\nDischarge: proved here from the restricted-probabilities theorem and the\nanswer-valued predecessor induction hypothesis.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.AvgSliceErrors.Successor",
+  "module_doc": "/-!\n# Section 6 — Averaged Slice Error Bounds: Successor Outputs\n\nThis module packages recursive answer-valued slice measurements and the final\nself-improvement-to-main-induction error comparisons.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/AvgSliceErrors/Successor.lean#L91-L156",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/AvgSliceErrors/Successor.lean",
+  "lines": [
+   91,
+   156
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MainInductionStep.average_answerSuccessorSliceMainInductionError_le",
+   "MIPStarRE.LDT.MainInductionStep.answerSuccessorRestrictedSliceConclusions"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.answerSuccessorSelfImprovementOutputs_ofMainInductionHypothesis",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.answerSuccessorSelfImprovementOutputs_ofMainInductionHypothesis",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.answerSuccessorSelfImprovementOutputs_ofMainInductionHypothesis\n    (params : Parameters)\n    [FieldModel.{uF} params.q]\n    (strategy : AnswerSymStrat params.next ι)\n    (eps delta gamma : Error)\n    (k : ℕ)\n    (hgood : strategy.IsGood eps delta gamma)\n    (hinduction : AnswerMainInductionHypothesis.{uF, uι} params)\n    (hk_next : 400 * params.next.m * params.next.d ≤ k)\n    (hsmall : mainInductionError params.next k eps delta gamma < 1) :\n    ∃ profile : AnswerSuccessorRestrictedFailureProfile params strategy,\n      ∃ sliceError : Fq params → Error,\n        ∃ sliceMeasurement : Fq params → Measurement (Polynomial params) ι,\n          ∃ sliceProj : Fq params → ProjSubMeas (Polynomial params) ι,\n            ∃ sliceWitness : Fq params → MIPStarRE.Quantum.Op ι,\n              averageAnswerSuccessorRestrictedAxisParallelError params profile ≤\n                  sliceConditioningLoss params * eps ∧\n                averageAnswerSuccessorRestrictedSelfConsistencyError params profile ≤ delta ∧\n                averageAnswerSuccessorRestrictedDiagonalError params profile ≤\n                  sliceConditioningLoss params * gamma ∧\n                (∀ x,\n                  ConsRel strategy.state (uniformDistribution (Point params))\n                    (IdxProjMeas.toIdxSubMeas\n                      (xRestrictedAnswerSymStratOfAnswer params strategy x).pointMeasurement)\n                    (polynomialEvaluationFamily params (sliceMeasurement x).toSubMeas)\n                    (sliceError x)) ∧\n                (∀ x,\n                  sliceError x ≤\n                    mainInductionError params k\n                      (profile.axisParallel x)\n                      (profile.selfConsistency x)\n                      (profile.diagonal x)) ∧\n                avgOver (uniformDistribution (Fq params)) sliceError ≤\n                  ((params.m : Error) ^ (2 : ℕ)) *\n                    (mainInductionNu params.next k eps delta gamma +\n                      Real.exp (-((k : Error) / (80000 * ((params.m : Error) ^ (2 : ℕ)))))) ∧\n                avgOver (uniformDistribution (Fq params))\n                    (fun x =>\n                      selfImprovementInInductionError params\n                        (profile.axisParallel x)\n                        (profile.selfConsistency x)\n                        (profile.diagonal x)) ≤\n                  selfImprovementInInductionError params.next eps delta gamma ∧\n                (∀ x,\n                  CompletenessAtLeast strategy.state (sliceProj x).toSubMeas.liftLeft\n                    ((1 - sliceError x) -\n                      selfImprovementInInductionError params\n                        (profile.axisParallel x)\n                        (profile.selfConsistency x)\n                        (profile.diagonal x))) ∧\n                (∀ x,\n                  ConsRel strategy.state (uniformDistribution (Point params))\n                    (IdxProjMeas.toIdxSubMeas\n                      (xRestrictedAnswerSymStratOfAnswer params strategy x).pointMeasurement)\n                    (polynomialEvaluationFamily params (sliceProj x).toSubMeas)\n                    (selfImprovementInInductionError params\n                      (profile.axisParallel x)\n                      (profile.selfConsistency x)\n                      (profile.diagonal x))) ∧\n                (∀ x,\n                  BipartiteSSCRel strategy.state (uniformDistribution Unit)\n                    (constSubMeasFamily (sliceProj x).toSubMeas)\n                    (selfImprovementInInductionError params\n                      (profile.axisParallel x)\n                      (profile.selfConsistency x)\n                      (profile.diagonal x))) ∧\n                (∀ x,\n                  SDDRel strategy.state (uniformDistribution Unit)\n                    (constSubMeasFamily (leftPlacedSubMeas (ιB := ι) (sliceProj x).toSubMeas))\n                    (constSubMeasFamily (rightPlacedSubMeas (ιA := ι) (sliceProj x).toSubMeas))\n                    (selfImprovementInInductionError params\n                      (profile.axisParallel x)\n                      (profile.selfConsistency x)\n                      (profile.diagonal x))) ∧\n                (∀ x,\n                  tensorFailureExpectation strategy.state (sliceWitness x) (sliceProj x).toSubMeas\n                    ≤ selfImprovementInInductionError params\n                      (profile.axisParallel x)\n                      (profile.selfConsistency x)\n                      (profile.diagonal x)) ∧\n                (∀ x, ∀ h : Polynomial params,\n                  IdxPolyFamily.averagedSlicePointEvaluationOperator\n                    (answerSelfImprovementCarrier params.next strategy) x h ≤ sliceWitness x) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Apply self-improvement to the recursive answer-valued successor slices.\n\nPaper origin: `references/ldt-paper/inductive_step.tex:461-551`.  Starting from\nthe recursive answer-valued slice measurements supplied by the predecessor\ninduction hypothesis, this theorem constructs the projective slice\nsubmeasurements `\\widehat G^x` and witnesses `Z^x`, proves their four\nself-improvement outputs, and keeps the averaged `\\zeta_x` and `\\sigma_x`\nbounds available.\n\n**Lean-only:** The ordinary carrier appears only in the domination field, where\nits point measurement is the same last-coordinate restriction of the ambient\nanswer-valued point measurement.  The proof invokes only the\naxis-parallel/self-consistency form of self-improvement, and therefore does not\nclaim that the carrier's dummy diagonal measurement is a good diagonal\nrealization of the answer-valued strategy.  This internal construction is\ntracked in issue #1507.  Discharge: proved here from the recursive slice\nmeasurements and the formal self-improvement theorem.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.AvgSliceErrors.Successor",
+  "module_doc": "/-!\n# Section 6 — Averaged Slice Error Bounds: Successor Outputs\n\nThis module packages recursive answer-valued slice measurements and the final\nself-improvement-to-main-induction error comparisons.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/AvgSliceErrors/Successor.lean#L158-L421",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/AvgSliceErrors/Successor.lean",
+  "lines": [
+   158,
+   421
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MainInductionStep.average_answerSuccessorSliceSelfImprovementError_le",
+   "MIPStarRE.LDT.MainInductionStep.answerSuccessorRecursiveSliceMeasurements_ofMainInductionHypothesis",
+   "MIPStarRE.LDT.MainInductionStep.selfImprovementInInductionSection_of_axisParallel_selfConsistency"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 164,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.selfImprovementInInductionError_le_mainInductionNu",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.selfImprovementInInductionError_le_mainInductionNu",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.selfImprovementInInductionError_le_mainInductionNu\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma : Error)\n    (k : ℕ)\n    (hgood : strategy.IsGood eps delta gamma)\n    (hsmall : mainInductionError params.next k eps delta gamma < 1)\n    (heps_le_one : eps ≤ 1) (hdelta_le_one : delta ≤ 1)\n    (hdq_le_q : params.d ≤ params.q) :\n    selfImprovementInInductionError params.next eps delta gamma ≤\n      mainInductionNu params.next k eps delta gamma := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Paper's `\\eqref{eq:zeta-smaller-than-nu}`: under the small-parameter\nhypotheses, the averaged self-improvement interface error `\\zeta` is bounded by\nthe next-stage induction parameter `\\nu`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.AvgSliceErrors.Successor",
+  "module_doc": "/-!\n# Section 6 — Averaged Slice Error Bounds: Successor Outputs\n\nThis module packages recursive answer-valued slice measurements and the final\nself-improvement-to-main-induction error comparisons.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/AvgSliceErrors/Successor.lean#L423-L497",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/AvgSliceErrors/Successor.lean",
+  "lines": [
+   423,
+   497
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MainInductionStep.three_le_k_sq_mul_next_m_of_hsmall",
+   "MIPStarRE.LDT.eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.delta_nonneg_of_isGood",
+   "MIPStarRE.LDT.gamma_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 60,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.answer_selfImprovementInInductionError_le_mainInductionNu",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.answer_selfImprovementInInductionError_le_mainInductionNu",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.answer_selfImprovementInInductionError_le_mainInductionNu\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : AnswerSymStrat params.next ι)\n    (eps delta gamma : Error)\n    (k : ℕ)\n    (hgood : strategy.IsGood eps delta gamma)\n    (hsmall : mainInductionError params.next k eps delta gamma < 1)\n    (heps_le_one : eps ≤ 1) (hdelta_le_one : delta ≤ 1)\n    (hdq_le_q : params.d ≤ params.q) :\n    selfImprovementInInductionError params.next eps delta gamma ≤\n      mainInductionNu params.next k eps delta gamma := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Answer-valued analogue of\n`selfImprovementInInductionError_le_mainInductionNu`.\n\nThis is the scalar part of the successor proof for an ambient answer-valued\nstrategy.  It uses only the answer-valued goodness bounds and does not replace\nthe answer-valued diagonal measurement by an ordinary one.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.AvgSliceErrors.Successor",
+  "module_doc": "/-!\n# Section 6 — Averaged Slice Error Bounds: Successor Outputs\n\nThis module packages recursive answer-valued slice measurements and the final\nself-improvement-to-main-induction error comparisons.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/AvgSliceErrors/Successor.lean#L499-L576",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/AvgSliceErrors/Successor.lean",
+  "lines": [
+   499,
+   576
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MainInductionStep.answer_three_le_k_sq_mul_next_m_of_hsmall",
+   "MIPStarRE.LDT.answer_eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.answer_delta_nonneg_of_isGood",
+   "MIPStarRE.LDT.answer_gamma_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 60,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.avgOver_uniform_rpow_one_div_le_rpow_avg",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.avgOver_uniform_rpow_one_div_le_rpow_avg",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.avgOver_uniform_rpow_one_div_le_rpow_avg\n    {α : Type*} [Fintype α] [DecidableEq α] [Nonempty α]\n    (f : α → Error) (n : ℕ) (hn : 1 ≤ n) (hf : ∀ a, 0 ≤ f a) :\n    avgOver (uniformDistribution α)\n        (fun a => Real.rpow (f a) (1 / (n : Error))) ≤\n      Real.rpow (avgOver (uniformDistribution α) f) (1 / (n : Error)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder"
+  ],
+  "docstring": "Jensen's inequality for `Real.rpow (1/n)` against a uniform distribution:\nthe average of `(f a)^{1/n}` is at most `(average f)^{1/n}`. This is the\nworkhorse used inside each of the averaged-slice bounds (`average_slice…_le`)\nto push `rpow (1/32)` or `rpow (1/1024)` through a uniform `avgOver` on\n`Fq params`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Averaging",
+  "module_doc": "/-!\n# Section 6 — Induction Parameter Averaging Bounds\n\nThis file contains the uniform Jensen estimate used for averaged slice errors,\ntogether with the\n`sliceConditioningLoss` comparisons which replace the ambient factor `m` by\n`m + 1` in the induction step.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n- `references/ldt-paper/inductive_step.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/Averaging.lean#L85-L98",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/Averaging.lean",
+  "lines": [
+   85,
+   98
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "PMF.sum_rpow_one_div_le_rpow_sum"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.m_mul_sliceConditioningLoss_rpow_le_next_m_mul_rpow",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.m_mul_sliceConditioningLoss_rpow_le_next_m_mul_rpow",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.m_mul_sliceConditioningLoss_rpow_le_next_m_mul_rpow\n    (params : Parameters) {x c : Error}\n    (hx : 0 ≤ x) (_hc_nonneg : 0 ≤ c) (hc_le_one : c ≤ 1) :\n    (params.m : Error) * Real.rpow (sliceConditioningLoss params * x) c ≤\n      (params.next.m : Error) * Real.rpow x c := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder"
+  ],
+  "docstring": "Internal helper: `m · (sliceConditioningLoss · x)^c ≤ m_next · x^c` for `c ≤ 1`.\n\nExposed for cross-module use in `AvgSliceErrors`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Averaging",
+  "module_doc": "/-!\n# Section 6 — Induction Parameter Averaging Bounds\n\nThis file contains the uniform Jensen estimate used for averaged slice errors,\ntogether with the\n`sliceConditioningLoss` comparisons which replace the ambient factor `m` by\n`m + 1` in the induction step.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n- `references/ldt-paper/inductive_step.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/Averaging.lean#L100-L142",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/Averaging.lean",
+  "lines": [
+   100,
+   142
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.m_sq_mul_sliceConditioningLoss_rpow_le_next_sq_mul_rpow",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.m_sq_mul_sliceConditioningLoss_rpow_le_next_sq_mul_rpow",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.m_sq_mul_sliceConditioningLoss_rpow_le_next_sq_mul_rpow\n    (params : Parameters) {x c : Error}\n    (hx : 0 ≤ x) (hc_nonneg : 0 ≤ c) (hc_le_one : c ≤ 1) :\n    ((params.m : Error) ^ (2 : ℕ)) * Real.rpow (sliceConditioningLoss params * x) c ≤\n      ((params.next.m : Error) ^ (2 : ℕ)) * Real.rpow x c := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder"
+  ],
+  "docstring": "Internal helper: `m² · (sliceConditioningLoss · x)^c ≤ m_next² · x^c` for `c ≤ 1`.\n\nExposed for cross-module use in `AvgSliceErrors`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Averaging",
+  "module_doc": "/-!\n# Section 6 — Induction Parameter Averaging Bounds\n\nThis file contains the uniform Jensen estimate used for averaged slice errors,\ntogether with the\n`sliceConditioningLoss` comparisons which replace the ambient factor `m` by\n`m + 1` in the induction step.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n- `references/ldt-paper/inductive_step.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/Averaging.lean#L143-L168",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/Averaging.lean",
+  "lines": [
+   143,
+   168
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MainInductionStep.m_mul_sliceConditioningLoss_rpow_le_next_m_mul_rpow"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.eps_le_one_of_mainInductionError_lt_one",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.eps_le_one_of_mainInductionError_lt_one",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.eps_le_one_of_mainInductionError_lt_one\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    {eps delta gamma : Error} {k : ℕ}\n    (hgood : strategy.IsGood eps delta gamma)\n    (hsmall : mainInductionError params.next k eps delta gamma < 1) :\n    eps ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Internal helper: under `mainInductionError < 1`, the axis-parallel error `eps ≤ 1`.\n\nExposed for cross-module use in `MainTheorems`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.MainError",
+  "module_doc": "/-!\n# Section 6 — Main-Induction Error Bounds\n\nThis file is one leaf of `InductionParameterBounds`. It contains the scalar\nconsequences of the non-vacuous hypothesis `mainInductionError < 1`, including\nthe bounds `eps ≤ 1`, `delta ≤ 1`, `gamma ≤ 1`, `params.d ≤ params.q`, and\n`mainInductionNu < 1`.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n- `references/ldt-paper/inductive_step.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean#L223-L264",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean",
+  "lines": [
+   223,
+   264
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.delta_nonneg_of_isGood",
+   "MIPStarRE.LDT.gamma_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.delta_le_one_of_mainInductionError_lt_one",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.delta_le_one_of_mainInductionError_lt_one",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.delta_le_one_of_mainInductionError_lt_one\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    {eps delta gamma : Error} {k : ℕ}\n    (hgood : strategy.IsGood eps delta gamma)\n    (hsmall : mainInductionError params.next k eps delta gamma < 1) :\n    delta ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Internal helper: under `mainInductionError < 1`, the self-consistency error `delta ≤ 1`.\n\nExposed for cross-module use in `MainTheorems`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.MainError",
+  "module_doc": "/-!\n# Section 6 — Main-Induction Error Bounds\n\nThis file is one leaf of `InductionParameterBounds`. It contains the scalar\nconsequences of the non-vacuous hypothesis `mainInductionError < 1`, including\nthe bounds `eps ≤ 1`, `delta ≤ 1`, `gamma ≤ 1`, `params.d ≤ params.q`, and\n`mainInductionNu < 1`.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n- `references/ldt-paper/inductive_step.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean#L266-L308",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean",
+  "lines": [
+   266,
+   308
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.delta_nonneg_of_isGood",
+   "MIPStarRE.LDT.gamma_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.three_le_k_sq_mul_next_m_of_hsmall",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.three_le_k_sq_mul_next_m_of_hsmall",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.three_le_k_sq_mul_next_m_of_hsmall\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    {eps delta gamma : Error} {k : ℕ}\n    (hgood : strategy.IsGood eps delta gamma)\n    (hsmall : mainInductionError params.next k eps delta gamma < 1) :\n    (3 : Error) ≤ ((k : Error) ^ (2 : ℕ)) * (params.next.m : Error) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Internal helper: `3 ≤ k² · m_next` in the small-parameter regime.\n\nExposed for cross-module use in `AvgSliceErrors`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.MainError",
+  "module_doc": "/-!\n# Section 6 — Main-Induction Error Bounds\n\nThis file is one leaf of `InductionParameterBounds`. It contains the scalar\nconsequences of the non-vacuous hypothesis `mainInductionError < 1`, including\nthe bounds `eps ≤ 1`, `delta ≤ 1`, `gamma ≤ 1`, `params.d ≤ params.q`, and\n`mainInductionNu < 1`.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n- `references/ldt-paper/inductive_step.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean#L310-L403",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean",
+  "lines": [
+   310,
+   403
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.delta_nonneg_of_isGood",
+   "MIPStarRE.LDT.gamma_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 83,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.gamma_le_one_of_mainInductionError_lt_one",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.gamma_le_one_of_mainInductionError_lt_one",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.gamma_le_one_of_mainInductionError_lt_one\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    {eps delta gamma : Error} {k : ℕ}\n    (hgood : strategy.IsGood eps delta gamma)\n    (hsmall : mainInductionError params.next k eps delta gamma < 1) :\n    gamma ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Internal helper: under `mainInductionError < 1`, the diagonal error `gamma ≤ 1`.\n\nExposed for cross-module use in `MainTheorems`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.MainError",
+  "module_doc": "/-!\n# Section 6 — Main-Induction Error Bounds\n\nThis file is one leaf of `InductionParameterBounds`. It contains the scalar\nconsequences of the non-vacuous hypothesis `mainInductionError < 1`, including\nthe bounds `eps ≤ 1`, `delta ≤ 1`, `gamma ≤ 1`, `params.d ≤ params.q`, and\n`mainInductionNu < 1`.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n- `references/ldt-paper/inductive_step.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean#L405-L447",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean",
+  "lines": [
+   405,
+   447
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.delta_nonneg_of_isGood",
+   "MIPStarRE.LDT.gamma_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 32,
+  "is_target": false
+ }
+]

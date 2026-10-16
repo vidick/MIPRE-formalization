@@ -1,0 +1,580 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Circuit.tseitin_sat_of_values",
+  "source_name": "MIPRE.SAT.Circuit.tseitin_sat_of_values",
+  "formal_statement": "theorem MIPRE.SAT.Circuit.tseitin_sat_of_values (C : Circuit) (hC : C.RefsLt) (inp gv : ℕ → V) (w : V → Bool)\n    (hwg : ∀ g < C.gates.length, w (gv g) = C.valueAt (fun i => w (inp i)) g)\n    (hx : C.eval (fun i => w (inp i)) = true) : (C.tseitin inp gv).Sat w := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Circuit",
+   "variable {V : Type*}"
+  ],
+  "docstring": "Completeness, for a given assignment: one that carries the gate values on the gate\nvariables satisfies the formula when the circuit accepts the bits it reads on the inputs.",
+  "module": "MIPRE.Foundations.SAT.Tseitin",
+  "module_doc": "/-!\n# The circuit-to-3SAT reduction\n\n`Circuit.tseitin C inp gv` is the 3SAT formula of a circuit `C` on variables `inp i` for its\ninputs and `gv g` for its gates (`lem:circuit-to-sat-reduction`, `lem:tseitin` with the\noutput-wire conjunct of the F7.2 erratum): for every gate the clauses saying that its\nvariable is the gate's function of its arguments' variables, and the unit clause on the\noutput gate. `tseitin_sat_iff`: for a circuit reading only earlier gates, `C(x) = 1` iff some\nassignment agreeing with `x` on the inputs satisfies the formula; `tseitin_values`: a\nsatisfying assignment carries the gate values. The tableau of the Cook–Levin theorem is\nthis reduction applied to the local check circuit at every window\n(`planning/succinct-cook-levin.md`, S1).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Tseitin.lean#L157-L179",
+  "source_path": "MIPRE/Foundations/SAT/Tseitin.lean",
+  "lines": [
+   157,
+   179
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Circuit.valueAt_eq",
+   "MIPRE.SAT.gateClauses_iff"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SampledGame.dist_eq_card",
+  "source_name": "MIPRE.SampledGame.dist_eq_card",
+  "formal_statement": "theorem MIPRE.SampledGame.dist_eq_card (qA : S → X) (qB : S → Y) (x : X) (y : Y) :\n    dist qA qB x y = ((univ.filter fun s => qA s = x ∧ qB s = y).card : ℝ) / Fintype.card S := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SampledGame",
+   "open Finset Classical",
+   "variable {S X Y : Type*} [Fintype S] [Fintype X] [Fintype Y]"
+  ],
+  "docstring": "The sample law is the normalized cardinality of each question pair's fibre.",
+  "module": "MIPRE.Foundations.SampledGame",
+  "module_doc": "/-! # Games generated from finite uniform samples\n\nUnlike `SeededGame`, the seed and the two question alphabets may differ.\nThis is needed for typed games, whose seed is an edge and a common vector.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SampledGame.lean#L29-L33",
+  "source_path": "MIPRE/Foundations/SampledGame.lean",
+  "lines": [
+   29,
+   33
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SampledGame.one_sub_value",
+  "source_name": "MIPRE.SampledGame.one_sub_value",
+  "formal_statement": "theorem MIPRE.SampledGame.one_sub_value [Nonempty S] {A B : Type*} [Fintype A] [Fintype B]\n    (qA : S → X) (qB : S → Y) (D : X → Y → A → B → Bool)\n    (R : TensorProductStrategy (game qA qB D)) :\n    1 - R.value = (∑ s, R.failAt (qA s) (qB s)) / Fintype.card S := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SampledGame",
+   "open Finset Classical",
+   "variable {S X Y : Type*} [Fintype S] [Fintype X] [Fintype Y]"
+  ],
+  "docstring": "The failure probability of a strategy is the uniform average of its conditional failures.",
+  "module": "MIPRE.Foundations.SampledGame",
+  "module_doc": "/-! # Games generated from finite uniform samples\n\nUnlike `SeededGame`, the seed and the two question alphabets may differ.\nThis is needed for typed games, whose seed is an edge and a common vector.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SampledGame.lean#L71-L77",
+  "source_path": "MIPRE/Foundations/SampledGame.lean",
+  "lines": [
+   71,
+   77
+  ],
+  "blueprint": [
+   {
+    "label": "lem:detype-game-soundness",
+    "env": "lemma",
+    "title": "Finite-game detyping soundness",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_weighted_mul_le_sqrt",
+  "source_name": "MIPRE.sum_weighted_mul_le_sqrt",
+  "formal_statement": "theorem MIPRE.sum_weighted_mul_le_sqrt {ι : Type*} [Fintype ι] (w u v : ι → ℝ) (hw : ∀ i, 0 ≤ w i) :\n    ∑ i, w i * (u i * v i)\n      ≤ Real.sqrt (∑ i, w i * u i ^ 2) * Real.sqrt (∑ i, w i * v i ^ 2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker"
+  ],
+  "docstring": "**Cauchy--Schwarz against a weight.** The one inequality the chain's square roots come from,\nand also the Jensen step that moves an average inside a square root (take `v = 1`).",
+  "module": "MIPRE.Foundations.Sandwich",
+  "module_doc": "/-!\n# The sandwich of two approximately commuting projective measurements\n\nTwo projective measurements `{X_a}` and `{Z_b}` on one party that *approximately commute* on a\nstate cannot in general be measured jointly. The **sandwich**\n\n`R_{a,b} = Z_b X_a Z_b`\n\nalways can: it is a POVM --- exactly, by projectivity of `Z` alone --- so its Naimark dilation is\na genuine *projective* joint measurement, and the dilation's compression identity carries every\nBorn-rule estimate about `R` to the dilated measurement unchanged.\n\nWhat has to be proved is that the sandwich is approximately self-consistent across the two\nparties, and that is the content of `one_sub_sum_bornProb_sand_le`: a five-link chain from\n\n`sum_{a,b} <psi| R_{a,b} (x) R'_{a,b} |psi>`  to  `1`,\n\nwhose links are, in order, the two parties' commutators (each paid for by one Cauchy--Schwarz\nagainst a family of squared norms summing to at most one), the two parties' `X`-consistency\ncollapsed by `sum_a X'_a = Id`, and the `Z`-consistency. The one thing the chain must *not* do is\nbound the `q^2` outcome pairs one at a time: that would cost a factor `q` and the conclusion has\nto be `q`-independent. Every link here is therefore an estimate on a single operator product ---\neither a sum that telescopes exactly, or one Cauchy--Schwarz over the whole outcome set.\n\nThe statement carries an index `iota` with weights, because that is how it is used: the two\nmeasurements come from a question and the bound is an average over questions, and averaging a\nsquare root would otherwise need a second Jensen step.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Sandwich.lean#L52-L87",
+  "source_path": "MIPRE/Foundations/Sandwich.lean",
+  "lines": [
+   52,
+   87
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.quadForm_eq",
+  "source_name": "MIPRE.quadForm_eq",
+  "formal_statement": "theorem MIPRE.quadForm_eq (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) :\n    star ψ ⬝ᵥ ((((Mᴴ * M) ⊗ₖ (1 : Matrix dB dB ℂ))) *ᵥ ψ) = (stateSqNorm ψ M : ℂ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "variable {X : Type*} [Fintype X]",
+   "variable {dA dB : Type*} [Fintype dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**The squared norm is the blueprint's quadratic form**, as a complex number:\n`⟨ψ| M† M ⊗ Id |ψ⟩` is real and equal to `stateSqNorm ψ M`. This is the only place the Kronecker\nadjoint is needed, and it is what makes the Lean definition and `def:state-distance`'s spelling\nthe same object rather than informally the same. The complex form is what a positivity\nhypothesis on a linear functional wants.",
+  "module": "MIPRE.Foundations.StateDistance",
+  "module_doc": "/-!\n# The state-dependent distance on a bipartite state\n\nEvery soundness argument in the Pauli basis test's appendix compares operators in the distance\n\n`A^x ≈_δ B^x` ⟺ `𝔼_{x ∼ μ} ⟨ψ| (A^x - B^x)† (A^x - B^x) |ψ⟩ ≤ δ`,\n\nwhere the operators act on **Alice's factor** of a bipartite state `|ψ⟩ ∈ ℂ^{dA} ⊗ ℂ^{dB}`. That\nis not the distance `MIPRE/Foundations/Distances.lean` defines: `povmDistance` and\n`IsPOVMClose` use the normalized Hilbert--Schmidt norm, which is the *tracial* — synchronous —\nspecialization, and `MIPRE/Foundations/Closeness.lean` says so in its own docstring. This file\nis the state-dependent one, and it is what blueprint `def:state-distance` names.\n\nTwo deliberate departures from the paper's `qld-prelim.tex`:\n\n* **no `O(·)` inside the definition.** The paper writes `≤ O(δ)`; here the relation is\n  `stateDist μ ψ A B ≤ δ` and the constants appear in the lemmas that produce them. That is\n  stronger, not weaker: `stateSqNorm_avg_le` preserves `δ` exactly and `povm_to_obs` gives\n  exactly `|𝒜| · δ`.\n* **answer-indexed families as well.** The paper's `≈_δ` is for operators indexed by questions\n  but not answers; the applications also need the form summed over a common outcome set\n  (`cor:ortho-from-consistency` concludes `P_a ⊗ Id ≈ Q_a ⊗ Id`). Both are here, the second as\n  `povmStateDist`.\n\n## Implementation\n\n`stateVec ψ A = (A ⊗ Id)|ψ⟩`, carried in `EuclideanSpace ℂ (dA × dB)` so that the triangle\ninequality and `‖c • v‖ = ‖c‖‖v‖` are Mathlib's rather than rebuilt. The bridge to the\nblueprint's quadratic-form spelling is `stateSqNorm_eq`, which is the only place the Kronecker\nadjoint is used.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/StateDistance.lean#L98-L120",
+  "source_path": "MIPRE/Foundations/StateDistance.lean",
+  "lines": [
+   98,
+   120
+  ],
+  "blueprint": [
+   {
+    "label": "def:state-distance",
+    "env": "definition",
+    "title": "State-dependent POVM distance",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SyncStrategy.value_pushQ_eq_one",
+  "source_name": "MIPRE.SyncStrategy.value_pushQ_eq_one",
+  "formal_statement": "theorem MIPRE.SyncStrategy.value_pushQ_eq_one (S : SyncStrategy G) {X' A' : Type*} [Fintype X'] [Fintype A']\n    [DecidableEq A'] (G' : SynchronousGame X' A') (g : X' → X) (f : X' → A → A')\n    (hZ : ∀ x y, 0 < G.μ x y → ∀ a b, G.D x y a b = false → S.P.M x a * S.P.M y b = 0)\n    (h : ∀ x' y', 0 < G'.μ x' y' → 0 < G.μ (g x') (g y') ∧ ∀ a b,\n      (0 < G.μ (g x') (g x') → G.D (g x') (g x') a a = true) →\n      (0 < G.μ (g y') (g y') → G.D (g y') (g y') b b = true) →\n      G.D (g x') (g y') a b = true → G'.D x' y' (f x' a) (f y' b) = true) :\n    (S.pushQ G' g f).value = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SyncStrategy",
+   "open Finset",
+   "variable {X A : Type*} [Fintype X] [Fintype A] [DecidableEq A] {G : SynchronousGame X A}"
+  ],
+  "docstring": "**The read strategy has value `1`.** The old strategy's operators for a rejected pair at a\npair of positive weight multiply to zero (`hZ`, the strong form of value `1` that a PCC\nstrategy of value `1` has, e.g. `SeededGame.oracleOp_mul_eq_zero`). Every new pair `(x', y')`\nof positive weight is read as an old pair of positive weight, and an old answer pair accepted\nthere — with each answer also accepted against itself at its own question, when that pair has\npositive weight — is read as an accepted new pair.",
+  "module": "MIPRE.Foundations.SyncPushQ",
+  "module_doc": "/-!\n# Playing a synchronous strategy through a reading of the questions\n\nThe honest strategy of a compiled game often measures an old strategy at a question computed from\nthe new one, and post-processes the outcome with a map that may depend on the new question. For\nanswer reduction (AR-4 of `planning/answer-reduction.md`) the old game is the oracularized one:\neach player measures at the oracularized question its seed's oracle half determines, and answers\nthe low-degree encoding of the outcome that its PCP question asks for.\n\n`SyncStrategy.pushQ` is that strategy: at a new question `x'`, the operator for `a'` is the sum\nof the old operators at `g x'` over the outcomes `f x'` sends to `a'`. It is projective because\ndistinct old outcomes are orthogonal.\n\n* `isPCC_pushQ` — it is PCC when the old one is, provided every new pair of positive weight is\n  read as an old pair of positive weight.\n* `value_pushQ_eq_one` — it has value `1` when the old strategy's operators for a rejected pair\n  at a pair of positive weight multiply to zero, and every old pair accepted there (with both\n  old answers accepted against themselves wherever that pair is asked) is read as an accepted\n  new pair.\n\nThis generalizes `SyncStrategy.pushTo` of `MIPRE/Foundations/OracularTyped` (the case of the\nidentity reading and an answer map independent of the question), but proves value `1` rather\nthan monotonicity, which is what a question-dependent answer map allows.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SyncPushQ.lean#L86-L126",
+  "source_path": "MIPRE/Foundations/SyncPushQ.lean",
+  "lines": [
+   86,
+   126
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-completeness",
+    "env": "lemma",
+    "title": "Answer-reduction completeness",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.tracialValue_eq_one_of_re_eq_zero"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.esize_nat_le",
+  "source_name": "MIPRE.TM.CookLevin.Desc.esize_nat_le",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.esize_nat_le (k : ℕ) : esize k ≤ 4 * Nat.size k + 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Assemble",
+  "module_doc": "/-!\n# Assembling the succinct Cook–Levin theorem\n\n`MIPRE.SAT.succinctCookLevin` inhabits `SuccinctCookLevin`, which is blueprint\n`thm:succinct-sat`. Everything mathematical is already proved; what is left is to discharge,\nfrom the validity hypotheses, the side conditions the describer's theorems carry at\n`e = eOf T σ`, and to name the two parameter functions.\n\n* `T ≤ Sof (eOf T σ)`, `T + 3 < 2 ^ W (eOf T σ)` and `FixedLen`: the five fixed tapes are\n  shorter than the tableau, since `|𝒟| ≤ σ < 2 ^ ⌈log σ⌉` and `2 ⌈log n⌉ ≤ T`, `|x|, |y| ≤ Q\n  ≤ T`, and `eOf` has `5 ⌈log T⌉ + 5 ⌈log σ⌉ + 24` in the exponent.\n* `4 T ≤ 2 ^ m`: an answer index is below `2 ^ flagOff`, and `flagOff < m`.\n* The gate bound: the time bound of the program, evaluated at a linear majorant of the size of\n  its input. To make it *computable from the parameters in time polynomial in their bit\n  lengths* (item 5) it is rounded up to a power of two, `s = 2 ^ (k · r + c)` with\n  `r = ⌈log ⌈log n⌉⌉ + ⌈log ⌈log T⌉⌉ + ⌈log Q⌉ + ⌈log σ⌉`: that needs no arithmetic on\n  numbers, only `pow2P` on a unary exponent, and it is squeezed between the true gate count\n  and a polynomial in `⌈log n⌉ + ⌈log T⌉ + Q + σ` (`planning/succinct-cook-levin.md`, S4).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Assemble.lean#L36-L41",
+  "source_path": "MIPRE/TM/CookLevin/Assemble.lean",
+  "lines": [
+   36,
+   41
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.size_le_self",
+  "source_name": "MIPRE.TM.CookLevin.Desc.size_le_self",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.size_le_self (k : ℕ) : Nat.size k ≤ k := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Assemble",
+  "module_doc": "/-!\n# Assembling the succinct Cook–Levin theorem\n\n`MIPRE.SAT.succinctCookLevin` inhabits `SuccinctCookLevin`, which is blueprint\n`thm:succinct-sat`. Everything mathematical is already proved; what is left is to discharge,\nfrom the validity hypotheses, the side conditions the describer's theorems carry at\n`e = eOf T σ`, and to name the two parameter functions.\n\n* `T ≤ Sof (eOf T σ)`, `T + 3 < 2 ^ W (eOf T σ)` and `FixedLen`: the five fixed tapes are\n  shorter than the tableau, since `|𝒟| ≤ σ < 2 ^ ⌈log σ⌉` and `2 ⌈log n⌉ ≤ T`, `|x|, |y| ≤ Q\n  ≤ T`, and `eOf` has `5 ⌈log T⌉ + 5 ⌈log σ⌉ + 24` in the exponent.\n* `4 T ≤ 2 ^ m`: an answer index is below `2 ^ flagOff`, and `flagOff < m`.\n* The gate bound: the time bound of the program, evaluated at a linear majorant of the size of\n  its input. To make it *computable from the parameters in time polynomial in their bit\n  lengths* (item 5) it is rounded up to a power of two, `s = 2 ^ (k · r + c)` with\n  `r = ⌈log ⌈log n⌉⌉ + ⌈log ⌈log T⌉⌉ + ⌈log Q⌉ + ⌈log σ⌉`: that needs no arithmetic on\n  numbers, only `pow2P` on a unary exponent, and it is squeezed between the true gate count\n  and a polynomial in `⌈log n⌉ + ⌈log T⌉ + Q + σ` (`planning/succinct-cook-levin.md`, S4).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Assemble.lean#L43-L43",
+  "source_path": "MIPRE/TM/CookLevin/Assemble.lean",
+  "lines": [
+   43,
+   43
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.T_le_Sof",
+  "source_name": "MIPRE.TM.CookLevin.Desc.T_le_Sof",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.T_le_Sof (T σ : ℕ) : T ≤ Sof (eOf T σ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Assemble",
+  "module_doc": "/-!\n# Assembling the succinct Cook–Levin theorem\n\n`MIPRE.SAT.succinctCookLevin` inhabits `SuccinctCookLevin`, which is blueprint\n`thm:succinct-sat`. Everything mathematical is already proved; what is left is to discharge,\nfrom the validity hypotheses, the side conditions the describer's theorems carry at\n`e = eOf T σ`, and to name the two parameter functions.\n\n* `T ≤ Sof (eOf T σ)`, `T + 3 < 2 ^ W (eOf T σ)` and `FixedLen`: the five fixed tapes are\n  shorter than the tableau, since `|𝒟| ≤ σ < 2 ^ ⌈log σ⌉` and `2 ⌈log n⌉ ≤ T`, `|x|, |y| ≤ Q\n  ≤ T`, and `eOf` has `5 ⌈log T⌉ + 5 ⌈log σ⌉ + 24` in the exponent.\n* `4 T ≤ 2 ^ m`: an answer index is below `2 ^ flagOff`, and `flagOff < m`.\n* The gate bound: the time bound of the program, evaluated at a linear majorant of the size of\n  its input. To make it *computable from the parameters in time polynomial in their bit\n  lengths* (item 5) it is rounded up to a power of two, `s = 2 ^ (k · r + c)` with\n  `r = ⌈log ⌈log n⌉⌉ + ⌈log ⌈log T⌉⌉ + ⌈log Q⌉ + ⌈log σ⌉`: that needs no arithmetic on\n  numbers, only `pow2P` on a unary exponent, and it is squeezed between the true gate count\n  and a polynomial in `⌈log n⌉ + ⌈log T⌉ + Q + σ` (`planning/succinct-cook-levin.md`, S4).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Assemble.lean#L50-L53",
+  "source_path": "MIPRE/TM/CookLevin/Assemble.lean",
+  "lines": [
+   50,
+   53
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.T_add_three_lt",
+  "source_name": "MIPRE.TM.CookLevin.Desc.T_add_three_lt",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.T_add_three_lt (T σ : ℕ) : T + 3 < 2 ^ W (eOf T σ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Assemble",
+  "module_doc": "/-!\n# Assembling the succinct Cook–Levin theorem\n\n`MIPRE.SAT.succinctCookLevin` inhabits `SuccinctCookLevin`, which is blueprint\n`thm:succinct-sat`. Everything mathematical is already proved; what is left is to discharge,\nfrom the validity hypotheses, the side conditions the describer's theorems carry at\n`e = eOf T σ`, and to name the two parameter functions.\n\n* `T ≤ Sof (eOf T σ)`, `T + 3 < 2 ^ W (eOf T σ)` and `FixedLen`: the five fixed tapes are\n  shorter than the tableau, since `|𝒟| ≤ σ < 2 ^ ⌈log σ⌉` and `2 ⌈log n⌉ ≤ T`, `|x|, |y| ≤ Q\n  ≤ T`, and `eOf` has `5 ⌈log T⌉ + 5 ⌈log σ⌉ + 24` in the exponent.\n* `4 T ≤ 2 ^ m`: an answer index is below `2 ^ flagOff`, and `flagOff < m`.\n* The gate bound: the time bound of the program, evaluated at a linear majorant of the size of\n  its input. To make it *computable from the parameters in time polynomial in their bit\n  lengths* (item 5) it is rounded up to a power of two, `s = 2 ^ (k · r + c)` with\n  `r = ⌈log ⌈log n⌉⌉ + ⌈log ⌈log T⌉⌉ + ⌈log Q⌉ + ⌈log σ⌉`: that needs no arithmetic on\n  numbers, only `pow2P` on a unary exponent, and it is squeezed between the true gate count\n  and a polynomial in `⌈log n⌉ + ⌈log T⌉ + Q + σ` (`planning/succinct-cook-levin.md`, S4).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Assemble.lean#L66-L71",
+  "source_path": "MIPRE/TM/CookLevin/Assemble.lean",
+  "lines": [
+   66,
+   71
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.T_le_Sof"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.fixedLen_of_valid",
+  "source_name": "MIPRE.TM.CookLevin.Desc.fixedLen_of_valid",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.fixedLen_of_valid (D : Prog) (n T Q σ : ℕ) (x y : BitStr)\n    (hV : Valid D n T Q σ x y) : FixedLen (eOf T σ) D n T x y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "The five fixed input tapes are shorter than the tableau.",
+  "module": "MIPRE.TM.CookLevin.Assemble",
+  "module_doc": "/-!\n# Assembling the succinct Cook–Levin theorem\n\n`MIPRE.SAT.succinctCookLevin` inhabits `SuccinctCookLevin`, which is blueprint\n`thm:succinct-sat`. Everything mathematical is already proved; what is left is to discharge,\nfrom the validity hypotheses, the side conditions the describer's theorems carry at\n`e = eOf T σ`, and to name the two parameter functions.\n\n* `T ≤ Sof (eOf T σ)`, `T + 3 < 2 ^ W (eOf T σ)` and `FixedLen`: the five fixed tapes are\n  shorter than the tableau, since `|𝒟| ≤ σ < 2 ^ ⌈log σ⌉` and `2 ⌈log n⌉ ≤ T`, `|x|, |y| ≤ Q\n  ≤ T`, and `eOf` has `5 ⌈log T⌉ + 5 ⌈log σ⌉ + 24` in the exponent.\n* `4 T ≤ 2 ^ m`: an answer index is below `2 ^ flagOff`, and `flagOff < m`.\n* The gate bound: the time bound of the program, evaluated at a linear majorant of the size of\n  its input. To make it *computable from the parameters in time polynomial in their bit\n  lengths* (item 5) it is rounded up to a power of two, `s = 2 ^ (k · r + c)` with\n  `r = ⌈log ⌈log n⌉⌉ + ⌈log ⌈log T⌉⌉ + ⌈log Q⌉ + ⌈log σ⌉`: that needs no arithmetic on\n  numbers, only `pow2P` on a unary exponent, and it is squeezed between the true gate count\n  and a polynomial in `⌈log n⌉ + ⌈log T⌉ + Q + σ` (`planning/succinct-cook-levin.md`, S4).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Assemble.lean#L73-L102",
+  "source_path": "MIPRE/TM/CookLevin/Assemble.lean",
+  "lines": [
+   73,
+   102
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.esize_nat_le",
+   "MIPRE.TM.CookLevin.Desc.T_le_Sof"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.four_T_le_m",
+  "source_name": "MIPRE.TM.CookLevin.Desc.four_T_le_m",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.four_T_le_m (T σ : ℕ) : 4 * T ≤ 2 ^ mOf (eOf T σ) Gc := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "An answer index is below `2 ^ m`.",
+  "module": "MIPRE.TM.CookLevin.Assemble",
+  "module_doc": "/-!\n# Assembling the succinct Cook–Levin theorem\n\n`MIPRE.SAT.succinctCookLevin` inhabits `SuccinctCookLevin`, which is blueprint\n`thm:succinct-sat`. Everything mathematical is already proved; what is left is to discharge,\nfrom the validity hypotheses, the side conditions the describer's theorems carry at\n`e = eOf T σ`, and to name the two parameter functions.\n\n* `T ≤ Sof (eOf T σ)`, `T + 3 < 2 ^ W (eOf T σ)` and `FixedLen`: the five fixed tapes are\n  shorter than the tableau, since `|𝒟| ≤ σ < 2 ^ ⌈log σ⌉` and `2 ⌈log n⌉ ≤ T`, `|x|, |y| ≤ Q\n  ≤ T`, and `eOf` has `5 ⌈log T⌉ + 5 ⌈log σ⌉ + 24` in the exponent.\n* `4 T ≤ 2 ^ m`: an answer index is below `2 ^ flagOff`, and `flagOff < m`.\n* The gate bound: the time bound of the program, evaluated at a linear majorant of the size of\n  its input. To make it *computable from the parameters in time polynomial in their bit\n  lengths* (item 5) it is rounded up to a power of two, `s = 2 ^ (k · r + c)` with\n  `r = ⌈log ⌈log n⌉⌉ + ⌈log ⌈log T⌉⌉ + ⌈log Q⌉ + ⌈log σ⌉`: that needs no arithmetic on\n  numbers, only `pow2P` on a unary exponent, and it is squeezed between the true gate count\n  and a polynomial in `⌈log n⌉ + ⌈log T⌉ + Q + σ` (`planning/succinct-cook-levin.md`, S4).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Assemble.lean#L104-L107",
+  "source_path": "MIPRE/TM/CookLevin/Assemble.lean",
+  "lines": [
+   104,
+   107
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.T_le_Sof"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.mParam_eq",
+  "source_name": "MIPRE.TM.CookLevin.Desc.mParam_eq",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.mParam_eq (T σ : ℕ) :\n    mParam T σ = 431 + Qb + Gb Gc + 75 * Nat.size T + 75 * Nat.size σ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Assemble",
+  "module_doc": "/-!\n# Assembling the succinct Cook–Levin theorem\n\n`MIPRE.SAT.succinctCookLevin` inhabits `SuccinctCookLevin`, which is blueprint\n`thm:succinct-sat`. Everything mathematical is already proved; what is left is to discharge,\nfrom the validity hypotheses, the side conditions the describer's theorems carry at\n`e = eOf T σ`, and to name the two parameter functions.\n\n* `T ≤ Sof (eOf T σ)`, `T + 3 < 2 ^ W (eOf T σ)` and `FixedLen`: the five fixed tapes are\n  shorter than the tableau, since `|𝒟| ≤ σ < 2 ^ ⌈log σ⌉` and `2 ⌈log n⌉ ≤ T`, `|x|, |y| ≤ Q\n  ≤ T`, and `eOf` has `5 ⌈log T⌉ + 5 ⌈log σ⌉ + 24` in the exponent.\n* `4 T ≤ 2 ^ m`: an answer index is below `2 ^ flagOff`, and `flagOff < m`.\n* The gate bound: the time bound of the program, evaluated at a linear majorant of the size of\n  its input. To make it *computable from the parameters in time polynomial in their bit\n  lengths* (item 5) it is rounded up to a power of two, `s = 2 ^ (k · r + c)` with\n  `r = ⌈log ⌈log n⌉⌉ + ⌈log ⌈log T⌉⌉ + ⌈log Q⌉ + ⌈log σ⌉`: that needs no arithmetic on\n  numbers, only `pow2P` on a unary exponent, and it is squeezed between the true gate count\n  and a polynomial in `⌈log n⌉ + ⌈log T⌉ + Q + σ` (`planning/succinct-cook-levin.md`, S4).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Assemble.lean#L159-L162",
+  "source_path": "MIPRE/TM/CookLevin/Assemble.lean",
+  "lines": [
+   159,
+   162
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.mParam_le",
+  "source_name": "MIPRE.TM.CookLevin.Desc.mParam_le",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.mParam_le (T σ : ℕ) :\n    mParam T σ ≤ (431 + Qb + Gb Gc + 75) * (Nat.size T + Nat.size σ + 1) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Assemble",
+  "module_doc": "/-!\n# Assembling the succinct Cook–Levin theorem\n\n`MIPRE.SAT.succinctCookLevin` inhabits `SuccinctCookLevin`, which is blueprint\n`thm:succinct-sat`. Everything mathematical is already proved; what is left is to discharge,\nfrom the validity hypotheses, the side conditions the describer's theorems carry at\n`e = eOf T σ`, and to name the two parameter functions.\n\n* `T ≤ Sof (eOf T σ)`, `T + 3 < 2 ^ W (eOf T σ)` and `FixedLen`: the five fixed tapes are\n  shorter than the tableau, since `|𝒟| ≤ σ < 2 ^ ⌈log σ⌉` and `2 ⌈log n⌉ ≤ T`, `|x|, |y| ≤ Q\n  ≤ T`, and `eOf` has `5 ⌈log T⌉ + 5 ⌈log σ⌉ + 24` in the exponent.\n* `4 T ≤ 2 ^ m`: an answer index is below `2 ^ flagOff`, and `flagOff < m`.\n* The gate bound: the time bound of the program, evaluated at a linear majorant of the size of\n  its input. To make it *computable from the parameters in time polynomial in their bit\n  lengths* (item 5) it is rounded up to a power of two, `s = 2 ^ (k · r + c)` with\n  `r = ⌈log ⌈log n⌉⌉ + ⌈log ⌈log T⌉⌉ + ⌈log Q⌉ + ⌈log σ⌉`: that needs no arithmetic on\n  numbers, only `pow2P` on a unary exponent, and it is squeezed between the true gate count\n  and a polynomial in `⌈log n⌉ + ⌈log T⌉ + Q + σ` (`planning/succinct-cook-levin.md`, S4).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Assemble.lean#L164-L174",
+  "source_path": "MIPRE/TM/CookLevin/Assemble.lean",
+  "lines": [
+   164,
+   174
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.mParam_eq"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 9,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.le_roundUp",
+  "source_name": "MIPRE.TM.CookLevin.Desc.le_roundUp",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.le_roundUp (P : Polynomial ℕ) (n T Q σ : ℕ) :\n    P.eval (LOf n T Q σ) ≤ roundUp P n T Q σ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "**The rounded bound dominates the polynomial.**",
+  "module": "MIPRE.TM.CookLevin.Assemble",
+  "module_doc": "/-!\n# Assembling the succinct Cook–Levin theorem\n\n`MIPRE.SAT.succinctCookLevin` inhabits `SuccinctCookLevin`, which is blueprint\n`thm:succinct-sat`. Everything mathematical is already proved; what is left is to discharge,\nfrom the validity hypotheses, the side conditions the describer's theorems carry at\n`e = eOf T σ`, and to name the two parameter functions.\n\n* `T ≤ Sof (eOf T σ)`, `T + 3 < 2 ^ W (eOf T σ)` and `FixedLen`: the five fixed tapes are\n  shorter than the tableau, since `|𝒟| ≤ σ < 2 ^ ⌈log σ⌉` and `2 ⌈log n⌉ ≤ T`, `|x|, |y| ≤ Q\n  ≤ T`, and `eOf` has `5 ⌈log T⌉ + 5 ⌈log σ⌉ + 24` in the exponent.\n* `4 T ≤ 2 ^ m`: an answer index is below `2 ^ flagOff`, and `flagOff < m`.\n* The gate bound: the time bound of the program, evaluated at a linear majorant of the size of\n  its input. To make it *computable from the parameters in time polynomial in their bit\n  lengths* (item 5) it is rounded up to a power of two, `s = 2 ^ (k · r + c)` with\n  `r = ⌈log ⌈log n⌉⌉ + ⌈log ⌈log T⌉⌉ + ⌈log Q⌉ + ⌈log σ⌉`: that needs no arithmetic on\n  numbers, only `pow2P` on a unary exponent, and it is squeezed between the true gate count\n  and a polynomial in `⌈log n⌉ + ⌈log T⌉ + Q + σ` (`planning/succinct-cook-levin.md`, S4).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Assemble.lean#L219-L237",
+  "source_path": "MIPRE/TM/CookLevin/Assemble.lean",
+  "lines": [
+   219,
+   237
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.roundUp_le",
+  "source_name": "MIPRE.TM.CookLevin.Desc.roundUp_le",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.roundUp_le (P : Polynomial ℕ) (n T Q σ : ℕ) :\n    roundUp P n T Q σ ≤ (roundPoly P).eval (LOf n T Q σ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "**The rounded bound is still polynomial.**",
+  "module": "MIPRE.TM.CookLevin.Assemble",
+  "module_doc": "/-!\n# Assembling the succinct Cook–Levin theorem\n\n`MIPRE.SAT.succinctCookLevin` inhabits `SuccinctCookLevin`, which is blueprint\n`thm:succinct-sat`. Everything mathematical is already proved; what is left is to discharge,\nfrom the validity hypotheses, the side conditions the describer's theorems carry at\n`e = eOf T σ`, and to name the two parameter functions.\n\n* `T ≤ Sof (eOf T σ)`, `T + 3 < 2 ^ W (eOf T σ)` and `FixedLen`: the five fixed tapes are\n  shorter than the tableau, since `|𝒟| ≤ σ < 2 ^ ⌈log σ⌉` and `2 ⌈log n⌉ ≤ T`, `|x|, |y| ≤ Q\n  ≤ T`, and `eOf` has `5 ⌈log T⌉ + 5 ⌈log σ⌉ + 24` in the exponent.\n* `4 T ≤ 2 ^ m`: an answer index is below `2 ^ flagOff`, and `flagOff < m`.\n* The gate bound: the time bound of the program, evaluated at a linear majorant of the size of\n  its input. To make it *computable from the parameters in time polynomial in their bit\n  lengths* (item 5) it is rounded up to a power of two, `s = 2 ^ (k · r + c)` with\n  `r = ⌈log ⌈log n⌉⌉ + ⌈log ⌈log T⌉⌉ + ⌈log Q⌉ + ⌈log σ⌉`: that needs no arithmetic on\n  numbers, only `pow2P` on a unary exponent, and it is squeezed between the true gate count\n  and a polynomial in `⌈log n⌉ + ⌈log T⌉ + Q + σ` (`planning/succinct-cook-levin.md`, S4).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Assemble.lean#L269-L284",
+  "source_path": "MIPRE/TM/CookLevin/Assemble.lean",
+  "lines": [
+   269,
+   284
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.roundUpProg_apply",
+  "source_name": "MIPRE.TM.CookLevin.Desc.roundUpProg_apply",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.roundUpProg_apply (P : Polynomial ℕ) (p : ℕ × ℕ × ℕ × ℕ) :\n    roundUpProg P p = roundUp P p.1 p.2.1 p.2.2.1 p.2.2.2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Assemble",
+  "module_doc": "/-!\n# Assembling the succinct Cook–Levin theorem\n\n`MIPRE.SAT.succinctCookLevin` inhabits `SuccinctCookLevin`, which is blueprint\n`thm:succinct-sat`. Everything mathematical is already proved; what is left is to discharge,\nfrom the validity hypotheses, the side conditions the describer's theorems carry at\n`e = eOf T σ`, and to name the two parameter functions.\n\n* `T ≤ Sof (eOf T σ)`, `T + 3 < 2 ^ W (eOf T σ)` and `FixedLen`: the five fixed tapes are\n  shorter than the tableau, since `|𝒟| ≤ σ < 2 ^ ⌈log σ⌉` and `2 ⌈log n⌉ ≤ T`, `|x|, |y| ≤ Q\n  ≤ T`, and `eOf` has `5 ⌈log T⌉ + 5 ⌈log σ⌉ + 24` in the exponent.\n* `4 T ≤ 2 ^ m`: an answer index is below `2 ^ flagOff`, and `flagOff < m`.\n* The gate bound: the time bound of the program, evaluated at a linear majorant of the size of\n  its input. To make it *computable from the parameters in time polynomial in their bit\n  lengths* (item 5) it is rounded up to a power of two, `s = 2 ^ (k · r + c)` with\n  `r = ⌈log ⌈log n⌉⌉ + ⌈log ⌈log T⌉⌉ + ⌈log Q⌉ + ⌈log σ⌉`: that needs no arithmetic on\n  numbers, only `pow2P` on a unary exponent, and it is squeezed between the true gate count\n  and a polynomial in `⌈log n⌉ + ⌈log T⌉ + Q + σ` (`planning/succinct-cook-levin.md`, S4).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Assemble.lean#L335-L338",
+  "source_path": "MIPRE/TM/CookLevin/Assemble.lean",
+  "lines": [
+   335,
+   338
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.inputPos_cfgAt_le",
+  "source_name": "MIPRE.TM.CookLevin.inputPos_cfgAt_le",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.inputPos_cfgAt_le (t : ℕ) (j : Fin i) :\n    ((cfgAt M (input := input) t).inputPos j : ℕ) ≤ t + 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]"
+  ],
+  "docstring": "An input head is at position at most `t + 1` at time `t`.",
+  "module": "MIPRE.TM.CookLevin.Correct",
+  "module_doc": "/-!\n# Correctness of the Cook–Levin tableau\n\nThe tableau formula of `S` steps of a machine `M` (`tableau`) is satisfiable, with the fixed\ninput tapes holding their strings, iff `M` accepts some completion of the free input tapes\nwithin `S` steps (`planning/succinct-cook-levin.md`, S1; `answer_reduction.tex`\n`lem:correct-tableau`). Acceptance is `AcceptsIn`: halted at time `S` with output string\nexactly `[acc]`.\n\n* **Completeness** (`tableau_sat_of_acceptsIn`): the assignment of an accepting run\n  (`runAssign`) satisfies every clause; the window clauses because the windows of a run are\n  locally consistent (`locallyConsistent_localCfgOf`) and the check circuit computes local\n  consistency, its specification being the hypothesis `hchk`.\n* **Soundness** (`acceptsIn_of_tableau_sat`): a satisfying assignment determines the free\n  input strings from its time-`0` rows, and its rows encode the configurations of the run on\n  those inputs, by induction on time: at each step the window clauses force, through the\n  check circuit, local consistency of every window, and a locally consistent window whose\n  time-`t` part is that of a configuration has the time-`t + 1` part of its successor\n  (`post_of_pre`). The acceptance row and the emission bookkeeping then give acceptance.\n\nBoth directions use the head bounds `headsIn_cfgAt`: along a run, a head moves at most one\ncell per step, so at every time `t ≤ S` every head is on an interior cell of the tableau.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Correct.lean#L60-L74",
+  "source_path": "MIPRE/TM/CookLevin/Correct.lean",
+  "lines": [
+   60,
+   74
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.workTapePos_cfgAt_bounds",
+  "source_name": "MIPRE.TM.CookLevin.workTapePos_cfgAt_bounds",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.workTapePos_cfgAt_bounds (t : ℕ) (j : Fin w) :\n    -(t : ℤ) ≤ (cfgAt M (input := input) t).workTapePos j ∧\n      (cfgAt M (input := input) t).workTapePos j ≤ t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]"
+  ],
+  "docstring": "A work head is at a position of absolute value at most `t` at time `t`.",
+  "module": "MIPRE.TM.CookLevin.Correct",
+  "module_doc": "/-!\n# Correctness of the Cook–Levin tableau\n\nThe tableau formula of `S` steps of a machine `M` (`tableau`) is satisfiable, with the fixed\ninput tapes holding their strings, iff `M` accepts some completion of the free input tapes\nwithin `S` steps (`planning/succinct-cook-levin.md`, S1; `answer_reduction.tex`\n`lem:correct-tableau`). Acceptance is `AcceptsIn`: halted at time `S` with output string\nexactly `[acc]`.\n\n* **Completeness** (`tableau_sat_of_acceptsIn`): the assignment of an accepting run\n  (`runAssign`) satisfies every clause; the window clauses because the windows of a run are\n  locally consistent (`locallyConsistent_localCfgOf`) and the check circuit computes local\n  consistency, its specification being the hypothesis `hchk`.\n* **Soundness** (`acceptsIn_of_tableau_sat`): a satisfying assignment determines the free\n  input strings from its time-`0` rows, and its rows encode the configurations of the run on\n  those inputs, by induction on time: at each step the window clauses force, through the\n  check circuit, local consistency of every window, and a locally consistent window whose\n  time-`t` part is that of a configuration has the time-`t + 1` part of its successor\n  (`post_of_pre`). The acceptance row and the emission bookkeeping then give acceptance.\n\nBoth directions use the head bounds `headsIn_cfgAt`: along a run, a head moves at most one\ncell per step, so at every time `t ≤ S` every head is on an interior cell of the tableau.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Correct.lean#L76-L91",
+  "source_path": "MIPRE/TM/CookLevin/Correct.lean",
+  "lines": [
+   76,
+   91
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.outputSymbol_of_accepting",
+  "source_name": "MIPRE.TM.CookLevin.outputSymbol_of_accepting",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.outputSymbol_of_accepting (hacc : M.outputString (M.initCfg input) S = [acc]) (t : ℕ)\n    (ht : t < S) (hne : M.outputSymbol (cfgAt M (input := input) t) ≠ none) :\n    M.outputSymbol (cfgAt M (input := input) t) = some acc ∧\n      M.outputString (M.initCfg input) t = [] := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]"
+  ],
+  "docstring": "In a run whose output over `S` steps is `[acc]`, a step that emits emits `acc`, and\nnothing was emitted before it.",
+  "module": "MIPRE.TM.CookLevin.Correct",
+  "module_doc": "/-!\n# Correctness of the Cook–Levin tableau\n\nThe tableau formula of `S` steps of a machine `M` (`tableau`) is satisfiable, with the fixed\ninput tapes holding their strings, iff `M` accepts some completion of the free input tapes\nwithin `S` steps (`planning/succinct-cook-levin.md`, S1; `answer_reduction.tex`\n`lem:correct-tableau`). Acceptance is `AcceptsIn`: halted at time `S` with output string\nexactly `[acc]`.\n\n* **Completeness** (`tableau_sat_of_acceptsIn`): the assignment of an accepting run\n  (`runAssign`) satisfies every clause; the window clauses because the windows of a run are\n  locally consistent (`locallyConsistent_localCfgOf`) and the check circuit computes local\n  consistency, its specification being the hypothesis `hchk`.\n* **Soundness** (`acceptsIn_of_tableau_sat`): a satisfying assignment determines the free\n  input strings from its time-`0` rows, and its rows encode the configurations of the run on\n  those inputs, by induction on time: at each step the window clauses force, through the\n  check circuit, local consistency of every window, and a locally consistent window whose\n  time-`t` part is that of a configuration has the time-`t + 1` part of its successor\n  (`post_of_pre`). The acceptance row and the emission bookkeeping then give acceptance.\n\nBoth directions use the head bounds `headsIn_cfgAt`: along a run, a head moves at most one\ncell per step, so at every time `t ≤ S` every head is on an interior cell of the tableau.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Correct.lean#L137-L154",
+  "source_path": "MIPRE/TM/CookLevin/Correct.lean",
+  "lines": [
+   137,
+   154
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 4,
+  "prooflines": 11,
+  "is_target": false
+ }
+]

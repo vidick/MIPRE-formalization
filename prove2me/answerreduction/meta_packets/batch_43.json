@@ -1,0 +1,618 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.completenessTransferSelfConsistentA",
+  "source_name": "MIPStarRE.LDT.Preliminaries.completenessTransferSelfConsistentA",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.completenessTransferSelfConsistentA\n    {Question Outcome : Type*} {ι : Type*}\n    [Fintype ι] [DecidableEq ι] [Fintype Outcome]\n    (ψ : QuantumState (ι × ι))\n    (hperm : PermInvState ψ)\n    (hψ : ψ.IsNormalized)\n    (𝒟 : Distribution Question)\n    (h𝒟 : ∑ q ∈ 𝒟.support, 𝒟.weight q ≤ 1)\n    (A B : IdxSubMeas Question Outcome ι) (δ ε : Error) :\n    BipartiteSSCRel ψ 𝒟 A δ →\n    SDDRel ψ 𝒟 (IdxSubMeas.liftLeft A) (IdxSubMeas.liftLeft B) ε →\n      idxSubMeasMass ψ 𝒟 (IdxSubMeas.liftLeft B) ≥\n        idxSubMeasMass ψ 𝒟 (IdxSubMeas.liftLeft A) - δ - 2 * Real.sqrt ε := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`prop:completeness-transfer-self-consistent-A`.\n\nProof:\n1. Lower-bound `⟨ψ|B ⊗ I|ψ⟩` by the mixed overlap\n   `∑ₐ ⟨ψ|B_a ⊗ A_a|ψ⟩` using `A_a ≤ I`.\n2. Compare `∑ₐ ⟨ψ|B_a ⊗ A_a|ψ⟩` with\n   `∑ₐ ⟨ψ|A_a ⊗ A_a|ψ⟩` by a Cauchy-Schwarz overlap estimate from\n   the hypothesis `A ⊗ I ≈_ε B ⊗ I`.\n3. Use bipartite SSC to replace the latter by\n   `⟨ψ|A ⊗ I|ψ⟩ - δ`.\n4. Relax the resulting bound to the requested `δ + 2√ε` form.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.Extensions",
+  "module_doc": "/-!\n# Self-consistency: strategy-level extensions\n\nGood-strategy characterization lemmas (`lem:good-strategy-characterization`)\nbundling the axis-parallel, self-consistency, and diagonal branches.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SelfConsistency/Extensions.lean#L235-L406",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SelfConsistency/Extensions.lean",
+  "lines": [
+   235,
+   406
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_nonneg",
+   "MIPStarRE.LDT.Preliminaries.bipartiteSSC_implies_localSSC_liftLeft",
+   "MIPStarRE.LDT.Preliminaries.question_overlap_gap_left",
+   "MIPStarRE.LDT.Preliminaries.question_overlap_gap_right",
+   "MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_mass",
+   "MIPStarRE.LDT.Preliminaries.avgOver_abs_le_sqrt_of_pointwise",
+   "MIPStarRE.LDT.qSDD_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 148,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.sum_ev_mul_leftBounded_le_of_leftHermitian",
+  "source_name": "MIPStarRE.LDT.Preliminaries.sum_ev_mul_leftBounded_le_of_leftHermitian",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.sum_ev_mul_leftBounded_le_of_leftHermitian\n    {Outcome : Type*} {ι : Type*}\n    [Fintype ι] [DecidableEq ι] [Fintype Outcome]\n    (ψ : QuantumState ι)\n    (LB : MIPStarRE.Quantum.Op ι)\n    (X Y : Outcome → MIPStarRE.Quantum.Op ι)\n    (hLB_herm : LBᴴ = LB)\n    (hLB_sq_le_one : LB * LB ≤ 1)\n    (hXherm : ∀ a, (X a)ᴴ = X a)\n    (hYherm : ∀ a, (Y a)ᴴ = Y a) :\n    |∑ a : Outcome, ev ψ (X a * (LB * Y a))| ≤\n      Real.sqrt (∑ a : Outcome, ev ψ (X a * X a)) *\n        Real.sqrt (∑ a : Outcome, ev ψ ((Y a)ᴴ * Y a)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Cauchy-Schwarz contraction used in both switch-sandwich gap estimates.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichGapBounds.Core",
+  "module_doc": "/-!\n# Switch-sandwich gap bounds: Cauchy–Schwarz core\n\nShared Cauchy–Schwarz contraction used in both the left and middle gap\nestimates of the switch-sandwich argument.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`, `prop:switch-sandwich`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichGapBounds/Core.lean#L57-L108",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichGapBounds/Core.lean",
+  "lines": [
+   57,
+   108
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.ev_abs_mul_le_sqrt",
+   "MIPStarRE.LDT.ev_adjoint_self_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 38,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.question_switchSandwich_left_gap",
+  "source_name": "MIPStarRE.LDT.Preliminaries.question_switchSandwich_left_gap",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.question_switchSandwich_left_gap\n    {Outcome : Type*} {ι : Type*}\n    [Fintype ι] [DecidableEq ι] [Fintype Outcome]\n    (ψ : QuantumState (ι × ι)) (hψ : ψ.IsNormalized)\n    (A : ProjSubMeas Outcome ι)\n    (B : MIPStarRE.Quantum.Op ι) (hB : OpBounded01 B) :\n    |(∑ a : Outcome,\n        ev ψ\n          (leftTensor (ι₂ := ι) (A.outcome a) *\n            leftTensor (ι₂ := ι) B *\n            leftTensor (ι₂ := ι) (A.outcome a))) -\n      ∑ a : Outcome,\n        ev ψ\n          (leftTensor (ι₂ := ι) (A.outcome a) *\n            leftTensor (ι₂ := ι) B *\n            rightTensor (ι₁ := ι) (A.outcome a))| ≤\n      Real.sqrt\n        (qSDD ψ A.toSubMeas.liftLeft A.toSubMeas.liftRight) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichGapBounds.Left",
+  "module_doc": "/-!\n# Switch-sandwich gap bounds: left gap\n\nThe left gap estimate `question_switchSandwich_left_gap`, bounding the\nquestion-level left gap of the switch-sandwich argument.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`, `prop:switch-sandwich`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichGapBounds/Left.lean#L74-L301",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichGapBounds/Left.lean",
+  "lines": [
+   74,
+   301
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.leftTensor_nonneg",
+   "MIPStarRE.LDT.rightTensor_nonneg",
+   "MIPStarRE.LDT.leftTensor_le_one",
+   "MIPStarRE.LDT.Preliminaries.sum_ev_mul_leftBounded_le_of_leftHermitian",
+   "MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_one",
+   "MIPStarRE.Quantum.sq_le_self"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 210,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.question_switchSandwich_middle_gap",
+  "source_name": "MIPStarRE.LDT.Preliminaries.question_switchSandwich_middle_gap",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.question_switchSandwich_middle_gap\n    {Outcome : Type*} {ι : Type*}\n    [Fintype ι] [DecidableEq ι] [Fintype Outcome]\n    (ψ : QuantumState (ι × ι)) (hψ : ψ.IsNormalized)\n    (A : ProjSubMeas Outcome ι)\n    (B : MIPStarRE.Quantum.Op ι) (hB : OpBounded01 B) :\n    |(∑ a : Outcome,\n        ev ψ\n          (leftTensor (ι₂ := ι) (A.outcome a) *\n            leftTensor (ι₂ := ι) B *\n            rightTensor (ι₁ := ι) (A.outcome a))) -\n      ∑ a : Outcome,\n        ev ψ\n          (leftTensor (ι₂ := ι) B *\n            rightTensor (ι₁ := ι) (A.outcome a))| ≤\n      Real.sqrt\n        (qSDD ψ A.toSubMeas.liftLeft A.toSubMeas.liftRight) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichGapBounds.Middle",
+  "module_doc": "/-!\n# Switch-sandwich gap bounds: middle gap\n\nThe middle gap estimate `question_switchSandwich_middle_gap`, bounding the\nquestion-level middle gap of the switch-sandwich argument.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`, `prop:switch-sandwich`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichGapBounds/Middle.lean#L69-L346",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichGapBounds/Middle.lean",
+  "lines": [
+   69,
+   346
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.leftTensor_nonneg",
+   "MIPStarRE.LDT.rightTensor_nonneg",
+   "MIPStarRE.LDT.leftTensor_le_one",
+   "MIPStarRE.LDT.Preliminaries.sum_ev_mul_leftBounded_le_of_leftHermitian",
+   "MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_one",
+   "MIPStarRE.Quantum.sq_le_self"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 261,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.completenessTransferProjectiveP",
+  "source_name": "MIPStarRE.LDT.Preliminaries.completenessTransferProjectiveP",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.completenessTransferProjectiveP {Question Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState ι) (𝒟 : Distribution Question)\n    (hψ : ψ.IsNormalized)\n    (h𝒟 : ∑ q ∈ 𝒟.support, 𝒟.weight q ≤ 1)\n    (A : IdxSubMeas Question Outcome ι)\n    (P : IdxProjSubMeas Question Outcome ι) (ε : Error) :\n    SDDRel ψ 𝒟 A\n        (IdxProjSubMeas.toIdxSubMeas P) ε →\n      CompTransferStmt ψ 𝒟 A P ε := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`prop:completeness-transfer-projective-P`.\n\nThe paper proof uses a normalized state and a probability distribution.\nThese are now explicit hypotheses `hψ` and `h𝒟`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichMain.Completeness",
+  "module_doc": "/-!\n# Switch-sandwich main: completeness estimate\n\n`prop:switch-sandwich` assembled from the left and right transfer steps on a\nnormalized quantum state with a subprobability distribution.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`, `prop:switch-sandwich`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichMain/Completeness.lean#L237-L256",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichMain/Completeness.lean",
+  "lines": [
+   237,
+   256
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.switchSandwich_leftTransfer",
+  "source_name": "MIPStarRE.LDT.Preliminaries.switchSandwich_leftTransfer",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.switchSandwich_leftTransfer\n    {Question Outcome : Type*} {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState (ι × ι)) (𝒟 : Distribution Question)\n    (hψ : ψ.IsNormalized)\n    (h𝒟 : ∑ q ∈ 𝒟.support, 𝒟.weight q ≤ 1)\n    (A : IdxProjSubMeas Question Outcome ι)\n    (B : MIPStarRE.Quantum.Op ι) (hB : OpBounded01 B)\n    (δ : Error) :\n    BipartiteSDDRel ψ 𝒟\n      (IdxProjSubMeas.toIdxSubMeas A)\n      (IdxProjSubMeas.toIdxSubMeas A) δ →\n    |leftSandwichExpectation ψ 𝒟 A B -\n      middleSandwichExpectation ψ 𝒟 A B| ≤\n      2 * Real.sqrt δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Left-to-middle transfer estimate used in the switch-sandwich theorem.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichMain.LeftTransfer",
+  "module_doc": "/-!\n# Switch-sandwich main: left-to-middle transfer\n\nThe left-to-middle transfer estimate used in `prop:switch-sandwich`, bounding\nthe gap between the left and middle expressions via the Cauchy–Schwarz-based\ngap bounds.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`, `prop:switch-sandwich`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichMain/LeftTransfer.lean#L64-L181",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichMain/LeftTransfer.lean",
+  "lines": [
+   64,
+   181
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.question_switchSandwich_left_gap",
+   "MIPStarRE.LDT.Preliminaries.question_switchSandwich_middle_gap",
+   "MIPStarRE.LDT.Preliminaries.avgOver_abs_le_sqrt_of_pointwise",
+   "MIPStarRE.LDT.qSDD_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 102,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.switchSandwich_rightTransfer",
+  "source_name": "MIPStarRE.LDT.Preliminaries.switchSandwich_rightTransfer",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.switchSandwich_rightTransfer\n    {Question Outcome : Type*} {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState (ι × ι)) (𝒟 : Distribution Question)\n    (hψ : ψ.IsNormalized)\n    (h𝒟 : ∑ q ∈ 𝒟.support, 𝒟.weight q ≤ 1)\n    (A : IdxProjSubMeas Question Outcome ι)\n    (B : MIPStarRE.Quantum.Op ι) (hB : OpBounded01 B)\n    (δ : Error) :\n    BipartiteSDDRel ψ 𝒟\n      (IdxProjSubMeas.toIdxSubMeas A)\n      (IdxProjSubMeas.toIdxSubMeas A) δ →\n    |middleSandwichExpectation ψ 𝒟 A B -\n      rightSandwichExpectation ψ 𝒟 A B| ≤\n      Real.sqrt δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Middle-to-right transfer estimate used in the switch-sandwich theorem.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichMain.RightTransfer",
+  "module_doc": "/-!\n# Switch-sandwich main: middle-to-right transfer\n\nThe middle-to-right transfer estimate used in `prop:switch-sandwich`.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`, `prop:switch-sandwich`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichMain/RightTransfer.lean#L87-L513",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichMain/RightTransfer.lean",
+  "lines": [
+   87,
+   513
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.ev_abs_mul_le_sqrt",
+   "MIPStarRE.LDT.ev_add",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.ev_scale",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.leftTensor_nonneg",
+   "MIPStarRE.LDT.rightTensor_nonneg",
+   "MIPStarRE.LDT.leftTensor_le_one",
+   "MIPStarRE.LDT.leftTensor_finset_sum",
+   "MIPStarRE.LDT.rightTensor_finset_sum",
+   "MIPStarRE.LDT.Preliminaries.projSubMeas_total_proj",
+   "MIPStarRE.LDT.Preliminaries.avgOver_abs_le_sqrt_of_pointwise",
+   "MIPStarRE.LDT.qSDD_nonneg",
+   "MIPStarRE.Quantum.sq_le_self"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 411,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.question_overlap_gap_left",
+  "source_name": "MIPStarRE.LDT.Preliminaries.question_overlap_gap_left",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.question_overlap_gap_left\n    {Outcome : Type*} {ι : Type*}\n    [Fintype ι] [DecidableEq ι] [Fintype Outcome]\n    (ψ : QuantumState ι) (hψ : ψ.IsNormalized)\n    (A B : SubMeas Outcome ι) :\n    |(∑ a : Outcome, ev ψ (A.outcome a * A.outcome a)) -\n        ∑ a : Outcome, ev ψ (A.outcome a * B.outcome a)| ≤\n      Real.sqrt (qSDD ψ A B) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.ApproxDelta",
+  "module_doc": "/-!\n# Switch-sandwich preparation: `approx_δ` overlap gaps\n\nPointwise overlap-gap estimates used to bound the switch-sandwich approximation\nerror under `approx_δ` families.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`, `prop:switch-sandwich`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/ApproxDelta.lean#L62-L137",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/ApproxDelta.lean",
+  "lines": [
+   62,
+   137
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_mul_comm_of_psd",
+   "MIPStarRE.LDT.ev_abs_mul_le_sqrt",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.ev_adjoint_self_nonneg",
+   "MIPStarRE.LDT.SubMeas.outcome_hermitian",
+   "MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_one"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 68,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.question_overlap_gap_right",
+  "source_name": "MIPStarRE.LDT.Preliminaries.question_overlap_gap_right",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.question_overlap_gap_right\n    {Outcome : Type*} {ι : Type*}\n    [Fintype ι] [DecidableEq ι] [Fintype Outcome]\n    (ψ : QuantumState ι) (hψ : ψ.IsNormalized)\n    (A B : SubMeas Outcome ι) :\n    |(∑ a : Outcome, ev ψ (A.outcome a * B.outcome a)) -\n        ∑ a : Outcome, ev ψ (B.outcome a * B.outcome a)| ≤\n      Real.sqrt (qSDD ψ A B) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.ApproxDelta",
+  "module_doc": "/-!\n# Switch-sandwich preparation: `approx_δ` overlap gaps\n\nPointwise overlap-gap estimates used to bound the switch-sandwich approximation\nerror under `approx_δ` families.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`, `prop:switch-sandwich`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/ApproxDelta.lean#L139-L212",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/ApproxDelta.lean",
+  "lines": [
+   139,
+   212
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_mul_comm_of_psd",
+   "MIPStarRE.LDT.ev_abs_mul_le_sqrt",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.ev_adjoint_self_nonneg",
+   "MIPStarRE.LDT.SubMeas.outcome_hermitian",
+   "MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_one"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 66,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.weightedFinsetCauchySchwarz",
+  "source_name": "MIPStarRE.LDT.Preliminaries.weightedFinsetCauchySchwarz",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.weightedFinsetCauchySchwarz\n    {Question Outcome : Type*}\n    [Fintype Outcome]\n    (𝒟 : Distribution Question)\n    (t x y : Question → Outcome → Error)\n    (ht : ∀ q a, |t q a| ≤ Real.sqrt (x q a) * Real.sqrt (y q a))\n    (hx : ∀ q a, 0 ≤ x q a)\n    (hy : ∀ q a, 0 ≤ y q a) :\n    |avgOver 𝒟 (fun q => ∑ a : Outcome, t q a)| ≤\n      Real.sqrt (avgOver 𝒟 (fun q => ∑ a : Outcome, x q a)) *\n        Real.sqrt (avgOver 𝒟 (fun q => ∑ a : Outcome, y q a)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core",
+  "module_doc": "/-! ### Bridge lemmas for `prop:switch-sandwich` -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/Core.lean#L67-L140",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/Core.lean",
+  "lines": [
+   67,
+   140
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 63,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.weightedFinsetCauchySchwarz_on_selectedSupport",
+  "source_name": "MIPStarRE.LDT.Preliminaries.weightedFinsetCauchySchwarz_on_selectedSupport",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.weightedFinsetCauchySchwarz_on_selectedSupport\n    {Question Outcome : Type*} [Fintype Outcome]\n    (𝒟 : Distribution Question)\n    (selected : Question → Outcome → Prop)\n    [∀ q a, Decidable (selected q a)]\n    (t x y : Question → Outcome → Error)\n    (ht :\n      ∀ q a, selected q a →\n        |t q a| ≤ Real.sqrt (x q a) * Real.sqrt (y q a))\n    (hx : ∀ q a, selected q a → 0 ≤ x q a)\n    (hy : ∀ q a, selected q a → 0 ≤ y q a) :\n    |avgOver 𝒟 (fun q =>\n      ∑ a : Outcome, if selected q a then t q a else 0)| ≤\n      Real.sqrt\n        (avgOver 𝒟 (fun q =>\n          ∑ a : Outcome, if selected q a then x q a else 0)) *\n      Real.sqrt\n        (avgOver 𝒟 (fun q =>\n          ∑ a : Outcome, if selected q a then y q a else 0)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Weighted finite Cauchy--Schwarz with the summand restricted to a selected\nsupport.\n\nThe statement is the ordinary weighted finite Cauchy--Schwarz inequality\napplied to the zero-extension of `t`, `x`, and `y` away from `selected`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core",
+  "module_doc": "/-! ### Bridge lemmas for `prop:switch-sandwich` -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/Core.lean#L142-L183",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/Core.lean",
+  "lines": [
+   142,
+   183
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.weightedFinsetCauchySchwarz"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_mass",
+  "source_name": "MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_mass",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_mass\n    {Outcome : Type*} {ι : Type*}\n    [Fintype ι] [DecidableEq ι] [Fintype Outcome]\n    (ψ : QuantumState ι) (A : SubMeas Outcome ι) :\n    ∑ a : Outcome, ev ψ (A.outcome a * A.outcome a) ≤ ev ψ A.total := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The diagonal mass of a sub-measurement is bounded by its total mass.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core",
+  "module_doc": "/-! ### Bridge lemmas for `prop:switch-sandwich` -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/Core.lean#L185-L200",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/Core.lean",
+  "lines": [
+   185,
+   200
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.SubMeas.outcome_le_one",
+   "MIPStarRE.Quantum.sq_le_self"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 10,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_one",
+  "source_name": "MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_one\n    {Outcome : Type*} {ι : Type*}\n    [Fintype ι] [DecidableEq ι] [Fintype Outcome]\n    (ψ : QuantumState ι) (hψ : ψ.IsNormalized) (A : SubMeas Outcome ι) :\n    ∑ a : Outcome, ev ψ (A.outcome a * A.outcome a) ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The diagonal mass of a sub-measurement is at most `1` on a normalized state.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core",
+  "module_doc": "/-! ### Bridge lemmas for `prop:switch-sandwich` -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/Core.lean#L202-L213",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/Core.lean",
+  "lines": [
+   202,
+   213
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_mass"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.projSubMeas_diagMass_eq_mass",
+  "source_name": "MIPStarRE.LDT.Preliminaries.projSubMeas_diagMass_eq_mass",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.projSubMeas_diagMass_eq_mass\n    {Outcome : Type*} {ι : Type*}\n    [Fintype ι] [DecidableEq ι] [Fintype Outcome]\n    (ψ : QuantumState ι) (A : ProjSubMeas Outcome ι) :\n    ∑ a : Outcome, ev ψ (A.outcome a * A.outcome a) = ev ψ A.total := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Projective outcomes satisfy `P_a^2 = P_a`, so diagonal mass equals total mass.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core",
+  "module_doc": "/-! ### Bridge lemmas for `prop:switch-sandwich` -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/Core.lean#L215-L228",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/Core.lean",
+  "lines": [
+   215,
+   228
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 8,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.projSubMeas_outcome_mul_total_eq_outcome",
+  "source_name": "MIPStarRE.LDT.Preliminaries.projSubMeas_outcome_mul_total_eq_outcome",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.projSubMeas_outcome_mul_total_eq_outcome\n    {Outcome : Type*} {ι : Type*}\n    [Fintype ι] [DecidableEq ι] [Fintype Outcome]\n    (A : ProjSubMeas Outcome ι) (a : Outcome) :\n    A.outcome a * A.total = A.outcome a := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Each projective outcome is absorbed by the total projector.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core",
+  "module_doc": "/-! ### Bridge lemmas for `prop:switch-sandwich` -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/Core.lean#L230-L236",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/Core.lean",
+  "lines": [
+   230,
+   236
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ProjSubMeas.outcome_mul_total_eq_outcome"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.projSubMeas_total_proj",
+  "source_name": "MIPStarRE.LDT.Preliminaries.projSubMeas_total_proj",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.projSubMeas_total_proj\n    {Outcome : Type*} {ι : Type*}\n    [Fintype ι] [DecidableEq ι] [Fintype Outcome]\n    (A : ProjSubMeas Outcome ι) :\n    A.total * A.total = A.total := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The total operator of a projective sub-measurement is itself a projector.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.Core",
+  "module_doc": "/-! ### Bridge lemmas for `prop:switch-sandwich` -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/Core.lean#L238-L244",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/Core.lean",
+  "lines": [
+   238,
+   244
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ProjSubMeas.outcome_mul_total_eq_outcome"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.avgOver_abs_le_sqrt_of_pointwise",
+  "source_name": "MIPStarRE.LDT.Preliminaries.avgOver_abs_le_sqrt_of_pointwise",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.avgOver_abs_le_sqrt_of_pointwise\n    {Question : Type*}\n    (𝒟 : Distribution Question) (f g : Question → Error)\n    (hf : ∀ q, |f q| ≤ Real.sqrt (g q))\n    (hg : ∀ q, 0 ≤ g q)\n    (h𝒟 : ∑ q ∈ 𝒟.support, 𝒟.weight q ≤ 1) :\n    |avgOver 𝒟 f| ≤ Real.sqrt (avgOver 𝒟 g) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.InnerProduct",
+  "module_doc": "/-!\n# Switch-sandwich preparation: inner-product bounds\n\nCauchy–Schwarz-style inner-product bounds in the `avgOver` formulation used by\nthe switch-sandwich argument.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`, `prop:switch-sandwich`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/InnerProduct.lean#L85-L118",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/InnerProduct.lean",
+  "lines": [
+   85,
+   118
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.weightedFinsetCauchySchwarz"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.closenessOfInnerProduct_left",
+  "source_name": "MIPStarRE.LDT.Preliminaries.closenessOfInnerProduct_left",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.closenessOfInnerProduct_left\n    {Question OutcomeA OutcomeB : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype OutcomeA] [Fintype OutcomeB]\n    (ψ : QuantumState ι) (hψ : ψ.IsNormalized)\n    (𝒟 : Distribution Question)\n    (h𝒟 : ∑ q ∈ 𝒟.support, 𝒟.weight q ≤ 1)\n    (A B : Question → OutcomeA → MIPStarRE.Quantum.Op ι)\n    (C : Question → OutcomeA → OutcomeB → MIPStarRE.Quantum.Op ι)\n    (γ : Error)\n    (hAB : avgOver 𝒟 (fun q => qSDDCore ψ (A q) (B q)) ≤ γ)\n    (hC :\n      ∀ q,\n        (∑ a : OutcomeA, (∑ b : OutcomeB, C q a b) * (∑ b : OutcomeB, C q a b)ᴴ) ≤ 1) :\n    |avgOver 𝒟 (fun q => ∑ a : OutcomeA, ∑ b : OutcomeB, ev ψ (C q a b * A q a)) -\n      avgOver 𝒟 (fun q => ∑ a : OutcomeA, ∑ b : OutcomeB, ev ψ (C q a b * B q a))|\n      ≤ Real.sqrt γ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`prop:closeness-of-ip`, left-action clause `eq:closeness3`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.InnerProduct",
+  "module_doc": "/-!\n# Switch-sandwich preparation: inner-product bounds\n\nCauchy–Schwarz-style inner-product bounds in the `avgOver` formulation used by\nthe switch-sandwich argument.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`, `prop:switch-sandwich`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/InnerProduct.lean#L143-L282",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/InnerProduct.lean",
+  "lines": [
+   143,
+   282
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_nonneg",
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.ev_abs_mul_le_sqrt",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.ev_adjoint_self_nonneg",
+   "MIPStarRE.LDT.Preliminaries.avgOver_abs_le_sqrt_of_pointwise"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 122,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.closenessOfInnerProduct_right",
+  "source_name": "MIPStarRE.LDT.Preliminaries.closenessOfInnerProduct_right",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.closenessOfInnerProduct_right\n    {Question OutcomeA OutcomeB : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype OutcomeA] [Fintype OutcomeB]\n    (ψ : QuantumState ι) (hψ : ψ.IsNormalized)\n    (𝒟 : Distribution Question)\n    (h𝒟 : ∑ q ∈ 𝒟.support, 𝒟.weight q ≤ 1)\n    (A B : Question → OutcomeA → MIPStarRE.Quantum.Op ι)\n    (C : Question → OutcomeA → OutcomeB → MIPStarRE.Quantum.Op ι)\n    (γ : Error)\n    (hAB :\n      avgOver 𝒟\n        (fun q => qSDDCore ψ (fun a : OutcomeA => (A q a)ᴴ) (fun a : OutcomeA => (B q a)ᴴ))\n        ≤ γ)\n    (hC :\n      ∀ q,\n        (∑ a : OutcomeA, (∑ b : OutcomeB, C q a b)ᴴ * (∑ b : OutcomeB, C q a b)) ≤ 1) :\n    |avgOver 𝒟 (fun q => ∑ a : OutcomeA, ∑ b : OutcomeB, ev ψ (A q a * C q a b)) -\n      avgOver 𝒟 (fun q => ∑ a : OutcomeA, ∑ b : OutcomeB, ev ψ (B q a * C q a b))|\n      ≤ Real.sqrt γ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`prop:closeness-of-ip`, right-action clause `eq:closeness4`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SwitchSandwichPrep.InnerProduct",
+  "module_doc": "/-!\n# Switch-sandwich preparation: inner-product bounds\n\nCauchy–Schwarz-style inner-product bounds in the `avgOver` formulation used by\nthe switch-sandwich argument.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`, `prop:switch-sandwich`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/InnerProduct.lean#L284-L339",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SwitchSandwichPrep/InnerProduct.lean",
+  "lines": [
+   284,
+   339
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.Preliminaries.closenessOfInnerProduct_left"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.qSDD_symm",
+  "source_name": "MIPStarRE.LDT.Preliminaries.qSDD_symm",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.qSDD_symm\n    {Outcome : Type*} {ι : Type*}\n    [Fintype ι] [DecidableEq ι] [Fintype Outcome]\n    (ψ : QuantumState ι) (A B : SubMeas Outcome ι) :\n    qSDD ψ A B = qSDD ψ B A := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Symmetry of the question-level state-dependent distance.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.Core",
+  "module_doc": "/-!\n# Triangle Inequalities for State-Dependent Distance: Core\n\nThis module contains the main triangle-substitution estimates for approximate\nmeasurements.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Triangles/Core.lean#L73-L92",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Triangles/Core.lean",
+  "lines": [
+   73,
+   92
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ }
+]

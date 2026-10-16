@@ -1,0 +1,620 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.registerOp_mulVec",
+  "source_name": "MIPRE.Introspection.registerOp_mulVec",
+  "formal_statement": "theorem MIPRE.Introspection.registerOp_mulVec (e : I ≃ J) (M : Matrix J J ℂ) (v : J → ℂ) :\n    registerOp e M *ᵥ (v ∘ e) = (M *ᵥ v) ∘ e := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {I J K L A : Type*}"
+  ],
+  "docstring": "Simultaneous matrix and vector reindexing commutes with matrix application.",
+  "module": "MIPRE.Foundations.Introspection.RegisterTransport",
+  "module_doc": "/-! # Transporting finite register operators and their state distances\n\nAll transports below are explicit permutations of computational basis labels.\nIn particular they preserve positivity, projectivity and squared state norms.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/RegisterTransport.lean#L102-L106",
+  "source_path": "MIPRE/Foundations/Introspection/RegisterTransport.lean",
+  "lines": [
+   102,
+   106
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.registerOp_kronecker",
+  "source_name": "MIPRE.Introspection.registerOp_kronecker",
+  "formal_statement": "theorem MIPRE.Introspection.registerOp_kronecker (e : I ≃ J) (f : K ≃ L)\n    (M : Matrix J J ℂ) (N : Matrix L L ℂ) :\n    registerOp (e.prodCongr f) (M ⊗ₖ N) = registerOp e M ⊗ₖ registerOp f N := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {I J K L A : Type*}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.RegisterTransport",
+  "module_doc": "/-! # Transporting finite register operators and their state distances\n\nAll transports below are explicit permutations of computational basis labels.\nIn particular they preserve positivity, projectivity and squared state norms.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/RegisterTransport.lean#L108-L110",
+  "source_path": "MIPRE/Foundations/Introspection/RegisterTransport.lean",
+  "lines": [
+   108,
+   110
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.self_le_errorProfile_scaled",
+  "source_name": "MIPRE.Introspection.self_le_errorProfile_scaled",
+  "formal_statement": "theorem MIPRE.Introspection.self_le_errorProfile_scaled {a b c x ε : ℝ}\n    (ha : 1 ≤ a) (hb0 : 0 ≤ b) (hb1 : b ≤ 1) (hc : 1 ≤ c)\n    (hx : 1 ≤ x) (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1) :\n    ε ≤ errorProfile a b x (c * ε) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection"
+  ],
+  "docstring": "On the unit interval, the normalized error profile dominates the original\nfailure, even after increasing that failure by a fixed restriction factor.",
+  "module": "MIPRE.Foundations.Introspection.RestrictedErrorBounds",
+  "module_doc": "/-! # Absorbing restriction loss into the introspection error profile\n\nRestriction multiplies the QLD failure by a fixed edge count. The finite-game\nargument also needs a budget for the original failure. These lemmas absorb both\nchanges into constants independent of the verifier index and strategy error.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/RestrictedErrorBounds.lean#L17-L35",
+  "source_path": "MIPRE/Foundations/Introspection/RestrictedErrorBounds.lean",
+  "lines": [
+   17,
+   35
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.errorProfile_of_restricted_bound",
+  "source_name": "MIPRE.Introspection.errorProfile_of_restricted_bound",
+  "formal_statement": "theorem MIPRE.Introspection.errorProfile_of_restricted_bound {C a b c x ε δ v : ℝ} (k : ℕ)\n    (hC : 0 ≤ C) (ha : 1 ≤ a) (hb0 : 0 < b) (hb1 : b ≤ 1)\n    (hc : 1 ≤ c) (hx : 1 ≤ x) (hε : 0 ≤ ε)\n    (hδ : δ ≤ errorProfile a b x (c * ε)) (hv : 0 ≤ v)\n    (hvalue : 1 - C * iteratedRoot k (max ε δ) ≤ v) :\n    1 - errorProfile\n      (powerCoefficient (C * (max 1 (c ^ b)) ^ rootExponent k) a (rootExponent k))\n      (b * rootExponent k) x ε ≤ v := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection"
+  ],
+  "docstring": "A fixed restriction factor and the original-failure budget can both be\nabsorbed into the two-term profile. The large-error case uses only `v ≥ 0`.",
+  "module": "MIPRE.Foundations.Introspection.RestrictedErrorBounds",
+  "module_doc": "/-! # Absorbing restriction loss into the introspection error profile\n\nRestriction multiplies the QLD failure by a fixed edge count. The finite-game\nargument also needs a budget for the original failure. These lemmas absorb both\nchanges into constants independent of the verifier index and strategy error.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/RestrictedErrorBounds.lean#L49-L72",
+  "source_path": "MIPRE/Foundations/Introspection/RestrictedErrorBounds.lean",
+  "lines": [
+   49,
+   72
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.errorProfile_scaled_power",
+   "MIPRE.Introspection.self_le_errorProfile_scaled"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.retained_fibre_dist",
+  "source_name": "MIPRE.Introspection.retained_fibre_dist",
+  "formal_statement": "theorem MIPRE.Introspection.retained_fibre_dist (ψ : N → ℂ) (M T : Y × A → Matrix N N ℂ)\n    (P R : Y → Matrix N N ℂ) (hM : IsPVM M) (hR : IsPVM R)\n    (hPR : ∀ y, P y *ᵥ ψ = R y *ᵥ ψ)\n    (hMR : ∀ y a, M (y, a) * R y = R y * M (y, a))\n    (hTR : ∀ y a, T (y, a) * R y = R y * T (y, a)) :\n    (∑ p : Y × A, snorm ψ (M p - T p * P p.1) ^ 2) ≤\n      2 * (∑ y, snorm ψ ((∑ a, M (y, a)) - P y) ^ 2) +\n      2 * (∑ p : Y × A, snorm ψ (M p - T p) ^ 2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {N Y A : Type*} [Fintype N] [DecidableEq N]"
+  ],
+  "docstring": "Keeping the matching target fibre costs twice the marginal error plus twice the original error.",
+  "module": "MIPRE.Foundations.Introspection.RetainedFibre",
+  "module_doc": "/-! # Retaining a classical fibre after twirling\n\nThe consistency marginal lets us retain the matching block of a nearby measurement.\nAn exactly consistent projective mirror moves the rightmost projector to the front,\nwhere it is a contraction. No outcome-count factor enters the estimate.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/RetainedFibre.lean#L45-L75",
+  "source_path": "MIPRE/Foundations/Introspection/RetainedFibre.lean",
+  "lines": [
+   45,
+   75
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-mixing-coordinates",
+    "env": "lemma",
+    "title": "Retained-fibre mixing in coordinate presentations",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.IsPVM.marg_left",
+   "MIPRE.sum_snorm_sq_mul_le",
+   "MIPRE.IsPVM.orthogonal"
+  ],
+  "pasted_helpers": 15,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.legal_query_cost_le",
+  "source_name": "MIPRE.Introspection.legal_query_cost_le",
+  "formal_statement": "theorem MIPRE.Introspection.legal_query_cost_le {lam n : ℕ} (hl : 1 ≤ lam) (hn : 1 ≤ n)\n    (x y a b : BitStr)\n    (hx : x.length ≤ (2 ^ n) ^ lam) (hy : y.length ≤ (2 ^ n) ^ lam)\n    (ha : a.length ≤ (2 ^ n) ^ lam) (hb : b.length ≤ (2 ^ n) ^ lam) :\n    (2 ^ n) ^ lam * (esize (x, y, a, b) + 1) ^ lam ≤ ansBound 5 lam n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "Legal-input ambient costs fit the repaired budget with exponent five.",
+  "module": "MIPRE.Foundations.Introspection.Runtime",
+  "module_doc": "/-! # Absolute simulation bounds on the original legal answer cut\n\nAmbient boundedness controls input-size degree as well as a time coefficient.\nOn four bit strings of length at most `(2^n)^λ`, the resulting absolute cost has\na quadratic exponent in `λ`. The polynomial-exponent introspection budget\nabsorbs this cost without enlarging the original game's answer alphabet.\n\nThese lemmas concern actual source and universal-simulator runs. They do not\nyet construct the introspective decider's format checks or other subtests.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/Runtime.lean#L36-L63",
+  "source_path": "MIPRE/Foundations/Introspection/Runtime.lean",
+  "lines": [
+   36,
+   63
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-ambient-runtime",
+    "env": "lemma",
+    "title": "Absolute costs on the original legal answer cut",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.polynomial_ansBound",
+  "source_name": "MIPRE.Introspection.polynomial_ansBound",
+  "formal_statement": "theorem MIPRE.Introspection.polynomial_ansBound (P : Polynomial ℕ) (k : ℕ) :\n    ∃ C, ∀ lam n, 1 ≤ lam → 1 ≤ n →\n      P.eval (ansBound k lam n) ≤ ansBound C lam n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "Any fixed polynomial overhead is absorbed by another polynomial exponent.",
+  "module": "MIPRE.Foundations.Introspection.Runtime",
+  "module_doc": "/-! # Absolute simulation bounds on the original legal answer cut\n\nAmbient boundedness controls input-size degree as well as a time coefficient.\nOn four bit strings of length at most `(2^n)^λ`, the resulting absolute cost has\na quadratic exponent in `λ`. The polynomial-exponent introspection budget\nabsorbs this cost without enlarging the original game's answer alphabet.\n\nThese lemmas concern actual source and universal-simulator runs. They do not\nyet construct the introspective decider's format checks or other subtests.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/Runtime.lean#L77-L94",
+  "source_path": "MIPRE/Foundations/Introspection/Runtime.lean",
+  "lines": [
+   77,
+   94
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-ambient-runtime",
+    "env": "lemma",
+    "title": "Absolute costs on the original legal answer cut",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.SamplerProgram.route_dimension",
+  "source_name": "MIPRE.Introspection.SamplerProgram.route_dimension",
+  "formal_statement": "theorem MIPRE.Introspection.SamplerProgram.route_dimension {P : Type*} [SizedEncoding P] (n : ℕ) :\n    route (encode (n, (TypedSampler.Query.dimension : TypedSampler.Query P))) =\n      callResult (.cons (encode n) .nil) .nil := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.SamplerProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.SamplerProgram",
+  "module_doc": "/-! # The executable typed introspection sampler router\n\nDimension queries and Pauli queries call the supplied sampler once. Auxiliary\nqueries write the zero vector or the appropriate factor indicator, using the\nlength of the supplied vector. This total router needs no decoding of the\nambient dimension and does not depend on the number of hiding types.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SamplerProgram.lean#L70-L74",
+  "source_path": "MIPRE/Foundations/Introspection/SamplerProgram.lean",
+  "lines": [
+   70,
+   74
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.SamplerProgram.route_pauli",
+  "source_name": "MIPRE.Introspection.SamplerProgram.route_pauli",
+  "formal_statement": "theorem MIPRE.Introspection.SamplerProgram.route_pauli {P : Type*} [SizedEncoding P] (ℓ n : ℕ) (p : P) (q : Sampler.Query) :\n    route (encode (n, TypedSampler.Query.atType (QuestionType.pauli (ℓ := ℓ) p) q)) =\n      callResult (encode (n, TypedSampler.Query.atType p q)) .nil := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.SamplerProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.SamplerProgram",
+  "module_doc": "/-! # The executable typed introspection sampler router\n\nDimension queries and Pauli queries call the supplied sampler once. Auxiliary\nqueries write the zero vector or the appropriate factor indicator, using the\nlength of the supplied vector. This total router needs no decoding of the\nambient dimension and does not depend on the number of hiding types.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SamplerProgram.lean#L76-L80",
+  "source_path": "MIPRE/Foundations/Introspection/SamplerProgram.lean",
+  "lines": [
+   76,
+   80
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.SamplerProgram.route_aux",
+  "source_name": "MIPRE.Introspection.SamplerProgram.route_aux",
+  "formal_statement": "theorem MIPRE.Introspection.SamplerProgram.route_aux {P : Type*} [SizedEncoding P] {ℓ : ℕ} (n : ℕ)\n    (t : AuxType ℓ) (role : Bool) (q : Sampler.Query) :\n    route (encode (n, TypedSampler.Query.atType (.inr (t, role) : QuestionType P ℓ) q)) =\n      directResult (auxResult (encode n, q.toTuple.1, q.toTuple.2.1.toBool,\n        q.toTuple.2.2.1, q.toTuple.2.2.2.1, q.toTuple.2.2.2.2)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.SamplerProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.SamplerProgram",
+  "module_doc": "/-! # The executable typed introspection sampler router\n\nDimension queries and Pauli queries call the supplied sampler once. Auxiliary\nqueries write the zero vector or the appropriate factor indicator, using the\nlength of the supplied vector. This total router needs no decoding of the\nambient dimension and does not depend on the number of hiding types.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SamplerProgram.lean#L82-L89",
+  "source_path": "MIPRE/Foundations/Introspection/SamplerProgram.lean",
+  "lines": [
+   82,
+   89
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.Program.parse_query"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.SamplerProgram.prog_closed",
+  "source_name": "MIPRE.Introspection.SamplerProgram.prog_closed",
+  "formal_statement": "theorem MIPRE.Introspection.SamplerProgram.prog_closed {P : Type*} [SizedEncoding P] (S : TypedSampler 3 P) :\n    (prog S).WellScoped 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.SamplerProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.SamplerProgram",
+  "module_doc": "/-! # The executable typed introspection sampler router\n\nDimension queries and Pauli queries call the supplied sampler once. Auxiliary\nqueries write the zero vector or the appropriate factor indicator, using the\nlength of the supplied vector. This total router needs no decoding of the\nambient dimension and does not depend on the number of hiding types.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SamplerProgram.lean#L111-L112",
+  "source_path": "MIPRE/Foundations/Introspection/SamplerProgram.lean",
+  "lines": [
+   111,
+   112
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.routeOneCall_closed"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.SamplerProgram.prog_halts",
+  "source_name": "MIPRE.Introspection.SamplerProgram.prog_halts",
+  "formal_statement": "theorem MIPRE.Introspection.SamplerProgram.prog_halts {P : Type*} [SizedEncoding P] (S : TypedSampler 3 P) (n : ℕ) (d : Data) :\n    Halts (prog S) (.cons (encode n) d) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.SamplerProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.SamplerProgram",
+  "module_doc": "/-! # The executable typed introspection sampler router\n\nDimension queries and Pauli queries call the supplied sampler once. Auxiliary\nqueries write the zero vector or the appropriate factor indicator, using the\nlength of the supplied vector. This total router needs no decoding of the\nambient dimension and does not depend on the number of hiding types.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SamplerProgram.lean#L114-L116",
+  "source_path": "MIPRE/Foundations/Introspection/SamplerProgram.lean",
+  "lines": [
+   114,
+   116
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.routeOneCall_halts"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.SamplerProgram.prog_run_call",
+  "source_name": "MIPRE.Introspection.SamplerProgram.prog_run_call",
+  "formal_statement": "theorem MIPRE.Introspection.SamplerProgram.prog_run_call {P : Type*} [SizedEncoding P] (S : TypedSampler 3 P)\n    (x a r : Data) (time : ℕ) (h : route x = callResult a .nil)\n    (hr : S.prog.Runs a r time) : ∃ t, (prog S).Runs x r t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.SamplerProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.SamplerProgram",
+  "module_doc": "/-! # The executable typed introspection sampler router\n\nDimension queries and Pauli queries call the supplied sampler once. Auxiliary\nqueries write the zero vector or the appropriate factor indicator, using the\nlength of the supplied vector. This total router needs no decoding of the\nambient dimension and does not depend on the number of hiding types.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SamplerProgram.lean#L118-L121",
+  "source_path": "MIPRE/Foundations/Introspection/SamplerProgram.lean",
+  "lines": [
+   118,
+   121
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.routeOneCall_indirect"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.SamplerProgram.prog_run_direct",
+  "source_name": "MIPRE.Introspection.SamplerProgram.prog_run_direct",
+  "formal_statement": "theorem MIPRE.Introspection.SamplerProgram.prog_run_direct {P : Type*} [SizedEncoding P] (S : TypedSampler 3 P)\n    (x : Data) (out : BitStr) (h : route x = directResult out) :\n    ∃ t, (prog S).Runs x (encode out) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.SamplerProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.SamplerProgram",
+  "module_doc": "/-! # The executable typed introspection sampler router\n\nDimension queries and Pauli queries call the supplied sampler once. Auxiliary\nqueries write the zero vector or the appropriate factor indicator, using the\nlength of the supplied vector. This total router needs no decoding of the\nambient dimension and does not depend on the number of hiding types.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SamplerProgram.lean#L123-L125",
+  "source_path": "MIPRE/Foundations/Introspection/SamplerProgram.lean",
+  "lines": [
+   123,
+   125
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.routeOneCall_direct"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.ExactlyOn.outputPrefix_self",
+  "source_name": "MIPRE.CL.CLFun.ExactlyOn.outputPrefix_self",
+  "formal_statement": "theorem MIPRE.CL.CLFun.ExactlyOn.outputPrefix_self {P : CLFun F ι ℓ} {T : Finset ι}\n    (hP : P.ExactlyOn T) (y : ι → F) : P.outputPrefix ℓ (proj T y) = proj T y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "open MIPRE.CL.CLFun.ExactlyOn",
+   "open Finset",
+   "variable {F ι : Type*} [Field F] [Fintype ι] [DecidableEq ι] {ℓ : ℕ}"
+  ],
+  "docstring": "No image-membership condition is used to compute prefixes of claimed answers.",
+  "module": "MIPRE.Foundations.Introspection.SamplingPrefix",
+  "module_doc": "/-! # Reading prefixes from arbitrary claimed CL outputs\n\nThe sampling test coarse-grains the entire answer alphabet, not merely the\nimage of the CL map. The prefix map therefore follows the claimed output's\ncoordinate branches and does not apply the stage linear maps again.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SamplingPrefix.lean#L57-L71",
+  "source_path": "MIPRE/Foundations/Introspection/SamplingPrefix.lean",
+  "lines": [
+   57,
+   71
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-subtest-estimates",
+    "env": "lemma",
+    "title": "Sampling and hiding subtest estimates",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.proj_add_proj_compl"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.introspect_prefix_register_rigidity_bob",
+  "source_name": "MIPRE.Introspection.TypedEstimates.introspect_prefix_register_rigidity_bob",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.introspect_prefix_register_rigidity_bob\n    (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)\n    (projectPauli : PauliAnswer → ι → F)\n    (D : (ι → F) → (ι → F) → A → A → Bool)\n    (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →\n      PauliAnswer → PauliAnswer → Bool)\n    (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)\n    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H))\n    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K))\n    {ε η : ℝ}\n    (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP)\n      (registerState (ι → F) ξ) MA MB ≤ ε)\n    (q : κ → ZMod 2) (hq : ∀ z, (P Z).eval z = q)\n    (w : Bool) (hL : (L w).SupportedOn univ)\n    (hS : IsPVM (fun a => ((MA (QuestionType.sample w, 0)).mats a).val))\n    (hZ : ∑ z, snorm (registerState (ι → F) ξ) (bOp\n      ((((MB (QuestionType.pauli Z, q)).map (pauliProjection projectPauli)).mats z).val -\n        (aOp (readout (some : (ι → F) → Option (ι → F)) z) :\n          Matrix ((ι → F) × K) _ ℂ))) ^ 2 ≤ η)\n    (j : ℕ) :\n    (∑ y, snorm (registerState (ι → F) ξ) (bOp\n      ((((MB (QuestionType.introspect w, 0)).map\n        (reportedPrefix (L w) j .introspect)).mats y).val -\n          (aOp (hidingPrefixOp (L w) j y) : Matrix ((ι → F) × K) _ ℂ))) ^ 2) ≤\n      4 * η + 12 * (TypeGraph.edges E X Z ℓ).card * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical MIPRE.Introspection.Honest",
+   "open scoped Kronecker",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "The actual parsed game and an extracted Bob Pauli-Z guarantee imply every\nBob Introspect-prefix guarantee needed in hiding rigidity. The sampled seed\nmeasurement is projective; no projectivity of the Introspect measurement and\nno assumption on the answer's CL-image membership are used.",
+  "module": "MIPRE.Foundations.Introspection.SamplingRigidity",
+  "module_doc": "/-! # Sampling supplies the Introspect-prefix rigidity input\n\nThe actual Z/Sample and Sample/Introspect tests transfer extracted Pauli-Z\nrigidity to every Introspect prefix. The only coarse-graining of a distance\nis between two projective measurements on opposite parties, so the loss is\nindependent of the seed and answer alphabets.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SamplingRigidity.lean#L65-L132",
+  "source_path": "MIPRE/Foundations/Introspection/SamplingRigidity.lean",
+  "lines": [
+   65,
+   132
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-hiding-initialization",
+    "env": "lemma",
+    "title": "Initializing hiding from the actual Pauli tests",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.POVM.map_map",
+   "MIPRE.norm_evec_expVec",
+   "MIPRE.Introspection.TypedEstimates.constant_edge_agreement_estimate",
+   "MIPRE.Introspection.readout_isPVM",
+   "MIPRE.Introspection.TypeGraph.symmetric",
+   "MIPRE.Introspection.TypedEstimates.aux_agreement_estimate",
+   "MIPRE.aOp_sum",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.dotProduct_star_self",
+   "MIPRE.sum_bornProb_le_fibSum",
+   "MIPRE.IsPVM.aOp",
+   "MIPRE.one_sub_sum_bornProb_eq"
+  ],
+  "pasted_helpers": 42,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.SourceCompiler.bounded_dimensionResult",
+  "source_name": "MIPRE.Introspection.SourceCompiler.bounded_dimensionResult",
+  "formal_statement": "theorem MIPRE.Introspection.SourceCompiler.bounded_dimensionResult {ℓ lam n : ℕ} (V : Verifier ℓ) (hV : V.IsBounded lam)\n    (hn : 1 ≤ n) : dimensionResult 5 lam V.sampler.prog n =\n      .cons (encode true) (encode (V.sampler.dim (2^n))) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.SourceCompiler",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping MIPRE.CL.Detyping.Program"
+  ],
+  "docstring": "The actual sampler query, rather than an assumed dimension subroutine, fits exponent five.",
+  "module": "MIPRE.Foundations.Introspection.SourceCompilerCorrect",
+  "module_doc": "/-! # Exact acceptance of the cross-introspection compiler\n\nFor a bounded original verifier the actual dimension query fits the clock.\nAcceptance is precisely the complete format/cutoff/projection guard followed\nby acceptance of the original decider at the exponential index.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SourceCompilerCorrect.lean#L75-L90",
+  "source_path": "MIPRE/Foundations/Introspection/SourceCompilerCorrect.lean",
+  "lines": [
+   75,
+   90
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-dynamic-source-compiler",
+    "env": "lemma",
+    "title": "Uniform executable cross-introspection compiler",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Introspection.legal_query_cost_le"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.SourceCompiler.originalBound_eq",
+  "source_name": "MIPRE.Introspection.SourceCompiler.originalBound_eq",
+  "formal_statement": "theorem MIPRE.Introspection.SourceCompiler.originalBound_eq (lam n : ℕ) : originalBound lam n = (2 ^ n) ^ lam := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.SourceCompiler",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program Polynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.SourceCompilerParams",
+  "module_doc": "/-! # Executable canonical register and answer bounds\n\nFor `R = 2^(lambda*n)`, the paper uses `t = max 2 (lambda*n)`,\n`m = 2^(size(c*t+1)-1)`, and `log q = c*size(t-1)+1`.\nHere `size(t-1)` is the integer ceiling of `log₂ t`. The universal even\nconstant `c` is fixed; `lambda` and `n` are binary program inputs.\nThe output is the binary pair `(Q,R)` with `Q = 2^m * log q`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SourceCompilerParams.lean#L29-L30",
+  "source_path": "MIPRE/Foundations/Introspection/SourceCompilerParams.lean",
+  "lines": [
+   29,
+   30
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.SourceCompiler.boundsProg_runs",
+  "source_name": "MIPRE.Introspection.SourceCompiler.boundsProg_runs",
+  "formal_statement": "theorem MIPRE.Introspection.SourceCompiler.boundsProg_runs (c lam n : ℕ) : ∃ time,\n    (boundsProg c).Runs (encode (lam, n)) (encode (registerBits c lam n, originalBound lam n)) time := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.SourceCompiler",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program Polynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.SourceCompilerParams",
+  "module_doc": "/-! # Executable canonical register and answer bounds\n\nFor `R = 2^(lambda*n)`, the paper uses `t = max 2 (lambda*n)`,\n`m = 2^(size(c*t+1)-1)`, and `log q = c*size(t-1)+1`.\nHere `size(t-1)` is the integer ceiling of `log₂ t`. The universal even\nconstant `c` is fixed; `lambda` and `n` are binary program inputs.\nThe output is the binary pair `(Q,R)` with `Q = 2^m * log q`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SourceCompilerParams.lean#L125-L164",
+  "source_path": "MIPRE/Foundations/Introspection/SourceCompilerParams.lean",
+  "lines": [
+   125,
+   164
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-dynamic-source-compiler",
+    "env": "lemma",
+    "title": "Uniform executable cross-introspection compiler",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.mulLoop_runs",
+   "MIPRE.Introspection.ClockArithmetic.bothUnary_runs"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 38,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.SourceCompiler.boundsProg_runs_cost",
+  "source_name": "MIPRE.Introspection.SourceCompiler.boundsProg_runs_cost",
+  "formal_statement": "theorem MIPRE.Introspection.SourceCompiler.boundsProg_runs_cost (c lam n : ℕ) : ∃ time ≤ boundsCost c lam n,\n    (boundsProg c).Runs (encode (lam,n)) (encode (registerBits c lam n,originalBound lam n)) time := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.SourceCompiler",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Introspection.ClockArithmetic"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.SourceCompilerParamsCost",
+  "module_doc": "/-! # Explicit runtime of canonical parameter generation -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SourceCompilerParamsCost.lean#L43-L96",
+  "source_path": "MIPRE/Foundations/Introspection/SourceCompilerParamsCost.lean",
+  "lines": [
+   43,
+   96
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-dynamic-source-compiler",
+    "env": "lemma",
+    "title": "Uniform executable cross-introspection compiler",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.mulLoop_runs",
+   "MIPRE.Introspection.ClockArithmetic.bothUnary_runs"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 52,
+  "is_target": false
+ }
+]

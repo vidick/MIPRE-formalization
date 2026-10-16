@@ -1,0 +1,592 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.questionSDD_triangle",
+  "source_name": "MIPStarRE.LDT.Preliminaries.questionSDD_triangle",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.questionSDD_triangle {Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState ι) (A B C : SubMeas Outcome ι) :\n    qSDD ψ A C ≤\n      2 * (qSDD ψ A B +\n           qSDD ψ B C) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Atomic mathematical fact: the parallelogram-style inequality for `qSDD`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.DistanceBounds",
+  "module_doc": "/-!\n# Preliminary comparison theorems: distance bounds\n\nTriangle-inequality style bounds for `SDDRel` and `SDDOpRel`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/DistanceBounds.lean#L69-L92",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/DistanceBounds.lean",
+  "lines": [
+   69,
+   92
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_diff_triangle"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.questionSDD_triangle_three",
+  "source_name": "MIPStarRE.LDT.Preliminaries.questionSDD_triangle_three",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.questionSDD_triangle_three {Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState ι) (A B C D : SubMeas Outcome ι) :\n    qSDD ψ A D ≤ 3 * (qSDD ψ A B + qSDD ψ B C + qSDD ψ C D) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Atomic mathematical fact: the three-step triangle inequality for `qSDD`.\n\nThis is the `k = 3` instance of `prop:triangle-inequality-for-approx_delta`,\nwith the sharp paper constant `3 * (δ₁ + δ₂ + δ₃)`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.DistanceBounds",
+  "module_doc": "/-!\n# Preliminary comparison theorems: distance bounds\n\nTriangle-inequality style bounds for `SDDRel` and `SDDOpRel`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/DistanceBounds.lean#L94-L122",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/DistanceBounds.lean",
+  "lines": [
+   94,
+   122
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.normalizedTrace_triangle_three"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.stateDependentDistanceRel_triangle",
+  "source_name": "MIPStarRE.LDT.Preliminaries.stateDependentDistanceRel_triangle",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.stateDependentDistanceRel_triangle\n    {Question Outcome : Type*} {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState ι) (𝒟 : Distribution Question)\n    (A B C : IdxSubMeas Question Outcome ι) (δ₁ δ₂ : Error) :\n    SDDRel ψ 𝒟 A B δ₁ →\n    SDDRel ψ 𝒟 B C δ₂ →\n    SDDRel ψ 𝒟 A C (2 * (δ₁ + δ₂)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Triangle inequality for state-dependent distance.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.DistanceBounds",
+  "module_doc": "/-!\n# Preliminary comparison theorems: distance bounds\n\nTriangle-inequality style bounds for `SDDRel` and `SDDOpRel`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/DistanceBounds.lean#L124-L155",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/DistanceBounds.lean",
+  "lines": [
+   124,
+   155
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.avgOver_const_mul",
+   "MIPStarRE.LDT.Preliminaries.questionSDD_triangle"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.stateDependentDistanceRel_triangle_three",
+  "source_name": "MIPStarRE.LDT.Preliminaries.stateDependentDistanceRel_triangle_three",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.stateDependentDistanceRel_triangle_three {Question Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι] [Fintype Outcome]\n    (ψ : QuantumState ι) (𝒟 : Distribution Question)\n    (A B C D : IdxSubMeas Question Outcome ι) (δ₁ δ₂ δ₃ : Error) :\n    SDDRel ψ 𝒟 A B δ₁ →\n    SDDRel ψ 𝒟 B C δ₂ →\n    SDDRel ψ 𝒟 C D δ₃ →\n    SDDRel ψ 𝒟 A D (3 * (δ₁ + δ₂ + δ₃)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Three-step triangle inequality for state-dependent distance.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.DistanceBounds",
+  "module_doc": "/-!\n# Preliminary comparison theorems: distance bounds\n\nTriangle-inequality style bounds for `SDDRel` and `SDDOpRel`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/DistanceBounds.lean#L157-L183",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/DistanceBounds.lean",
+  "lines": [
+   157,
+   183
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.avgOver_const_mul",
+   "MIPStarRE.LDT.Preliminaries.questionSDD_triangle_three"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.questionCabApproxDelta",
+  "source_name": "MIPStarRE.LDT.Preliminaries.questionCabApproxDelta",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.questionCabApproxDelta\n    {Outcome Aux : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome] [Fintype Aux]\n    (ψ : QuantumState ι)\n    (A B : OpFamily Outcome ι)\n    (C : Outcome → Aux → MIPStarRE.Quantum.Op ι)\n    (hC : ∀ a, ∑ b : Aux, (C a b)ᴴ * C a b ≤ 1) :\n    qSDDOp ψ\n        ({ outcome := fun ab : Outcome × Aux =>\n             C ab.1 ab.2 * A.outcome ab.1\n           total := ∑ ab : Outcome × Aux,\n             C ab.1 ab.2 * A.outcome ab.1\n         } : OpFamily (Outcome × Aux) ι)\n        ({ outcome := fun ab : Outcome × Aux =>\n             C ab.1 ab.2 * B.outcome ab.1\n           total := ∑ ab : Outcome × Aux,\n             C ab.1 ab.2 * B.outcome ab.1\n         } : OpFamily (Outcome × Aux) ι) ≤\n      qSDDOp ψ A B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.DistanceBounds",
+  "module_doc": "/-!\n# Preliminary comparison theorems: distance bounds\n\nTriangle-inequality style bounds for `SDDRel` and `SDDOpRel`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/DistanceBounds.lean#L197-L262",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/DistanceBounds.lean",
+  "lines": [
+   197,
+   262
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_mono"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 46,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.cabApproxDelta_raw",
+  "source_name": "MIPStarRE.LDT.Preliminaries.cabApproxDelta_raw",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.cabApproxDelta_raw\n    {Question Outcome Aux : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome] [Fintype Aux]\n    (ψ : QuantumState ι) (𝒟 : Distribution Question)\n    (A B : IdxOpFamily Question Outcome ι)\n    (C : (q : Question) → Outcome → Aux → MIPStarRE.Quantum.Op ι)\n    (δ : Error) :\n    SDDOpRel ψ 𝒟 A B δ →\n    (∀ q a, ∑ b : Aux, (C q a b)ᴴ * C q a b ≤ 1) →\n    SDDOpRel ψ 𝒟\n      (fun q => ({\n        outcome := fun ab : Outcome × Aux =>\n          C q ab.1 ab.2 * (A q).outcome ab.1\n        total := ∑ ab : Outcome × Aux,\n          C q ab.1 ab.2 * (A q).outcome ab.1\n      } : OpFamily (Outcome × Aux) ι))\n      (fun q => ({\n        outcome := fun ab : Outcome × Aux =>\n          C q ab.1 ab.2 * (B q).outcome ab.1\n        total := ∑ ab : Outcome × Aux,\n          C q ab.1 ab.2 * (B q).outcome ab.1\n      } : OpFamily (Outcome × Aux) ι))\n      δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`prop:cab-approx-delta`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.DistanceBounds",
+  "module_doc": "/-!\n# Preliminary comparison theorems: distance bounds\n\nTriangle-inequality style bounds for `SDDRel` and `SDDOpRel`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/DistanceBounds.lean#L264-L311",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/DistanceBounds.lean",
+  "lines": [
+   264,
+   311
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.Preliminaries.questionCabApproxDelta"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.stateDependentDistanceOpRel_triangle",
+  "source_name": "MIPStarRE.LDT.Preliminaries.stateDependentDistanceOpRel_triangle",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.stateDependentDistanceOpRel_triangle\n    {Question Outcome : Type*} {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState ι) (𝒟 : Distribution Question)\n    (A B C : IdxOpFamily Question Outcome ι) (δ₁ δ₂ : Error) :\n    SDDOpRel ψ 𝒟 A B δ₁ →\n    SDDOpRel ψ 𝒟 B C δ₂ →\n    SDDOpRel ψ 𝒟 A C (2 * (δ₁ + δ₂)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Triangle inequality for operator-family state-dependent distance.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.DistanceBounds",
+  "module_doc": "/-!\n# Preliminary comparison theorems: distance bounds\n\nTriangle-inequality style bounds for `SDDRel` and `SDDOpRel`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/DistanceBounds.lean#L345-L372",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/DistanceBounds.lean",
+  "lines": [
+   345,
+   372
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.avgOver_const_mul"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.sddOpRel_leftPlaced_of_ev_eq",
+  "source_name": "MIPStarRE.LDT.Preliminaries.sddOpRel_leftPlaced_of_ev_eq",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.sddOpRel_leftPlaced_of_ev_eq\n    {Question Outcome : Type*} {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype Outcome]\n    (ψ : QuantumState (ιA × ιB)) (φ : QuantumState ιA)\n    (𝒟 : Distribution Question)\n    (A B : IdxOpFamily Question Outcome ιA) (δ : Error)\n    (hev : ∀ X : MIPStarRE.Quantum.Op ιA,\n      ev ψ (leftTensor (ι₂ := ιB) X) = ev φ X) :\n    SDDOpRel φ 𝒟 A B δ →\n    SDDOpRel ψ 𝒟\n      (fun q => OpFamily.leftPlacedOpFamily (ιB := ιB) (A q))\n      (fun q => OpFamily.leftPlacedOpFamily (ιB := ιB) (B q)) δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Transport a local raw-operator state-dependent distance estimate to the\nleft tensor factor of a bipartite state.\n\nThe hypothesis `hev` is the defining marginal identity for the left register:\nexpectations of local operators in `φ` agree with expectations of their\nleft-tensor placements in `ψ`.  Under this identity, the squared-distance\ndefect of two local raw operator families is exactly the squared-distance\ndefect of their left placements.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.DistanceBounds",
+  "module_doc": "/-!\n# Preliminary comparison theorems: distance bounds\n\nTriangle-inequality style bounds for `SDDRel` and `SDDOpRel`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/DistanceBounds.lean#L396-L434",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/DistanceBounds.lean",
+  "lines": [
+   396,
+   434
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.leftTensor_sub"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.polynomialAgreement_avg_eq_scalarDomain",
+  "source_name": "MIPStarRE.LDT.Preliminaries.polynomialAgreement_avg_eq_scalarDomain",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.polynomialAgreement_avg_eq_scalarDomain\n    (params : Parameters) [FieldModel params.q]\n    (g g' : Polynomial params) :\n    avgOver (uniformDistribution (Point params))\n      (fun u => if g u = g' u then (1 : Error) else 0) =\n      avgOver (uniformDistribution (Fin params.m → Scalar params))\n        (fun u =>\n          if MvPolynomial.eval u g.poly = MvPolynomial.eval u g'.poly then\n            (1 : Error)\n          else 0) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Reindex evaluation equality from coded `Point params` points to the scalar\nfunction space used by `schwartzZippel_individualDegree`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.PolynomialAgreement",
+  "module_doc": "/-!\n# Polynomial agreement bound (Step 5 hammer)\n\nPublic packaging of Schwartz-Zippel for the project's `Polynomial params`\nclass. This is the building block invoked at:\n\n* paper `references/ldt-paper/inductive_step.tex`, lines 119–133 — the\n  `md/q` term in the `mainFormal` self-consistency cascade,\n* paper `references/ldt-paper/commutativity-G.tex`, the analogous step in\n  `comMain` (issue #297).\n\nThe earlier private form of this lemma lived in\n`MIPStarRE.LDT.Commutativity.Scaffold.Symmetry`. Promoting it lets both `comMain`\nand `mainFormal` Step 5 (#425) share one proof.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`\n* `references/ldt-paper/preliminaries.tex`, Section 3\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/PolynomialAgreement.lean#L150-L194",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/PolynomialAgreement.lean",
+  "lines": [
+   150,
+   194
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_equiv",
+   "MIPStarRE.LDT.avgOver_congr"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 33,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.polynomialAgreement_avg_le_mdq",
+  "source_name": "MIPStarRE.LDT.Preliminaries.polynomialAgreement_avg_le_mdq",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.polynomialAgreement_avg_le_mdq\n    (params : Parameters) [FieldModel params.q]\n    (g g' : Polynomial params) (hneq : g ≠ g') :\n    avgOver (uniformDistribution (Point params))\n      (fun u => if g u = g' u then (1 : Error) else 0) ≤\n      (params.m * params.d : Error) / params.q := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Schwartz-Zippel bound for the pointwise agreement indicator of two distinct\nfull polynomial outcomes.\n\nPackages the `md/q` loss term that appears at:\n- `references/ldt-paper/inductive_step.tex` lines 119–133 (the `mainFormal`\n  Step 5 self-consistency cascade, issue #425),\n- `references/ldt-paper/commutativity-G.tex` (the `comMain` step, issue #297).\n\nBoth call sites previously held a private duplicate of this proof; this is the\nshared, reusable form.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.PolynomialAgreement",
+  "module_doc": "/-!\n# Polynomial agreement bound (Step 5 hammer)\n\nPublic packaging of Schwartz-Zippel for the project's `Polynomial params`\nclass. This is the building block invoked at:\n\n* paper `references/ldt-paper/inductive_step.tex`, lines 119–133 — the\n  `md/q` term in the `mainFormal` self-consistency cascade,\n* paper `references/ldt-paper/commutativity-G.tex`, the analogous step in\n  `comMain` (issue #297).\n\nThe earlier private form of this lemma lived in\n`MIPStarRE.LDT.Commutativity.Scaffold.Symmetry`. Promoting it lets both `comMain`\nand `mainFormal` Step 5 (#425) share one proof.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`\n* `references/ldt-paper/preliminaries.tex`, Section 3\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/PolynomialAgreement.lean#L196-L276",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/PolynomialAgreement.lean",
+  "lines": [
+   196,
+   276
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.polynomialAgreement_avg_eq_scalarDomain",
+   "MIPStarRE.LDT.Preliminaries.schwartzZippel_individualDegree"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 65,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.axisLinePolynomialAgreement_avg_eq_scalarDomain",
+  "source_name": "MIPStarRE.LDT.Preliminaries.axisLinePolynomialAgreement_avg_eq_scalarDomain",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.axisLinePolynomialAgreement_avg_eq_scalarDomain\n    (params : Parameters) [FieldModel params.q]\n    (f h : AxisLinePolynomial params) :\n    avgOver (uniformDistribution (Fq params))\n      (fun t => if f t = h t then (1 : Error) else 0) =\n      avgOver (uniformDistribution (Scalar params))\n        (fun x =>\n          if _root_.Polynomial.eval x f.poly = _root_.Polynomial.eval x h.poly then\n            (1 : Error)\n          else 0) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Reindex evaluation equality for degree-`d` line polynomials from coded\n`Fq params` parameters to the scalar field used by Mathlib's univariate\npolynomial API.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.PolynomialAgreement",
+  "module_doc": "/-!\n# Polynomial agreement bound (Step 5 hammer)\n\nPublic packaging of Schwartz-Zippel for the project's `Polynomial params`\nclass. This is the building block invoked at:\n\n* paper `references/ldt-paper/inductive_step.tex`, lines 119–133 — the\n  `md/q` term in the `mainFormal` self-consistency cascade,\n* paper `references/ldt-paper/commutativity-G.tex`, the analogous step in\n  `comMain` (issue #297).\n\nThe earlier private form of this lemma lived in\n`MIPStarRE.LDT.Commutativity.Scaffold.Symmetry`. Promoting it lets both `comMain`\nand `mainFormal` Step 5 (#425) share one proof.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`\n* `references/ldt-paper/preliminaries.tex`, Section 3\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/PolynomialAgreement.lean#L278-L325",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/PolynomialAgreement.lean",
+  "lines": [
+   278,
+   325
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_equiv",
+   "MIPStarRE.LDT.avgOver_congr"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.axisLinePolynomialAgreement_avg_le_mdq",
+  "source_name": "MIPStarRE.LDT.Preliminaries.axisLinePolynomialAgreement_avg_le_mdq",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.axisLinePolynomialAgreement_avg_le_mdq\n    (params : Parameters) [FieldModel params.q]\n    (f h : AxisLinePolynomial params) (hneq : f.poly ≠ h.poly) :\n    avgOver (uniformDistribution (Fq params))\n      (fun t => if f t = h t then (1 : Error) else 0) ≤\n      (params.m * params.d : Error) / params.q := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Schwartz--Zippel for two distinct degree-`d` axis-line answers, stated with\nthe ambient `m*d/q` loss used in the LDT estimates.  The underlying univariate\nroot count gives `d/q`, and `params.hm` deliberately pads it to the paper's\nambient `m*d/q` loss.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.PolynomialAgreement",
+  "module_doc": "/-!\n# Polynomial agreement bound (Step 5 hammer)\n\nPublic packaging of Schwartz-Zippel for the project's `Polynomial params`\nclass. This is the building block invoked at:\n\n* paper `references/ldt-paper/inductive_step.tex`, lines 119–133 — the\n  `md/q` term in the `mainFormal` self-consistency cascade,\n* paper `references/ldt-paper/commutativity-G.tex`, the analogous step in\n  `comMain` (issue #297).\n\nThe earlier private form of this lemma lived in\n`MIPStarRE.LDT.Commutativity.Scaffold.Symmetry`. Promoting it lets both `comMain`\nand `mainFormal` Step 5 (#425) share one proof.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`\n* `references/ldt-paper/preliminaries.tex`, Section 3\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/PolynomialAgreement.lean#L327-L404",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/PolynomialAgreement.lean",
+  "lines": [
+   327,
+   404
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.axisLinePolynomialAgreement_avg_eq_scalarDomain"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 68,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.polynomialCollision_sandwichTensor_le_mdq",
+  "source_name": "MIPStarRE.LDT.Preliminaries.polynomialCollision_sandwichTensor_le_mdq",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.polynomialCollision_sandwichTensor_le_mdq\n    {ιA ιB β : Type*}\n    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Fintype β]\n    (params : Parameters) [FieldModel params.q]\n    (ψ : QuantumState (ιA × ιB)) (hnorm : ψ.IsNormalized)\n    (Outer : SubMeas β ιA)\n    (Inner : SubMeas (Polynomial params) ιA) (Right : SubMeas (Polynomial params) ιB) :\n    (∑ gg : Polynomial params × Polynomial params, ∑ o : β,\n        (if gg.1 = gg.2 then 0 else\n          avgOver (uniformDistribution (Point params))\n            (fun u => if gg.1 u = gg.2 u then (1 : Error) else 0)) *\n          ev ψ\n            (leftTensor (ι₂ := ιB)\n                (Outer.outcome o * Inner.outcome gg.1 * Outer.outcome o) *\n              rightTensor (ι₁ := ιA) (Right.outcome gg.2))) ≤\n      (params.m * params.d : Error) / params.q := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open Classical"
+  ],
+  "docstring": "Tensor-form Schwartz-Zippel collision bound.\n\nFor each off-diagonal pair of polynomial outcomes, the point-collision\ncoefficient is bounded by `params.m * params.d / params.q` via\n`polynomialAgreement_avg_le_mdq`. The remaining tensor residual is bounded by\n`1` using `sandwichTensor_residual_sum_le_one`, so the whole nonnegative\ncollision sum has the same `m d / q` bound.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.PolynomialAgreement",
+  "module_doc": "/-!\n# Polynomial agreement bound (Step 5 hammer)\n\nPublic packaging of Schwartz-Zippel for the project's `Polynomial params`\nclass. This is the building block invoked at:\n\n* paper `references/ldt-paper/inductive_step.tex`, lines 119–133 — the\n  `md/q` term in the `mainFormal` self-consistency cascade,\n* paper `references/ldt-paper/commutativity-G.tex`, the analogous step in\n  `comMain` (issue #297).\n\nThe earlier private form of this lemma lived in\n`MIPStarRE.LDT.Commutativity.Scaffold.Symmetry`. Promoting it lets both `comMain`\nand `mainFormal` Step 5 (#425) share one proof.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`\n* `references/ldt-paper/preliminaries.tex`, Section 3\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/PolynomialAgreement.lean#L406-L483",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/PolynomialAgreement.lean",
+  "lines": [
+   406,
+   483
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.sandwichTensorSummand_nonneg",
+   "MIPStarRE.LDT.sandwichTensor_residual_sum_le_one",
+   "MIPStarRE.LDT.Preliminaries.polynomialAgreement_avg_le_mdq"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 54,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.totalDegree_le_mul_of_degreeOf_le",
+  "source_name": "MIPStarRE.LDT.Preliminaries.totalDegree_le_mul_of_degreeOf_le",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.totalDegree_le_mul_of_degreeOf_le {m d : ℕ} {K : Type*} [CommSemiring K]\n    {p : MvPolynomial (Fin m) K} (hdeg : ∀ i, p.degreeOf i ≤ d) :\n    p.totalDegree ≤ m * d := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open Finset Fintype",
+   "open scoped BigOperators",
+   "open MvPolynomial"
+  ],
+  "docstring": "If every individual degree of `p` is at most `d`, then the total degree of\n`p` is at most `m * d`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Polynomials",
+  "module_doc": "/-!\n# Polynomial preliminaries\n\nPackages the paper's low-individual-degree polynomial class together\nwith Schwartz-Zippel bounds as thin wrappers around Mathlib's existing\nmultivariate polynomial theorems.\n\n## References\n\n* `references/ldt-paper/preliminaries.tex`, Section 3 (Preliminaries)\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Polynomials.lean#L69-L87",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Polynomials.lean",
+  "lines": [
+   69,
+   87
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.schwartzZippel_totalDegree",
+  "source_name": "MIPStarRE.LDT.Preliminaries.schwartzZippel_totalDegree",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.schwartzZippel_totalDegree {m d : ℕ} {K : Type*} [Field K] [Fintype K]\n    [DecidableEq K] {g h : MvPolynomial (Fin m) K} (hneq : g ≠ h)\n    (hg : g.totalDegree ≤ d) (hh : h.totalDegree ≤ d) :\n    polynomialAgreementProbability m K g h ≤ d / Fintype.card K := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open Finset Fintype",
+   "open scoped BigOperators",
+   "open MvPolynomial"
+  ],
+  "docstring": "If two polynomials on `K^m` have total degree at most `d`, then the uniform\nagreement probability is at most `d / |K|`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Polynomials",
+  "module_doc": "/-!\n# Polynomial preliminaries\n\nPackages the paper's low-individual-degree polynomial class together\nwith Schwartz-Zippel bounds as thin wrappers around Mathlib's existing\nmultivariate polynomial theorems.\n\n## References\n\n* `references/ldt-paper/preliminaries.tex`, Section 3 (Preliminaries)\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Polynomials.lean#L89-L114",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Polynomials.lean",
+  "lines": [
+   89,
+   114
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.schwartzZippel_individualDegree",
+  "source_name": "MIPStarRE.LDT.Preliminaries.schwartzZippel_individualDegree",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.schwartzZippel_individualDegree {m d : ℕ} {K : Type*} [Field K] [Fintype K]\n    [DecidableEq K] (g h : polyFunc m K d) (hneq : g ≠ h) :\n    polynomialAgreementProbability m K g.1 h.1 ≤ ((m * d : ℕ) : ℚ≥0) / Fintype.card K := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open Finset Fintype",
+   "open scoped BigOperators",
+   "open MvPolynomial"
+  ],
+  "docstring": "Schwartz-Zippel for the paper's low-individual-degree class\n`\\polyfunc{m}{q}{d}`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Polynomials",
+  "module_doc": "/-!\n# Polynomial preliminaries\n\nPackages the paper's low-individual-degree polynomial class together\nwith Schwartz-Zippel bounds as thin wrappers around Mathlib's existing\nmultivariate polynomial theorems.\n\n## References\n\n* `references/ldt-paper/preliminaries.tex`, Section 3 (Preliminaries)\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Polynomials.lean#L116-L131",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Polynomials.lean",
+  "lines": [
+   116,
+   131
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.totalDegree_le_mul_of_degreeOf_le",
+   "MIPStarRE.LDT.Preliminaries.schwartzZippel_totalDegree"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.otherTwoNotionsOfSelfConsistency",
+  "source_name": "MIPStarRE.LDT.Preliminaries.otherTwoNotionsOfSelfConsistency",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.otherTwoNotionsOfSelfConsistency {Question Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState (ι × ι))\n    (𝒟 : Distribution Question)\n    (A : IdxSubMeas Question Outcome ι) (δ : Error) :\n    BipartiteSSCRel ψ 𝒟 A δ →\n      @ConsRel Question Outcome ι ι _ _ _ _ _ ψ 𝒟 A A δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`prop:other-two-notions-of-self-consistency`.\n\nProof:\n1. Expand `qConsDefect` for the left/right lifts.\n2. Bound the total-overlap term `⟨ψ|A ⊗ A|ψ⟩` by `⟨ψ|A ⊗ I|ψ⟩`\n   using `A.total ≤ I`.\n3. The remaining expression is exactly the bipartite SSC defect.\n4. Average over questions and use the hypothesis.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.Core",
+  "module_doc": "/-!\n# Self-consistency: core squared-mass bounds\n\nSquared-mass lower bound lemma derived from bipartite self-consistency on\npermutation-invariant states (`prop:cool-prop`).\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SelfConsistency/Core.lean#L224-L312",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SelfConsistency/Core.lean",
+  "lines": [
+   224,
+   312
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.bipartiteConsError_eq_consError_placed"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 73,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.bipartiteSSCRel_of_consRel_self_measurement",
+  "source_name": "MIPStarRE.LDT.Preliminaries.bipartiteSSCRel_of_consRel_self_measurement",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.bipartiteSSCRel_of_consRel_self_measurement {Question Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState (ι × ι))\n    (𝒟 : Distribution Question)\n    (A : IdxMeas Question Outcome ι) (δ : Error) :\n    @ConsRel Question Outcome ι ι _ _ _ _ _ ψ 𝒟\n        (IdxMeas.toIdxSubMeas A) (IdxMeas.toIdxSubMeas A) δ →\n      BipartiteSSCRel ψ 𝒟 (IdxMeas.toIdxSubMeas A) δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Diagonal consistency for a full measurement is exactly bipartite strong\nself-consistency.\n\nThis is the converse of `otherTwoNotionsOfSelfConsistency` in the special case\nwhere the indexed family is measurement-valued.  Completeness identifies both\ntotal-mass terms with the identity operator, so the self-`ConsRel` defect\n`G ⊗ I ≃ I ⊗ G` and the diagonal SSC defect have the same questionwise\nquantity.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.Core",
+  "module_doc": "/-!\n# Self-consistency: core squared-mass bounds\n\nSquared-mass lower bound lemma derived from bipartite self-consistency on\npermutation-invariant states (`prop:cool-prop`).\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SelfConsistency/Core.lean#L314-L342",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SelfConsistency/Core.lean",
+  "lines": [
+   314,
+   342
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.selfConsistencyImpliesDataProcessing",
+  "source_name": "MIPStarRE.LDT.Preliminaries.selfConsistencyImpliesDataProcessing",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.selfConsistencyImpliesDataProcessing\n    {Question α β : Type*} {ι : Type*}\n    [Fintype ι] [DecidableEq ι] [Fintype α] [Fintype β]\n    (ψ : QuantumState (ι × ι))\n    (hperm : PermInvState ψ)\n    (hψ : ψ.IsNormalized)\n    (𝒟 : Distribution Question)\n    (h𝒟 : ∑ q ∈ 𝒟.support, 𝒟.weight q ≤ 1)\n    (A : IdxSubMeas Question α ι)\n    (P : IdxProjSubMeas Question α ι)\n    (δ ε : Error) (f : Question → α → β) :\n    BipartiteSSCRel ψ 𝒟 A δ →\n    SDDRel ψ 𝒟\n      (IdxSubMeas.liftLeft (IdxProjSubMeas.toIdxSubMeas P))\n      (IdxSubMeas.liftLeft A) ε →\n      SDDRel ψ 𝒟\n        (IdxSubMeas.liftLeft (fun q => postprocess ((P q).toSubMeas) (f q)))\n        (IdxSubMeas.liftLeft (fun q => postprocess (A q) (f q)))\n        (8 * δ + 8 * Real.sqrt ε) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`prop:self-consistency-implies-data-processing`.\n\nA projective approximation to a strongly self-consistent family remains close\nafter postprocessing on the left register. The proof combines the wrong-side\nestimate, self-consistency after evaluation, and the `SDDRel` triangle\ninequality.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.DataProcessing",
+  "module_doc": "/-!\n# Self-consistency: data processing\n\n`prop:self-consistency-implies-data-processing`: self-consistency implies that\npostprocessing a measurement cannot substantially decrease consistency.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SelfConsistency/DataProcessing.lean#L326-L393",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SelfConsistency/DataProcessing.lean",
+  "lines": [
+   326,
+   393
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.stateDependentDistanceRel_triangle",
+   "MIPStarRE.LDT.Preliminaries.twoNotionsOfSelfConsistencyAfterEvaluation",
+   "MIPStarRE.LDT.Preliminaries.sddRel_symm"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 43,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.twoNotionsOfSelfConsistencyAfterEvaluation",
+  "source_name": "MIPStarRE.LDT.Preliminaries.twoNotionsOfSelfConsistencyAfterEvaluation",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.twoNotionsOfSelfConsistencyAfterEvaluation\n    {Question α β : Type*} {ι : Type*}\n    [Fintype ι] [DecidableEq ι] [Fintype α] [Fintype β]\n    (ψ : QuantumState (ι × ι))\n    (hperm : PermInvState ψ)\n    (𝒟 : Distribution Question)\n    (A : IdxSubMeas Question α ι) (δ : Error) (f : Question → α → β) :\n    BipartiteSSCRel ψ 𝒟 A δ →\n      SDDRel ψ 𝒟\n        (IdxSubMeas.liftLeft (fun q => postprocess (A q) (f q)))\n        (IdxSubMeas.liftRight (fun q => postprocess (A q) (f q)))\n        (2 * δ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`prop:two-notions-of-self-consistency-after-evaluation`.\n\nProof:\n1. Question-dependent postprocessing preserves the total mass and can only\n   increase the diagonal overlap term\n   `∑_b ⟨ψ|A_[f_q(a)=b] ⊗ A_[f_q(a)=b]|ψ⟩`.\n2. Hence bipartite SSC transfers from `A` to the postprocessed family.\n3. Apply `twoNotionsOfSelfConsistency` to the postprocessed family.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.SelfConsistency.Extensions",
+  "module_doc": "/-!\n# Self-consistency: strategy-level extensions\n\nGood-strategy characterization lemmas (`lem:good-strategy-characterization`)\nbundling the axis-parallel, self-consistency, and diagonal branches.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SelfConsistency/Extensions.lean#L132-L233",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/SelfConsistency/Extensions.lean",
+  "lines": [
+   132,
+   233
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.Preliminaries.twoNotionsOfSelfConsistency",
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 82,
+  "is_target": false
+ }
+]

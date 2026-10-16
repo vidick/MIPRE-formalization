@@ -1,0 +1,620 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.params_pdom",
+  "source_name": "MIPRE.AnswerReduction.params_pdom",
+  "formal_statement": "theorem MIPRE.AnswerReduction.params_pdom (PD : PcpDecider) (R : Polynomial ℕ) : ∃ c m e, ∀ {W X : ℕ},\n    ParamsBound PD R → ∀ (lam mu sigma n : ℕ), 1 ≤ X → arQ lam mu n ≤ W → sigma ≤ W → n ≤ W →\n    PDom W X mu c m e (20 * ((arPar PD lam mu sigma n).k + (arPar PD lam mu sigma n).m +\n      (arPar PD lam mu sigma n).s) + 20) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Pipeline MIPRE.SAT MIPRE.AnswerReduction.StageProg"
+  ],
+  "docstring": "**The PCP's parameters are dominated**, with the contexts that hold them.",
+  "module": "MIPRE.Background.AnswerReduction.ParamsCost",
+  "module_doc": "/-!\n# The running time of the parameter routine\n\nPiece AR-3f of `planning/answer-reduction.md`. The routine `parProg` of answer reduction computes\nthe PCP's parameters `pd n` by loops whose lengths are the *values* `λ`, `n`, `μ`, `Q = (λn + 1)^μ`\nand the parameters `k, m, s`; so its time is polynomial in those values, and dominated in the\nsense of `MIPRE.Pipeline.PDom` by any `W ≥ Q, λ, σ, n` at `K = μ` (`parProg_time`), provided the\nPCP's parameters are polynomial in `(log n, log T, Q, σ)` (`ParamsBound`), as the paper's\n`pcpparams` are. The bit length of `T = 2^{(Q + 5)(μ + 1)}` is `(Q + 5)(μ + 1) + 1`, a product of a\nquantity below `W` and one below `K + 1`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/ParamsCost.lean#L154-L172",
+  "source_path": "MIPRE/Background/AnswerReduction/ParamsCost.lean",
+  "lines": [
+   154,
+   172
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Pipeline.PDom.poly"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.ctxQT_pdom",
+  "source_name": "MIPRE.AnswerReduction.ctxQT_pdom",
+  "formal_statement": "theorem MIPRE.AnswerReduction.ctxQT_pdom : ∃ c m e, ∀ {W X : ℕ} (lam mu sigma n : ℕ), 1 ≤ X → arQ lam mu n ≤ W →\n    lam ≤ W → sigma ≤ W → n ≤ W →\n    PDom W X mu c m e (Data.cons (encode (arQ lam mu n, tPcp lam mu n))\n      (.cons (encode (lam, mu, sigma)) (encode n))).size := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Pipeline MIPRE.SAT MIPRE.AnswerReduction.StageProg"
+  ],
+  "docstring": "The context after the budgets, `((Q, T), (λ, μ, σ), n)`, is dominated.",
+  "module": "MIPRE.Background.AnswerReduction.ParamsCost",
+  "module_doc": "/-!\n# The running time of the parameter routine\n\nPiece AR-3f of `planning/answer-reduction.md`. The routine `parProg` of answer reduction computes\nthe PCP's parameters `pd n` by loops whose lengths are the *values* `λ`, `n`, `μ`, `Q = (λn + 1)^μ`\nand the parameters `k, m, s`; so its time is polynomial in those values, and dominated in the\nsense of `MIPRE.Pipeline.PDom` by any `W ≥ Q, λ, σ, n` at `K = μ` (`parProg_time`), provided the\nPCP's parameters are polynomial in `(log n, log T, Q, σ)` (`ParamsBound`), as the paper's\n`pcpparams` are. The bit length of `T = 2^{(Q + 5)(μ + 1)}` is `(Q + 5)(μ + 1) + 1`, a product of a\nquantity below `W` and one below `K + 1`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/ParamsCost.lean#L174-L198",
+  "source_path": "MIPRE/Background/AnswerReduction/ParamsCost.lean",
+  "lines": [
+   174,
+   198
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 13,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.parCore_time",
+  "source_name": "MIPRE.AnswerReduction.parCore_time",
+  "formal_statement": "theorem MIPRE.AnswerReduction.parCore_time (PD : PcpDecider) (R : Polynomial ℕ) : ∃ c m e, ∀ {W X : ℕ},\n    ParamsBound PD R → ∀ (lam mu sigma n : ℕ), 1 ≤ X →\n    arQ lam mu n ≤ W → lam ≤ W → sigma ≤ W → n ≤ W →\n    PRuns W X mu c m e (core PD) (.cons (encode (lam, mu, sigma)) (encode n))\n      ((family PD lam mu sigma).pd n) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Pipeline MIPRE.SAT MIPRE.AnswerReduction.StageProg",
+   "open ParRoutine"
+  ],
+  "docstring": "**The running time of the routine's core**, on `((λ, μ, σ), n)`.",
+  "module": "MIPRE.Background.AnswerReduction.ParamsCost",
+  "module_doc": "/-!\n# The running time of the parameter routine\n\nPiece AR-3f of `planning/answer-reduction.md`. The routine `parProg` of answer reduction computes\nthe PCP's parameters `pd n` by loops whose lengths are the *values* `λ`, `n`, `μ`, `Q = (λn + 1)^μ`\nand the parameters `k, m, s`; so its time is polynomial in those values, and dominated in the\nsense of `MIPRE.Pipeline.PDom` by any `W ≥ Q, λ, σ, n` at `K = μ` (`parProg_time`), provided the\nPCP's parameters are polynomial in `(log n, log T, Q, σ)` (`ParamsBound`), as the paper's\n`pcpparams` are. The bit length of `T = 2^{(Q + 5)(μ + 1)}` is `(Q + 5)(μ + 1) + 1`, a product of a\nquantity below `W` and one below `K + 1`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/ParamsCost.lean#L200-L269",
+  "source_path": "MIPRE/Background/AnswerReduction/ParamsCost.lean",
+  "lines": [
+   200,
+   269
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.ParRoutine.budCore_closed",
+   "MIPRE.AnswerReduction.post6_apply",
+   "MIPRE.AnswerReduction.budCore_time",
+   "MIPRE.AnswerReduction.params_pdom",
+   "MIPRE.AnswerReduction.ctxQT_pdom",
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.Cost.seqProg_closed",
+   "MIPRE.Cost.seqProg_runs",
+   "MIPRE.Pipeline.PDom.poly",
+   "MIPRE.Pipeline.toUnaryProg_time",
+   "MIPRE.Pipeline.PRuns.stage",
+   "MIPRE.Pipeline.stageProg_closed"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 63,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.parProg_time",
+  "source_name": "MIPRE.AnswerReduction.parProg_time",
+  "formal_statement": "theorem MIPRE.AnswerReduction.parProg_time (PD : PcpDecider) (R : Polynomial ℕ) : ∃ c m e, ∀ {W X : ℕ},\n    ParamsBound PD R → ∀ (lam mu sigma n : ℕ), 1 ≤ X →\n    arQ lam mu n ≤ W → lam ≤ W → sigma ≤ W → n ≤ W →\n    PRuns W X mu c m e (parProg PD lam mu sigma) (encode n) ((family PD lam mu sigma).pd n) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Pipeline MIPRE.SAT MIPRE.AnswerReduction.StageProg"
+  ],
+  "docstring": "**The running time of the parameter routine** `parProg`, on the index `n`.",
+  "module": "MIPRE.Background.AnswerReduction.ParamsCost",
+  "module_doc": "/-!\n# The running time of the parameter routine\n\nPiece AR-3f of `planning/answer-reduction.md`. The routine `parProg` of answer reduction computes\nthe PCP's parameters `pd n` by loops whose lengths are the *values* `λ`, `n`, `μ`, `Q = (λn + 1)^μ`\nand the parameters `k, m, s`; so its time is polynomial in those values, and dominated in the\nsense of `MIPRE.Pipeline.PDom` by any `W ≥ Q, λ, σ, n` at `K = μ` (`parProg_time`), provided the\nPCP's parameters are polynomial in `(log n, log T, Q, σ)` (`ParamsBound`), as the paper's\n`pcpparams` are. The bit length of `T = 2^{(Q + 5)(μ + 1)}` is `(Q + 5)(μ + 1) + 1`, a product of a\nquantity below `W` and one below `K + 1`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/ParamsCost.lean#L271-L288",
+  "source_path": "MIPRE/Background/AnswerReduction/ParamsCost.lean",
+  "lines": [
+   271,
+   288
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-typed-sampler",
+    "env": "lemma",
+    "title": "The typed answer-reduced sampler",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.ParRoutine.core_closed",
+   "MIPRE.AnswerReduction.parCore_time",
+   "MIPRE.Cost.hardcode_time"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.Pcp.pt6_block",
+  "source_name": "MIPRE.AnswerReduction.Pcp.pt6_block",
+  "formal_statement": "theorem MIPRE.AnswerReduction.Pcp.pt6_block (i : Fin 5) (j : Fin P.m) :\n    pt6 P ⟨i * P.m + j, by\n      have h1 : (i : ℕ) * P.m ≤ 4 * P.m := Nat.mul_le_mul_right _ (Nat.lt_succ_iff.mp i.isLt)\n      have h2 : (j : ℕ) < P.m := j.isLt\n      simp only [PcpParams.m']\n      omega⟩ = .pt i j := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.AnswerReduction.Pcp",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL MIPRE.SAT",
+   "variable (P : PcpParams)"
+  ],
+  "docstring": "The `j`-th coordinate of the `i`-th block of `V_{6,pt}` is the `j`-th coordinate of\n`V_{i,pt}`.",
+  "module": "MIPRE.Background.AnswerReduction.PcpPresentation",
+  "module_doc": "/-!\n# The PCP sampler of answer reduction, over `F_q`\n\nPiece AR-3a of `planning/answer-reduction.md`: the typed PCP sampler `Ŝ^pcp` of the paper's\n`sec:ar-verifier` (`ld_compiler.tex`, `eq:V-pcp`), as CL presentations over `F_q`.\n\nThe ambient space is\n`V^pcp = ⊕_{i≤5} (V_{i,pt} ⊕ V_{i,coord} ⊕ V_{i,dir}) ⊕ V_{aux,pt} ⊕ V_{6,coord} ⊕ V_{aux,dir}`,\nwith coordinates `Coord P` (`10m + 2s + 16` of them, `card_coord`). There are six copies of the\nseeded low-degree test on it (`regs`, `regs6`):\n\n* copy `i ≤ 5` is the test in `m` variables on its own three registers;\n* copy `6` is the test in `m' = 5m + 5 + s` variables whose point and direction registers are the\n  *concatenations* `V_{6,pt} = ⊕_{i≤5} V_{i,pt} ⊕ V_{aux,pt}` and `V_{6,dir}` likewise, with its\n  own seed coordinate.\n\nThe overlap is the point of the construction: the `i`-th block of the sixth copy's point, in the\nblock order `SAT.PcpParams.block` of the PCP, is the `i`-th copy's point (`block_ptOf_regs6`).\nThat is what the answer-reduced decider's consistency subtests compare.\n\nThe types are `Fin 6 × LIDT.CL.Ty`, eighteen of them, each presented in three levels (`pres`),\nexactly on the whole space (`pres_exactlyOn`), with full evaluation the seeded question of its\ncopy (`question_eval`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/PcpPresentation.lean#L148-L169",
+  "source_path": "MIPRE/Background/AnswerReduction/PcpPresentation.lean",
+  "lines": [
+   148,
+   169
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.progs_size_pdom",
+  "source_name": "MIPRE.AnswerReduction.progs_size_pdom",
+  "formal_statement": "theorem MIPRE.AnswerReduction.progs_size_pdom (PD : PcpDecider) : ∃ c m e, ∀ {W X : ℕ} (sp : Prog) (lam mu sigma : ℕ),\n    1 ≤ X → esize sp ≤ W → lam ≤ W → sigma ≤ W →\n    PDom W X mu c m e (esize (OracleSampler.prog sp) + esize (parProg PD lam mu sigma)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.Cost MIPRE.CL MIPRE.Pipeline MIPRE.SAT MIPRE.AnswerReduction.Pcp"
+  ],
+  "docstring": "The sizes of the two programs the product hardcodes are dominated.",
+  "module": "MIPRE.Background.AnswerReduction.SamplerCost",
+  "module_doc": "/-!\n# The running time of the typed answer-reduced sampler\n\nPiece AR-3f of `planning/answer-reduction.md`, for `lem:ar-typed-sampler`. The typed sampler is\nthe product of the oracularized sampler of the input sampler and the directly answered PCP\nsampler, whose parameters the routine `parProg` computes\n(`MIPRE/Background/AnswerReduction/ArSampler`).\nIts time at index `n` is dominated by `(C (W + 1)^M)^{μ + 1}` at degree `E (μ + 1)`\n(`typedSampler_time`) for any `W` above `Q = (λn + 1)^μ`, `λ`, `σ`, `n` and the input sampler's\nsize, when the input sampler runs within `Q (|d| + 1)^μ`: the product's accounting\n(`CL.ProductSampler.prog_time`) with the oracularized sampler's (`oracleSampler_timeBound`) and the\nroutine's (`parProg_time`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SamplerCost.lean#L30-L49",
+  "source_path": "MIPRE/Background/AnswerReduction/SamplerCost.lean",
+  "lines": [
+   30,
+   49
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 12,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.typedSampler_time",
+  "source_name": "MIPRE.AnswerReduction.typedSampler_time",
+  "formal_statement": "theorem MIPRE.AnswerReduction.typedSampler_time (ℓ : ℕ) (PD : PcpDecider) (R : Polynomial ℕ) : ∃ C M E, ∀ {W : ℕ}\n    (S : Sampler (ℓ + 1)) (lam mu sigma n : ℕ), ParamsBound PD R →\n    arQ lam mu n ≤ W → lam ≤ W → sigma ≤ W → n ≤ W → esize S.prog ≤ W →\n    S.TimeBoundAt n (arQ lam mu n) mu →\n    (typedSampler S PD lam mu sigma).TimeBoundAt n ((C * (W + 1) ^ M) ^ (mu + 1))\n      (E * (mu + 1)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.Cost MIPRE.CL MIPRE.Pipeline MIPRE.SAT MIPRE.AnswerReduction.Pcp"
+  ],
+  "docstring": "**The running time of the typed answer-reduced sampler.**",
+  "module": "MIPRE.Background.AnswerReduction.SamplerCost",
+  "module_doc": "/-!\n# The running time of the typed answer-reduced sampler\n\nPiece AR-3f of `planning/answer-reduction.md`, for `lem:ar-typed-sampler`. The typed sampler is\nthe product of the oracularized sampler of the input sampler and the directly answered PCP\nsampler, whose parameters the routine `parProg` computes\n(`MIPRE/Background/AnswerReduction/ArSampler`).\nIts time at index `n` is dominated by `(C (W + 1)^M)^{μ + 1}` at degree `E (μ + 1)`\n(`typedSampler_time`) for any `W` above `Q = (λn + 1)^μ`, `λ`, `σ`, `n` and the input sampler's\nsize, when the input sampler runs within `Q (|d| + 1)^μ`: the product's accounting\n(`CL.ProductSampler.prog_time`) with the oracularized sampler's (`oracleSampler_timeBound`) and the\nroutine's (`parProg_time`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SamplerCost.lean#L51-L69",
+  "source_path": "MIPRE/Background/AnswerReduction/SamplerCost.lean",
+  "lines": [
+   51,
+   69
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-typed-sampler",
+    "env": "lemma",
+    "title": "The typed answer-reduced sampler",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.parProg_time",
+   "MIPRE.AnswerReduction.progs_size_pdom",
+   "MIPRE.CL.ProductSampler.prog_time",
+   "MIPRE.OracleSampler.oracleSampler_timeBound"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.cl_accepts_of_side",
+  "source_name": "MIPRE.AnswerReduction.cl_accepts_of_side",
+  "formal_statement": "theorem MIPRE.AnswerReduction.cl_accepts_of_side {r : Role} {i : Fin 5} (hr : LDStep r i) {τ' : Ty}\n    (hτ' : τ' ≠ .point) {x x' : X} {y y' : Coord P → F} {u v : Ans P F}\n    (h : side S S' check ((r, (i.castSucc, .point)), x, y) ((r, (i.castSucc, τ')), x', y') u v\n      = true) :\n    CL.accepts hm (q1 S i .point y) (q1 S i τ' y') (ans1 u) (ans1 v) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "variable {P : PcpParams} {F : Type*} [Field F] [Fintype F] [DecidableEq F] [NeZero P.m]"
+  ],
+  "docstring": "Step 3 or step 4(b), read off one side: a point answer of copy `i` against a line answer of\nthe same copy, at a role pair where the copy is tested.",
+  "module": "MIPRE.Background.AnswerReduction.SoundCopy",
+  "module_doc": "/-!\n# Soundness of answer reduction: the low-degree test inside the predicate\n\nPiece AR-5b of `planning/answer-reduction.md` (`claim:ar-3`, `claim:ar-4`): on the nine type\npairs of one copy of the low-degree test, at a role pair where the answer-reduced predicate runs\nthat copy's test, acceptance of the predicate implies acceptance of the seeded CL test on the\nquestions the copy's presentation computes (`cl_accepts_of_accepts`, `cl_accepts_of_accepts6`).\nThe copies tested are copy `v` for the isolated player `v` (step 3), copies `3`, `4`, `5` and the\nsixth for two oracles (step 4); an oracle's copies `1` and `2` are tested only through the\nisolated players.\n\nThe CL test's equality subtest on equal types is the predicate's step 1, its format check is the\npreamble, and its point-against-line subtests are steps 3 and 4, in either order of the players\n(`CL.accepts_comm`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundCopy.lean#L73-L90",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundCopy.lean",
+  "lines": [
+   73,
+   90
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.cl_accepts_of_accepts",
+  "source_name": "MIPRE.AnswerReduction.cl_accepts_of_accepts",
+  "formal_statement": "theorem MIPRE.AnswerReduction.cl_accepts_of_accepts {r : Role} {i : Fin 5} (hr : LDStep r i) (τ τ' : Ty) {x x' : X}\n    {y y' : Coord P → F} {u v : Ans P F}\n    (h : accepts S S' check ((r, (i.castSucc, τ)), x, y) ((r, (i.castSucc, τ')), x', y') u v\n      = true) :\n    CL.accepts hm (q1 S i τ y) (q1 S i τ' y') (ans1 u) (ans1 v) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "variable {P : PcpParams} {F : Type*} [Field F] [Fintype F] [DecidableEq F] [NeZero P.m]"
+  ],
+  "docstring": "**The copy's test inside the predicate**: on the nine type pairs of copy `i ≤ 5`, at a role pair\nwhere the copy is tested, acceptance of the answer-reduced predicate implies acceptance of the\nseeded CL test on the questions the copy's registers carry.",
+  "module": "MIPRE.Background.AnswerReduction.SoundCopy",
+  "module_doc": "/-!\n# Soundness of answer reduction: the low-degree test inside the predicate\n\nPiece AR-5b of `planning/answer-reduction.md` (`claim:ar-3`, `claim:ar-4`): on the nine type\npairs of one copy of the low-degree test, at a role pair where the answer-reduced predicate runs\nthat copy's test, acceptance of the predicate implies acceptance of the seeded CL test on the\nquestions the copy's presentation computes (`cl_accepts_of_accepts`, `cl_accepts_of_accepts6`).\nThe copies tested are copy `v` for the isolated player `v` (step 3), copies `3`, `4`, `5` and the\nsixth for two oracles (step 4); an oracle's copies `1` and `2` are tested only through the\nisolated players.\n\nThe CL test's equality subtest on equal types is the predicate's step 1, its format check is the\npreamble, and its point-against-line subtests are steps 3 and 4, in either order of the players\n(`CL.accepts_comm`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundCopy.lean#L92-L120",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundCopy.lean",
+  "lines": [
+   92,
+   120
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.cl_accepts_of_side"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.cl_accepts_of_accepts6",
+  "source_name": "MIPRE.AnswerReduction.cl_accepts_of_accepts6",
+  "formal_statement": "theorem MIPRE.AnswerReduction.cl_accepts_of_accepts6 {i : Fin 6} (hi : (i : ℕ) = 5) (τ τ' : Ty) {x x' : X}\n    {y y' : Coord P → F} {u v : Ans P F}\n    (h : accepts S S' check ((.oracle, (i, τ)), x, y) ((.oracle, (i, τ')), x', y') u v = true) :\n    CL.accepts hm' (q6 S' τ y) (q6 S' τ' y') (ans6 u) (ans6 v) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "variable {P : PcpParams} {F : Type*} [Field F] [Fintype F] [DecidableEq F] [NeZero P.m]"
+  ],
+  "docstring": "**The sixth copy's test inside the predicate**, for two oracles.",
+  "module": "MIPRE.Background.AnswerReduction.SoundCopy",
+  "module_doc": "/-!\n# Soundness of answer reduction: the low-degree test inside the predicate\n\nPiece AR-5b of `planning/answer-reduction.md` (`claim:ar-3`, `claim:ar-4`): on the nine type\npairs of one copy of the low-degree test, at a role pair where the answer-reduced predicate runs\nthat copy's test, acceptance of the predicate implies acceptance of the seeded CL test on the\nquestions the copy's presentation computes (`cl_accepts_of_accepts`, `cl_accepts_of_accepts6`).\nThe copies tested are copy `v` for the isolated player `v` (step 3), copies `3`, `4`, `5` and the\nsixth for two oracles (step 4); an oracle's copies `1` and `2` are tested only through the\nisolated players.\n\nThe CL test's equality subtest on equal types is the predicate's step 1, its format check is the\npreamble, and its point-against-line subtests are steps 3 and 4, in either order of the players\n(`CL.accepts_comm`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundCopy.lean#L136-L161",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundCopy.lean",
+  "lines": [
+   136,
+   161
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 4,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.condFail_OO_le",
+  "source_name": "MIPRE.AnswerReduction.condFail_OO_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.condFail_OO_le (y : Fin (V.sampler.dim n) → 𝔽₂) :\n    condFail (oGame V n B') T.ψ (MAo V n P hk S S' check B T B' dec)\n        (MBo V n P hk S S' check B T B' dec) (.oracle, y) (.oracle, y)\n      ≤ gcA V n P hk S S' check B T B' dec y + gcB V n P hk S S' check B T B' dec y\n        + dis T.ψ ((JA V n P hk S S' check B T y).toPOVM ())\n          ((JB V n P hk S S' check B T y).toPOVM ()) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "open scoped ComplexOrder",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**Two oracles**: the two game checks and the disagreement of the two `J`.",
+  "module": "MIPRE.Background.AnswerReduction.SoundDecoded",
+  "module_doc": "/-!\n# Soundness of answer reduction: the decoded strategy\n\nPiece AR-5e of `planning/answer-reduction.md` (`lem:ar-ora`): a POVM strategy for the typed\noracularized game of the input verifier, on the typed strategy's state. An oracle measures the\nextracted simultaneous measurement `J` and answers the pair decoded from the first two answer\npolynomials its outcome carries on their blocks (`decO`); an isolated player measures the\nextracted `G` of its own copy and answers the decoded polynomial (`decV`). The decoder `dec` is a\nparameter here.\n\nEach of the nine ordered pairs of roles fails at most (`condFail_OO_le`, `condFail_Ov_le`, ...):\n\n* the game check of an oracle's decoded pair, which fails only if `J`'s outcome is not placed on\n  its blocks or the PCP check rejects it at at least half the points (the hypothesis `hgc`, the\n  contrapositive of the PCP's soundness): `gcA_le`;\n* the disagreement of the decoded answers, which is at most that of the polynomials.\n\nThe failure of the decoded strategy is then at most a constant times the errors of\n`SoundRelations`, `SoundPoly` and `SoundGameCheck` (`one_sub_povmValue_decoded_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundDecoded.lean#L119-L148",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundDecoded.lean",
+  "lines": [
+   119,
+   148
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb_mapB",
+   "MIPRE.sum_bornProb_mapA",
+   "MIPRE.condFail_le_of",
+   "MIPRE.dis_map_le",
+   "MIPRE.POVM.map_map"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.condFail_Oa_le",
+  "source_name": "MIPRE.AnswerReduction.condFail_Oa_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.condFail_Oa_le (x : Fin (V.sampler.dim n) → 𝔽₂) :\n    condFail (oGame V n B') T.ψ (MAo V n P hk S S' check B T B' dec)\n        (MBo V n P hk S S' check B T B' dec)\n        (.oracle, (roleFamily (V.sampler.cl n) .oracle).eval x)\n        (.alice, (roleFamily (V.sampler.cl n) .alice).eval x)\n      ≤ gcA V n P hk S S' check B T B' dec ((roleFamily (V.sampler.cl n) .oracle).eval x)\n        + disPolyA V n P hk S S' check B T 0 x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "open scoped ComplexOrder",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**An oracle and Alice**: the oracle's game check and the disagreement of its first answer\npolynomial with Alice's.",
+  "module": "MIPRE.Background.AnswerReduction.SoundDecoded",
+  "module_doc": "/-!\n# Soundness of answer reduction: the decoded strategy\n\nPiece AR-5e of `planning/answer-reduction.md` (`lem:ar-ora`): a POVM strategy for the typed\noracularized game of the input verifier, on the typed strategy's state. An oracle measures the\nextracted simultaneous measurement `J` and answers the pair decoded from the first two answer\npolynomials its outcome carries on their blocks (`decO`); an isolated player measures the\nextracted `G` of its own copy and answers the decoded polynomial (`decV`). The decoder `dec` is a\nparameter here.\n\nEach of the nine ordered pairs of roles fails at most (`condFail_OO_le`, `condFail_Ov_le`, ...):\n\n* the game check of an oracle's decoded pair, which fails only if `J`'s outcome is not placed on\n  its blocks or the PCP check rejects it at at least half the points (the hypothesis `hgc`, the\n  contrapositive of the PCP's soundness): `gcA_le`;\n* the disagreement of the decoded answers, which is at most that of the polynomials.\n\nThe failure of the decoded strategy is then at most a constant times the errors of\n`SoundRelations`, `SoundPoly` and `SoundGameCheck` (`one_sub_povmValue_decoded_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundDecoded.lean#L195-L230",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundDecoded.lean",
+  "lines": [
+   195,
+   230
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb_mapB",
+   "MIPRE.sum_bornProb_mapA",
+   "MIPRE.condFail_le_of",
+   "MIPRE.dis_map_le",
+   "MIPRE.POVM.map_map"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.condFail_Ob_le",
+  "source_name": "MIPRE.AnswerReduction.condFail_Ob_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.condFail_Ob_le (x : Fin (V.sampler.dim n) → 𝔽₂) :\n    condFail (oGame V n B') T.ψ (MAo V n P hk S S' check B T B' dec)\n        (MBo V n P hk S S' check B T B' dec)\n        (.oracle, (roleFamily (V.sampler.cl n) .oracle).eval x)\n        (.bob, (roleFamily (V.sampler.cl n) .bob).eval x)\n      ≤ gcA V n P hk S S' check B T B' dec ((roleFamily (V.sampler.cl n) .oracle).eval x)\n        + disPolyA V n P hk S S' check B T 1 x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "open scoped ComplexOrder",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**An oracle and Bob.**",
+  "module": "MIPRE.Background.AnswerReduction.SoundDecoded",
+  "module_doc": "/-!\n# Soundness of answer reduction: the decoded strategy\n\nPiece AR-5e of `planning/answer-reduction.md` (`lem:ar-ora`): a POVM strategy for the typed\noracularized game of the input verifier, on the typed strategy's state. An oracle measures the\nextracted simultaneous measurement `J` and answers the pair decoded from the first two answer\npolynomials its outcome carries on their blocks (`decO`); an isolated player measures the\nextracted `G` of its own copy and answers the decoded polynomial (`decV`). The decoder `dec` is a\nparameter here.\n\nEach of the nine ordered pairs of roles fails at most (`condFail_OO_le`, `condFail_Ov_le`, ...):\n\n* the game check of an oracle's decoded pair, which fails only if `J`'s outcome is not placed on\n  its blocks or the PCP check rejects it at at least half the points (the hypothesis `hgc`, the\n  contrapositive of the PCP's soundness): `gcA_le`;\n* the disagreement of the decoded answers, which is at most that of the polynomials.\n\nThe failure of the decoded strategy is then at most a constant times the errors of\n`SoundRelations`, `SoundPoly` and `SoundGameCheck` (`one_sub_povmValue_decoded_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundDecoded.lean#L232-L266",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundDecoded.lean",
+  "lines": [
+   232,
+   266
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb_mapB",
+   "MIPRE.sum_bornProb_mapA",
+   "MIPRE.condFail_le_of",
+   "MIPRE.dis_map_le",
+   "MIPRE.POVM.map_map"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.condFail_aO_le",
+  "source_name": "MIPRE.AnswerReduction.condFail_aO_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.condFail_aO_le (x : Fin (V.sampler.dim n) → 𝔽₂) :\n    condFail (oGame V n B') T.ψ (MAo V n P hk S S' check B T B' dec)\n        (MBo V n P hk S S' check B T B' dec)\n        (.alice, (roleFamily (V.sampler.cl n) .alice).eval x)\n        (.oracle, (roleFamily (V.sampler.cl n) .oracle).eval x)\n      ≤ gcB V n P hk S S' check B T B' dec ((roleFamily (V.sampler.cl n) .oracle).eval x)\n        + disPolyB V n P hk S S' check B T 0 x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "open scoped ComplexOrder",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**Alice and an oracle.**",
+  "module": "MIPRE.Background.AnswerReduction.SoundDecoded",
+  "module_doc": "/-!\n# Soundness of answer reduction: the decoded strategy\n\nPiece AR-5e of `planning/answer-reduction.md` (`lem:ar-ora`): a POVM strategy for the typed\noracularized game of the input verifier, on the typed strategy's state. An oracle measures the\nextracted simultaneous measurement `J` and answers the pair decoded from the first two answer\npolynomials its outcome carries on their blocks (`decO`); an isolated player measures the\nextracted `G` of its own copy and answers the decoded polynomial (`decV`). The decoder `dec` is a\nparameter here.\n\nEach of the nine ordered pairs of roles fails at most (`condFail_OO_le`, `condFail_Ov_le`, ...):\n\n* the game check of an oracle's decoded pair, which fails only if `J`'s outcome is not placed on\n  its blocks or the PCP check rejects it at at least half the points (the hypothesis `hgc`, the\n  contrapositive of the PCP's soundness): `gcA_le`;\n* the disagreement of the decoded answers, which is at most that of the polynomials.\n\nThe failure of the decoded strategy is then at most a constant times the errors of\n`SoundRelations`, `SoundPoly` and `SoundGameCheck` (`one_sub_povmValue_decoded_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundDecoded.lean#L268-L303",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundDecoded.lean",
+  "lines": [
+   268,
+   303
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb_mapB",
+   "MIPRE.sum_bornProb_mapA",
+   "MIPRE.condFail_le_of",
+   "MIPRE.dis_map_le",
+   "MIPRE.POVM.map_map"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.condFail_bO_le",
+  "source_name": "MIPRE.AnswerReduction.condFail_bO_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.condFail_bO_le (x : Fin (V.sampler.dim n) → 𝔽₂) :\n    condFail (oGame V n B') T.ψ (MAo V n P hk S S' check B T B' dec)\n        (MBo V n P hk S S' check B T B' dec)\n        (.bob, (roleFamily (V.sampler.cl n) .bob).eval x)\n        (.oracle, (roleFamily (V.sampler.cl n) .oracle).eval x)\n      ≤ gcB V n P hk S S' check B T B' dec ((roleFamily (V.sampler.cl n) .oracle).eval x)\n        + disPolyB V n P hk S S' check B T 1 x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "open scoped ComplexOrder",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**Bob and an oracle.**",
+  "module": "MIPRE.Background.AnswerReduction.SoundDecoded",
+  "module_doc": "/-!\n# Soundness of answer reduction: the decoded strategy\n\nPiece AR-5e of `planning/answer-reduction.md` (`lem:ar-ora`): a POVM strategy for the typed\noracularized game of the input verifier, on the typed strategy's state. An oracle measures the\nextracted simultaneous measurement `J` and answers the pair decoded from the first two answer\npolynomials its outcome carries on their blocks (`decO`); an isolated player measures the\nextracted `G` of its own copy and answers the decoded polynomial (`decV`). The decoder `dec` is a\nparameter here.\n\nEach of the nine ordered pairs of roles fails at most (`condFail_OO_le`, `condFail_Ov_le`, ...):\n\n* the game check of an oracle's decoded pair, which fails only if `J`'s outcome is not placed on\n  its blocks or the PCP check rejects it at at least half the points (the hypothesis `hgc`, the\n  contrapositive of the PCP's soundness): `gcA_le`;\n* the disagreement of the decoded answers, which is at most that of the polynomials.\n\nThe failure of the decoded strategy is then at most a constant times the errors of\n`SoundRelations`, `SoundPoly` and `SoundGameCheck` (`one_sub_povmValue_decoded_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundDecoded.lean#L305-L340",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundDecoded.lean",
+  "lines": [
+   305,
+   340
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb_mapB",
+   "MIPRE.sum_bornProb_mapA",
+   "MIPRE.condFail_le_of",
+   "MIPRE.dis_map_le",
+   "MIPRE.POVM.map_map"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.condFail_aa_le",
+  "source_name": "MIPRE.AnswerReduction.condFail_aa_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.condFail_aa_le (y : Fin (V.sampler.dim n) → 𝔽₂) :\n    condFail (oGame V n B') T.ψ (MAo V n P hk S S' check B T B' dec)\n        (MBo V n P hk S S' check B T B' dec) (.alice, y) (.alice, y)\n      ≤ dis T.ψ ((GA1 V n P hk S S' check B T (roleOf 0) 0 y).toPOVM ())\n          ((GB1 V n P hk S S' check B T (roleOf 0) 0 y).toPOVM ()) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "open scoped ComplexOrder",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**Alice and Alice**: the disagreement of the two extracted polynomial measurements.",
+  "module": "MIPRE.Background.AnswerReduction.SoundDecoded",
+  "module_doc": "/-!\n# Soundness of answer reduction: the decoded strategy\n\nPiece AR-5e of `planning/answer-reduction.md` (`lem:ar-ora`): a POVM strategy for the typed\noracularized game of the input verifier, on the typed strategy's state. An oracle measures the\nextracted simultaneous measurement `J` and answers the pair decoded from the first two answer\npolynomials its outcome carries on their blocks (`decO`); an isolated player measures the\nextracted `G` of its own copy and answers the decoded polynomial (`decV`). The decoder `dec` is a\nparameter here.\n\nEach of the nine ordered pairs of roles fails at most (`condFail_OO_le`, `condFail_Ov_le`, ...):\n\n* the game check of an oracle's decoded pair, which fails only if `J`'s outcome is not placed on\n  its blocks or the PCP check rejects it at at least half the points (the hypothesis `hgc`, the\n  contrapositive of the PCP's soundness): `gcA_le`;\n* the disagreement of the decoded answers, which is at most that of the polynomials.\n\nThe failure of the decoded strategy is then at most a constant times the errors of\n`SoundRelations`, `SoundPoly` and `SoundGameCheck` (`one_sub_povmValue_decoded_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundDecoded.lean#L342-L374",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundDecoded.lean",
+  "lines": [
+   342,
+   374
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb_mapB",
+   "MIPRE.sum_bornProb_mapA",
+   "MIPRE.condFail_le_of",
+   "MIPRE.dis_map_le",
+   "MIPRE.POVM.map_map"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.condFail_ab_le",
+  "source_name": "MIPRE.AnswerReduction.condFail_ab_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.condFail_ab_le (y y' : Fin (V.sampler.dim n) → 𝔽₂) :\n    condFail (oGame V n B') T.ψ (MAo V n P hk S S' check B T B' dec)\n        (MBo V n P hk S S' check B T B' dec) (.alice, y) (.bob, y') ≤ 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "open scoped ComplexOrder",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**Alice and Bob** never fail: only the formats are checked.",
+  "module": "MIPRE.Background.AnswerReduction.SoundDecoded",
+  "module_doc": "/-!\n# Soundness of answer reduction: the decoded strategy\n\nPiece AR-5e of `planning/answer-reduction.md` (`lem:ar-ora`): a POVM strategy for the typed\noracularized game of the input verifier, on the typed strategy's state. An oracle measures the\nextracted simultaneous measurement `J` and answers the pair decoded from the first two answer\npolynomials its outcome carries on their blocks (`decO`); an isolated player measures the\nextracted `G` of its own copy and answers the decoded polynomial (`decV`). The decoder `dec` is a\nparameter here.\n\nEach of the nine ordered pairs of roles fails at most (`condFail_OO_le`, `condFail_Ov_le`, ...):\n\n* the game check of an oracle's decoded pair, which fails only if `J`'s outcome is not placed on\n  its blocks or the PCP check rejects it at at least half the points (the hypothesis `hgc`, the\n  contrapositive of the PCP's soundness): `gcA_le`;\n* the disagreement of the decoded answers, which is at most that of the polynomials.\n\nThe failure of the decoded strategy is then at most a constant times the errors of\n`SoundRelations`, `SoundPoly` and `SoundGameCheck` (`one_sub_povmValue_decoded_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundDecoded.lean#L376-L403",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundDecoded.lean",
+  "lines": [
+   376,
+   403
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb_mapB",
+   "MIPRE.sum_bornProb_mapA",
+   "MIPRE.dis_map_eq_sum",
+   "MIPRE.condFail_le_of"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.condFail_bb_le",
+  "source_name": "MIPRE.AnswerReduction.condFail_bb_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.condFail_bb_le (y : Fin (V.sampler.dim n) → 𝔽₂) :\n    condFail (oGame V n B') T.ψ (MAo V n P hk S S' check B T B' dec)\n        (MBo V n P hk S S' check B T B' dec) (.bob, y) (.bob, y)\n      ≤ dis T.ψ ((GA1 V n P hk S S' check B T (roleOf 1) 1 y).toPOVM ())\n          ((GB1 V n P hk S S' check B T (roleOf 1) 1 y).toPOVM ()) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "open scoped ComplexOrder",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**Bob and Bob**: the disagreement of the two extracted polynomial measurements.",
+  "module": "MIPRE.Background.AnswerReduction.SoundDecoded",
+  "module_doc": "/-!\n# Soundness of answer reduction: the decoded strategy\n\nPiece AR-5e of `planning/answer-reduction.md` (`lem:ar-ora`): a POVM strategy for the typed\noracularized game of the input verifier, on the typed strategy's state. An oracle measures the\nextracted simultaneous measurement `J` and answers the pair decoded from the first two answer\npolynomials its outcome carries on their blocks (`decO`); an isolated player measures the\nextracted `G` of its own copy and answers the decoded polynomial (`decV`). The decoder `dec` is a\nparameter here.\n\nEach of the nine ordered pairs of roles fails at most (`condFail_OO_le`, `condFail_Ov_le`, ...):\n\n* the game check of an oracle's decoded pair, which fails only if `J`'s outcome is not placed on\n  its blocks or the PCP check rejects it at at least half the points (the hypothesis `hgc`, the\n  contrapositive of the PCP's soundness): `gcA_le`;\n* the disagreement of the decoded answers, which is at most that of the polynomials.\n\nThe failure of the decoded strategy is then at most a constant times the errors of\n`SoundRelations`, `SoundPoly` and `SoundGameCheck` (`one_sub_povmValue_decoded_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundDecoded.lean#L405-L437",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundDecoded.lean",
+  "lines": [
+   405,
+   437
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb_mapB",
+   "MIPRE.sum_bornProb_mapA",
+   "MIPRE.condFail_le_of",
+   "MIPRE.dis_map_le",
+   "MIPRE.POVM.map_map"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.condFail_ba_le",
+  "source_name": "MIPRE.AnswerReduction.condFail_ba_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.condFail_ba_le (y y' : Fin (V.sampler.dim n) → 𝔽₂) :\n    condFail (oGame V n B') T.ψ (MAo V n P hk S S' check B T B' dec)\n        (MBo V n P hk S S' check B T B' dec) (.bob, y) (.alice, y') ≤ 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "open scoped ComplexOrder",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**Bob and Alice** never fail: only the formats are checked.",
+  "module": "MIPRE.Background.AnswerReduction.SoundDecoded",
+  "module_doc": "/-!\n# Soundness of answer reduction: the decoded strategy\n\nPiece AR-5e of `planning/answer-reduction.md` (`lem:ar-ora`): a POVM strategy for the typed\noracularized game of the input verifier, on the typed strategy's state. An oracle measures the\nextracted simultaneous measurement `J` and answers the pair decoded from the first two answer\npolynomials its outcome carries on their blocks (`decO`); an isolated player measures the\nextracted `G` of its own copy and answers the decoded polynomial (`decV`). The decoder `dec` is a\nparameter here.\n\nEach of the nine ordered pairs of roles fails at most (`condFail_OO_le`, `condFail_Ov_le`, ...):\n\n* the game check of an oracle's decoded pair, which fails only if `J`'s outcome is not placed on\n  its blocks or the PCP check rejects it at at least half the points (the hypothesis `hgc`, the\n  contrapositive of the PCP's soundness): `gcA_le`;\n* the disagreement of the decoded answers, which is at most that of the polynomials.\n\nThe failure of the decoded strategy is then at most a constant times the errors of\n`SoundRelations`, `SoundPoly` and `SoundGameCheck` (`one_sub_povmValue_decoded_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundDecoded.lean#L439-L466",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundDecoded.lean",
+  "lines": [
+   439,
+   466
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb_mapB",
+   "MIPRE.sum_bornProb_mapA",
+   "MIPRE.dis_map_eq_sum",
+   "MIPRE.condFail_le_of"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.one_le_two_mul_rejFrac",
+  "source_name": "MIPRE.AnswerReduction.one_le_two_mul_rejFrac",
+  "formal_statement": "theorem MIPRE.AnswerReduction.one_le_two_mul_rejFrac (hgc : PcpSound V n P hk check B' dec)\n    (y : Fin (V.sampler.dim n) → 𝔽₂) (f : Poly6 P hk) (hbl : BlockLocal P hk f)\n    (hg : ¬ (V.seeded n B').gameCheck (.oracle, y) (decO P hk B' dec f) = true) :\n    1 ≤ 2 * rejFrac V n P hk check y f := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "open scoped ComplexOrder",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**A placed outcome whose decoded pair fails the game check is rejected at at least half the\npoints.**",
+  "module": "MIPRE.Background.AnswerReduction.SoundDecoded",
+  "module_doc": "/-!\n# Soundness of answer reduction: the decoded strategy\n\nPiece AR-5e of `planning/answer-reduction.md` (`lem:ar-ora`): a POVM strategy for the typed\noracularized game of the input verifier, on the typed strategy's state. An oracle measures the\nextracted simultaneous measurement `J` and answers the pair decoded from the first two answer\npolynomials its outcome carries on their blocks (`decO`); an isolated player measures the\nextracted `G` of its own copy and answers the decoded polynomial (`decV`). The decoder `dec` is a\nparameter here.\n\nEach of the nine ordered pairs of roles fails at most (`condFail_OO_le`, `condFail_Ov_le`, ...):\n\n* the game check of an oracle's decoded pair, which fails only if `J`'s outcome is not placed on\n  its blocks or the PCP check rejects it at at least half the points (the hypothesis `hgc`, the\n  contrapositive of the PCP's soundness): `gcA_le`;\n* the disagreement of the decoded answers, which is at most that of the polynomials.\n\nThe failure of the decoded strategy is then at most a constant times the errors of\n`SoundRelations`, `SoundPoly` and `SoundGameCheck` (`one_sub_povmValue_decoded_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundDecoded.lean#L489-L518",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundDecoded.lean",
+  "lines": [
+   489,
+   518
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 23,
+  "is_target": false
+ }
+]

@@ -1,0 +1,698 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.ev_leftTensor_mul_middle_finset_sum",
+  "source_name": "MIPStarRE.LDT.Commutativity.ev_leftTensor_mul_middle_finset_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.ev_leftTensor_mul_middle_finset_sum\n    {α : Type*} (s : Finset α)\n    (ψ : QuantumState (ι × ι))\n    (A C R D : MIPStarRE.Quantum.Op ι)\n    (B : α → MIPStarRE.Quantum.Op ι) :\n    ev ψ\n        (leftTensor (ι₂ := ι) (((A * (∑ x ∈ s, B x) * C) * R)) *\n          rightTensor (ι₁ := ι) D) =\n      ∑ x ∈ s,\n        ev ψ\n          (leftTensor (ι₂ := ι) (((A * B x * C) * R)) *\n            rightTensor (ι₁ := ι) D) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Expand a finite sum in the middle factor of a left-register sandwich.\n\nLinearity of matrix multiplication, left tensor placement, multiplication by a\nfixed right-register operator, and `ev` turns\n`A (∑ x, B_x) C R ⊗ D` into the corresponding sum of expectations\n`∑ x, A B_x C R ⊗ D`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainBasic.Reindexing",
+  "module_doc": "/-!\n# Reindexing and evaluation utilities for the evaluated-slice paper chain\n\nThis file contains finite-reindexing and evaluated-family identities used by\nthe paper-faithful scalar approximation chain.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainBasic/Reindexing.lean#L68-L111",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainBasic/Reindexing.lean",
+  "lines": [
+   68,
+   111
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.leftTensor_finset_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.evaluatedPointFamily_appendPoint_outcome",
+  "source_name": "MIPStarRE.LDT.Commutativity.evaluatedPointFamily_appendPoint_outcome",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.evaluatedPointFamily_appendPoint_outcome\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι)\n    (G : Fq params → SubMeas (Polynomial params) ι)\n    (hG : ∀ x, G x = (family.meas x).toSubMeas)\n    (x : Fq params) (u : Point params) (a : Fq params) :\n    (evaluatedPointFamily params family (appendPoint params u x)).outcome a =\n      ∑ g ∈ Finset.univ.filter (fun g : Polynomial params => g u = a),\n        (G x).outcome g := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Evaluating the slice family at an appended point is postprocessing the slice\nmeasurement by the fiber `{g | g u = a}`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainBasic.Reindexing",
+  "module_doc": "/-!\n# Reindexing and evaluation utilities for the evaluated-slice paper chain\n\nThis file contains finite-reindexing and evaluated-family identities used by\nthe paper-faithful scalar approximation chain.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainBasic/Reindexing.lean#L114-L126",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainBasic/Reindexing.lean",
+  "lines": [
+   114,
+   126
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseFivePaper_avg_diff_eq_neg_orderedDefect",
+  "source_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseFivePaper_avg_diff_eq_neg_orderedDefect",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseFivePaper_avg_diff_eq_neg_orderedDefect\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (G : Fq params → SubMeas (Polynomial params) ι)\n    (hG : ∀ x, G x = (family.meas x).toSubMeas) :\n    let 𝒟 := uniformDistribution (EvaluatedSliceQuestion params)\n    let inserted : EvaluatedSliceQuestion params → Error := fun q =>\n      ∑ a : Fq params, ∑ b : Fq params,\n        ev strategy.state\n          (leftTensor (ι₂ := ι)\n              (((evaluatedSliceFirstFactor params family q).outcome a) *\n                ((evaluatedSliceSecondFactor params family q).outcome b) *\n                (evaluatedSliceFirstFactor params family q).total) *\n            rightTensor (ι₁ := ι)\n              (((evaluatedSlicePointMeas params strategy q.1).outcome a) *\n                ((evaluatedSlicePointMeas params strategy q.2).outcome b)))\n    let removed : EvaluatedSliceQuestion params → Error :=\n      evaluatedSlicePhaseFivePaperRemoved params strategy family\n    avgOver 𝒟 inserted - avgOver 𝒟 removed =\n      -avgOver 𝒟 (evaluatedSlicePhaseFivePaperOrderedDefect params strategy family G) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Average the paper phase-five algebra over evaluated-slice questions.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainPhaseFive",
+  "module_doc": "/-!\n# Phase-five endpoint for the evaluated-slice paper chain\n\nThis file isolates the paper line-87 removal endpoint and the finite\nreindexing to the raw scalar `G`-commutativity stability defect.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainPhaseFive.lean#L265-L365",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainPhaseFive.lean",
+  "lines": [
+   265,
+   365
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 79,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseFivePaper_reindex_to_raw_defect",
+  "source_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseFivePaper_reindex_to_raw_defect",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseFivePaper_reindex_to_raw_defect\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (G : Fq params → SubMeas (Polynomial params) ι)\n    (hG : ∀ x, G x = (family.meas x).toSubMeas) :\n    avgOver (uniformDistribution (EvaluatedSliceQuestion params))\n        (evaluatedSlicePhaseFivePaperSwappedDefect params strategy family G) =\n      avgOver (uniformDistribution (Fq params))\n        (gCommStabilityTwoRawScalarDefect params strategy family G) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Exact reindexing of the swapped paper defect to the raw scalar stability defect.\n\nThis is the phase-five coordinate audit point from issue #628.  The proof\nintentionally decomposes the **first** evaluated-slice coordinate\n`q.1 = appendPoint params u x`, because the defect reads\n`pointHeight params q.1` and the first-coordinate point outcome\n`evaluatedSlicePointMeas params strategy q.1`.  There is no `gamma` parameter in\nthis reindexing lemma: the only `gamma` loss in phase five is the separate\nright-register point-measurement swap paid by `hphase5paper` in\n`ProcessedG.lean`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainPhaseFive",
+  "module_doc": "/-!\n# Phase-five endpoint for the evaluated-slice paper chain\n\nThis file isolates the paper line-87 removal endpoint and the finite\nreindexing to the raw scalar `G`-commutativity stability defect.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainPhaseFive.lean#L500-L594",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainPhaseFive.lean",
+  "lines": [
+   500,
+   594
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_prod",
+   "MIPStarRE.LDT.avgOver_uniform_comm",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.CommutativityPoints.avgOver_uniform_pointNext_decompose"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 75,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseSeven_second_reverse_bound",
+  "source_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseSeven_second_reverse_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseSeven_second_reverse_bound\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (zeta : Error)\n    (hnorm : strategy.state.IsNormalized)\n    (family : IdxPolyFamily params ι)\n    (hcombined_snd : SDDRel strategy.state\n      (uniformDistribution (EvaluatedSliceQuestion params))\n      (fun q => evaluatedPointFamilyLeft params family q.2)\n      (fun q =>\n        (MIPStarRE.LDT.Preliminaries.totalSandwichFamily\n          (evaluatedPointFamily params family)\n          (evaluatedSlicePointMeas params strategy) q.2))\n      (4 * zeta)) :\n    let 𝒟 := uniformDistribution (EvaluatedSliceQuestion params)\n    let phase6FirstRemoved : EvaluatedSliceQuestion params → Error :=\n      evaluatedSlicePhaseSixFirstRemoved params strategy family\n    let phase7GonnaCite : EvaluatedSliceQuestion params → Error :=\n      evaluatedSlicePhaseSevenGonnaCite params strategy family\n    |avgOver 𝒟 phase6FirstRemoved - avgOver 𝒟 phase7GonnaCite| ≤\n      2 * Real.sqrt zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Paper lines 103--104: reverse the second `eq:add-an-a` insertion.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainPhaseSeven",
+  "module_doc": "/-!\n# Phase-seven reverse insertion for the evaluated-slice paper chain\n\nThis file proves the second reverse `eq:add-an-a` bound used after the\npaper line-87 phase-five removal.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainPhaseSeven.lean#L62-L184",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainPhaseSeven.lean",
+  "lines": [
+   62,
+   184
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.opTensor_mul",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.Commutativity.leftTensor_pair_prefix_normalization",
+   "MIPStarRE.LDT.Preliminaries.closenessOfIP",
+   "MIPStarRE.LDT.Preliminaries.projSubMeas_outcome_mul_total_eq_outcome"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 101,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseSix_first_reverse_bound",
+  "source_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseSix_first_reverse_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseSix_first_reverse_bound\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (zeta : Error)\n    (hnorm : strategy.state.IsNormalized)\n    (family : IdxPolyFamily params ι)\n    (hcombined_fst : SDDRel strategy.state\n      (uniformDistribution (EvaluatedSliceQuestion params))\n      (fun q => evaluatedPointFamilyLeft params family q.1)\n      (fun q =>\n        (MIPStarRE.LDT.Preliminaries.totalSandwichFamily\n          (evaluatedPointFamily params family)\n          (evaluatedSlicePointMeas params strategy) q.1))\n      (4 * zeta)) :\n    let 𝒟 := uniformDistribution (EvaluatedSliceQuestion params)\n    let phase5PaperRemoved : EvaluatedSliceQuestion params → Error :=\n      evaluatedSlicePhaseFivePaperRemoved params strategy family\n    let phase6FirstRemoved : EvaluatedSliceQuestion params → Error :=\n      evaluatedSlicePhaseSixFirstRemoved params strategy family\n    |avgOver 𝒟 phase5PaperRemoved - avgOver 𝒟 phase6FirstRemoved| ≤\n      2 * Real.sqrt zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Paper lines 99--102: reverse the first `eq:add-an-a` insertion after `eq:gcom10`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainPhaseSix",
+  "module_doc": "/-!\n# Phase-six reverse insertion for the evaluated-slice paper chain\n\nThis file proves the first reverse `eq:add-an-a` bound used after the\npaper line-87 phase-five removal.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainPhaseSix.lean#L66-L268",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainPhaseSix.lean",
+  "lines": [
+   66,
+   268
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.opTensor_mul",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.ProjSubMeas.outcome_hermitian",
+   "MIPStarRE.LDT.leftTensor_nonneg",
+   "MIPStarRE.LDT.Commutativity.leftRightTensor_prefix_pointMeasurement_adjoint_normalization",
+   "MIPStarRE.LDT.Preliminaries.projSubMeas_outcome_mul_total_eq_outcome",
+   "MIPStarRE.LDT.Preliminaries.closenessOfInnerProduct_right"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 181,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseSixSeven_reverse_bound",
+  "source_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseSixSeven_reverse_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseSixSeven_reverse_bound\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (zeta : Error)\n    (hnorm : strategy.state.IsNormalized)\n    (family : IdxPolyFamily params ι)\n    (hcombined_fst : SDDRel strategy.state\n      (uniformDistribution (EvaluatedSliceQuestion params))\n      (fun q => evaluatedPointFamilyLeft params family q.1)\n      (fun q =>\n        (MIPStarRE.LDT.Preliminaries.totalSandwichFamily\n          (evaluatedPointFamily params family)\n          (evaluatedSlicePointMeas params strategy) q.1))\n      (4 * zeta))\n    (hcombined_snd : SDDRel strategy.state\n      (uniformDistribution (EvaluatedSliceQuestion params))\n      (fun q => evaluatedPointFamilyLeft params family q.2)\n      (fun q =>\n        (MIPStarRE.LDT.Preliminaries.totalSandwichFamily\n          (evaluatedPointFamily params family)\n          (evaluatedSlicePointMeas params strategy) q.2))\n      (4 * zeta)) :\n    let 𝒟 := uniformDistribution (EvaluatedSliceQuestion params)\n    let phase5PaperRemoved : EvaluatedSliceQuestion params → Error :=\n      evaluatedSlicePhaseFivePaperRemoved params strategy family\n    let phase7GonnaCite : EvaluatedSliceQuestion params → Error :=\n      evaluatedSlicePhaseSevenGonnaCite params strategy family\n    |avgOver 𝒟 phase5PaperRemoved - avgOver 𝒟 phase7GonnaCite| ≤\n      4 * Real.sqrt zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Paper lines 99--104: the combined phase-67 reverse-insertion bridge.\n\nThe scalar-chain assembly only needs the endpoint comparison from the paper\nline-87/`eq:gcom10` term to `eq:gonna-cite-this-in-just-a-bit`.  This lemma\npackages the two proved `eq:add-an-a` reverse insertions (`2√ζ` each) through\none triangle inequality, so downstream code no longer has to carry the\nintermediate phase-six endpoint.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainReverse",
+  "module_doc": "/-!\n# Reverse insertion endpoints for the evaluated-slice paper chain\n\nThis module re-exports the two reverse `eq:add-an-a` bounds used after the\npaper line-87 phase-five removal and packages them into the combined phase-67\nbridge consumed by `ProcessedG.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainReverse.lean#L56-L119",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainReverse.lean",
+  "lines": [
+   56,
+   119
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseSeven_second_reverse_bound",
+   "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseSix_first_reverse_bound"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseEight_tail_bound",
+  "source_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseEight_tail_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseEight_tail_bound\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (zeta : Error)\n    (hnorm : strategy.state.IsNormalized)\n    (family : IdxPolyFamily params ι)\n    (hpostSSC_snd : SDDRel strategy.state\n      (uniformDistribution (EvaluatedSliceQuestion params))\n      (fun q => evaluatedPointFamilyLeft params family q.2)\n      (fun q => evaluatedPointFamilyRight params family q.2)\n      zeta) :\n    let 𝒟 := uniformDistribution (EvaluatedSliceQuestion params)\n    let phase7GonnaCite : EvaluatedSliceQuestion params → Error :=\n      evaluatedSlicePhaseSevenGonnaCite params strategy family\n    let phase8TailRight : EvaluatedSliceQuestion params → Error :=\n      evaluatedSlicePhaseEightTailRight params strategy family\n    |avgOver 𝒟 phase7GonnaCite - avgOver 𝒟 phase8TailRight| ≤ Real.sqrt zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Paper line 117--118: move the second-coordinate factor to the right register.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainTail",
+  "module_doc": "/-!\n# Tail endpoints for the evaluated-slice paper chain\n\nThis file proves the two postprocessed self-consistency tail moves at the\nend of the paper-faithful scalar chain.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainTail.lean#L61-L141",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainTail.lean",
+  "lines": [
+   61,
+   141
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.Commutativity.leftTensor_pair_prefix_normalization",
+   "MIPStarRE.LDT.Preliminaries.closenessOfIP"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 63,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseNine_tail_bound",
+  "source_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseNine_tail_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseNine_tail_bound\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (zeta : Error)\n    (hnorm : strategy.state.IsNormalized)\n    (family : IdxPolyFamily params ι)\n    (hpostSSC_snd : SDDRel strategy.state\n      (uniformDistribution (EvaluatedSliceQuestion params))\n      (fun q => evaluatedPointFamilyLeft params family q.2)\n      (fun q => evaluatedPointFamilyRight params family q.2)\n      zeta) :\n    let 𝒟 := uniformDistribution (EvaluatedSliceQuestion params)\n    let phase8TailRight : EvaluatedSliceQuestion params → Error :=\n      evaluatedSlicePhaseEightTailRight params strategy family\n    let avgBAB : EvaluatedSliceQuestion params → Error := fun q =>\n      ∑ ab : EvaluatedSliceOutcome params,\n        evaluatedSliceBABTerm params strategy family q ab\n    |avgOver 𝒟 phase8TailRight - avgOver 𝒟 avgBAB| ≤ Real.sqrt zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Paper line 118--119: move the second-coordinate factor back to the left register.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainTail",
+  "module_doc": "/-!\n# Tail endpoints for the evaluated-slice paper chain\n\nThis file proves the two postprocessed self-consistency tail moves at the\nend of the paper-faithful scalar chain.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainTail.lean#L143-L277",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainTail.lean",
+  "lines": [
+   143,
+   277
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.opTensor_mul",
+   "MIPStarRE.LDT.leftTensor_nonneg",
+   "MIPStarRE.LDT.rightTensor_nonneg",
+   "MIPStarRE.LDT.Commutativity.leftTensor_pair_prefix_adjoint_normalization",
+   "MIPStarRE.LDT.Preliminaries.closenessOfInnerProduct_right"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 116,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.gCommStability_sliceSSC",
+  "source_name": "MIPStarRE.LDT.Commutativity.gCommStability_sliceSSC",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.gCommStability_sliceSSC\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (zeta : Error)\n    (family : IdxPolyFamily params ι)\n    (G : Fq params → SubMeas (Polynomial params) ι)\n    (hG : ∀ x, G x = (family.meas x).toSubMeas)\n    (hself : family.StronglySelfConsistent strategy.state zeta) :\n    BipartiteSSCRel strategy.state\n      (uniformDistribution (Fq params))\n      G\n      (zeta / 2) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The slice self-consistency defect of `G` is at most `zeta / 2`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.Pointwise",
+  "module_doc": "/-!\n# Section 11 commutativity: pointwise scalar approximation\n\nPointwise overlap terms `⟨ψ, (I - G^x) ⊗ G^x ψ⟩` controlling both sides of\nthe `G`-stability estimate, used as the base for the averaged scalar bound.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/Pointwise.lean#L107-L170",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/Pointwise.lean",
+  "lines": [
+   107,
+   170
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_const_mul",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.Commutativity.qBipartiteSSCDefect_eq_half_qSDD_of_proj"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 50,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.evaluatedPointFamily_selfConsistency_of_stronglySelfConsistent",
+  "source_name": "MIPStarRE.LDT.Commutativity.evaluatedPointFamily_selfConsistency_of_stronglySelfConsistent",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.evaluatedPointFamily_selfConsistency_of_stronglySelfConsistent\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)\n    (zeta : Error)\n    (hself : family.StronglySelfConsistent strategy.state zeta) :\n    SDDRel strategy.state\n      (uniformDistribution (Point params.next))\n      (evaluatedPointFamilyLeft params family)\n      (evaluatedPointFamilyRight params family)\n      zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Slice strong self-consistency transfers to the evaluated point family.\n\nThe paper invokes the slice self-consistency item after postprocessing a slice\nmeasurement by the predicate `g(truncatePoint u) = a`.  This lemma makes that\nimplicit data-processing step explicit: projectivity converts the left/right SDD\nhypothesis into bipartite strong self-consistency with loss `1/2`,\nquestion-dependent postprocessing converts it back to left/right SDD with the\ncompensating factor `2`, and uniform reindexing\n`Point params.next ≃ Point params × Fq params` averages the height coordinate.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.Pointwise",
+  "module_doc": "/-!\n# Section 11 commutativity: pointwise scalar approximation\n\nPointwise overlap terms `⟨ψ, (I - G^x) ⊗ G^x ψ⟩` controlling both sides of\nthe `G`-stability estimate, used as the base for the averaged scalar bound.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/Pointwise.lean#L172-L297",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/Pointwise.lean",
+  "lines": [
+   172,
+   297
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_le_const",
+   "MIPStarRE.LDT.avgOver_uniform_equiv",
+   "MIPStarRE.LDT.avgOver_uniform_prod",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.Commutativity.gCommStability_sliceSSC",
+   "MIPStarRE.LDT.Preliminaries.twoNotionsOfSelfConsistencyAfterEvaluation"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 107,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.commDataProcessedG_of_commutativityPoints",
+  "source_name": "MIPStarRE.LDT.Commutativity.commDataProcessedG_of_commutativityPoints",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.commDataProcessedG_of_commutativityPoints\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (gamma zeta : Error)\n    (hnorm : strategy.state.IsNormalized)\n    (hcomm :\n      SDDOpRel strategy.state\n        (uniformDistribution (MIPStarRE.LDT.GlobalVariance.PointPairQuestion params.next))\n        (pointMeasurementProductLeft params.next strategy)\n        (pointMeasurementProductRight params.next strategy)\n        (commutativityPointsError params.next gamma))\n    (hgamma_nonneg : 0 ≤ gamma)\n    (family : IdxPolyFamily params ι)\n    (hcons : family.ConsistentWithPoints strategy zeta)\n    (hself : family.StronglySelfConsistent strategy.state zeta)\n    (hbound : IdxPolyFamily.SliceBoundednessInput strategy family zeta) :\n    CommDataProcessedGConclusion params strategy family gamma zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Section 11 scalar chain from an already established point-commutativity\nestimate.\n\nThis is the internal form needed when the point-commutativity theorem has been\nproved by a route other than the ordinary `SymStrat.IsGood` diagonal-line\nfield.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG",
+  "module_doc": "/-!\n# Processed `G` scalar approximation\n\nThis file assembles the paper-faithful evaluated-slice scalar chain used in the proof of\n`lem:comm-data-processed-g` (`references/ldt-paper/commutativity-G.tex`, lines 72–131).\nThe heavier endpoint and normalization lemmas are imported from\n`ScalarApproximation.PaperChain` so this final assembly can reuse cached proofs.\n\n**Proof strategy:** The proof follows the paper's exact route of ten approximation steps\nusing `closenessOfIP`, `commutativityPoints`, `gCommStability_scalar`, and\n`gCommStabilityTwo_raw_scalar`.  Every `≈_{ε}` step in the paper corresponds to a\nnamed `hphase` block below, and the final error budget `48m(√γ + √ζ)` matches\nthe paper's displayed computation at line 129.  The only presentation difference\nis that the Lean chain terminates at the `BAB` average and then applies the\n*exact* swap-symmetry identity `avgBAB = avgABA` (see\n`EvaluatedSliceCommutation/Averages.lean`) rather than directly chaining to `ABA`;\nthis is an equality, not an approximation, and does not affect the error budget.\n\n## Module organization\n\nThe formerly monolithic file has been split into focused leaf modules:\n\n- `ProcessedG.PhaseTwo`: Phase 2 stability-defect infrastructure\n  (`evaluatedSlicePhaseTwoStabilityDefect`, finite reindexing, subtraction algebra)\n- `ProcessedG.MainChain`: The main `evaluatedSlice_scalar_chain_bound` assembly\n\nThis file provides the public statement of `commDataProcessedG`, the paper-facing\nscalar approximation theorem.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG.lean#L125-L165",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG.lean",
+  "lines": [
+   125,
+   165
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Commutativity.evaluatedSliceCommutation_qSDDOp_avg_eq",
+   "MIPStarRE.LDT.Commutativity.evaluatedPointFamily_selfConsistency_of_stronglySelfConsistent",
+   "MIPStarRE.LDT.Commutativity.evaluatedSlice_scalar_chain_bound"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_scalar_chain_bound",
+  "source_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_scalar_chain_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.evaluatedSlice_scalar_chain_bound\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (gamma zeta : Error)\n    (_hnorm : strategy.state.IsNormalized)\n    (_hcomm :\n      SDDOpRel strategy.state\n        (uniformDistribution (PointPairQuestion params.next))\n        (pointMeasurementProductLeft params.next strategy)\n        (pointMeasurementProductRight params.next strategy)\n        (commutativityPointsError params.next gamma))\n    (_hgamma_nonneg : 0 ≤ gamma)\n    (family : IdxPolyFamily params ι)\n    (G : Fq params → SubMeas (Polynomial params) ι)\n    (_hG : ∀ x, G x = (family.meas x).toSubMeas)\n    (_hcons : family.ConsistentWithPoints strategy zeta)\n    (_hself : family.StronglySelfConsistent strategy.state zeta)\n    (_hbound : IdxPolyFamily.SliceBoundednessInput strategy family zeta)\n    (_hpostSSC : SDDRel strategy.state\n      (uniformDistribution (Point params.next))\n      (evaluatedPointFamilyLeft params family)\n      (evaluatedPointFamilyRight params family)\n      zeta) :\n    2 *\n      (avgOver (uniformDistribution (EvaluatedSliceQuestion params))\n          (fun q => ∑ ab : EvaluatedSliceOutcome params,\n            evaluatedSliceABATerm params strategy family q ab) -\n        avgOver (uniformDistribution (EvaluatedSliceQuestion params))\n          (fun q => ∑ ab : EvaluatedSliceOutcome params,\n            evaluatedSliceABABTerm params strategy family q ab)) ≤\n      commDataProcessedGError params gamma zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.MainChain",
+  "module_doc": "/-!\n# Main scalar chain assembly\n\nThe core lemma `evaluatedSlice_scalar_chain_bound` that assembles the ten-step\nscalar approximation chain for `lem:comm-data-processed-g`.  This is the\nheavyweight proof corresponding to `references/ldt-paper/commutativity-G.tex`,\nlines 72–131.  Phases 1, 3, 4, 6–7, and 8–9 are supplied by the reverse and\ntail parts of the paper chain; Phase 2 uses the reindexing infrastructure from\n`PhaseTwo`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/MainChain.lean#L237-L873",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/MainChain.lean",
+  "lines": [
+   237,
+   873
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_fst",
+   "MIPStarRE.LDT.avgOver_congr",
+   "PMF.uniformOfFintype_sum_equiv_fst_smul",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.opTensor_mul",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseOne_insert_bound",
+   "MIPStarRE.LDT.Commutativity.evaluatedSliceCommutation_avg_swap_terms",
+   "MIPStarRE.LDT.Commutativity.gCommStability_scalar",
+   "MIPStarRE.LDT.Commutativity.gCommStabilityTwo_raw_scalar",
+   "MIPStarRE.LDT.Commutativity.leftRightTensor_prefix_pointMeasurement_normalization",
+   "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseFivePaper_avg_diff_eq_neg_orderedDefect",
+   "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseFivePaper_reindex_to_raw_defect",
+   "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseSixSeven_reverse_bound",
+   "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseEight_tail_bound",
+   "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseNine_tail_bound",
+   "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseTwo_avg_diff_eq_neg_questionDefect",
+   "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseTwo_questionDefect_avg_eq_stabilityDefect",
+   "MIPStarRE.LDT.Preliminaries.closenessOfIP",
+   "MIPStarRE.LDT.Preliminaries.consSubMeas",
+   "MIPStarRE.LDT.sddError_nonneg",
+   "MIPStarRE.LDT.consRel_symm_of_density_fixed"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 606,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.postprocess_sandwichByOuter_prod_snd_outcome",
+  "source_name": "MIPStarRE.LDT.Commutativity.postprocess_sandwichByOuter_prod_snd_outcome",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.postprocess_sandwichByOuter_prod_snd_outcome\n    {α β : Type*} [Fintype α] [Fintype β]\n    (A : SubMeas α ι) (B : SubMeas β ι) (b : β) :\n    (postprocess (sandwichByOuterSubMeas A B) Prod.snd).outcome b =\n      ∑ a : α, A.outcome a * B.outcome b * A.outcome a := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Postprocessing a sandwiched product by its second coordinate sums over the\nouter outcome.\n\nFor the sandwiched submeasurement with outcomes `(a, b)` and effect\n`A_a B_b A_a`, the `Prod.snd` postprocessing has outcome `b` equal to\n`∑ a, A_a B_b A_a`.  This is the finite-fiber identity used to recognize the\n`gCommStabilityR` averaged sandwich.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.PhaseTwo",
+  "module_doc": "/-!\n# Phase 2 stability defect infrastructure\n\nInternal helper definitions and lemmas for the Phase 2 scalar bridge in\n`ProcessedG`.  These definitions extract and bound the one-dimensional stability\ndefect controlled by `gCommStability_scalar` (the paper's `clm:g-comm-stability`),\nreindex the question-level defect into the stability defect via finite\nmarginalization, and perform the subtraction algebra that rewrites the phase-2\ninsertion/removal difference as the negative defect.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/PhaseTwo.lean#L163-L201",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/PhaseTwo.lean",
+  "lines": [
+   163,
+   201
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.avgOver_avgOver_phaseTwo_linear",
+  "source_name": "MIPStarRE.LDT.Commutativity.avgOver_avgOver_phaseTwo_linear",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.avgOver_avgOver_phaseTwo_linear\n    {Q V Γ Aidx : Type*} [Fintype Γ] [Fintype Aidx]\n    (𝒟Q : Distribution Q) (𝒟V : Distribution V)\n    (ψ : QuantumState (ι × ι))\n    (F : Q → Γ → Aidx → MIPStarRE.Quantum.Op ι)\n    (P : Γ → V → MIPStarRE.Quantum.Op ι)\n    (R : MIPStarRE.Quantum.Op ι) :\n    avgOver 𝒟V (fun v =>\n        avgOver 𝒟Q (fun q =>\n          ∑ g : Γ, ∑ a : Aidx,\n            ev ψ (leftTensor (ι₂ := ι) (F q g a * R) *\n              rightTensor (ι₁ := ι) (P g v)))) =\n      ∑ g : Γ,\n        ev ψ\n          (leftTensor (ι₂ := ι)\n              ((averageOperatorOverDistribution 𝒟Q (fun q => ∑ a : Aidx, F q g a)) * R) *\n            rightTensor (ι₁ := ι)\n              (averageOperatorOverDistribution 𝒟V (fun v => P g v))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Pull two finite averages into a bipartite expectation with averaged operators.\n\nFor a fixed polynomial outcome `g`, the left register is averaged over `𝒟Q`\nwhile the right register is averaged over `𝒟V`.  The identity rewrites the\nnested scalar average of\n`ev ψ (leftTensor (F q g a * R) * rightTensor (P g v))` into the expectation of\n`leftTensor ((E_q ∑_a F q g a) * R) * rightTensor (E_v P g v)`, preserving the\nouter sum over `g`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.PhaseTwo",
+  "module_doc": "/-!\n# Phase 2 stability defect infrastructure\n\nInternal helper definitions and lemmas for the Phase 2 scalar bridge in\n`ProcessedG`.  These definitions extract and bound the one-dimensional stability\ndefect controlled by `gCommStability_scalar` (the paper's `clm:g-comm-stability`),\nreindex the question-level defect into the stability defect via finite\nmarginalization, and perform the subtraction algebra that rewrites the phase-2\ninsertion/removal difference as the negative defect.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/PhaseTwo.lean#L203-L291",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/PhaseTwo.lean",
+  "lines": [
+   203,
+   291
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_real_smul",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_real_smul_right",
+   "MIPStarRE.LDT.leftTensor_finset_sum",
+   "MIPStarRE.LDT.rightTensor_finset_sum"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 63,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseTwoQuestionDefect_append_eq_sum_poly",
+  "source_name": "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseTwoQuestionDefect_append_eq_sum_poly",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseTwoQuestionDefect_append_eq_sum_poly\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (G : Fq params → SubMeas (Polynomial params) ι)\n    (q1 : Point params.next) (v : Point params) (y : Fq params) :\n    evaluatedSlicePhaseTwoQuestionDefect params strategy family G\n        (q1, appendPoint params v y) =\n      ∑ g : Polynomial params, ∑ a : Fq params,\n        ev strategy.state\n          (leftTensor (ι₂ := ι)\n              ((((evaluatedPointFamily params family q1).outcome a) *\n                ((family.meas y).toSubMeas.outcome g) *\n                ((evaluatedPointFamily params family q1).outcome a)) *\n                (1 - (G y).total)) *\n            rightTensor (ι₁ := ι)\n              ((strategy.pointMeasurement (appendPoint params v y)).outcome (g v))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Reindex the pointwise phase-2 question defect by polynomial outcomes.\n\nWhen the sampled second point is `appendPoint v y`, the postprocessed slice\noutcome `(evaluatedSliceSecondFactor ...).outcome b` is the sum of\n`G^y_g` over the fiber `g v = b`.  Expanding this fiber inside the sandwiched\nleft-register expression and summing over `b` collapses the defect to a\npolynomial-indexed sum whose right-register outcome is `A^{v,y}_{g(v)}`.\n\nThe proof is heartbeat-heavy because it keeps the finite-fiber and tensor\nlinearity steps explicit rather than hiding the #714 marginalization residual in\none large `simp`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.PhaseTwo",
+  "module_doc": "/-!\n# Phase 2 stability defect infrastructure\n\nInternal helper definitions and lemmas for the Phase 2 scalar bridge in\n`ProcessedG`.  These definitions extract and bound the one-dimensional stability\ndefect controlled by `gCommStability_scalar` (the paper's `clm:g-comm-stability`),\nreindex the question-level defect into the stability defect via finite\nmarginalization, and perform the subtraction algebra that rewrites the phase-2\ninsertion/removal difference as the negative defect.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/PhaseTwo.lean#L293-L398",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/PhaseTwo.lean",
+  "lines": [
+   293,
+   398
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Commutativity.ev_leftTensor_mul_middle_finset_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 78,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseTwo_term_diff",
+  "source_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseTwo_term_diff",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseTwo_term_diff\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (G : Fq params → SubMeas (Polynomial params) ι)\n    (hG : ∀ x, G x = (family.meas x).toSubMeas)\n    (q : EvaluatedSliceQuestion params)\n    (a b : Fq params) :\n    ev strategy.state\n        (leftTensor (ι₂ := ι)\n            (((evaluatedSliceFirstFactor params family q).outcome a) *\n              ((evaluatedSliceSecondFactor params family q).outcome b) *\n              ((evaluatedSliceFirstFactor params family q).outcome a)) *\n          ((MIPStarRE.LDT.Preliminaries.totalSandwichFamily\n            (evaluatedPointFamily params family)\n            (evaluatedSlicePointMeas params strategy) q.2).outcome b)) -\n      ev strategy.state\n        (leftTensor (ι₂ := ι)\n            (((evaluatedSliceFirstFactor params family q).outcome a) *\n              ((evaluatedSliceSecondFactor params family q).outcome b) *\n              ((evaluatedSliceFirstFactor params family q).outcome a)) *\n          rightTensor (ι₁ := ι) ((evaluatedSlicePointMeas params strategy q.2).outcome b)) =\n    - ev strategy.state\n        (leftTensor (ι₂ := ι)\n            ((((evaluatedSliceFirstFactor params family q).outcome a) *\n              ((evaluatedSliceSecondFactor params family q).outcome b) *\n              ((evaluatedSliceFirstFactor params family q).outcome a)) *\n              (1 - (G (pointHeight params q.2)).total)) *\n          rightTensor (ι₁ := ι) ((evaluatedSlicePointMeas params strategy q.2).outcome b)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Pointwise algebra for the phase-2 subtraction.\n\nAfter expanding `totalSandwichFamily`, the inserted summand has the extra factor\n`G^y.total` on the left register.  This lemma rewrites the difference with the\nremoved summand as the negative defect, using the noncommutative identity\n`S * T - S = -(S * (1 - T))`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.PhaseTwo",
+  "module_doc": "/-!\n# Phase 2 stability defect infrastructure\n\nInternal helper definitions and lemmas for the Phase 2 scalar bridge in\n`ProcessedG`.  These definitions extract and bound the one-dimensional stability\ndefect controlled by `gCommStability_scalar` (the paper's `clm:g-comm-stability`),\nreindex the question-level defect into the stability defect via finite\nmarginalization, and perform the subtraction algebra that rewrites the phase-2\ninsertion/removal difference as the negative defect.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/PhaseTwo.lean#L400-L489",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/PhaseTwo.lean",
+  "lines": [
+   400,
+   489
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.ev_scale",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.opTensor_sub_left",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.Commutativity.evaluatedPointFamily_total_eq_G_total"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 55,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseTwo_avg_diff_eq_neg_questionDefect",
+  "source_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseTwo_avg_diff_eq_neg_questionDefect",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseTwo_avg_diff_eq_neg_questionDefect\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (G : Fq params → SubMeas (Polynomial params) ι)\n    (hG : ∀ x, G x = (family.meas x).toSubMeas) :\n    let 𝒟 := uniformDistribution (EvaluatedSliceQuestion params)\n    let inserted : EvaluatedSliceQuestion params → Error := fun q =>\n      ∑ b : Fq params, ∑ a : Fq params,\n        ev strategy.state\n          (leftTensor (ι₂ := ι)\n              (((evaluatedSliceFirstFactor params family q).outcome a) *\n                ((evaluatedSliceSecondFactor params family q).outcome b) *\n                ((evaluatedSliceFirstFactor params family q).outcome a)) *\n            ((MIPStarRE.LDT.Preliminaries.totalSandwichFamily\n              (evaluatedPointFamily params family)\n              (evaluatedSlicePointMeas params strategy) q.2).outcome b))\n    let removed : EvaluatedSliceQuestion params → Error := fun q =>\n      ∑ b : Fq params, ∑ a : Fq params,\n        ev strategy.state\n          (leftTensor (ι₂ := ι)\n              (((evaluatedSliceFirstFactor params family q).outcome a) *\n                ((evaluatedSliceSecondFactor params family q).outcome b) *\n                ((evaluatedSliceFirstFactor params family q).outcome a)) *\n            rightTensor (ι₁ := ι) ((evaluatedSlicePointMeas params strategy q.2).outcome b))\n    avgOver 𝒟 inserted - avgOver 𝒟 removed =\n      -avgOver 𝒟 (evaluatedSlicePhaseTwoQuestionDefect params strategy family G) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Average the pointwise phase-2 algebra over evaluated-slice questions.\n\nThis proves the advertised sign rewrite\n`avgOver 𝒟 phase1Inserted - avgOver 𝒟 phase2Removed = -avgOver 𝒟 questionDefect`.\nIt leaves only the finite marginalization from the question-level defect to the\none-dimensional `evaluatedSlicePhaseTwoStabilityDefect`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.PhaseTwo",
+  "module_doc": "/-!\n# Phase 2 stability defect infrastructure\n\nInternal helper definitions and lemmas for the Phase 2 scalar bridge in\n`ProcessedG`.  These definitions extract and bound the one-dimensional stability\ndefect controlled by `gCommStability_scalar` (the paper's `clm:g-comm-stability`),\nreindex the question-level defect into the stability defect via finite\nmarginalization, and perform the subtraction algebra that rewrites the phase-2\ninsertion/removal difference as the negative defect.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/PhaseTwo.lean#L491-L624",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/PhaseTwo.lean",
+  "lines": [
+   491,
+   624
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseTwo_term_diff"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 101,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseTwo_questionDefect_avg_eq_stabilityDefect",
+  "source_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseTwo_questionDefect_avg_eq_stabilityDefect",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseTwo_questionDefect_avg_eq_stabilityDefect\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (G : Fq params → SubMeas (Polynomial params) ι) :\n  avgOver (uniformDistribution (EvaluatedSliceQuestion params))\n      (evaluatedSlicePhaseTwoQuestionDefect params strategy family G) =\n    avgOver (uniformDistribution (Fq params))\n      (evaluatedSlicePhaseTwoStabilityDefect params strategy family G) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Exact finite reindexing identity for the phase-2 scalar bridge.\n\nPaper origin: `references/ldt-paper/commutativity-G.tex:60-83`, the finite\naveraging and reindexing step leading to the scalar `eq:add-an-a` bridge.\n\nThis statement contains no analytic estimate.  It says that the question-level\nphase-2 defect averages to the one-dimensional scalar defect bounded by\n`gCommStability_scalar`.  The proof is only finite marginalization and fiber\nbookkeeping: decompose the second sampled point as `(v,y)`, collapse the\npostprocessing fibers, and average the first sampled point into\n`gCommStabilityR`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.PhaseTwo",
+  "module_doc": "/-!\n# Phase 2 stability defect infrastructure\n\nInternal helper definitions and lemmas for the Phase 2 scalar bridge in\n`ProcessedG`.  These definitions extract and bound the one-dimensional stability\ndefect controlled by `gCommStability_scalar` (the paper's `clm:g-comm-stability`),\nreindex the question-level defect into the stability defect via finite\nmarginalization, and perform the subtraction algebra that rewrites the phase-2\ninsertion/removal difference as the negative defect.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/PhaseTwo.lean#L626-L750",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/PhaseTwo.lean",
+  "lines": [
+   626,
+   750
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.averageOperatorOverDistribution_congr",
+   "MIPStarRE.LDT.avgOver_uniform_equiv",
+   "MIPStarRE.LDT.avgOver_uniform_prod",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseTwoQuestionDefect_append_eq_sum_poly",
+   "MIPStarRE.LDT.Commutativity.postprocess_sandwichByOuter_prod_snd_outcome",
+   "MIPStarRE.LDT.Commutativity.avgOver_avgOver_phaseTwo_linear",
+   "MIPStarRE.LDT.CommutativityPoints.avgOver_uniform_pointNext_decompose"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 105,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.evaluatedSliceCommutation_of_evaluationSpecialization",
+  "source_name": "MIPStarRE.LDT.Commutativity.evaluatedSliceCommutation_of_evaluationSpecialization",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.evaluatedSliceCommutation_of_evaluationSpecialization\n    (params : Parameters) [FieldModel params.q] (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (δ : Error)\n    (hEval :\n      SDDOpRel strategy.state\n        (uniformDistribution (EvaluatedSliceQuestion params))\n        (evaluatedFromFullSliceProductLeft params strategy family)\n        (evaluatedFromFullSliceProductRight params strategy family)\n        δ) :\n    SDDOpRel strategy.state\n      (uniformDistribution (EvaluatedSliceQuestion params))\n      (evaluatedSliceProductLeft params strategy family)\n      (evaluatedSliceProductRight params strategy family)\n      δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Restate the evaluated-from-full-slice commutation bound as a bound for the\nevaluated-slice product families, using the pointwise postprocessing identities.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.EvaluationSpecialization",
+  "module_doc": "/-!\n# Section 11 commutativity: transport via evaluation specialization\n\nPostprocessing identities for `leftPlacedOpFamily` of bilinear products, used\nto transport bounds across evaluation specializations of the full-slice\ncommutation argument.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/EvaluationSpecialization.lean#L177-L206",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/EvaluationSpecialization.lean",
+  "lines": [
+   177,
+   206
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.CommutativityPoints.sddOpRel_congr_outcome"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ }
+]

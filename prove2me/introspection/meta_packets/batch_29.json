@@ -1,0 +1,709 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.coreCheck_common",
+  "source_name": "MIPRE.Introspection.Honest.coreCheck_common",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.coreCheck_common (hR : R.IsPCC) (hval : R.value = 1)\n    (t u : CoreType) (z : ι → F) (a b : A)\n    (hNZ : R.P.M (t.2, (L t.2).eval z) a * R.P.M (u.2, (L u.2).eval z) b ≠ 0) :\n    coreCheck L D t u (displayed L t z, a) (displayed L u z, b) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {F ι A : Type*} [Field F] [Fintype F] [DecidableEq F]",
+   "variable (L : Bool → CL.CLFun F ι ℓ) (D : (ι → F) → (ι → F) → A → A → Bool)",
+   "variable (R : SyncStrategy (sourceGame L D).doubled)"
+  ],
+  "docstring": "A nonzero honest seed block always produces an accepted core answer pair.",
+  "module": "MIPRE.Foundations.Introspection.HonestCoreGame",
+  "module_doc": "/-! # Perfect PCC completeness of the four-type introspection core\n\nThis is the actual induced subgraph on the two Introspect and two Sample\ntypes, with the restriction of the parsed typed predicate. The constructed\nstrategy is a concrete seed-register extension of the original PCC strategy.\nRead, Hide, and Pauli vertices are not part of this intermediate theorem.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestCoreGame.lean#L53-L93",
+  "source_path": "MIPRE/Foundations/Introspection/HonestCoreGame.lean",
+  "lines": [
+   53,
+   93
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.Honest.source_commute",
+   "MIPRE.re_eq_zero_of_tracialValue_eq_one",
+   "MIPRE.SampledGame.dist_eq_card"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 36,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.coreOp_reject_zero",
+  "source_name": "MIPRE.Introspection.Honest.coreOp_reject_zero",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.coreOp_reject_zero (hR : R.IsPCC) (hval : R.value = 1)\n    (t u : CoreType) (ya zb : (ι → F) × A) (hD : coreCheck L D t u ya zb = false) :\n    coreOp L D R t ya * coreOp L D R u zb = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {F ι A : Type*} [Field F] [Fintype F] [DecidableEq F]",
+   "variable (L : Bool → CL.CLFun F ι ℓ) (D : (ι → F) → (ι → F) → A → A → Bool)",
+   "variable (R : SyncStrategy (sourceGame L D).doubled)"
+  ],
+  "docstring": "Rejected answers have zero operator product, for every core question pair.",
+  "module": "MIPRE.Foundations.Introspection.HonestCoreGame",
+  "module_doc": "/-! # Perfect PCC completeness of the four-type introspection core\n\nThis is the actual induced subgraph on the two Introspect and two Sample\ntypes, with the restriction of the parsed typed predicate. The constructed\nstrategy is a concrete seed-register extension of the original PCC strategy.\nRead, Hide, and Pauli vertices are not part of this intermediate theorem.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestCoreGame.lean#L95-L109",
+  "source_path": "MIPRE/Foundations/Introspection/HonestCoreGame.lean",
+  "lines": [
+   95,
+   109
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.Honest.coreCheck_common"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.pauli_mul_firstHide",
+  "source_name": "MIPRE.Introspection.Honest.pauli_mul_firstHide",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.pauli_mul_firstHide (P : CL.CLFun F ι ℓ) (x : ι → F)\n    (v : (ι → F) × (ι → F) × (ι → F)) :\n    proj wX x * firstHideOp P v = if firstHideAnswer P x = v then proj wX x else 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "Pauli-X followed by first-Hide retains exactly the selected coarse label.",
+  "module": "MIPRE.Foundations.Introspection.HonestFirstHide",
+  "module_doc": "/-! # The honest first hiding measurement\n\nAt the first hiding type no Z-prefix has yet been measured. The honest\nmeasurement is exactly a coarse-graining of the full Pauli-X measurement:\nread the dual map on the first CL register and retain the untouched X tail.\nThis constructs the measurement and proves perfect acceptance and commutation\non the Pauli-X/first-Hide edge, on the entire answer alphabet.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestFirstHide.lean#L56-L75",
+  "source_path": "MIPRE/Foundations/Introspection/HonestFirstHide.lean",
+  "lines": [
+   56,
+   75
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.proj_mul_proj"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.hideRegister_entry_nonzero",
+  "source_name": "MIPRE.Introspection.Honest.hideRegister_entry_nonzero",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.hideRegister_entry_nonzero {ℓ : ℕ} (P : CL.CLFun F ι ℓ) (k : ℕ)\n    (V : Finset ι) (h : P.SupportedOn V) (a : HideLabel F ι) (x x' : V → F)\n    (ha : hideRegister P k V h a x x' ≠ 0) :\n    (P.truncate k).eval (insertRegister V x) = a.1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "The question reported by Hide at level `k` is the actual first `k` CL stages.",
+  "module": "MIPRE.Foundations.Introspection.HonestHiding",
+  "module_doc": "/-! # The honest adaptive hiding prefixes\n\nThe first component of the honest hiding measurement is exactly the preceding\nCL prefix, for every level of the adaptive construction. The statement concerns\nthe actual recursively constructed operators and the source CL truncation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestHiding.lean#L31-L60",
+  "source_path": "MIPRE/Foundations/Introspection/HonestHiding.lean",
+  "lines": [
+   31,
+   60
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.readout_eq_synOf"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.hideRegister_marginal",
+  "source_name": "MIPRE.Introspection.Honest.hideRegister_marginal",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.hideRegister_marginal {ℓ : ℕ} (P : CL.CLFun F ι ℓ) (k : ℕ)\n    (V : Finset ι) (h : P.SupportedOn V) (y : ι → F) :\n    (∑ yp : (ι → F) × (ι → F), hideRegister P k V h (y, yp)) =\n      readout (fun x => (P.truncate k).eval (insertRegister V x)) y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "Forgetting the dual answer and untouched X tail gives exactly the preceding CL prefix.",
+  "module": "MIPRE.Foundations.Introspection.HonestHiding",
+  "module_doc": "/-! # The honest adaptive hiding prefixes\n\nThe first component of the honest hiding measurement is exactly the preceding\nCL prefix, for every level of the adaptive construction. The statement concerns\nthe actual recursively constructed operators and the source CL truncation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestHiding.lean#L73-L88",
+  "source_path": "MIPRE/Foundations/Introspection/HonestHiding.lean",
+  "lines": [
+   73,
+   88
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-honest-hiding",
+    "env": "lemma",
+    "title": "Honest hiding marginals and edge compatibility",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.linear_measurements_commute",
+   "MIPRE.Introspection.Honest.hideRegister_entry_nonzero",
+   "MIPRE.Introspection.linear_measurement_isPVM",
+   "MIPRE.Introspection.registerOp_isPVM",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.hideRegister_accepts_next",
+  "source_name": "MIPRE.Introspection.Honest.hideRegister_accepts_next",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.hideRegister_accepts_next (P : CL.CLFun F ι ℓ) (k : ℕ) (hk : k + 1 < ℓ)\n    (V : Finset ι) (h : P.SupportedOn V) (a b : HideLabel F ι)\n    (hab : hideRegister P k V h a * hideRegister P (k + 1) V h b ≠ 0) :\n    CLChecks.hidingNext P k a b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "Nonzero neighboring Hide products satisfy all four actual hiding comparisons.",
+  "module": "MIPRE.Foundations.Introspection.HonestHidingAcceptance",
+  "module_doc": "/-! # Perfect acceptance along the honest adaptive hiding chain\n\nA nonzero product of two neighboring honest measurements satisfies the actual\nCL hiding check. The proof follows the same adaptive branches as the concrete\noperators, using zero products to exclude incompatible earlier outcomes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestHidingAcceptance.lean#L44-L90",
+  "source_path": "MIPRE/Foundations/Introspection/HonestHidingAcceptance.lean",
+  "lines": [
+   44,
+   90
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.linear_measurements_commute",
+   "MIPRE.Introspection.Honest.hidingNext_join",
+   "MIPRE.Introspection.Honest.hidingNext_stop_join",
+   "MIPRE.Introspection.Honest.pauliX_mul_stopHide",
+   "MIPRE.Introspection.Honest.stopHide_split",
+   "MIPRE.Introspection.Honest.hideRegister_entry_supported",
+   "MIPRE.Introspection.linear_measurement_isPVM",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX"
+  ],
+  "pasted_helpers": 15,
+  "prooflines": 41,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.hideRegister_accepts_read",
+  "source_name": "MIPRE.Introspection.Honest.hideRegister_accepts_read",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.hideRegister_accepts_read {A : Type*} (P : CL.CLFun F ι ℓ)\n    (k : ℕ) (hk : k + 1 = ℓ) (V : Finset ι) (h : P.SupportedOn V)\n    (a : HideLabel F ι) (b : ReadLabel F ι) (c : A)\n    (hab : hideRegister P k V h a * readRegister P V h b ≠ 0) :\n    CLChecks.hidingRead P a (b.1, b.2, c) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "The terminal Hide/Read product satisfies the actual common-prefix/full-dual check.",
+  "module": "MIPRE.Foundations.Introspection.HonestHidingAcceptance",
+  "module_doc": "/-! # Perfect acceptance along the honest adaptive hiding chain\n\nA nonzero product of two neighboring honest measurements satisfies the actual\nCL hiding check. The proof follows the same adaptive branches as the concrete\noperators, using zero products to exclude incompatible earlier outcomes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestHidingAcceptance.lean#L98-L146",
+  "source_path": "MIPRE/Foundations/Introspection/HonestHidingAcceptance.lean",
+  "lines": [
+   98,
+   146
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.linear_measurements_commute",
+   "MIPRE.Introspection.Honest.stopHide_split",
+   "MIPRE.Introspection.Honest.readRegister_entry_supported",
+   "MIPRE.Introspection.Honest.hideRegister_entry_supported",
+   "MIPRE.Introspection.linear_measurement_isPVM",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 42,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.hidingNext_join",
+  "source_name": "MIPRE.Introspection.Honest.hidingNext_join",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.hidingNext_join {S V : Finset ι} (L : CL.RegLinear F S)\n    (next : (ι → F) → CL.CLFun F ι ℓ)\n    (h : (CL.CLFun.cons S L next).SupportedOn V) (k : ℕ)\n    (z : (Fin (Fintype.card S) → F) × (Fin (Fintype.card S) → F))\n    (u v : HideLabel F ι)\n    (hu : CL.proj (V \\ S) u.1 = u.1 ∧ CL.proj (V \\ S) u.2.1 = u.2.1 ∧\n      CL.proj (V \\ S) u.2.2 = u.2.2)\n    (hv : CL.proj (V \\ S) v.1 = v.1 ∧ CL.proj (V \\ S) v.2.1 = v.2.1 ∧\n      CL.proj (V \\ S) v.2.2 = v.2.2)\n    (ht : CLChecks.hidingNext (next (coordinateInsert S z.1)) k u v) :\n    CLChecks.hidingNext (.cons S L next) (k + 1) (joinHide S (z, u)) (joinHide S (z, v)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "The adjacent-hiding check lifts through an actual common adaptive local outcome.",
+  "module": "MIPRE.Foundations.Introspection.HonestHidingChecks",
+  "module_doc": "/-! # Exact recursion of the honest hiding checks\n\nAdding one common local Z/dual outcome to two supported continuation answers\npreserves the actual parsed hiding predicate. These are identities for the\nsource checks, including the later-answer choice of adaptive registers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestHidingChecks.lean#L98-L128",
+  "source_path": "MIPRE/Foundations/Introspection/HonestHidingChecks.lean",
+  "lines": [
+   98,
+   128
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-honest-hiding",
+    "env": "lemma",
+    "title": "Honest hiding marginals and edge compatibility",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.CLChecks.proj_outputPrefix_cons"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.hidingNext_stop_join",
+  "source_name": "MIPRE.Introspection.Honest.hidingNext_stop_join",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.hidingNext_stop_join {S V : Finset ι} (L : CL.RegLinear F S)\n    (next : (ι → F) → CL.CLFun F ι ℓ)\n    (h : (CL.CLFun.cons S L next).SupportedOn V)\n    (z : (Fin (Fintype.card S) → F) × (Fin (Fintype.card S) → F))\n    (x : ↥(V \\ S) → F) :\n    CLChecks.hidingNext (.cons S L next) 0 (stopLabel S V (z.2, x))\n      (joinHide S (z, stopHideAnswer (next (coordinateInsert S z.1)) (V \\ S) x)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "The first adjacent hiding check holds on the exact common X-tail labels\nappearing in the stopping measurement and its next adaptive refinement.",
+  "module": "MIPRE.Foundations.Introspection.HonestHidingChecks",
+  "module_doc": "/-! # Exact recursion of the honest hiding checks\n\nAdding one common local Z/dual outcome to two supported continuation answers\npreserves the actual parsed hiding predicate. These are identities for the\nsource checks, including the later-answer choice of adaptive registers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestHidingChecks.lean#L149-L189",
+  "source_path": "MIPRE/Foundations/Introspection/HonestHidingChecks.lean",
+  "lines": [
+   149,
+   189
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-honest-hiding",
+    "env": "lemma",
+    "title": "Honest hiding marginals and edge compatibility",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.hideRegister_commute_next",
+  "source_name": "MIPRE.Introspection.Honest.hideRegister_commute_next",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.hideRegister_commute_next (P : CL.CLFun F ι ℓ) (k : ℕ)\n    (V : Finset ι) (h : P.SupportedOn V) (a b : HideLabel F ι) :\n    Commute (hideRegister P k V h a) (hideRegister P (k + 1) V h b) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "Every pair of neighboring honest hiding levels commutes on every answer label.",
+  "module": "MIPRE.Foundations.Introspection.HonestHidingCommute",
+  "module_doc": "/-! # Commutation along the honest hiding chain\n\nThe base step uses the concrete dual-X/tail factorization of the stopping\nmeasurement. Earlier adaptive stages lift the step using orthogonality of the\nshared local Z/dual-X measurement. Different branch labels therefore vanish\nbefore any commutation claim about different continuations is needed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestHidingCommute.lean#L116-L148",
+  "source_path": "MIPRE/Foundations/Introspection/HonestHidingCommute.lean",
+  "lines": [
+   116,
+   148
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.linear_measurements_commute",
+   "MIPRE.Introspection.Honest.stopHide_split",
+   "MIPRE.Introspection.linear_measurement_isPVM",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj"
+  ],
+  "pasted_helpers": 19,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.hideRegister_commute_read",
+  "source_name": "MIPRE.Introspection.Honest.hideRegister_commute_read",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.hideRegister_commute_read (P : CL.CLFun F ι ℓ) (k : ℕ) (hk : ℓ ≤ k + 1)\n    (V : Finset ι) (h : P.SupportedOn V) (a : HideLabel F ι) (b : ReadLabel F ι) :\n    Commute (hideRegister P k V h a) (readRegister P V h b) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "The terminal honest hiding level commutes with the complete adaptive Read family.",
+  "module": "MIPRE.Foundations.Introspection.HonestHidingCommute",
+  "module_doc": "/-! # Commutation along the honest hiding chain\n\nThe base step uses the concrete dual-X/tail factorization of the stopping\nmeasurement. Earlier adaptive stages lift the step using orthogonality of the\nshared local Z/dual-X measurement. Different branch labels therefore vanish\nbefore any commutation claim about different continuations is needed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestHidingCommute.lean#L159-L182",
+  "source_path": "MIPRE/Foundations/Introspection/HonestHidingCommute.lean",
+  "lines": [
+   159,
+   182
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.linear_measurements_commute",
+   "MIPRE.Introspection.Honest.stopHide_split",
+   "MIPRE.Introspection.linear_measurement_isPVM",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX"
+  ],
+  "pasted_helpers": 15,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.pauliX_mul_stopHide",
+  "source_name": "MIPRE.Introspection.Honest.pauliX_mul_stopHide",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.pauliX_mul_stopHide (P : CL.CLFun F ι ℓ) (V : Finset ι)\n    (x : V → F) (a : HideLabel F ι) :\n    proj wX x * stopHide P V a =\n      if stopHideAnswer P V x = a then proj wX x else 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "A complete X answer fixes the stopping Hide answer exactly.",
+  "module": "MIPRE.Foundations.Introspection.HonestHidingProducts",
+  "module_doc": "/-! # Exact products at an honest hiding transition -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestHidingProducts.lean#L61-L81",
+  "source_path": "MIPRE/Foundations/Introspection/HonestHidingProducts.lean",
+  "lines": [
+   61,
+   81
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.proj_mul_proj"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.coarseOp_comp",
+  "source_name": "MIPRE.Introspection.Honest.coarseOp_comp",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.coarseOp_comp (f : A → B) (g : B → C) (P : A → Matrix I I ℂ) (c : C) :\n    coarseOp g (coarseOp f P) c = coarseOp (g ∘ f) P c := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {I J A B C D : Type*} [Fintype I] [DecidableEq I]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.HonestHidingStep",
+  "module_doc": "/-! # The local honest hiding step\n\nThis identifies the actual stopping Hide measurement with its local dual-X\nmeasurement and untouched X tail in the coordinate split used by the next\nadaptive step.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestHidingStep.lean#L31-L45",
+  "source_path": "MIPRE/Foundations/Introspection/HonestHidingStep.lean",
+  "lines": [
+   31,
+   45
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.stopHide_split",
+  "source_name": "MIPRE.Introspection.Honest.stopHide_split",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.stopHide_split (S V : Finset ι) (h : S ⊆ V) (L : CL.RegLinear F S)\n    (next : (ι → F) → CL.CLFun F ι ℓ) (a : HideLabel F ι) :\n    stopHide (.cons S L next) V a =\n      registerOp (coordinateSplit S V h)\n        (coarseOp (stopLabel S V)\n          (fun bt => synOf wX (CL.lperp (coordinateLinear L)) bt.1 ⊗ₖ proj wX bt.2) a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "Exact factorization of the stopping Hide measurement, with the actual dual map.",
+  "module": "MIPRE.Foundations.Introspection.HonestHidingStep",
+  "module_doc": "/-! # The local honest hiding step\n\nThis identifies the actual stopping Hide measurement with its local dual-X\nmeasurement and untouched X tail in the coordinate split used by the next\nadaptive step.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestHidingStep.lean#L76-L102",
+  "source_path": "MIPRE/Foundations/Introspection/HonestHidingStep.lean",
+  "lines": [
+   76,
+   102
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-honest-hiding",
+    "env": "lemma",
+    "title": "Honest hiding marginals and edge compatibility",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.Honest.coarseOp_comp",
+   "MIPRE.Introspection.Honest.pauliX_entry",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.sgn_add"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.readRegister_entry_supported",
+  "source_name": "MIPRE.Introspection.Honest.readRegister_entry_supported",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.readRegister_entry_supported {ℓ : ℕ} (P : CL.CLFun F ι ℓ)\n    (V : Finset ι) (h : P.SupportedOn V) (a : ReadLabel F ι) (x x' : V → F)\n    (ha : readRegister P V h a x x' ≠ 0) :\n    CL.proj V a.1 = a.1 ∧ CL.proj V a.2 = a.2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "Both labels of every nonzero Read entry are supported in the active register.",
+  "module": "MIPRE.Foundations.Introspection.HonestLabelSupport",
+  "module_doc": "/-! # Support of the actual honest Read and Hide answers\n\nA nonzero entry of either adaptive measurement forces every reported vector\nto lie in the active coordinate register. The statements cover the full answer\nalphabet: no support or honest-format assumption is imposed on the answer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestLabelSupport.lean#L71-L100",
+  "source_path": "MIPRE/Foundations/Introspection/HonestLabelSupport.lean",
+  "lines": [
+   71,
+   100
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-honest-hiding",
+    "env": "lemma",
+    "title": "Honest hiding marginals and edge compatibility",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.hideRegister_entry_supported",
+  "source_name": "MIPRE.Introspection.Honest.hideRegister_entry_supported",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.hideRegister_entry_supported {ℓ : ℕ} (P : CL.CLFun F ι ℓ) (k : ℕ)\n    (V : Finset ι) (h : P.SupportedOn V) (a : HideLabel F ι) (x x' : V → F)\n    (ha : hideRegister P k V h a x x' ≠ 0) :\n    CL.proj V a.1 = a.1 ∧ CL.proj V a.2.1 = a.2.1 ∧ CL.proj V a.2.2 = a.2.2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "Every component of a nonzero Hide entry is supported in the active register.",
+  "module": "MIPRE.Foundations.Introspection.HonestLabelSupport",
+  "module_doc": "/-! # Support of the actual honest Read and Hide answers\n\nA nonzero entry of either adaptive measurement forces every reported vector\nto lie in the active coordinate register. The statements cover the full answer\nalphabet: no support or honest-format assumption is imposed on the answer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestLabelSupport.lean#L102-L131",
+  "source_path": "MIPRE/Foundations/Introspection/HonestLabelSupport.lean",
+  "lines": [
+   102,
+   131
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-honest-hiding",
+    "env": "lemma",
+    "title": "Honest hiding marginals and edge compatibility",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 4,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.HonestMagicSquare.grid_isObservable",
+  "source_name": "MIPRE.Introspection.HonestMagicSquare.grid_isObservable",
+  "formal_statement": "theorem MIPRE.Introspection.HonestMagicSquare.grid_isObservable {A B : Matrix I I ℂ}\n    (hA : IsObservable A) (hB : IsObservable B) (hAB : A * B = -(B * A))\n    (j : Fin 9) : IsObservable (grid A B j) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.HonestMagicSquare",
+   "open Matrix Finset MIPRE.LCS MIPRE.LCS.MagicSquare",
+   "open scoped Kronecker",
+   "variable {I : Type*} [Fintype I] [DecidableEq I]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.HonestMagicSquare",
+  "module_doc": "/-! # The Magic Square extension of an arbitrary anticommuting pair\n\nThis is the concrete operator construction needed by the honest Pauli test.\nIt adds one qubit and retains the original observables at cells zero and four.\nThe row and column identities use the actual Magic Square layout and parity.\nNo game completeness statement is assumed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestMagicSquare.lean#L87-L101",
+  "source_path": "MIPRE/Foundations/Introspection/HonestMagicSquare.lean",
+  "lines": [
+   87,
+   101
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-honest-magic-square",
+    "env": "lemma",
+    "title": "Honest Magic Square extension of an anticommuting pair",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 6,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.HonestMagicSquare.cells_commute",
+  "source_name": "MIPRE.Introspection.HonestMagicSquare.cells_commute",
+  "formal_statement": "theorem MIPRE.Introspection.HonestMagicSquare.cells_commute {A B : Matrix I I ℂ}\n    (hAB : A * B = -(B * A)) (c : Fin layout.r) (s t : Fin 3) :\n    Commute (grid A B (cellIndex c s)) (grid A B (cellIndex c t)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.HonestMagicSquare",
+   "open Matrix Finset MIPRE.LCS MIPRE.LCS.MagicSquare",
+   "open scoped Kronecker",
+   "variable {I : Type*} [Fintype I] [DecidableEq I]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.HonestMagicSquare",
+  "module_doc": "/-! # The Magic Square extension of an arbitrary anticommuting pair\n\nThis is the concrete operator construction needed by the honest Pauli test.\nIt adds one qubit and retains the original observables at cells zero and four.\nThe row and column identities use the actual Magic Square layout and parity.\nNo game completeness statement is assumed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestMagicSquare.lean#L127-L146",
+  "source_path": "MIPRE/Foundations/Introspection/HonestMagicSquare.lean",
+  "lines": [
+   127,
+   146
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-honest-magic-square",
+    "env": "lemma",
+    "title": "Honest Magic Square extension of an anticommuting pair",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LCS.Pauli.X_anticomm_Z"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.HonestMagicSquare.constraintOp_isPVM",
+  "source_name": "MIPRE.Introspection.HonestMagicSquare.constraintOp_isPVM",
+  "formal_statement": "theorem MIPRE.Introspection.HonestMagicSquare.constraintOp_isPVM {A B : Matrix I I ℂ}\n    (hA : IsObservable A) (hB : IsObservable B) (hAB : A * B = -(B * A))\n    (c : Fin layout.r) : IsPVM (constraintOp A B c) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.HonestMagicSquare",
+   "open Matrix Finset MIPRE.LCS MIPRE.LCS.MagicSquare",
+   "open scoped Kronecker",
+   "variable {I : Type*} [Fintype I] [DecidableEq I]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.HonestMagicSquare",
+  "module_doc": "/-! # The Magic Square extension of an arbitrary anticommuting pair\n\nThis is the concrete operator construction needed by the honest Pauli test.\nIt adds one qubit and retains the original observables at cells zero and four.\nThe row and column identities use the actual Magic Square layout and parity.\nNo game completeness statement is assumed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestMagicSquare.lean#L196-L213",
+  "source_path": "MIPRE/Foundations/Introspection/HonestMagicSquare.lean",
+  "lines": [
+   196,
+   213
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-honest-magic-square",
+    "env": "lemma",
+    "title": "Honest Magic Square extension of an anticommuting pair",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.HonestMagicSquare.grid_isObservable",
+   "MIPRE.Introspection.HonestMagicSquare.cells_commute",
+   "MIPRE.LCS.isMeasurementSystem_observableToProjector"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.HonestMagicSquare.constraint_wrong_parity",
+  "source_name": "MIPRE.Introspection.HonestMagicSquare.constraint_wrong_parity",
+  "formal_statement": "theorem MIPRE.Introspection.HonestMagicSquare.constraint_wrong_parity {A B : Matrix I I ℂ}\n    (hA : IsObservable A) (hB : IsObservable B) (hAB : A * B = -(B * A))\n    (c : Fin layout.r) (a : Fin 3 → ZMod 2)\n    (ha : a 0 + a 1 + a 2 ≠ game.b c) : constraintOp A B c a = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.HonestMagicSquare",
+   "open Matrix Finset MIPRE.LCS MIPRE.LCS.MagicSquare",
+   "open scoped Kronecker",
+   "variable {I : Type*} [Fintype I] [DecidableEq I]"
+  ],
+  "docstring": "A parity-violating constraint answer has zero effect.",
+  "module": "MIPRE.Foundations.Introspection.HonestMagicSquare",
+  "module_doc": "/-! # The Magic Square extension of an arbitrary anticommuting pair\n\nThis is the concrete operator construction needed by the honest Pauli test.\nIt adds one qubit and retains the original observables at cells zero and four.\nThe row and column identities use the actual Magic Square layout and parity.\nNo game completeness statement is assumed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestMagicSquare.lean#L263-L282",
+  "source_path": "MIPRE/Foundations/Introspection/HonestMagicSquare.lean",
+  "lines": [
+   263,
+   282
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.HonestMagicSquare.grid_isObservable",
+   "MIPRE.Introspection.HonestMagicSquare.cells_commute",
+   "MIPRE.LCS.zmod_two_eq_zero_or_one",
+   "MIPRE.LCS.Pauli.X_anticomm_Z"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 15,
+  "is_target": false
+ }
+]

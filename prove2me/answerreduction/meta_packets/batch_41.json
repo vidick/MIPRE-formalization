@@ -1,0 +1,586 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.completion_self_distance",
+  "source_name": "MIPStarRE.LDT.Preliminaries.completion_self_distance",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.completion_self_distance\n    {Outcome : Type*} {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState ι) (B : SubMeas Outcome ι) (a0 : Outcome) :\n    qSDD ψ B (completeAtOutcome B a0).toSubMeas =\n      ev ψ (((1 : MIPStarRE.Quantum.Op ι) - B.total) *\n        ((1 : MIPStarRE.Quantum.Op ι) - B.total)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Completing `B` at `a0` changes only the missing mass, so the self-distance is\nexactly the squared residual mass.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Completion",
+  "module_doc": "/-!\n# Preliminary comparison theorems: bipartite self-consistency (completion)\n\nCompletion-transfer lemmas for bipartite self-consistency.  The constant\n`Unit`-family reductions identify `sddError` and `sscError` with their pointwise\nforms, and the later lemmas compare a submeasurement with its completion.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/BipartiteSelfConsistency/Completion.lean#L111-L156",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/BipartiteSelfConsistency/Completion.lean",
+  "lines": [
+   111,
+   156
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_zero",
+   "MIPStarRE.LDT.SubMeas.total_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 37,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.evaluateAt_completeAtOutcome",
+  "source_name": "MIPStarRE.LDT.Preliminaries.evaluateAt_completeAtOutcome",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.evaluateAt_completeAtOutcome\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (params : Parameters)\n    [FieldModel params.q]\n    (H : SubMeas (Polynomial params) ι)\n    (h0 : Polynomial params)\n    (u : Point params) :\n    evaluateAt params u (completeAtOutcome H h0).toSubMeas =\n      (completeAtOutcome (evaluateAt params u H) (h0 u)).toSubMeas := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Evaluating a completed polynomial submeasurement at a point is the same as\ncompleting the evaluated submeasurement at the induced outcome.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Completion",
+  "module_doc": "/-!\n# Preliminary comparison theorems: bipartite self-consistency (completion)\n\nCompletion-transfer lemmas for bipartite self-consistency.  The constant\n`Unit`-family reductions identify `sddError` and `sscError` with their pointwise\nforms, and the later lemmas compare a submeasurement with its completion.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/BipartiteSelfConsistency/Completion.lean#L158-L219",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/BipartiteSelfConsistency/Completion.lean",
+  "lines": [
+   158,
+   219
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.ext",
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 51,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.qBipartiteConsDefect_completeAtOutcome_right_le",
+  "source_name": "MIPStarRE.LDT.Preliminaries.qBipartiteConsDefect_completeAtOutcome_right_le",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.qBipartiteConsDefect_completeAtOutcome_right_le\n    {Outcome : Type*}\n    {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype Outcome]\n    (ψ : QuantumState (ιA × ιB))\n    (A : Measurement Outcome ιA)\n    (B : SubMeas Outcome ιB)\n    (a0 : Outcome) :\n    qBipartiteConsDefect ψ A.toSubMeas (completeAtOutcome B a0).toSubMeas ≤\n      qBipartiteConsDefect ψ A.toSubMeas B +\n        ev ψ (rightTensor (ι₁ := ιA) (1 - B.total)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Completing the right submeasurement can increase the bipartite consistency\ndefect by at most the residual completion mass `1 - B.total`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Completion",
+  "module_doc": "/-!\n# Preliminary comparison theorems: bipartite self-consistency (completion)\n\nCompletion-transfer lemmas for bipartite self-consistency.  The constant\n`Unit`-family reductions identify `sddError` and `sscError` with their pointwise\nforms, and the later lemmas compare a submeasurement with its completion.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/BipartiteSelfConsistency/Completion.lean#L221-L313",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/BipartiteSelfConsistency/Completion.lean",
+  "lines": [
+   221,
+   313
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_add",
+   "MIPStarRE.LDT.ev_zero",
+   "MIPStarRE.LDT.rightTensor_nonneg",
+   "MIPStarRE.LDT.qBipartiteConsDefect_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 79,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.qSDDCore_rightTensor_eq_leftTensor_of_permInv",
+  "source_name": "MIPStarRE.LDT.Preliminaries.qSDDCore_rightTensor_eq_leftTensor_of_permInv",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.qSDDCore_rightTensor_eq_leftTensor_of_permInv\n    {Outcome : Type*} {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    {ψ : QuantumState (ι × ι)}\n    (hperm : PermInvState ψ)\n    (A B : Outcome → MIPStarRE.Quantum.Op ι) :\n    qSDDCore ψ\n      (fun a => rightTensor (ι₁ := ι) (A a))\n      (fun a => rightTensor (ι₁ := ι) (B a)) =\n    qSDDCore ψ\n      (fun a => leftTensor (ι₂ := ι) (A a))\n      (fun a => leftTensor (ι₂ := ι) (B a)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "On a permutation-invariant bipartite state, the `qSDDCore` distance between\nright-tensor placements of two local operator families equals the corresponding\nleft-tensor distance.\n\nThis is a shared tensor-placement helper for Bob/right-register variants of\n`≈_δ` arguments.  The proof expands each squared-difference term and applies\n`PermInvState.swap_ev` to `(A_a-B_a)^†(A_a-B_a)`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Core",
+  "module_doc": "/-!\n# Preliminary comparison theorems: bipartite self-consistency (core)\n\nCore building blocks for bipartite self-consistency: reflexivity of the\nquestion-level state-dependent distance `qSDD` and its lift to the family-level\n`sddError`.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/BipartiteSelfConsistency/Core.lean#L91-L133",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/BipartiteSelfConsistency/Core.lean",
+  "lines": [
+   91,
+   133
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.rightTensor_mul_rightTensor",
+   "MIPStarRE.LDT.leftTensor_sub"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.twoNotionsOfSelfConsistency",
+  "source_name": "MIPStarRE.LDT.Preliminaries.twoNotionsOfSelfConsistency",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.twoNotionsOfSelfConsistency {Question Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState (ι × ι)) (𝒟 : Distribution Question)\n    (A : IdxSubMeas Question Outcome ι) (δ : Error) :\n    (PermInvState ψ ∧ BipartiteSSCRel ψ 𝒟 A δ) →\n      SDDRel ψ 𝒟 (IdxSubMeas.liftLeft A)\n        (IdxSubMeas.liftRight A) (2 * δ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`prop:two-notions-of-self-consistency`.\n\nIf the indexed sub-measurement `A` is bipartite-strongly-self-consistent\non the permutation-invariant state `ψ` (i.e., `BipartiteSSCRel ψ 𝒟 A δ`,\nmeaning `∑ₐ ev ψ (Aₐ ⊗ I) − ∑ₐ ev ψ (Aₐ ⊗ Aₐ) ≤ δ`), then the left\nand right lifts are close: `SDDRel ψ 𝒟 (liftLeft A) (liftRight A) (2 * δ)`.\n\n**Paper proof sketch:**\n1. Expand `∑ₐ ev ψ ((Aₐ⊗I − I⊗Aₐ)² )`.\n2. Using Kronecker mixed-product rule and PermInvState.swap_ev, this\n   equals `2 · (∑ₐ ev ψ (Aₐ²⊗I) − ∑ₐ ev ψ (Aₐ⊗Aₐ))`.\n3. Since `Aₐ² ≤ Aₐ` (sub-measurement bound), we get\n   `≤ 2 · (∑ₐ ev ψ (Aₐ⊗I) − ∑ₐ ev ψ (Aₐ⊗Aₐ)) = 2 · bipartiteSSCDefect`.\n4. Average over 𝒟 and apply the BipartiteSSCRel hypothesis.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Core",
+  "module_doc": "/-!\n# Preliminary comparison theorems: bipartite self-consistency (core)\n\nCore building blocks for bipartite self-consistency: reflexivity of the\nquestion-level state-dependent distance `qSDD` and its lift to the family-level\n`sddError`.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/BipartiteSelfConsistency/Core.lean#L331-L374",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/BipartiteSelfConsistency/Core.lean",
+  "lines": [
+   331,
+   374
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_const_mul"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.bipartiteSSC_implies_localSSC_liftLeft",
+  "source_name": "MIPStarRE.LDT.Preliminaries.bipartiteSSC_implies_localSSC_liftLeft",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.bipartiteSSC_implies_localSSC_liftLeft {Question Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState (ι × ι))\n    (hperm : PermInvState ψ)\n    (𝒟 : Distribution Question)\n    (A : IdxSubMeas Question Outcome ι) (δ : Error) :\n    BipartiteSSCRel ψ 𝒟 A δ →\n    SSCRel ψ 𝒟 (IdxSubMeas.liftLeft A) δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Bridge lemma: for a permutation-invariant bipartite state, bipartite SSC\non local families implies local SSC on the left-lifted families.\n\nRequires `PermInvState ψ` because the bipartite defect\n`∑ ev(A_a ⊗ A_a)` and local defect `∑ ev(A_a² ⊗ I)` are generally\nincomparable without symmetry; the permutation-invariance bridge\n`ev(M ⊗ I) = ev(I ⊗ M)` makes the two notions equivalent.\n\nThe proof expands `qSDD ψ A.liftLeft A.liftRight`, uses\n`PermInvState.swap_ev` to identify the left and right square terms, and\nthen reads off `∑ ev(A_a² ⊗ I) ≥ ∑ ev(A_a ⊗ A_a)` from\n`qSDD_nonneg`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Local",
+  "module_doc": "/-!\n# Preliminary comparison theorems: bipartite self-consistency (local bridges)\n\nBridge lemmas connecting the bipartite self-consistency relation on a\npermutation-invariant state to the single-sided local self-consistency relation\nafter a left/right lift of the family.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/BipartiteSelfConsistency/Local.lean#L79-L227",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/BipartiteSelfConsistency/Local.lean",
+  "lines": [
+   79,
+   227
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.rightTensor_mul_rightTensor",
+   "MIPStarRE.LDT.leftTensor_nonneg",
+   "MIPStarRE.LDT.rightTensor_nonneg",
+   "MIPStarRE.LDT.qSDD_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 128,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.easyApproxFromApproxDelta",
+  "source_name": "MIPStarRE.LDT.Preliminaries.easyApproxFromApproxDelta",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.easyApproxFromApproxDelta\n    {Question Outcome : Type*} {ι : Type*}\n    [Fintype Outcome] [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι) (hψ : ψ.IsNormalized)\n    (𝒟 : Distribution Question)\n    (h𝒟 : ∑ q ∈ 𝒟.support, 𝒟.weight q ≤ 1)\n    (A B C : IdxSubMeas Question Outcome ι)\n    (δ : Error)\n    (hAB : SDDRel ψ 𝒟 A B δ) :\n    |avgOver 𝒟 (fun q => ∑ a : Outcome, ev ψ ((A q).outcome a * (C q).outcome a)) -\n        avgOver 𝒟 (fun q => ∑ a : Outcome, ev ψ ((B q).outcome a * (C q).outcome a))| ≤\n      Real.sqrt δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`prop:easy-approx-from-approx-delta`.\n\nIf `A ≈_δ B` (sub-measurements) and `C` is a sub-measurement, then\n`|𝔼_x Σ_a ⟨ψ| A_a C_a |ψ⟩ - 𝔼_x Σ_a ⟨ψ| B_a C_a |ψ⟩| ≤ √δ`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz",
+  "module_doc": "/-!\n# Cauchy–Schwarz Inequalities for Approximate Measurements\n\nFormalizes Cauchy–Schwarz-style propositions from Section 3\n(Preliminaries) of the LDT paper:\n- `easyApproxFromApproxDelta` — Proposition `prop:easy-approx-from-approx-delta`\n- `closenessOfIP` / `closenessOfIPAdjoint` — Proposition `prop:closeness-of-ip`\n  (`eq:closeness3` / `eq:closeness4`)\n- `cabApproxDelta` — Proposition `prop:cab-approx-delta`\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/CauchySchwarz.lean#L168-L201",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/CauchySchwarz.lean",
+  "lines": [
+   168,
+   201
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.avgOver_abs_le_sqrt_of_pointwise",
+   "MIPStarRE.LDT.qSDD_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.closenessOfIP",
+  "source_name": "MIPStarRE.LDT.Preliminaries.closenessOfIP",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.closenessOfIP\n    {Question OutcomeA OutcomeB : Type*} {ι : Type*}\n    [Fintype OutcomeA] [Fintype OutcomeB] [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι) (hψ : ψ.IsNormalized)\n    (𝒟 : Distribution Question)\n    (h𝒟 : ∑ q ∈ 𝒟.support, 𝒟.weight q ≤ 1)\n    (A B : Question → OutcomeA → MIPStarRE.Quantum.Op ι)\n    (C : Question → OutcomeA → OutcomeB → MIPStarRE.Quantum.Op ι)\n    (γ : Error)\n    (hAB : avgOver 𝒟 (fun q => qSDDCore ψ (A q) (B q)) ≤ γ)\n    (hC :\n      ∀ q,\n        ∑ a : OutcomeA,\n          (∑ b : OutcomeB, C q a b) * (∑ b : OutcomeB, C q a b)ᴴ ≤ 1) :\n    |avgOver 𝒟 (fun q => ∑ a : OutcomeA, ∑ b : OutcomeB, ev ψ (C q a b * A q a)) -\n        avgOver 𝒟 (fun q => ∑ a : OutcomeA, ∑ b : OutcomeB, ev ψ (C q a b * B q a))| ≤\n      Real.sqrt γ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`prop:closeness-of-ip` (`eq:closeness3`).\n\nIf `A ≈_γ B` (raw matrices) and `Σ_a (Σ_b C_{a,b})(Σ_b C_{a,b})† ≤ I`,\nthen\n`|𝔼_x Σ_{a,b} ⟨ψ| C_{a,b} A_a |ψ⟩ -\n  𝔼_x Σ_{a,b} ⟨ψ| C_{a,b} B_a |ψ⟩| ≤ √γ`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz",
+  "module_doc": "/-!\n# Cauchy–Schwarz Inequalities for Approximate Measurements\n\nFormalizes Cauchy–Schwarz-style propositions from Section 3\n(Preliminaries) of the LDT paper:\n- `easyApproxFromApproxDelta` — Proposition `prop:easy-approx-from-approx-delta`\n- `closenessOfIP` / `closenessOfIPAdjoint` — Proposition `prop:closeness-of-ip`\n  (`eq:closeness3` / `eq:closeness4`)\n- `cabApproxDelta` — Proposition `prop:cab-approx-delta`\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/CauchySchwarz.lean#L203-L226",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/CauchySchwarz.lean",
+  "lines": [
+   203,
+   226
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.closenessOfInnerProduct_left"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.cabApproxDelta",
+  "source_name": "MIPStarRE.LDT.Preliminaries.cabApproxDelta",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.cabApproxDelta\n    {Question OutcomeA OutcomeB : Type*} {ι : Type*}\n    [Fintype OutcomeA] [Fintype OutcomeB] [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι)\n    (𝒟 : Distribution Question)\n    (A B : Question → OutcomeA → MIPStarRE.Quantum.Op ι)\n    (C : Question → OutcomeA → OutcomeB → MIPStarRE.Quantum.Op ι)\n    (δ : Error)\n    (hAB : avgOver 𝒟 (fun q => qSDDCore ψ (A q) (B q)) ≤ δ)\n    (hC : ∀ q, ∀ a : OutcomeA, ∑ b : OutcomeB, (C q a b)ᴴ * C q a b ≤ 1) :\n    avgOver 𝒟\n      (fun q =>\n        qSDDCore ψ\n          (fun ab : OutcomeA × OutcomeB => C q ab.1 ab.2 * A q ab.1)\n          (fun ab : OutcomeA × OutcomeB => C q ab.1 ab.2 * B q ab.1))\n      ≤ δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`prop:cab-approx-delta`.\n\nIf `A ≈_δ B` and `∀ x a, Σ_b (C_{a,b})† C_{a,b} ≤ I`, then\n`C_{a,b} A_a ≈_δ C_{a,b} B_a`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CauchySchwarz",
+  "module_doc": "/-!\n# Cauchy–Schwarz Inequalities for Approximate Measurements\n\nFormalizes Cauchy–Schwarz-style propositions from Section 3\n(Preliminaries) of the LDT paper:\n- `easyApproxFromApproxDelta` — Proposition `prop:easy-approx-from-approx-delta`\n- `closenessOfIP` / `closenessOfIPAdjoint` — Proposition `prop:closeness-of-ip`\n  (`eq:closeness3` / `eq:closeness4`)\n- `cabApproxDelta` — Proposition `prop:cab-approx-delta`\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/CauchySchwarz.lean#L254-L299",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/CauchySchwarz.lean",
+  "lines": [
+   254,
+   299
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.cabApproxDelta_raw"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ConsRel.mono",
+  "source_name": "MIPStarRE.LDT.ConsRel.mono",
+  "formal_statement": "theorem MIPStarRE.LDT.ConsRel.mono {Question Outcome : Type*} {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype Outcome]\n    {ψ : QuantumState (ιA × ιB)} {𝒟 : Distribution Question}\n    {A : IdxSubMeas Question Outcome ιA}\n    {B : IdxSubMeas Question Outcome ιB}\n    {δ δ' : Error} (hδ : δ ≤ δ') :\n    _root_.MIPStarRE.LDT.ConsRel ψ 𝒟 A B δ →\n      _root_.MIPStarRE.LDT.ConsRel ψ 𝒟 A B δ' := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ConsRel",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Monotonicity of `ConsRel` in the allowed error parameter.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonCore",
+  "module_doc": "/-!\n# Preliminary comparison theorems: core layer\n\nCore comparison lemmas and measurement-agreement translations for the\npreliminaries chapter.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ComparisonCore.lean#L76-L87",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ComparisonCore.lean",
+  "lines": [
+   76,
+   87
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.simeqToApprox",
+  "source_name": "MIPStarRE.LDT.Preliminaries.simeqToApprox",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.simeqToApprox {Question Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState (ι × ι)) (𝒟 : Distribution Question)\n    (A B : IdxMeas Question Outcome ι) (δ : Error) :\n    ConsRel ψ 𝒟\n        (IdxMeas.toIdxSubMeas A)\n        (IdxMeas.toIdxSubMeas B) δ →\n      BipartiteSDDRel ψ 𝒟\n        (IdxMeas.toIdxSubMeas A)\n        (IdxMeas.toIdxSubMeas B)\n        (2 * δ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`prop:simeq-to-approx`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonCore",
+  "module_doc": "/-!\n# Preliminary comparison theorems: core layer\n\nCore comparison lemmas and measurement-agreement translations for the\npreliminaries chapter.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ComparisonCore.lean#L209-L254",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ComparisonCore.lean",
+  "lines": [
+   209,
+   254
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_const_mul",
+   "MIPStarRE.LDT.leftTensor_one",
+   "MIPStarRE.LDT.rightTensor_one",
+   "MIPStarRE.LDT.bipartiteConsError_eq_consError_placed"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 33,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.simeqToApprox_heterogeneous",
+  "source_name": "MIPStarRE.LDT.Preliminaries.simeqToApprox_heterogeneous",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.simeqToApprox_heterogeneous {Question Outcome : Type*}\n    {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype Outcome]\n    (ψ : QuantumState (ιA × ιB)) (𝒟 : Distribution Question)\n    (A : IdxMeas Question Outcome ιA) (B : IdxMeas Question Outcome ιB)\n    (δ : Error) :\n    ConsRel ψ 𝒟\n        (IdxMeas.toIdxSubMeas A)\n        (IdxMeas.toIdxSubMeas B) δ →\n      SDDRel ψ 𝒟\n        (IdxSubMeas.placeLeft (ιB := ιB) (IdxMeas.toIdxSubMeas A))\n        (IdxSubMeas.placeRight (ιA := ιA) (IdxMeas.toIdxSubMeas B))\n        (2 * δ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Heterogeneous form of `prop:simeq-to-approx`.\n\nThe paper's consistency relation is naturally bipartite: Alice's measurement may\nact on `H_A` and Bob's on `H_B`.  This theorem is the same calculation as\n`simeqToApprox`, but expressed with the general tensor placements\n`IdxSubMeas.placeLeft` and `IdxSubMeas.placeRight` on `ιA × ιB`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonCore",
+  "module_doc": "/-!\n# Preliminary comparison theorems: core layer\n\nCore comparison lemmas and measurement-agreement translations for the\npreliminaries chapter.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ComparisonCore.lean#L256-L307",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ComparisonCore.lean",
+  "lines": [
+   256,
+   307
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_const_mul",
+   "MIPStarRE.LDT.leftTensor_one",
+   "MIPStarRE.LDT.rightTensor_one",
+   "MIPStarRE.LDT.bipartiteConsError_eq_consError_placed"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 33,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.qBipartiteSSCDefect_postprocess_le",
+  "source_name": "MIPStarRE.LDT.Preliminaries.qBipartiteSSCDefect_postprocess_le",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.qBipartiteSSCDefect_postprocess_le {α β : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype α] [Fintype β]\n    (ψ : QuantumState (ι × ι)) (M : SubMeas α ι) (f : α → β) :\n    qBipartiteSSCDefect ψ (postprocess M f) ≤ qBipartiteSSCDefect ψ M := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Postprocessing can only decrease the bipartite strong self-consistency\ndefect: the total mass is preserved while the diagonal overlap term can only\nincrease.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonCore",
+  "module_doc": "/-!\n# Preliminary comparison theorems: core layer\n\nCore comparison lemmas and measurement-agreement translations for the\npreliminaries chapter.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ComparisonCore.lean#L401-L475",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ComparisonCore.lean",
+  "lines": [
+   401,
+   475
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 67,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.consRelDataProcessing_questionDependent",
+  "source_name": "MIPStarRE.LDT.Preliminaries.consRelDataProcessing_questionDependent",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.consRelDataProcessing_questionDependent {Question α β : Type*}\n    {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype α] [Fintype β]\n    (ψ : QuantumState (ιA × ιB)) (𝒟 : Distribution Question)\n    (A : IdxSubMeas Question α ιA) (B : IdxSubMeas Question α ιB) (δ : Error)\n    (f : Question → α → β) :\n    ConsRel ψ 𝒟 A B δ →\n      ConsRel ψ 𝒟\n        (fun q => postprocess (A q) (f q))\n        (fun q => postprocess (B q) (f q)) δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Question-dependent postprocessing preserves bipartite consistency.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonCore",
+  "module_doc": "/-!\n# Preliminary comparison theorems: core layer\n\nCore comparison lemmas and measurement-agreement translations for the\npreliminaries chapter.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ComparisonCore.lean#L575-L604",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ComparisonCore.lean",
+  "lines": [
+   575,
+   604
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.bipartiteConsError_eq_consError_placed"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.consRel_uniform_prod_fst",
+  "source_name": "MIPStarRE.LDT.Preliminaries.consRel_uniform_prod_fst",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.consRel_uniform_prod_fst\n    {α β Outcome : Type*}\n    {ιA ιB : Type*}\n    [Fintype α] [DecidableEq α] [Nonempty α]\n    [Fintype β] [DecidableEq β] [Nonempty β]\n    [Fintype Outcome]\n    [Fintype ιA] [DecidableEq ιA]\n    [Fintype ιB] [DecidableEq ιB]\n    (ψ : QuantumState (ιA × ιB))\n    (A : IdxSubMeas α Outcome ιA)\n    (B : IdxSubMeas α Outcome ιB)\n    (δ : Error)\n    (hAB : ConsRel ψ (uniformDistribution α) A B δ) :\n    ConsRel ψ (uniformDistribution (α × β))\n      (fun ab => A ab.1)\n      (fun ab => B ab.1)\n      δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "If a uniformly sampled consistency statement depends only on the first\ncoordinate of a product question, it lifts to the full product with the same\nerror.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonCore",
+  "module_doc": "/-!\n# Preliminary comparison theorems: core layer\n\nCore comparison lemmas and measurement-agreement translations for the\npreliminaries chapter.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ComparisonCore.lean#L606-L636",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ComparisonCore.lean",
+  "lines": [
+   606,
+   636
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_fst"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.consRel_uniform_equiv",
+  "source_name": "MIPStarRE.LDT.Preliminaries.consRel_uniform_equiv",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.consRel_uniform_equiv\n    {α β Outcome : Type*}\n    {ιA ιB : Type*}\n    [Fintype α] [DecidableEq α] [Nonempty α]\n    [Fintype β] [DecidableEq β] [Nonempty β]\n    [Fintype Outcome]\n    [Fintype ιA] [DecidableEq ιA]\n    [Fintype ιB] [DecidableEq ιB]\n    (e : α ≃ β)\n    (ψ : QuantumState (ιA × ιB))\n    (A : IdxSubMeas α Outcome ιA)\n    (B : IdxSubMeas α Outcome ιB)\n    (δ : Error) :\n    ConsRel ψ (uniformDistribution α) A B δ ↔\n      ConsRel ψ (uniformDistribution β)\n        (fun b => A (e.symm b))\n        (fun b => B (e.symm b))\n        δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Reindexing a uniformly sampled consistency statement along an equivalence.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonCore",
+  "module_doc": "/-!\n# Preliminary comparison theorems: core layer\n\nCore comparison lemmas and measurement-agreement translations for the\npreliminaries chapter.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ComparisonCore.lean#L638-L682",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ComparisonCore.lean",
+  "lines": [
+   638,
+   682
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.qSDDOp_symm",
+  "source_name": "MIPStarRE.LDT.Preliminaries.qSDDOp_symm",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.qSDDOp_symm\n    {Outcome : Type*} {ι : Type*}\n    [Fintype ι] [DecidableEq ι] [Fintype Outcome]\n    (ψ : QuantumState ι) (A B : OpFamily Outcome ι) :\n    qSDDOp ψ A B = qSDDOp ψ B A := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`qSDDOp` is symmetric: swapping the two operator families gives the same\nsquared-distance sum.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonCore",
+  "module_doc": "/-!\n# Preliminary comparison theorems: core layer\n\nCore comparison lemmas and measurement-agreement translations for the\npreliminaries chapter.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ComparisonCore.lean#L684-L703",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ComparisonCore.lean",
+  "lines": [
+   684,
+   703
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.approxToSimeq_heterogeneous",
+  "source_name": "MIPStarRE.LDT.Preliminaries.approxToSimeq_heterogeneous",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.approxToSimeq_heterogeneous {Question Outcome : Type*}\n    {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype Outcome]\n    (ψ : QuantumState (ιA × ιB)) (𝒟 : Distribution Question)\n    (A : IdxProjMeas Question Outcome ιA) (B : IdxProjMeas Question Outcome ιB)\n    (δ : Error) :\n    SDDRel ψ 𝒟\n        (IdxSubMeas.placeLeft (ιB := ιB) (IdxProjMeas.toIdxSubMeas A))\n        (IdxSubMeas.placeRight (ιA := ιA) (IdxProjMeas.toIdxSubMeas B))\n        (2 * δ) →\n      ConsRel ψ 𝒟\n        (IdxProjMeas.toIdxSubMeas A)\n        (IdxProjMeas.toIdxSubMeas B) δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Heterogeneous projective converse of `prop:simeq-to-approx`.\n\nFor projective measurements acting on different tensor factors, a\nstate-dependent-distance estimate at strength `2·δ` for the placed families\nimplies the corresponding bipartite consistency statement at strength `δ`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ComparisonProjective",
+  "module_doc": "/-!\n# Preliminary comparison theorems: projective converse\n\nProjective-case converse of `prop:simeq-to-approx`. This lemma lives in a\nsibling module to `ComparisonCore` because its proof uses\n`projSubMeas_diagMass_eq_mass`, which is introduced in\n`SwitchSandwichPrep.Core`, downstream of `ComparisonCore`.\n\nThe imports above are chosen to make the direct dependencies explicit rather\nthan relying on transitive re-exports through `SwitchSandwichPrep.Core`:\n`ComparisonCore` is the sibling comparison module, `ConsistencyBridges`\nsupplies the `BipartiteSDDRel`/`ConsRel` bridging machinery, and\n`SwitchSandwichPrep.Core` provides `projSubMeas_diagMass_eq_mass`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ComparisonProjective.lean#L377-L421",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ComparisonProjective.lean",
+  "lines": [
+   377,
+   421
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_const_mul",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.bipartiteConsError_eq_consError_placed"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.sddOpRel_chain",
+  "source_name": "MIPStarRE.LDT.Preliminaries.sddOpRel_chain",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.sddOpRel_chain\n    {Question Outcome : Type*} {ι' : Type*}\n    [Fintype ι'] [DecidableEq ι'] [Fintype Outcome]\n    (ψ : QuantumState ι') (𝒟 : Distribution Question)\n    (n : ℕ)\n    (families : Fin (n + 1) → IdxOpFamily Question Outcome ι')\n    (errors : Fin n → Error)\n    (hsteps : ∀ i : Fin n,\n      SDDOpRel ψ 𝒟 (families i.castSucc) (families i.succ)\n        (errors i)) :\n    SDDOpRel ψ 𝒟 (families 0) (families (Fin.last n))\n      ((n : Error) * ∑ i : Fin n, errors i) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "n-step SDDOpRel chain lemma via vector Cauchy-Schwarz.\n\nGiven `n` consecutive SDDOpRel bounds, the endpoints satisfy an SDDOpRel\nbound with error `n * (∑ individual errors)`.  This improves on naive\ntriangle-inequality chaining, which would give exponential blowup.\n\nPaper reference: `prop:triangle-inequality-for-approx_delta` in\n`references/ldt-paper/preliminaries.tex`.\n\nProof sketch: telescoping + `‖∑ dᵢ|ψ⟩‖² ≤ n · ∑ ‖dᵢ|ψ⟩‖²`\n(vector Cauchy-Schwarz / norm triangle inequality).",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.CompletionTransfer",
+  "module_doc": "/-!\n# Preliminary comparison theorems: completion and chain rules\n\nCompletion lemmas and final chain inequalities from the preliminaries chapter.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/CompletionTransfer.lean#L402-L449",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/CompletionTransfer.lean",
+  "lines": [
+   402,
+   449
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_const_mul"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.consSubMeas",
+  "source_name": "MIPStarRE.LDT.Preliminaries.consSubMeas",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.consSubMeas {Question Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState (ι × ι)) (𝒟 : Distribution Question)\n    (A : IdxSubMeas Question Outcome ι)\n    (B : IdxMeas Question Outcome ι) (γ : Error) :\n    ConsRel ψ 𝒟\n      A\n      (IdxMeas.toIdxSubMeas B) γ →\n    ConsSubMeasStmt ψ 𝒟 A B γ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Same-space specialization of `prop:cons-sub-meas`.\n\nThe paper-facing two-space theorem is `consSubMeas_heterogeneous`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.ConsistencyBridges",
+  "module_doc": "/-!\n# Preliminary comparison theorems: consistency-to-distance estimates\n\nEstimates converting consistency of a submeasurement and a measurement into\nstate-dependent distance controls for the diagonal and total sandwich families\nof `prop:cons-sub-meas`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ConsistencyBridges.lean#L629-L654",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/ConsistencyBridges.lean",
+  "lines": [
+   629,
+   654
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.stateDependentDistanceRel_triangle"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ }
+]

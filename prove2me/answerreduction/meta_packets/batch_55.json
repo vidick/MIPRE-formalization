@@ -1,0 +1,538 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.conicNormalizedSeparatorFunctional_lt_of_sep",
+  "source_name": "MIPStarRE.Quantum.conicNormalizedSeparatorFunctional_lt_of_sep",
+  "formal_statement": "theorem MIPStarRE.Quantum.conicNormalizedSeparatorFunctional_lt_of_sep\n    {E : Type*} [TopologicalSpace E] [AddCommMonoid E] [Module ℝ E]\n    (φ : StrongDual ℝ (E × ℝ))\n    {y : E} {t : ℝ}\n    (hsep : φ (y, t) < 0)\n    (hcoeff : conicSeparatorObjectiveCoefficient φ < 0) :\n    conicNormalizedSeparatorFunctional φ y < t := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "If a separator is negative at `(y, t)`, then its normalized\nconstraint-coordinate functional is below `t` at `y`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteConicDuality",
+  "module_doc": "/-!\n# Finite conic-duality separation lemmas\n\nThis module contains the product-space part of the finite-dimensional conic\nduality argument used by the Section 9 SDP.  A separator on a product space\n`E × ℝ` decomposes into a constraint-coordinate functional and an objective\ncoefficient.  If the separator is nonnegative on a conic image and negative at\na point with the same constraint coordinate but larger objective coordinate,\nthen the objective coefficient is negative.  After normalizing by this negative\ncoefficient one obtains the functional dual bound.\n\nThe matrix trace-pairing representation and the paper-form SDP witness remain\nin the Section 9 matrix-realization layer.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n- `docs/reports/issue-2386-finite-sdp-duality-theorem-design.md`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteConicDuality.lean#L170-L190",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteConicDuality.lean",
+  "lines": [
+   170,
+   190
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.conic_primalValue_eq_dualValue_of_fiber_max_dual_min",
+  "source_name": "MIPStarRE.Quantum.conic_primalValue_eq_dualValue_of_fiber_max_dual_min",
+  "formal_statement": "theorem MIPStarRE.Quantum.conic_primalValue_eq_dualValue_of_fiber_max_dual_min\n    {F : Type*}\n    [TopologicalSpace F] [AddCommGroup F] [IsTopologicalAddGroup F]\n    [Module ℝ F] [ContinuousSMul ℝ F] [LocallyConvexSpace ℝ F]\n    (C : ProperCone ℝ (F × ℝ))\n    {y : F} {p d : ℝ}\n    (hprimalMem : (y, p) ∈ C)\n    (hprimalMax : ∀ {t : ℝ}, (y, t) ∈ C → t ≤ p)\n    (hdualMin : ∀ ψ : StrongDual ℝ F,\n      (∀ z ∈ C, z.2 ≤ ψ z.1) → d ≤ ψ y)\n    (hweak : p ≤ d) :\n    p = d := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum"
+  ],
+  "docstring": "A functional conic zero-gap theorem.\n\nLet `C` be a closed conic image in `F × ℝ`.  Suppose that, on the fiber over\n`y`, the value `p` lies in `C` and is maximal among all objective coordinates\nin that fiber.  Suppose also that `d` is minimal among all continuous\nreal-linear functionals `ψ` satisfying the functional dual inequalities\n`t ≤ ψ y'` for every `(y', t) ∈ C`.  If weak duality gives `p ≤ d`, then the\nattained primal and dual values are equal.\n\nThis is the product-space separation argument behind finite-dimensional conic\nduality.  It deliberately records the closed-image fiber condition through the\nmaximality hypothesis, rather than assuming that fiber recovery is automatic.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteConicDuality",
+  "module_doc": "/-!\n# Finite conic-duality separation lemmas\n\nThis module contains the product-space part of the finite-dimensional conic\nduality argument used by the Section 9 SDP.  A separator on a product space\n`E × ℝ` decomposes into a constraint-coordinate functional and an objective\ncoefficient.  If the separator is nonnegative on a conic image and negative at\na point with the same constraint coordinate but larger objective coordinate,\nthen the objective coefficient is negative.  After normalizing by this negative\ncoefficient one obtains the functional dual bound.\n\nThe matrix trace-pairing representation and the paper-form SDP witness remain\nin the Section 9 matrix-realization layer.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n- `docs/reports/issue-2386-finite-sdp-duality-theorem-design.md`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteConicDuality.lean#L192-L242",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteConicDuality.lean",
+  "lines": [
+   192,
+   242
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.Quantum.conicSeparatorObjectiveCoefficient_neg_of_above",
+   "MIPStarRE.Quantum.conicFunctionalDualFeasible_normalizedSeparator",
+   "MIPStarRE.Quantum.conicNormalizedSeparatorFunctional_lt_of_sep"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "Matrix.mul_conjTranspose_eq_one_of_orthonormal_rows",
+  "source_name": "Matrix.mul_conjTranspose_eq_one_of_orthonormal_rows",
+  "formal_statement": "theorem Matrix.mul_conjTranspose_eq_one_of_orthonormal_rows\n    {𝕜 : Type*} [RCLike 𝕜]\n    {m n : Type*} [DecidableEq m] [Fintype n]\n    (row : m → EuclideanSpace 𝕜 n)\n    (hrow : Orthonormal 𝕜 row) :\n    (Matrix.of fun i j => row i j) * (Matrix.of fun i j => row i j)ᴴ =\n      (1 : Matrix m m 𝕜) := by sorry",
+  "preamble_opens": [
+   "open Matrix",
+   "open Module"
+  ],
+  "docstring": "A matrix whose rows form an orthonormal family is a coisometry.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteHilbert",
+  "module_doc": "/-!\n# Finite-dimensional Hilbert spaces\n\nThis file contains small reusable lemmas about finite-dimensional Hilbert\nspaces which are independent of the low individual degree test.  The first\ningredient is the elementary fact that a Hilbert space embeds linearly and\nisometrically into any finite-dimensional Hilbert space of at least the same\ndimension.  The second translates this dimension-controlled isometry into a\nrectangular matrix with orthonormal rows.\n\n## References\n\nThe construction is the standard one: choose orthonormal bases in the two\nspaces and send the first basis into the corresponding initial segment of the\nsecond basis.  The resulting matrix statement is the finite-dimensional\ncoisometry identity used in the paper's rectangular `Xhat` construction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteHilbert.lean#L77-L95",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteHilbert.lean",
+  "lines": [
+   77,
+   95
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "Matrix.trace_reindex",
+  "source_name": "Matrix.trace_reindex",
+  "formal_statement": "theorem Matrix.trace_reindex {α β R : Type*} [Fintype α] [Fintype β]\n    [AddCommMonoid R] (e : α ≃ β) (M : Matrix α α R) :\n    Matrix.trace (Matrix.reindex e e M) = Matrix.trace M := by sorry",
+  "preamble_opens": [
+   "open Matrix",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise",
+   "open WithLp"
+  ],
+  "docstring": "Reindexing rows and columns by the same equivalence preserves matrix trace.\n\nThis generic matrix lemma is used when moving between equivalent finite index\npresentations of the same operator.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.Basic",
+  "module_doc": "/-!\n# Basic finite-dimensional matrix operators\n\nThis module contains the elementary trace and matrix-algebra facts used by the\nfinite-dimensional quantum layer.  It introduces the local operator abbreviation\n`Op d = Matrix d d ℂ` and keeps the basic trace bookkeeping independent of the\npositive-semidefinite order and normalized-trace material.\n\n## References\n\nThe declarations in this file are matrix facts for the LDT\nformalization of `references/ldt-paper/`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/Basic.lean#L67-L77",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/Basic.lean",
+  "lines": [
+   67,
+   77
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "Matrix.blockDiagonal_nonneg_iff",
+  "source_name": "Matrix.blockDiagonal_nonneg_iff",
+  "formal_statement": "theorem Matrix.blockDiagonal_nonneg_iff {o m : Type*}\n    [Finite o] [DecidableEq o] [Finite m]\n    (B : o → Matrix m m ℂ) :\n    0 ≤ Matrix.blockDiagonal B ↔ ∀ b, 0 ≤ B b := by sorry",
+  "preamble_opens": [
+   "open Matrix",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise",
+   "open WithLp"
+  ],
+  "docstring": "A block-diagonal complex matrix is positive semidefinite exactly when each\nof its diagonal blocks is positive semidefinite.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.BlockDiagonal",
+  "module_doc": "/-!\n# Block-diagonal finite matrix operators\n\nThis module contains block-diagonal trace and positive-semidefinite order facts\nfor finite complex matrices.  The canonical SDP block algebra in Section 9 uses\nthese lemmas to compare the paper's block form with Mathlib's\n`Matrix.blockDiagonal`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/BlockDiagonal.lean#L124-L144",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/BlockDiagonal.lean",
+  "lines": [
+   124,
+   144
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.Quantum.kronecker_nonneg"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.normalizedTrace_add",
+  "source_name": "MIPStarRE.Quantum.normalizedTrace_add",
+  "formal_statement": "theorem MIPStarRE.Quantum.normalizedTrace_add (A B : Op d) :\n    normalizedTrace (A + B) = normalizedTrace A + normalizedTrace B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise",
+   "open WithLp",
+   "variable {d : Type*} [Fintype d]"
+  ],
+  "docstring": "The normalized trace is additive.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace",
+  "module_doc": "/-!\n# Normalized trace, projectors, and spectral truncation\n\nThis module contains the normalized trace `τ`, the squared `τ`-norm, the\npaper-facing orthogonal-projection name, and the spectral-truncation witness used\nin the low individual degree test formalization.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/NormalizedTrace.lean#L47-L50",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/NormalizedTrace.lean",
+  "lines": [
+   47,
+   50
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.normalizedTrace_smul",
+  "source_name": "MIPStarRE.Quantum.normalizedTrace_smul",
+  "formal_statement": "theorem MIPStarRE.Quantum.normalizedTrace_smul (c : ℂ) (A : Op d) :\n    normalizedTrace (c • A) = c * normalizedTrace A := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise",
+   "open WithLp",
+   "variable {d : Type*} [Fintype d]"
+  ],
+  "docstring": "Scalar multiplication pulls out of the normalized trace.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace",
+  "module_doc": "/-!\n# Normalized trace, projectors, and spectral truncation\n\nThis module contains the normalized trace `τ`, the squared `τ`-norm, the\npaper-facing orthogonal-projection name, and the spectral-truncation witness used\nin the low individual degree test formalization.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/NormalizedTrace.lean#L57-L61",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/NormalizedTrace.lean",
+  "lines": [
+   57,
+   61
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.normalizedTrace_mul_comm",
+  "source_name": "MIPStarRE.Quantum.normalizedTrace_mul_comm",
+  "formal_statement": "theorem MIPStarRE.Quantum.normalizedTrace_mul_comm (A B : Op d) :\n    normalizedTrace (A * B) = normalizedTrace (B * A) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise",
+   "open WithLp",
+   "variable {d : Type*} [Fintype d]"
+  ],
+  "docstring": "The normalized trace is invariant under swapping two multiplicative factors.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.NormalizedTrace",
+  "module_doc": "/-!\n# Normalized trace, projectors, and spectral truncation\n\nThis module contains the normalized trace `τ`, the squared `τ`-norm, the\npaper-facing orthogonal-projection name, and the spectral-truncation witness used\nin the low individual degree test formalization.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/NormalizedTrace.lean#L63-L67",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/NormalizedTrace.lean",
+  "lines": [
+   63,
+   67
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.norm_apply_le_trace_re_of_nonneg",
+  "source_name": "MIPStarRE.Quantum.norm_apply_le_trace_re_of_nonneg",
+  "formal_statement": "theorem MIPStarRE.Quantum.norm_apply_le_trace_re_of_nonneg {A : Op d} (hA : 0 ≤ A) (i j : d) :\n    ‖A i j‖ ≤ Complex.re A.trace := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise",
+   "open WithLp",
+   "variable {d : Type*} [Fintype d]"
+  ],
+  "docstring": "Every entry of a positive semidefinite finite matrix is bounded by its real trace.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.Order",
+  "module_doc": "/-!\n# Positive-semidefinite finite matrix order\n\nThis module contains the order-theoretic facts for finite-dimensional\ncomplex matrix operators: trace control of positive operators, closedness of the\npositive-semidefinite cone, the corresponding `ProperCone`, and basic\nmonotonicity facts for sandwiches, Kronecker products, and reindexing.\n\nThese are the matrix-operator facts used by the canonical SDP strong-duality\nargument in Section 9.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/Order.lean#L173-L195",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/Order.lean",
+  "lines": [
+   173,
+   195
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.kronecker_nonneg",
+  "source_name": "MIPStarRE.Quantum.kronecker_nonneg",
+  "formal_statement": "theorem MIPStarRE.Quantum.kronecker_nonneg\n    {d₁ d₂ : Type*} [hd₁ : Finite d₁] [hd₂ : Finite d₂]\n    {A : Op d₁} {B : Op d₂} (hA : 0 ≤ A) (hB : 0 ≤ B) :\n    0 ≤ Matrix.kronecker A B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise",
+   "open WithLp",
+   "variable {d : Type*} [Fintype d]"
+  ],
+  "docstring": "Kronecker products preserve positivity.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.Order",
+  "module_doc": "/-!\n# Positive-semidefinite finite matrix order\n\nThis module contains the order-theoretic facts for finite-dimensional\ncomplex matrix operators: trace control of positive operators, closedness of the\npositive-semidefinite cone, the corresponding `ProperCone`, and basic\nmonotonicity facts for sandwiches, Kronecker products, and reindexing.\n\nThese are the matrix-operator facts used by the canonical SDP strong-duality\nargument in Section 9.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/Order.lean#L257-L267",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/Order.lean",
+  "lines": [
+   257,
+   267
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.kronecker_mono_left",
+  "source_name": "MIPStarRE.Quantum.kronecker_mono_left",
+  "formal_statement": "theorem MIPStarRE.Quantum.kronecker_mono_left\n    {d₁ d₂ : Type*} [hd₁ : Finite d₁] [hd₂ : Finite d₂]\n    {A₁ A₂ : Op d₁} {B : Op d₂} (hA : A₁ ≤ A₂) (hB : 0 ≤ B) :\n    Matrix.kronecker A₁ B ≤ Matrix.kronecker A₂ B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise",
+   "open WithLp",
+   "variable {d : Type*} [Fintype d]"
+  ],
+  "docstring": "Kronecker product is monotone in the left factor against a PSD right factor.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.Order",
+  "module_doc": "/-!\n# Positive-semidefinite finite matrix order\n\nThis module contains the order-theoretic facts for finite-dimensional\ncomplex matrix operators: trace control of positive operators, closedness of the\npositive-semidefinite cone, the corresponding `ProperCone`, and basic\nmonotonicity facts for sandwiches, Kronecker products, and reindexing.\n\nThese are the matrix-operator facts used by the canonical SDP strong-duality\nargument in Section 9.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/Order.lean#L282-L293",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/Order.lean",
+  "lines": [
+   282,
+   293
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.Quantum.kronecker_nonneg"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.reindex_nonneg",
+  "source_name": "MIPStarRE.Quantum.reindex_nonneg",
+  "formal_statement": "theorem MIPStarRE.Quantum.reindex_nonneg {d₁ d₂ : Type*} [Finite d₁] [Finite d₂]\n    (e : d₁ ≃ d₂) {A : Op d₁} (hA : 0 ≤ A) :\n    0 ≤ Matrix.reindex e e A := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise",
+   "open WithLp",
+   "variable {d : Type*} [Fintype d]"
+  ],
+  "docstring": "Simultaneous reindexing of rows and columns preserves positive semidefiniteness.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.Order",
+  "module_doc": "/-!\n# Positive-semidefinite finite matrix order\n\nThis module contains the order-theoretic facts for finite-dimensional\ncomplex matrix operators: trace control of positive operators, closedness of the\npositive-semidefinite cone, the corresponding `ProperCone`, and basic\nmonotonicity facts for sandwiches, Kronecker products, and reindexing.\n\nThese are the matrix-operator facts used by the canonical SDP strong-duality\nargument in Section 9.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/Order.lean#L295-L305",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/Order.lean",
+  "lines": [
+   295,
+   305
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.sq_le_self",
+  "source_name": "MIPStarRE.Quantum.sq_le_self",
+  "formal_statement": "theorem MIPStarRE.Quantum.sq_le_self [DecidableEq d] {X : Op d} (hX : 0 ≤ X) (hXle : X ≤ 1) :\n    X * X ≤ X := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise",
+   "open WithLp",
+   "variable {d : Type*} [Fintype d]"
+  ],
+  "docstring": "An operator between `0` and `1` dominates its square.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.Order",
+  "module_doc": "/-!\n# Positive-semidefinite finite matrix order\n\nThis module contains the order-theoretic facts for finite-dimensional\ncomplex matrix operators: trace control of positive operators, closedness of the\npositive-semidefinite cone, the corresponding `ProperCone`, and basic\nmonotonicity facts for sandwiches, Kronecker products, and reindexing.\n\nThese are the matrix-operator facts used by the canonical SDP strong-duality\nargument in Section 9.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/Order.lean#L307-L315",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/Order.lean",
+  "lines": [
+   307,
+   315
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.realTracePairingCLM_tracePairingMatrixOfRealCLM",
+  "source_name": "MIPStarRE.Quantum.realTracePairingCLM_tracePairingMatrixOfRealCLM",
+  "formal_statement": "theorem MIPStarRE.Quantum.realTracePairingCLM_tracePairingMatrixOfRealCLM\n    {d : Type*} [Fintype d] [DecidableEq d]\n    (ψ : StrongDual ℝ (Op d)) :\n    realTracePairingCLM (tracePairingMatrixOfRealCLM ψ) = ψ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise",
+   "open WithLp",
+   "variable {d : Type*} [Fintype d]"
+  ],
+  "docstring": "Every continuous real-linear functional on finite complex matrices is a real trace pairing.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing",
+  "module_doc": "/-!\n# Real trace pairing for finite matrix operators\n\nThis module records the continuous real-linear trace pairing\n`X ↦ Re Tr(ZX)`, the representation of every continuous real-linear\nfunctional by such a pairing, and the finite-dimensional Hilbert--Schmidt\npositivity facts used in weak duality and complementary slackness.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/TracePairing.lean#L175-L229",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/TracePairing.lean",
+  "lines": [
+   175,
+   229
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 50,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.realTracePairingCLM_selfAdjointPart_apply_of_isHermitian",
+  "source_name": "MIPStarRE.Quantum.realTracePairingCLM_selfAdjointPart_apply_of_isHermitian",
+  "formal_statement": "theorem MIPStarRE.Quantum.realTracePairingCLM_selfAdjointPart_apply_of_isHermitian\n    {d : Type*} [Fintype d] [DecidableEq d]\n    (Z : Op d) {X : Op d} (hX : X.IsHermitian) :\n    realTracePairingCLM (selfAdjointPart ℝ Z) X =\n      realTracePairingCLM Z X := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise",
+   "open WithLp",
+   "variable {d : Type*} [Fintype d]"
+  ],
+  "docstring": "On Hermitian inputs, the Hermitian part has the same real trace pairing.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing",
+  "module_doc": "/-!\n# Real trace pairing for finite matrix operators\n\nThis module records the continuous real-linear trace pairing\n`X ↦ Re Tr(ZX)`, the representation of every continuous real-linear\nfunctional by such a pairing, and the finite-dimensional Hilbert--Schmidt\npositivity facts used in weak duality and complementary slackness.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/TracePairing.lean#L231-L253",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/TracePairing.lean",
+  "lines": [
+   231,
+   253
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.trace_mul_nonneg_of_nonneg",
+  "source_name": "MIPStarRE.Quantum.trace_mul_nonneg_of_nonneg",
+  "formal_statement": "theorem MIPStarRE.Quantum.trace_mul_nonneg_of_nonneg {A B : Op d} (hA : 0 ≤ A) (hB : 0 ≤ B) :\n    0 ≤ Complex.re (Matrix.trace (A * B)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise",
+   "open WithLp",
+   "variable {d : Type*} [Fintype d]"
+  ],
+  "docstring": "The real trace pairing of two positive semidefinite operators is\nnonnegative.\n\nThis is the finite-dimensional Hilbert-Schmidt positivity fact used in weak\nduality arguments: if \\(A,B\\geq 0\\), then\n\\(\\operatorname{Re}\\operatorname{Tr}(AB)\\geq 0\\).",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing",
+  "module_doc": "/-!\n# Real trace pairing for finite matrix operators\n\nThis module records the continuous real-linear trace pairing\n`X ↦ Re Tr(ZX)`, the representation of every continuous real-linear\nfunctional by such a pairing, and the finite-dimensional Hilbert--Schmidt\npositivity facts used in weak duality and complementary slackness.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/TracePairing.lean#L284-L311",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/TracePairing.lean",
+  "lines": [
+   284,
+   311
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.nonneg_of_trace_mul_nonneg_of_isHermitian",
+  "source_name": "MIPStarRE.Quantum.nonneg_of_trace_mul_nonneg_of_isHermitian",
+  "formal_statement": "theorem MIPStarRE.Quantum.nonneg_of_trace_mul_nonneg_of_isHermitian {A : Op d}\n    (hA : A.IsHermitian)\n    (htrace : ∀ B : Op d, 0 ≤ B →\n      0 ≤ Complex.re (Matrix.trace (A * B))) :\n    0 ≤ A := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise",
+   "open WithLp",
+   "variable {d : Type*} [Fintype d]"
+  ],
+  "docstring": "A Hermitian operator whose real trace pairing with every PSD operator is\nnonnegative is positive semidefinite.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing",
+  "module_doc": "/-!\n# Real trace pairing for finite matrix operators\n\nThis module records the continuous real-linear trace pairing\n`X ↦ Re Tr(ZX)`, the representation of every continuous real-linear\nfunctional by such a pairing, and the finite-dimensional Hilbert--Schmidt\npositivity facts used in weak duality and complementary slackness.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/TracePairing.lean#L313-L332",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/TracePairing.lean",
+  "lines": [
+   313,
+   332
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.mul_eq_zero_of_nonneg_of_trace_mul_eq_zero",
+  "source_name": "MIPStarRE.Quantum.mul_eq_zero_of_nonneg_of_trace_mul_eq_zero",
+  "formal_statement": "theorem MIPStarRE.Quantum.mul_eq_zero_of_nonneg_of_trace_mul_eq_zero {A B : Op d}\n    (hA : 0 ≤ A) (hB : 0 ≤ B)\n    (htrace : Complex.re (Matrix.trace (A * B)) = 0) :\n    A * B = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise",
+   "open WithLp",
+   "variable {d : Type*} [Fintype d]"
+  ],
+  "docstring": "If two positive semidefinite operators have zero trace pairing, then their\nproduct is zero.\n\nThis is the finite-dimensional complementary-slackness algebra used after a\nzero duality gap has been obtained: for PSD operators `A` and `B`, the equality\n`Re Tr(A * B) = 0` forces `A * B = 0`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteMatrix.TracePairing",
+  "module_doc": "/-!\n# Real trace pairing for finite matrix operators\n\nThis module records the continuous real-linear trace pairing\n`X ↦ Re Tr(ZX)`, the representation of every continuous real-linear\nfunctional by such a pairing, and the finite-dimensional Hilbert--Schmidt\npositivity facts used in weak duality and complementary slackness.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/TracePairing.lean#L342-L390",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteMatrix/TracePairing.lean",
+  "lines": [
+   342,
+   390
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 39,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.IsProj.trace_eq_rank",
+  "source_name": "MIPStarRE.Quantum.IsProj.trace_eq_rank",
+  "formal_statement": "theorem MIPStarRE.Quantum.IsProj.trace_eq_rank (Q : Op ι) (hQ : IsProj Q) :\n    Q.trace = (Q.rank : ℂ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum",
+   "open MIPStarRE.Quantum.IsProj",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.L2Operator",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The trace of a finite-dimensional orthogonal projector equals its rank.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB",
+  "module_doc": "/-!\n# Projector Range Orthonormal Bases\n\nThis file packages the finite-dimensional spectral decomposition of an\northogonal projector as an orthonormal basis of its range. It supplies the\nrank-one decomposition needed by the rank-reduction truncation branch in the\nlow-degree-test formalization.\n\n## References\n\n- `references/ldt-paper/orthonormalization.tex`, lines 570--573.\n- `MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/LowRank.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/ProjectorONB.lean#L122-L148",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/ProjectorONB.lean",
+  "lines": [
+   122,
+   148
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.ProjectorRangeONB.subprojector_idempotent",
+  "source_name": "MIPStarRE.Quantum.ProjectorRangeONB.subprojector_idempotent",
+  "formal_statement": "theorem MIPStarRE.Quantum.ProjectorRangeONB.subprojector_idempotent (S : Finset (Fin P.rank)) :\n    b.subprojector S * b.subprojector S = b.subprojector S := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum",
+   "open MIPStarRE.Quantum.ProjectorRangeONB",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.L2Operator",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]",
+   "variable {P : Op ι} {hP : IsProj P} (b : ProjectorRangeONB P hP)"
+  ],
+  "docstring": "A selected sum of orthonormal rank-one projectors is idempotent.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB",
+  "module_doc": "/-!\n# Projector Range Orthonormal Bases\n\nThis file packages the finite-dimensional spectral decomposition of an\northogonal projector as an orthonormal basis of its range. It supplies the\nrank-one decomposition needed by the rank-reduction truncation branch in the\nlow-degree-test formalization.\n\n## References\n\n- `references/ldt-paper/orthonormalization.tex`, lines 570--573.\n- `MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/LowRank.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/ProjectorONB.lean#L242-L266",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/ProjectorONB.lean",
+  "lines": [
+   242,
+   266
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 21,
+  "is_target": false
+ }
+]

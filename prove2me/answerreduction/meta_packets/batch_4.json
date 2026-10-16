@@ -1,0 +1,736 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.sum_copyFail_le",
+  "source_name": "MIPRE.AnswerReduction.sum_copyFail_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.sum_copyFail_le (T : TensorProductStrategy (typedGame V n P hk S S' check B)) (r : Role)\n    (i : Fin 5) :\n    (Fintype.card (Fq P hk) ^ (Fintype.card (Coord P) - (2 * P.m + 1)) : ℝ) *\n        ∑ x₀, ∑ sm,\n          copyFail V n P hk S S' check B T r i ((roleFamily (V.sampler.cl n) r).eval x₀) sm\n      ≤ (Fintype.card (ArTy × ArTy) * Fintype.card (Fin (dim V n P) → 𝔽₂)) * (1 - T.value) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.CL.CLFun MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)",
+   "variable [NeZero P.m] {hm : P.m ∣ Fintype.card (Fq P hk)} {hm' : P.m' ∣ Fintype.card (Fq P hk)}"
+  ],
+  "docstring": "**The copy's edges inside the typed failure**: the nine type pairs of copy `i` at role `r`,\nsummed over the seeds and the samples, weigh at most the typed game's failure.",
+  "module": "MIPRE.Background.AnswerReduction.SoundIsolate",
+  "module_doc": "/-!\n# Soundness of answer reduction: the per-seed low-degree games\n\nPiece AR-5b of `planning/answer-reduction.md` (`claim:ar-3`, `claim:ar-4`, `def:ar-seed-index`).\nA strategy for the typed answer-reduced game, restricted to one copy of the low-degree test at a\nrole pair where that copy is tested and to one seed of the input sampler, is a strategy for the\nseeded CL test of the copy's parameters (`copyStrategy`): its question maps a CL question to the\ntyped question whose PCP half the copy's presentation computes (`Regs.embedQ`) and whose oracle\nhalf the seed's role family gives, and its answers are parsed and read as answers of the copy's\ntest. The seeds are indexed by the full seed of the input sampler, as the blueprint's\n`def:ar-seed-index` asks.\n\nThe per-seed failures average to at most a constant times the typed failure\n(`sum_one_sub_value_copyStrategy_le`): the copy's nine type pairs are a fixed fraction of the\ntyped game's, and the copy's registers of a uniform PCP vector carry a uniform sample\n(`Regs.sum_sampleOf`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundIsolate.lean#L203-L233",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundIsolate.lean",
+  "lines": [
+   203,
+   233
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-global-tests",
+    "env": "lemma",
+    "title": "Global PCP consistency tests",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.pcpCl_exactlyOn",
+   "MIPRE.AnswerReduction.sum_edges_le",
+   "MIPRE.LIDT.CL.Regs.sum_sampleOf",
+   "MIPRE.LIDT.CL.Regs.pres_eval",
+   "MIPRE.CL.CLFun.truncate_reindex",
+   "MIPRE.CL.CLFun.eval_reindex",
+   "MIPRE.CL.pull_proj_compl",
+   "MIPRE.CL.CLFun.eval_truncate_of_le",
+   "MIPRE.exactlyOn_roleFamily"
+  ],
+  "pasted_helpers": 24,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy_le",
+  "source_name": "MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy_le\n    (T : TensorProductStrategy (typedGame V n P hk S S' check B)) {r : Role} {i : Fin 5}\n    (hr : LDStep r i) :\n    ∑ x₀, (1 - (copyStrategy V n P hk S S' check B T r i\n        ((roleFamily (V.sampler.cl n) r).eval x₀)).value)\n      ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * (324 * (1 - T.value)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.CL.CLFun MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)",
+   "variable [NeZero P.m] {hm : P.m ∣ Fintype.card (Fq P hk)} {hm' : P.m' ∣ Fintype.card (Fq P hk)}"
+  ],
+  "docstring": "**The per-seed failures average to at most `324` times the typed failure**, at a role pair\nwhere copy `i` is tested: the copy's nine type pairs are `9 / 54^2 = 1 / 324` of the typed game's\nedges, and on them the copy's registers of a uniform vector carry a uniform sample.",
+  "module": "MIPRE.Background.AnswerReduction.SoundIsolate",
+  "module_doc": "/-!\n# Soundness of answer reduction: the per-seed low-degree games\n\nPiece AR-5b of `planning/answer-reduction.md` (`claim:ar-3`, `claim:ar-4`, `def:ar-seed-index`).\nA strategy for the typed answer-reduced game, restricted to one copy of the low-degree test at a\nrole pair where that copy is tested and to one seed of the input sampler, is a strategy for the\nseeded CL test of the copy's parameters (`copyStrategy`): its question maps a CL question to the\ntyped question whose PCP half the copy's presentation computes (`Regs.embedQ`) and whose oracle\nhalf the seed's role family gives, and its answers are parsed and read as answers of the copy's\ntest. The seeds are indexed by the full seed of the input sampler, as the blueprint's\n`def:ar-seed-index` asks.\n\nThe per-seed failures average to at most a constant times the typed failure\n(`sum_one_sub_value_copyStrategy_le`): the copy's nine type pairs are a fixed fraction of the\ntyped game's, and the copy's registers of a uniform PCP vector carry a uniform sample\n(`Regs.sum_sampleOf`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundIsolate.lean#L239-L282",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundIsolate.lean",
+  "lines": [
+   239,
+   282
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.cl_accepts_of_accepts",
+   "MIPRE.AnswerReduction.sum_copyFail_le",
+   "MIPRE.LIDT.CL.Regs.sum_sampleOf",
+   "MIPRE.TensorProductStrategy.succAt_adapt_eq"
+  ],
+  "pasted_helpers": 26,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.sum_copyFail6_le",
+  "source_name": "MIPRE.AnswerReduction.sum_copyFail6_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.sum_copyFail6_le (T : TensorProductStrategy (typedGame V n P hk S S' check B)) :\n    (Fintype.card (Fq P hk) ^ (Fintype.card (Coord P) - (2 * P.m' + 1)) : ℝ) *\n        ∑ x₀, ∑ sm,\n          copyFail6 V n P hk S S' check B T ((roleFamily (V.sampler.cl n) .oracle).eval x₀) sm\n      ≤ (Fintype.card (ArTy × ArTy) * Fintype.card (Fin (dim V n P) → 𝔽₂)) * (1 - T.value) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.CL.CLFun MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)",
+   "variable [NeZero P.m] {hm : P.m ∣ Fintype.card (Fq P hk)} {hm' : P.m' ∣ Fintype.card (Fq P hk)}"
+  ],
+  "docstring": "**The sixth copy's edges inside the typed failure.**",
+  "module": "MIPRE.Background.AnswerReduction.SoundIsolate",
+  "module_doc": "/-!\n# Soundness of answer reduction: the per-seed low-degree games\n\nPiece AR-5b of `planning/answer-reduction.md` (`claim:ar-3`, `claim:ar-4`, `def:ar-seed-index`).\nA strategy for the typed answer-reduced game, restricted to one copy of the low-degree test at a\nrole pair where that copy is tested and to one seed of the input sampler, is a strategy for the\nseeded CL test of the copy's parameters (`copyStrategy`): its question maps a CL question to the\ntyped question whose PCP half the copy's presentation computes (`Regs.embedQ`) and whose oracle\nhalf the seed's role family gives, and its answers are parsed and read as answers of the copy's\ntest. The seeds are indexed by the full seed of the input sampler, as the blueprint's\n`def:ar-seed-index` asks.\n\nThe per-seed failures average to at most a constant times the typed failure\n(`sum_one_sub_value_copyStrategy_le`): the copy's nine type pairs are a fixed fraction of the\ntyped game's, and the copy's registers of a uniform PCP vector carry a uniform sample\n(`Regs.sum_sampleOf`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundIsolate.lean#L354-L381",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundIsolate.lean",
+  "lines": [
+   354,
+   381
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-global-tests",
+    "env": "lemma",
+    "title": "Global PCP consistency tests",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.pcpCl_exactlyOn",
+   "MIPRE.AnswerReduction.sum_edges_le",
+   "MIPRE.LIDT.CL.Regs.sum_sampleOf",
+   "MIPRE.LIDT.CL.Regs.pres_eval",
+   "MIPRE.CL.CLFun.truncate_reindex",
+   "MIPRE.CL.CLFun.eval_reindex",
+   "MIPRE.CL.pull_proj_compl",
+   "MIPRE.CL.CLFun.eval_truncate_of_le",
+   "MIPRE.exactlyOn_roleFamily"
+  ],
+  "pasted_helpers": 24,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy6_le",
+  "source_name": "MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy6_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy6_le\n    (T : TensorProductStrategy (typedGame V n P hk S S' check B)) :\n    ∑ x₀, (1 - (copyStrategy6 V n P hk S S' check B T\n        ((roleFamily (V.sampler.cl n) .oracle).eval x₀)).value)\n      ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * (324 * (1 - T.value)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.CL.CLFun MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)",
+   "variable [NeZero P.m] {hm : P.m ∣ Fintype.card (Fq P hk)} {hm' : P.m' ∣ Fintype.card (Fq P hk)}"
+  ],
+  "docstring": "**The sixth copy's per-seed failures average to at most `324` times the typed failure.**",
+  "module": "MIPRE.Background.AnswerReduction.SoundIsolate",
+  "module_doc": "/-!\n# Soundness of answer reduction: the per-seed low-degree games\n\nPiece AR-5b of `planning/answer-reduction.md` (`claim:ar-3`, `claim:ar-4`, `def:ar-seed-index`).\nA strategy for the typed answer-reduced game, restricted to one copy of the low-degree test at a\nrole pair where that copy is tested and to one seed of the input sampler, is a strategy for the\nseeded CL test of the copy's parameters (`copyStrategy`): its question maps a CL question to the\ntyped question whose PCP half the copy's presentation computes (`Regs.embedQ`) and whose oracle\nhalf the seed's role family gives, and its answers are parsed and read as answers of the copy's\ntest. The seeds are indexed by the full seed of the input sampler, as the blueprint's\n`def:ar-seed-index` asks.\n\nThe per-seed failures average to at most a constant times the typed failure\n(`sum_one_sub_value_copyStrategy_le`): the copy's nine type pairs are a fixed fraction of the\ntyped game's, and the copy's registers of a uniform PCP vector carry a uniform sample\n(`Regs.sum_sampleOf`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundIsolate.lean#L383-L423",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundIsolate.lean",
+  "lines": [
+   383,
+   423
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.cl_accepts_of_accepts6",
+   "MIPRE.AnswerReduction.sum_copyFail6_le",
+   "MIPRE.LIDT.CL.Regs.sum_sampleOf",
+   "MIPRE.TensorProductStrategy.succAt_adapt_eq"
+  ],
+  "pasted_helpers": 26,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.pcpSound",
+  "source_name": "MIPRE.AnswerReduction.pcpSound",
+  "formal_statement": "theorem MIPRE.AnswerReduction.pcpSound (hF : ShoupField PD) (hlam : 1 ≤ lam) (hmu : 1 ≤ mu)\n    (hV : V.Within n (inBudget lam mu n)) (hsz : V.decider.size ≤ sigma) :\n    PcpSound V n (((family PD lam mu sigma)).par n) (((family PD lam mu sigma)).hk n) (chk PD V lam mu sigma n) (inAns lam mu n)\n      (decAns (((family PD lam mu sigma)).par n) (((family PD lam mu sigma)).hk n) (inAns lam mu n)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.LowDegree MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost",
+   "variable (PD : PcpDecider) (lam mu sigma : ℕ) {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ)"
+  ],
+  "docstring": "**The PCP's soundness, as the decoded strategy needs it**, for the answer-reduced verifier's\ngame check and the decoder `decAns`.",
+  "module": "MIPRE.Background.AnswerReduction.SoundPcp",
+  "module_doc": "/-!\n# Soundness of answer reduction: the PCP's soundness\n\nPiece AR-5e of `planning/answer-reduction.md`, concluded (`lem:ar-ora`): the hypothesis\n`PcpSound` of `SoundDecoded` holds for the answer-reduced verifier's game check, with the decoder\n`decAns`, which reads a polynomial's Boolean values as the answer vector of a short answer.\n\nAn outcome `f` of the extracted `J` carries a PCP proof (`pcpOf`): its five answer polynomials\nare `f`'s first five components read on their blocks, its constraint polynomials are the rest.\nWhen `f` is placed on its blocks, the evaluations the game check reads are that proof's\n(`eval_ofProof_pcpOf`), so the check accepting at more than half the points is the PCP verifier\naccepting the proof there, and the PCP decider's soundness (`SAT.PcpDecider.soundness`) decodes\nthe proof's first two answer polynomials to answers the input decider accepts. Those answers are\nat most `inAns` long, since the input decider rejects longer ones, and the answer vector\ndetermines a short answer (`SAT.answerVec_injective`), so they are what `decAns` returns.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundPcp.lean#L99-L144",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundPcp.lean",
+  "lines": [
+   99,
+   144
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-decoding",
+    "env": "lemma",
+    "title": "Decoding with the original answer cutoff",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.vecBits_ofProof",
+   "MIPRE.AnswerReduction.valid_of",
+   "MIPRE.LIDT.LowIndDegPoly.eval_blockPoly",
+   "MIPRE.SAT.answerVec_injective"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 40,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.disPolyA_le",
+  "source_name": "MIPRE.AnswerReduction.disPolyA_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.disPolyA_le (i : Fin 5) (x : Fin (V.sampler.dim n) → 𝔽₂) :\n    disPolyA V n P hk S S' check B T i x\n      ≤ (∑ w, dis T.ψ (JAe V n P hk S S' check B T (blk P i) (x, w))\n          (GBe V n P hk S S' check B T i (x, w))) / Fintype.card (Coord P → Fq P hk)\n        + errSZ P hk := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**From evaluations to polynomials, Alice's `J`**: at each oracle half, the outcome-level\ndisagreement is at most the evaluated one, averaged over the PCP vectors, plus `m' d / q`.",
+  "module": "MIPRE.Background.AnswerReduction.SoundPoly",
+  "module_doc": "/-!\n# Soundness of answer reduction: from evaluations to polynomials\n\nPiece AR-5d of `planning/answer-reduction.md`, the Schwartz--Zippel step of `lem:ar-ar`\n(`eq:ld-strat-con-def`): the evaluated relations of `SoundRelations` between the sixth copy's\n`J` and copy `i`'s `G` become relations between their polynomial outcomes. Copy `i`'s polynomial,\nin `m` variables, is placed on its block of the sixth copy's `m'` variables\n(`LowIndDegPoly.liftIdx` along `blockEmb i`); two distinct polynomials in `m'` variables of\nindividual degree `d` agree at a uniform point with probability at most `m' d / q`\n(`sum_uniform_eval_eq_le`), so the polynomial outcomes of `J`'s `i`-th component and of the placed\n`G` disagree with probability at most their evaluated disagreement plus `m' d / q`\n(`sum_dis_poly_JA_le`, and its mirror image).\n\nThis replaces the paper's giant sandwich `Λ` of `claim:ar-5`: the oracle's measurement here is\n`J` itself, whose components are placed polynomials except with the probability this file bounds.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundPoly.lean#L110-L146",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundPoly.lean",
+  "lines": [
+   110,
+   146
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.Pcp.pt6_block",
+   "MIPRE.LIDT.LowIndDegPoly.eval_blockPoly",
+   "MIPRE.LIDT.card_eval_eq_zero_le",
+   "MIPRE.CL.sum_comp_injective",
+   "MIPRE.dis_le_sum_dis_map_add",
+   "MIPRE.POVM.map_map"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 30,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.disPolyB_le",
+  "source_name": "MIPRE.AnswerReduction.disPolyB_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.disPolyB_le (i : Fin 5) (x : Fin (V.sampler.dim n) → 𝔽₂) :\n    disPolyB V n P hk S S' check B T i x\n      ≤ (∑ w, dis T.ψ (GAe V n P hk S S' check B T i (x, w))\n          (JBe V n P hk S S' check B T (blk P i) (x, w))) / Fintype.card (Coord P → Fq P hk)\n        + errSZ P hk := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**From evaluations to polynomials, Bob's `J`.**",
+  "module": "MIPRE.Background.AnswerReduction.SoundPoly",
+  "module_doc": "/-!\n# Soundness of answer reduction: from evaluations to polynomials\n\nPiece AR-5d of `planning/answer-reduction.md`, the Schwartz--Zippel step of `lem:ar-ar`\n(`eq:ld-strat-con-def`): the evaluated relations of `SoundRelations` between the sixth copy's\n`J` and copy `i`'s `G` become relations between their polynomial outcomes. Copy `i`'s polynomial,\nin `m` variables, is placed on its block of the sixth copy's `m'` variables\n(`LowIndDegPoly.liftIdx` along `blockEmb i`); two distinct polynomials in `m'` variables of\nindividual degree `d` agree at a uniform point with probability at most `m' d / q`\n(`sum_uniform_eval_eq_le`), so the polynomial outcomes of `J`'s `i`-th component and of the placed\n`G` disagree with probability at most their evaluated disagreement plus `m' d / q`\n(`sum_dis_poly_JA_le`, and its mirror image).\n\nThis replaces the paper's giant sandwich `Λ` of `claim:ar-5`: the oracle's measurement here is\n`J` itself, whose components are placed polynomials except with the probability this file bounds.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundPoly.lean#L148-L184",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundPoly.lean",
+  "lines": [
+   148,
+   184
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.Pcp.pt6_block",
+   "MIPRE.LIDT.LowIndDegPoly.eval_blockPoly",
+   "MIPRE.LIDT.card_eval_eq_zero_le",
+   "MIPRE.CL.sum_comp_injective",
+   "MIPRE.dis_le_sum_dis_map_add",
+   "MIPRE.POVM.map_map"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.sum_disPolyA_le",
+  "source_name": "MIPRE.AnswerReduction.sum_disPolyA_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.sum_disPolyA_le (i : Fin 5) :\n    ∑ x, disPolyA V n P hk S S' check B T i x\n      ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * (11 * (err6 V n P hk S S' check B T\n        + 2916 * (1 - T.value) + err1 V n P hk S S' check B T) + errSZ P hk) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**Summed over the oracle halves**, Alice's `J` against Bob's placed `G`.",
+  "module": "MIPRE.Background.AnswerReduction.SoundPoly",
+  "module_doc": "/-!\n# Soundness of answer reduction: from evaluations to polynomials\n\nPiece AR-5d of `planning/answer-reduction.md`, the Schwartz--Zippel step of `lem:ar-ar`\n(`eq:ld-strat-con-def`): the evaluated relations of `SoundRelations` between the sixth copy's\n`J` and copy `i`'s `G` become relations between their polynomial outcomes. Copy `i`'s polynomial,\nin `m` variables, is placed on its block of the sixth copy's `m'` variables\n(`LowIndDegPoly.liftIdx` along `blockEmb i`); two distinct polynomials in `m'` variables of\nindividual degree `d` agree at a uniform point with probability at most `m' d / q`\n(`sum_uniform_eval_eq_le`), so the polynomial outcomes of `J`'s `i`-th component and of the placed\n`G` disagree with probability at most their evaluated disagreement plus `m' d / q`\n(`sum_dis_poly_JA_le`, and its mirror image).\n\nThis replaces the paper's giant sandwich `Λ` of `claim:ar-5`: the oracle's measurement here is\n`J` itself, whose components are placed polynomials except with the probability this file bounds.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundPoly.lean#L186-L210",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundPoly.lean",
+  "lines": [
+   186,
+   210
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.sum_edges_le",
+   "MIPRE.AnswerReduction.disPolyA_le",
+   "MIPRE.AnswerReduction.sum_dis_MA1_GBe_le",
+   "MIPRE.AnswerReduction.sum_dis_JAe_MB6_le",
+   "MIPRE.AnswerReduction.rd_eq_of_typedPred",
+   "MIPRE.one_sub_sum_bornProb_le_condFail",
+   "MIPRE.sum_dis_triangle"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.sum_disPolyB_le",
+  "source_name": "MIPRE.AnswerReduction.sum_disPolyB_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.sum_disPolyB_le (i : Fin 5) :\n    ∑ x, disPolyB V n P hk S S' check B T i x\n      ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * (11 * (err1 V n P hk S S' check B T\n        + 2916 * (1 - T.value) + err6 V n P hk S S' check B T) + errSZ P hk) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**Summed over the oracle halves**, Alice's placed `G` against Bob's `J`.",
+  "module": "MIPRE.Background.AnswerReduction.SoundPoly",
+  "module_doc": "/-!\n# Soundness of answer reduction: from evaluations to polynomials\n\nPiece AR-5d of `planning/answer-reduction.md`, the Schwartz--Zippel step of `lem:ar-ar`\n(`eq:ld-strat-con-def`): the evaluated relations of `SoundRelations` between the sixth copy's\n`J` and copy `i`'s `G` become relations between their polynomial outcomes. Copy `i`'s polynomial,\nin `m` variables, is placed on its block of the sixth copy's `m'` variables\n(`LowIndDegPoly.liftIdx` along `blockEmb i`); two distinct polynomials in `m'` variables of\nindividual degree `d` agree at a uniform point with probability at most `m' d / q`\n(`sum_uniform_eval_eq_le`), so the polynomial outcomes of `J`'s `i`-th component and of the placed\n`G` disagree with probability at most their evaluated disagreement plus `m' d / q`\n(`sum_dis_poly_JA_le`, and its mirror image).\n\nThis replaces the paper's giant sandwich `Λ` of `claim:ar-5`: the oracle's measurement here is\n`J` itself, whose components are placed polynomials except with the probability this file bounds.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundPoly.lean#L212-L236",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundPoly.lean",
+  "lines": [
+   212,
+   236
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.sum_edges_le",
+   "MIPRE.AnswerReduction.disPolyB_le",
+   "MIPRE.AnswerReduction.sum_dis_GAe_MB1_le",
+   "MIPRE.AnswerReduction.sum_dis_MA6_JBe_le",
+   "MIPRE.AnswerReduction.rd_eq_of_typedPred'",
+   "MIPRE.one_sub_sum_bornProb_le_condFail",
+   "MIPRE.sum_dis_triangle"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.rd_eq_of_typedPred",
+  "source_name": "MIPRE.AnswerReduction.rd_eq_of_typedPred",
+  "formal_statement": "theorem MIPRE.AnswerReduction.rd_eq_of_typedPred (i : Fin 5) (x : Fin (V.sampler.dim n) → 𝔽₂) (w : Coord P → Fq P hk)\n    {a b : Verifier.Answers B}\n    (h : typedPred V n P hk S S' check B (tq V n P hk S S' (roleOf i, (i.castSucc, .point)) x w)\n      (tq V n P hk S S' (.oracle, ((5 : Fin 6), .point)) x w) a b = true) :\n    rd1 P hk B i a = rd6 P hk B (blk P i) b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**Step 2 or step 4(a)**: at the type pair of copy `i`'s point and the sixth copy's point, both\nat the roles that test it, acceptance forces the two readings to agree.",
+  "module": "MIPRE.Background.AnswerReduction.SoundRelations",
+  "module_doc": "/-!\n# Soundness of answer reduction: the cross relations\n\nPiece AR-5d of `planning/answer-reduction.md` (`claim:ar-2`, the first item of `claim:ar-4`, and\nthe input of `claim:ar-5`). Every relation is a disagreement (`MIPRE.dis`) between a family of\nAlice's measurements and a family of Bob's, on the common index `(x, w)` of an oracle half and a\nPCP vector, both uniform: the typed question of a type at `(x, w)` is `tq`, and a point answer is\nread by `rd1` (copies `1`–`5`) or `rd6` (a component of the sixth copy's answer).\n\nThe relations come from two sources:\n\n* **the typed game**, at one type pair (`sum_dis_edge_le`): a subtest whose acceptance forces two\n  readings to agree bounds their disagreement by the failure on that pair, at most `54²` times\n  the typed failure after summing;\n* **the extraction** (`sum_dis_ext1_le`, `sum_dis_ext6_le`, ...): `clSoundness`'s conclusions,\n  reindexed from a uniform point of the copy to the point the copy's registers carry in a uniform\n  PCP vector, and averaged over the oracle halves.\n\nThey chain across the two players (`sum_dis_triangle`): Alice's evaluated `J` against Bob's\nevaluated `G` for each of the five copies (`sum_dis_JA_GB_le`), and the mirror image.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundRelations.lean#L188-L206",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundRelations.lean",
+  "lines": [
+   188,
+   206
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.rd_eq_of_typedPred_prime",
+  "source_name": "MIPRE.AnswerReduction.rd_eq_of_typedPred'",
+  "formal_statement": "theorem MIPRE.AnswerReduction.rd_eq_of_typedPred_prime (i : Fin 5) (x : Fin (V.sampler.dim n) → 𝔽₂) (w : Coord P → Fq P hk)\n    {a b : Verifier.Answers B}\n    (h : typedPred V n P hk S S' check B (tq V n P hk S S' (.oracle, ((5 : Fin 6), .point)) x w)\n      (tq V n P hk S S' (roleOf i, (i.castSucc, .point)) x w) a b = true) :\n    rd6 P hk B (blk P i) a = rd1 P hk B i b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "The mirror image, with the sixth copy's point asked to Alice.",
+  "module": "MIPRE.Background.AnswerReduction.SoundRelations",
+  "module_doc": "/-!\n# Soundness of answer reduction: the cross relations\n\nPiece AR-5d of `planning/answer-reduction.md` (`claim:ar-2`, the first item of `claim:ar-4`, and\nthe input of `claim:ar-5`). Every relation is a disagreement (`MIPRE.dis`) between a family of\nAlice's measurements and a family of Bob's, on the common index `(x, w)` of an oracle half and a\nPCP vector, both uniform: the typed question of a type at `(x, w)` is `tq`, and a point answer is\nread by `rd1` (copies `1`–`5`) or `rd6` (a component of the sixth copy's answer).\n\nThe relations come from two sources:\n\n* **the typed game**, at one type pair (`sum_dis_edge_le`): a subtest whose acceptance forces two\n  readings to agree bounds their disagreement by the failure on that pair, at most `54²` times\n  the typed failure after summing;\n* **the extraction** (`sum_dis_ext1_le`, `sum_dis_ext6_le`, ...): `clSoundness`'s conclusions,\n  reindexed from a uniform point of the copy to the point the copy's registers carry in a uniform\n  PCP vector, and averaged over the oracle halves.\n\nThey chain across the two players (`sum_dis_triangle`): Alice's evaluated `J` against Bob's\nevaluated `G` for each of the five copies (`sum_dis_JA_GB_le`), and the mirror image.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundRelations.lean#L208-L225",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundRelations.lean",
+  "lines": [
+   208,
+   225
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.sum_dis_MA1_GBe_le",
+  "source_name": "MIPRE.AnswerReduction.sum_dis_MA1_GBe_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.sum_dis_MA1_GBe_le (i : Fin 5) :\n    ∑ p, dis T.ψ (MA1 V n P hk S S' check B T i p) (GBe V n P hk S S' check B T i p)\n      ≤ Fintype.card (Idx V n P hk) *\n        Simul.deltaSim (Fintype.card (Fq P hk)) P.m dPcp 1 (324 * (1 - T.value)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)",
+   "variable (T : TensorProductStrategy (typedGame V n P hk S S' check B))"
+  ],
+  "docstring": "**Alice's point of copy `i` against Bob's extracted polynomial**, from the extraction.",
+  "module": "MIPRE.Background.AnswerReduction.SoundRelations",
+  "module_doc": "/-!\n# Soundness of answer reduction: the cross relations\n\nPiece AR-5d of `planning/answer-reduction.md` (`claim:ar-2`, the first item of `claim:ar-4`, and\nthe input of `claim:ar-5`). Every relation is a disagreement (`MIPRE.dis`) between a family of\nAlice's measurements and a family of Bob's, on the common index `(x, w)` of an oracle half and a\nPCP vector, both uniform: the typed question of a type at `(x, w)` is `tq`, and a point answer is\nread by `rd1` (copies `1`–`5`) or `rd6` (a component of the sixth copy's answer).\n\nThe relations come from two sources:\n\n* **the typed game**, at one type pair (`sum_dis_edge_le`): a subtest whose acceptance forces two\n  readings to agree bounds their disagreement by the failure on that pair, at most `54²` times\n  the typed failure after summing;\n* **the extraction** (`sum_dis_ext1_le`, `sum_dis_ext6_le`, ...): `clSoundness`'s conclusions,\n  reindexed from a uniform point of the copy to the point the copy's registers carry in a uniform\n  PCP vector, and averaged over the oracle halves.\n\nThey chain across the two players (`sum_dis_triangle`): Alice's evaluated `J` against Bob's\nevaluated `G` for each of the five copies (`sum_dis_JA_GB_le`), and the mirror image.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundRelations.lean#L390-L419",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundRelations.lean",
+  "lines": [
+   390,
+   419
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.pcpCl_exactlyOn",
+   "MIPRE.LIDT.Simul.sum_deltaSim_le",
+   "MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy_le",
+   "MIPRE.LIDT.Simul.inconsistency_eq_one_sub",
+   "MIPRE.CL.sum_comp_injective",
+   "MIPRE.LIDT.CL.Regs.pres_eval",
+   "MIPRE.CL.CLFun.truncate_reindex",
+   "MIPRE.CL.CLFun.eval_reindex",
+   "MIPRE.CL.pull_proj_compl",
+   "MIPRE.CL.CLFun.eval_truncate_of_le",
+   "MIPRE.dis_map_le",
+   "MIPRE.POVM.ext'",
+   "MIPRE.POVM.map_map",
+   "MIPRE.exactlyOn_roleFamily"
+  ],
+  "pasted_helpers": 41,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.sum_dis_GAe_MB1_le",
+  "source_name": "MIPRE.AnswerReduction.sum_dis_GAe_MB1_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.sum_dis_GAe_MB1_le (i : Fin 5) :\n    ∑ p, dis T.ψ (GAe V n P hk S S' check B T i p) (MB1 V n P hk S S' check B T i p)\n      ≤ Fintype.card (Idx V n P hk) *\n        Simul.deltaSim (Fintype.card (Fq P hk)) P.m dPcp 1 (324 * (1 - T.value)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)",
+   "variable (T : TensorProductStrategy (typedGame V n P hk S S' check B))"
+  ],
+  "docstring": "**Alice's extracted polynomial of copy `i` against Bob's point**, from the extraction.",
+  "module": "MIPRE.Background.AnswerReduction.SoundRelations",
+  "module_doc": "/-!\n# Soundness of answer reduction: the cross relations\n\nPiece AR-5d of `planning/answer-reduction.md` (`claim:ar-2`, the first item of `claim:ar-4`, and\nthe input of `claim:ar-5`). Every relation is a disagreement (`MIPRE.dis`) between a family of\nAlice's measurements and a family of Bob's, on the common index `(x, w)` of an oracle half and a\nPCP vector, both uniform: the typed question of a type at `(x, w)` is `tq`, and a point answer is\nread by `rd1` (copies `1`–`5`) or `rd6` (a component of the sixth copy's answer).\n\nThe relations come from two sources:\n\n* **the typed game**, at one type pair (`sum_dis_edge_le`): a subtest whose acceptance forces two\n  readings to agree bounds their disagreement by the failure on that pair, at most `54²` times\n  the typed failure after summing;\n* **the extraction** (`sum_dis_ext1_le`, `sum_dis_ext6_le`, ...): `clSoundness`'s conclusions,\n  reindexed from a uniform point of the copy to the point the copy's registers carry in a uniform\n  PCP vector, and averaged over the oracle halves.\n\nThey chain across the two players (`sum_dis_triangle`): Alice's evaluated `J` against Bob's\nevaluated `G` for each of the five copies (`sum_dis_JA_GB_le`), and the mirror image.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundRelations.lean#L421-L450",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundRelations.lean",
+  "lines": [
+   421,
+   450
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.pcpCl_exactlyOn",
+   "MIPRE.LIDT.Simul.sum_deltaSim_le",
+   "MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy_le",
+   "MIPRE.LIDT.Simul.inconsistency_eq_one_sub",
+   "MIPRE.CL.sum_comp_injective",
+   "MIPRE.LIDT.CL.Regs.pres_eval",
+   "MIPRE.CL.CLFun.truncate_reindex",
+   "MIPRE.CL.CLFun.eval_reindex",
+   "MIPRE.CL.pull_proj_compl",
+   "MIPRE.CL.CLFun.eval_truncate_of_le",
+   "MIPRE.dis_map_le",
+   "MIPRE.POVM.ext'",
+   "MIPRE.POVM.map_map",
+   "MIPRE.exactlyOn_roleFamily"
+  ],
+  "pasted_helpers": 41,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.sum_dis_JAe_MB6_le",
+  "source_name": "MIPRE.AnswerReduction.sum_dis_JAe_MB6_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.sum_dis_JAe_MB6_le (j : Fin (P.m' + 6)) :\n    ∑ p, dis T.ψ (JAe V n P hk S S' check B T j p) (MB6 V n P hk S S' check B T j p)\n      ≤ Fintype.card (Idx V n P hk) *\n        Simul.deltaSim (Fintype.card (Fq P hk)) P.m' dPcp (P.m' + 6) (324 * (1 - T.value)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)",
+   "variable (T : TensorProductStrategy (typedGame V n P hk S S' check B))"
+  ],
+  "docstring": "**Alice's extracted `j`-th polynomial of the sixth copy against Bob's `Point_6`.**",
+  "module": "MIPRE.Background.AnswerReduction.SoundRelations",
+  "module_doc": "/-!\n# Soundness of answer reduction: the cross relations\n\nPiece AR-5d of `planning/answer-reduction.md` (`claim:ar-2`, the first item of `claim:ar-4`, and\nthe input of `claim:ar-5`). Every relation is a disagreement (`MIPRE.dis`) between a family of\nAlice's measurements and a family of Bob's, on the common index `(x, w)` of an oracle half and a\nPCP vector, both uniform: the typed question of a type at `(x, w)` is `tq`, and a point answer is\nread by `rd1` (copies `1`–`5`) or `rd6` (a component of the sixth copy's answer).\n\nThe relations come from two sources:\n\n* **the typed game**, at one type pair (`sum_dis_edge_le`): a subtest whose acceptance forces two\n  readings to agree bounds their disagreement by the failure on that pair, at most `54²` times\n  the typed failure after summing;\n* **the extraction** (`sum_dis_ext1_le`, `sum_dis_ext6_le`, ...): `clSoundness`'s conclusions,\n  reindexed from a uniform point of the copy to the point the copy's registers carry in a uniform\n  PCP vector, and averaged over the oracle halves.\n\nThey chain across the two players (`sum_dis_triangle`): Alice's evaluated `J` against Bob's\nevaluated `G` for each of the five copies (`sum_dis_JA_GB_le`), and the mirror image.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundRelations.lean#L452-L480",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundRelations.lean",
+  "lines": [
+   452,
+   480
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.pcpCl_exactlyOn",
+   "MIPRE.LIDT.Simul.sum_deltaSim_le",
+   "MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy6_le",
+   "MIPRE.LIDT.Simul.inconsistency_eq_one_sub",
+   "MIPRE.CL.sum_comp_injective",
+   "MIPRE.LIDT.CL.Regs.pres_eval",
+   "MIPRE.CL.CLFun.truncate_reindex",
+   "MIPRE.CL.CLFun.eval_reindex",
+   "MIPRE.CL.pull_proj_compl",
+   "MIPRE.CL.CLFun.eval_truncate_of_le",
+   "MIPRE.dis_map_le",
+   "MIPRE.POVM.ext'",
+   "MIPRE.POVM.map_map",
+   "MIPRE.exactlyOn_roleFamily"
+  ],
+  "pasted_helpers": 40,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.sum_dis_MA6_JBe_le",
+  "source_name": "MIPRE.AnswerReduction.sum_dis_MA6_JBe_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.sum_dis_MA6_JBe_le (j : Fin (P.m' + 6)) :\n    ∑ p, dis T.ψ (MA6 V n P hk S S' check B T j p) (JBe V n P hk S S' check B T j p)\n      ≤ Fintype.card (Idx V n P hk) *\n        Simul.deltaSim (Fintype.card (Fq P hk)) P.m' dPcp (P.m' + 6) (324 * (1 - T.value)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)",
+   "variable (T : TensorProductStrategy (typedGame V n P hk S S' check B))"
+  ],
+  "docstring": "**Alice's `Point_6` against Bob's extracted `j`-th polynomial of the sixth copy.**",
+  "module": "MIPRE.Background.AnswerReduction.SoundRelations",
+  "module_doc": "/-!\n# Soundness of answer reduction: the cross relations\n\nPiece AR-5d of `planning/answer-reduction.md` (`claim:ar-2`, the first item of `claim:ar-4`, and\nthe input of `claim:ar-5`). Every relation is a disagreement (`MIPRE.dis`) between a family of\nAlice's measurements and a family of Bob's, on the common index `(x, w)` of an oracle half and a\nPCP vector, both uniform: the typed question of a type at `(x, w)` is `tq`, and a point answer is\nread by `rd1` (copies `1`–`5`) or `rd6` (a component of the sixth copy's answer).\n\nThe relations come from two sources:\n\n* **the typed game**, at one type pair (`sum_dis_edge_le`): a subtest whose acceptance forces two\n  readings to agree bounds their disagreement by the failure on that pair, at most `54²` times\n  the typed failure after summing;\n* **the extraction** (`sum_dis_ext1_le`, `sum_dis_ext6_le`, ...): `clSoundness`'s conclusions,\n  reindexed from a uniform point of the copy to the point the copy's registers carry in a uniform\n  PCP vector, and averaged over the oracle halves.\n\nThey chain across the two players (`sum_dis_triangle`): Alice's evaluated `J` against Bob's\nevaluated `G` for each of the five copies (`sum_dis_JA_GB_le`), and the mirror image.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundRelations.lean#L482-L511",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundRelations.lean",
+  "lines": [
+   482,
+   511
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.pcpCl_exactlyOn",
+   "MIPRE.LIDT.Simul.sum_deltaSim_le",
+   "MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy6_le",
+   "MIPRE.LIDT.Simul.inconsistency_eq_one_sub",
+   "MIPRE.CL.sum_comp_injective",
+   "MIPRE.LIDT.CL.Regs.pres_eval",
+   "MIPRE.CL.CLFun.truncate_reindex",
+   "MIPRE.CL.CLFun.eval_reindex",
+   "MIPRE.CL.pull_proj_compl",
+   "MIPRE.CL.CLFun.eval_truncate_of_le",
+   "MIPRE.dis_map_le",
+   "MIPRE.POVM.ext'",
+   "MIPRE.POVM.map_map",
+   "MIPRE.exactlyOn_roleFamily"
+  ],
+  "pasted_helpers": 40,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.typedStrategy_value_ge",
+  "source_name": "MIPRE.AnswerReduction.typedStrategy_value_ge",
+  "formal_statement": "theorem MIPRE.AnswerReduction.typedStrategy_value_ge (R : TensorProductStrategy\n    ((arVerifier PD lam mu sigma V).game n (cutVal (arPar PD lam mu sigma n))))\n    {ε : ℝ} (hR : 1 - ε ≤ R.value) :\n    1 - (16 : ℝ) ^ Fintype.card ArTy * ε ≤ (typedStrategy PD lam mu sigma V n R).value := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost",
+   "variable (PD : PcpDecider) (lam mu sigma : ℕ) {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ)"
+  ],
+  "docstring": "**Detyping soundness for answer reduction**: the typed strategy loses at most a factor\n`16^{54}` in failure probability.",
+  "module": "MIPRE.Background.AnswerReduction.SoundSetup",
+  "module_doc": "/-!\n# Soundness of answer reduction: the setup\n\nPiece AR-5a of `planning/answer-reduction.md` (`lem:ar-soundness-setup`): a strategy for the\nanswer-reduced verifier's game at the answer cut, of value at least `1 - ε`, gives a strategy for\nthe typed answer-reduced game (`typedGame`, with the predicate `typedPred`) of value at least\n`1 - 16^{54} ε`, on the same state (`typedStrategy_value_ge`). This is the detyping compiler's\nsoundness (`CL.Detyping.DeciderProgram.restrictAmbient_value_ge`), read through the typed\ndecider's acceptance law (`typedPredicate_eq`).\n\nThe strategy stays a `TensorProductStrategy`: two families of projective measurements, one per\nplayer. The paper symmetrizes it first (`lem:symmetric-strat`); the Lean does not, and derives\nevery relation for each ordered pair of players from the ordered pair of types that carries it.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundSetup.lean#L52-L76",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundSetup.lean",
+  "lines": [
+   52,
+   76
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-soundness-setup",
+    "env": "lemma",
+    "title": "Typed soundness setup",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.accepts_iff",
+   "MIPRE.AnswerReduction.total",
+   "MIPRE.CL.Detyping.select_eq_some_iff",
+   "MIPRE.CL.Detyping.DeciderProgram.numbered_clDist",
+   "MIPRE.CL.Detyping.sum_valid_questions",
+   "MIPRE.CL.Detyping.graphOfBits_take_eq",
+   "MIPRE.CL.Detyping.valid_average_le",
+   "MIPRE.TensorProductStrategy.failAt_nonneg",
+   "MIPRE.SampledGame.one_sub_value"
+  ],
+  "pasted_helpers": 27,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.StageProg.ptMapL_vecBits",
+  "source_name": "MIPRE.AnswerReduction.StageProg.ptMapL_vecBits",
+  "formal_statement": "theorem MIPRE.AnswerReduction.StageProg.ptMapL_vecBits (τ : LIDT.CL.Ty) (s : ((shoupBinField k hk)).carrier) (dir w : Fin sz → ((shoupBinField k hk)).carrier) :\n    ptMapL (unary k) (unary o, unary sz, unary jw, unary c) (tyNat τ) (((shoupBinField k hk)).toBits s)\n      (((shoupBinField k hk)).vecBits dir) (((shoupBinField k hk)).vecBits w) = ((shoupBinField k hk)).vecBits (Regs.ptMap S τ s dir w) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.AnswerReduction.StageProg",
+   "open MIPRE.Cost MIPRE.AnswerReduction.Pcp MIPRE.SAT MIPRE.Introspection.SeededLineProgram MIPRE.Introspection.LineProgram MIPRE.Introspection.SeedProgram MIPRE.LIDT MIPRE.LIDT.CL MIPRE.CL",
+   "variable {k : ℕ} (hk : 1 ≤ k)",
+   "variable (o sz jw : ℕ) (c : Fin 6)",
+   "variable [NeZero sz] {hsz : sz ∣ Fintype.card (shoupBinField k hk).carrier}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.AnswerReduction.StageCorrect",
+  "module_doc": "/-!\n# The stage programs are correct\n\nPiece AR-3d of `planning/answer-reduction.md`: `copyAnswer` (`MIPRE/Background/AnswerReduction/\nStageProg`) computes the Shoup bits of a copy's marginals (`copyAnswer_marginal`), stage maps\n(`copyAnswer_linear`) and factor spaces (`copyAnswer_factor`), for a copy whose seed selector is\nthe high bits of the seed (`hχ`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/StageCorrect.lean#L157-L178",
+  "source_path": "MIPRE/Background/AnswerReduction/StageCorrect.lean",
+  "lines": [
+   157,
+   178
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.pivots_line",
+   "MIPRE.QLD.PauliCL.representative_eq_canonLin",
+   "MIPRE.Introspection.LineProgram.lineRepresentativeProg_correct"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.StageProg.blocksOf_flatBits",
+  "source_name": "MIPRE.AnswerReduction.StageProg.blocksOf_flatBits",
+  "formal_statement": "theorem MIPRE.AnswerReduction.StageProg.blocksOf_flatBits (v : Coord P → ((shoupBinField k hk)).carrier) :\n    blocksOf (unary k) (unary P.m') (flatBits P hk v) =\n      (((shoupBinField k hk)).vecBits (ptOf6 P v), ((shoupBinField k hk)).vecBits (dirOf6 P v), ((shoupBinField k hk)).vecBits (seedsOf P v)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.AnswerReduction.StageProg",
+   "open MIPRE.Cost MIPRE.AnswerReduction.Pcp MIPRE.SAT MIPRE.Introspection.SeededLineProgram MIPRE.Introspection.LineProgram MIPRE.Introspection.SeedProgram MIPRE.LIDT MIPRE.LIDT.CL MIPRE.CL",
+   "variable {k : ℕ} (hk : 1 ≤ k)",
+   "variable (o sz jw : ℕ) (c : Fin 6)",
+   "variable [NeZero sz] {hsz : sz ∣ Fintype.card (shoupBinField k hk).carrier}",
+   "variable (P : PcpParams)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.AnswerReduction.StageCorrect",
+  "module_doc": "/-!\n# The stage programs are correct\n\nPiece AR-3d of `planning/answer-reduction.md`: `copyAnswer` (`MIPRE/Background/AnswerReduction/\nStageProg`) computes the Shoup bits of a copy's marginals (`copyAnswer_marginal`), stage maps\n(`copyAnswer_linear`) and factor spaces (`copyAnswer_factor`), for a copy whose seed selector is\nthe high bits of the seed (`hχ`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/StageCorrect.lean#L192-L208",
+  "source_path": "MIPRE/Background/AnswerReduction/StageCorrect.lean",
+  "lines": [
+   192,
+   208
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 5,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.StageProg.copyAnswer_marginal",
+  "source_name": "MIPRE.AnswerReduction.StageProg.copyAnswer_marginal",
+  "formal_statement": "theorem MIPRE.AnswerReduction.StageProg.copyAnswer_marginal (τ : LIDT.CL.Ty) {j : ℕ} (hj : 1 ≤ j) (v : Coord P → ((shoupBinField k hk)).carrier)\n    (y : BitStr) :\n    copyAnswer (unary k) (((unary o, unary sz, unary jw, unary c) : Desc)) (tyNat τ) (unary P.m') 1 j (flatBits P hk v) y =\n      flatBits P hk ((((regsAt P o sz c h).pres S τ).truncate j).eval v) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.AnswerReduction.StageProg",
+   "open MIPRE.Cost MIPRE.AnswerReduction.Pcp MIPRE.SAT MIPRE.Introspection.SeededLineProgram MIPRE.Introspection.LineProgram MIPRE.Introspection.SeedProgram MIPRE.LIDT MIPRE.LIDT.CL MIPRE.CL",
+   "variable {k : ℕ} (hk : 1 ≤ k)",
+   "variable (o sz jw : ℕ) (c : Fin 6)",
+   "variable [NeZero sz] {hsz : sz ∣ Fintype.card (shoupBinField k hk).carrier}",
+   "variable (P : PcpParams) (h : o + sz ≤ P.m')"
+  ],
+  "docstring": "**The marginals of a copy**, in bits.",
+  "module": "MIPRE.Background.AnswerReduction.StageCorrect",
+  "module_doc": "/-!\n# The stage programs are correct\n\nPiece AR-3d of `planning/answer-reduction.md`: `copyAnswer` (`MIPRE/Background/AnswerReduction/\nStageProg`) computes the Shoup bits of a copy's marginals (`copyAnswer_marginal`), stage maps\n(`copyAnswer_linear`) and factor spaces (`copyAnswer_factor`), for a copy whose seed selector is\nthe high bits of the seed (`hχ`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/StageCorrect.lean#L276-L300",
+  "source_path": "MIPRE/Background/AnswerReduction/StageCorrect.lean",
+  "lines": [
+   276,
+   300
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-typed-sampler",
+    "env": "lemma",
+    "title": "The typed answer-reduced sampler",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.StageProg.ptMapL_vecBits",
+   "MIPRE.AnswerReduction.StageProg.blocksOf_flatBits",
+   "MIPRE.AnswerReduction.Pcp.ofFn_placeV",
+   "MIPRE.AnswerReduction.Pcp.comps_marginal"
+  ],
+  "pasted_helpers": 30,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.StageProg.copyAnswer_linear",
+  "source_name": "MIPRE.AnswerReduction.StageProg.copyAnswer_linear",
+  "formal_statement": "theorem MIPRE.AnswerReduction.StageProg.copyAnswer_linear (τ : LIDT.CL.Ty) {j : ℕ} (hj : 1 ≤ j) (u y : Coord P → ((shoupBinField k hk)).carrier) :\n    copyAnswer (unary k) (((unary o, unary sz, unary jw, unary c) : Desc)) (tyNat τ) (unary P.m') 2 j (flatBits P hk u) (flatBits P hk y) =\n      flatBits P hk (((regsAt P o sz c h).pres S τ).mapOfPrefix (j - 1) u y) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.AnswerReduction.StageProg",
+   "open MIPRE.Cost MIPRE.AnswerReduction.Pcp MIPRE.SAT MIPRE.Introspection.SeededLineProgram MIPRE.Introspection.LineProgram MIPRE.Introspection.SeedProgram MIPRE.LIDT MIPRE.LIDT.CL MIPRE.CL",
+   "variable {k : ℕ} (hk : 1 ≤ k)",
+   "variable (o sz jw : ℕ) (c : Fin 6)",
+   "variable [NeZero sz] {hsz : sz ∣ Fintype.card (shoupBinField k hk).carrier}",
+   "variable (P : PcpParams) (h : o + sz ≤ P.m')"
+  ],
+  "docstring": "**The stage maps of a copy**, in bits.",
+  "module": "MIPRE.Background.AnswerReduction.StageCorrect",
+  "module_doc": "/-!\n# The stage programs are correct\n\nPiece AR-3d of `planning/answer-reduction.md`: `copyAnswer` (`MIPRE/Background/AnswerReduction/\nStageProg`) computes the Shoup bits of a copy's marginals (`copyAnswer_marginal`), stage maps\n(`copyAnswer_linear`) and factor spaces (`copyAnswer_factor`), for a copy whose seed selector is\nthe high bits of the seed (`hχ`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/StageCorrect.lean#L302-L329",
+  "source_path": "MIPRE/Background/AnswerReduction/StageCorrect.lean",
+  "lines": [
+   302,
+   329
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-typed-sampler",
+    "env": "lemma",
+    "title": "The typed answer-reduced sampler",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.StageProg.ptMapL_vecBits",
+   "MIPRE.AnswerReduction.StageProg.blocksOf_flatBits",
+   "MIPRE.AnswerReduction.Pcp.ofFn_placeV",
+   "MIPRE.CL.CLFun.mapOfPrefix_of_le"
+  ],
+  "pasted_helpers": 70,
+  "prooflines": 23,
+  "is_target": false
+ }
+]

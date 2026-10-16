@@ -1,0 +1,2299 @@
+[
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical",
+  "module_doc": "/-!\n# Section 9 — Canonical matrix SDP dual and slackness layer\n\nThis module contains the canonical objective and dual operators, the dual slack\nblock identities, and the slack-block saturation step used to extract the\npaper-form primal normalization.  The optimal-witness packages built from these\ncanonical facts live in `MatrixRealization/Canonical/Witness.lean`.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical.lean",
+  "defmat": [
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualOperator",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualOperatorBlockFamily",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualSlackBlockFamily",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalObjectiveBlockFamily",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalObjectiveOperator",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpComplementarySlacknessDefect"
+  ],
+  "embedded": [
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDiagonalBlock_dualOperator",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDiagonalBlock_objectiveOperator_none",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDiagonalBlock_objectiveOperator_some",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualOperatorBlockFamily_apply",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualSlackBlockFamily_none",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualSlackBlockFamily_some",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalObjectiveBlockFamily_none",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalObjectiveBlockFamily_some"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDiagonalBlock_dualOperator",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     155,
+     163
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDiagonalBlock_objectiveOperator_none",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     108,
+     114
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDiagonalBlock_objectiveOperator_some",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     116,
+     123
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualOperator",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     138,
+     145
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualOperatorBlockFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     125,
+     136
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualOperatorBlockFamily_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     147,
+     153
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualSlackBlockFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     165,
+     175
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualSlackBlockFamily_none",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     177,
+     182
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualSlackBlockFamily_some",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     184,
+     191
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalObjectiveBlockFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     78,
+     84
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalObjectiveBlockFamily_none",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     94,
+     98
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalObjectiveBlockFamily_some",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     100,
+     106
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalObjectiveOperator",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     86,
+     92
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpComplementarySlacknessDefect",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     643,
+     650
+    ]
+   }
+  ],
+  "lines": 543,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MainInductionStep_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Projectivization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Operators",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Families",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Fourier",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_TraceForms",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Base",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_CanonicalPrimal"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualOperator": [
+    "/-- The canonical dual operator corresponding to a paper dual variable `Z`. -/"
+   ],
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualOperatorBlockFamily": [
+    "/-- The block family representing the canonical dual operator associated to a",
+    "paper dual variable `Z`.",
+    "",
+    "In the paper calculation this is",
+    "`∑_{i,j} z_{ij} D_{ij}`, which is the block-diagonal matrix with the same",
+    "operator `Z` on every canonical block. -/"
+   ],
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualSlackBlockFamily": [
+    "/-- The block family for the canonical dual slack operator.",
+    "",
+    "It has polynomial blocks `Z - A_g` and slack block `Z`, exactly as in the",
+    "canonical dual constraint obtained from the paper SDP. -/"
+   ],
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalObjectiveBlockFamily": [
+    "/-- The canonical objective matrix `C = diag(A_g, 0)` in the paper's block SDP. -/"
+   ],
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalObjectiveOperator": [
+    "/-- The canonical objective operator of the block SDP. -/"
+   ],
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpComplementarySlacknessDefect": [
+    "/-- The concrete complementary-slackness defect `T_g (Z - A_g)`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical_Witness",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical.Witness",
+  "module_doc": "/-!\n# Section 9 — Canonical matrix SDP witnesses\n\nThis module contains the optimal-witness structures extracted from the canonical\nmatrix SDP.  The preceding canonical module proves the block-diagonal algebra,\nincluding the dual slack identities and saturation of the slack block.  This\nfile records the paper-form optimal pair and the measurement witnesses used by\nthe self-improvement comparison.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/Witness.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/Witness.lean",
+  "defmat": [
+   "MIPStarRE.LDT.SelfImprovement.MatrixSdpOptimalWitness",
+   "MIPStarRE.LDT.SelfImprovement.MatrixSdpOptimalWitness.primalMeasurement",
+   "MIPStarRE.LDT.SelfImprovement.MatrixSdpStatementWithSlackness",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpComplementarySlacknessEquation"
+  ],
+  "embedded": [
+   "MIPStarRE.LDT.SelfImprovement.MatrixSdpOptimalWitness.primalMeasurement_effect"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.MatrixSdpOptimalWitness",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     46,
+     64
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.MatrixSdpOptimalWitness.primalMeasurement",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     110,
+     118
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.MatrixSdpOptimalWitness.primalMeasurement_effect",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     120,
+     126
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.MatrixSdpStatementWithSlackness",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     66,
+     86
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpComplementarySlacknessEquation",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     88,
+     95
+    ]
+   }
+  ],
+  "lines": 498,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MainInductionStep_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Projectivization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Operators",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Families",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Fourier",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_TraceForms",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Base",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_CanonicalPrimal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.SelfImprovement.MatrixSdpOptimalWitness": [
+    "/-- Paper origin: `references/ldt-paper/self_improvement.tex:82-88`",
+    "(`\\label{lem:sdp}`, `\\label{eq:slater}`);",
+    "`docs/paper-gaps/issue-1230-self-improvement-sdp-usage.tex` (SDP gap).",
+    "",
+    "Matrix-level witness for an optimal SDP pair. -/"
+   ],
+   "MIPStarRE.LDT.SelfImprovement.MatrixSdpOptimalWitness.primalMeasurement": [
+    "/-- An optimal matrix SDP witness whose primal total is the identity determines",
+    "a complete matrix measurement. -/"
+   ],
+   "MIPStarRE.LDT.SelfImprovement.MatrixSdpStatementWithSlackness": [
+    "/-- Paper origin: `references/ldt-paper/self_improvement.tex:82-181`",
+    "(`\\label{lem:sdp}`), with complementary slackness from",
+    "`eq:complementary-slackness` at line 179; matrix realization of",
+    "`SdpStatementWithSlackness`.",
+    "",
+    "Matrix-level statement of the strong-duality output for the SDP.",
+    "",
+    "This is the concrete matrix analogue of `SdpStatementWithSlackness`: it does",
+    "not assert that the explicit strict feasible witnesses are optimal.  Instead it",
+    "records the kind of optimal witness obtained from the paper's",
+    "Slater/strong-duality argument.  The feasible primal variables in the canonical",
+    "SDP remain submeasurements; this statement stores the selected saturated",
+    "optimal witness as a complete matrix measurement.",
+    "",
+    "Grounded by: #1230. -/"
+   ],
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpComplementarySlacknessEquation": [
+    "/-- The concrete complementary-slackness equation `T_g Z = T_g A_g`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical_Saturated",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical.Saturated",
+  "module_doc": "/-!\n# Section 9 — Saturated canonical SDP witnesses\n\nThis module contains the zero-slack variant of the canonical SDP output used in\nthe self-improvement argument.  The canonical block SDP supplies a feasible\nmatrix `X`; when its slack diagonal block is zero, the extracted polynomial\nblocks form a complete measurement without using the auxiliary dominance\ncondition \\(I \\le Z\\).\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/Saturated.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/Saturated.lean",
+  "defmat": [
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalSaturateSlackBlockFamily",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalSaturateSlackBlockMatrix"
+  ],
+  "embedded": [
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDiagonalBlock_saturateSlackBlockMatrix_none",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDiagonalBlock_saturateSlackBlockMatrix_some",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalSaturateSlackBlockFamily_none",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalSaturateSlackBlockFamily_some"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDiagonalBlock_saturateSlackBlockMatrix_none",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     117,
+     125
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDiagonalBlock_saturateSlackBlockMatrix_some",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     127,
+     141
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalSaturateSlackBlockFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     64,
+     82
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalSaturateSlackBlockFamily_none",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     84,
+     89
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalSaturateSlackBlockFamily_some",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     91,
+     101
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalSaturateSlackBlockMatrix",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     103,
+     115
+    ]
+   }
+  ],
+  "lines": 501,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MainInductionStep_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Projectivization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Operators",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Families",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Fourier",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_TraceForms",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Base",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_CanonicalPrimal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical_Witness"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalSaturateSlackBlockFamily": [
+    "/-- Move the canonical primal slack block into the distinguished polynomial block.",
+    "",
+    "Paper origin: `references/ldt-paper/self_improvement.tex:177-190`.  The paper",
+    "passes from an optimal canonical block matrix to a saturated paper primal",
+    "measurement.  This block family implements the source-faithful completion step:",
+    "the `none` block is set to zero, and its positive mass is added to the fixed",
+    "polynomial block `sdpDistinguishedPolynomial params`.  This avoids the auxiliary",
+    "route which proves saturation from an additional bound `I ≤ Z`. -/"
+   ],
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalSaturateSlackBlockMatrix": [
+    "/-- The saturated canonical matrix obtained by completing the slack at the",
+    "distinguished polynomial block.",
+    "",
+    "This is a source-faithful replacement for the Lean-only saturation route through",
+    "`I ≤ Z`: it changes only the primal matrix, setting the extra canonical slack",
+    "block to zero and adding that block to `sdpDistinguishedPolynomial params`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteConicDuality",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.FiniteConicDuality",
+  "module_doc": "/-!\n# Finite conic-duality separation lemmas\n\nThis module contains the product-space part of the finite-dimensional conic\nduality argument used by the Section 9 SDP.  A separator on a product space\n`E × ℝ` decomposes into a constraint-coordinate functional and an objective\ncoefficient.  If the separator is nonnegative on a conic image and negative at\na point with the same constraint coordinate but larger objective coordinate,\nthen the objective coefficient is negative.  After normalizing by this negative\ncoefficient one obtains the functional dual bound.\n\nThe matrix trace-pairing representation and the paper-form SDP witness remain\nin the Section 9 matrix-realization layer.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n- `docs/reports/issue-2386-finite-sdp-duality-theorem-design.md`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteConicDuality.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/FiniteConicDuality.lean",
+  "defmat": [
+   "MIPStarRE.Quantum.conicNormalizedSeparatorFunctional",
+   "MIPStarRE.Quantum.conicSeparatorConstraintFunctional",
+   "MIPStarRE.Quantum.conicSeparatorObjectiveCoefficient"
+  ],
+  "embedded": [
+   "MIPStarRE.Quantum.conicNormalizedSeparatorFunctional_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.Quantum.conicNormalizedSeparatorFunctional",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     97,
+     106
+    ]
+   },
+   {
+    "name": "MIPStarRE.Quantum.conicNormalizedSeparatorFunctional_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     108,
+     115
+    ]
+   },
+   {
+    "name": "MIPStarRE.Quantum.conicSeparatorConstraintFunctional",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     38,
+     43
+    ]
+   },
+   {
+    "name": "MIPStarRE.Quantum.conicSeparatorObjectiveCoefficient",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     45,
+     49
+    ]
+   }
+  ],
+  "lines": 68,
+  "published_bundle": null,
+  "imports": [],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.Quantum.conicNormalizedSeparatorFunctional": [
+    "/-- The normalized constraint-coordinate functional associated to a separator.",
+    "",
+    "This definition is useful when the objective-coordinate coefficient is known to",
+    "be negative. -/"
+   ],
+   "MIPStarRE.Quantum.conicSeparatorConstraintFunctional": [
+    "/-- The constraint-coordinate part of a separator on a product space. -/"
+   ],
+   "MIPStarRE.Quantum.conicSeparatorObjectiveCoefficient": [
+    "/-- The objective-coordinate coefficient of a separator on a product space. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical_StrongDuality_Basic",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical.StrongDuality.Basic",
+  "module_doc": "/-!\n# Section 9 -- Canonical SDP strong-duality preliminaries\n\nThis module contains the feasibility, compactness, closedness, and\nobjective-continuity lemmas used in the finite-dimensional strong-duality\nargument for the canonical matrix SDP.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Basic.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Basic.lean",
+  "defmat": [
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalConstraintOperatorCLM",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDiagonalBlockCLM",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalObjectiveCLM"
+  ],
+  "embedded": [
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalConstraintOperatorCLM_apply",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDiagonalBlockCLM_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalConstraintOperatorCLM",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     235,
+     242
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalConstraintOperatorCLM_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     244,
+     251
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDiagonalBlockCLM",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     213,
+     223
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDiagonalBlockCLM_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     225,
+     233
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalObjectiveCLM",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     253,
+     259
+    ]
+   }
+  ],
+  "lines": 483,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MainInductionStep_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Projectivization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Operators",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Families",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Fourier",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_TraceForms",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Base",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_CanonicalPrimal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalConstraintOperatorCLM": [
+    "/-- The canonical equality-constraint operator as a continuous real-linear map. -/"
+   ],
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDiagonalBlockCLM": [
+    "/-- The projection onto one diagonal block of the canonical primal matrix, as a",
+    "continuous real-linear map. -/"
+   ],
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalObjectiveCLM": [
+    "/-- The canonical primal objective as a continuous real-linear functional. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical_StrongDuality_Separation",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical.StrongDuality.Separation",
+  "module_doc": "/-!\n# Section 9 -- Canonical SDP separation argument\n\nThis module contains the closed-image-cone separation argument and the resulting\nzero-duality-gap theorem for the canonical finite-dimensional matrix SDP.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Separation.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Separation.lean",
+  "defmat": [
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalConeMap",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalImageCone"
+  ],
+  "embedded": [
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalConeMap_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalConeMap",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     169,
+     176
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalConeMap_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     178,
+     186
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalImageCone",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     188,
+     196
+    ]
+   }
+  ],
+  "lines": 490,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MainInductionStep_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Projectivization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Operators",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Families",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Fourier",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_TraceForms",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Base",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_CanonicalPrimal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteConicDuality",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical_StrongDuality_Basic"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalConeMap": [
+    "/-- The map sending a primal matrix to its constraint image and objective value. -/"
+   ],
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalImageCone": [
+    "/-- The closed image cone of positive semidefinite canonical primal matrices under",
+    "the constraint-objective map. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Theorems_Results_SdpMatrixBridge",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.SdpMatrixBridge",
+  "module_doc": "/-!\n# Matrix SDP comparison\n\nThis file compares the concrete matrix-level SDP slackness interface with the\nabstract self-improvement SDP statement interface.\n\nThe comparison is intentionally split into two interfaces.  The source-shaped\nmatrix optimal witness supplies dual feasibility, complementary slackness, and\nthe saturated canonical slack block needed for the abstract Section 9 statement.\nNo auxiliary dominance bound `I ≤ Z` is part of this comparison theorem.\n\nMathlib provides the underlying finite-dimensional matrix order and convex-cone\ninfrastructure used throughout this project, but it does not yet provide a\nready-made finite-dimensional semidefinite-programming strong-duality theorem\nwith complementary slackness in the shape needed here.  Consequently this file\ndoes not reprove SDP duality.  It only transports the project-local matrix\nwitness `MatrixSdpStatementWithSlackness` to the abstract Section 9 interface.\nIf a Mathlib SDP theorem is later available, its output should replace the\nproject-local witness while the comparison theorem below should remain the\ncomparison with the self-improvement notation.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/SdpMatrixBridge.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/SdpMatrixBridge.lean",
+  "defmat": [
+   "MIPStarRE.LDT.SelfImprovement.MatrixSdpCanonicalOptimalPair",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpPointRealizationOfStrategy"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.MatrixSdpCanonicalOptimalPair",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     123,
+     150
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.matrixSdpPointRealizationOfStrategy",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     68,
+     94
+    ]
+   }
+  ],
+  "lines": 554,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MainInductionStep_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Projectivization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Operators",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Families",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Theorems_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Fourier",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_TraceForms",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Base",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_CanonicalPrimal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical_Witness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical_Saturated",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteConicDuality",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical_StrongDuality_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical_StrongDuality_Separation"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.SelfImprovement.MatrixSdpCanonicalOptimalPair": [
+    "/-- Canonical primal-dual data with complementary slackness and zero slack",
+    "block.",
+    "",
+    "This is the paper-faithful canonical output still required from the",
+    "strong-duality argument in `lem:sdp`: a feasible canonical primal matrix, a",
+    "dual-feasible operator with the same objective value, canonical complementary",
+    "slackness, and vanishing of the extra slack block \\(X_{\\mathrm{none},\\mathrm{none}}\\).",
+    "The dominance condition \\(I \\le Z\\) is not part of this structure. -/"
+   ],
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpPointRealizationOfStrategy": [
+    "/-- The point-measurement part of the matrix SDP realization associated to a strategy.",
+    "",
+    "The present comparison only uses the point-measurement fields of",
+    "`MatrixSdpRealization`, through `matrixAveragedPointOperator` and",
+    "`matrixSdpDualSlackOperator`.  The state field is therefore filled by the zero",
+    "positive operator.  This construction should not be used for state-dependent",
+    "matrix expressions such as `matrixExpectation`; such expressions would compute",
+    "with the zero operator rather than with `strategy.state`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Foundations",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Foundations",
+  "module_doc": "/-!\n# Section 7 hypercube graph: trace-form foundations\n\nThis file provides the abstract theorem statements and trace-form identities\nused to formalize the local and global variance rewrites in Section 7 of the LDT\npaper.  The concrete matrix-realization statements are proved first; the\npublic-facing statements in `MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Results`\nthen specialize these identities to arbitrary finite-dimensional operator\nfamilies.\n\n## References\n\n- `references/ldt-paper/expansion.tex`, especially `lem:local-rewrite` and\n  `lem:global-rewrite`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Foundations.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Foundations.lean",
+  "defmat": [
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.abstractMatrixModel",
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.matrixModelState"
+  ],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Foundations.0.MIPStarRE.LDT.ExpansionHypercubeGraph.trace_combined_tensor_eq"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.ExpansionHypercubeGraph.abstractMatrixModel",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     139,
+     152
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.ExpansionHypercubeGraph.matrixModelState",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     256,
+     260
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Foundations.0.MIPStarRE.LDT.ExpansionHypercubeGraph.trace_combined_tensor_eq",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     262,
+     320
+    ]
+   }
+  ],
+  "lines": 432,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Fourier",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_TraceForms"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.abstractMatrixModel": [
+    "/-- Reinterpret an abstract operator family and quantum state as the concrete",
+    "matrix realization used by the trace-form proof of Section 7. -/"
+   ],
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.matrixModelState": [
+    "/-- Turn a matrix realization state into the corresponding abstract quantum state. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Matrix",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix",
+  "module_doc": "/-!\n# Section 7 hypercube graph: matrix-realization theorems\n\nTranslating the squared-difference expectation of the hypercube graph\noperators into the `ev`-based inner-product language of the matrix\nrealization model.\n\n## References\n\n- `references/ldt-paper/expansion.tex`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Matrix.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Matrix.lean",
+  "defmat": [],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix.0.MIPStarRE.LDT.ExpansionHypercubeGraph.hypercubeAdjacencyWeight_eq_rerandomizeCoordWeight",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix.0.MIPStarRE.LDT.ExpansionHypercubeGraph.orthogonalModeProjector_re_sum",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix.0.MIPStarRE.LDT.ExpansionHypercubeGraph.update_eq_fixed_count"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix.0.MIPStarRE.LDT.ExpansionHypercubeGraph.hypercubeAdjacencyWeight_eq_rerandomizeCoordWeight",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     412,
+     419
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix.0.MIPStarRE.LDT.ExpansionHypercubeGraph.orthogonalModeProjector_re_sum",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     132,
+     180
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix.0.MIPStarRE.LDT.ExpansionHypercubeGraph.update_eq_fixed_count",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     354,
+     410
+    ]
+   }
+  ],
+  "lines": 461,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Fourier",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_TraceForms",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Foundations"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Results",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Results",
+  "module_doc": "/-!\n# Section 7 hypercube graph: local-to-global variance theorems\n\nThis file assembles the public Section 7 results about the hypercube graph:\nthe Laplacian edge-difference formula, the local and global variance rewrites,\nand the local-to-global inequality.  The proof route passes through the\nmatrix-realization theorems and then exposes the statements in the\n`QuantumState` and operator-family language used elsewhere in the LDT\nformalization.\n\n## References\n\n- `references/ldt-paper/expansion.tex`, especially `prop:laplacian-rewrite`,\n  `lem:local-rewrite`, `lem:global-rewrite`, and `lem:local-to-global`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Results.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Results.lean",
+  "defmat": [],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Results.0.MIPStarRE.LDT.ExpansionHypercubeGraph.matrixLocalVariance_eq_closedForm",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Results.0.MIPStarRE.LDT.ExpansionHypercubeGraph.matrixTraceForm_localToGlobal"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Results.0.MIPStarRE.LDT.ExpansionHypercubeGraph.matrixLocalVariance_eq_closedForm",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     110,
+     232
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Results.0.MIPStarRE.LDT.ExpansionHypercubeGraph.matrixTraceForm_localToGlobal",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     234,
+     323
+    ]
+   }
+  ],
+  "lines": 577,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Fourier",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_TraceForms",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Foundations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Matrix"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_Averaging",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.Averaging",
+  "module_doc": "/-! ## Uniform averaging infrastructure -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/Averaging.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/Averaging.lean",
+  "defmat": [],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.Averaging.0.MIPStarRE.LDT.GlobalVariance.ev_uniformAverage_sq_le_avg",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.Averaging.0.MIPStarRE.LDT.GlobalVariance.qSDD_unit_family_of_average_le_avg"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.Averaging.0.MIPStarRE.LDT.GlobalVariance.ev_uniformAverage_sq_le_avg",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     107,
+     249
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.Averaging.0.MIPStarRE.LDT.GlobalVariance.qSDD_unit_family_of_average_le_avg",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     251,
+     287
+    ]
+   }
+  ],
+  "lines": 520,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Operators",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Families"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_Statements",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.Statements",
+  "module_doc": "/-! ## Statement structures -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/Statements.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/Statements.lean",
+  "defmat": [
+   "MIPStarRE.LDT.GlobalVariance.GeneralizeBStatement",
+   "MIPStarRE.LDT.GlobalVariance.GlobalVarianceOfPointsStatement",
+   "MIPStarRE.LDT.GlobalVariance.LocalVarianceOfPointsStatement"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.GlobalVariance.GeneralizeBStatement",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     31,
+     53
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.GlobalVariance.GlobalVarianceOfPointsStatement",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     84,
+     117
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.GlobalVariance.LocalVarianceOfPointsStatement",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     55,
+     82
+    ]
+   }
+  ],
+  "lines": 417,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Operators",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Families"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.GlobalVariance.GeneralizeBStatement": [
+    "/-- Paper origin: `references/ldt-paper/expansion.tex:273-291`",
+    "(`\\label{lem:generalize-b}`).",
+    "",
+    "Conclusion statement for `lem:generalize-b`.",
+    "`ψbi` is the bipartite state on `d * d` (passed as `strategy.state`",
+    "by callers). -/"
+   ],
+   "MIPStarRE.LDT.GlobalVariance.GlobalVarianceOfPointsStatement": [
+    "/-- Paper origin: `references/ldt-paper/expansion.tex:325-353`",
+    "(`\\label{lem:global-variance-of-points}`).",
+    "",
+    "Conclusion statement for `lem:global-variance-of-points`. -/"
+   ],
+   "MIPStarRE.LDT.GlobalVariance.LocalVarianceOfPointsStatement": [
+    "/-- Paper origin: `references/ldt-paper/expansion.tex:292-324`",
+    "(`\\label{lem:local-variance-of-points}`).",
+    "",
+    "Conclusion statement for `lem:local-variance-of-points`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_AlgebraicIdentity",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity",
+  "module_doc": "/-! # Algebraic identities and variance reductions -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/AlgebraicIdentity.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/AlgebraicIdentity.lean",
+  "defmat": [],
+  "embedded": [
+   "MIPStarRE.LDT.GlobalVariance.polynomialWeightSqrtOperator_conjTranspose",
+   "MIPStarRE.LDT.GlobalVariance.polynomialWeightSqrtOperator_mul_self",
+   "MIPStarRE.LDT.GlobalVariance.weightedPointConditionedOperator_sq",
+   "MIPStarRE.LDT.GlobalVariance.weightedPointConditionedOperator_sub",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity.0.MIPStarRE.LDT.GlobalVariance.generalizeBLeftOperator_eq_right_add_collision",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity.0.MIPStarRE.LDT.GlobalVariance.generalizeBLineDifference_sq_eq_collision",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity.0.MIPStarRE.LDT.GlobalVariance.generalizeB_right_event_implies_left_event",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity.0.MIPStarRE.LDT.GlobalVariance.weightedNormDeviation_eq_pointConditionedDifferenceAvg",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity.0.MIPStarRE.LDT.GlobalVariance.weightedPolynomialState_ev_leftTensor"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.GlobalVariance.polynomialWeightSqrtOperator_conjTranspose",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     152,
+     159
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.GlobalVariance.polynomialWeightSqrtOperator_mul_self",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     161,
+     169
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.GlobalVariance.weightedPointConditionedOperator_sq",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     188,
+     209
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.GlobalVariance.weightedPointConditionedOperator_sub",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     171,
+     186
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity.0.MIPStarRE.LDT.GlobalVariance.generalizeBLeftOperator_eq_right_add_collision",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     232,
+     258
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity.0.MIPStarRE.LDT.GlobalVariance.generalizeBLineDifference_sq_eq_collision",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     260,
+     286
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity.0.MIPStarRE.LDT.GlobalVariance.generalizeB_right_event_implies_left_event",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     211,
+     230
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity.0.MIPStarRE.LDT.GlobalVariance.weightedNormDeviation_eq_pointConditionedDifferenceAvg",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     367,
+     399
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity.0.MIPStarRE.LDT.GlobalVariance.weightedPolynomialState_ev_leftTensor",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     316,
+     365
+    ]
+   }
+  ],
+  "lines": 646,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Polynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_PolynomialAgreement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Operators",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Families",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Fourier",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_TraceForms",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Foundations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Matrix",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Results",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_Averaging",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_Statements"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_CollisionExpansion",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion",
+  "module_doc": "/-! # Collision expansion and Schwartz-Zippel bounds\n\nThis module contains the `generalizeB` theorem wrappers, finite reparametrization\nand distribution bookkeeping, and the Schwartz-Zippel collision expansion that\nbounds the line-collision residual.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/CollisionExpansion.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/CollisionExpansion.lean",
+  "defmat": [
+   "MIPStarRE.LDT.GlobalVariance.axisParallelLinePointParamEquiv",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion.0.MIPStarRE.LDT.GlobalVariance.axisParallelLineQuestionParameterEquiv"
+  ],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion.0.MIPStarRE.LDT.GlobalVariance.avgOver_axisParallelLinePointParam",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion.0.MIPStarRE.LDT.GlobalVariance.generalizeBCollisionSeed_integrand",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion.0.MIPStarRE.LDT.GlobalVariance.generalizeBLineCollisionTensorMass_sum_le_one",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion.0.MIPStarRE.LDT.GlobalVariance.generalizeB_of_pointwise"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.GlobalVariance.axisParallelLinePointParamEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     165,
+     189
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion.0.MIPStarRE.LDT.GlobalVariance.avgOver_axisParallelLinePointParam",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     191,
+     215
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion.0.MIPStarRE.LDT.GlobalVariance.axisParallelLineQuestionParameterEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     123,
+     143
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion.0.MIPStarRE.LDT.GlobalVariance.generalizeBCollisionSeed_integrand",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     228,
+     255
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion.0.MIPStarRE.LDT.GlobalVariance.generalizeBLineCollisionTensorMass_sum_le_one",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     271,
+     317
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion.0.MIPStarRE.LDT.GlobalVariance.generalizeB_of_pointwise",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     70,
+     103
+    ]
+   }
+  ],
+  "lines": 620,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Polynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_PolynomialAgreement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Operators",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Families",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Fourier",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_TraceForms",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Foundations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Matrix",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Results",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_Averaging",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_AlgebraicIdentity"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.GlobalVariance.axisParallelLinePointParamEquiv": [
+    "/-- Reindex a line representative and affine parameter by the sampled point on",
+    "that line, keeping the direction and parameter as auxiliary data.",
+    "",
+    "This is the finite bookkeeping behind `expansion.tex`, lines 300--302: averaging",
+    "over a line representative `ℓ` and a parameter `t` is the same as averaging over",
+    "the sampled base point `u = ℓ(t)`, the direction, and the forgotten parameter. -/"
+   ],
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion.0.MIPStarRE.LDT.GlobalVariance.axisParallelLineQuestionParameterEquiv": [
+    "/-- The finite reparametrization of incident axis-parallel line questions by a",
+    "line `ℓ` and affine parameter `t`, sending `(ℓ,t)` to `(ℓ, ℓ(t))`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_SelfConsistencyTransport_PointLine",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine",
+  "module_doc": "/-! # Axis-parallel point-line self-consistency transport\n\nThis module contains the point-line consistency and rebasing interfaces used in\nthe middle two `2ε` moves of the local-variance transport chain in\n`lem:local-variance-of-points` (`expansion.tex`, lines 306--307 and\n309--310).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/PointLine.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/PointLine.lean",
+  "defmat": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine.0.MIPStarRE.LDT.GlobalVariance.axisParallelBaseLineEventMeasurement",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine.0.MIPStarRE.LDT.GlobalVariance.axisParallelBasePointEventMeasurement"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine.0.MIPStarRE.LDT.GlobalVariance.axisParallelBaseLineEventMeasurement",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     122,
+     135
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine.0.MIPStarRE.LDT.GlobalVariance.axisParallelBasePointEventMeasurement",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     110,
+     120
+    ]
+   }
+  ],
+  "lines": 448,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Polynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_PolynomialAgreement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Operators",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Families",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Fourier",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_TraceForms",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Foundations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Matrix",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Results",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_Averaging",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_AlgebraicIdentity",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_CollisionExpansion"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine.0.MIPStarRE.LDT.GlobalVariance.axisParallelBaseLineEventMeasurement": [
+    "/-- Line-event measurement used by the base-point point-line consistency step. -/"
+   ],
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine.0.MIPStarRE.LDT.GlobalVariance.axisParallelBasePointEventMeasurement": [
+    "/-- Point-event measurement used by the base-point point-line consistency step. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_TransportChain_Core",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.Core",
+  "module_doc": "/-! # Six-step local-variance transport-chain assembly\n\nThis module assembles the six steps of `lem:local-variance-of-points`\n(`expansion.tex`, lines 305--311) into a single triangle-inequality bound\non the hypercube-edge distribution, producing the main transport estimate\n`localVarianceTransportChainBound`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/TransportChain/Core.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/TransportChain/Core.lean",
+  "defmat": [
+   "MIPStarRE.LDT.GlobalVariance.TransportQuestion",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.Core.0.MIPStarRE.LDT.GlobalVariance.addCoordLeftEquiv",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.Core.0.MIPStarRE.LDT.GlobalVariance.singletonOpFamily"
+  ],
+  "embedded": [
+   "MIPStarRE.LDT.GlobalVariance.avgOver_transport_leftPoint",
+   "MIPStarRE.LDT.GlobalVariance.avgOver_transport_leftQuestion",
+   "MIPStarRE.LDT.GlobalVariance.avgOver_transport_rightPoint",
+   "MIPStarRE.LDT.GlobalVariance.avgOver_transport_rightQuestion",
+   "MIPStarRE.LDT.GlobalVariance.weightedGeneralizeBRightOperatorAtPolynomial_point_eq",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.Core.0.MIPStarRE.LDT.GlobalVariance.localVarianceTransportLinePairBound",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.Core.0.MIPStarRE.LDT.GlobalVariance.sddOpRel_singleton_of_bound",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.Core.0.MIPStarRE.LDT.GlobalVariance.transportQuestionEquiv_symm_pair"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.GlobalVariance.TransportQuestion",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     91,
+     92
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.GlobalVariance.avgOver_transport_leftPoint",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     160,
+     177
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.GlobalVariance.avgOver_transport_leftQuestion",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     110,
+     125
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.GlobalVariance.avgOver_transport_rightPoint",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     179,
+     196
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.GlobalVariance.avgOver_transport_rightQuestion",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     127,
+     158
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.GlobalVariance.weightedGeneralizeBRightOperatorAtPolynomial_point_eq",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     319,
+     329
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.Core.0.MIPStarRE.LDT.GlobalVariance.addCoordLeftEquiv",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     198,
+     204
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.Core.0.MIPStarRE.LDT.GlobalVariance.localVarianceTransportLinePairBound",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     331,
+     521
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.Core.0.MIPStarRE.LDT.GlobalVariance.sddOpRel_singleton_of_bound",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     100,
+     108
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.Core.0.MIPStarRE.LDT.GlobalVariance.singletonOpFamily",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     94,
+     98
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.Core.0.MIPStarRE.LDT.GlobalVariance.transportQuestionEquiv_symm_pair",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     206,
+     230
+    ]
+   }
+  ],
+  "lines": 781,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Polynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_PolynomialAgreement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Operators",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Families",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Fourier",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_TraceForms",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Foundations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Matrix",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Results",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_Averaging",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_AlgebraicIdentity",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_CollisionExpansion",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_SelfConsistencyTransport_PointLine"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.GlobalVariance.TransportQuestion": null,
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.Core.0.MIPStarRE.LDT.GlobalVariance.addCoordLeftEquiv": null,
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.TransportChain.Core.0.MIPStarRE.LDT.GlobalVariance.singletonOpFamily": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_SelfConsistencyTransportSum",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransportSum",
+  "module_doc": "/-! ## Sum-form (cardinality-free) `2ε` axis-parallel consistency endpoints\n\nThe lemmas below are the polynomial-sum (i.e. unnormalized `∑_g`) analogues of\nthe per-`g` `2ε` endpoints above.  They keep the answer space at `Fq params`\nrather than postprocessing to the per-`g` `Option Unit` event, then group\npolynomials by the common value `g(u)` via the `cabApproxDelta` multiplier\n`if a = g s.1 then rightTensor (G_g)^{1/2} else 0`.  Combined with the\nsubmeasurement contraction `∑_{g : g(u) = a} G_g ≤ I` from\n`rightPolynomialWeightSqrt_grouped_contraction`, this gives `2ε` for the full\npolynomial sum, with no polynomial-cardinality loss.  These are the steps 2 and\n5 sum-level inputs to `eq:equivalent-local-variance`\n(`references/ldt-paper/expansion.tex:317--321`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransportSum.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransportSum.lean",
+  "defmat": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransportSum.0.MIPStarRE.LDT.GlobalVariance.axisParallelLineAnswerMeasurement",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransportSum.0.MIPStarRE.LDT.GlobalVariance.axisParallelPointAnswerMeasurement"
+  ],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransportSum.0.MIPStarRE.LDT.GlobalVariance.liftLeft_lineAnswerMeasurement_outcome_at_g",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransportSum.0.MIPStarRE.LDT.GlobalVariance.liftRight_pointAnswerMeasurement_outcome_at_g"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransportSum.0.MIPStarRE.LDT.GlobalVariance.axisParallelLineAnswerMeasurement",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     73,
+     81
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransportSum.0.MIPStarRE.LDT.GlobalVariance.axisParallelPointAnswerMeasurement",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     65,
+     71
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransportSum.0.MIPStarRE.LDT.GlobalVariance.liftLeft_lineAnswerMeasurement_outcome_at_g",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     83,
+     113
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransportSum.0.MIPStarRE.LDT.GlobalVariance.liftRight_pointAnswerMeasurement_outcome_at_g",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     115,
+     130
+    ]
+   }
+  ],
+  "lines": 495,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Polynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_PolynomialAgreement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Operators",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Families",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Fourier",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_TraceForms",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Foundations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Matrix",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Results",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_Averaging",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_AlgebraicIdentity",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_CollisionExpansion",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_SelfConsistencyTransport_PointLine"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransportSum.0.MIPStarRE.LDT.GlobalVariance.axisParallelLineAnswerMeasurement": null,
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransportSum.0.MIPStarRE.LDT.GlobalVariance.axisParallelPointAnswerMeasurement": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_PolynomialSumBounds",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.PolynomialSumBounds",
+  "module_doc": "/-! # Polynomial-sum (cardinality-free) bounds for Section 8 transport\n\nCardinality-free sum-over-`g` bounds for the building blocks of the local-variance\ntransport chain.  These avoid the per-polynomial blow-up that one would get by\nsumming the pointwise estimates: instead they use both the line-measurement POVM\nidentity `∑_f B^ℓ_f = B^ℓ.total` and the polynomial submeasurement normalization\n`∑_g G_g = G.total ≤ 1` to keep the right-register weight under control.\n\n## Paper anchor\n\n`references/ldt-paper/expansion.tex`, lines 282-289 (proof of `lem:generalize-b`)\nand lines 317-321 (`eq:equivalent-local-variance`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/PolynomialSumBounds.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/PolynomialSumBounds.lean",
+  "defmat": [],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.PolynomialSumBounds.0.MIPStarRE.LDT.GlobalVariance.generalizeBLineCollisionTensorMass_polysum_le_one"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.PolynomialSumBounds.0.MIPStarRE.LDT.GlobalVariance.generalizeBLineCollisionTensorMass_polysum_le_one",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     68,
+     146
+    ]
+   }
+  ],
+  "lines": 514,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Polynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_PolynomialAgreement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Operators",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Families",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Fourier",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_TraceForms",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Foundations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Matrix",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Results",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_Averaging",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_AlgebraicIdentity",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_CollisionExpansion"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Theorems_Results_HelperCompleteness_Bracketed",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.HelperCompleteness.Bracketed",
+  "module_doc": "/-!\n# Helper completeness: bracketed mass identities and reduced reductions\n\nThis file contains the exact bracketed reindexing of the helper-stage mass, the\npaper-shaped completeness assemblies, and the reduced `addInU` reduction used\nby the surrounding self-improvement theorem.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 354--414\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/HelperCompleteness/Bracketed.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/HelperCompleteness/Bracketed.lean",
+  "defmat": [],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.HelperCompleteness.Bracketed.0.MIPStarRE.LDT.SelfImprovement.sandwichedPolynomialOutcomeOperatorAt_sum_eq_bracketed"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.HelperCompleteness.Bracketed.0.MIPStarRE.LDT.SelfImprovement.sandwichedPolynomialOutcomeOperatorAt_sum_eq_bracketed",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     143,
+     179
+    ]
+   }
+  ],
+  "lines": 552,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MainInductionStep_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Projectivization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Triangles_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Polynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_PolynomialAgreement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Operators",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Families",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Theorems_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SelfConsistency_DataProcessing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Theorems_Thresholds_Final",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Theorems_Results_HelperCompleteness_InputSdp",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Theorems_Results_HelperCompleteness_FiberBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Theorems_Results_HelperCompleteness_Linearized",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Fourier",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_MatrixRealization_TraceForms",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Base",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_CanonicalPrimal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical_Witness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical_Saturated",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteConicDuality",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical_StrongDuality_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_MatrixRealization_Canonical_StrongDuality_Separation",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Theorems_Results_SdpMatrixBridge",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Foundations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Matrix",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Theorems_Results",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_Averaging",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_AlgebraicIdentity",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_CollisionExpansion",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_SelfConsistencyTransport_PointLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_TransportChain_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_SelfConsistencyTransportSum",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Theorems_PolynomialSumBounds"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Theorems_Results_AddInUDiagonalAndDefs_Selection",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Selection",
+  "module_doc": "/-!\n# Diagonal add-in-u selection and point-sandwich endpoints\n\nThis module contains the diagonal selection used in the strong-self-consistency\napplication of the add-in-`u` lemma, the endpoint identities for its left and\nright sides, the point-projector insertion identities, and the Schwartz--Zippel\ncollision endpoints used by the helper strong-self-consistency argument.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 247--252, 455--468\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/Selection.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/Selection.lean",
+  "defmat": [
+   "MIPStarRE.LDT.SelfImprovement.selfConsistencyAddInUSelection"
+  ],
+  "embedded": [
+   "MIPStarRE.LDT.SelfImprovement.proj_outer_sandwich_eq",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Selection.0.MIPStarRE.LDT.SelfImprovement.addInURightOperatorAtPoint_selfConsistencySelection",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Selection.0.MIPStarRE.LDT.SelfImprovement.addInURightOperatorAtPoint_selfConsistencySelection_proj_eq"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.proj_outer_sandwich_eq",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     236,
+     247
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.SelfImprovement.selfConsistencyAddInUSelection",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     77,
+     84
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Selection.0.MIPStarRE.LDT.SelfImprovement.addInURightOperatorAtPoint_selfConsistencySelection",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     109,
+     132
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Selection.0.MIPStarRE.LDT.SelfImprovement.addInURightOperatorAtPoint_selfConsistencySelection_proj_eq",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     680,
+     726
+    ]
+   }
+  ],
+  "lines": 490,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MainInductionStep_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Projectivization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Triangles_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Polynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_PolynomialAgreement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Operators",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Families",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Theorems_Statements",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SelfConsistency_DataProcessing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_SelfImprovement_Theorems_Thresholds_Final"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.SelfImprovement.selfConsistencyAddInUSelection": [
+    "/-- The diagonal selection used in the strong-self-consistency application of",
+    "`lem:add-in-u` in the proof of `lem:self-improvement-helper`.",
+    "",
+    "At every point `u`, this selects exactly the pairs `(h, h)` of polynomial",
+    "outcomes, matching `self_improvement.tex`, lines 459--468. -/"
+   ]
+  }
+ }
+]

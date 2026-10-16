@@ -1,0 +1,617 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryPrimePowerTrace.flat_trace_natDegree",
+  "source_name": "MIPRE.LowDegree.BinaryPrimePowerTrace.flat_trace_natDegree",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryPrimePowerTrace.flat_trace_natDegree (f : (ZMod 2)[X]) (hf : f.Monic) (hi : Irreducible f)\n    (q e : ℕ) (hq : q.Prime) (hq2 : q ≠ 2)\n    (hn : ∀ b : AdjoinRoot f, b ^ q ≠ AdjoinRoot.root f)\n    (horder : orderOf (2 : ZMod q) = f.natDegree) (hcop : q.Coprime f.natDegree) :\n    (minpoly (ZMod 2) (traceElement (AdjoinRoot.root (f.comp (X ^ (q ^ (e + 1)))))\n      f.natDegree (q ^ (e + 1)))).natDegree = q ^ (e + 1) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryPrimePowerTrace",
+   "open Polynomial IntermediateField"
+  ],
+  "docstring": "The trace in the explicitly specified flat odd-prime-power quotient has exactly\nthe requested prime-power degree over the binary field.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryPrimePowerTrace",
+  "module_doc": "/-! # Exact degree of the odd-prime Shoup trace -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryPrimePowerTrace.lean#L174-L194",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryPrimePowerTrace.lean",
+  "lines": [
+   174,
+   194
+  ],
+  "blueprint": [
+   {
+    "label": "lem:binary-odd-prime-power-irreducible",
+    "env": "lemma",
+    "title": "Effective irreducibles of every odd-prime-power degree",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.irreducible_comp_prime_pow_of_nonresidue",
+   "MIPRE.LowDegree.BinaryPolynomial.flat_prime_power_root_pow_minpoly",
+   "MIPRE.LowDegree.BinaryPrimePowerTrace.traceElement_natDegree_of_root_degrees"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.toBits_ofBits",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.toBits_ofBits",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.toBits_ofBits (l : BitStr) (hlen : l.length = f.natDegree) :\n    toBits f hf (ofBits f hf l) = l := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost MIPRE.LowDegree.BinaryPolynomial",
+   "variable (f : Polynomial (ZMod 2)) (hf : f.Monic)"
+  ],
+  "docstring": "Every correctly sized list is already the canonical quotient encoding.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotient",
+  "module_doc": "/-!\n# Coordinates for arbitrary monic binary polynomial quotients\n\nThe basis and coefficient representation require only monicity. In particular,\nthe modulus need not be irreducible or squarefree. The abstract coordinate maps\nare used in proofs; the executable addition and multiplication are the existing\nuniform coefficient-list programs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotient.lean#L62-L76",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotient.lean",
+  "lines": [
+   62,
+   76
+  ],
+  "blueprint": [
+   {
+    "label": "lem:binary-monic-quotient",
+    "env": "lemma",
+    "title": "Canonical coordinates in monic binary quotients",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.root_eq",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.root_eq",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.root_eq (p : BitStr) (hpoly : f = polyOfBits (p ++ [true])) :\n    AdjoinRoot.root f ^ p.length = evalBits (AdjoinRoot.root f) p := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost MIPRE.LowDegree.BinaryPolynomial",
+   "variable (f : Polynomial (ZMod 2)) (hf : f.Monic)"
+  ],
+  "docstring": "The quotient root satisfies the lower-coefficient reduction equation.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotient",
+  "module_doc": "/-!\n# Coordinates for arbitrary monic binary polynomial quotients\n\nThe basis and coefficient representation require only monicity. In particular,\nthe modulus need not be irreducible or squarefree. The abstract coordinate maps\nare used in proofs; the executable addition and multiplication are the existing\nuniform coefficient-list programs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotient.lean#L110-L121",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotient.lean",
+  "lines": [
+   110,
+   121
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 9,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.splitBits_encoding",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.splitBits_encoding",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.splitBits_encoding (p : BitStr) (hp : p.length = f.natDegree)\n    (hpoly : f = polyOfBits (p ++ [true])) (e b : AdjoinRoot f) :\n    splitBits p (toBits f hf e) (toBits f hf b) =\n      (splitComponent e b).map (toBits f hf) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial MIPRE.LowDegree.BinaryPolynomial",
+   "variable (f : Polynomial (ZMod 2)) (hf : f.Monic)"
+  ],
+  "docstring": "The encoded split is exactly the abstract idempotent split.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientComponents",
+  "module_doc": "/-!\n# Bounded component separation in binary polynomial quotients\n\nRefine the unit by a supplied family of Frobenius-fixed vectors. The component\ncount is clipped to the quotient dimension on every iteration; the algebraic\northogonality invariant proves that clipping is inert on valid inputs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientComponents.lean#L80-L97",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientComponents.lean",
+  "lines": [
+   80,
+   97
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_xor",
+   "MIPRE.LowDegree.BinaryPolynomial.length_mulReduce",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_mulReduce",
+   "MIPRE.LowDegree.BinaryQuotient.toBits_ofBits",
+   "MIPRE.LowDegree.BinaryQuotient.root_eq"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.quotientComponentsProg_correct",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.quotientComponentsProg_correct",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.quotientComponentsProg_correct (p : BitStr) (hp : p.length = f.natDegree)\n    (hpoly : f = polyOfBits (p ++ [true])) (hp0 : p ≠ []) :\n    quotientComponentsProg p = (components f hf).map (toBits f hf) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial MIPRE.LowDegree.BinaryPolynomial",
+   "variable (f : Polynomial (ZMod 2)) (hf : f.Monic)"
+  ],
+  "docstring": "The uniform program computes precisely the abstract primitive components.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientComponents",
+  "module_doc": "/-!\n# Bounded component separation in binary polynomial quotients\n\nRefine the unit by a supplied family of Frobenius-fixed vectors. The component\ncount is clipped to the quotient dimension on every iteration; the algebraic\northogonality invariant proves that clipping is inert on valid inputs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientComponents.lean#L295-L314",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientComponents.lean",
+  "lines": [
+   295,
+   314
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.typedBasis_span",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.append_reduced",
+   "MIPRE.LowDegree.BinaryLinear.binary_eq_zero_or_one",
+   "MIPRE.LowDegree.BinaryLinear.getD_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.kernelGeneratorsProg_encoding",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.LowDegree.BinaryQuotient.toBits_ofBits",
+   "MIPRE.LowDegree.BinaryQuotient.splitBits_encoding",
+   "MIPRE.LowDegree.BinaryQuotient.frobeniusMatrixProg_correct",
+   "MIPRE.LowDegree.BinaryQuotient.fixedMatrix_ker",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.eq_zero_of_pivots_zero",
+   "MIPRE.LowDegree.ComponentFamily.split",
+   "MIPRE.LowDegree.ComponentFamily.linearIndependent"
+  ],
+  "pasted_helpers": 35,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.componentFactor_dvd_iff",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.componentFactor_dvd_iff",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.componentFactor_dvd_iff (f E H : Polynomial (ZMod 2))\n    (he : AdjoinRoot.mk f E * AdjoinRoot.mk f E = AdjoinRoot.mk f E) :\n    componentFactor f E ∣ H ↔ AdjoinRoot.mk f E * AdjoinRoot.mk f H = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open Polynomial"
+  ],
+  "docstring": "An idempotent's supported factor describes its polynomial annihilator.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientFactors",
+  "module_doc": "/-!\n# Extracting polynomial factors from primitive quotient components\n\nAn idempotent represented by `E` corresponds to the factor `gcd(f,E-1)`.\nIts multiples are exactly the polynomials annihilated by that component.\nPrimitive-component inverses therefore prove irreducibility without a Chinese\nremainder construction or an enumeration of the quotient ring.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientFactors.lean#L30-L49",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientFactors.lean",
+  "lines": [
+   30,
+   49
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.componentFactor_prime",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.componentFactor_prime",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.componentFactor_prime (f E : Polynomial (ZMod 2)) (hf : f ≠ 0)\n    [Finite (AdjoinRoot f)]\n    (hsq : Function.Bijective (fun x : AdjoinRoot f => x * x))\n    (he : PrimitiveBinaryComponent (AdjoinRoot.mk f E)) :\n    Prime (componentFactor f E) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open Polynomial"
+  ],
+  "docstring": "A primitive component of a quotient with bijective squaring yields a prime factor.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientFactors",
+  "module_doc": "/-!\n# Extracting polynomial factors from primitive quotient components\n\nAn idempotent represented by `E` corresponds to the factor `gcd(f,E-1)`.\nIts multiples are exactly the polynomials annihilated by that component.\nPrimitive-component inverses therefore prove irreducibility without a Chinese\nremainder construction or an enumeration of the quotient ring.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientFactors.lean#L51-L81",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientFactors.lean",
+  "lines": [
+   51,
+   81
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryQuotient.componentFactor_dvd_iff",
+   "MIPRE.LowDegree.PrimitiveBinaryComponent.exists_mul_eq"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.componentFactor_isCoprime",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.componentFactor_isCoprime",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.componentFactor_isCoprime (f E H : Polynomial (ZMod 2))\n    (he : Irreducible (componentFactor f E))\n    (heh : AdjoinRoot.mk f E * AdjoinRoot.mk f H = 0) :\n    IsCoprime (componentFactor f E) (componentFactor f H) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open Polynomial"
+  ],
+  "docstring": "Orthogonal components cannot share a nonunit supported factor.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientFactors",
+  "module_doc": "/-!\n# Extracting polynomial factors from primitive quotient components\n\nAn idempotent represented by `E` corresponds to the factor `gcd(f,E-1)`.\nIts multiples are exactly the polynomials annihilated by that component.\nPrimitive-component inverses therefore prove irreducibility without a Chinese\nremainder construction or an enumeration of the quotient ring.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientFactors.lean#L98-L114",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientFactors.lean",
+  "lines": [
+   98,
+   114
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.componentFactors_prod",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.componentFactors_prod",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.componentFactors_prod (f : Polynomial (ZMod 2)) (hf : f.Monic)\n    [Finite (AdjoinRoot f)]\n    (hsq : Function.Bijective (fun x : AdjoinRoot f => x * x))\n    {n : ℕ} (E : Fin n → Polynomial (ZMod 2))\n    (he : ∀ i, PrimitiveBinaryComponent (AdjoinRoot.mk f (E i)))\n    (horth : Pairwise (fun i j => AdjoinRoot.mk f (E i) * AdjoinRoot.mk f (E j) = 0))\n    (hsum : ∑ i, AdjoinRoot.mk f (E i) = 1) :\n    ∏ i, componentFactor f (E i) = f := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open Polynomial"
+  ],
+  "docstring": "A complete orthogonal primitive family reconstructs its monic quotient modulus.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientFactors",
+  "module_doc": "/-!\n# Extracting polynomial factors from primitive quotient components\n\nAn idempotent represented by `E` corresponds to the factor `gcd(f,E-1)`.\nIts multiples are exactly the polynomials annihilated by that component.\nPrimitive-component inverses therefore prove irreducibility without a Chinese\nremainder construction or an enumeration of the quotient ring.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientFactors.lean#L116-L145",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientFactors.lean",
+  "lines": [
+   116,
+   145
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryQuotient.componentFactor_prime",
+   "MIPRE.LowDegree.BinaryQuotient.componentFactor_isCoprime",
+   "MIPRE.LowDegree.BinaryQuotient.componentFactor_dvd_iff"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.componentFactors_list_prod",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.componentFactors_list_prod",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.componentFactors_list_prod (f : Polynomial (ZMod 2)) (hf : f.Monic)\n    [Finite (AdjoinRoot f)]\n    (hsq : Function.Bijective (fun x : AdjoinRoot f => x * x))\n    (l : List (Polynomial (ZMod 2)))\n    (hl : ComponentFamily (l.map (AdjoinRoot.mk f)))\n    (he : ∀ E ∈ l, PrimitiveBinaryComponent (AdjoinRoot.mk f E)) :\n    (l.map (componentFactor f)).prod = f := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open Polynomial"
+  ],
+  "docstring": "The reconstruction theorem in the list representation used by the programs.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientFactors",
+  "module_doc": "/-!\n# Extracting polynomial factors from primitive quotient components\n\nAn idempotent represented by `E` corresponds to the factor `gcd(f,E-1)`.\nIts multiples are exactly the polynomials annihilated by that component.\nPrimitive-component inverses therefore prove irreducibility without a Chinese\nremainder construction or an enumeration of the quotient ring.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientFactors.lean#L147-L168",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientFactors.lean",
+  "lines": [
+   147,
+   168
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryQuotient.componentFactors_prod"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.componentFactors_toBits_prod",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.componentFactors_toBits_prod",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.componentFactors_toBits_prod (f : Polynomial (ZMod 2)) (hf : f.Monic)\n    [Finite (AdjoinRoot f)]\n    (hsq : Function.Bijective (fun x : AdjoinRoot f => x * x))\n    (l : List (AdjoinRoot f)) (hl : ComponentFamily l)\n    (he : ∀ e ∈ l, PrimitiveBinaryComponent e) :\n    (l.map (fun e => componentFactor f (polyOfBits (toBits f hf e)))).prod = f := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open Polynomial"
+  ],
+  "docstring": "Canonical representatives of a primitive component family yield the complete factorization.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientFactors",
+  "module_doc": "/-!\n# Extracting polynomial factors from primitive quotient components\n\nAn idempotent represented by `E` corresponds to the factor `gcd(f,E-1)`.\nIts multiples are exactly the polynomials annihilated by that component.\nPrimitive-component inverses therefore prove irreducibility without a Chinese\nremainder construction or an enumeration of the quotient ring.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientFactors.lean#L182-L199",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientFactors.lean",
+  "lines": [
+   182,
+   199
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryQuotient.componentFactors_list_prod"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.frobeniusMatrixProg_correct",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.frobeniusMatrixProg_correct",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.frobeniusMatrixProg_correct (p : BitStr)\n    (hp : p.length = f.natDegree) (hpoly : f = polyOfBits (p ++ [true])) :\n    frobeniusMatrixProg p = matrixBits (frobeniusMatrix f hf) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost MIPRE.LowDegree.BinaryPolynomial MIPRE.LowDegree.BinaryLinear",
+   "variable (f : Polynomial (ZMod 2)) (hf : f.Monic)"
+  ],
+  "docstring": "The ambient program computes the exact Frobenius matrix of a monic quotient.\nIts columns encode the squares of `1,X,...,X^(d-1)`, not repeated squarings of `X`.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientFrobenius",
+  "module_doc": "/-! # Computing Frobenius matrices in arbitrary monic binary quotients -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientFrobenius.lean#L71-L97",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientFrobenius.lean",
+  "lines": [
+   71,
+   97
+  ],
+  "blueprint": [
+   {
+    "label": "lem:binary-quotient-fixed-space",
+    "env": "lemma",
+    "title": "Effective Frobenius fixed spaces in binary quotients",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.transposeBits_matrixBits",
+   "MIPRE.LowDegree.BinaryPolynomial.length_mulReduce",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_mulReduce",
+   "MIPRE.LowDegree.BinaryQuotient.toBits_ofBits",
+   "MIPRE.LowDegree.BinaryQuotient.root_eq"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.fixedMatrix_ker",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.fixedMatrix_ker",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.fixedMatrix_ker (x : AdjoinRoot f) :\n    coordinateEquiv f hf x ∈ (fixedMatrix f hf).mulVecLin.ker ↔ x * x = x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost MIPRE.LowDegree.BinaryPolynomial MIPRE.LowDegree.BinaryLinear",
+   "variable (f : Polynomial (ZMod 2)) (hf : f.Monic)"
+  ],
+  "docstring": "The binary matrix kernel is exactly the set of quotient idempotents.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientFrobenius",
+  "module_doc": "/-! # Computing Frobenius matrices in arbitrary monic binary quotients -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientFrobenius.lean#L103-L123",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientFrobenius.lean",
+  "lines": [
+   103,
+   123
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.linearMulCarry_width",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.linearMulCarry_width",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.linearMulCarry_width (p a carry : BitStr) (cs : List BitStr)\n    (ha : a.length = p.length) (hc : carry.length = p.length)\n    (hs : ∀ c ∈ cs, c.length = p.length) :\n    ∀ c ∈ linearMulCarry p a carry cs, c.length = p.length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree.BinaryPolynomial Polynomial",
+   "variable {R : Type*} [CommRing R]"
+  ],
+  "docstring": "The carried linear multiplication preserves correct coefficient widths.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientOrbit",
+  "module_doc": "/-! # Polynomial products with coefficients in an explicit binary quotient -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientOrbit.lean#L44-L64",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientOrbit.lean",
+  "lines": [
+   44,
+   64
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.length_mulReduce"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.coeffPolynomial_linearMulCarry",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.coeffPolynomial_linearMulCarry",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.coeffPolynomial_linearMulCarry [CharP R 2] (z : R)\n    (p a carry : BitStr) (cs : List BitStr)\n    (hz : z ^ p.length = evalBits z p)\n    (ha : a.length = p.length) (hc : carry.length = p.length)\n    (hs : ∀ c ∈ cs, c.length = p.length) :\n    coeffPolynomial z (linearMulCarry p a carry cs) =\n      C (evalBits z carry) + (X + C (evalBits z a)) * coeffPolynomial z cs := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree.BinaryPolynomial Polynomial",
+   "variable {R : Type*} [CommRing R]"
+  ],
+  "docstring": "Linear multiplication has exactly the expected polynomial semantics.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientOrbit",
+  "module_doc": "/-! # Polynomial products with coefficients in an explicit binary quotient -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientOrbit.lean#L66-L87",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientOrbit.lean",
+  "lines": [
+   66,
+   87
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_xor",
+   "MIPRE.LowDegree.BinaryPolynomial.length_mulReduce",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_mulReduce"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.coeffPolynomial_addCoeffLists",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.coeffPolynomial_addCoeffLists",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.coeffPolynomial_addCoeffLists [CharP R 2] (z : R) (as bs : List BitStr) (n : ℕ)\n    (ha : ∀ a ∈ as, a.length = n) (hb : ∀ b ∈ bs, b.length = n) :\n    coeffPolynomial z (addCoeffLists as bs) = coeffPolynomial z as + coeffPolynomial z bs := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree.BinaryPolynomial Polynomial",
+   "variable {R : Type*} [CommRing R]"
+  ],
+  "docstring": "Coefficient-list addition implements addition of the interpreted polynomials.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial",
+  "module_doc": "/-! # Polynomial arithmetic with supplied binary-quotient coefficient vectors -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientPolynomial.lean#L63-L77",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientPolynomial.lean",
+  "lines": [
+   63,
+   77
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_xor"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.length_mulCoeffLists_le",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.length_mulCoeffLists_le",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.length_mulCoeffLists_le (p : BitStr) (as bs : List BitStr) :\n    (mulCoeffLists p as bs).length ≤ as.length + bs.length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree.BinaryPolynomial Polynomial",
+   "variable {R : Type*} [CommRing R]"
+  ],
+  "docstring": "Each multiplication output has at most the sum of the input coefficient counts.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial",
+  "module_doc": "/-! # Polynomial arithmetic with supplied binary-quotient coefficient vectors -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientPolynomial.lean#L156-L163",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientPolynomial.lean",
+  "lines": [
+   156,
+   163
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.mulCoeffLists_width",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.mulCoeffLists_width",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.mulCoeffLists_width (p : BitStr) (as bs : List BitStr)\n    (ha : ∀ a ∈ as, a.length = p.length) :\n    ∀ c ∈ mulCoeffLists p as bs, c.length = p.length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree.BinaryPolynomial Polynomial",
+   "variable {R : Type*} [CommRing R]"
+  ],
+  "docstring": "Multiplication preserves valid quotient coefficient widths.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial",
+  "module_doc": "/-! # Polynomial arithmetic with supplied binary-quotient coefficient vectors -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientPolynomial.lean#L165-L179",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientPolynomial.lean",
+  "lines": [
+   165,
+   179
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.length_mulReduce"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.coeffPolynomial_mulCoeffLists",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.coeffPolynomial_mulCoeffLists",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.coeffPolynomial_mulCoeffLists [CharP R 2] (z : R) (p : BitStr) (as bs : List BitStr)\n    (hz : z ^ p.length = evalBits z p) (ha : ∀ a ∈ as, a.length = p.length) :\n    coeffPolynomial z (mulCoeffLists p as bs) = coeffPolynomial z as * coeffPolynomial z bs := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree.BinaryPolynomial Polynomial",
+   "variable {R : Type*} [CommRing R]"
+  ],
+  "docstring": "Horner multiplication agrees with multiplication of the interpreted polynomials.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial",
+  "module_doc": "/-! # Polynomial arithmetic with supplied binary-quotient coefficient vectors -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientPolynomial.lean#L191-L210",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientPolynomial.lean",
+  "lines": [
+   191,
+   210
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.length_mulReduce",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_mulReduce",
+   "MIPRE.LowDegree.BinaryQuotient.coeffPolynomial_addCoeffLists",
+   "MIPRE.LowDegree.BinaryQuotient.mulCoeffLists_width"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.mulCoeffLists_width_le",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.mulCoeffLists_width_le",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.mulCoeffLists_width_le (p : BitStr) (as bs : List BitStr) (N : ℕ)\n    (hp : p.length ≤ N) (ha : ∀ a ∈ as, a.length ≤ N) :\n    ∀ c ∈ mulCoeffLists p as bs, c.length ≤ N := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree.BinaryPolynomial Polynomial",
+   "variable {R : Type*} [CommRing R]"
+  ],
+  "docstring": "A common width bound for the left coefficients and modulus bounds every product coefficient.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotientPolynomial",
+  "module_doc": "/-! # Polynomial arithmetic with supplied binary-quotient coefficient vectors -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotientPolynomial.lean#L320-L334",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotientPolynomial.lean",
+  "lines": [
+   320,
+   334
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.length_mulReduce_le"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ }
+]

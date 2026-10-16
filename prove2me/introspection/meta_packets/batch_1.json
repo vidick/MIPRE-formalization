@@ -1,0 +1,704 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionCompiler.accepts_zero",
+  "source_name": "MIPRE.Introspection.DecisionCompiler.accepts_zero",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionCompiler.accepts_zero (c : ℕ) (U : ClockedUniversalMachine) (S D : Prog)\n    (lam n : ℕ) (h : lam = 0 ∨ n = 0) (x y a b : BitStr) :\n    (decider c U S D lam).Accepts n x y a b ↔\n      x = [] ∧ y = [] ∧ a.length ≤ 2 ∧ b.length ≤ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionCompiler",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program",
+   "open MIPRE.Introspection.DecisionPreparation (Metadata)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.DecisionCompiler",
+  "module_doc": "/-! # The actual compiled introspection decider\n\nCompilation clamps each source description, specializes the fixed prepared\nkernel using binary metadata, and adds zero-parameter and zero-index branches.\nThe positive branch computes its clock and canonical resources exactly once.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionCompiler.lean#L133-L145",
+  "source_path": "MIPRE/Background/Introspection/DecisionCompiler.lean",
+  "lines": [
+   133,
+   145
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.Program.readBits_encode",
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Cost.encode_injective",
+   "MIPRE.Introspection.AuxiliaryProgram.equal_iff"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 9,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionCompiler.accepts_positive_bounds",
+  "source_name": "MIPRE.Introspection.DecisionCompiler.accepts_positive_bounds",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionCompiler.accepts_positive_bounds (c : ℕ) (U : ClockedUniversalMachine) (S D : Prog)\n    {lam n : ℕ} (hl : 1 ≤ lam) (hn : 1 ≤ n) (x y a b : BitStr)\n    (h : (decider c U S D lam).Accepts n x y a b) :\n    x.length = CL.Detyping.graphDim DecisionKernel.Label +\n      (3*SourceCompiler.registerPower c lam n+3)*SourceCompiler.fieldBits c lam n ∧\n    y.length = CL.Detyping.graphDim DecisionKernel.Label +\n      (3*SourceCompiler.registerPower c lam n+3)*SourceCompiler.fieldBits c lam n ∧\n    a.length ≤ answerBound (SourceCompiler.registerBits c lam n) (SourceCompiler.originalBound lam n) ∧\n    b.length ≤ answerBound (SourceCompiler.registerBits c lam n) (SourceCompiler.originalBound lam n) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionCompiler",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program",
+   "open MIPRE.Introspection.DecisionPreparation (Metadata)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.DecisionCompiler",
+  "module_doc": "/-! # The actual compiled introspection decider\n\nCompilation clamps each source description, specializes the fixed prepared\nkernel using binary metadata, and adds zero-parameter and zero-index branches.\nThe positive branch computes its clock and canonical resources exactly once.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionCompiler.lean#L150-L166",
+  "source_path": "MIPRE/Background/Introspection/DecisionCompiler.lean",
+  "lines": [
+   150,
+   166
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.DecisionCompiler.untypedKernel_iff",
+   "MIPRE.Introspection.DecisionCompiler.zeroWrap_runs_pos",
+   "MIPRE.Cost.Prog.routeOneCall_closed",
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Cost.encode_injective",
+   "MIPRE.Cost.hardcode_time",
+   "MIPRE.Introspection.ClockArithmetic.uniformProg_closed",
+   "MIPRE.Introspection.DecisionPreparation.compiler_closed",
+   "MIPRE.Introspection.DecisionPreparation.prog_runs",
+   "MIPRE.Introspection.PauliSamplerParameters.prog_closed"
+  ],
+  "pasted_helpers": 16,
+  "prooflines": 8,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionCompiler.answerBound_ansBound",
+  "source_name": "MIPRE.Introspection.DecisionCompiler.answerBound_ansBound",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionCompiler.answerBound_ansBound {c : ℕ} (hc : 1 ≤ c) :\n    ∃ K, ∀ lam n, 1 ≤ lam → 1 ≤ n →\n      answerBound (SourceCompiler.registerBits c lam n) (SourceCompiler.originalBound lam n) ≤\n        ansBound K lam n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionCompiler",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial"
+  ],
+  "docstring": "The concrete binary cutoff fits one fixed introspection answer budget.",
+  "module": "MIPRE.Background.Introspection.DecisionCompilerCutoff",
+  "module_doc": "/-! # A binary answer cutoff for the compiled introspection decider\n\nThe cutoff covers full register triples and original answers. Its computation\nuses binary comparison and three binary shifts; its numeric value is never\nexpanded into a unary counter.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionCompilerCutoff.lean#L48-L85",
+  "source_path": "MIPRE/Background/Introspection/DecisionCompilerCutoff.lean",
+  "lines": [
+   48,
+   85
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.PauliSamplerParameters.selectorBits_le_fieldBits",
+   "MIPRE.Introspection.polynomial_ansBound"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 33,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionCompiler.untypedKernel_iff",
+  "source_name": "MIPRE.Introspection.DecisionCompiler.untypedKernel_iff",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionCompiler.untypedKernel_iff (U : ClockedUniversalMachine) (n : ℕ) (x y a b : BitStr)\n    (M : DecisionPreparation.Metadata) (clock : Unary) (N Q R : ℕ)\n    (p : PauliSamplerParameters.Parameters) :\n    untypedKernel U (encode (n,x,y,a,b),M,clock,N,p,Q,R) = true ↔\n      x.length = CL.Detyping.graphDim Label + (3*p.2.2.length+3)*p.1.length ∧\n      y.length = CL.Detyping.graphDim Label + (3*p.2.2.length+3)*p.1.length ∧\n      a.length ≤ answerBound Q R ∧ b.length ≤ answerBound Q R ∧\n      (match CL.Detyping.DeciderProgram.selectedEdge graph\n          (CL.Detyping.graphOfBits x) (CL.Detyping.graphOfBits y) with\n      | none => True\n      | some uv => DecisionKernel.program U\n          (encode (n,uv.1,x.drop (CL.Detyping.graphDim Label),uv.2,\n            y.drop (CL.Detyping.graphDim Label),a,b),M,clock,N,p,Q,R) = true) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionCompiler",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Introspection.DecisionKernel"
+  ],
+  "docstring": "Canonical untyped inputs use exactly the graph router's edge convention,\nwith the global answer cutoff enforced also on nonedge views.",
+  "module": "MIPRE.Background.Introspection.DecisionCompilerRoute",
+  "module_doc": "/-! # Detyping the prepared decision kernel\n\nThe graph router consumes the original untyped input and the already prepared\ndimension and answer cutoff. A genuine edge is checked by the typed kernel\nusing those same resources. No second clock or parameter preparation occurs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionCompilerRoute.lean#L84-L111",
+  "source_path": "MIPRE/Background/Introspection/DecisionCompilerRoute.lean",
+  "lines": [
+   84,
+   111
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.DeciderProgram.route_context",
+   "MIPRE.Cost.encode_injective"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionCompiler.positive_time_bound",
+  "source_name": "MIPRE.Introspection.DecisionCompiler.positive_time_bound",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionCompiler.positive_time_bound {c : ℕ} (hc : 1 ≤ c) (U : ClockedUniversalMachine) :\n    ∃ C, ∀ S D lam n, 1 ≤ lam → 1 ≤ n →\n      (decider c U S D lam).TimeBoundAt n (ansBound C lam n) C := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionCompiler",
+   "open MIPRE.Cost Polynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.DecisionCompilerTime",
+  "module_doc": "/-! # All-index ambient time bounds for the actual decision compiler -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionCompilerTime.lean#L13-L68",
+  "source_path": "MIPRE/Background/Introspection/DecisionCompilerTime.lean",
+  "lines": [
+   13,
+   68
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.DecisionCompiler.zeroWrap_runs_pos",
+   "MIPRE.Cost.Prog.routeOneCall_closed",
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.Cost.hardcode_time",
+   "MIPRE.Introspection.ClockArithmetic.uniformProg_closed",
+   "MIPRE.Introspection.DecisionPreparation.compiler_closed",
+   "MIPRE.Introspection.DecisionPreparation.prog_runs_poly",
+   "MIPRE.Introspection.PauliSamplerParameters.prog_closed",
+   "MIPRE.Introspection.polynomial_ansBound"
+  ],
+  "pasted_helpers": 18,
+  "prooflines": 53,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionCompiler.time_bound",
+  "source_name": "MIPRE.Introspection.DecisionCompiler.time_bound",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionCompiler.time_bound {c : ℕ} (hc : 1 ≤ c) (U : ClockedUniversalMachine) :\n    ∃ C, ∀ S D lam n,\n      (decider c U S D lam).TimeBoundAt n (ansBound C lam n) C := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionCompiler",
+   "open MIPRE.Cost Polynomial"
+  ],
+  "docstring": "The zero cases and positive branch share one fixed degree and the exact\nall-index exponential coefficient required by the pipeline.",
+  "module": "MIPRE.Background.Introspection.DecisionCompilerTime",
+  "module_doc": "/-! # All-index ambient time bounds for the actual decision compiler -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionCompilerTime.lean#L70-L106",
+  "source_path": "MIPRE/Background/Introspection/DecisionCompilerTime.lean",
+  "lines": [
+   70,
+   106
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.DecisionCompiler.positive_time_bound"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionCompiler.resources_with_cutoff",
+  "source_name": "MIPRE.Introspection.DecisionCompiler.resources_with_cutoff",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionCompiler.resources_with_cutoff (c : ℕ) (hc : 1 ≤ c) (he : Even c) (U : ClockedUniversalMachine) :\n    ∃ C, (∀ source lam n, (output c hc he U source lam).Within n (budget C lam n)) ∧\n      (∀ source lam, (output c hc he U source lam).decider.size ≤ C*(lam+1)^C) ∧\n      ∀ lam n, cutoffAt c lam n ≤ ansBound C lam n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionCompiler",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "All compiler inputs and all indices satisfy the pipeline's exact `Within`\ncontract, with the same fixed exponent also bounding output descriptions.",
+  "module": "MIPRE.Background.Introspection.DecisionCompilerVerifier",
+  "module_doc": "/-! # The compiled five-level verifier and its complete resource contract -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionCompilerVerifier.lean#L45-L77",
+  "source_path": "MIPRE/Background/Introspection/DecisionCompilerVerifier.lean",
+  "lines": [
+   45,
+   77
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-ambient-kernel",
+    "env": "lemma",
+    "title": "The ambient compiler's resources and raw-game bridge",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.DecisionCompiler.accepts_zero",
+   "MIPRE.Introspection.DecisionCompiler.accepts_positive_bounds",
+   "MIPRE.Introspection.DecisionCompiler.answerBound_ansBound",
+   "MIPRE.Introspection.DecisionCompiler.time_bound",
+   "MIPRE.Introspection.PauliSampler.finalSampler_uniform_bound",
+   "MIPRE.Introspection.SourceDescriptionCompiler.exists_compiler_size"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionCompiler.zeroProg_closed",
+  "source_name": "MIPRE.Introspection.DecisionCompiler.zeroProg_closed",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionCompiler.zeroProg_closed : zeroProg.WellScoped 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionCompiler",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program",
+   "open MIPRE.Introspection.ClockSimulation",
+   "open MIPRE.Introspection.AuxiliaryProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.DecisionCompilerZero",
+  "module_doc": "/-! # Constant-resource branches of the introspection decider\n\nAt zero parameter or index, the sampler has dimension zero. These branches\ninspect the answer payload without copying the index or source metadata.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionCompilerZero.lean#L44-L45",
+  "source_path": "MIPRE/Background/Introspection/DecisionCompilerZero.lean",
+  "lines": [
+   44,
+   45
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionCompiler.zeroWrap_closed",
+  "source_name": "MIPRE.Introspection.DecisionCompiler.zeroWrap_closed",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionCompiler.zeroWrap_closed {p : Prog} (hp : p.WellScoped 1) : (zeroWrap p).WellScoped 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionCompiler",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program",
+   "open MIPRE.Introspection.ClockSimulation",
+   "open MIPRE.Introspection.AuxiliaryProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.DecisionCompilerZero",
+  "module_doc": "/-! # Constant-resource branches of the introspection decider\n\nAt zero parameter or index, the sampler has dimension zero. These branches\ninspect the answer payload without copying the index or source metadata.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionCompilerZero.lean#L61-L63",
+  "source_path": "MIPRE/Background/Introspection/DecisionCompilerZero.lean",
+  "lines": [
+   61,
+   63
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionCompiler.zeroWrap_runs_pos",
+  "source_name": "MIPRE.Introspection.DecisionCompiler.zeroWrap_runs_pos",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionCompiler.zeroWrap_runs_pos {p : Prog} (hp : p.WellScoped 1) {n : ℕ} (hn : 1 ≤ n)\n    (d r : Data) (t : ℕ) (hr : p.Runs (.cons (encode n) d) r t) :\n    (zeroWrap p).Runs (.cons (encode n) d) r (t + (Data.cons (encode n) d).size + 4) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionCompiler",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program",
+   "open MIPRE.Introspection.ClockSimulation",
+   "open MIPRE.Introspection.AuxiliaryProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.DecisionCompilerZero",
+  "module_doc": "/-! # Constant-resource branches of the introspection decider\n\nAt zero parameter or index, the sampler has dimension zero. These branches\ninspect the answer payload without copying the index or source metadata.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionCompilerZero.lean#L75-L92",
+  "source_path": "MIPRE/Background/Introspection/DecisionCompilerZero.lean",
+  "lines": [
+   75,
+   92
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.encode_injective"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionKernel.program_auxiliary_facts",
+  "source_name": "MIPRE.Introspection.DecisionKernel.program_auxiliary_facts",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionKernel.program_auxiliary_facts (W : ClockedUniversalMachine) (V : Verifier 7)\n    (lam n Q R : ℕ) (p : PauliSamplerParameters.Parameters) (T U : Label) (x y a b : BitStr)\n    (h : program W (canonicalInput V lam n Q R p T U x y a b) = true) :\n    Valid Q R T a ∧ Valid Q R U b ∧ (T = U → a = b) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionKernel",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.SAT MIPRE.Introspection.AuxiliaryAnswer"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.DecisionKernelAuxiliary",
+  "module_doc": "/-! # Raw auxiliary soundness of the complete decision kernel -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionKernelAuxiliary.lean#L25-L47",
+  "source_path": "MIPRE/Background/Introspection/DecisionKernelAuxiliary.lean",
+  "lines": [
+   25,
+   47
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.AuxiliaryDecision.check_iff",
+   "MIPRE.Introspection.AuxiliaryDecision.guarded_iff"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionKernel.program_raw_quotient_sound",
+  "source_name": "MIPRE.Introspection.DecisionKernel.program_raw_quotient_sound",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionKernel.program_raw_quotient_sound (W : ClockedUniversalMachine) {lam n : ℕ}\n    (V : Verifier 7) (hV : V.IsBounded lam) (hn : 1 ≤ n)\n    (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k) (j : ℕ) (hj : j ≤ k)\n    (hm : 2 ^ j ∣ Fintype.card (shoupBinField k hk).carrier)\n    (hs : V.sampler.dim (2 ^ n) ≤ 2 ^ (2 ^ j) * k)\n    (hQ : 4 ≤ 2 ^ (2 ^ j) * k) (hR : 3 * ((2 ^ n)^lam) ≤ 2 ^ (2 ^ j) * k)\n    (T U : Label) (x y a b : BitStr)\n    (h : program W (canonicalInput V lam n (2 ^ (2 ^ j) * k) ((2 ^ n)^lam)\n      (unary k,unary j,unary (2 ^ j)) T U x y a b) = true) :\n    AuxiliaryQuotient.check (AuxiliaryDecision.padded V hs) (.pauli .X) (.pauli .Z)\n      (Answer.rawProject (unary k,unary j,unary (2 ^ j)) (2 ^ (2 ^ j) * k))\n      (AuxiliaryDecision.sourcePredicate V hs) (rawPauliCheck k hk hodd j hm x y) T U\n      (decode (2 ^ (2 ^ j) * k) T a) (decode (2 ^ (2 ^ j) * k) U b) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionKernel",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.SAT MIPRE.Introspection.AuxiliaryAnswer"
+  ],
+  "docstring": "All auxiliary checks are sound on every accepted raw tuple. The short\nPauli/Pauli case is handled without allocating an artificial full prefix.",
+  "module": "MIPRE.Background.Introspection.DecisionKernelAuxiliary",
+  "module_doc": "/-! # Raw auxiliary soundness of the complete decision kernel -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionKernelAuxiliary.lean#L82-L146",
+  "source_path": "MIPRE/Background/Introspection/DecisionKernelAuxiliary.lean",
+  "lines": [
+   82,
+   146
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.DecisionKernel.program_auxiliary_facts",
+   "MIPRE.QLD.PauliCL.binaryVectorEquiv_bits",
+   "MIPRE.QLD.PauliAnswerProgram.answerRows_decodeRows",
+   "MIPRE.QLD.PauliBooleanProgram.program_correct_formatted",
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.CL.Detyping.toBits_zero",
+   "MIPRE.Introspection.AuxiliaryDecision.check_raw_sound",
+   "MIPRE.Introspection.AuxiliaryProgram.equal_iff",
+   "MIPRE.Introspection.AuxiliaryDecision.guarded_iff",
+   "MIPRE.Introspection.SourceCompiler.bounded_dimensionResult",
+   "MIPRE.LowDegree.BinaryLinear.inverseRootMatrixProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.groupComponentsProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.transposeBits_matrixBits",
+   "MIPRE.LowDegree.BinaryLinear.mulBits_matrixBits",
+   "MIPRE.SAT.shoupInBasisProg_correct",
+   "MIPRE.SAT.shoupMulProg_encoding",
+   "MIPRE.SAT.shoupBinField_finrank",
+   "MIPRE.SAT.shoupActionProg_correct",
+   "MIPRE.SAT.shoupNormalBasis_normal",
+   "MIPRE.SAT.BinField.width_vecBits",
+   "MIPRE.SAT.shoupBinField_toBits_ofBits",
+   "MIPRE.SAT.shoupTraceGramProg_correct"
+  ],
+  "pasted_helpers": 113,
+  "prooflines": 50,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionKernel.encoded_quotient",
+  "source_name": "MIPRE.Introspection.DecisionKernel.encoded_quotient",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionKernel.encoded_quotient {lam n : ℕ} (V : Verifier 7)\n    (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k) (j : ℕ)\n    (hm : 2^j ∣ Fintype.card (shoupBinField k hk).carrier)\n    (hs : V.sampler.dim (2^n) ≤ 2^(2^j)*k)\n    (T U : Label) (x y : BitStr)\n    (a b : ParsedAnswer (Fin (2^(2^j)*k) → CL.𝔽₂) (Verifier.Answers ((2^n)^lam))\n      (QLD.Answer (shoupBinField k hk).carrier (2^j) 1))\n    (ha : Answer.PauliFormatted k hk hodd j _ _ T x a)\n    (hb : Answer.PauliFormatted k hk hodd j _ _ U y b)\n    (h : AuxiliaryQuotient.check (AuxiliaryDecision.padded V hs) (.pauli .X) (.pauli .Z)\n      (Answer.pauliProject (shoupSelfDualNormalBasis k hk hodd))\n      (finiteSourcePredicate V hs) (finitePauliCheck k hk hodd j hm x y) T U a b = true) :\n    AuxiliaryQuotient.check (AuxiliaryDecision.padded V hs) (.pauli .X) (.pauli .Z)\n      (Answer.rawProject (unary k,unary j,unary (2^j)) (2^(2^j)*k))\n      (AuxiliaryDecision.sourcePredicate V hs) (rawPauliCheck k hk hodd j hm x y) T U\n      (Answer.toRaw (shoupBinField k hk) a) (Answer.toRaw (shoupBinField k hk) b) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionKernel",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.SAT"
+  ],
+  "docstring": "Encoding bounded source answers and legal Pauli answers preserves every\naccepted semantic quotient comparison.",
+  "module": "MIPRE.Background.Introspection.DecisionKernelComplete",
+  "module_doc": "/-! # Honest completeness of the actual decision kernel -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionKernelComplete.lean#L28-L84",
+  "source_path": "MIPRE/Background/Introspection/DecisionKernelComplete.lean",
+  "lines": [
+   28,
+   84
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.PauliAnswerProgram.answerRows_decodeRows",
+   "MIPRE.Introspection.AuxiliaryQuotient.check_mapPauli",
+   "MIPRE.Introspection.AuxiliaryQuotient.check_mapAnswer",
+   "MIPRE.LowDegree.BinaryLinear.inverseRootMatrixProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.groupComponentsProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.transposeBits_matrixBits",
+   "MIPRE.LowDegree.BinaryLinear.mulBits_matrixBits",
+   "MIPRE.SAT.shoupInBasisProg_correct",
+   "MIPRE.SAT.shoupMulProg_encoding",
+   "MIPRE.SAT.shoupBinField_finrank",
+   "MIPRE.SAT.shoupActionProg_correct",
+   "MIPRE.SAT.shoupNormalBasis_normal",
+   "MIPRE.SAT.BinField.width_vecBits",
+   "MIPRE.SAT.shoupBinField_toBits_ofBits",
+   "MIPRE.SAT.shoupTraceGramProg_correct"
+  ],
+  "pasted_helpers": 61,
+  "prooflines": 39,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionKernel.auxiliary_encoded_complete",
+  "source_name": "MIPRE.Introspection.DecisionKernel.auxiliary_encoded_complete",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionKernel.auxiliary_encoded_complete (W : ClockedUniversalMachine) {lam n : ℕ}\n    (V : Verifier 7) (hV : V.IsBounded lam) (hn : 1 ≤ n)\n    (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k) (j : ℕ)\n    (hm : 2^j ∣ Fintype.card (shoupBinField k hk).carrier)\n    (hs : V.sampler.dim (2^n) ≤ 2^(2^j)*k)\n    (hQ : 4 ≤ 2^(2^j)*k) (hR : 3*((2^n)^lam) ≤ 2^(2^j)*k)\n    (T U : Label) (x y : BitStr)\n    (a b : ParsedAnswer (Fin (2^(2^j)*k) → CL.𝔽₂) (Verifier.Answers ((2^n)^lam))\n      (QLD.Answer (shoupBinField k hk).carrier (2^j) 1))\n    (ha : Answer.PauliFormatted k hk hodd j _ _ T x a)\n    (hb : Answer.PauliFormatted k hk hodd j _ _ U y b)\n    (hga : PrefixGuard.holds (AuxiliaryDecision.padded V hs) T a)\n    (hgb : PrefixGuard.holds (AuxiliaryDecision.padded V hs) U b)\n    (hsa : AuxiliaryDecision.sourceOutput (V.sampler.dim (2^n)) T (Answer.toRaw (shoupBinField k hk) a))\n    (hsb : AuxiliaryDecision.sourceOutput (V.sampler.dim (2^n)) U (Answer.toRaw (shoupBinField k hk) b))\n    (h : AuxiliaryQuotient.check (AuxiliaryDecision.padded V hs) (.pauli .X) (.pauli .Z)\n      (Answer.pauliProject (shoupSelfDualNormalBasis k hk hodd))\n      (finiteSourcePredicate V hs) (finitePauliCheck k hk hodd j hm x y) T U a b = true) :\n    auxiliary W (canonicalInput V lam n (2^(2^j)*k) ((2^n)^lam)\n      (unary k,unary j,unary (2^j)) T U x y\n      (Answer.bits (shoupBinField k hk) a) (Answer.bits (shoupBinField k hk) b)) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionKernel",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.SAT"
+  ],
+  "docstring": "The auxiliary part needs a full zero prefix only when one endpoint has\nan auxiliary answer; Pauli-only pairs reduce to their byte consistency check.",
+  "module": "MIPRE.Background.Introspection.DecisionKernelComplete",
+  "module_doc": "/-! # Honest completeness of the actual decision kernel -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionKernelComplete.lean#L106-L188",
+  "source_path": "MIPRE/Background/Introspection/DecisionKernelComplete.lean",
+  "lines": [
+   106,
+   188
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.DecisionKernel.encoded_quotient",
+   "MIPRE.QLD.PauliAnswerProgram.answerRows_decodeRows",
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.CL.Detyping.toBits_zero",
+   "MIPRE.Introspection.AuxiliaryDecision.guarded_complete",
+   "MIPRE.Introspection.SourceCompiler.bounded_dimensionResult",
+   "MIPRE.LowDegree.BinaryLinear.inverseRootMatrixProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.groupComponentsProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.transposeBits_matrixBits",
+   "MIPRE.LowDegree.BinaryLinear.mulBits_matrixBits",
+   "MIPRE.SAT.shoupInBasisProg_correct",
+   "MIPRE.SAT.shoupMulProg_encoding",
+   "MIPRE.SAT.shoupBinField_finrank",
+   "MIPRE.SAT.shoupActionProg_correct",
+   "MIPRE.SAT.shoupNormalBasis_normal",
+   "MIPRE.SAT.BinField.width_vecBits",
+   "MIPRE.SAT.shoupBinField_toBits_ofBits",
+   "MIPRE.SAT.shoupTraceGramProg_correct"
+  ],
+  "pasted_helpers": 72,
+  "prooflines": 60,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionKernel.program_complete",
+  "source_name": "MIPRE.Introspection.DecisionKernel.program_complete",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionKernel.program_complete (W : ClockedUniversalMachine) {lam n : ℕ}\n    (V : Verifier 7) (hV : V.IsBounded lam) (hn : 1 ≤ n)\n    (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k) (j : ℕ) (hj : j ≤ k)\n    (hm : 2^j ∣ Fintype.card (shoupBinField k hk).carrier)\n    (hs : V.sampler.dim (2^n) ≤ 2^(2^j)*k)\n    (hQ : 4 ≤ 2^(2^j)*k) (hR : 3*((2^n)^lam) ≤ 2^(2^j)*k)\n    (T U : Label) (x y : BitStr)\n    (hx : x.length = (3*2^j+3)*k) (hy : y.length = (3*2^j+3)*k)\n    (a b : ParsedAnswer (Fin (2^(2^j)*k) → CL.𝔽₂) (Verifier.Answers ((2^n)^lam))\n      (QLD.Answer (shoupBinField k hk).carrier (2^j) 1))\n    (ha : Answer.PauliFormatted k hk hodd j _ _ T x a)\n    (hb : Answer.PauliFormatted k hk hodd j _ _ U y b)\n    (hga : PrefixGuard.holds (AuxiliaryDecision.padded V hs) T a)\n    (hgb : PrefixGuard.holds (AuxiliaryDecision.padded V hs) U b)\n    (hsa : AuxiliaryDecision.sourceOutput (V.sampler.dim (2^n)) T (Answer.toRaw (shoupBinField k hk) a))\n    (hsb : AuxiliaryDecision.sourceOutput (V.sampler.dim (2^n)) U (Answer.toRaw (shoupBinField k hk) b))\n    (h : AuxiliaryQuotient.check (AuxiliaryDecision.padded V hs) (.pauli .X) (.pauli .Z)\n      (Answer.pauliProject (shoupSelfDualNormalBasis k hk hodd))\n      (finiteSourcePredicate V hs) (finitePauliCheck k hk hodd j hm x y) T U a b = true) :\n    program W (canonicalInput V lam n (2^(2^j)*k) ((2^n)^lam)\n      (unary k,unary j,unary (2^j)) T U x y\n      (Answer.bits (shoupBinField k hk) a) (Answer.bits (shoupBinField k hk) b)) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionKernel",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.SAT"
+  ],
+  "docstring": "The complete executable kernel accepts the honest finite encodings.\nAll hypotheses concern the semantic game or the honest outcome support.",
+  "module": "MIPRE.Background.Introspection.DecisionKernelComplete",
+  "module_doc": "/-! # Honest completeness of the actual decision kernel -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionKernelComplete.lean#L190-L275",
+  "source_path": "MIPRE/Background/Introspection/DecisionKernelComplete.lean",
+  "lines": [
+   190,
+   275
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.DecisionKernel.auxiliary_encoded_complete",
+   "MIPRE.QLD.PauliCL.binaryVectorEquiv_bits",
+   "MIPRE.QLD.PauliAnswerProgram.answerRows_decodeRows",
+   "MIPRE.QLD.PauliBooleanProgram.program_correct_formatted",
+   "MIPRE.Introspection.AuxiliaryProgram.equal_iff",
+   "MIPRE.LowDegree.BinaryLinear.inverseRootMatrixProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.groupComponentsProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.transposeBits_matrixBits",
+   "MIPRE.LowDegree.BinaryLinear.mulBits_matrixBits",
+   "MIPRE.SAT.shoupMulProg_encoding",
+   "MIPRE.SAT.shoupBinField_finrank",
+   "MIPRE.SAT.shoupActionProg_correct",
+   "MIPRE.SAT.shoupNormalBasis_normal",
+   "MIPRE.SAT.BinField.width_vecBits",
+   "MIPRE.SAT.shoupBinField_toBits_ofBits",
+   "MIPRE.SAT.shoupTraceGramProg_correct"
+  ],
+  "pasted_helpers": 89,
+  "prooflines": 62,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionKernel.program_complete_numbered",
+  "source_name": "MIPRE.Introspection.DecisionKernel.program_complete_numbered",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionKernel.program_complete_numbered (W : ClockedUniversalMachine) {lam n : ℕ}\n    (V : Verifier 7) (hV : V.IsBounded lam) (hn : 1 ≤ n)\n    (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k) (j : ℕ) (hj : j ≤ k)\n    (hm : 2^j ∣ Fintype.card (shoupBinField k hk).carrier)\n    (hs : V.sampler.dim (2^n) ≤ 2^(2^j)*k)\n    (hQ : 4 ≤ 2^(2^j)*k) (hR : 3*((2^n)^lam) ≤ 2^(2^j)*k)\n    (χ : (shoupBinField k hk).carrier → Fin (2^j))\n    (T U : Label) (x y : Fin ((3*2^j+3)*k) → CL.𝔽₂)\n    (a b : ParsedAnswer (Fin (2^(2^j)*k) → CL.𝔽₂) (Verifier.Answers ((2^n)^lam))\n      (QLD.Answer (shoupBinField k hk).carrier (2^j) 1))\n    (ha : Answer.PauliFormatted k hk hodd j _ _ T (CL.toBits x) a)\n    (hb : Answer.PauliFormatted k hk hodd j _ _ U (CL.toBits y) b)\n    (hga : PrefixGuard.holds (AuxiliaryDecision.padded V hs) T a)\n    (hgb : PrefixGuard.holds (AuxiliaryDecision.padded V hs) U b)\n    (hsa : AuxiliaryDecision.sourceOutput (V.sampler.dim (2^n)) T (Answer.toRaw (shoupBinField k hk) a))\n    (hsb : AuxiliaryDecision.sourceOutput (V.sampler.dim (2^n)) U (Answer.toRaw (shoupBinField k hk) b))\n    (h : (NumberedComplete.game (d := 1)\n      (QLD.PauliFullAnswerProgram.registerNumbering (2^j) k).symm\n      (AuxiliaryDecision.padded V hs) (finiteSourcePredicate (R := (2^n)^lam) V hs)\n      hm (shoupSelfDualNormalBasis k hk hodd) χ\n      (QLD.PauliCL.ExplicitSeed.seedPermutation (shoupBinField k hk))).D (T,x) (U,y) a b = true) :\n    program W (canonicalInput V lam n (2^(2^j)*k) ((2^n)^lam)\n      (unary k,unary j,unary (2^j)) T U (CL.toBits x) (CL.toBits y)\n      (Answer.bits (shoupBinField k hk) a) (Answer.bits (shoupBinField k hk) b)) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionKernel",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.SAT"
+  ],
+  "docstring": "The accepted finite pair can be supplied directly from the numbered\nquotient game used by the honest strategy construction.",
+  "module": "MIPRE.Background.Introspection.DecisionKernelComplete",
+  "module_doc": "/-! # Honest completeness of the actual decision kernel -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionKernelComplete.lean#L277-L319",
+  "source_path": "MIPRE/Background/Introspection/DecisionKernelComplete.lean",
+  "lines": [
+   277,
+   319
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-quotient-kernel",
+    "env": "lemma",
+    "title": "Executable quotient hiding and the finite decision kernel",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.DecisionKernel.program_complete"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionKernel.Answer.pauliBits_length_le",
+  "source_name": "MIPRE.Introspection.DecisionKernel.Answer.pauliBits_length_le",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionKernel.Answer.pauliBits_length_le {k m : ℕ} (E : BinField k) (hm : 1 ≤ m)\n    (hQ : 3 ≤ 2^m*k) (a : QLD.Answer E.carrier m 1) :\n    (QLD.PauliAnswerProgram.answerBits E a).length ≤ 2^m*k := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionKernel",
+   "open MIPRE.Introspection.DecisionKernel.Answer",
+   "open MIPRE.Cost MIPRE.SAT"
+  ],
+  "docstring": "All semantic Pauli constructors have short encodings at degree one,\nincluding constructors excluded by the eventual question format.",
+  "module": "MIPRE.Background.Introspection.DecisionKernelEncoding",
+  "module_doc": "/-! # Encoding finite honest answers for the actual decision kernel -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionKernelEncoding.lean#L104-L133",
+  "source_path": "MIPRE/Background/Introspection/DecisionKernelEncoding.lean",
+  "lines": [
+   104,
+   133
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionKernel.Answer.bits_length_le_cutoff",
+  "source_name": "MIPRE.Introspection.DecisionKernel.Answer.bits_length_le_cutoff",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionKernel.Answer.bits_length_le_cutoff {k m R : ℕ} (E : BinField k) (hm : 1 ≤ m)\n    (hQ : 4 ≤ 2^m*k) (hR : 3*R ≤ 2^m*k)\n    (a : ParsedAnswer (Fin (2^m*k) → CL.𝔽₂) (Verifier.Answers R) (QLD.Answer E.carrier m 1)) :\n    (bits E a).length ≤ DecisionCompiler.answerBound (2^m*k) R := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionKernel",
+   "open MIPRE.Introspection.DecisionKernel.Answer",
+   "open MIPRE.Cost MIPRE.SAT"
+  ],
+  "docstring": "Every finite honest answer lies below the actual compiler's outer cutoff.",
+  "module": "MIPRE.Background.Introspection.DecisionKernelEncoding",
+  "module_doc": "/-! # Encoding finite honest answers for the actual decision kernel -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionKernelEncoding.lean#L135-L156",
+  "source_path": "MIPRE/Background/Introspection/DecisionKernelEncoding.lean",
+  "lines": [
+   135,
+   156
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.DecisionKernel.Answer.pauliBits_length_le"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionKernel.program_sound_numbered",
+  "source_name": "MIPRE.Introspection.DecisionKernel.program_sound_numbered",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionKernel.program_sound_numbered (W : ClockedUniversalMachine) {lam n : ℕ}\n    (V : Verifier 7) (hV : V.IsBounded lam) (hn : 1 ≤ n)\n    (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k) (j : ℕ) (hj : j ≤ k)\n    (hm : 2 ^ j ∣ Fintype.card (shoupBinField k hk).carrier)\n    (hs : V.sampler.dim (2 ^ n) ≤ 2 ^ (2 ^ j) * k)\n    (hQ : 4 ≤ 2 ^ (2 ^ j) * k) (hR : 3 * ((2 ^ n)^lam) ≤ 2 ^ (2 ^ j) * k)\n    (χ : (shoupBinField k hk).carrier → Fin (2 ^ j))\n    (T U : Label) (x y : Fin ((3 * 2 ^ j + 3) * k) → CL.𝔽₂) (a b : BitStr)\n    (h : program W (canonicalInput V lam n (2 ^ (2 ^ j) * k) ((2 ^ n)^lam)\n      (unary k,unary j,unary (2 ^ j)) T U (CL.toBits x) (CL.toBits y) a b) = true) :\n    (NumberedComplete.game (d := 1)\n      (QLD.PauliFullAnswerProgram.registerNumbering (2 ^ j) k).symm\n      (AuxiliaryDecision.padded V hs) (finiteSourcePredicate (R := (2 ^ n)^lam) V hs)\n      hm (shoupSelfDualNormalBasis k hk hodd) χ\n      (QLD.PauliCL.ExplicitSeed.seedPermutation (shoupBinField k hk))).D (T,x) (U,y)\n      (Answer.decode (shoupBinField k hk) (2 ^ j) (2 ^ (2 ^ j) * k) ((2 ^ n)^lam) T a)\n      (Answer.decode (shoupBinField k hk) (2 ^ j) (2 ^ (2 ^ j) * k) ((2 ^ n)^lam) U b) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionKernel",
+   "open MIPRE.Cost MIPRE.SAT"
+  ],
+  "docstring": "Raw kernel acceptance gives the exact finite game used by the source\nsoundness theorem, including the executable full-register numbering.",
+  "module": "MIPRE.Background.Introspection.DecisionKernelGameInterface",
+  "module_doc": "/-! # Identification of the kernel's finite semantics with the explicit game -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionKernelGameInterface.lean#L33-L67",
+  "source_path": "MIPRE/Background/Introspection/DecisionKernelGameInterface.lean",
+  "lines": [
+   33,
+   67
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-quotient-kernel",
+    "env": "lemma",
+    "title": "Executable quotient hiding and the finite decision kernel",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.DecisionKernel.program_sound"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionKernel.program_sound",
+  "source_name": "MIPRE.Introspection.DecisionKernel.program_sound",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionKernel.program_sound (W : ClockedUniversalMachine) {lam n : ℕ}\n    (V : Verifier 7) (hV : V.IsBounded lam) (hn : 1 ≤ n)\n    (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k) (j : ℕ) (hj : j ≤ k)\n    (hm : 2 ^ j ∣ Fintype.card (shoupBinField k hk).carrier)\n    (hs : V.sampler.dim (2 ^ n) ≤ 2 ^ (2 ^ j) * k)\n    (hQ : 4 ≤ 2 ^ (2 ^ j) * k) (hR : 3 * ((2 ^ n)^lam) ≤ 2 ^ (2 ^ j) * k)\n    (T U : Label) (x y a b : BitStr)\n    (h : program W (canonicalInput V lam n (2 ^ (2 ^ j) * k) ((2 ^ n)^lam)\n      (unary k,unary j,unary (2 ^ j)) T U x y a b) = true) :\n    AuxiliaryQuotient.check (AuxiliaryDecision.padded V hs) (.pauli .X) (.pauli .Z)\n      (Answer.pauliProject (shoupSelfDualNormalBasis k hk hodd))\n      (finiteSourcePredicate (R := (2 ^ n)^lam) V hs) (finitePauliCheck k hk hodd j hm x y) T U\n      (Answer.decode (shoupBinField k hk) (2 ^ j) (2 ^ (2 ^ j) * k) ((2 ^ n)^lam) T a)\n      (Answer.decode (shoupBinField k hk) (2 ^ j) (2 ^ (2 ^ j) * k) ((2 ^ n)^lam) U b) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionKernel",
+   "open MIPRE.Cost MIPRE.SAT MIPRE.Introspection.AuxiliaryAnswer"
+  ],
+  "docstring": "Accepted raw tuples decode into the actual finite quotient game. Neither\nthe Pauli field answers nor the original source answers retain an infinite byte alphabet.",
+  "module": "MIPRE.Background.Introspection.DecisionKernelSoundness",
+  "module_doc": "/-! # Kernel soundness in the finite semantic answer alphabet -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionKernelSoundness.lean#L26-L89",
+  "source_path": "MIPRE/Background/Introspection/DecisionKernelSoundness.lean",
+  "lines": [
+   26,
+   89
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.DecisionKernel.program_raw_quotient_sound",
+   "MIPRE.Introspection.DecisionKernel.program_auxiliary_facts",
+   "MIPRE.QLD.PauliAnswerProgram.answerRows_decodeRows",
+   "MIPRE.Introspection.AuxiliaryQuotient.check_mapPauli",
+   "MIPRE.Introspection.AuxiliaryQuotient.check_mapAnswer",
+   "MIPRE.LowDegree.BinaryLinear.inverseRootMatrixProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.groupComponentsProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.transposeBits_matrixBits",
+   "MIPRE.LowDegree.BinaryLinear.mulBits_matrixBits",
+   "MIPRE.SAT.shoupInBasisProg_correct",
+   "MIPRE.SAT.shoupMulProg_encoding",
+   "MIPRE.SAT.shoupBinField_finrank",
+   "MIPRE.SAT.shoupActionProg_correct",
+   "MIPRE.SAT.shoupNormalBasis_normal",
+   "MIPRE.SAT.BinField.width_vecBits",
+   "MIPRE.SAT.shoupBinField_toBits_ofBits",
+   "MIPRE.SAT.shoupTraceGramProg_correct"
+  ],
+  "pasted_helpers": 58,
+  "prooflines": 48,
+  "is_target": false
+ }
+]

@@ -1,0 +1,591 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.diagonalLineProductReversed_outcome",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.diagonalLineProductReversed_outcome",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.diagonalLineProductReversed_outcome\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (q : PointPairDiagonalLineQuestion params)\n    (a b : Fq params) :\n    (diagonalLineProductReversed params strategy q).outcome (a, b) =\n      rightTensor\n        ((sampledDiagonalLineEvaluation params strategy (q.1, q.2.1)).outcome a *\n          (sampledDiagonalLineEvaluation params strategy (q.1, q.2.2)).outcome b) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine",
+  "module_doc": "/-!\n# Section 10 commutativity points: shared-line helpers\n\nCompatibility lemmas between sampled point pairs and shared-diagonal line\nquestions, used by both the lift and drop comparisons.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/SharedLine.lean#L329-L340",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/SharedLine.lean",
+  "lines": [
+   329,
+   340
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.sampledDiagonalLineApproximation_ignore_first",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.sampledDiagonalLineApproximation_ignore_first",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.sampledDiagonalLineApproximation_ignore_first\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma) :\n    SDDOpRel strategy.state\n      (pointPairSharedDiagonalLineDistribution params)\n      (fun q =>\n        OpFamily.leftPlacedOpFamily (ιB := ι)\n          ((strategy.pointMeasurement (q.1.pointAt q.2.2)).toSubMeas))\n      (fun q =>\n        OpFamily.rightPlacedOpFamily (ιA := ι)\n          (SubMeas.toOpFamily (sampledDiagonalLineEvaluation params strategy (q.1, q.2.2))))\n      (pointDiagonalLineApproxError params gamma) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine",
+  "module_doc": "/-!\n# Section 10 commutativity points: shared-line helpers\n\nCompatibility lemmas between sampled point pairs and shared-diagonal line\nquestions, used by both the lift and drop comparisons.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/SharedLine.lean#L342-L397",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/SharedLine.lean",
+  "lines": [
+   342,
+   397
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.CommutativityPoints.sampledDiagonalLineApproximation_pointWithDiagonalLine",
+   "MIPStarRE.LDT.CommutativityPoints.avgOver_pointPairSharedDiagonalLine_ignore_first"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 41,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.sampledDiagonalLineApproximation_ignore_second",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.sampledDiagonalLineApproximation_ignore_second",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.sampledDiagonalLineApproximation_ignore_second\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma) :\n    SDDOpRel strategy.state\n      (pointPairSharedDiagonalLineDistribution params)\n      (fun q =>\n        OpFamily.leftPlacedOpFamily (ιB := ι)\n          ((strategy.pointMeasurement (q.1.pointAt q.2.1)).toSubMeas))\n      (fun q =>\n        OpFamily.rightPlacedOpFamily (ιA := ι)\n          (SubMeas.toOpFamily (sampledDiagonalLineEvaluation params strategy (q.1, q.2.1))))\n      (pointDiagonalLineApproxError params gamma) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine",
+  "module_doc": "/-!\n# Section 10 commutativity points: shared-line helpers\n\nCompatibility lemmas between sampled point pairs and shared-diagonal line\nquestions, used by both the lift and drop comparisons.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/SharedLine.lean#L399-L454",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/SharedLine.lean",
+  "lines": [
+   399,
+   454
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.CommutativityPoints.sampledDiagonalLineApproximation_pointWithDiagonalLine",
+   "MIPStarRE.LDT.CommutativityPoints.avgOver_pointPairSharedDiagonalLine_ignore_second"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 41,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.avgOver_rerandomizeCoord_eq_weight_sum",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.avgOver_rerandomizeCoord_eq_weight_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.avgOver_rerandomizeCoord_eq_weight_sum (params : Parameters)\n    (f : Point params × Point params → Error) :\n    avgOver (rerandomizeCoord params) f =\n      ∑ uv : Point params × Point params,\n        rerandomizeCoordWeight params uv.1 uv.2 * f uv := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The push-forward presentation of `rerandomizeCoord` has the same averages as\nthe explicit counting coefficient `rerandomizeCoordWeight`.\n\nThe explicit coefficient remains useful for the matrix calculation of the\nhypercube adjacency and Laplacian.  This lemma identifies its weighted sum with\nthe probability-side push-forward average.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Core",
+  "module_doc": "/-!\n# Section 7 hypercube graph: core definitions\n\nVertex-set cardinality and the hypercube graph edge relation on `F_q^m`.\n\n## References\n\n- `references/ldt-paper/expansion.tex`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Defs/Core.lean#L180-L273",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Defs/Core.lean",
+  "lines": [
+   180,
+   273
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Distribution.map_sum_smul"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 83,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.addCharFq_dotProduct_eq_stdAddChar_dotProductZMod",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.addCharFq_dotProduct_eq_stdAddChar_dotProductZMod",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.addCharFq_dotProduct_eq_stdAddChar_dotProductZMod (params : Parameters)\n    (u α : Point params) :\n    addCharFq params (dotProductFq params u α) =\n      ZMod.stdAddChar (N := params.q) (dotProductZMod params u α) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Fourier",
+  "module_doc": "/-!\n# Section 7 hypercube graph: Fourier basis\n\nAdditive characters and the Fourier basis of `ℂ^{F_q^m}` used to diagonalize\nthe hypercube adjacency matrix `K`.\n\n## References\n\n- `references/ldt-paper/expansion.tex`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Defs/Fourier.lean#L172-L180",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Defs/Fourier.lean",
+  "lines": [
+   172,
+   180
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.fourierBasisState_update_sum",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.fourierBasisState_update_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.fourierBasisState_update_sum (params : Parameters) (u α : Point params)\n    (i : Fin params.m) :\n    ∑ x : Fq params, fourierBasisState params α (Function.update u i x) =\n      ((if α i = (0 : Fq params) then params.q else 0 : ℕ) : ℂ) *\n        fourierBasisState params α u := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Fourier",
+  "module_doc": "/-!\n# Section 7 hypercube graph: Fourier basis\n\nAdditive characters and the Fourier basis of `ℂ^{F_q^m}` used to diagonalize\nthe hypercube adjacency matrix `K`.\n\n## References\n\n- `references/ldt-paper/expansion.tex`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Defs/Fourier.lean#L230-L285",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Defs/Fourier.lean",
+  "lines": [
+   230,
+   285
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.addCharFq_dotProduct_eq_stdAddChar_dotProductZMod"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 51,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.pointAddChar_eq_zero_iff",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.pointAddChar_eq_zero_iff",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.pointAddChar_eq_zero_iff (params : Parameters) (α : Point params) :\n    pointAddChar params α = 0 ↔ α = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "`pointAddChar params α` is trivial exactly when `α = 0`.\n\nHere the `0` on the left is the `Zero` instance on `AddChar`, i.e. the trivial\ncharacter `u ↦ 1`, not the pointwise-zero function.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Fourier",
+  "module_doc": "/-!\n# Section 7 hypercube graph: Fourier basis\n\nAdditive characters and the Fourier basis of `ℂ^{F_q^m}` used to diagonalize\nthe hypercube adjacency matrix `K`.\n\n## References\n\n- `references/ldt-paper/expansion.tex`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Defs/Fourier.lean#L528-L551",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Defs/Fourier.lean",
+  "lines": [
+   528,
+   551
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.fourierBasisState_inner_product",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.fourierBasisState_inner_product",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.fourierBasisState_inner_product (params : Parameters) (α β : Point params) :\n    ∑ u : Point params, star (fourierBasisState params α u) * fourierBasisState params β u =\n      if α = β then 1 else 0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The actual Fourier inner product equals the Kronecker delta.\nThis proves `∑_u conj(φ_α(u)) * φ_β(u) = if α = β then 1 else 0`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Fourier",
+  "module_doc": "/-!\n# Section 7 hypercube graph: Fourier basis\n\nAdditive characters and the Fourier basis of `ℂ^{F_q^m}` used to diagonalize\nthe hypercube adjacency matrix `K`.\n\n## References\n\n- `references/ldt-paper/expansion.tex`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Defs/Fourier.lean#L553-L636",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Defs/Fourier.lean",
+  "lines": [
+   553,
+   636
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.pointAddChar_eq_zero_iff",
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.addCharFq_dotProduct_eq_stdAddChar_dotProductZMod"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 79,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.eigenvectors",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.eigenvectors",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.eigenvectors (params : Parameters) (α : Point params) :\n    (matrixAdjacencyOperator params).mulVec (fourierBasisState params α) =\n      ((adjacencyEigenvalue params α : ℝ) : ℂ) • fourierBasisState params α := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "`prop:eigenvectors`, item 2: each `|φ_α⟩` is an eigenvector of the\nadjacency matrix `K` with eigenvalue `λ_α`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Fourier",
+  "module_doc": "/-!\n# Section 7 hypercube graph: Fourier basis\n\nAdditive characters and the Fourier basis of `ℂ^{F_q^m}` used to diagonalize\nthe hypercube adjacency matrix `K`.\n\n## References\n\n- `references/ldt-paper/expansion.tex`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Defs/Fourier.lean#L662-L721",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Defs/Fourier.lean",
+  "lines": [
+   662,
+   721
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.fourierBasisState_update_sum"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 55,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.laplacianEigenvalue_eq",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.laplacianEigenvalue_eq",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.laplacianEigenvalue_eq (params : Parameters) (α : Point params) :\n    laplacianEigenvalue params α =\n      (1 / (hypercubeVertexCount params : Error)) - adjacencyEigenvalue params α := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "`cor:laplacian-spectral-gap`, eigenvalue relation: `λ_L(α) = 1/M − λ_K(α)`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Fourier",
+  "module_doc": "/-!\n# Section 7 hypercube graph: Fourier basis\n\nAdditive characters and the Fourier basis of `ℂ^{F_q^m}` used to diagonalize\nthe hypercube adjacency matrix `K`.\n\n## References\n\n- `references/ldt-paper/expansion.tex`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Defs/Fourier.lean#L723-L734",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Defs/Fourier.lean",
+  "lines": [
+   723,
+   734
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 8,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.hypercubeSpectralGap_le_laplacianEigenvalue",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.hypercubeSpectralGap_le_laplacianEigenvalue",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.hypercubeSpectralGap_le_laplacianEigenvalue (params : Parameters) (α : Point params)\n    (hα : 0 < frequencyWeight params α) :\n    hypercubeSpectralGap params ≤ laplacianEigenvalue params α := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "`cor:laplacian-spectral-gap`, spectral gap bound: for `α ≠ 0`, the\nspectral gap `1/(mM)` lower-bounds the Laplacian eigenvalue `λ_L(α)`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Defs.Fourier",
+  "module_doc": "/-!\n# Section 7 hypercube graph: Fourier basis\n\nAdditive characters and the Fourier basis of `ℂ^{F_q^m}` used to diagonalize\nthe hypercube adjacency matrix `K`.\n\n## References\n\n- `references/ldt-paper/expansion.tex`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Defs/Fourier.lean#L736-L743",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Defs/Fourier.lean",
+  "lines": [
+   736,
+   743
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.hypercubeSpectralGap_operator",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.hypercubeSpectralGap_operator",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.hypercubeSpectralGap_operator (params : Parameters) :\n    ((hypercubeSpectralGap params : ℂ) • orthogonalModeProjectorMatrix params) ≤\n      matrixLaplacianOperator params := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The operator spectral gap inequality for the hypercube:\n`(1 / (m M)) · P⊥ ≤ L`, with `M = q^m`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.MatrixRealization.Core",
+  "module_doc": "/-!\n# Section 7 — Matrix realization\n\nThis file gives concrete finite-dimensional matrix realizations of the\nhypercube variance operators, Fourier projectors, and spectral inequalities\nintroduced in `Defs`.\n\n## References\n\n- `blueprint/src/chapter/ch05_expansion.tex`\n- `references/ldt-paper/expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/MatrixRealization/Core.lean#L707-L712",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/MatrixRealization/Core.lean",
+  "lines": [
+   707,
+   712
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.conjTranspose_mul_mul_mono",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.conjTranspose_mul_mul_mono",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.conjTranspose_mul_mul_mono {H K : FiniteHilbertSpace}\n    (M : RectangularMatrixOperator H K) {A B : MatrixOperator K} (hAB : A ≤ B) :\n    Mᴴ * (A * M) ≤ Mᴴ * (B * M) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Adjoint sandwiching is monotone in the middle factor.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.MatrixRealization.TraceForms",
+  "module_doc": "/-!\n# Section 7 — Matrix variance trace forms\n\nThis file contains the matrix-level variance quantities and trace-form rewrite\nstatements used after the Fourier spectral-gap material in `MatrixRealization.Core`.\n\n## References\n\n- `blueprint/src/chapter/ch05_expansion.tex`\n- `references/ldt-paper/expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/MatrixRealization/TraceForms.lean#L148-L168",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/MatrixRealization/TraceForms.lean",
+  "lines": [
+   148,
+   168
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.normalizedTrace_re_mono",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.normalizedTrace_re_mono",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.normalizedTrace_re_mono {H : FiniteHilbertSpace}\n    {A B : MatrixOperator H} (hAB : A ≤ B) :\n    Complex.re (MIPStarRE.Quantum.normalizedTrace A) ≤\n      Complex.re (MIPStarRE.Quantum.normalizedTrace B) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Monotonicity of `Re τ` with respect to the matrix order.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.MatrixRealization.TraceForms",
+  "module_doc": "/-!\n# Section 7 — Matrix variance trace forms\n\nThis file contains the matrix-level variance quantities and trace-form rewrite\nstatements used after the Fourier spectral-gap material in `MatrixRealization.Core`.\n\n## References\n\n- `blueprint/src/chapter/ch05_expansion.tex`\n- `references/ldt-paper/expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/MatrixRealization/TraceForms.lean#L170-L176",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/MatrixRealization/TraceForms.lean",
+  "lines": [
+   170,
+   176
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_mono"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.sum_sum_mul_left",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.sum_sum_mul_left",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.sum_sum_mul_left {α β γ : Type*}\n    [Fintype α] [Fintype β] [CommSemiring γ] (c : γ) (f : α → β → γ) :\n    ∑ a, ∑ b, c * f a b = c * ∑ a, ∑ b, f a b := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type u} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Factor a common scalar out of a doubly indexed finite sum.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Foundations",
+  "module_doc": "/-!\n# Section 7 hypercube graph: trace-form foundations\n\nThis file provides the abstract theorem statements and trace-form identities\nused to formalize the local and global variance rewrites in Section 7 of the LDT\npaper.  The concrete matrix-realization statements are proved first; the\npublic-facing statements in `MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Results`\nthen specialize these identities to arbitrary finite-dimensional operator\nfamilies.\n\n## References\n\n- `references/ldt-paper/expansion.tex`, especially `lem:local-rewrite` and\n  `lem:global-rewrite`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Foundations.lean#L217-L224",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Foundations.lean",
+  "lines": [
+   217,
+   224
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.sum_sum_add",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.sum_sum_add",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.sum_sum_add {α β γ : Type*}\n    [Fintype α] [Fintype β] [AddCommMonoid γ] (f g : α → β → γ) :\n    ∑ a, ∑ b, (f a b + g a b) = (∑ a, ∑ b, f a b) + ∑ a, ∑ b, g a b := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type u} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Distribute a doubly indexed sum across pointwise addition.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Foundations",
+  "module_doc": "/-!\n# Section 7 hypercube graph: trace-form foundations\n\nThis file provides the abstract theorem statements and trace-form identities\nused to formalize the local and global variance rewrites in Section 7 of the LDT\npaper.  The concrete matrix-realization statements are proved first; the\npublic-facing statements in `MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Results`\nthen specialize these identities to arbitrary finite-dimensional operator\nfamilies.\n\n## References\n\n- `references/ldt-paper/expansion.tex`, especially `lem:local-rewrite` and\n  `lem:global-rewrite`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Foundations.lean#L226-L236",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Foundations.lean",
+  "lines": [
+   226,
+   236
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.sum_sum_sub",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.sum_sum_sub",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.sum_sum_sub {α β γ : Type*}\n    [Fintype α] [Fintype β] [AddCommGroup γ] (f g : α → β → γ) :\n    ∑ a, ∑ b, (f a b - g a b) = (∑ a, ∑ b, f a b) - ∑ a, ∑ b, g a b := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type u} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Distribute a doubly indexed sum across pointwise subtraction.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Foundations",
+  "module_doc": "/-!\n# Section 7 hypercube graph: trace-form foundations\n\nThis file provides the abstract theorem statements and trace-form identities\nused to formalize the local and global variance rewrites in Section 7 of the LDT\npaper.  The concrete matrix-realization statements are proved first; the\npublic-facing statements in `MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Results`\nthen specialize these identities to arbitrary finite-dimensional operator\nfamilies.\n\n## References\n\n- `references/ldt-paper/expansion.tex`, especially `lem:local-rewrite` and\n  `lem:global-rewrite`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Foundations.lean#L238-L252",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Foundations.lean",
+  "lines": [
+   238,
+   252
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.sum_sum_add"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.corr_symm",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.corr_symm",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.corr_symm (params : Parameters) (model : MatrixOperatorFamilyRealization params)\n    (u v : Point params) :\n    ev (matrixModelState model) ((model.family v)ᴴ * model.family u) =\n      ev (matrixModelState model) ((model.family u)ᴴ * model.family v) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The matrix correlation term is symmetric under swapping the two points.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix",
+  "module_doc": "/-!\n# Section 7 hypercube graph: matrix-realization theorems\n\nTranslating the squared-difference expectation of the hypercube graph\noperators into the `ev`-based inner-product language of the matrix\nrealization model.\n\n## References\n\n- `references/ldt-paper/expansion.tex`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Matrix.lean#L106-L112",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Matrix.lean",
+  "lines": [
+   106,
+   112
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.Quantum.normalizedTrace_mul_comm"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.sqdiff_eq_corr",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.sqdiff_eq_corr",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.sqdiff_eq_corr (params : Parameters) (model : MatrixOperatorFamilyRealization params)\n    (u v : Point params) :\n    matrixSquaredDifferenceExpectation model.state (model.family u) (model.family v) =\n      ev (matrixModelState model) ((model.family u)ᴴ * model.family u) +\n        ev (matrixModelState model) ((model.family v)ᴴ * model.family v) -\n        ev (matrixModelState model) ((model.family u)ᴴ * model.family v) -\n        ev (matrixModelState model) ((model.family v)ᴴ * model.family u) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Expand the matrix squared-difference expectation into diagonal and correlation terms.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix",
+  "module_doc": "/-!\n# Section 7 hypercube graph: matrix-realization theorems\n\nTranslating the squared-difference expectation of the hypercube graph\noperators into the `ev`-based inner-product language of the matrix\nrealization model.\n\n## References\n\n- `references/ldt-paper/expansion.tex`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Matrix.lean#L114-L130",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Matrix.lean",
+  "lines": [
+   114,
+   130
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_add",
+   "MIPStarRE.LDT.ev_sub"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 9,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.matrixGlobalVariance_eq_closedForm",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.matrixGlobalVariance_eq_closedForm",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.matrixGlobalVariance_eq_closedForm (params : Parameters)\n    (model : MatrixOperatorFamilyRealization params) :\n    matrixGlobalVariance params model =\n      (hypercubeVertexCount params : Error)⁻¹ *\n          ∑ u, ev (matrixModelState model) ((model.family u)ᴴ * model.family u) -\n        (hypercubeVertexCount params : Error)⁻¹ *\n          (hypercubeVertexCount params : Error)⁻¹ *\n            ∑ u, ∑ v, ev (matrixModelState model) ((model.family v)ᴴ * model.family u) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Closed form for the matrix global variance.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix",
+  "module_doc": "/-!\n# Section 7 hypercube graph: matrix-realization theorems\n\nTranslating the squared-difference expectation of the hypercube graph\noperators into the `ev`-based inner-product language of the matrix\nrealization model.\n\n## References\n\n- `references/ldt-paper/expansion.tex`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Matrix.lean#L198-L307",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Matrix.lean",
+  "lines": [
+   198,
+   307
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.sum_sum_sub",
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.sum_sum_mul_left",
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.sum_sum_add",
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.corr_symm",
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.sqdiff_eq_corr"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 101,
+  "is_target": false
+ }
+]

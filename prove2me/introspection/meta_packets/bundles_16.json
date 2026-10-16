@@ -1,0 +1,4812 @@
+[
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Blocks",
+  "module": "MIPRE.Foundations.Blocks",
+  "module_doc": "/-!\n# Summing over assignments to a block-decomposed index type\n\nA construction that reads only some coordinates of a uniformly random point needs to know that\nthose coordinates are themselves uniform, and independent of the rest. In the form a sum identity\ntakes, that is: when the index type is a sum, summing a function of the blocks' assignments over all\nassignments to the whole gives the iterated sum over the blocks --- once per assignment of whatever\nblock the function ignores.\n\n* `sum_arrow_pair` --- both blocks, which is the product measure written as an iterated sum;\n* `sum_arrow_inl` --- the left block alone, at the cost of one factor of the right block's count.\n\nNothing here is about fields, lines or games. The only reason the file exists is that the padded\nspace of the combining stage (`MIPRE/Background/QLD/Padded.lean`) is `F_q^{4m}` with its coordinates\nsplit into blocks, and every distributional statement about that splitting reduces to these two.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Blocks.lean",
+  "source_path": "MIPRE/Foundations/Blocks.lean",
+  "defmat": [
+   "MIPRE.sumArrow"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.sumArrow",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     42,
+     48
+    ]
+   }
+  ],
+  "lines": 83,
+  "published_bundle": null,
+  "imports": [],
+  "blueprint": [
+   "lem:qld-sublines"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.sumArrow": [
+    "/-- An assignment to a sum index type is a pair of assignments to the summands. Spelled out rather",
+    "than taken from `Equiv.sumArrowEquivProdArrow` so that both directions compute by `rfl`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_QLD_Padded",
+  "module": "MIPRE.Background.QLD.Padded",
+  "module_doc": "/-!\n# The padded space, and the sublines of a padded line\n\nBlueprint `lem:qld-sublines`. The combining stage compares a measurement of *pairs* of\n`m`-variable polynomials with a low-degree test, and a low-degree test wants a single polynomial\nin a number of variables dividing `q`. The paper's device is to pad: work over `F_q^{4m}`, whose\ncoordinates split as `u = (x, z, alpha, beta, w)` with `x, z` in `F_q^m`, `alpha, beta` in `F_q`\nand `w` in `F_q^{2m-2}` the dummy coordinates, and to combine the pair `(f_X, f_Z)` into the\nsingle polynomial `alpha f_X(x) + beta f_Z(z)`. Admissibility makes `m` a power of two, so\n`2m + 2` never divides `q = 2^k`, while `4m` does as soon as `4m <= q`; that is the whole reason\nthe dummy block is there.\n\nThis file is the geometry of that padding, and it is deliberately free of operators.\n\n## The two pieces\n\n* **The seed's block and offset.** The seeded test reads an axis index off a seed through\n  `chi`, which is \"which of the `m` equal blocks of `F` does `s` fall into\". `seedEquiv` names\n  the corresponding bijection `F ~ Fin m x Fin (q/m)`, with `chi` as its first component. Two\n  things follow that the subline construction needs: a seed can be *retargeted* to a prescribed\n  block keeping its offset (`seedIn`), and a uniform seed retargeted to a fixed block is uniform\n  on that block's fibre (`sum_seedIn`). The paper's \"choose `s_X` uniformly at random subject to\n  `chi(s_X) = i`\" is exactly this.\n* **The blocks of `F_q^{4m}`.** `xIdx`, `zIdx`, `aIdx`, `bIdx` are the coordinate positions and\n  `xBlk`, `zBlk`, `alph`, `bet` the projections. `padCase` classifies a coordinate position into\n  the four blocks, which is the case distinction the construction of `lem:qld-sublines` branches\n  on: whether the padded line's direction moves an `X` coordinate, a `Z` coordinate, or only\n  `alpha`, `beta` and the dummy coordinates.\n\n## Why `4m` and not `2m + 2`\n\n`aIdx` and `bIdx` sit at positions `2m` and `2m + 1`, so the dummy block is positions\n`2m + 2, ..., 4m - 1`, of size `2m - 2`. Every index bound below needs only `1 <= m`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Padded.lean",
+  "source_path": "MIPRE/Background/QLD/Padded.lean",
+  "defmat": [
+   "MIPRE.QLD.LPData",
+   "MIPRE.QLD.LPData.dir",
+   "MIPRE.QLD.LPData.question",
+   "MIPRE.QLD.LPData.toSample",
+   "MIPRE.QLD.PadCase",
+   "MIPRE.QLD.PadSum",
+   "MIPRE.QLD.aIdx",
+   "MIPRE.QLD.alph",
+   "MIPRE.QLD.avgAll",
+   "MIPRE.QLD.avgRestr",
+   "MIPRE.QLD.avgSub",
+   "MIPRE.QLD.avgSubAB",
+   "MIPRE.QLD.bIdx",
+   "MIPRE.QLD.bet",
+   "MIPRE.QLD.lpEquiv",
+   "MIPRE.QLD.padCase",
+   "MIPRE.QLD.padEquiv",
+   "MIPRE.QLD.seedEquiv",
+   "MIPRE.QLD.seedIn",
+   "MIPRE.QLD.shiftAB",
+   "MIPRE.QLD.subX",
+   "MIPRE.QLD.subXof",
+   "MIPRE.QLD.subZ",
+   "MIPRE.QLD.subZof",
+   "MIPRE.QLD.sumAll",
+   "MIPRE.QLD.sumRestr",
+   "MIPRE.QLD.sumSub",
+   "MIPRE.QLD.sumSubAB",
+   "MIPRE.QLD.sumSubAt",
+   "MIPRE.QLD.xBlk",
+   "MIPRE.QLD.xIdx",
+   "MIPRE.QLD.zBlk",
+   "MIPRE.QLD.zIdx"
+  ],
+  "embedded": [
+   "MIPRE.QLD.LPData.dir_aline",
+   "MIPRE.QLD.LPData.dir_dline",
+   "MIPRE.QLD.LPData.dir_point",
+   "MIPRE.QLD.aIdx_ne_bIdx",
+   "MIPRE.QLD.aIdx_val",
+   "MIPRE.QLD.alph_add",
+   "MIPRE.QLD.alph_shiftAB",
+   "MIPRE.QLD.alph_smul",
+   "MIPRE.QLD.bIdx_val",
+   "MIPRE.QLD.bet_add",
+   "MIPRE.QLD.bet_shiftAB",
+   "MIPRE.QLD.bet_smul",
+   "MIPRE.QLD.chi_seedIn",
+   "MIPRE.QLD.instNeZeroNatHMulOfNat_mIPRE",
+   "MIPRE.QLD.mul_card_div",
+   "MIPRE.QLD.padEquiv_inl_inl",
+   "MIPRE.QLD.padEquiv_inl_inr",
+   "MIPRE.QLD.seedEquiv_fst",
+   "MIPRE.QLD.seedIn_self",
+   "MIPRE.QLD.shiftAB_zero",
+   "MIPRE.QLD.subX_pt",
+   "MIPRE.QLD.subXof_ab",
+   "MIPRE.QLD.subXof_dum",
+   "MIPRE.QLD.subXof_xc",
+   "MIPRE.QLD.subXof_zc",
+   "MIPRE.QLD.subZ_pt",
+   "MIPRE.QLD.subZof_ab",
+   "MIPRE.QLD.subZof_aline_xc",
+   "MIPRE.QLD.subZof_dline_xc",
+   "MIPRE.QLD.subZof_dum",
+   "MIPRE.QLD.subZof_point_xc",
+   "MIPRE.QLD.subZof_zc",
+   "MIPRE.QLD.xBlk_add",
+   "MIPRE.QLD.xBlk_apply",
+   "MIPRE.QLD.xBlk_shiftAB",
+   "MIPRE.QLD.xBlk_smul",
+   "MIPRE.QLD.xBlk_zero",
+   "MIPRE.QLD.xIdx_ne_aIdx",
+   "MIPRE.QLD.xIdx_ne_bIdx",
+   "MIPRE.QLD.xIdx_val",
+   "MIPRE.QLD.zBlk_add",
+   "MIPRE.QLD.zBlk_apply",
+   "MIPRE.QLD.zBlk_shiftAB",
+   "MIPRE.QLD.zBlk_smul",
+   "MIPRE.QLD.zBlk_zero",
+   "MIPRE.QLD.zIdx_ne_aIdx",
+   "MIPRE.QLD.zIdx_ne_bIdx",
+   "MIPRE.QLD.zIdx_val",
+   "MIPRE.QLD.zeroBelow_zero"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.QLD.LPData",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     417,
+     427
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.LPData.dir",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     448,
+     450
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.LPData.dir_aline",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     455,
+     456
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.LPData.dir_dline",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     458,
+     459
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.LPData.dir_point",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     452,
+     453
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.LPData.question",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     444,
+     446
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.LPData.toSample",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     440,
+     442
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.PadCase",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     233,
+     240
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.PadSum",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     705,
+     707
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.aIdx",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     131,
+     133
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.aIdx_ne_bIdx",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     190,
+     194
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.aIdx_val",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     143,
+     143
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.alph",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     202,
+     203
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.alph_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     218,
+     218
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.alph_shiftAB",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     1402,
+     1405
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.alph_smul",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     220,
+     220
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.avgAll",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     1077,
+     1079
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.avgRestr",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     1081,
+     1084
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.avgSub",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     1086,
+     1090
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.avgSubAB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     1463,
+     1466
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.bIdx",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     135,
+     137
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.bIdx_val",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     144,
+     144
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.bet",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     205,
+     206
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.bet_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     219,
+     219
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.bet_shiftAB",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     1407,
+     1410
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.bet_smul",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     221,
+     221
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.chi_seedIn",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     83,
+     86
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.instNeZeroNatHMulOfNat_mIPRE",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     431,
+     432
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.lpEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     1235,
+     1240
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.mul_card_div",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     60,
+     62
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.padCase",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     242,
+     247
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.padEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     709,
+     713
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.padEquiv_inl_inl",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     715,
+     717
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.padEquiv_inl_inr",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     719,
+     721
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.seedEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     64,
+     67
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.seedEquiv_fst",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     69,
+     75
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.seedIn",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     77,
+     81
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.seedIn_self",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     88,
+     93
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.shiftAB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     1388,
+     1390
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.shiftAB_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     1417,
+     1418
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.subX",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     477,
+     484
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.subX_pt",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     525,
+     528
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.subXof",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     469,
+     475
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.subXof_ab",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     511,
+     511
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.subXof_dum",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     512,
+     512
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.subXof_xc",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     508,
+     509
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.subXof_zc",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     510,
+     510
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.subZ",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     495,
+     501
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.subZ_pt",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     530,
+     533
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.subZof",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     486,
+     493
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.subZof_ab",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     520,
+     520
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.subZof_aline_xc",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     517,
+     517
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.subZof_dline_xc",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     514,
+     515
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.subZof_dum",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     521,
+     521
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.subZof_point_xc",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     516,
+     516
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.subZof_zc",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     518,
+     519
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.sumAll",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     793,
+     796
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.sumRestr",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     785,
+     791
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.sumSub",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     811,
+     816
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.sumSubAB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     1458,
+     1461
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.sumSubAt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     1441,
+     1445
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.xBlk",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     196,
+     197
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.xBlk_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     214,
+     214
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.xBlk_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     208,
+     208
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.xBlk_shiftAB",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     1392,
+     1395
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.xBlk_smul",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     216,
+     216
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.xBlk_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     211,
+     211
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.xIdx",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     123,
+     125
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.xIdx_ne_aIdx",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     162,
+     167
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.xIdx_ne_bIdx",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     169,
+     174
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.xIdx_val",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     141,
+     141
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.zBlk",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     199,
+     200
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.zBlk_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     215,
+     215
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.zBlk_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     209,
+     209
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.zBlk_shiftAB",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     1397,
+     1400
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.zBlk_smul",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     217,
+     217
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.zBlk_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     212,
+     212
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.zIdx",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     127,
+     129
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.zIdx_ne_aIdx",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     176,
+     181
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.zIdx_ne_bIdx",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     183,
+     188
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.zIdx_val",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     142,
+     142
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.zeroBelow_zero",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     434,
+     438
+    ]
+   }
+  ],
+  "lines": 937,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_LCS_Basic",
+   "import Definitions.Def_MIPRE_LCS_Common",
+   "import Definitions.Def_MIPRE_LCS_Measurement",
+   "import Definitions.Def_MIPRE_LCS_Observable",
+   "import Definitions.Def_MIPRE_LCS_Strategy_ObservableToProjector",
+   "import Definitions.Def_MIPRE_LCS_NonlocalGame",
+   "import Definitions.Def_MIPRE_LCS_Pauli",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Strategy",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Game",
+   "import Definitions.Def_MIPRE_Background_QLD_Game",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Win",
+   "import Definitions.Def_MIPRE_Background_QLD_Anticomm",
+   "import Definitions.Def_MIPRE_Background_QLD_WinMS",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_PhiNorm",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_IsometryData",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Assembly",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_JointDiag",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Blocks",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Main",
+   "import Definitions.Def_MIPRE_Background_QLD_Ortho",
+   "import Definitions.Def_MIPRE_Background_QLD_Consistency",
+   "import Definitions.Def_MIPRE_Background_QLD_Commutation",
+   "import Definitions.Def_MIPRE_Background_QLD_Expanded",
+   "import Definitions.Def_MIPRE_Background_QLD_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Combined",
+   "import Definitions.Def_MIPRE_Background_QLD_Lines",
+   "import Definitions.Def_MIPRE_Foundations_Blocks"
+  ],
+  "blueprint": [
+   "lem:qld-padded-lines",
+   "lem:qld-sublines"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.QLD.LPData": [
+    "/-- The data a line-point pair of the seeded test is generated from: the point, the seed, and the",
+    "raw diagonal direction. This is the part of `MIPRE.LIDT.CL.Sample` that the line questions read,",
+    "and it has the same shape in the padded dimension `4m` and the unpadded dimension `m`. -/"
+   ],
+   "MIPRE.QLD.LPData.dir": [
+    "/-- The direction of the line this data presents. -/"
+   ],
+   "MIPRE.QLD.LPData.question": [
+    "/-- The question of type `t` this data presents, as the seeded test computes it. -/"
+   ],
+   "MIPRE.QLD.LPData.toSample": [
+    "/-- The sample whose questions this data generates. Both players are given the same type, which is",
+    "all that the line questions read. -/"
+   ],
+   "MIPRE.QLD.PadCase": [
+    "/-- Where a coordinate position of the padded space lies: in the `X` block, in the `Z` block, at",
+    "`alpha` or `beta`, or among the dummy coordinates. The construction of `lem:qld-sublines`",
+    "branches on this. -/"
+   ],
+   "MIPRE.QLD.PadSum": [
+    "/-- The padded index type as a disjoint union of blocks: the `X` block, the `Z` block, and the `2m`",
+    "positions holding `alpha`, `beta` and the dummy coordinates. -/"
+   ],
+   "MIPRE.QLD.aIdx": [
+    "/-- The position of the `alpha` coordinate. -/"
+   ],
+   "MIPRE.QLD.alph": [
+    "/-- The `alpha` coordinate of a padded point. -/"
+   ],
+   "MIPRE.QLD.avgAll": [
+    "/-- The average of `h` over all the data of a line-point pair: `q^m` points, `q` seeds, `q^m` raw",
+    "directions. -/"
+   ],
+   "MIPRE.QLD.avgRestr": [
+    "/-- The average of `h` over the data of a line-point pair with axis index `i`: the restricted law",
+    "`D_{ty,i}`, whose seed ranges over one block of `q/m` elements. -/"
+   ],
+   "MIPRE.QLD.avgSub": [
+    "/-- The average of `g` over the subline sampling space at a fixed padded seed: two padded points and",
+    "two fresh seed-and-direction pairs. -/"
+   ],
+   "MIPRE.QLD.avgSubAB": [
+    "/-- The normalized version. -/"
+   ],
+   "MIPRE.QLD.bIdx": [
+    "/-- The position of the `beta` coordinate. -/"
+   ],
+   "MIPRE.QLD.bet": [
+    "/-- The `beta` coordinate of a padded point. -/"
+   ],
+   "MIPRE.QLD.lpEquiv": [
+    "/-- The data of a line-point pair, as a triple. -/"
+   ],
+   "MIPRE.QLD.padCase": [
+    "/-- The block a coordinate position lies in. -/"
+   ],
+   "MIPRE.QLD.padEquiv": [
+    "/-- The block decomposition of the padded index type. The `X` block lands on positions",
+    "`0, ..., m-1` and the `Z` block on `m, ..., 2m-1`, which is exactly `xIdx` and `zIdx`. -/"
+   ],
+   "MIPRE.QLD.seedEquiv": [
+    "/-- A seed's block and offset: the bijection `F ~ Fin m x Fin (q/m)` whose first component is",
+    "`chi`, available because `m` divides `q`. -/"
+   ],
+   "MIPRE.QLD.seedIn": [
+    "/-- The seed in block `i` with the same offset as `s`. For a fixed `i` this turns a uniform seed",
+    "into a uniform seed of axis index `i`, which is the paper's \"`s_X` uniformly at random subject to",
+    "`chi(s_X) = i`\". -/"
+   ],
+   "MIPRE.QLD.shiftAB": [
+    "/-- Translating the padded point in its `alpha` and `beta` coordinates only. -/"
+   ],
+   "MIPRE.QLD.subX": [
+    "/-- The `X`-side subline data of a padded line-point pair. The point is the `X` block of the padded",
+    "point; the direction is forced to the `X` block of the padded direction when that block is nonzero,",
+    "with the fresh seed `e.1` supplying only the offset inside the forced block, and is sampled from `e`",
+    "when it vanishes. No case distinction on the line type is needed here: an axis index in the `X`",
+    "block forces the `X` block of the direction for both types at once. -/"
+   ],
+   "MIPRE.QLD.subXof": [
+    "/-- The `X`-side subline data, as a function of the block the padded axis index lies in. Splitting",
+    "the case distinction out of `subX` is what lets a proof rewrite the block and then reduce. -/"
+   ],
+   "MIPRE.QLD.subZ": [
+    "/-- The `Z`-side subline data. A diagonal padded line whose axis index lies in the `X` block leaves",
+    "the whole `Z` block of its direction intact, so the `Z` subline is forced, at axis index `0` since",
+    "nothing of its direction is truncated; an axis-parallel one leaves that block zero, so the `Z`",
+    "subline is free. That is the one asymmetry between the two sides. -/"
+   ],
+   "MIPRE.QLD.subZof": [
+    "/-- The `Z`-side subline data, as a function of the line type and of the block the padded axis index",
+    "lies in. -/"
+   ],
+   "MIPRE.QLD.sumAll": [
+    "/-- The sum of `h` over all the data of a line-point pair: the unrestricted seeded law,",
+    "unnormalized. -/"
+   ],
+   "MIPRE.QLD.sumRestr": [
+    "/-- The sum of `h` over the data of a line-point pair whose axis index is `i`: the restricted law",
+    "`D_{ty,i}` of `def:ith-restricted-line`, unnormalized. The seed ranges over the fibre of `chi` above",
+    "`i`, written through `seedEquiv` as an offset. -/"
+   ],
+   "MIPRE.QLD.sumSub": [
+    "/-- The sum over the subline sampling space at a fixed padded seed: the padded point and the padded",
+    "raw direction, and a fresh seed and raw direction for each side. -/"
+   ],
+   "MIPRE.QLD.sumSubAB": [
+    "/-- The padded average with `alpha` and `beta` carried. -/"
+   ],
+   "MIPRE.QLD.sumSubAt": [
+    "/-- The inner average of the subline sampling space, at a fixed padded point. -/"
+   ],
+   "MIPRE.QLD.xBlk": [
+    "/-- The `X` block of a padded point. -/"
+   ],
+   "MIPRE.QLD.xIdx": [
+    "/-- The position of the `i`-th `X` coordinate of the padded space. -/"
+   ],
+   "MIPRE.QLD.zBlk": [
+    "/-- The `Z` block of a padded point. -/"
+   ],
+   "MIPRE.QLD.zIdx": [
+    "/-- The position of the `i`-th `Z` coordinate of the padded space. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_QLD_Product",
+  "module": "MIPRE.Background.QLD.Product",
+  "module_doc": "/-!\n# A content, and a product of two independent line-point pairs\n\n`lem:qld-pairs-of-lines` is proved on the Pauli basis test's own question distribution: one\n`Content`, carrying both sides' points but a **single** seed and a **single** raw direction, so the\n`X` line and the `Z` line it presents are not independent. `lem:qld-padded-lines` needs the same\nconclusion on a **product** of two independent line-point laws, which is what `lem:qld-sublines`\ndelivers.\n\nThe transfer is available, and the reason is worth stating before the machinery: **no hypothesis of\nthe pasting lemma involves both lines.** Each marginal consistency involves one line and the two\npoints; the fine self-consistency and the collision term involve one line only. So the only laws\nthat have to agree are\n\n* one side's line-point data on its own,\n* one side's line-point data together with the *other side's point*,\n* the two points.\n\nand each of those has the same law under a content as under a product, because a content's two\npoints and its seed and raw direction are independent and uniform. This file says that three times,\nand each proof is one line on top of `MIPRE.avg_comp_equiv_fst`: exhibit the splitting of each\nsample space that isolates the part the quantity depends on, and the marginals match.\n\nWhat the file does *not* claim is that the two laws agree on anything involving both lines --- they\ndo not, and that is the content of the paper's restriction to product distributions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Product.lean",
+  "source_path": "MIPRE/Background/QLD/Product.lean",
+  "defmat": [
+   "MIPRE.QLD.Content.lpX",
+   "MIPRE.QLD.Content.lpZ",
+   "MIPRE.QLD.FactorsX",
+   "MIPRE.QLD.FactorsZ",
+   "MIPRE.QLD.contentSplitPts",
+   "MIPRE.QLD.contentSplitX",
+   "MIPRE.QLD.contentSplitZ",
+   "MIPRE.QLD.ofLPX",
+   "MIPRE.QLD.ofLPZ",
+   "MIPRE.QLD.pairCX",
+   "MIPRE.QLD.pairCZ",
+   "MIPRE.QLD.pairDirX",
+   "MIPRE.QLD.pairShift",
+   "MIPRE.QLD.pairSplitX",
+   "MIPRE.QLD.pairSplitZ"
+  ],
+  "embedded": [
+   "MIPRE.QLD.lpX_ofLPX",
+   "MIPRE.QLD.lpZ_ofLPZ",
+   "MIPRE.QLD.pairCX_pairShift",
+   "MIPRE.QLD.pairCZ_pairShift",
+   "MIPRE.QLD.pairDirX_eq",
+   "MIPRE.QLD.pairShift_zero",
+   "MIPRE.QLD.uX_ofLPX",
+   "MIPRE.QLD.uX_ofLPZ",
+   "MIPRE.QLD.uZ_ofLPX",
+   "MIPRE.QLD.uZ_ofLPZ"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.QLD.Content.lpX",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     48,
+     49
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.Content.lpZ",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     51,
+     54
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.FactorsX",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     383,
+     387
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.FactorsZ",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     389,
+     393
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.contentSplitPts",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     104,
+     110
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.contentSplitX",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     76,
+     81
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.contentSplitZ",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     90,
+     95
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.lpX_ofLPX",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     63,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.lpZ_ofLPZ",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     64,
+     64
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.ofLPX",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     56,
+     58
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.ofLPZ",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     60,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.pairCX",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     226,
+     228
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.pairCX_pairShift",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     237,
+     238
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.pairCZ",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     230,
+     232
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.pairCZ_pairShift",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     240,
+     241
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.pairDirX",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     180,
+     182
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.pairDirX_eq",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     234,
+     235
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.pairShift",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     176,
+     178
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.pairShift_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     196,
+     197
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.pairSplitX",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     83,
+     88
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.pairSplitZ",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     97,
+     102
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.uX_ofLPX",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     66,
+     66
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.uX_ofLPZ",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     67,
+     67
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.uZ_ofLPX",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     65,
+     65
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.uZ_ofLPZ",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     68,
+     68
+    ]
+   }
+  ],
+  "lines": 599,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_LCS_Basic",
+   "import Definitions.Def_MIPRE_LCS_Common",
+   "import Definitions.Def_MIPRE_LCS_Measurement",
+   "import Definitions.Def_MIPRE_LCS_Observable",
+   "import Definitions.Def_MIPRE_LCS_Strategy_ObservableToProjector",
+   "import Definitions.Def_MIPRE_LCS_NonlocalGame",
+   "import Definitions.Def_MIPRE_LCS_Pauli",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Strategy",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Game",
+   "import Definitions.Def_MIPRE_Background_QLD_Game",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Win",
+   "import Definitions.Def_MIPRE_Background_QLD_Anticomm",
+   "import Definitions.Def_MIPRE_Background_QLD_WinMS",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_PhiNorm",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_IsometryData",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Assembly",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_JointDiag",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Blocks",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Main",
+   "import Definitions.Def_MIPRE_Background_QLD_Ortho",
+   "import Definitions.Def_MIPRE_Background_QLD_Consistency",
+   "import Definitions.Def_MIPRE_Background_QLD_Commutation",
+   "import Definitions.Def_MIPRE_Background_QLD_Expanded",
+   "import Definitions.Def_MIPRE_Background_QLD_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Combined",
+   "import Definitions.Def_MIPRE_Background_QLD_Lines",
+   "import Definitions.Def_MIPRE_Foundations_Blocks",
+   "import Definitions.Def_MIPRE_Background_QLD_Padded"
+  ],
+  "blueprint": [
+   "lem:qld-padded-lines"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.QLD.Content.lpX": [
+    "/-- The `X`-side line-point data a content carries: its `X` point, its seed, its raw direction. -/"
+   ],
+   "MIPRE.QLD.Content.lpZ": [
+    "/-- The `Z`-side line-point data a content carries: the **same** seed and raw direction, with the",
+    "`Z` point. That sharing is exactly why a content is not a product of two independent line-point",
+    "pairs. -/"
+   ],
+   "MIPRE.QLD.FactorsX": [
+    "/-- `PX` reads the content only through its `X` line-point data. -/"
+   ],
+   "MIPRE.QLD.FactorsZ": [
+    "/-- `PZ` reads the content only through its `Z` line-point data. -/"
+   ],
+   "MIPRE.QLD.contentSplitPts": [
+    "/-- A content splits as its two points and everything else. -/"
+   ],
+   "MIPRE.QLD.contentSplitX": [
+    "/-- A content splits as (its `X` data, its `Z` point) and its probes. -/"
+   ],
+   "MIPRE.QLD.contentSplitZ": [
+    "/-- The mirror of `contentSplitX`. -/"
+   ],
+   "MIPRE.QLD.ofLPX": [
+    "/-- A content assembled from `X`-side line-point data and a `Z` point. The probe registers are",
+    "irrelevant to every line quantity, so they are set to zero. -/"
+   ],
+   "MIPRE.QLD.ofLPZ": [
+    "/-- A content assembled from `Z`-side line-point data and an `X` point. -/"
+   ],
+   "MIPRE.QLD.pairCX": [
+    "/-- The `X`-side content a pair of line-point data presents: the `X` side's own line-point data, with",
+    "the `Z` side's point as the content's other point. -/"
+   ],
+   "MIPRE.QLD.pairCZ": [
+    "/-- The `Z`-side content. Its seed and raw direction are the `Z` side's own, independent of the `X`",
+    "side's --- which is the whole difference from a single content. -/"
+   ],
+   "MIPRE.QLD.pairDirX": [
+    "/-- The `X` line's direction, read off a pair through the content the `X` side presents. -/"
+   ],
+   "MIPRE.QLD.pairShift": [
+    "/-- The shift on a pair of line-point data: move the `X` side's point, leave the `Z` side alone. -/"
+   ],
+   "MIPRE.QLD.pairSplitX": [
+    "/-- A pair of line-point data splits as (the `X` one, the `Z` one's point) and the `Z` one's line. -/"
+   ],
+   "MIPRE.QLD.pairSplitZ": [
+    "/-- The mirror of `pairSplitX`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_QLD_Combine",
+  "module": "MIPRE.Background.QLD.Combine",
+  "module_doc": "/-!\n# The combining map and the padded line measurement\n\nBlueprint `lem:qld-padded-lines`, the definitional half. The pairs-of-lines stage measures a *pair*\nof line polynomials, one per basis; the low-degree test over the padded space\n`F_q^{4m}` wants a *single* polynomial on a single padded line. The bridge is the paper's combining\nmap: on the padded point `u = (x, z, alpha, beta, w)` the combined polynomial takes the value\n\n  `alpha * f_X(x) + beta * f_Z(z)`.\n\nThree things have to be said about it, and this file says them.\n\n* **It is a polynomial of degree at most `md + 1` on the padded line.** Restricted to the padded\n  line the two evaluations become evaluations of `f_X` and `f_Z` at *affine* functions of the padded\n  parameter --- which is exactly Property 2 of `lem:qld-sublines`, made quantitative --- and the\n  factors `alpha` and `beta` are affine in it too. So the whole thing is a product of an affine\n  polynomial with a degree-`md` one, and `combine` is that polynomial, built through Mathlib's\n  `Polynomial` and truncated back to a coefficient vector.\n* **On an axis-parallel padded line the degree drops to `d`.** The padded direction is a single\n  coordinate, and the case distinction is the one `padCase` already makes: in the `X` and `Z` blocks\n  `alpha` and `beta` are constant along the line, so the degree is that of `f_X` and `f_Z`; at\n  `alpha`, `beta` or a dummy coordinate *both* blocks are constant along the line, so the combined\n  polynomial is affine. The first case needs `f_X` and `f_Z` to have degree `d`, which is\n  `lem:qld-axis-degree`; the second needs only `d >= 1`.\n* **The measurement.** `padLineMats` is the paper's `Q-hat^l`: the conditional average, over the\n  fresh randomness the subline construction draws, of the pasted line measurement\n  `T^{l_X,l_Z}`, coarse-grained by the combining map. It is a POVM.\n\nWhat is *not* here is the consistency bound `delta_combine`; see the blueprint.\n\n## The affine data, and why the whole geometry is in `xBlk_dir_sub`\n\nThe one calculation behind the affine substitutions is this. Moving along the padded line moves the\n`X` block by `tau * xBlk(dir)`, and `xBlk_dir_sub` says that block is *either* the `X` subline's own\ndirection *or* zero. In the first case the parameter on the subline moves by exactly `tau`, in the\nsecond it does not move at all --- so in both cases it is `p0 + c * tau` with `c` one or zero, and\n`subAff` is that pair. Nothing else about the construction is used.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Combine.lean",
+  "source_path": "MIPRE/Background/QLD/Combine.lean",
+  "defmat": [
+   "MIPRE.QLD.DegLE",
+   "MIPRE.QLD.SubRand",
+   "MIPRE.QLD.aAffOf",
+   "MIPRE.QLD.affEval",
+   "MIPRE.QLD.affPoly",
+   "MIPRE.QLD.bAffOf",
+   "MIPRE.QLD.combine",
+   "MIPRE.QLD.combinePoly",
+   "MIPRE.QLD.ofPoly",
+   "MIPRE.QLD.padCombine",
+   "MIPRE.QLD.padLineMats",
+   "MIPRE.QLD.padShift",
+   "MIPRE.QLD.subAff",
+   "MIPRE.QLD.subPair",
+   "MIPRE.QLD.xAffOf",
+   "MIPRE.QLD.zAffOf"
+  ],
+  "embedded": [
+   "MIPRE.QLD.padShift_pt",
+   "MIPRE.QLD.padShift_raw",
+   "MIPRE.QLD.padShift_s"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.QLD.DegLE",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     104,
+     107
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.SubRand",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     540,
+     541
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.aAffOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     344,
+     345
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.affEval",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     62,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.affPoly",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     68,
+     69
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.bAffOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     347,
+     348
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.combine",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     148,
+     151
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.combinePoly",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     126,
+     129
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.ofPoly",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     95,
+     96
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.padCombine",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     425,
+     429
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.padLineMats",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     549,
+     559
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.padShift",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     284,
+     286
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.padShift_pt",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     288,
+     289
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.padShift_raw",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     294,
+     295
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.padShift_s",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     291,
+     292
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.subAff",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     218,
+     222
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.subPair",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     543,
+     547
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.xAffOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     350,
+     352
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.zAffOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     354,
+     356
+    ]
+   }
+  ],
+  "lines": 581,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_LCS_Basic",
+   "import Definitions.Def_MIPRE_LCS_Common",
+   "import Definitions.Def_MIPRE_LCS_Measurement",
+   "import Definitions.Def_MIPRE_LCS_Observable",
+   "import Definitions.Def_MIPRE_LCS_Strategy_ObservableToProjector",
+   "import Definitions.Def_MIPRE_LCS_NonlocalGame",
+   "import Definitions.Def_MIPRE_LCS_Pauli",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Strategy",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Game",
+   "import Definitions.Def_MIPRE_Background_QLD_Game",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Win",
+   "import Definitions.Def_MIPRE_Background_QLD_Anticomm",
+   "import Definitions.Def_MIPRE_Background_QLD_WinMS",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_PhiNorm",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_IsometryData",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Assembly",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_JointDiag",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Blocks",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Main",
+   "import Definitions.Def_MIPRE_Background_QLD_Ortho",
+   "import Definitions.Def_MIPRE_Background_QLD_Consistency",
+   "import Definitions.Def_MIPRE_Background_QLD_Commutation",
+   "import Definitions.Def_MIPRE_Background_QLD_Expanded",
+   "import Definitions.Def_MIPRE_Background_QLD_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Combined",
+   "import Definitions.Def_MIPRE_Background_QLD_Lines",
+   "import Definitions.Def_MIPRE_Foundations_Blocks",
+   "import Definitions.Def_MIPRE_Background_QLD_Padded",
+   "import Definitions.Def_MIPRE_Background_QLD_Product"
+  ],
+  "blueprint": [
+   "lem:qld-padded-lines"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.QLD.DegLE": [
+    "/-- **Degree at most `k`**, as a predicate on coefficient vectors: everything above `k` vanishes.",
+    "The answer alphabet is `LinePoly F (m d)` throughout, so a sharper degree bound on an",
+    "axis-parallel line is a property of the vector rather than a change of type. -/"
+   ],
+   "MIPRE.QLD.SubRand": [
+    "/-- The fresh randomness the subline construction draws: a seed and a raw direction per side. -/"
+   ],
+   "MIPRE.QLD.aAffOf": [
+    "/-- `alpha` along the padded line. -/"
+   ],
+   "MIPRE.QLD.affEval": [
+    "/-- An affine map `t |-> a.1 + a.2 * t` of the line parameter, as the pair of its coefficients. -/"
+   ],
+   "MIPRE.QLD.affPoly": [
+    "/-- The degree-one polynomial an affine map is. -/"
+   ],
+   "MIPRE.QLD.bAffOf": [
+    "/-- `beta` along the padded line. -/"
+   ],
+   "MIPRE.QLD.combine": [
+    "/-- **The combining map.** The four affine maps are, in order: `alpha` and `beta` along the padded",
+    "line, and the parameter of the `X` and `Z` blocks on their sublines. -/"
+   ],
+   "MIPRE.QLD.combinePoly": [
+    "/-- The polynomial `alpha(t) f_X(x(t)) + beta(t) f_Z(z(t))` with all four substitutions affine. -/"
+   ],
+   "MIPRE.QLD.ofPoly": [
+    "/-- The coefficient vector of degree at most `n` a polynomial truncates to. -/"
+   ],
+   "MIPRE.QLD.padCombine": [
+    "/-- **The combining map at a padded line and its two sublines.** -/"
+   ],
+   "MIPRE.QLD.padLineMats": [
+    "/-- **The padded line measurement `Q-hat^l`.** Its outcomes are line polynomials of degree at most",
+    "`md + 1` on the padded line, and on an axis-parallel padded line `degLE_padCombine_aline` sharpens",
+    "that to `d`. -/"
+   ],
+   "MIPRE.QLD.padShift": [
+    "/-- Moving the padded point along the padded line by `tau`. -/"
+   ],
+   "MIPRE.QLD.subAff": [
+    "/-- **The affine substitution the subline's parametrization induces.** The constant term is the",
+    "parameter of the unshifted block, and the linear term is `1` exactly when the padded direction moves",
+    "the block along a nondegenerate subline. -/"
+   ],
+   "MIPRE.QLD.subPair": [
+    "/-- The pair of subline data a padded line and the fresh randomness produce --- the sample the",
+    "product form of `lem:qld-pairs-of-lines` is stated over. -/"
+   ],
+   "MIPRE.QLD.xAffOf": [
+    "/-- The parameter of the `X` block on the `X` subline, along the padded line. -/"
+   ],
+   "MIPRE.QLD.zAffOf": [
+    "/-- The parameter of the `Z` block on the `Z` subline, along the padded line. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_QLD_Legalize",
+  "module": "MIPRE.Background.QLD.Legalize",
+  "module_doc": "/-!\n# Legalizing a strategy for the Pauli basis test\n\nThe paper's strategies answer each question in the format its type prescribes: a strategy's\nmeasurement for a `(Point, W)` question has outcomes in `F_q`, for an axis-parallel line question\noutcomes of degree at most `d`, and so on. The Lean strategies of `MIPRE.QLD` are more permissive:\none answer type `Answer F m d` serves every question, so a measurement may have an element on an\nanswer of the wrong format. The decider rejects such an answer before running any rule\n(`Question.fmtOk`), so the mass on them is controlled by the failure probability --- but \"controlled\nby `O(ε)`\" is not \"zero\", and one place needs zero. `lem:qld-axis-degree` asks that the expanded\naxis-parallel line measurement be *supported* on polynomials of degree at most `d`, which the\npaper takes from the format and which a `dpoly` answer to an axis question breaks.\n\nThis file makes the paper's convention available at no cost. `legalize q a` keeps an answer of the\nright format and replaces any other by a fixed legal default (`Question.defaultAns`); the\n**legalized strategy** `legalizeStrat M` relabels every measurement along it. Four things hold, and\nthey are all one needs to pass to the legalized strategy without loss of generality:\n\n* it is projective when the original is (`isPVM_legalizeStrat`);\n* it has no element on an answer of the wrong format (`legalizeStrat_mats_eq_zero`,\n  packaged as `LegalSupport`);\n* its value in the game is at least the original's (`povmValue_le_legalizeStrat`): the decider\n  rejected the answers that were changed, so no accepted pair is lost;\n* every reading the rules and the conclusions use is unchanged (`rdVal_legalize_point` and its\n  siblings, lifted to the measurements by `legalizeStrat_map`): the defaults read as `0`, which is\n  what every reading already assigns to an ill-formatted answer. In particular the point-probe\n  measurements and the hatted point measurements of the two strategies coincide\n  (`ptPOVM_legalizeStrat`, `hatPtPOVM_legalizeStrat`), so a conclusion about the legalized\n  strategy's point or Pauli measurements is a conclusion about the original's.\n\nSo every hypothesis of the appendix's chain holds for `legalizeStrat MA`, `legalizeStrat MB` when it\nholds for `MA`, `MB`, and the extra property --- legal support --- is what\n`MIPRE/Background/QLD/PaddedLines.lean` turns into the exact degree bound of `lem:qld-axis-degree`.\nThe campaign record had costed that lemma as \"coarse-grain and pay the format-failure probability,\nwhich changes the constants\"; legalizing the strategy first costs nothing and changes no constant.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Legalize.lean",
+  "source_path": "MIPRE/Background/QLD/Legalize.lean",
+  "defmat": [
+   "MIPRE.QLD.LegalSupport",
+   "MIPRE.QLD.Question.defaultAns",
+   "MIPRE.QLD.legalize",
+   "MIPRE.QLD.legalizeStrat"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.QLD.LegalSupport",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     132,
+     135
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.Question.defaultAns",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     55,
+     64
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.legalize",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     69,
+     72
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.legalizeStrat",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     137,
+     140
+    ]
+   }
+  ],
+  "lines": 486,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_LCS_Basic",
+   "import Definitions.Def_MIPRE_LCS_Common",
+   "import Definitions.Def_MIPRE_LCS_Measurement",
+   "import Definitions.Def_MIPRE_LCS_Observable",
+   "import Definitions.Def_MIPRE_LCS_Strategy_ObservableToProjector",
+   "import Definitions.Def_MIPRE_LCS_NonlocalGame",
+   "import Definitions.Def_MIPRE_LCS_Pauli",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Strategy",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Game",
+   "import Definitions.Def_MIPRE_Background_QLD_Game",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Win",
+   "import Definitions.Def_MIPRE_Background_QLD_Anticomm",
+   "import Definitions.Def_MIPRE_Background_QLD_WinMS",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_PhiNorm",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_IsometryData",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Assembly",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_JointDiag",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Blocks",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Main",
+   "import Definitions.Def_MIPRE_Background_QLD_Ortho",
+   "import Definitions.Def_MIPRE_Background_QLD_Consistency",
+   "import Definitions.Def_MIPRE_Background_QLD_Commutation",
+   "import Definitions.Def_MIPRE_Background_QLD_Expanded",
+   "import Definitions.Def_MIPRE_Background_QLD_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Combined"
+  ],
+  "blueprint": [
+   "lem:qld-axis-degree"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.QLD.LegalSupport": [
+    "/-- A strategy is **legally supported** when it has no measurement element on an answer of the",
+    "wrong format for the question. This is the paper's standing convention on strategies. -/"
+   ],
+   "MIPRE.QLD.Question.defaultAns": [
+    "/-- A legal answer to each question, reading as `0` under every rule's reading. -/"
+   ],
+   "MIPRE.QLD.legalize": [
+    "/-- Legalize an answer: keep it if it has the question's format, replace it by the default",
+    "otherwise. -/"
+   ],
+   "MIPRE.QLD.legalizeStrat": [
+    "/-- **The legalized strategy**: each measurement relabelled along `legalize`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_QLD_PaddedLines",
+  "module": "MIPRE.Background.QLD.PaddedLines",
+  "module_doc": "/-!\n# The padded line measurement's consistency\n\nBlueprint `lem:qld-padded-lines`, the analytic half. `Combine.lean` built the measurement; this file\nproves it consistent with the padded point measurement on the padded line-point law.\n\nThe paper chains three Cauchy--Schwarz claims here. They are not needed for this construction, and\n`reports/padded-lines-product-law.md` says why: the joint law of the two sublines-with-points is\n*exactly* a product of the two marginals at a fixed padded seed, so the product form of the\npairs-of-lines lemma applies directly. What is left is a single coarse-graining step, and that is\nwhat this file adds.\n\n* **Coarse-graining both sides the same way can only increase agreement.**\n  `sum_bornProb_le_fibre`, for bare matrix families rather than `POVM` structures --- which is what\n  the pasted line measurement is.\n* **The two coarse-grained families.** `ptComb` is the combined point measurement read along the\n  linear form `(a, b)`, the paper's `Q-hat^{x,z,alpha,beta}`; `lineComb` is the pasted line\n  measurement coarse-grained by the combining map. `lineComb_eq_sum_pasteFib` identifies the second\n  as a coarse-graining of the first coarse-graining, which is what makes them comparable.\n* **The bound.** `padded_lines_consistency`: the two disagree by at most `m^2 * delta_P` on the\n  padded line-point law, at every padded seed and line type.\n\nThe `m^2` and the functional form are discussed in the report: it is `poly(m) * poly(eps, md/q)`\nrather than the `m * poly(eps, md/q)` the blueprint statement advertises, which\n`lem:qld-simultaneous`'s `a(md)^a` prefactor absorbs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedLines.lean",
+  "source_path": "MIPRE/Background/QLD/PaddedLines.lean",
+  "defmat": [
+   "MIPRE.QLD.lineComb",
+   "MIPRE.QLD.pasteEval",
+   "MIPRE.QLD.pasteFib",
+   "MIPRE.QLD.ptComb"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.QLD.lineComb",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     175,
+     183
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.pasteEval",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     127,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.pasteFib",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     133,
+     140
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.ptComb",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     169,
+     173
+    ]
+   }
+  ],
+  "lines": 543,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_LCS_Basic",
+   "import Definitions.Def_MIPRE_LCS_Common",
+   "import Definitions.Def_MIPRE_LCS_Measurement",
+   "import Definitions.Def_MIPRE_LCS_Observable",
+   "import Definitions.Def_MIPRE_LCS_Strategy_ObservableToProjector",
+   "import Definitions.Def_MIPRE_LCS_NonlocalGame",
+   "import Definitions.Def_MIPRE_LCS_Pauli",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Strategy",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Game",
+   "import Definitions.Def_MIPRE_Background_QLD_Game",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Win",
+   "import Definitions.Def_MIPRE_Background_QLD_Anticomm",
+   "import Definitions.Def_MIPRE_Background_QLD_WinMS",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_PhiNorm",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_IsometryData",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Assembly",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_JointDiag",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Blocks",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Main",
+   "import Definitions.Def_MIPRE_Background_QLD_Ortho",
+   "import Definitions.Def_MIPRE_Background_QLD_Consistency",
+   "import Definitions.Def_MIPRE_Background_QLD_Commutation",
+   "import Definitions.Def_MIPRE_Background_QLD_Expanded",
+   "import Definitions.Def_MIPRE_Background_QLD_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Combined",
+   "import Definitions.Def_MIPRE_Background_QLD_Lines",
+   "import Definitions.Def_MIPRE_Foundations_Blocks",
+   "import Definitions.Def_MIPRE_Background_QLD_Padded",
+   "import Definitions.Def_MIPRE_Background_QLD_Product",
+   "import Definitions.Def_MIPRE_Background_QLD_Combine",
+   "import Definitions.Def_MIPRE_Background_QLD_Legalize"
+  ],
+  "blueprint": [
+   "lem:qld-padded-lines"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.QLD.lineComb": [
+    "/-- **The pasted line measurement coarse-grained by the combining map at `(a, b)`.** Averaged over",
+    "the fresh randomness this is `padLineMats` read at the sampled point; see",
+    "`sum_filter_padLineMats`. -/"
+   ],
+   "MIPRE.QLD.pasteEval": [
+    "/-- The pasted line measurement's own outcome map: each side's polynomial read at the parameter of",
+    "its own subline. -/"
+   ],
+   "MIPRE.QLD.pasteFib": [
+    "/-- The pasted line measurement coarse-grained by that map --- the family the product form of",
+    "`lem:qld-pairs-of-lines` bounds. -/"
+   ],
+   "MIPRE.QLD.ptComb": [
+    "/-- **The combined point measurement along the linear form `(a, b)`**: the paper's",
+    "`Q-hat^{x,z,alpha,beta}`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_QLD_PaddedStrategy",
+  "module": "MIPRE.Background.QLD.PaddedStrategy",
+  "module_doc": "/-!\n# The padded strategy for the seeded low individual degree test\n\nStage 4 of the Pauli basis test's analysis (`lem:qld-global-setup`, `lem:qld-global-success`)\nassembles the padded point and line measurements of `lem:qld-padded-points` and\n`lem:qld-padded-lines` into a strategy for the seeded test `clGame` at parameters\n`(q, 4m, d, 1)`, and shows that it succeeds with probability `1 - O(δ_combine + δ_Q + md/q)`.\nThis file defines the strategy and bounds its conditional failure at each of the seeded test's\nquestion pairs by an agreement defect of the measurements it is built from; the averages over the\nverifier's samples, and the value bound, are in `PaddedValue.lean`.\n\n## The registers, and why the strategy is a family of POVMs\n\nThe strategy lives on the registers `(dA × Anc F m) × (F × F)` of `extHat ψ`: the player's own\nspace, the expansion's ancilla, and the combining coefficients' ancilla that `lem:qld-padded-points`\ndilates its sandwich with. Its point measurement is the *sandwich* `M^X_a M^Z_b M^X_a` of the\nhatted point measurements, coarse-grained along `(a, b) ↦ α a + β b`, extended by the identity to\nthe last register; its line measurements are the padded line measurements `padLineMats`. Both are\nPOVMs and neither is projective, so the strategy is a family of POVMs, and one Naimark dilation at\nthe end (`clSoundness_ldc_one_deltaCL_of_povm`) makes it the projective strategy the soundness\ntheorem takes. The dilated point measurement of `lem:qld-padded-points` is not used: on the\nextended state the Born rule sees only compressions (`bornProb_extVec2`), so every bound proved\nfor it is a bound for the sandwich.\n\n## A function of the question\n\nThe seeded test asks for a measurement per *question*, while `padLineMats` is indexed by the\n*data* `⟨pt, s, raw⟩` a sample generates the question from. A line question carries the canonical\nbase point `u₀` of the line, the seed, and for a diagonal line the truncated direction `v'`; the\nstrategy answers it with the padded line measurement at the data `⟨u₀, s, raw⟩`, **averaged over\nthe raw directions that produce the question** (`rawFiber`). Two things make this the right\nchoice. The decider reads the answer polynomial at the parameter of the sampled point relative to\n`u₀`, and moving the data's point to the sampled point along the line does not change the padded\nline measurement (`pasteLine_subPair_padShift`), so what the decider reads is `padLineMats` at the\nsample's own data, coarse-grained by evaluation at the sample's point --- exactly the quantity\n`lem:qld-padded-lines` controls (`lineMeas_map_eval_mats`). And the sample distribution averages\nuniformly over the raw direction, so by linearity of the Born rule the strategy's failure at a\nquestion is the average of the per-sample quantities.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedStrategy.lean",
+  "source_path": "MIPRE/Background/QLD/PaddedStrategy.lean",
+  "defmat": [
+   "MIPRE.QLD.alineAns",
+   "MIPRE.QLD.dlineAns",
+   "MIPRE.QLD.lineAns",
+   "MIPRE.QLD.lineDir",
+   "MIPRE.QLD.lineMeas",
+   "MIPRE.QLD.lineQ",
+   "MIPRE.QLD.lineTau",
+   "MIPRE.QLD.padComb",
+   "MIPRE.QLD.padLinePOVM",
+   "MIPRE.QLD.padPt",
+   "MIPRE.QLD.padPtPair",
+   "MIPRE.QLD.padStrat",
+   "MIPRE.QLD.presOf",
+   "MIPRE.QLD.rawFiber",
+   "MIPRE.QLD.rawSet",
+   "MIPRE.QLD.rdEval"
+  ],
+  "embedded": [
+   "MIPRE.QLD.padLinePOVM_mats",
+   "MIPRE.QLD.padPtPair_mats"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.QLD.alineAns",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     255,
+     259
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.dlineAns",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     261,
+     264
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.lineAns",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     266,
+     270
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.lineDir",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     180,
+     186
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.lineMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     151,
+     156
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.lineQ",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     219,
+     223
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.lineTau",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     238,
+     240
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.padComb",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     74,
+     76
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.padLinePOVM",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     97,
+     102
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.padLinePOVM_mats",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     104,
+     107
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.padPt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     78,
+     84
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.padPtPair",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     62,
+     67
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.padPtPair_mats",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     69,
+     72
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.padStrat",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     278,
+     285
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.presOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     111,
+     116
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.rawFiber",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     167,
+     170
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.rawSet",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     194,
+     200
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.rdEval",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     272,
+     276
+    ]
+   }
+  ],
+  "lines": 623,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix_B",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Seeds",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Reparam",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Strategy",
+   "import Definitions.Def_MIPRE_LCS_Basic",
+   "import Definitions.Def_MIPRE_LCS_Common",
+   "import Definitions.Def_MIPRE_LCS_Measurement",
+   "import Definitions.Def_MIPRE_LCS_Observable",
+   "import Definitions.Def_MIPRE_LCS_Strategy_ObservableToProjector",
+   "import Definitions.Def_MIPRE_LCS_NonlocalGame",
+   "import Definitions.Def_MIPRE_LCS_Pauli",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Strategy",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Game",
+   "import Definitions.Def_MIPRE_Background_QLD_Game",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Value",
+   "import Definitions.Def_MIPRE_Foundations_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Win",
+   "import Definitions.Def_MIPRE_Background_QLD_Anticomm",
+   "import Definitions.Def_MIPRE_Background_QLD_WinMS",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_PhiNorm",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_IsometryData",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Assembly",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_JointDiag",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Blocks",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Main",
+   "import Definitions.Def_MIPRE_Background_QLD_Ortho",
+   "import Definitions.Def_MIPRE_Background_QLD_Consistency",
+   "import Definitions.Def_MIPRE_Background_QLD_Commutation",
+   "import Definitions.Def_MIPRE_Background_QLD_Expanded",
+   "import Definitions.Def_MIPRE_Background_QLD_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Combined",
+   "import Definitions.Def_MIPRE_Background_QLD_Lines",
+   "import Definitions.Def_MIPRE_Foundations_Blocks",
+   "import Definitions.Def_MIPRE_Background_QLD_Padded",
+   "import Definitions.Def_MIPRE_Background_QLD_Product",
+   "import Definitions.Def_MIPRE_Background_QLD_Combine",
+   "import Definitions.Def_MIPRE_Background_QLD_Legalize",
+   "import Definitions.Def_MIPRE_Background_QLD_PaddedLines"
+  ],
+  "blueprint": [
+   "lem:qld-global-setup"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.QLD.alineAns": [
+    "/-- The answer a padded line outcome is read as, at an axis-parallel line question: the polynomial",
+    "resized to degree `d`. On the support of a legally supported strategy this loses nothing",
+    "(`padLineMats_aline_eq_zero_of_not_degLE`). -/"
+   ],
+   "MIPRE.QLD.dlineAns": [
+    "/-- The answer a padded line outcome is read as, at a diagonal line question: the polynomial",
+    "resized to degree `4 m d`, which loses nothing since `m d + 1 ≤ 4 m d`. -/"
+   ],
+   "MIPRE.QLD.lineAns": [
+    "/-- The answer map of a line type. -/"
+   ],
+   "MIPRE.QLD.lineDir": [
+    "/-- The direction of the line of type `ty` a seed and raw direction describe; `0` for the point",
+    "type. -/"
+   ],
+   "MIPRE.QLD.lineMeas": [
+    "/-- **The line measurement of the padded strategy**: the padded line POVM at the data",
+    "`⟨u₀, s, raw⟩`, averaged over the raw directions in `S`. -/"
+   ],
+   "MIPRE.QLD.lineQ": [
+    "/-- The line question of type `ty` the sample `(u, s, raw)` generates, as the seeded test",
+    "computes it. -/"
+   ],
+   "MIPRE.QLD.lineTau": [
+    "/-- The parameter of the sample's point on the line it generates. -/"
+   ],
+   "MIPRE.QLD.padComb": [
+    "/-- The combining coefficients' reading of a pair outcome at a padded point:",
+    "`(a, b) ↦ α a + β b`. -/"
+   ],
+   "MIPRE.QLD.padLinePOVM": [
+    "/-- `padLineMats`, bundled as a POVM. -/"
+   ],
+   "MIPRE.QLD.padPt": [
+    "/-- **The padded point measurement**: the sandwich read through the combining coefficients and",
+    "extended by the identity to the coefficients' ancilla, the strategy's answer to a point question",
+    "as a POVM with outcomes in `F`. -/"
+   ],
+   "MIPRE.QLD.padPtPair": [
+    "/-- The sandwich `M^X_a M^Z_b M^X_a` of the hatted point measurements at the `X` and `Z` blocks of",
+    "a padded point, as a POVM with outcomes the pairs `(a, b)`. -/"
+   ],
+   "MIPRE.QLD.padStrat": [
+    "/-- **The padded strategy** of one player, as a family of POVMs indexed by the seeded test's",
+    "questions at `(q, 4m, d, 1)`. -/"
+   ],
+   "MIPRE.QLD.presOf": [
+    "/-- The presentation of a line type on side `W`: the diagonal one for `dline`, the axis-parallel",
+    "one otherwise. -/"
+   ],
+   "MIPRE.QLD.rawFiber": [
+    "/-- The raw directions a sample with seed `s` can carry so that its diagonal question shows the",
+    "truncated direction `v'`. -/"
+   ],
+   "MIPRE.QLD.rawSet": [
+    "/-- The raw directions the strategy averages over at the line question of type `ty` a sample with",
+    "seed `s` and raw direction `raw` generates: all of them for an axis-parallel line, the fibre of",
+    "the truncated direction for a diagonal one. -/"
+   ],
+   "MIPRE.QLD.rdEval": [
+    "/-- The value a line answer takes at the parameter `t`; a point answer reads as `0`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_QLD_Dummy",
+  "module": "MIPRE.Background.QLD.Dummy",
+  "module_doc": "/-!\n# Removing the dummy coordinates (`lem:qld-global-dummy`)\n\nThe global polynomial measurements of `lem:qld-global-pvm` have outcomes in\n`LowIndDegPoly F (4m) d`, polynomials in the `4m` coordinates of the padded point, while the\npadded point measurements read only the `2m + 2` coordinates `xBlk`, `zBlk`, `alph`, `bet`\n(`padPt_mats`). The remaining `2m - 2` coordinates are the paper's dummy coordinates `w`. This file\nproves that an outcome which reads a dummy coordinate carries little state weight: if the\nevaluated global measurement is `δ`-consistent, on average over a uniform point, with a point\nmeasurement that does not read the dummy coordinates, then the total weight of such outcomes is at\nmost `2δ / (1 - 8md/q)`, hence `4δ` once `16 m d ≤ q`.\n\n## The argument\n\nResample the dummy coordinates: for two independent uniform points `u`, `u'`, let `mix u u'` be\n`u` with its dummy coordinates replaced by those of `u'`. The point measurement is the same at `u`\nand at `mix u u'`, and `(u, u') ↦ (mix u u', mix u' u)` is an involution of the pairs, so the\nconsistency estimate holds at both points simultaneously. Adding the two, the operator\n`P_u(g(u)) + P_u(g(mix u u'))` is at most `2 · 1` when the two values agree and at most `1` when\nthey differ (two distinct elements of a POVM sum to at most the identity; no projectivity is\nused), which gives `∑_g ⟨G_g⟩ · Pr[g(u) = g(mix u u')] ≥ 1 - 2δ` (`sum_mass_mixAgree_ge`). For an\noutcome that reads a dummy coordinate, `g(u) - g(mix u u')` is a nonzero polynomial in the `8m`\ncoordinates of the pair, of individual degree at most `d`, so Schwartz--Zippel bounds the\nprobability by `8md/q` (`card_mixAgree_le`); for one that does not, the probability is `1`\n(`eval_mix_of_wIndep`). The two bounds give `sum_bad_mass_le`.\n\n## The bridge to `MvPolynomial`\n\n`LowIndDegPoly.toMv`, `degreeOf_rename_le` and `prob_agreeOn_le_individualDegree` (Schwartz--Zippel\nfor any finite variable type, which is what the pair `Fin (4m) ⊕ Fin (4m)` needs) were written\nhere and now live in `MIPRE/Background/LIDT/Coefficients.lean`, where the simultaneous low-degree\ntest can use them too.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Dummy.lean",
+  "source_path": "MIPRE/Background/QLD/Dummy.lean",
+  "defmat": [
+   "MIPRE.QLD.IsDummy",
+   "MIPRE.QLD.WIndep",
+   "MIPRE.QLD.instDecidablePredFinHMulNatOfNatIsDummy",
+   "MIPRE.QLD.instDecidablePredLowIndDegPolyWIndep",
+   "MIPRE.QLD.mix",
+   "MIPRE.QLD.mixSwap"
+  ],
+  "embedded": [
+   "MIPRE.QLD.alph_mix",
+   "MIPRE.QLD.bet_mix",
+   "MIPRE.QLD.mixSwap_apply_fst",
+   "MIPRE.QLD.mix_apply_of_not",
+   "MIPRE.QLD.mix_mix",
+   "MIPRE.QLD.not_isDummy_aIdx",
+   "MIPRE.QLD.not_isDummy_bIdx",
+   "MIPRE.QLD.not_isDummy_xIdx",
+   "MIPRE.QLD.not_isDummy_zIdx",
+   "MIPRE.QLD.xBlk_mix",
+   "MIPRE.QLD.zBlk_mix"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.QLD.IsDummy",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     183,
+     185
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.WIndep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     266,
+     268
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.alph_mix",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     235,
+     237
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.bet_mix",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     239,
+     241
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.instDecidablePredFinHMulNatOfNatIsDummy",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     187,
+     188
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.instDecidablePredLowIndDegPolyWIndep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     270,
+     272
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.mix",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     215,
+     217
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.mixSwap",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     249,
+     254
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.mixSwap_apply_fst",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     256,
+     258
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.mix_apply_of_not",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     219,
+     221
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.mix_mix",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     243,
+     247
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.not_isDummy_aIdx",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     200,
+     202
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.not_isDummy_bIdx",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     204,
+     206
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.not_isDummy_xIdx",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     190,
+     193
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.not_isDummy_zIdx",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     195,
+     198
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.xBlk_mix",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     227,
+     229
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.zBlk_mix",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     231,
+     233
+    ]
+   }
+  ],
+  "lines": 561,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix_B",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Seeds",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Reparam",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Strategy",
+   "import Definitions.Def_MIPRE_Foundations_StrategyDilation",
+   "import Definitions.Def_MIPRE_LCS_Basic",
+   "import Definitions.Def_MIPRE_LCS_Common",
+   "import Definitions.Def_MIPRE_LCS_Measurement",
+   "import Definitions.Def_MIPRE_LCS_Observable",
+   "import Definitions.Def_MIPRE_LCS_Strategy_ObservableToProjector",
+   "import Definitions.Def_MIPRE_LCS_NonlocalGame",
+   "import Definitions.Def_MIPRE_LCS_Pauli",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Strategy",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Game",
+   "import Definitions.Def_MIPRE_Background_QLD_Game",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Value",
+   "import Definitions.Def_MIPRE_Foundations_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Win",
+   "import Definitions.Def_MIPRE_Background_QLD_Anticomm",
+   "import Definitions.Def_MIPRE_Background_QLD_WinMS",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_PhiNorm",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_IsometryData",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Assembly",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_JointDiag",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Blocks",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Main",
+   "import Definitions.Def_MIPRE_Background_QLD_Ortho",
+   "import Definitions.Def_MIPRE_Background_QLD_Consistency",
+   "import Definitions.Def_MIPRE_Background_QLD_Commutation",
+   "import Definitions.Def_MIPRE_Background_QLD_Expanded",
+   "import Definitions.Def_MIPRE_Background_QLD_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Combined",
+   "import Definitions.Def_MIPRE_Background_QLD_Lines",
+   "import Definitions.Def_MIPRE_Foundations_Blocks",
+   "import Definitions.Def_MIPRE_Background_QLD_Padded",
+   "import Definitions.Def_MIPRE_Background_QLD_Product",
+   "import Definitions.Def_MIPRE_Background_QLD_Combine",
+   "import Definitions.Def_MIPRE_Background_QLD_Legalize",
+   "import Definitions.Def_MIPRE_Background_QLD_PaddedLines",
+   "import Definitions.Def_MIPRE_Background_QLD_PaddedStrategy"
+  ],
+  "blueprint": [
+   "lem:qld-global-dummy"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.QLD.IsDummy": [
+    "/-- A coordinate of the padded point that no padded point measurement reads: everything past",
+    "`xBlk`, `zBlk`, `alph`, `bet`. -/"
+   ],
+   "MIPRE.QLD.WIndep": [
+    "/-- **`w`-independence**: a coefficient vector with no monomial involving a dummy coordinate. -/"
+   ],
+   "MIPRE.QLD.instDecidablePredFinHMulNatOfNatIsDummy": null,
+   "MIPRE.QLD.instDecidablePredLowIndDegPolyWIndep": null,
+   "MIPRE.QLD.mix": [
+    "/-- **Resampling the dummy coordinates**: `u` with its dummy coordinates replaced by those of",
+    "`u'`. -/"
+   ],
+   "MIPRE.QLD.mixSwap": [
+    "/-- The involution of pairs of points that exchanges their dummy coordinates. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_QLD_Products",
+  "module": "MIPRE.Background.QLD.Products",
+  "module_doc": "/-!\n# Ordered products with global outcome multipliers (`lem:qld-global-products`)\n\nThe global measurement of `lem:qld-global-pvm` is consistent, on average over a uniform padded\npoint `u = (x, z, α, β, w)`, with the *sandwich combination*\n`P_u(c) = ∑_{αa + βb = c} Z_b X_a Z_b` of Bob's expanded point measurements. Stage 4b needs the\nsame statement for the two *ordered products* `∑_{αa + βb = c} Z_b X_a` and\n`∑_{αa + βb = c} X_a Z_b`, in the state-distance form: with `v_g = (G_g ⊗ 1) Φ`,\n`∑_g E_u ‖v_g - (1 ⊗ B_u(g(u))) v_g‖² ≤ 2δ + 2κ`, where `δ` is the consistency error and `κ` the\naverage commutator weight `E_{x,z} ∑_{a,b} ‖(1 ⊗ [X_a, Z_b]) Φ‖²` of Bob's two measurements.\n\n## The argument\n\nTwo steps. `(1 ⊗ (1 - P)) v_g` is controlled by the consistency itself, because `0 ≤ P ≤ 1` gives\n`(1 - P)² ≤ 1 - P` and so `∑_g E ‖(G_g ⊗ (1 - P_u(g(u)))) Φ‖² ≤ ∑_g E ⟨G_g ⊗ (1 - P_u(g(u)))⟩ ≤ δ`.\n`(1 ⊗ (P - B)) v_g` is controlled by the commutators: grouping the outcomes by their value\n`c = g(u)` and dropping the projector `∑_{g(u) = c} G_g ≤ 1` leaves\n`∑_c ‖(1 ⊗ (P_u(c) - B_u(c))) Φ‖²`,\na fibre-summed family of the deviations `sand - ord`; these sum to zero over `(a, b)`, so Parseval\nover `F_q` (`sum_avg_norm_fibre_sq`) turns the average over `(α, β)` of the fibre sums into\n`(1 - 1/q) ∑_{a,b} ‖(1 ⊗ (sand - ord)(a, b)) Φ‖²` with no loss of a factor `q`, and each deviation\nis a contraction of a commutator: `Z X Z - Z X = Z [X, Z]` and `Z X Z - X Z = -(1 - Z) [X, Z]`.\n\nEverything here is stated for abstract projective families `X x`, `Z z` on Bob's register, with\nthe consistency and the commutator weight as hypotheses; `lem:qld-global-pvm` and\n`lem:qld-combined-points` supply them for the padded state.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Products.lean",
+  "source_path": "MIPRE/Background/QLD/Products.lean",
+  "defmat": [
+   "MIPRE.QLD.abSwap",
+   "MIPRE.QLD.comm",
+   "MIPRE.QLD.ordComb",
+   "MIPRE.QLD.ordXZ",
+   "MIPRE.QLD.ordZX",
+   "MIPRE.QLD.sandComb",
+   "MIPRE.QLD.setAB"
+  ],
+  "embedded": [
+   "MIPRE.QLD.alph_setAB",
+   "MIPRE.QLD.bet_setAB",
+   "MIPRE.QLD.setAB_setAB"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.QLD.abSwap",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     319,
+     324
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.alph_setAB",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     295,
+     298
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.bet_setAB",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     300,
+     303
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.comm",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     189,
+     190
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.ordComb",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     417,
+     420
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.ordXZ",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     186,
+     187
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.ordZX",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     183,
+     184
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.sandComb",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     411,
+     415
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.setAB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     279,
+     281
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.setAB_setAB",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     305,
+     317
+    ]
+   }
+  ],
+  "lines": 579,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix_B",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Seeds",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Reparam",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Strategy",
+   "import Definitions.Def_MIPRE_Foundations_StrategyDilation",
+   "import Definitions.Def_MIPRE_LCS_Basic",
+   "import Definitions.Def_MIPRE_LCS_Common",
+   "import Definitions.Def_MIPRE_LCS_Measurement",
+   "import Definitions.Def_MIPRE_LCS_Observable",
+   "import Definitions.Def_MIPRE_LCS_Strategy_ObservableToProjector",
+   "import Definitions.Def_MIPRE_LCS_NonlocalGame",
+   "import Definitions.Def_MIPRE_LCS_Pauli",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Strategy",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Game",
+   "import Definitions.Def_MIPRE_Background_QLD_Game",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Value",
+   "import Definitions.Def_MIPRE_Foundations_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Win",
+   "import Definitions.Def_MIPRE_Background_QLD_Anticomm",
+   "import Definitions.Def_MIPRE_Background_QLD_WinMS",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_PhiNorm",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_IsometryData",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Assembly",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_JointDiag",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Blocks",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Main",
+   "import Definitions.Def_MIPRE_Background_QLD_Ortho",
+   "import Definitions.Def_MIPRE_Background_QLD_Consistency",
+   "import Definitions.Def_MIPRE_Background_QLD_Commutation",
+   "import Definitions.Def_MIPRE_Background_QLD_Expanded",
+   "import Definitions.Def_MIPRE_Background_QLD_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Combined",
+   "import Definitions.Def_MIPRE_Background_QLD_Lines",
+   "import Definitions.Def_MIPRE_Foundations_Blocks",
+   "import Definitions.Def_MIPRE_Background_QLD_Padded",
+   "import Definitions.Def_MIPRE_Background_QLD_Product",
+   "import Definitions.Def_MIPRE_Background_QLD_Combine",
+   "import Definitions.Def_MIPRE_Background_QLD_Legalize",
+   "import Definitions.Def_MIPRE_Background_QLD_PaddedLines",
+   "import Definitions.Def_MIPRE_Background_QLD_PaddedStrategy",
+   "import Definitions.Def_MIPRE_Background_QLD_Dummy"
+  ],
+  "blueprint": [
+   "lem:qld-global-products"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.QLD.abSwap": [
+    "/-- The involution of `(point, α, β)` exchanging the combining coordinates with `(α, β)`. -/"
+   ],
+   "MIPRE.QLD.comm": [
+    "/-- The commutator `X_a Z_b - Z_b X_a`. -/"
+   ],
+   "MIPRE.QLD.ordComb": [
+    "/-- An ordered-product combination at a padded point, `∑_{αa + βb = c} ord(a, b)`. -/"
+   ],
+   "MIPRE.QLD.ordXZ": [
+    "/-- Bob's ordered product, `Z` then `X`: `X_a Z_b`. -/"
+   ],
+   "MIPRE.QLD.ordZX": [
+    "/-- Bob's ordered product, `X` then `Z` (applied right to left: `Z_b X_a`). -/"
+   ],
+   "MIPRE.QLD.sandComb": [
+    "/-- The sandwich combination at a padded point, `P_u(c) = ∑_{αa + βb = c} Z_b X_a Z_b`, for",
+    "abstract point measurements `X x`, `Z z` on Bob's register. -/"
+   ],
+   "MIPRE.QLD.setAB": [
+    "/-- Setting the two combining coordinates of a padded point. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_QLD_Linear",
+  "module": "MIPRE.Background.QLD.Linear",
+  "module_doc": "/-!\n# Linearity in the two combining coefficients (`lem:qld-global-linear`)\n\nAn outcome `g` of the global measurement is a polynomial on `F^{4m}`; read at the padded point\n`u = (x, z, α, β, w)` it is a polynomial in `(α, β)` whose coefficients are polynomials in the other\ncoordinates. The good outcomes are those of the form `g = α g₁(x, z) + β g₂(x, z)`: linear in\n`(α, β)` with no constant term and no other monomial. This file bounds the weight of the others\n(`IsLinAB` fails) from the ordered-product estimate of `lem:qld-global-products` for the order\n`X_a Z_b`.\n\n## The polynomial side\n\n`LowIndDegPoly.coef g T t` is the coefficient vector, in the variables outside `T`, of the\nmonomial pattern `t` on the coordinates `T` (`eval_eq_sum_coef`): `g(u) = ∑_t u^t_T · coef(u)`.\nThose generic facts are in `MIPRE/Background/LIDT/Coefficients.lean`.\nWith `T = {aIdx, bIdx}` the patterns are pairs `(i, j)`, and `pAB g u₀` is the bivariate\npolynomial `(α, β) ↦ g(setAB u₀ α β)` as a coefficient vector on `Fin 2` (`eval_pAB`). If `g` is\nnot of the good form, some coefficient `G_{i₀ j₀}` with `(i₀, j₀) ∉ {(1, 0), (0, 1)}` is a nonzero\npolynomial, so by Schwartz--Zippel it vanishes at a uniform `u₀` with probability at most\n`4md/q` (`sum_uniform_eval_eq_zero_le`); where it does not vanish, `pAB g u₀` differs from every\nlinear form `α a + β b` (`pAB_ne_linAB`), so they agree at a uniform `(α, β)` with probability at\nmost `2d/q` (`sum_agree_two_le`).\n\n## The operator side\n\nFor `β ≠ 0` the fibre `{αa + βb = c}` has one `b` per `a`, so\n`‖(G_g ⊗ ∑_{fibre} X_a Z_b) Φ‖² = ∑_{fibre} ‖(G_g ⊗ X_a Z_b) Φ‖²` (Pythagoras, the `X_a` being\northogonal projectors), and the weights `W_g(a, b) = ‖(G_g ⊗ X_a Z_b) Φ‖²` do not depend on\n`(α, β)` and sum to `⟨G_g⟩`. Averaging over `(α, β)` and then over the other coordinates\n(`sum_uniform_setAB` reads the uniform padded point as a uniform base point with a fresh uniform\npair), an outcome that is not of the good form has `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≤ η ⟨G_g⟩` with\n`η = (1 + 2d + 4md)/q` (`sum_uniform_snorm_sq_ordComb_le_of_not_isLinAB`). On the other hand\n`⟨G_g⟩ ≤ 2 ‖(G_g ⊗ B_u) Φ‖² + 2 ‖(G_g ⊗ (1 - B_u)) Φ‖²` for every `u`, and the second terms are\nwhat the product estimate bounds by `Δ` in total; hence\n`(1 - 2η) · (weight of the bad outcomes) ≤ 2Δ` (`sum_bad_linear_mass_le`). This is the linear\nbound the paper's `cnote` at `eq:qld-g-prime-bound` describes, rather than the displayed `√Δ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Linear.lean",
+  "source_path": "MIPRE/Background/QLD/Linear.lean",
+  "defmat": [
+   "MIPRE.QLD.IsLinAB",
+   "MIPRE.QLD.abSet",
+   "MIPRE.QLD.e01",
+   "MIPRE.QLD.e10",
+   "MIPRE.QLD.fibMap",
+   "MIPRE.QLD.fin2Equiv",
+   "MIPRE.QLD.instDecidablePredLowIndDegPolyIsLinAB",
+   "MIPRE.QLD.linAB",
+   "MIPRE.QLD.pAB",
+   "MIPRE.QLD.patAB"
+  ],
+  "embedded": [
+   "MIPRE.QLD.patAB_aIdx",
+   "MIPRE.QLD.patAB_bIdx",
+   "MIPRE.QLD.vec_two_eq"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.QLD.IsLinAB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     283,
+     288
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.abSet",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     77,
+     78
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.e01",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     208,
+     209
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.e10",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     205,
+     206
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.fibMap",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     398,
+     399
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.fin2Equiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     198,
+     203
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.instDecidablePredLowIndDegPolyIsLinAB",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     290,
+     293
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.linAB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     217,
+     219
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.pAB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     126,
+     130
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.patAB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     96,
+     98
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.patAB_aIdx",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     100,
+     101
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.patAB_bIdx",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     103,
+     105
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.vec_two_eq",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     193,
+     196
+    ]
+   }
+  ],
+  "lines": 570,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix_B",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Seeds",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Reparam",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Strategy",
+   "import Definitions.Def_MIPRE_Foundations_StrategyDilation",
+   "import Definitions.Def_MIPRE_LCS_Basic",
+   "import Definitions.Def_MIPRE_LCS_Common",
+   "import Definitions.Def_MIPRE_LCS_Measurement",
+   "import Definitions.Def_MIPRE_LCS_Observable",
+   "import Definitions.Def_MIPRE_LCS_Strategy_ObservableToProjector",
+   "import Definitions.Def_MIPRE_LCS_NonlocalGame",
+   "import Definitions.Def_MIPRE_LCS_Pauli",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Strategy",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Game",
+   "import Definitions.Def_MIPRE_Background_QLD_Game",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Value",
+   "import Definitions.Def_MIPRE_Foundations_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Win",
+   "import Definitions.Def_MIPRE_Background_QLD_Anticomm",
+   "import Definitions.Def_MIPRE_Background_QLD_WinMS",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_PhiNorm",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_IsometryData",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Assembly",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_JointDiag",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Blocks",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Main",
+   "import Definitions.Def_MIPRE_Background_QLD_Ortho",
+   "import Definitions.Def_MIPRE_Background_QLD_Consistency",
+   "import Definitions.Def_MIPRE_Background_QLD_Commutation",
+   "import Definitions.Def_MIPRE_Background_QLD_Expanded",
+   "import Definitions.Def_MIPRE_Background_QLD_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Combined",
+   "import Definitions.Def_MIPRE_Background_QLD_Lines",
+   "import Definitions.Def_MIPRE_Foundations_Blocks",
+   "import Definitions.Def_MIPRE_Background_QLD_Padded",
+   "import Definitions.Def_MIPRE_Background_QLD_Product",
+   "import Definitions.Def_MIPRE_Background_QLD_Combine",
+   "import Definitions.Def_MIPRE_Background_QLD_Legalize",
+   "import Definitions.Def_MIPRE_Background_QLD_PaddedLines",
+   "import Definitions.Def_MIPRE_Background_QLD_PaddedStrategy",
+   "import Definitions.Def_MIPRE_Background_QLD_Dummy",
+   "import Definitions.Def_MIPRE_Background_QLD_Products"
+  ],
+  "blueprint": [
+   "lem:qld-global-linear"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.QLD.IsLinAB": [
+    "/-- **Linear in `(α, β)`**: every monomial of `g` has exponents `(1, 0)` or `(0, 1)` on the two",
+    "combining coordinates, so `g = α g₁ + β g₂` with `g₁`, `g₂` not reading `α, β`. -/"
+   ],
+   "MIPRE.QLD.abSet": [
+    "/-- The two combining coordinates. -/"
+   ],
+   "MIPRE.QLD.e01": [
+    "/-- The pattern `α^0 β^1`. -/"
+   ],
+   "MIPRE.QLD.e10": [
+    "/-- The pattern `α^1 β^0`. -/"
+   ],
+   "MIPRE.QLD.fibMap": [
+    "/-- The fibre `{αa + βb = c}` parametrized by `a`, for `β ≠ 0`. -/"
+   ],
+   "MIPRE.QLD.fin2Equiv": [
+    "/-- Pairs as functions on two indices. -/"
+   ],
+   "MIPRE.QLD.instDecidablePredLowIndDegPolyIsLinAB": null,
+   "MIPRE.QLD.linAB": [
+    "/-- **The linear form `α a + β b`**, as a coefficient vector on two variables. -/"
+   ],
+   "MIPRE.QLD.pAB": [
+    "/-- **The outcome read at `(α, β)`**, with the other coordinates fixed at those of `u₀`: a",
+    "polynomial in two variables, as a coefficient vector. -/"
+   ],
+   "MIPRE.QLD.patAB": [
+    "/-- The pattern with exponents `i` at `α` and `j` at `β`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_QLD_Separate",
+  "module": "MIPRE.Background.QLD.Separate",
+  "module_doc": "/-!\n# Separating the two point variables (`lem:qld-global-separate`)\n\nAn outcome `g = α g₁ + β g₂` of the global measurement that is linear in the combining\ncoordinates (`IsLinAB`, `lem:qld-global-linear`) is *good* when `g₁` reads only the `x` block and\n`g₂` only the `z` block: `g = α g_X(x) + β g_Z(z)` (`IsGood`). This file bounds the weight of the\nlinear outcomes that are not good, from the two ordered-product estimates of\n`lem:qld-global-products`: the order `X_a Z_b` controls the outcomes whose `g₂` reads a coordinate\noutside the `z` block, and the order `Z_b X_a` those whose `g₁` reads a coordinate outside the `x`\nblock.\n\n## The argument\n\nFor a linear outcome and a base point `u₀`, the fibre `{αa + βb = α g₁(u₀) + β g₂(u₀)}` always\ncontains the diagonal pair `(g₁(u₀), g₂(u₀))`, and contains any other pair for at most `q` of the\n`q²` values of `(α, β)`. So the average over `(α, β)` of `‖(S ⊗ B_u(g(u))) Φ‖²` is at most\n`2/q · ⟨S⟩ + W(g₁(u₀), g₂(u₀))`, with `W(a, b) = ‖(S ⊗ X_a Z_b) Φ‖² ≤ ⟨S ⊗ Z_b⟩`. Averaging over\n`u₀`, read as a uniform `z` block with the other coordinates uniform and independent\n(`sum_uniform_mixOn`): for fixed `z`, `u ↦ g₂(u)` is a polynomial in the other coordinates\n(`LowIndDegPoly.restrictOff`) which, if `g₂` reads a coordinate outside the `z` block, is\nnon-constant except for a set of `z` of probability at most `4md/q` (Schwartz--Zippel on a\nnonzero coefficient), and where it is non-constant each value `b` is taken with probability at\nmost `4md/q`, so `E ⟨S ⊗ Z_{g₂(u)}(z)⟩ ≤ 8md/q · ⟨S⟩`. Altogether\n`E_u ‖(S ⊗ B_u(g(u))) Φ‖² ≤ η ⟨S⟩` with `η = (2 + 8md)/q`, and the assembly of\n`lem:qld-global-linear` gives `(1 - 2η) · (weight of these outcomes) ≤ 2Δ`. The other block is\nthe mirror image, with the roles of `(X, a, α)` and `(Z, b, β)` exchanged.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Separate.lean",
+  "source_path": "MIPRE/Background/QLD/Separate.lean",
+  "defmat": [
+   "MIPRE.LIDT.LowIndDegPoly.DepOutside",
+   "MIPRE.LIDT.LowIndDegPoly.const",
+   "MIPRE.LIDT.LowIndDegPoly.restrictOff",
+   "MIPRE.LIDT.instDecidableDepOutsideOfDecidableEq",
+   "MIPRE.QLD.IsGood",
+   "MIPRE.QLD.gA",
+   "MIPRE.QLD.gB",
+   "MIPRE.QLD.instDecidablePredLowIndDegPolyIsGood",
+   "MIPRE.QLD.mixOn",
+   "MIPRE.QLD.mixOnSwap",
+   "MIPRE.QLD.oneD",
+   "MIPRE.QLD.xSet",
+   "MIPRE.QLD.zSet"
+  ],
+  "embedded": [
+   "MIPRE.QLD.mixOn_mixOn"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LIDT.LowIndDegPoly.DepOutside",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     104,
+     108
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.LowIndDegPoly.const",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     50,
+     52
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.LowIndDegPoly.restrictOff",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     72,
+     76
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.instDecidableDepOutsideOfDecidableEq",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     129,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.IsGood",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     299,
+     304
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.gA",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     225,
+     228
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.gB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     230,
+     233
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.instDecidablePredLowIndDegPolyIsGood",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     306,
+     309
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.mixOn",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     146,
+     148
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.mixOnSwap",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     157,
+     163
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.mixOn_mixOn",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     150,
+     155
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.oneD",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     222,
+     223
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.xSet",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     197,
+     198
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.zSet",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     194,
+     195
+    ]
+   }
+  ],
+  "lines": 556,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix_B",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Seeds",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Reparam",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Strategy",
+   "import Definitions.Def_MIPRE_Foundations_StrategyDilation",
+   "import Definitions.Def_MIPRE_LCS_Basic",
+   "import Definitions.Def_MIPRE_LCS_Common",
+   "import Definitions.Def_MIPRE_LCS_Measurement",
+   "import Definitions.Def_MIPRE_LCS_Observable",
+   "import Definitions.Def_MIPRE_LCS_Strategy_ObservableToProjector",
+   "import Definitions.Def_MIPRE_LCS_NonlocalGame",
+   "import Definitions.Def_MIPRE_LCS_Pauli",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Strategy",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Game",
+   "import Definitions.Def_MIPRE_Background_QLD_Game",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Value",
+   "import Definitions.Def_MIPRE_Foundations_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Win",
+   "import Definitions.Def_MIPRE_Background_QLD_Anticomm",
+   "import Definitions.Def_MIPRE_Background_QLD_WinMS",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_PhiNorm",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_IsometryData",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Assembly",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_JointDiag",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Blocks",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Main",
+   "import Definitions.Def_MIPRE_Background_QLD_Ortho",
+   "import Definitions.Def_MIPRE_Background_QLD_Consistency",
+   "import Definitions.Def_MIPRE_Background_QLD_Commutation",
+   "import Definitions.Def_MIPRE_Background_QLD_Expanded",
+   "import Definitions.Def_MIPRE_Background_QLD_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Combined",
+   "import Definitions.Def_MIPRE_Background_QLD_Lines",
+   "import Definitions.Def_MIPRE_Foundations_Blocks",
+   "import Definitions.Def_MIPRE_Background_QLD_Padded",
+   "import Definitions.Def_MIPRE_Background_QLD_Product",
+   "import Definitions.Def_MIPRE_Background_QLD_Combine",
+   "import Definitions.Def_MIPRE_Background_QLD_Legalize",
+   "import Definitions.Def_MIPRE_Background_QLD_PaddedLines",
+   "import Definitions.Def_MIPRE_Background_QLD_PaddedStrategy",
+   "import Definitions.Def_MIPRE_Background_QLD_Dummy",
+   "import Definitions.Def_MIPRE_Background_QLD_Products",
+   "import Definitions.Def_MIPRE_Background_QLD_Linear"
+  ],
+  "blueprint": [
+   "lem:qld-global-separate"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LIDT.LowIndDegPoly.DepOutside": [
+    "/-- **Dependence on a coordinate outside `T`**: some monomial of `g` has a nonzero exponent off",
+    "`T`. -/"
+   ],
+   "MIPRE.LIDT.LowIndDegPoly.const": [
+    "/-- The constant coefficient vector. -/"
+   ],
+   "MIPRE.LIDT.LowIndDegPoly.restrictOff": [
+    "/-- **Substituting the coordinates in `T` by those of `z`**: the coefficient vector, in the",
+    "variables off `T`, of `u ↦ g(z on T, u off T)`. -/"
+   ],
+   "MIPRE.LIDT.instDecidableDepOutsideOfDecidableEq": null,
+   "MIPRE.QLD.IsGood": [
+    "/-- **The good outcomes**: `g = α g_X(x) + β g_Z(z)`, with `g_X` reading only the `x` block and",
+    "`g_Z` only the `z` block. -/"
+   ],
+   "MIPRE.QLD.gA": [
+    "/-- The coefficient of `α` in an outcome: a polynomial in the coordinates other than `α, β`. -/"
+   ],
+   "MIPRE.QLD.gB": [
+    "/-- The coefficient of `β` in an outcome. -/"
+   ],
+   "MIPRE.QLD.instDecidablePredLowIndDegPolyIsGood": null,
+   "MIPRE.QLD.mixOn": [
+    "/-- The point with the coordinates in `T` taken from `u'` and the others from `u`. -/"
+   ],
+   "MIPRE.QLD.mixOnSwap": [
+    "/-- The involution of pairs of points that exchanges their coordinates in `T`. -/"
+   ],
+   "MIPRE.QLD.oneD": [
+    "/-- The exponent `1`. -/"
+   ],
+   "MIPRE.QLD.xSet": [
+    "/-- The positions of the `x` block. -/"
+   ],
+   "MIPRE.QLD.zSet": [
+    "/-- The positions of the `z` block. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_QLD_Simul",
+  "module": "MIPRE.Background.QLD.Simul",
+  "module_doc": "/-!\n# The simultaneous pair measurement: the interface between stages 4 and 5\n\nStage 5 of the Pauli basis test's analysis (`lem:qld-helper`, `lem:qld-exact-paulis`,\n`lem:qld-swap`, and the assembly of `thm:qld`) consumes stage 4 through one statement, the\npaper's `lem:qld-4-7` (blueprint `lem:qld-simultaneous`): a *projective* measurement\n`S-hat_{g_X, g_Z}` on each party's padded local space, with outcomes pairs of polynomials in `m`\nvariables of individual degree at most `d`, whose evaluated `X` and `Z` marginals are consistent\nwith the opposite party's expanded point measurements, in both register versions. This file\nfixes that statement as a structure, `SimulPair`, so that stage 5 can be proved against it while\nstage 4 fills it in, with no `sorry` in the tree at any point.\n\n## The registers\n\nThe Lean padded strategy does not live on the paper's registers `A A' | B A''`:\n`lem:qld-padded-points` dilates its sandwich with an `F × F` ancilla per party, and the seeded\nsoundness theorem is applied to a projective dilation of the padded strategy, which adds one\nmore. So the measurement stage 4 produces acts on `(dA × Anc F m) × EA` for an ancilla type `EA`\nthat stage 5 has no reason to know, and the state it is consistent on is a product of the\nexpanded state `hatVec ψ` with fixed ancilla vectors. The structure carries the ancilla types\n`EA`, `EB` and the state `Φ` abstractly, and records the one property of `Φ` every transfer from\nstages 2 and 3 needs: an operator on the two hat registers, extended by the identity, has the\nexpectation it has on `hatVec ψ` (`Φ_reduced`). Every `extVec2 (hatVec ψ) a₀ b₀`, nested or\nreindexed, satisfies it.\n\n## The consistency\n\n`consA` says that Alice's pair measurement, read through the `W`-component evaluated at a\nuniformly random point `u`, agrees with Bob's expanded `(Point, W)` measurement at `u` up to\n`δ` --- the paper's `eq:qld-s-point-con-alice`; `consB` is `eq:qld-s-point-con-bob`. Both are\nrequired, and no symmetry of the strategy is assumed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Simul.lean",
+  "source_path": "MIPRE/Background/QLD/Simul.lean",
+  "defmat": [
+   "MIPRE.QLD.PolyPair",
+   "MIPRE.QLD.PolyPair.proj",
+   "MIPRE.QLD.SimulPair",
+   "MIPRE.QLD.evalMarg"
+  ],
+  "embedded": [
+   "MIPRE.QLD.PolyPair.proj_X",
+   "MIPRE.QLD.PolyPair.proj_Z"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.QLD.PolyPair",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     78,
+     81
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.PolyPair.proj",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     83,
+     87
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.PolyPair.proj_X",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     89,
+     90
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.PolyPair.proj_Z",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     92,
+     93
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.SimulPair",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     123,
+     156
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.evalMarg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     97,
+     101
+    ]
+   }
+  ],
+  "lines": 522,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix_B",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_LCS_Basic",
+   "import Definitions.Def_MIPRE_LCS_Common",
+   "import Definitions.Def_MIPRE_LCS_Measurement",
+   "import Definitions.Def_MIPRE_LCS_Observable",
+   "import Definitions.Def_MIPRE_LCS_Strategy_ObservableToProjector",
+   "import Definitions.Def_MIPRE_LCS_NonlocalGame",
+   "import Definitions.Def_MIPRE_LCS_Pauli",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Strategy",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Game",
+   "import Definitions.Def_MIPRE_Background_QLD_Game",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Win",
+   "import Definitions.Def_MIPRE_Background_QLD_Anticomm",
+   "import Definitions.Def_MIPRE_Background_QLD_WinMS",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_PhiNorm",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_IsometryData",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Assembly",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_JointDiag",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Blocks",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Main",
+   "import Definitions.Def_MIPRE_Background_QLD_Ortho",
+   "import Definitions.Def_MIPRE_Background_QLD_Consistency",
+   "import Definitions.Def_MIPRE_Background_QLD_Commutation",
+   "import Definitions.Def_MIPRE_Background_QLD_Expanded",
+   "import Definitions.Def_MIPRE_Background_QLD_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Combined"
+  ],
+  "blueprint": [
+   "lem:qld-simultaneous"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.QLD.PolyPair": [
+    "/-- Pairs of polynomials in `m` variables of individual degree at most `d`: the outcomes of the",
+    "simultaneous measurement. -/"
+   ],
+   "MIPRE.QLD.PolyPair.proj": [
+    "/-- The component of a pair a basis reads: `g_X` for `X`, `g_Z` for `Z`. -/"
+   ],
+   "MIPRE.QLD.SimulPair": [
+    "/-- **The simultaneous pair measurement** (`lem:qld-simultaneous`, the paper's `lem:qld-4-7`),",
+    "for a strategy `(ψ, MA, MB)` of the Pauli basis test, with error `δ`: on each party's padded",
+    "local space `(dA × Anc F m) × EA` a projective measurement with outcomes pairs of polynomials,",
+    "whose evaluated marginals are consistent with the opposite party's expanded point measurements",
+    "on the padded state `Φ`, in both register versions. -/"
+   ],
+   "MIPRE.QLD.evalMarg": [
+    "/-- **The evaluated `W`-marginal** of a pair measurement at the point `u`: the paper's",
+    "`S-hat_{[eval_u(·_W) = a]}`, the POVM with outcomes in `F` that sums the pair operators whose",
+    "`W`-component takes the value `a` at `u`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_QLD_Complete",
+  "module": "MIPRE.Background.QLD.Complete",
+  "module_doc": "/-!\n# Completing the pair measurement and its evaluated marginals (`lem:qld-global-complete`,\n`lem:qld-global-sandwich`)\n\nStage 4 ends with the interface `SimulPair` (`lem:qld-simultaneous`): a projective measurement\nwith outcomes pairs `(g_X, g_Z)` of polynomials in `m` variables, whose evaluated marginals are\nconsistent with the opposite party's expanded point measurements. This file builds it from a\nglobal measurement `G` with outcomes in `LowIndDegPoly F (4m) d` (the polynomials on the padded\npoint) and the estimates of stage 4b, abstractly: for a projective `G` on Alice's register and\ntwo projective families `X x`, `Z z` on Bob's.\n\n## The completion\n\nA good outcome `g = α g_X(x) + β g_Z(z)` (`IsGood`) is relabelled by the pair `(g_X, g_Z)`, read\noff its two coefficient polynomials through `LowIndDegPoly.blockPoly` (a polynomial reading only\nthe `x` block, as a polynomial in `m` variables); every other outcome is sent to the fixed pair\n`(0, 0)`. This is a coarse-graining of `G`, so it is a complete projective measurement\n(`pairMeas`, `isPVM_pairMeas`): the paper's completion by the orthogonal complement `R`, whose\nweight is the weight of the non-good outcomes, bounded by `lem:qld-global-separate`.\n\n## The marginals\n\nFrom the products estimate `∑_g E_u ‖(G_g ⊗ (1 - B_u(g(u)))) Φ‖² ≤ Δ`, the triangle inequality\nand Cauchy--Schwarz give `∑_g E_u ‖(G_g ⊗ B_u(g(u))) Φ‖² ≥ 1 - 2√Δ`\n(`one_sub_two_sqrt_le_sum_snorm_sq`). For a good `g` and the order `X_a Z_b`, the fibre analysis\nof `lem:qld-global-separate` bounds `E_u ‖(G_g ⊗ B_u(g(u))) Φ‖²` by `2/q · ⟨G_g⟩` plus the\ndiagonal weight `E_z ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩`, and the non-good outcomes carry weight at most\n`δ_G`; hence the `Z` marginal `E_z ∑_g ⟨G_g ⊗ Z_{g_Z(z)}(z)⟩ ≥ 1 - 2√Δ - 2/q - δ_G`\n(`marg_Z_ge`), and the order `Z_b X_a` gives the `X` marginal. The consistency form\n(`inconsistency_evalMarg_Z_le`, `_X_le`) is the same statement read through `inconsistency`.\nThe register transport to the shape of `SimulPair` (`reindex_aOp_aOp`, `isPVM_reindex`) and the\ninstance itself are in `PaddedLIDT.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Complete.lean",
+  "source_path": "MIPRE/Background/QLD/Complete.lean",
+  "defmat": [
+   "MIPRE.QLD.gX",
+   "MIPRE.QLD.gZ",
+   "MIPRE.QLD.pairMeas",
+   "MIPRE.QLD.pairOf"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.QLD.gX",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     178,
+     181
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.gZ",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     183,
+     186
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.pairMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     213,
+     219
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.pairOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     202,
+     205
+    ]
+   }
+  ],
+  "lines": 538,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix_B",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Seeds",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Reparam",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Strategy",
+   "import Definitions.Def_MIPRE_Background_LIDT_BlockPoly",
+   "import Definitions.Def_MIPRE_Foundations_StrategyDilation",
+   "import Definitions.Def_MIPRE_LCS_Basic",
+   "import Definitions.Def_MIPRE_LCS_Common",
+   "import Definitions.Def_MIPRE_LCS_Measurement",
+   "import Definitions.Def_MIPRE_LCS_Observable",
+   "import Definitions.Def_MIPRE_LCS_Strategy_ObservableToProjector",
+   "import Definitions.Def_MIPRE_LCS_NonlocalGame",
+   "import Definitions.Def_MIPRE_LCS_Pauli",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Strategy",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Game",
+   "import Definitions.Def_MIPRE_Background_QLD_Game",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Value",
+   "import Definitions.Def_MIPRE_Foundations_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Win",
+   "import Definitions.Def_MIPRE_Background_QLD_Anticomm",
+   "import Definitions.Def_MIPRE_Background_QLD_WinMS",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_PhiNorm",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_IsometryData",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Assembly",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_JointDiag",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Blocks",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Main",
+   "import Definitions.Def_MIPRE_Background_QLD_Ortho",
+   "import Definitions.Def_MIPRE_Background_QLD_Consistency",
+   "import Definitions.Def_MIPRE_Background_QLD_Commutation",
+   "import Definitions.Def_MIPRE_Background_QLD_Expanded",
+   "import Definitions.Def_MIPRE_Background_QLD_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Combined",
+   "import Definitions.Def_MIPRE_Background_QLD_Lines",
+   "import Definitions.Def_MIPRE_Foundations_Blocks",
+   "import Definitions.Def_MIPRE_Background_QLD_Padded",
+   "import Definitions.Def_MIPRE_Background_QLD_Product",
+   "import Definitions.Def_MIPRE_Background_QLD_Combine",
+   "import Definitions.Def_MIPRE_Background_QLD_Legalize",
+   "import Definitions.Def_MIPRE_Background_QLD_PaddedLines",
+   "import Definitions.Def_MIPRE_Background_QLD_PaddedStrategy",
+   "import Definitions.Def_MIPRE_Background_QLD_Dummy",
+   "import Definitions.Def_MIPRE_Background_QLD_Products",
+   "import Definitions.Def_MIPRE_Background_QLD_Linear",
+   "import Definitions.Def_MIPRE_Background_QLD_Separate",
+   "import Definitions.Def_MIPRE_Background_QLD_Simul"
+  ],
+  "blueprint": [
+   "lem:qld-global-complete"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.QLD.gX": [
+    "/-- The `X` polynomial of an outcome: its `α` coefficient read on the `x` block. -/"
+   ],
+   "MIPRE.QLD.gZ": [
+    "/-- The `Z` polynomial of an outcome: its `β` coefficient read on the `z` block. -/"
+   ],
+   "MIPRE.QLD.pairMeas": [
+    "/-- **The completed pair measurement**: the global measurement coarse-grained by the relabelling.",
+    "The non-good outcomes are absorbed into the pair `(0, 0)`: the paper's complement `R`, added to a",
+    "fixed legal outcome. -/"
+   ],
+   "MIPRE.QLD.pairOf": [
+    "/-- **The relabelling**: a good outcome becomes its pair `(g_X, g_Z)`, every other outcome the",
+    "fixed pair `(0, 0)`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_QLD_PauliBasis",
+  "module": "MIPRE.Background.QLD.PauliBasis",
+  "module_doc": "/-!\n# The point measurement and the Pauli basis reading, on one party\n\nThe repaired proof of `lem:qld-exact-paulis` needs the strategy's `(Point, W)` measurement to be\nclose to the low-degree reading of its `(Pauli, W)` answer **on the same party**: the Pauli basis\nanswer does not depend on the sampled point, which is what lets Schwartz--Zippel be applied to a\nuniform point independent of the operators.\n\nBoth inputs are items of `lem:qld-win-implications`, and both are *cross-party*: the point\nmeasurements of the two players agree (`item_consistency` at the type `(Point, W)`), and Alice's\npoint answer agrees with the evaluation at the sampled point of the low-degree encoding of Bob's\nPauli basis answer (`item_pauli_consistency`). They share Alice's family, so the triangle\ninequality of `normSq_stateVecB_sub_le` leaves a statement about Bob alone, at four times the\nerror: `688 ε`.\n\nNothing here is expanded or padded: this is the bare strategy, and the statement is the one the\nmass argument of `MIPRE/Background/QLD/NonMultilinear.lean` consumes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliBasis.lean",
+  "source_path": "MIPRE/Background/QLD/PauliBasis.lean",
+  "defmat": [
+   "MIPRE.QLD.hatPauli",
+   "MIPRE.QLD.rdPauliVec",
+   "MIPRE.QLD.weylPOVM",
+   "MIPRE.conv"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.QLD.hatPauli",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     229,
+     233
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.rdPauliVec",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     189,
+     192
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.weylPOVM",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     212,
+     214
+    ]
+   },
+   {
+    "name": "MIPRE.conv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     44,
+     48
+    ]
+   }
+  ],
+  "lines": 468,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix_B",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_LCS_Basic",
+   "import Definitions.Def_MIPRE_LCS_Common",
+   "import Definitions.Def_MIPRE_LCS_Measurement",
+   "import Definitions.Def_MIPRE_LCS_Observable",
+   "import Definitions.Def_MIPRE_LCS_Strategy_ObservableToProjector",
+   "import Definitions.Def_MIPRE_LCS_NonlocalGame",
+   "import Definitions.Def_MIPRE_LCS_Pauli",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Strategy",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Game",
+   "import Definitions.Def_MIPRE_Background_QLD_Game",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Win",
+   "import Definitions.Def_MIPRE_Background_QLD_Anticomm",
+   "import Definitions.Def_MIPRE_Background_QLD_WinMS",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_PhiNorm",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_IsometryData",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Assembly",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_JointDiag",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Blocks",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Main",
+   "import Definitions.Def_MIPRE_Background_QLD_Ortho",
+   "import Definitions.Def_MIPRE_Background_QLD_Consistency",
+   "import Definitions.Def_MIPRE_Background_QLD_Commutation",
+   "import Definitions.Def_MIPRE_Background_QLD_Expanded",
+   "import Definitions.Def_MIPRE_Background_QLD_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Combined",
+   "import Definitions.Def_MIPRE_Background_QLD_Simul"
+  ],
+  "blueprint": [
+   "lem:qld-exact-paulis"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.QLD.hatPauli": [
+    "/-- **The Pauli basis measurement convolved with the ancilla's Weyl measurement**: a POVM whose",
+    "outcomes are cube data and which, crucially, does not depend on any sampled point. -/"
+   ],
+   "MIPRE.QLD.rdPauliVec": [
+    "/-- The cube data a `(Pauli, W)` answer reports; zero on an ill-formatted answer. -/"
+   ],
+   "MIPRE.QLD.weylPOVM": [
+    "/-- **The ancilla's Weyl measurement**, whose outcomes are the cube data themselves: the",
+    "syndrome measurements are its coarse-grainings. -/"
+   ],
+   "MIPRE.conv": [
+    "/-- **The convolution of a family on the party's own register with one on its ancilla**: the shape",
+    "every hatted measurement has, `X̂_c = ∑_{a + b = c} X_a ⊗ T_b`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_QLD_Multilinear",
+  "module": "MIPRE.Background.QLD.Multilinear",
+  "module_doc": "/-!\n# The mass at non-multilinear outcomes (`lem:qld-exact-paulis`, the approximate half)\n\nThe Pauli construction of `MIPRE/Background/QLD/ExactPauli.lean` reads an outcome `g` of the\nsimultaneous measurement through the *multilinear interpolant* of its values on the boolean cube,\n`Coded(g) · ind_m(u)`, rather than through `g(u)` itself. The two agree exactly when `g` is\nmultilinear and not otherwise, so the construction is consistent with the strategy's point\nmeasurement up to the mass the simultaneous measurement puts on non-multilinear outcomes.\n\nThat mass is what the paper's `lem:qld-construct-the-paulis` bounds, in an argument it repaired\ntwice. The repair is to compare the outcome not with the point measurement --- whose label depends\non the sampled point --- but with a projective family indexed by **cube data**, which does not.\nThen the point is independent of the operators, and Schwartz--Zippel applies in the direction it\nis true in: two distinct polynomials of total degree `md` *agree* on at most an `md/q` fraction.\n\nThis file is the aggregation step, stated so that its two inputs are visible: a lower bound on the\nagreement with the cube-data family, and a uniform bound on the probability that a bad outcome\nagrees with any one of its labels.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Multilinear.lean",
+  "source_path": "MIPRE/Background/QLD/Multilinear.lean",
+  "defmat": [
+   "MIPRE.QLD.IsInterp",
+   "MIPRE.QLD.IsML",
+   "MIPRE.QLD.cubeData",
+   "MIPRE.QLD.instDecidablePredLowIndDegPolyIsInterp",
+   "MIPRE.QLD.instDecidablePredLowIndDegPolyIsML",
+   "MIPRE.QLD.polyMarg"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.QLD.IsInterp",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     253,
+     255
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.IsML",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     193,
+     196
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.cubeData",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     249,
+     251
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.instDecidablePredLowIndDegPolyIsInterp",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     257,
+     258
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.instDecidablePredLowIndDegPolyIsML",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     198,
+     199
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.polyMarg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     321,
+     324
+    ]
+   }
+  ],
+  "lines": 527,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix_B",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Seeds",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Reparam",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Strategy",
+   "import Definitions.Def_MIPRE_Background_LIDT_BlockPoly",
+   "import Definitions.Def_MIPRE_Foundations_StrategyDilation",
+   "import Definitions.Def_MIPRE_LCS_Basic",
+   "import Definitions.Def_MIPRE_LCS_Common",
+   "import Definitions.Def_MIPRE_LCS_Measurement",
+   "import Definitions.Def_MIPRE_LCS_Observable",
+   "import Definitions.Def_MIPRE_LCS_Strategy_ObservableToProjector",
+   "import Definitions.Def_MIPRE_LCS_NonlocalGame",
+   "import Definitions.Def_MIPRE_LCS_Pauli",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Strategy",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Game",
+   "import Definitions.Def_MIPRE_Background_QLD_Game",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Value",
+   "import Definitions.Def_MIPRE_Foundations_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Win",
+   "import Definitions.Def_MIPRE_Background_QLD_Anticomm",
+   "import Definitions.Def_MIPRE_Background_QLD_WinMS",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_PhiNorm",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_IsometryData",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Assembly",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_JointDiag",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Blocks",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Main",
+   "import Definitions.Def_MIPRE_Background_QLD_Ortho",
+   "import Definitions.Def_MIPRE_Background_QLD_Consistency",
+   "import Definitions.Def_MIPRE_Background_QLD_Commutation",
+   "import Definitions.Def_MIPRE_Background_QLD_Expanded",
+   "import Definitions.Def_MIPRE_Background_QLD_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Combined",
+   "import Definitions.Def_MIPRE_Background_QLD_Lines",
+   "import Definitions.Def_MIPRE_Foundations_Blocks",
+   "import Definitions.Def_MIPRE_Background_QLD_Padded",
+   "import Definitions.Def_MIPRE_Background_QLD_Product",
+   "import Definitions.Def_MIPRE_Background_QLD_Combine",
+   "import Definitions.Def_MIPRE_Background_QLD_Legalize",
+   "import Definitions.Def_MIPRE_Background_QLD_PaddedLines",
+   "import Definitions.Def_MIPRE_Background_QLD_PaddedStrategy",
+   "import Definitions.Def_MIPRE_Background_QLD_Dummy",
+   "import Definitions.Def_MIPRE_Background_QLD_Products",
+   "import Definitions.Def_MIPRE_Background_QLD_Linear",
+   "import Definitions.Def_MIPRE_Background_QLD_Separate",
+   "import Definitions.Def_MIPRE_Background_QLD_Simul",
+   "import Definitions.Def_MIPRE_Background_QLD_Complete",
+   "import Definitions.Def_MIPRE_Background_QLD_PauliBasis"
+  ],
+  "blueprint": [
+   "lem:qld-exact-paulis"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.QLD.IsInterp": [
+    "/-- **An outcome that is the low-degree encoding of its own cube data.** -/"
+   ],
+   "MIPRE.QLD.IsML": [
+    "/-- **A multilinear outcome**: every monomial has each exponent at most one, so the outcome is its",
+    "own multilinear interpolant. -/"
+   ],
+   "MIPRE.QLD.cubeData": [
+    "/-- **The cube data of an outcome**: its values on `{0,1}^m`, the paper's `\\coded(g)`. -/"
+   ],
+   "MIPRE.QLD.instDecidablePredLowIndDegPolyIsInterp": null,
+   "MIPRE.QLD.instDecidablePredLowIndDegPolyIsML": null,
+   "MIPRE.QLD.polyMarg": [
+    "/-- **The `W` marginal of a pair measurement, indexed by polynomials.** -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_QLD_ExactPauli",
+  "module": "MIPRE.Background.QLD.ExactPauli",
+  "module_doc": "/-!\n# Exact Pauli observables from a simultaneous pair measurement\n\nBlueprint `lem:qld-exact-paulis`, the part of it that is **exact**: given a projective measurement\n`S` whose outcomes are *pairs* `(g_X, g_Z)` and a map `cd` sending an outcome to a vector of\n`F_q^n`, the appendix builds binary observables on the enlarged space `dA (x) (C^q)^{(x) n}` which\nsatisfy the generalized Pauli relations with no error term at all. This file is that construction\nand those relations.\n\nNothing here is approximate, and nothing here mentions the game: every statement is an identity\nbetween matrices, with `IsPVM S` and `IsWeylFamily w` the only hypotheses. That is the point ---\nthe blueprint's proof paragraph says exactness comes \"from projectivity of the simultaneous\nmeasurement together with the group law of the Pauli basis\", and this file is the\nformalization of exactly that sentence. `thm:linearity` is not used.\n\n## The construction\n\nWrite `pi` for one of the two projections `(g_X, g_Z) |→ g_W`. Then\n\n* `sCoarse S pi g` is the `W`-marginal `S^W_g`, a projective measurement by `IsPVM.coarse`;\n* `mTilde` is the appendix's `eq:tilde_M`,\n  `M~^{W,u}_a = sum_g S^W_g (x) tau^W_{cd(g) . u + a}(u)`,\n  where `tau^W_c(u)` is the syndrome projector `MIPRE.Weyl.syn w u c` --- the level set of the\n  pairing with `u` --- so that `mTilde` is a projective measurement with outcomes in `F_q`;\n* `wTilde` is `eq:def-tildewj`, the binary observable\n  `W~^e(u) = sum_a (-1)^{tr(e a)} M~^{W,u}_a`, at a field element `e` (the appendix takes `e` in a\n  self-dual basis of `F_q` over `F_2`, which this file does not need).\n\n## The one identity everything follows from\n\n`wTilde_eq`: the observable **factorizes**,\n\n`W~^e(u) = pvmObs S (p |→ (-1)^{tr(e (cd (pi p) . u))})  (x)  w (e . u)`,\n\na signed sum of the *pair* measurement tensor a genuine Weyl operator. The `F_q`-valued syndrome\nlabel is what makes this work: summing the syndrome projectors against the character of `a`\nreassembles the Weyl operator on the line `r |→ r . u` (`MIPRE.Weyl.eq_sum_proj`), and the\n`cd(g) . u` shift becomes the sign the first factor carries.\n\nSelf-adjointness (`wTilde_conjTranspose`) and involutivity (`wTilde_mul_self`) are then the\n`pvmObs` calculus of `MIPRE/Foundations/PVM.lean` on the left factor and the group law on the\nright. The twisted commutation (`wTilde_mul_wTilde`) is the same: the two left factors are\nweightings of *one* projective measurement, so they commute exactly (`pvmObs_comm`), and the whole\nphase comes from the right factors' `MIPRE.Weyl.wX_mul_wZ`.\n\n## A repair carried over from the paper\n\nThe pinned paper's display for the commutation relation used to split into `e != e'` (claiming\nexact commutation) and `e = e'` (a phase). That is false: self-duality gives `tr(e_j e_{j'}) =\ndelta_{j j'}`, but `tr(e_j e_{j'} c)` need not vanish for `c` outside `F_2`, and the quantity in\nthe exponent is `e_j e_{j'} (u . v)` with `u . v` an arbitrary field element. The paper now states\nthe general phase, and `wTilde_mul_wTilde` below is that general phase --- with no case split, and\nwith no reference to a basis, since the relation holds for every pair of field elements.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ExactPauli.lean",
+  "source_path": "MIPRE/Background/QLD/ExactPauli.lean",
+  "defmat": [
+   "MIPRE.QLD.cdPhase",
+   "MIPRE.QLD.mTilde",
+   "MIPRE.QLD.sCoarse",
+   "MIPRE.QLD.wTilde"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.QLD.cdPhase",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     169,
+     171
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.mTilde",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     158,
+     161
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.sCoarse",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     129,
+     133
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.wTilde",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     173,
+     176
+    ]
+   }
+  ],
+  "lines": 147,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl"
+  ],
+  "blueprint": [
+   "lem:qld-exact-paulis"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.QLD.cdPhase": [
+    "/-- **The phase the first tensor factor carries**, `tr(e (cd(pi p) . u))`. -/"
+   ],
+   "MIPRE.QLD.mTilde": [
+    "/-- **The appendix's `eq:tilde_M`.** `M~^{W,u}_a = sum_g S^W_g (x) tau^W_{cd(g) . u - a}(u)`; in",
+    "characteristic two the subtraction is the addition. -/"
+   ],
+   "MIPRE.QLD.sCoarse": [
+    "/-- **A coarse-graining of a measurement along a map on its outcomes.** The two marginals of the",
+    "simultaneous pair measurement are this at `Prod.fst` and `Prod.snd`; `IsPVM.coarse` is what makes",
+    "each of them projective. -/"
+   ],
+   "MIPRE.QLD.wTilde": [
+    "/-- **The appendix's `eq:def-tildewj`.** The binary observable obtained from `mTilde` by the",
+    "character of the field element `e`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_QLD_SwapUnitary",
+  "module": "MIPRE.Background.QLD.SwapUnitary",
+  "module_doc": "/-!\n# The swap unitary, and why two twirls force an EPR pair\n\nBlueprint `lem:qld-swap`, the part of it that is **exact**, together with the elementary estimate\nthat turns the exact part into the closeness statement.\n\nThe appendix builds, out of the simultaneous pair measurement `S`, a *local unitary*\n\n`V = sum_{(g_X, g_Z)} S_{g_X,g_Z}  (x)  tau^X(cd g_Z) tau^Z(cd g_X)`\n\nand shows that conjugation by it carries each exact Pauli observable `wTilde` of\n`MIPRE/Background/QLD/ExactPauli.lean` to a *bare* Weyl operator on the ancilla,\n`V W~^e(u) V^dagger = Id (x) tau^W(e . u)`. Both statements are identities, and both are here\n(`swapU_mul_conjTranspose`, `swapU_conj`).\n\n## The algebra of `sTensor`\n\nEvery operator in sight has the shape `sum_p S_p (x) T_p` for a family `T` on the ancilla. Because\n`S` is projective, these compose factorwise (`sTensor_mul`), so the whole calculation is arithmetic\nin `T` and the projectivity of `S` is used once, in that one lemma. Unitarity of `V` and the\nconjugation identity are then two lines each.\n\n## The two twirls\n\nThe estimate rests on an identity about the Weyl system alone, with no measurement in it:\n\n`twirl_mul_twirl`:  `(E_u tau^X(u) (x) tau^X(u)) * (E_v tau^Z(v) (x) tau^Z(v)) = |EPR_q><EPR_q|` .\n\nThe paper reaches it through an iterated tensor product over the `M` qudits. In this\nrepository `(C^q)^{(x) M}` is *one* matrix algebra indexed by `F_q^M`\n(`MIPRE/Foundations/Weyl.lean` explains why), so the identity is a single entry computation: the\n`v`-average kills every off-diagonal pair of column indices by the cancellation lemma, and the\n`u`-average then leaves exactly the diagonal pair of row indices.\n\n## The repaired arithmetic\n\n`re_inner_ge_of_two_close` is the last step, and it is where the pinned paper carried an error that\nthe verification campaign repaired: the earlier text bounded `||(H_W - Id) v||` by `delta_S` where\nthe display above it gives `delta_S` for the *square*, and compared a squared triangle inequality\nwith `2 sqrt(delta_S)` where the bound on the square is `4 delta_S`. The conclusion\n`O(sqrt(delta_S))` is unchanged; only the constants move, and the chain below is the corrected one:\nfrom `Re<theta, H_W theta> >= 1 - delta/2` for both `W` one gets\n`Re<H_X theta, H_Z theta> >= 1 - 2 sqrt(delta) - 2 delta`.\n\nThe case split in its proof is not in the paper and is not a repair --- it is what a statement\nwith no implicit \"for small enough `delta`\" needs: for `delta > 1` the first chain's\n`1 - sqrt(delta)` is negative and squaring it reverses, so that range is handled by the trivial\nbound `Re<x,y> >= -2 delta`, which is already stronger there.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/SwapUnitary.lean",
+  "source_path": "MIPRE/Background/QLD/SwapUnitary.lean",
+  "defmat": [
+   "MIPRE.QLD.eprProj",
+   "MIPRE.QLD.sTensor",
+   "MIPRE.QLD.swapU",
+   "MIPRE.QLD.twirl",
+   "MIPRE.QLD.uOf"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.QLD.eprProj",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     229,
+     232
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.sTensor",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     76,
+     80
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.swapU",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     124,
+     127
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.twirl",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     247,
+     250
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.uOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     119,
+     122
+    ]
+   }
+  ],
+  "lines": 172,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Background_QLD_ExactPauli"
+  ],
+  "blueprint": [
+   "lem:qld-swap"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.QLD.eprProj": [
+    "/-- The rank-one projector onto the maximally entangled state of the two ancilla halves. The",
+    "generalized Paulis in characteristic two are real, so no conjugation appears. -/"
+   ],
+   "MIPRE.QLD.sTensor": [
+    "/-- `sum_p S_p (x) T_p`: an ancilla-side family `T` read along the outcomes of `S`. The swap",
+    "unitary, the exact Pauli observables and the identity are all of this shape. -/"
+   ],
+   "MIPRE.QLD.swapU": [
+    "/-- **The swap unitary** of the appendix's isometry construction. -/"
+   ],
+   "MIPRE.QLD.twirl": [
+    "/-- **The Weyl twirl** `E_u tau^W(u) (x) tau^W(u)` on two copies of the ancilla. -/"
+   ],
+   "MIPRE.QLD.uOf": [
+    "/-- The ancilla-side factor of the swap unitary at one outcome: `tau^X(cd g_Z) tau^Z(cd g_X)`.",
+    "Note the crossing --- the argument of the `X`-type operator is the `Z`-side polynomial. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_QLD_MTilde",
+  "module": "MIPRE.Background.QLD.MTilde",
+  "module_doc": "/-!\n# Item 1 of `lem:qld-exact-paulis`, read as `M~` (the paper's `eq:tilde_M`)\n\n`MIPRE/Background/QLD/Multilinear.lean` proves the agreement the appendix's chain establishes,\n\n`E_u sum_g <S^W_g (x) M^(Point,W),u_{coded(g).ind_m(u)}> >= 1 - delta_S - 2 (mass off the good\nset)`,\n\nas a sum over the *outcomes* of the simultaneous measurement. The paper states the same thing as a\ncloseness between two **measurements**: `M~^{W,ind_m(u)}_a`, an operator on one party, and the\nstrategy's `(Point, W)` measurement on the other. This file is that reading.\n\n## Why it is a reindexing and not a new estimate\n\nThe paper's expanded state is\n`|psi-hat> = |psi>_{A B} (x) |EPR>_{A' A''} (x) |EPR>_{B' B''}`, with `A' A''` a maximally\nentangled pair *local to Alice* and `B' B''` one local to Bob, and it is read along two cuts,\n`A A' | B A''` and `B B' | A B''` --- one per orientation of `lem:qld-simultaneous`. Neither cut is\nthe physical one: each splits a local pair. `MIPRE.QLD.hatVec` is one such cut, and it is all\n`lem:qld-simultaneous` and `lem:qld-helper` need, since each uses one orientation at a time.\n\n`M~^{W,u-tilde}_a = sum_g S-hat^W_g (x) tau^W_{coded(g) . u-tilde - a}(u-tilde)` is different: it\nwants the pair measurement and the generalized Pauli on *disjoint registers of one party*,\n`A A'` and `A''`. In the `hatVec` cut the register `A''` sits with the opposite party. So writing\n`M~` as a single matrix is a regrouping of the same six registers along a third cut,\n`A A' A'' | B`, and every Born probability transports across it by `bornProb_regroupVec`, which is\none entry computation. No second entangled pair and no new estimate are involved.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/MTilde.lean",
+  "source_path": "MIPRE/Background/QLD/MTilde.lean",
+  "defmat": [
+   "MIPRE.QLD.SimulPair.mTildeAt",
+   "MIPRE.QLD.SimulPair.mVec",
+   "MIPRE.QLD.SimulPair.wTildeAt",
+   "MIPRE.QLD.ptAtPOVM",
+   "MIPRE.regroupEquiv",
+   "MIPRE.regroupVec"
+  ],
+  "embedded": [
+   "MIPRE.QLD.SimulPair.isPVM_mTildeAt",
+   "MIPRE.QLD.isPVM_mTilde",
+   "MIPRE.QLD.mTilde_eq_sTensor"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.QLD.SimulPair.isPVM_mTildeAt",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     275,
+     277
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.SimulPair.mTildeAt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     269,
+     273
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.SimulPair.mVec",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     263,
+     265
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.SimulPair.wTildeAt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     346,
+     349
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.isPVM_mTilde",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     129,
+     154
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.mTilde_eq_sTensor",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     123,
+     127
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.ptAtPOVM",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     212,
+     214
+    ]
+   },
+   {
+    "name": "MIPRE.regroupEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     52,
+     57
+    ]
+   },
+   {
+    "name": "MIPRE.regroupVec",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     59,
+     61
+    ]
+   }
+  ],
+  "lines": 589,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix_B",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Seeds",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Reparam",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Strategy",
+   "import Definitions.Def_MIPRE_Background_LIDT_BlockPoly",
+   "import Definitions.Def_MIPRE_Foundations_StrategyDilation",
+   "import Definitions.Def_MIPRE_LCS_Basic",
+   "import Definitions.Def_MIPRE_LCS_Common",
+   "import Definitions.Def_MIPRE_LCS_Measurement",
+   "import Definitions.Def_MIPRE_LCS_Observable",
+   "import Definitions.Def_MIPRE_LCS_Strategy_ObservableToProjector",
+   "import Definitions.Def_MIPRE_LCS_NonlocalGame",
+   "import Definitions.Def_MIPRE_LCS_Pauli",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Strategy",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Game",
+   "import Definitions.Def_MIPRE_Background_QLD_Game",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Value",
+   "import Definitions.Def_MIPRE_Foundations_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Win",
+   "import Definitions.Def_MIPRE_Background_QLD_Anticomm",
+   "import Definitions.Def_MIPRE_Background_QLD_WinMS",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_PhiNorm",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_IsometryData",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Assembly",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_JointDiag",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Blocks",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Main",
+   "import Definitions.Def_MIPRE_Background_QLD_Ortho",
+   "import Definitions.Def_MIPRE_Background_QLD_Consistency",
+   "import Definitions.Def_MIPRE_Background_QLD_Commutation",
+   "import Definitions.Def_MIPRE_Background_QLD_Expanded",
+   "import Definitions.Def_MIPRE_Background_QLD_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Combined",
+   "import Definitions.Def_MIPRE_Background_QLD_Lines",
+   "import Definitions.Def_MIPRE_Foundations_Blocks",
+   "import Definitions.Def_MIPRE_Background_QLD_Padded",
+   "import Definitions.Def_MIPRE_Background_QLD_Product",
+   "import Definitions.Def_MIPRE_Background_QLD_Combine",
+   "import Definitions.Def_MIPRE_Background_QLD_Legalize",
+   "import Definitions.Def_MIPRE_Background_QLD_PaddedLines",
+   "import Definitions.Def_MIPRE_Background_QLD_PaddedStrategy",
+   "import Definitions.Def_MIPRE_Background_QLD_Dummy",
+   "import Definitions.Def_MIPRE_Background_QLD_Products",
+   "import Definitions.Def_MIPRE_Background_QLD_Linear",
+   "import Definitions.Def_MIPRE_Background_QLD_Separate",
+   "import Definitions.Def_MIPRE_Background_QLD_Simul",
+   "import Definitions.Def_MIPRE_Background_QLD_Complete",
+   "import Definitions.Def_MIPRE_Background_QLD_PauliBasis",
+   "import Definitions.Def_MIPRE_Background_QLD_Multilinear",
+   "import Definitions.Def_MIPRE_Background_QLD_ExactPauli",
+   "import Definitions.Def_MIPRE_Background_QLD_SwapUnitary"
+  ],
+  "blueprint": [
+   "lem:qld-exact-paulis"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.QLD.SimulPair.mTildeAt": [
+    "/-- **The paper's `M~^{W, ind_m(u)}_a`** (`eq:tilde_M`): the simultaneous pair measurement of",
+    "`lem:qld-simultaneous` tensored with the ancilla's generalized Pauli at the shifted syndrome. -/"
+   ],
+   "MIPRE.QLD.SimulPair.mVec": [
+    "/-- **The state along the third cut.** `hatVec`'s cut puts the register the paper calls `A''`",
+    "with the opposite party; this one puts it with Alice, which is where `mTilde` needs it. -/"
+   ],
+   "MIPRE.QLD.SimulPair.wTildeAt": [
+    "/-- **The paper's `W~^e(u-tilde)`** (`eq:def-tildewj`) at the simultaneous pair measurement. -/"
+   ],
+   "MIPRE.QLD.ptAtPOVM": [
+    "/-- The strategy's `(Point, W)` measurement at `u`, read as a field element. -/"
+   ],
+   "MIPRE.regroupEquiv": [
+    "/-- **The regrouping** that moves the ancilla factor `T` from the second party to the first. -/"
+   ],
+   "MIPRE.regroupVec": [
+    "/-- The state, read along the regrouped cut. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_QLD_Pulling",
+  "module": "MIPRE.Background.QLD.Pulling",
+  "module_doc": "/-!\n# The estimates of `lem:qld-pauli-selfcons`, by polynomial outcome\n\n`MIPRE/Background/QLD/AncTransport.lean` closes the identities of the paper's pulling chain. Its\nestimates --- displays `eq:qld-pulling-7` and `eq:qld-pulling-11` --- consume the second item of\n`lem:qld-helper`, but not in the form that lemma is stated in. The helper is stated at an outcome\n`a` in `F_q`, which is what the expansion stage produces; the chain sums over the *polynomial*\noutcomes `g` of the simultaneous measurement, because the label `coded(g) . u-tilde` it carries is\na function of `g` and not of `g(u)`.\n\nThe two sums are equal, not merely comparable. Within a fibre of the evaluation the pair\nmeasurement's outcomes are orthogonal projectors, so every cross term of the squared norm\nvanishes, and the fibres partition the outcomes. That is `snorm_sq_sum_orthogonal` below, and the\nhelper in the chain's own indexing is its corollary.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Pulling.lean",
+  "source_path": "MIPRE/Background/QLD/Pulling.lean",
+  "defmat": [
+   "MIPRE.agreeOp"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.agreeOp",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     71,
+     75
+    ]
+   }
+  ],
+  "lines": 579,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix_B",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Seeds",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Reparam",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Strategy",
+   "import Definitions.Def_MIPRE_Background_LIDT_BlockPoly",
+   "import Definitions.Def_MIPRE_Foundations_StrategyDilation",
+   "import Definitions.Def_MIPRE_LCS_Basic",
+   "import Definitions.Def_MIPRE_LCS_Common",
+   "import Definitions.Def_MIPRE_LCS_Measurement",
+   "import Definitions.Def_MIPRE_LCS_Observable",
+   "import Definitions.Def_MIPRE_LCS_Strategy_ObservableToProjector",
+   "import Definitions.Def_MIPRE_LCS_NonlocalGame",
+   "import Definitions.Def_MIPRE_LCS_Pauli",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Strategy",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Game",
+   "import Definitions.Def_MIPRE_Background_QLD_Game",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Value",
+   "import Definitions.Def_MIPRE_Foundations_Swap",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ValueStability",
+   "import Definitions.Def_MIPRE_Background_QLD_Win",
+   "import Definitions.Def_MIPRE_Background_QLD_Anticomm",
+   "import Definitions.Def_MIPRE_Background_QLD_WinMS",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_PhiNorm",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_IsometryData",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Assembly",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_JointDiag",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Blocks",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Main",
+   "import Definitions.Def_MIPRE_Background_QLD_Ortho",
+   "import Definitions.Def_MIPRE_Background_QLD_Consistency",
+   "import Definitions.Def_MIPRE_Background_QLD_Commutation",
+   "import Definitions.Def_MIPRE_Background_QLD_Expanded",
+   "import Definitions.Def_MIPRE_Background_QLD_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Combined",
+   "import Definitions.Def_MIPRE_Background_QLD_Lines",
+   "import Definitions.Def_MIPRE_Foundations_Blocks",
+   "import Definitions.Def_MIPRE_Background_QLD_Padded",
+   "import Definitions.Def_MIPRE_Background_QLD_Product",
+   "import Definitions.Def_MIPRE_Background_QLD_Combine",
+   "import Definitions.Def_MIPRE_Background_QLD_Legalize",
+   "import Definitions.Def_MIPRE_Background_QLD_PaddedLines",
+   "import Definitions.Def_MIPRE_Background_QLD_PaddedStrategy",
+   "import Definitions.Def_MIPRE_Background_QLD_Dummy",
+   "import Definitions.Def_MIPRE_Background_QLD_Products",
+   "import Definitions.Def_MIPRE_Background_QLD_Linear",
+   "import Definitions.Def_MIPRE_Background_QLD_Separate",
+   "import Definitions.Def_MIPRE_Background_QLD_Simul",
+   "import Definitions.Def_MIPRE_Background_QLD_Complete",
+   "import Definitions.Def_MIPRE_Background_QLD_PauliBasis",
+   "import Definitions.Def_MIPRE_Background_QLD_Multilinear",
+   "import Definitions.Def_MIPRE_Background_QLD_ExactPauli",
+   "import Definitions.Def_MIPRE_Background_QLD_SwapUnitary",
+   "import Definitions.Def_MIPRE_Background_QLD_MTilde"
+  ],
+  "blueprint": [
+   "lem:qld-pauli-selfcons"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.agreeOp": [
+    "/-- **The agreement operator** `sum_g S_g (x) B_g` of a family on one party against a family on the",
+    "other, indexed by the same outcome. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_QLD_SwapMeasure",
+  "module": "MIPRE.Background.QLD.SwapMeasure",
+  "module_doc": "/-!\n# Conjugating the exact Pauli *measurement* by the swap unitary\n\n`MIPRE/Background/QLD/SwapUnitary.lean` conjugates the exact Pauli *observable*: the two signs\ncancel and `V W~^e(u) V^dagger = Id (x) tau^W(e . u)`, exactly. Item 2 of `lem:qld-swap` needs the\nsame statement one level down, on the measurement the observable is read off --- the appendix's\ndisplay `eq:qld-unitary-6`,\n\n`V M~^{W,u}_a V^dagger = Id (x) tau^W_{[g_h(u) = a]}` ,\n\nagain exactly. This file is that identity.\n\n## What conjugation does to a spectral projector\n\nThe observable's proof only needed the twisted commutation relation, which says conjugation by the\nancilla factor multiplies each Weyl operator by a character. On the *projectors* that becomes a\nshift: a spectral projector is the Fourier average of the family against a character\n(`proj_def`), two characters multiply by adding their labels, and so conjugation moves the\neigenvalue pattern by the label of the twist (`conj_proj_of_sign`). A syndrome projector is the\nsum of the spectral projectors over a level set of the pairing with the probe, so its outcome\nmoves by the shift's own pairing with the probe (`conj_syn_of_sign`).\n\nIn `M~^{W,u}_a` the outcome carried at the pair outcome `p` is `cd(pi p) . u + a`, and the shift\nconjugation applies there is `cd(pi p)`, whose pairing with `u` is that same `cd(pi p) . u`. The\ntwo cancel --- in characteristic two, `x + a + x = a` --- so every factor of the conjugated sum is\nthe *same* syndrome projector `tau^W_{[g_h(u)=a]}`, with the pair outcome gone from it, and the\nmeasurement in front sums to the identity.\n\nThat cancellation is the paper's relabelling `h' = h + coded(g_W)`, the passage its `\\cnote`\nrecords as repaired: the repair was to keep `coded(g_W) . ind_m(u)` rather than the false\n`g_W(u)` throughout, and what makes the relabelling exact here is that the shift and the outcome\nare written with the same `cd(pi p) . u` by construction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/SwapMeasure.lean",
+  "source_path": "MIPRE/Background/QLD/SwapMeasure.lean",
+  "defmat": [
+   "MIPRE.QLD.SimulPair.swapA",
+   "MIPRE.QLD.pauliAtPOVM"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.QLD.SimulPair.swapA",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     429,
+     431
+    ]
+   },
+   {
+    "name": "MIPRE.QLD.pauliAtPOVM",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     340,
+     345
+    ]
+   }
+  ],
+  "lines": 611,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix_B",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients_B",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Seeds",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Reparam",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Strategy",
+   "import Definitions.Def_MIPRE_Background_LIDT_BlockPoly",
+   "import Definitions.Def_MIPRE_Foundations_StrategyDilation",
+   "import Definitions.Def_MIPRE_LCS_Basic",
+   "import Definitions.Def_MIPRE_LCS_Common",
+   "import Definitions.Def_MIPRE_LCS_Measurement",
+   "import Definitions.Def_MIPRE_LCS_Observable",
+   "import Definitions.Def_MIPRE_LCS_Strategy_ObservableToProjector",
+   "import Definitions.Def_MIPRE_LCS_NonlocalGame",
+   "import Definitions.Def_MIPRE_LCS_Pauli",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Strategy",
+   "import Definitions.Def_MIPRE_LCS_MagicSquare_Game",
+   "import Definitions.Def_MIPRE_Background_QLD_Game",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Value",
+   "import Definitions.Def_MIPRE_Foundations_Swap",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ValueStability",
+   "import Definitions.Def_MIPRE_Background_QLD_Win",
+   "import Definitions.Def_MIPRE_Background_QLD_Anticomm",
+   "import Definitions.Def_MIPRE_Background_QLD_WinMS",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Positivity",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_PhiNorm",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_IsometryData",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_Assembly",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_JointDiag",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Blocks",
+   "import Definitions.Def_MIPRE_Background_Orthonormalization_Orthogonalization_FinDim_Main",
+   "import Definitions.Def_MIPRE_Background_QLD_Ortho",
+   "import Definitions.Def_MIPRE_Background_QLD_Consistency",
+   "import Definitions.Def_MIPRE_Background_QLD_Commutation",
+   "import Definitions.Def_MIPRE_Background_QLD_Expanded",
+   "import Definitions.Def_MIPRE_Background_QLD_Swap",
+   "import Definitions.Def_MIPRE_Background_QLD_Combined",
+   "import Definitions.Def_MIPRE_Background_QLD_Lines",
+   "import Definitions.Def_MIPRE_Foundations_Blocks",
+   "import Definitions.Def_MIPRE_Background_QLD_Padded",
+   "import Definitions.Def_MIPRE_Background_QLD_Product",
+   "import Definitions.Def_MIPRE_Background_QLD_Combine",
+   "import Definitions.Def_MIPRE_Background_QLD_Legalize",
+   "import Definitions.Def_MIPRE_Background_QLD_PaddedLines",
+   "import Definitions.Def_MIPRE_Background_QLD_PaddedStrategy",
+   "import Definitions.Def_MIPRE_Background_QLD_Dummy",
+   "import Definitions.Def_MIPRE_Background_QLD_Products",
+   "import Definitions.Def_MIPRE_Background_QLD_Linear",
+   "import Definitions.Def_MIPRE_Background_QLD_Separate",
+   "import Definitions.Def_MIPRE_Background_QLD_Simul",
+   "import Definitions.Def_MIPRE_Background_QLD_Complete",
+   "import Definitions.Def_MIPRE_Background_QLD_PauliBasis",
+   "import Definitions.Def_MIPRE_Background_QLD_Multilinear",
+   "import Definitions.Def_MIPRE_Background_QLD_ExactPauli",
+   "import Definitions.Def_MIPRE_Background_QLD_SwapUnitary",
+   "import Definitions.Def_MIPRE_Background_QLD_MTilde",
+   "import Definitions.Def_MIPRE_Background_QLD_Pulling"
+  ],
+  "blueprint": [
+   "lem:qld-swap"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.QLD.SimulPair.swapA": [
+    "/-- **Alice's swap unitary**, built from the simultaneous pair measurement along the encoding. -/"
+   ],
+   "MIPRE.QLD.pauliAtPOVM": [
+    "/-- **The `(Pauli, W)` measurement, read at a point.** The paper's",
+    "`M^{(Pauli,W)}_{[g_h(u) = a]}`: the strategy's Pauli measurement coarse-grained by the value at",
+    "`u` of the low-degree encoding of the answer it returns. -/"
+   ]
+  }
+ }
+]

@@ -1,0 +1,1896 @@
+[
+ {
+  "kind": "bundle-delta",
+  "definition_name": "MIPRE_Foundations_OpBound_B",
+  "module": "MIPRE.Foundations.OpBound",
+  "module_doc": "/-!\n# Operator bounds on matrices, by hand\n\nThe rigidity arguments of the Pauli basis test's appendix are chains of estimates\n`‖M |ψ⟩‖ ≤ …`, and the only thing they need about the operators in front is a bound\n`‖M v‖ ≤ K ‖v‖`. `Bnd M K` is that bound, with the four closure properties the chains use ---\nsums, products, scalars, and the two sources: a self-adjoint contraction has `Bnd M 1`, and an\nisometry has `‖M v‖ = ‖v‖` on the nose.\n\nThis is the `ℓ²` operator norm, spelled as a relation instead of a number. That is deliberate.\nMathlib has the norm, through `Matrix.toEuclideanCLM` and the C*-algebra structure on\ncontinuous linear maps, but the Loewner order on `EuclideanSpace ℂ n →L[ℂ] EuclideanSpace ℂ n`\ncosts enough instance search to time out the elaborator on a statement as small as\n`T * T ≤ 1 → ‖T‖ ≤ 1`. The order the arguments actually need is the one on *matrices*\n(`Matrix.nonneg_iff_posSemidef`, which is cheap), so the bridge here goes from a matrix\ninequality straight to a vector-norm inequality and never mentions an operator norm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OpBound.lean",
+  "source_path": "MIPRE/Foundations/OpBound.lean",
+  "defmat": [
+   "MIPRE.Bnd"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Bnd",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     89,
+     90
+    ]
+   }
+  ],
+  "lines": 90,
+  "published_bundle": "MIPRE_Foundations_OpBound",
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_OpBound"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Bnd": [
+    "/-- `‖M v‖ ≤ K ‖v‖` for every `v`: the `ℓ²` operator norm of `M` is at most `K`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-delta",
+  "definition_name": "MIPRE_Foundations_StateDistance_B",
+  "module": "MIPRE.Foundations.StateDistance",
+  "module_doc": "/-!\n# The state-dependent distance on a bipartite state\n\nEvery soundness argument in the Pauli basis test's appendix compares operators in the distance\n\n`A^x ≈_δ B^x` ⟺ `𝔼_{x ∼ μ} ⟨ψ| (A^x - B^x)† (A^x - B^x) |ψ⟩ ≤ δ`,\n\nwhere the operators act on **Alice's factor** of a bipartite state `|ψ⟩ ∈ ℂ^{dA} ⊗ ℂ^{dB}`. That\nis not the distance `MIPRE/Foundations/Distances.lean` defines: `povmDistance` and\n`IsPOVMClose` use the normalized Hilbert--Schmidt norm, which is the *tracial* — synchronous —\nspecialization, and `MIPRE/Foundations/Closeness.lean` says so in its own docstring. This file\nis the state-dependent one, and it is what blueprint `def:state-distance` names.\n\nTwo deliberate departures from the paper's `qld-prelim.tex`:\n\n* **no `O(·)` inside the definition.** The paper writes `≤ O(δ)`; here the relation is\n  `stateDist μ ψ A B ≤ δ` and the constants appear in the lemmas that produce them. That is\n  stronger, not weaker: `stateSqNorm_avg_le` preserves `δ` exactly and `povm_to_obs` gives\n  exactly `|𝒜| · δ`.\n* **answer-indexed families as well.** The paper's `≈_δ` is for operators indexed by questions\n  but not answers; the applications also need the form summed over a common outcome set\n  (`cor:ortho-from-consistency` concludes `P_a ⊗ Id ≈ Q_a ⊗ Id`). Both are here, the second as\n  `povmStateDist`.\n\n## Implementation\n\n`stateVec ψ A = (A ⊗ Id)|ψ⟩`, carried in `EuclideanSpace ℂ (dA × dB)` so that the triangle\ninequality and `‖c • v‖ = ‖c‖‖v‖` are Mathlib's rather than rebuilt. The bridge to the\nblueprint's quadratic-form spelling is `stateSqNorm_eq`, which is the only place the Kronecker\nadjoint is used.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/StateDistance.lean",
+  "source_path": "MIPRE/Foundations/StateDistance.lean",
+  "defmat": [
+   "MIPRE.obsOf",
+   "MIPRE.stateDist"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.obsOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     182,
+     185
+    ]
+   },
+   {
+    "name": "MIPRE.stateDist",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     148,
+     151
+    ]
+   }
+  ],
+  "lines": 98,
+  "published_bundle": "MIPRE_Foundations_StateDistance",
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance"
+  ],
+  "blueprint": [
+   "def:state-distance",
+   "lem:qld-povm-to-obs"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.obsOf": [
+    "/-- The generalized observable of a POVM family and a weighting of the outcomes:",
+    "`A^x = ∑_a α_a A^x_a`. -/"
+   ],
+   "MIPRE.stateDist": [
+    "/-- **The state-dependent distance** of two families of operators on Alice's factor, relative to",
+    "a question distribution `μ` and the state `ψ`: blueprint `def:state-distance`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Sign",
+  "module": "MIPRE.Foundations.Sign",
+  "module_doc": "/-!\n# The sign of a bit\n\n`sgn x = (-1)^x` for `x : ZMod 2`, as a complex number. It is the character group of `𝔽₂` written\nmultiplicatively, and it is what every `±1`-observable in this development is built from: the\nobservable of a two-outcome measurement, the phase of a Weyl operator in characteristic two, and\nthe sign a Magic Square constraint carries.\n\nCharacteristic two is why this is a *sign* and not a root of unity. Over `𝔽_p` the generalized\nPauli operators carry phases `e^{2πi/p}`; this project's fields are always of admissible size\n`q = 2^k`, so `p = 2` and every phase is real. That collapse is worth having in one place.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Sign.lean",
+  "source_path": "MIPRE/Foundations/Sign.lean",
+  "defmat": [
+   "MIPRE.sgn"
+  ],
+  "embedded": [
+   "MIPRE.sgn_one",
+   "MIPRE.sgn_zero"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.sgn",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     27,
+     28
+    ]
+   },
+   {
+    "name": "MIPRE.sgn_one",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     44,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.sgn_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     42,
+     42
+    ]
+   }
+  ],
+  "lines": 39,
+  "published_bundle": null,
+  "imports": [],
+  "blueprint": [
+   "def:generalized-pauli"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.sgn": [
+    "/-- `(-1)^x` for a bit `x`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-delta",
+  "definition_name": "MIPRE_Foundations_CrossConsistency_B",
+  "module": "MIPRE.Foundations.CrossConsistency",
+  "module_doc": "/-!\n# Cross-party consistency, and what winning a subtest buys\n\nThe Pauli appendix's `≃_δ` compares `A ⊗ Id` with `Id ⊗ B`: one player's operator against the\n*other* player's. `MIPRE.stateDist` of `def:state-distance` compares two families on the same\nside, which is what the orthonormalization step needs; this file is the cross-party form, and\nthe one lemma that produces it.\n\n## The engine\n\n`xSqNorm ψ A B = ‖(A ⊗ Id - Id ⊗ B)|ψ⟩‖²`, and `xPovmDist` averages its sum over outcomes\nagainst a question distribution. `xSqNorm_sum_le_two_mul` is the only analytic content:\n\n```\n∑_c ‖(A_c ⊗ Id - Id ⊗ B_c)|ψ⟩‖² ≤ 2 (1 - ∑_c ⟨ψ| A_c ⊗ B_c |ψ⟩)\n```\n\nfor any two POVMs indexed by the same outcome set. Expand each square; the two diagonal sums are\nat most one because a POVM element `A` has `A† A = A² ≤ A` and the elements sum to the identity,\nand the cross term is exactly the agreement probability. **No projectivity is used** --- which\nmatters, because the strategies this is applied to are arbitrary POVM strategies and the\nprojectivity only arrives later, through `cor:ortho-from-consistency`.\n\nPaired with `condFail_agree`, which says the right-hand side *is* twice the conditional failure\nof a subtest whose decider accepts iff two post-processings of the answers agree, this turns\neach item of `lem:qld-win` into an instance: name the two post-processings, check the decider,\nand the bound is `2 ε / μ`.\n\n## The weights\n\n`sum_mul_condFail_le` is the other half: the conditional failures of *any* set of question\npairs, weighted by their probabilities, add up to at most `ε`. `condFail_le_div` in\n`MIPRE/Foundations/POVMValue.lean` is its one-pair case. The useful corollary is\n`sum_condFail_le_of_le`: an auxiliary distribution `ν` on an index set that injects into the\nquestion pairs, with `c · ν i ≤ μ` at each, gives `∑_i ν i · condFail ≤ ε / c`. That is the\nblueprint's \"each item is the value of the corresponding subtest, divided by the probability\nthat the subtest is selected\", with `c` the selection probability and `ν` the conditional\nquestion distribution.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CrossConsistency.lean",
+  "source_path": "MIPRE/Foundations/CrossConsistency.lean",
+  "defmat": [
+   "MIPRE.obs2",
+   "MIPRE.xPovmDist",
+   "MIPRE.xStateDist"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.obs2",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     643,
+     645
+    ]
+   },
+   {
+    "name": "MIPRE.xPovmDist",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     70,
+     73
+    ]
+   },
+   {
+    "name": "MIPRE.xStateDist",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     92,
+     95
+    ]
+   }
+  ],
+  "lines": 193,
+  "published_bundle": "MIPRE_Foundations_CrossConsistency",
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency"
+  ],
+  "blueprint": [
+   "def:cross-distance"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.obs2": [
+    "/-- The `±1`-observable of a POVM with outcomes in `F_2`. -/"
+   ],
+   "MIPRE.xPovmDist": [
+    "/-- **The cross-party distance** of two families of POVMs, one on each side, relative to a",
+    "question distribution: the appendix's `M^x_a ⊗ Id ≃_δ Id ⊗ N^x_a`. -/"
+   ],
+   "MIPRE.xStateDist": [
+    "/-- **The cross-party distance** of two families of operators, one on each side. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-delta",
+  "definition_name": "MIPRE_Foundations_PVM_B",
+  "module": "MIPRE.Foundations.PVM",
+  "module_doc": "/-!\n# Observables of a projective measurement\n\nA projective measurement `P : Λ → Matrix n n ℂ` and a weighting `ε : Λ → ℂ` give the operator\n`pvmObs P ε = ∑_a ε a • P a`. The one fact worth isolating is that this is a **ring\nhomomorphism** in `ε`:\n\n`pvmObs P ε * pvmObs P δ = pvmObs P (ε * δ)`,  `pvmObs P 1 = 1`,\n\nbecause the projections are mutually orthogonal (`IsPVM.orthogonal`). Everything the rigidity\narguments want about signed sums of a projective measurement follows: with `ε` valued in\n`{±1}`, `pvmObs P ε` is a self-adjoint reflection; two weightings of the *same* measurement\ncommute, whatever they are; and if `ε δ η` is constantly `s` then `pvmObs P ε * pvmObs P δ *\npvmObs P η = s • 1` exactly.\n\nThat last one is what a linear-constraint-system game's Alice-side dilation buys: the three\nreflections of one constraint commute and multiply to the constraint's sign, with no error\nterm. Blueprint `lem:ms-direct-anticomm` is the consumer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/PVM.lean",
+  "source_path": "MIPRE/Foundations/PVM.lean",
+  "defmat": [
+   "MIPRE.pvmObs"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.pvmObs",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     130,
+     132
+    ]
+   }
+  ],
+  "lines": 58,
+  "published_bundle": "MIPRE_Foundations_PVM",
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_PVM"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.pvmObs": [
+    "/-- `∑_a ε a • P a`, the operator a weighting of a projective measurement's outcomes",
+    "defines. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Expanded",
+  "module": "MIPRE.Foundations.Expanded",
+  "module_doc": "/-!\n# The expanded state, and an inert ancilla\n\nThe expansion stage of the Pauli appendix (`sec:expanding`) adjoins a maximally entangled pair of\nancilla registers to each player and then **re-bipartitions**: Alice's party becomes her own\nregister together with her half of the ancilla, and Bob's becomes his register together with the\n*other* half. This file is that construction, for an arbitrary ancilla state.\n\n## The one thing it has to support\n\nEvery statement of the expansion stage is a norm on the expanded state, and the operators that\nappear are of the form `M (x) N` --- the strategy's own operator on the original register, the\nancilla's on the adjoined one. Two facts carry all of them:\n\n* `mulVec_kron_expVec`: such an operator acts on a product state factor by factor, so the whole\n  computation splits;\n* `norm_evec_expVec`: the norm of a product state is the product of the norms.\n\nTogether they say that an operator with an **inert ancilla**, `M (x) Id`, has the same state-norm\non the expanded state as `M` has on the original one, provided the ancilla state is a unit vector\n(`norm_stateVec_expVec_kron_one`). That is what lets a bound proved before the expansion be used\nafter it, which is how the expansion stage consumes `lem:qld-obs-commutation`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Expanded.lean",
+  "source_path": "MIPRE/Foundations/Expanded.lean",
+  "defmat": [
+   "MIPRE.POVM.kron",
+   "MIPRE.expEquiv",
+   "MIPRE.expVec"
+  ],
+  "embedded": [
+   "MIPRE.POVM.kron_mats"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.POVM.kron",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     246,
+     268
+    ]
+   },
+   {
+    "name": "MIPRE.POVM.kron_mats",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     270,
+     272
+    ]
+   },
+   {
+    "name": "MIPRE.expEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     50,
+     56
+    ]
+   },
+   {
+    "name": "MIPRE.expVec",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     45,
+     48
+    ]
+   }
+  ],
+  "lines": 139,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B"
+  ],
+  "blueprint": [
+   "def:expanded-state"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.POVM.kron": [
+    "/-- **The product of two POVMs**, on the two systems of one party: outcomes the pairs, elements the",
+    "Kronecker products. -/"
+   ],
+   "MIPRE.expEquiv": [
+    "/-- The reindexing that separates the two systems from the two parties. -/"
+   ],
+   "MIPRE.expVec": [
+    "/-- **The expanded state**: the strategy's state on the original registers, tensored with an",
+    "ancilla state whose two halves go to the two *different* parties. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_Anticomm",
+  "module": "MIPRE.Foundations.LowDegree.Anticomm",
+  "module_doc": "/-!\n# When is a Pauli-test question tuple anticommuting?\n\nThe Pauli basis test samples `ω = (u_X, u_Z, r_X, r_Z)` and the two Pauli operators it asks\nabout commute or anticommute according to whether\n\n`γ(ω) = tr_{q → 2} \\bigl( (r_X · ind_m(u_X)) · (r_Z · ind_m(u_Z)) \\bigr)`\n\nvanishes. The paper's `fact:omega-anticomm-prob` says each case has probability at least\n`(1 - 3md/q)/2`; this file is that fact.\n\n`ind_m(x) ∈ 𝔽_q^{2^m}` is the vector of the subcube indicator polynomials of\n`MIPRE/Foundations/LowDegree/Encoding.lean` evaluated at an *arbitrary* point `x`, and the\ndot product of two of them is one low-degree encoding evaluated at the other point\n(`indPair_eq_eval`). So the fact is Schwartz--Zippel --- the encoding is a nonzero polynomial,\nbecause `ind_m(x)` is never the zero vector (`sum_indVec`, whose value is `1`) --- together with\nthe count of `r` in the kernel of a nonzero `𝔽`-linear functional (`card_filter_ker_mul`).\n\nTwo departures from the paper, both recorded in the blueprint's comments on the fact:\n\n* **the wasteful factor is dropped.** The paper states\n  `(1 - q^{-m})(1 - q^{-1})(1 - md/q)/2`, whose first factor came from a case distinction on\n  `u_X = 0` that its own `\\cnote` then removes as vacuous. The bound proved here is\n  `(1 - (m+1)/q)/2`, which is sharper than the paper's final `(1 - 3md/q)/2` and needs no such\n  factor.\n* **individual degree, not total degree.** The low-degree encoding is multilinear, so the\n  Schwartz--Zippel step costs `m/q` rather than the `md/q` the paper spends. The paper's form is\n  recovered in `prob_anticommuting_ge` for `1 ≤ d`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/Anticomm.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/Anticomm.lean",
+  "defmat": [
+   "MIPRE.LowDegree.acGamma",
+   "MIPRE.LowDegree.indPair",
+   "MIPRE.LowDegree.indVec"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.acGamma",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     213,
+     217
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.indPair",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     82,
+     84
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.indVec",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     53,
+     56
+    ]
+   }
+  ],
+  "lines": 119,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel"
+  ],
+  "blueprint": [
+   "fact:omega-anticomm-prob"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.acGamma": [
+    "/-- `γ(ω)`, the quantity of the Pauli basis test whose vanishing says that the two Pauli",
+    "operators of the tuple `ω = (u_X, u_Z, r_X, r_Z)` commute: the trace of the dot product of",
+    "`r_X · ind_m(u_X)` with `r_Z · ind_m(u_Z)`. -/"
+   ],
+   "MIPRE.LowDegree.indPair": [
+    "/-- The dot product `ind_m(x) · ind_m(z)`, which is the `γ` of the Pauli basis test up to the",
+    "scalars `r_X r_Z` and the trace. -/"
+   ],
+   "MIPRE.LowDegree.indVec": [
+    "/-- `ind_m(x)`, the vector of the subcube indicator polynomials evaluated at `x`. For a subcube",
+    "point this is the standard basis vector at that point (`eval_ind`); the definition is what the",
+    "Pauli basis test uses at a general `x ∈ 𝔽_q^m`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Weyl",
+  "module": "MIPRE.Foundations.Weyl",
+  "module_doc": "/-!\n# Generalized Pauli operators over a field of characteristic two\n\nThe paper's `sec:generalized-pauli`: for `a ∈ F_q^n` the `X`-type operator shifts the\ncomputational basis of `(C^q)^{⊗ n}` by `a`, the `Z`-type operator is diagonal with the phase\n`ω^{tr(a · b)}`, and the two families *twisted-commute*,\n`τ^X(a) τ^Z(b) = ω^{-tr(a · b)} τ^Z(b) τ^X(a)`.\n\nThis is the missing half of the Pauli basis test's infrastructure. `MIPRE/LCS/Pauli.lean` is the\n`2 × 2` Pauli matrices for the Magic Square; what the appendix's expansion stage and its swap\nisometry both run on is the `F_q` Weyl system, and that is this file.\n\n## Two deliberate restrictions\n\n**Characteristic two.** The paper states the construction over `F_p` with `ω = e^{2πi/p}` and\nthen specializes. This file is only the `p = 2` case, where `ω = -1` and every phase is the real\nsign `MIPRE.sgn` of `MIPRE/Foundations/Sign.lean`. That is not a loss for this project: the\nPauli basis test's parameters are *admissible* (`def:admissible`), which means `q = 2^k`, and no\nconsumer instantiates it elsewhere. What it buys is large — there are no roots of unity, the\noperators are self-adjoint involutions rather than order-`p` unitaries, so they are genuine\n`±1`-observables, and `(τ^W(a))² = 1` is where the paper needs `(σ^W(a))^p = I`.\n\n**One matrix, not an iterated Kronecker product.** `(C^q)^{⊗ n}` is presented as\n`Matrix (n → F) (n → F) C`: the basis of the `n`-fold tensor power is indexed by the functions\n`n → F`, which *is* `F_q^n`. So `τ^W(a)` is a single matrix and the `n`-register statements are\nthe one-register statements with no associativity bookkeeping. The index type `n` is an arbitrary\nfinite type rather than `Fin n`, which is what lets the Pauli basis test use it at\n`n = (Fin m → Bool)`, the indexing `MIPRE.LowDegree` already uses for `F_q^M` with `M = 2^m`.\n\n## What is here\n\n`wX`, `wZ`, the group laws, self-adjointness, involutivity, unitarity, and the twisted\ncommutation `wX_mul_wZ`. Then the `Z`-eigenbasis projectors, the expansion of `wZ` in them, and\nthe Fourier inversion that recovers a projector from an average of operators --- the identity the\nexpansion stage's `E_r (-1)^{tr(ar)} Ŵ^r(u)` is an instance of. The `X` side and the maximally\nentangled state come next; they go through the Fourier transform conjugating one family into the\nother.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Weyl.lean",
+  "source_path": "MIPRE/Foundations/Weyl.lean",
+  "defmat": [
+   "MIPRE.Weyl.IsWeylFamily",
+   "MIPRE.Weyl.dotF",
+   "MIPRE.Weyl.proj",
+   "MIPRE.Weyl.syn",
+   "MIPRE.Weyl.synOf",
+   "MIPRE.Weyl.trDot",
+   "MIPRE.Weyl.trDotL",
+   "MIPRE.Weyl.trMulL",
+   "MIPRE.Weyl.wX",
+   "MIPRE.Weyl.wZ",
+   "MIPRE.Weyl.zProj"
+  ],
+  "embedded": [
+   "MIPRE.Weyl.add_add_cancel",
+   "MIPRE.Weyl.add_add_cancel_vec",
+   "MIPRE.Weyl.add_self",
+   "MIPRE.Weyl.add_self_vec",
+   "MIPRE.Weyl.trDotL_apply",
+   "MIPRE.Weyl.trDot_add_left",
+   "MIPRE.Weyl.trDot_zero_left",
+   "MIPRE.Weyl.trDot_zero_right",
+   "MIPRE.Weyl.two_eq_zero",
+   "MIPRE.Weyl.wX_apply",
+   "MIPRE.Weyl.wX_conjTranspose",
+   "MIPRE.Weyl.wX_mul_self",
+   "MIPRE.Weyl.wX_mul_wX",
+   "MIPRE.Weyl.wX_zero",
+   "MIPRE.Weyl.wZ_apply",
+   "MIPRE.Weyl.wZ_conjTranspose",
+   "MIPRE.Weyl.wZ_mul_self",
+   "MIPRE.Weyl.wZ_mul_wZ",
+   "MIPRE.Weyl.wZ_zero",
+   "MIPRE.Weyl.zProj_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Weyl.IsWeylFamily",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     404,
+     412
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.add_add_cancel",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     75,
+     76
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.add_add_cancel_vec",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     81,
+     82
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.add_self",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     72,
+     73
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.add_self_vec",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     78,
+     79
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.dotF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     546,
+     547
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.proj",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     428,
+     433
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.syn",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     624,
+     628
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.synOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     616,
+     622
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.trDot",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     106,
+     107
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.trDotL",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     127,
+     134
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.trDotL_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     136,
+     136
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.trDot_add_left",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     118,
+     122
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.trDot_zero_left",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     112,
+     113
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.trDot_zero_right",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     115,
+     116
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.trMulL",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     562,
+     569
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.two_eq_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     65,
+     70
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.wX",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     154,
+     156
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.wX_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     162,
+     163
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.wX_conjTranspose",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     206,
+     211
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.wX_mul_self",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     198,
+     199
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.wX_mul_wX",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     182,
+     190
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.wX_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     174,
+     176
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.wZ",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     158,
+     160
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.wZ_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     165,
+     170
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.wZ_conjTranspose",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     213,
+     218
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.wZ_mul_self",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     201,
+     202
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.wZ_mul_wZ",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     192,
+     196
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.wZ_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     178,
+     180
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.zProj",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     331,
+     333
+    ]
+   },
+   {
+    "name": "MIPRE.Weyl.zProj_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     335,
+     340
+    ]
+   }
+  ],
+  "lines": 322,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm"
+  ],
+  "blueprint": [
+   "def:generalized-pauli",
+   "def:weyl-epr"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.Weyl.IsWeylFamily": [
+    "/-- A family of self-adjoint operators indexed by `F_q^n` representing its additive group. The",
+    "two Weyl families are the instances, and the spectral theory needs nothing else. -/"
+   ],
+   "MIPRE.Weyl.dotF": [
+    "/-- The `F_q`-valued pairing, before the trace. -/"
+   ],
+   "MIPRE.Weyl.proj": [
+    "/-- **The spectral projector** of a Weyl family at the eigenvalue pattern `e`: the Fourier average",
+    "of the family against the character of `e`. For `wZ` it is `zProj e` (`proj_wZ`); for `wX` it is",
+    "the projector onto the `X`-eigenbasis vector the paper writes `|e_X⟩`. -/"
+   ],
+   "MIPRE.Weyl.syn": [
+    "/-- **The syndrome projector**: onto the eigenvectors whose pairing with `v` is `a`. The paper's",
+    "`eq:qld-point-obs-def`. -/"
+   ],
+   "MIPRE.Weyl.synOf": [
+    "/-- **A coarse-graining of the eigenbasis measurement**: the sum of the spectral projectors over",
+    "a level set of an arbitrary label `φ`. The syndrome projector below is this at",
+    "`φ = ⟨·, v⟩`, and the expansion stage's line measurements are this at the label ``restriction of",
+    "the low-degree encoding to the line''. -/"
+   ],
+   "MIPRE.Weyl.trDot": [
+    "/-- `tr_{q → 2}(a · b)` for `a, b ∈ F_q^n`. -/"
+   ],
+   "MIPRE.Weyl.trDotL": [
+    "/-- The form against a fixed `b`, as an `F_2`-linear functional. -/"
+   ],
+   "MIPRE.Weyl.trMulL": [
+    "/-- The trace against a fixed field element, as an `F_2`-linear functional on `F_q`. -/"
+   ],
+   "MIPRE.Weyl.wX": [
+    "/-- **The `X`-type Weyl operator**: the shift of the computational basis by `a`. -/"
+   ],
+   "MIPRE.Weyl.wZ": [
+    "/-- **The `Z`-type Weyl operator**: diagonal, with the sign `(-1)^{tr(b · i)}`. -/"
+   ],
+   "MIPRE.Weyl.zProj": [
+    "/-- The rank-one projector onto the computational basis vector `c`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Parseval",
+  "module": "MIPRE.Foundations.Parseval",
+  "module_doc": "/-!\n# Parseval for the character transform\n\nThe combining stage of the Pauli appendix moves between two descriptions of the same data: an\n`F_q`-valued measurement `{P_a}` and its **binary observables**\n`O^r = sum_a (-1)^{tr(ar)} P_a`, one for each `r in F_q`. The two are Fourier transforms of each\nother, and what the estimates need is that the transform is an **isometry**: a bound on the\nobservables, averaged over `r`, is a bound on the measurement elements, summed over `a`, and\nconversely.\n\nThis file is that dictionary, for vectors and for families of matrices applied to a state:\n\n* `fourierVec` is the transform of a family of vectors indexed by `V = F_q^n`, against the\n  characters of the trace form, and `sum_norm_fourierVec_sq` is Parseval --- an identity, not an\n  estimate;\n* `trObs` is the observable of an `F_q`-indexed family at a parameter `r`, `trObs_fourier` inverts\n  it, and `sum_stateSqNorm_eq_avg_trObs` is Parseval in the form the appendix uses: the sum over\n  outcomes of the squared state-norms of the elements is the average over `r` of the squared\n  state-norms of the observables.\n\nThe one-field character orthogonality it all rests on is `MIPRE.Weyl.sum_sgn_trMul`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Parseval.lean",
+  "source_path": "MIPRE/Foundations/Parseval.lean",
+  "defmat": [
+   "MIPRE.fourierVec",
+   "MIPRE.fourierVecRaw",
+   "MIPRE.pairVec",
+   "MIPRE.trFourier",
+   "MIPRE.trObs",
+   "MIPRE.trVecRaw"
+  ],
+  "embedded": [
+   "MIPRE.pairVec_one",
+   "MIPRE.pairVec_zero"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.fourierVec",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     47,
+     49
+    ]
+   },
+   {
+    "name": "MIPRE.fourierVecRaw",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     51,
+     53
+    ]
+   },
+   {
+    "name": "MIPRE.pairVec",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     204,
+     205
+    ]
+   },
+   {
+    "name": "MIPRE.pairVec_one",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     209,
+     210
+    ]
+   },
+   {
+    "name": "MIPRE.pairVec_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     207,
+     207
+    ]
+   },
+   {
+    "name": "MIPRE.trFourier",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     152,
+     154
+    ]
+   },
+   {
+    "name": "MIPRE.trObs",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     148,
+     150
+    ]
+   },
+   {
+    "name": "MIPRE.trVecRaw",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     249,
+     251
+    ]
+   }
+  ],
+  "lines": 142,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl"
+  ],
+  "blueprint": [
+   "lem:qld-combined-points",
+   "lem:qld-padded-points"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.fourierVec": [
+    "/-- **The character transform** of a family of vectors indexed by `V = F_q^n`. -/"
+   ],
+   "MIPRE.fourierVecRaw": [
+    "/-- The unnormalized transform: the same sum without the `1/|V|`. -/"
+   ],
+   "MIPRE.pairVec": [
+    "/-- The pair `(r, s)` as a vector of `F_q^2`. -/"
+   ],
+   "MIPRE.trFourier": [
+    "/-- The transform back: the `a`-th element recovered from the observables. -/"
+   ],
+   "MIPRE.trObs": [
+    "/-- The binary observable of an `F_q`-indexed family of operators at the probe `r`. -/"
+   ],
+   "MIPRE.trVecRaw": [
+    "/-- The unnormalized character transform of a family of vectors indexed by `F_q` itself. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Linearity",
+  "module": "MIPRE.Foundations.Linearity",
+  "module_doc": "/-!\n# Approximate linearity gives exact linearity\n\nBlueprint `thm:linearity`, the quantum linearity test. A family of observables\n`{O^u}_{u in F_q^n}` that is *approximately* linear --- `O^u O^{u'}` close to `O^{u + u'}` on\naverage, in the state-dependent distance --- is close on average to a family that is *exactly*\nlinear, after adjoining an ancilla register to one player.\n\nThe paper imports this from Natarajan--Vidick; it is proved here. The route is the one the\nblueprint's proof text names, and every step of it is already in this repository:\n\n* **Parseval.** The Fourier transform `A_e = |V|^{-1} sum_a (-1)^{<a,e>} O^a` of the family\n  against the characters of the trace form has `sum_e A_e^2 = |V|^{-1} sum_a (O^a)^2 = Id`\n  whenever each `O^a` is an involution. So `{A_e^2}` is a POVM --- **exactly**, with no\n  appeal to the approximate linearity, which is the one surprise of the argument.\n* **Naimark.** `exists_projective_dilation` dilates that POVM to a projective measurement\n  `{P_e}` on `d x V`, compressed back by the isometry that pads with the ancilla state `|0>`.\n* **Inversion.** `L^u = sum_e (-1)^{<u,e>} P_e` is then exactly linear --- `L^u L^{u'} =\n  L^{u+u'}` and `L^0 = Id` --- because the `P_e` are mutually orthogonal projections, and its\n  compression is `sum_e (-1)^{<u,e>} A_e^2`, which the same character sum identifies with\n  `|V|^{-1} sum_a O^a O^{a+u}`.\n* **The estimate.** That average is where the hypothesis enters, and it enters once:\n  `|V|^{-2} sum_{a,b} <psi| O^a O^b O^{a+b} |psi>` is the hypothesis written out, so the\n  closeness of `L^u` to `O^u` on the extended state carries the *same* `delta`, with no square\n  root and no loss in the exponent.\n\nThe one thing to watch is which distance the hypothesis is in. It is the state-dependent one of\n`def:state-distance` --- not the Hilbert--Schmidt distance of `thm:gowers-hatami` --- so this is\nnot Gowers--Hatami with a different normalization; the exact-POVM step above replaces the\napproximate-representation machinery entirely.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Linearity.lean",
+  "source_path": "MIPRE/Foundations/Linearity.lean",
+  "defmat": [
+   "MIPRE.extVecA",
+   "MIPRE.fourierOf"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.extVecA",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     275,
+     281
+    ]
+   },
+   {
+    "name": "MIPRE.fourierOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     59,
+     63
+    ]
+   }
+  ],
+  "lines": 131,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval"
+  ],
+  "blueprint": [
+   "thm:linearity"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.extVecA": [
+    "/-- **The one-sided extension of a state**: an ancilla register in the fixed state `|a₀⟩`,",
+    "adjoined to the **first** party only. `expVec` splits an ancilla *pair* between the two parties;",
+    "this is the asymmetric extension `thm:linearity` needs, the exactly linear observables living on",
+    "the first party's enlarged space and the second party untouched. -/"
+   ],
+   "MIPRE.fourierOf": [
+    "/-- **The Fourier transform** of a family of operators indexed by `V = F_q^n`, against the",
+    "characters of the trace form. This is `MIPRE.Weyl.proj` with the index group decoupled from the",
+    "space the operators act on, and with no group law assumed. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Pasting",
+  "module": "MIPRE.Foundations.Pasting",
+  "module_doc": "/-!\n# Pasting two measurements into one\n\nThe blueprint's missing piece for `lem:qld-pairs-of-lines`: NW19's Fact 4.35, the paper's\n`lem:pasting-updated`. One party holds a *joint* projective measurement `A_{a,b}`; the other holds\ntwo projective measurements `G_1` and `G_2` whose coarse-grainings along evaluation maps agree with\n`A`'s two marginals. The conclusion is that `A` agrees with the **sandwich**\n`J_{g_1, g_2} = G_2^{g_2} G_1^{g_1} G_2^{g_2}`, coarse-grained by evaluating both outcomes.\n\nTwo facts beyond the sandwich chain of `MIPRE/Foundations/Sandwich.lean` are needed, and they are\nproved first.\n\n* **A sub-measurement close to a projective measurement carries almost all the mass**\n  (`qform_sum_ge_of_close`, NW19's Fact 4.31). Two Cauchy--Schwarz steps against the same\n  deviation, and the loss is `2 sqrt(delta)`.\n* **Multiplying by the projector of the same outcome costs nothing** (`sum_snorm_sq_cool`, the\n  paper's `lem:cool-closeness-fact` in its partition form). The cross terms vanish by mutual\n  orthogonality and each diagonal term loses only `A_a <= Id`. The partition form is what matters:\n  the consumers apply it to the `q` fibres of an outcome map at once, and the single-subset form\n  would cost a factor `q` there.\n\nThe sandwich is where a **collision probability** enters. `G_2^{g_2} G_1 G_2^{g_2}` summed over a\nfibre of `g_2 |-> g_2(y)` is a *pinching* of `G_1` by that fibre, not a conjugation by the fibre's\nprojector, and the difference is the cross terms `g_2 \\ne g_2'` with `g_2(y) = g_2'(y)`. Those are\nrare exactly when the outcome map separates the family, which for line polynomials is\nSchwartz--Zippel.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pasting.lean",
+  "source_path": "MIPRE/Foundations/Pasting.lean",
+  "defmat": [
+   "MIPRE.collisionTerm",
+   "MIPRE.fibSum",
+   "MIPRE.pasteJ"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.collisionTerm",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     860,
+     866
+    ]
+   },
+   {
+    "name": "MIPRE.fibSum",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     157,
+     160
+    ]
+   },
+   {
+    "name": "MIPRE.pasteJ",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     440,
+     445
+    ]
+   }
+  ],
+  "lines": 273,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich"
+  ],
+  "blueprint": [
+   "lem:pasting-updated"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.collisionTerm": [
+    "/-- **The collision term**: the pairs of `G`-outcomes that the outcome map cannot tell apart. It",
+    "is exactly what the coarse-grained cloud has beyond the fine-grained one, and the only place where",
+    "the separating property of the outcome map is needed. -/"
+   ],
+   "MIPRE.fibSum": [
+    "/-- The fibre sum of a family of operators along an outcome map --- its coarse-graining. -/"
+   ],
+   "MIPRE.pasteJ": [
+    "/-- **The pasted POVM**: the paper's `J_{[eval = (a_1, a_2)]}`. `R` is already the coarse-graining",
+    "of the paper's `G_1` along its own outcome map --- only `R`'s projectivity is used, so it enters",
+    "as a single projective family, and the inner coarse-graining is the consumer's business. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-delta",
+  "definition_name": "MIPRE_Foundations_POVMMix_B",
+  "module": "MIPRE.Foundations.POVMMix",
+  "module_doc": "/-!\n# Mixtures and extensions of POVMs, and the agreement triangle\n\nThree constructions on bundled POVMs that the padded strategy of the Pauli basis test's stage 4\nneeds, and one inequality.\n\n* `POVM.aOp` extends a POVM on `d` by the identity to `d × E`; `POVM.dirac a₀` answers `a₀` with\n  certainty; `POVM.mix w Q` is a convex combination of POVMs with the same outcomes. A strategy\n  that must be a *function of the question* while the analysis controls it *sample by sample* is\n  a mixture over the samples producing the question, and the Born rule's linearity\n  (`bornProb_mix_left`, `bornProb_mix_right`) turns a bound on the mixture into the average of the\n  per-sample bounds.\n* `agreeSum_triangle` is the paper's triangle-like inequality for the consistency relation\n  (`fact:triangle-for-simeq`, item 1): if Alice's `A` agrees with Bob's `B`, Alice's `C` agrees\n  with Bob's `B`, and Alice's `C` agrees with Bob's `D`, each with probability at least `1 - δ`,\n  then Alice's `A` agrees with Bob's `D` with probability at least `1 - 11 δ`. No projectivity is\n  assumed: for POVMs the agreement is not a squared distance, and the argument goes through the\n  vectors `(R_a ⊗ I)|ψ⟩`, whose weighted squared norms are at most one and, by Cauchy--Schwarz\n  against a partner they agree with, at least `1 - 2δ`. The paper pads these vectors to unit\n  vectors and gets `9 δ`; the unpadded argument here costs the extra `2 δ` and needs no auxiliary\n  space.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/POVMMix.lean",
+  "source_path": "MIPRE/Foundations/POVMMix.lean",
+  "defmat": [
+   "MIPRE.POVM.avgOn",
+   "MIPRE.POVM.dirac",
+   "MIPRE.unifOn"
+  ],
+  "embedded": [
+   "MIPRE.sum_unifOn",
+   "MIPRE.unifOn_nonneg"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.POVM.avgOn",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     194,
+     198
+    ]
+   },
+   {
+    "name": "MIPRE.POVM.dirac",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     71,
+     87
+    ]
+   },
+   {
+    "name": "MIPRE.sum_unifOn",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     187,
+     190
+    ]
+   },
+   {
+    "name": "MIPRE.unifOn",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     179,
+     180
+    ]
+   },
+   {
+    "name": "MIPRE.unifOn_nonneg",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     182,
+     185
+    ]
+   }
+  ],
+  "lines": 198,
+  "published_bundle": "MIPRE_Foundations_POVMMix",
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix"
+  ],
+  "blueprint": [
+   "lem:qld-global-setup"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.POVM.avgOn": [
+    "/-- **The uniform average of POVMs over a finset**, defaulting to the deterministic answer `a₀`",
+    "when the finset is empty. -/"
+   ],
+   "MIPRE.POVM.dirac": [
+    "/-- The deterministic POVM answering `a₀`. -/"
+   ],
+   "MIPRE.unifOn": [
+    "/-- The uniform weights on a finset. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-delta",
+  "definition_name": "MIPRE_Foundations_RegisterReindex_B",
+  "module": "MIPRE.Foundations.RegisterReindex",
+  "module_doc": "/-!\n# Reindexing the registers of a bipartite strategy\n\n`TensorProductStrategy` (blueprint `def:tensor-strategy`) fixes the two players' registers to be\n`Fin dA` and `Fin dB`, and every soundness theorem proved through the vendored developments ---\n`MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL` in particular --- takes and returns its\nstrategies in that form. The rigidity arguments of `MIPRE.QLD`, on the other hand, build their\nstates and measurements on *structured* registers: a strategy's own space tensored with ancillas\nsuch as `(dA × Anc F m) × (F × F)`, where the block structure is what the proofs compute with. A\nstrategy in that form has a value (`povmValue`), but it is not a `TensorProductStrategy`, and\nnothing in the repository turned one into the other. This file is that bridge.\n\nEverything transports along an equivalence `e : d ≃ d'` of a register:\n\n* `reindexStarAlgEquiv e` is `Matrix.reindex e e` as a star-algebra equivalence, so that\n  `ProjectiveMeasurement.map` moves projective measurement families across it;\n* `POVM.reindex e` moves POVMs, and commutes with the relabelling `POVM.map`\n  (`POVM.map_reindex`) and with `ProjectiveMeasurement.toPOVM`\n  (`ProjectiveMeasurement.toPOVM_map_reindex`);\n* `reindexVec eA eB` moves a bipartite state, and the Born rule is invariant\n  (`quadForm_reindex`, `bornProb_reindex`), hence so are `povmValue` (`povmValue_reindex`) and\n  `inconsistency` (`inconsistency_reindex`).\n\n`TensorProductStrategy.ofProjective` then packages a projective strategy on arbitrary finite\nregisters as a `TensorProductStrategy` on `Fin (card dA) × Fin (card dB)`, with\n`TensorProductStrategy.value_ofProjective` identifying its value with the `povmValue` of the\noriginal; `TensorProductStrategy.ofPVM` is the same for measurements given as POVM families with\n`IsPVM` proofs, the form the rigidity arguments produce. A consumer applies a soundness theorem to\nthe packaged strategy and reads the conclusion back through `inconsistency_reindex` and the\n`reindex` lemmas: `MIPRE.Background.LIDT.Adapter.Registers` does exactly that for the seeded\nlow individual degree test.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/RegisterReindex.lean",
+  "source_path": "MIPRE/Foundations/RegisterReindex.lean",
+  "defmat": [
+   "MIPRE.TensorProductStrategy.ofPVM"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.TensorProductStrategy.ofPVM",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     250,
+     257
+    ]
+   }
+  ],
+  "lines": 107,
+  "published_bundle": "MIPRE_Foundations_RegisterReindex",
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TensorProductStrategy.ofPVM": [
+    "/-- A strategy given by POVM families with projective elements, packaged as a",
+    "`TensorProductStrategy`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryTrace",
+  "module": "MIPRE.Foundations.LowDegree.BinaryTrace",
+  "module_doc": "/-!\n# Effective Frobenius iteration and trace\n\nA fixed-width loop squares its current field element and adds it to a trace\naccumulator. The loop count is unary, so `k` Frobenius operations take `poly(k)`\ntime even though the represented exponent is `2^k`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryTrace.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryTrace.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryPolynomial.frobeniusTrace",
+   "MIPRE.LowDegree.BinaryPolynomial.frobeniusTraceProg",
+   "MIPRE.LowDegree.BinaryPolynomial.traceStep",
+   "_private.MIPRE.Foundations.LowDegree.BinaryTrace.0.MIPRE.LowDegree.BinaryPolynomial.traceStepProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryPolynomial.fold_traceStep_width",
+   "MIPRE.LowDegree.BinaryPolynomial.frobeniusTraceProg_apply",
+   "MIPRE.LowDegree.BinaryPolynomial.traceStep_width",
+   "_private.MIPRE.Foundations.LowDegree.BinaryTrace.0.MIPRE.LowDegree.BinaryPolynomial.traceStep_bounded"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.fold_traceStep_width",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     32,
+     41
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.frobeniusTrace",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     52,
+     54
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.frobeniusTraceProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     138,
+     143
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.frobeniusTraceProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     145,
+     146
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.traceStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     20,
+     21
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.traceStep_width",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     23,
+     30
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryTrace.0.MIPRE.LowDegree.BinaryPolynomial.traceStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     114,
+     118
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryTrace.0.MIPRE.LowDegree.BinaryPolynomial.traceStep_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     123,
+     136
+    ]
+   }
+  ],
+  "lines": 110,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPower"
+  ],
+  "blueprint": [
+   "lem:effective-field-inverse-trace"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryPolynomial.frobeniusTrace": [
+    "/-- Both the final Frobenius iterate and the sum of the preceding iterates. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.frobeniusTraceProg": [
+    "/-- Uniform computation of Frobenius iteration and the associated trace sum. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.traceStep": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryTrace.0.MIPRE.LowDegree.BinaryPolynomial.traceStepProg": null
+  }
+ },
+ {
+  "kind": "bundle-delta",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryEchelon_B",
+  "module": "MIPRE.Foundations.LowDegree.BinaryEchelon",
+  "module_doc": "/-! # Triangular pivot bases and certified binary reduction -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryEchelon.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryEchelon.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryLinear.pivotVectors"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.pivotVectors",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     77,
+     79
+    ]
+   }
+  ],
+  "lines": 58,
+  "published_bundle": "MIPRE_Foundations_LowDegree_BinaryEchelon",
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryLinear.pivotVectors": [
+    "/-- The vector family extracted in insertion order. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-delta",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinarySolve_B",
+  "module": "MIPRE.Foundations.LowDegree.BinarySolve",
+  "module_doc": "/-! # Solving binary linear systems with certified elimination -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinarySolve.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinarySolve.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryLinear.basisSolveProg",
+   "MIPRE.LowDegree.BinaryLinear.solveBitsProg"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.basisSolveProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     170,
+     172
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.solveBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     137,
+     140
+    ]
+   }
+  ],
+  "lines": 70,
+  "published_bundle": "MIPRE_Foundations_LowDegree_BinarySolve",
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryLinear.basisSolveProg": [
+    "/-- Construct a basis and solve, all within one ambient polynomial-time program. -/"
+   ],
+   "MIPRE.LowDegree.BinaryLinear.solveBitsProg": [
+    "/-- Solve using a supplied pivot basis; the certificate width is unary. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-delta",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryMatrixSolve_B",
+  "module": "MIPRE.Foundations.LowDegree.BinaryMatrixSolve",
+  "module_doc": "/-! # A uniform solver for binary matrices -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryMatrixSolve.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryMatrixSolve.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryLinear.matrixSolveProg"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.matrixSolveProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     105,
+     109
+    ]
+   }
+  ],
+  "lines": 68,
+  "published_bundle": "MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryLinear.matrixSolveProg": [
+    "/-- The output width is unary; matrix rows and the right-hand side are raw bits. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryMatrixInverse",
+  "module": "MIPRE.Foundations.LowDegree.BinaryMatrixInverse",
+  "module_doc": "/-! # Uniform binary matrix inversion -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryMatrixInverse.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryMatrixInverse.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryLinear.inverseMatrix",
+   "MIPRE.LowDegree.BinaryLinear.inverseMatrixProg",
+   "MIPRE.LowDegree.BinaryLinear.matrixSolution",
+   "_private.MIPRE.Foundations.LowDegree.BinaryMatrixInverse.0.MIPRE.LowDegree.BinaryLinear.inverseColumnsProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryLinear.matrixSolveProg_encoding",
+   "_private.MIPRE.Foundations.LowDegree.BinaryMatrixInverse.0.MIPRE.LowDegree.BinaryLinear.inverseColumnsProg_encoding"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.inverseMatrix",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     32,
+     35
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.inverseMatrixProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     72,
+     75
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.matrixSolution",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     13,
+     16
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.matrixSolveProg_encoding",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     18,
+     24
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryMatrixInverse.0.MIPRE.LowDegree.BinaryLinear.inverseColumnsProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     51,
+     54
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryMatrixInverse.0.MIPRE.LowDegree.BinaryLinear.inverseColumnsProg_encoding",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     56,
+     70
+    ]
+   }
+  ],
+  "lines": 109,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve_B"
+  ],
+  "blueprint": [
+   "lem:effective-binary-linear-algebra"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryLinear.inverseMatrix": [
+    "/-- The inverse is assembled column by column, solving for each standard basis vector. -/"
+   ],
+   "MIPRE.LowDegree.BinaryLinear.inverseMatrixProg": [
+    "/-- One globally polynomial-time ambient program for binary matrix inversion.",
+    "The dimension is explicit and unary; correctness requires a nonsingular matrix. -/"
+   ],
+   "MIPRE.LowDegree.BinaryLinear.matrixSolution": [
+    "/-- The coefficient vector selected by the deterministic elimination algorithm. -/"
+   ],
+   "_private.MIPRE.Foundations.LowDegree.BinaryMatrixInverse.0.MIPRE.LowDegree.BinaryLinear.inverseColumnsProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_SelfDualize",
+  "module": "MIPRE.Foundations.LowDegree.SelfDualize",
+  "module_doc": "/-!\n# Self-dualization in characteristic two\n\nThe step that turns a normal basis into a *self-dual* normal basis (blueprint\n`lem:self-dual-basis`, ledger nodes `1.1.6.1.7` and `1.1.6.1.8`).\n\nWritten in the group algebra, where the whole step is two short lemmas. If `α` is a normal\nelement of `K / F` with Galois group `G`, the Gram matrix of its orbit is circulant, i.e. it is\nthe element `c ∈ F[G]` with `c g = tr(α · g α)`; it is a unit, and it is fixed by the involution\n`τ` induced by `g ↦ g⁻¹`. Replacing `α` by `a • α` replaces `c` by `a · τ a · c`, so a self-dual\nnormal basis is exactly a solution `a` of `a · τ a = c⁻¹`.\n\n* `exists_mul_involute_eq` — that equation is solvable in any commutative ring on which\n  squaring is bijective: take the square root of the right-hand side, which is unique and\n  therefore fixed by `τ` because the right-hand side is.\n* `sq_bijective` — and squaring *is* bijective on `F[G]` when `F` is a finite field of\n  characteristic two and `G` is a finite abelian group of odd order, because squaring is then\n  the composite of the Frobenius of `F` on coefficients with the doubling bijection of `G` on\n  indices.\n\nBetween them they replace the circulant Gram manipulation the campaign's two nodes carry.\nNothing here is about fields yet: `MIPRE/Foundations/LowDegree/SelfDual.lean` has the\ndefinitions `IsSelfDualBasis` and `IsNormalBasis`, and assembling these lemmas into a basis is\nthe remaining work of issue #105.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/SelfDualize.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/SelfDualize.lean",
+  "defmat": [
+   "MIPRE.LowDegree.binarySquareRoot"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.coeff_binarySquareRoot",
+   "_private.MIPRE.Foundations.LowDegree.SelfDualize.0.MIPRE.LowDegree.two_eq_zero"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.binarySquareRoot",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     144,
+     148
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.coeff_binarySquareRoot",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     150,
+     153
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.SelfDualize.0.MIPRE.LowDegree.two_eq_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     78,
+     84
+    ]
+   }
+  ],
+  "lines": 71,
+  "published_bundle": null,
+  "imports": [],
+  "blueprint": [
+   "lem:group-algebra-selfdualization"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.binarySquareRoot": [
+    "/-- Square root in a binary group algebra: the coefficient at `g` is read from `g + g`.",
+    "For an odd-order group this is a permutation of the coefficient vector. In particular,",
+    "this step needs neither factorization nor exponentiation in the group of units. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinarySquareRoot",
+  "module": "MIPRE.Foundations.LowDegree.BinarySquareRoot",
+  "module_doc": "/-!\n# A polynomial-time square root in the binary cyclic group algebra\n\nFor an odd-length coefficient vector, reading the doubled indices means reading\nthe even positions followed by the odd positions. Splitting those two lists and\nappending them is polynomial-time in the ambient cost model. This implements the\nsquare-root step of self-dualization; it does not compute the inverse Gram element\nor the initial normal basis.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinarySquareRoot.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinarySquareRoot.lean",
+  "defmat": [
+   "MIPRE.LowDegree.groupOfBits",
+   "MIPRE.LowDegree.rootBits",
+   "MIPRE.LowDegree.rootBitsProg",
+   "MIPRE.LowDegree.splitParity",
+   "MIPRE.LowDegree.splitParityProg",
+   "_private.MIPRE.Foundations.LowDegree.BinarySquareRoot.0.MIPRE.LowDegree.splitParityStep"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.coeff_groupOfBits",
+   "MIPRE.LowDegree.length_rootBits",
+   "MIPRE.LowDegree.length_splitParity",
+   "MIPRE.LowDegree.rootBitsProg_apply",
+   "MIPRE.LowDegree.splitParityProg_apply",
+   "MIPRE.LowDegree.splitParity_eq_foldr",
+   "_private.MIPRE.Foundations.LowDegree.BinarySquareRoot.0.MIPRE.LowDegree.splitParityStep_size"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.coeff_groupOfBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     144,
+     146
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.groupOfBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     139,
+     142
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.length_rootBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     64,
+     67
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.length_splitParity",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     36,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.rootBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     61,
+     62
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.rootBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     118,
+     120
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.rootBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     122,
+     122
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.splitParity",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     25,
+     28
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.splitParityProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     105,
+     114
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.splitParityProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     116,
+     116
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.splitParity_eq_foldr",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     30,
+     34
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinarySquareRoot.0.MIPRE.LowDegree.splitParityStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     93,
+     96
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinarySquareRoot.0.MIPRE.LowDegree.splitParityStep_size",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     98,
+     103
+    ]
+   }
+  ],
+  "lines": 125,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SelfDualize"
+  ],
+  "blueprint": [
+   "lem:binary-square-root-program"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.groupOfBits": [
+    "/-- A binary coefficient list interpreted in the cyclic group algebra. -/"
+   ],
+   "MIPRE.LowDegree.rootBits": [
+    "/-- The doubled-index permutation for an odd-length coefficient vector. -/"
+   ],
+   "MIPRE.LowDegree.rootBitsProg": [
+    "/-- The coefficient square-root permutation, in polynomial time. -/"
+   ],
+   "MIPRE.LowDegree.splitParity": [
+    "/-- Split a list into its even-position and odd-position subsequences. -/"
+   ],
+   "MIPRE.LowDegree.splitParityProg": [
+    "/-- The parity split, with an ambient program and polynomial cost proof. -/"
+   ],
+   "_private.MIPRE.Foundations.LowDegree.BinarySquareRoot.0.MIPRE.LowDegree.splitParityStep": null
+  }
+ }
+]

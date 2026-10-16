@@ -1,0 +1,823 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.padPt_mats",
+  "source_name": "MIPRE.QLD.padPt_mats",
+  "formal_statement": "theorem MIPRE.QLD.padPt_mats {M : Question F m → POVM (Answer F m d) dA}\n    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) (u : Point F (4 * m)) (a : F) :\n    ((padPt hM u).mats a).val\n      = aOp (ptComb (sand (hatMats M .X (xBlk u)) (hatMats M .Z (zBlk u))) (alph u) (bet u) a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.PaddedStrategy",
+  "module_doc": "/-!\n# The padded strategy for the seeded low individual degree test\n\nStage 4 of the Pauli basis test's analysis (`lem:qld-global-setup`, `lem:qld-global-success`)\nassembles the padded point and line measurements of `lem:qld-padded-points` and\n`lem:qld-padded-lines` into a strategy for the seeded test `clGame` at parameters\n`(q, 4m, d, 1)`, and shows that it succeeds with probability `1 - O(δ_combine + δ_Q + md/q)`.\nThis file defines the strategy and bounds its conditional failure at each of the seeded test's\nquestion pairs by an agreement defect of the measurements it is built from; the averages over the\nverifier's samples, and the value bound, are in `PaddedValue.lean`.\n\n## The registers, and why the strategy is a family of POVMs\n\nThe strategy lives on the registers `(dA × Anc F m) × (F × F)` of `extHat ψ`: the player's own\nspace, the expansion's ancilla, and the combining coefficients' ancilla that `lem:qld-padded-points`\ndilates its sandwich with. Its point measurement is the *sandwich* `M^X_a M^Z_b M^X_a` of the\nhatted point measurements, coarse-grained along `(a, b) ↦ α a + β b`, extended by the identity to\nthe last register; its line measurements are the padded line measurements `padLineMats`. Both are\nPOVMs and neither is projective, so the strategy is a family of POVMs, and one Naimark dilation at\nthe end (`clSoundness_ldc_one_deltaCL_of_povm`) makes it the projective strategy the soundness\ntheorem takes. The dilated point measurement of `lem:qld-padded-points` is not used: on the\nextended state the Born rule sees only compressions (`bornProb_extVec2`), so every bound proved\nfor it is a bound for the sandwich.\n\n## A function of the question\n\nThe seeded test asks for a measurement per *question*, while `padLineMats` is indexed by the\n*data* `⟨pt, s, raw⟩` a sample generates the question from. A line question carries the canonical\nbase point `u₀` of the line, the seed, and for a diagonal line the truncated direction `v'`; the\nstrategy answers it with the padded line measurement at the data `⟨u₀, s, raw⟩`, **averaged over\nthe raw directions that produce the question** (`rawFiber`). Two things make this the right\nchoice. The decider reads the answer polynomial at the parameter of the sampled point relative to\n`u₀`, and moving the data's point to the sampled point along the line does not change the padded\nline measurement (`pasteLine_subPair_padShift`), so what the decider reads is `padLineMats` at the\nsample's own data, coarse-grained by evaluation at the sample's point --- exactly the quantity\n`lem:qld-padded-lines` controls (`lineMeas_map_eval_mats`). And the sample distribution averages\nuniformly over the raw direction, so by linearity of the Born rule the strategy's failure at a\nquestion is the average of the per-sample quantities.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedStrategy.lean#L86-L91",
+  "source_path": "MIPRE/Background/QLD/PaddedStrategy.lean",
+  "lines": [
+   86,
+   91
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-setup",
+    "env": "lemma",
+    "title": "Admissible padded setup",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.eval_padLine_of_degLE",
+  "source_name": "MIPRE.QLD.eval_padLine_of_degLE",
+  "formal_statement": "theorem MIPRE.QLD.eval_padLine_of_degLE {k n : ℕ} {f : LinePoly F k} (hf : DegLE f n) (t : F) :\n    (padLine n f).eval t = f.eval t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable (hm4 : 4 * m ∣ Fintype.card F)",
+   "variable (hm)"
+  ],
+  "docstring": "Resizing to the degree bound a polynomial already satisfies does not change its values.",
+  "module": "MIPRE.Background.QLD.PaddedStrategy",
+  "module_doc": "/-!\n# The padded strategy for the seeded low individual degree test\n\nStage 4 of the Pauli basis test's analysis (`lem:qld-global-setup`, `lem:qld-global-success`)\nassembles the padded point and line measurements of `lem:qld-padded-points` and\n`lem:qld-padded-lines` into a strategy for the seeded test `clGame` at parameters\n`(q, 4m, d, 1)`, and shows that it succeeds with probability `1 - O(δ_combine + δ_Q + md/q)`.\nThis file defines the strategy and bounds its conditional failure at each of the seeded test's\nquestion pairs by an agreement defect of the measurements it is built from; the averages over the\nverifier's samples, and the value bound, are in `PaddedValue.lean`.\n\n## The registers, and why the strategy is a family of POVMs\n\nThe strategy lives on the registers `(dA × Anc F m) × (F × F)` of `extHat ψ`: the player's own\nspace, the expansion's ancilla, and the combining coefficients' ancilla that `lem:qld-padded-points`\ndilates its sandwich with. Its point measurement is the *sandwich* `M^X_a M^Z_b M^X_a` of the\nhatted point measurements, coarse-grained along `(a, b) ↦ α a + β b`, extended by the identity to\nthe last register; its line measurements are the padded line measurements `padLineMats`. Both are\nPOVMs and neither is projective, so the strategy is a family of POVMs, and one Naimark dilation at\nthe end (`clSoundness_ldc_one_deltaCL_of_povm`) makes it the projective strategy the soundness\ntheorem takes. The dilated point measurement of `lem:qld-padded-points` is not used: on the\nextended state the Born rule sees only compressions (`bornProb_extVec2`), so every bound proved\nfor it is a bound for the sandwich.\n\n## A function of the question\n\nThe seeded test asks for a measurement per *question*, while `padLineMats` is indexed by the\n*data* `⟨pt, s, raw⟩` a sample generates the question from. A line question carries the canonical\nbase point `u₀` of the line, the seed, and for a diagonal line the truncated direction `v'`; the\nstrategy answers it with the padded line measurement at the data `⟨u₀, s, raw⟩`, **averaged over\nthe raw directions that produce the question** (`rawFiber`). Two things make this the right\nchoice. The decider reads the answer polynomial at the parameter of the sampled point relative to\n`u₀`, and moving the data's point to the sampled point along the line does not change the padded\nline measurement (`pasteLine_subPair_padShift`), so what the decider reads is `padLineMats` at the\nsample's own data, coarse-grained by evaluation at the sample's point --- exactly the quantity\n`lem:qld-padded-lines` controls (`lineMeas_map_eval_mats`). And the sample distribution averages\nuniformly over the raw direction, so by linearity of the Born rule the strategy's failure at a\nquestion is the average of the per-sample quantities.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedStrategy.lean#L320-L351",
+  "source_path": "MIPRE/Background/QLD/PaddedStrategy.lean",
+  "lines": [
+   320,
+   351
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-setup",
+    "env": "lemma",
+    "title": "Admissible padded setup",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.padStrat_lineQ_map_rdEval",
+  "source_name": "MIPRE.QLD.padStrat_lineQ_map_rdEval",
+  "formal_statement": "theorem MIPRE.QLD.padStrat_lineQ_map_rdEval (ty : CL.Ty) (hty : ty ≠ .point) (hd : 1 ≤ d)\n    {M : Question F m → POVM (Answer F m d) dA} (hM : ∀ q, IsPVM fun a => (((M q).mats a).val))\n    (hleg : LegalSupport M) (u : Point F (4 * m)) (s : F) (raw : Point F (4 * m)) (t : F) :\n    (padStrat hm hm4 hM (lineQ hm4 ty u s raw)).map (rdEval t)\n      = (lineMeas hm hm4 ty hM (CL.rep (lineDir hm4 ty s raw) u) s (rawSet hm4 ty s raw)).map\n          fun f => LinePoly.eval f t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable (hm4 : 4 * m ∣ Fintype.card F)",
+   "variable (hm)"
+  ],
+  "docstring": "**Reading the strategy's line answer at a parameter is reading the line measurement there**:\nthe resizing in `lineAns` is invisible on the support.",
+  "module": "MIPRE.Background.QLD.PaddedStrategy",
+  "module_doc": "/-!\n# The padded strategy for the seeded low individual degree test\n\nStage 4 of the Pauli basis test's analysis (`lem:qld-global-setup`, `lem:qld-global-success`)\nassembles the padded point and line measurements of `lem:qld-padded-points` and\n`lem:qld-padded-lines` into a strategy for the seeded test `clGame` at parameters\n`(q, 4m, d, 1)`, and shows that it succeeds with probability `1 - O(δ_combine + δ_Q + md/q)`.\nThis file defines the strategy and bounds its conditional failure at each of the seeded test's\nquestion pairs by an agreement defect of the measurements it is built from; the averages over the\nverifier's samples, and the value bound, are in `PaddedValue.lean`.\n\n## The registers, and why the strategy is a family of POVMs\n\nThe strategy lives on the registers `(dA × Anc F m) × (F × F)` of `extHat ψ`: the player's own\nspace, the expansion's ancilla, and the combining coefficients' ancilla that `lem:qld-padded-points`\ndilates its sandwich with. Its point measurement is the *sandwich* `M^X_a M^Z_b M^X_a` of the\nhatted point measurements, coarse-grained along `(a, b) ↦ α a + β b`, extended by the identity to\nthe last register; its line measurements are the padded line measurements `padLineMats`. Both are\nPOVMs and neither is projective, so the strategy is a family of POVMs, and one Naimark dilation at\nthe end (`clSoundness_ldc_one_deltaCL_of_povm`) makes it the projective strategy the soundness\ntheorem takes. The dilated point measurement of `lem:qld-padded-points` is not used: on the\nextended state the Born rule sees only compressions (`bornProb_extVec2`), so every bound proved\nfor it is a bound for the sandwich.\n\n## A function of the question\n\nThe seeded test asks for a measurement per *question*, while `padLineMats` is indexed by the\n*data* `⟨pt, s, raw⟩` a sample generates the question from. A line question carries the canonical\nbase point `u₀` of the line, the seed, and for a diagonal line the truncated direction `v'`; the\nstrategy answers it with the padded line measurement at the data `⟨u₀, s, raw⟩`, **averaged over\nthe raw directions that produce the question** (`rawFiber`). Two things make this the right\nchoice. The decider reads the answer polynomial at the parameter of the sampled point relative to\n`u₀`, and moving the data's point to the sampled point along the line does not change the padded\nline measurement (`pasteLine_subPair_padShift`), so what the decider reads is `padLineMats` at the\nsample's own data, coarse-grained by evaluation at the sample's point --- exactly the quantity\n`lem:qld-padded-lines` controls (`lineMeas_map_eval_mats`). And the sample distribution averages\nuniformly over the raw direction, so by linearity of the Born rule the strategy's failure at a\nquestion is the average of the per-sample quantities.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedStrategy.lean#L369-L388",
+  "source_path": "MIPRE/Background/QLD/PaddedStrategy.lean",
+  "lines": [
+   369,
+   388
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-setup",
+    "env": "lemma",
+    "title": "Admissible padded setup",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.degLE_padCombine_aline",
+   "MIPRE.QLD.eval_padLine",
+   "MIPRE.QLD.hatLinePOVM_aline_eq_zero_of_not_degLE",
+   "MIPRE.QLD.eval_padLine_of_degLE",
+   "MIPRE.POVM.map_map",
+   "MIPRE.aOp_zero"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.lineMats_pairCX_padShift",
+  "source_name": "MIPRE.QLD.lineMats_pairCX_padShift",
+  "formal_statement": "theorem MIPRE.QLD.lineMats_pairCX_padShift (ty : CL.Ty) (PX : LinePres F m hm .X) (hfacX : FactorsX PX)\n    (hdirX : ∀ (D : LPData F m) (u : Point F m), PX.dir (ofLPX D u) = D.dir hm ty) (tau : F)\n    (P : LPData F (4 * m)) (e : SubRand F m) :\n    PX.lineMats d M (pairCX (subPair hm4 hm ty (padShift hm4 ty tau P) e))\n      = PX.lineMats d M (pairCX (subPair hm4 hm ty P e)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable (hm4 : 4 * m ∣ Fintype.card F)",
+   "variable (hm)",
+   "variable {dB : Type} [Fintype dB] [DecidableEq dB] {M : Question F m → POVM (Answer F m d) dB}"
+  ],
+  "docstring": "The `X` line measurement of the pair of sublines is unchanged by the padded shift.",
+  "module": "MIPRE.Background.QLD.PaddedStrategy",
+  "module_doc": "/-!\n# The padded strategy for the seeded low individual degree test\n\nStage 4 of the Pauli basis test's analysis (`lem:qld-global-setup`, `lem:qld-global-success`)\nassembles the padded point and line measurements of `lem:qld-padded-points` and\n`lem:qld-padded-lines` into a strategy for the seeded test `clGame` at parameters\n`(q, 4m, d, 1)`, and shows that it succeeds with probability `1 - O(δ_combine + δ_Q + md/q)`.\nThis file defines the strategy and bounds its conditional failure at each of the seeded test's\nquestion pairs by an agreement defect of the measurements it is built from; the averages over the\nverifier's samples, and the value bound, are in `PaddedValue.lean`.\n\n## The registers, and why the strategy is a family of POVMs\n\nThe strategy lives on the registers `(dA × Anc F m) × (F × F)` of `extHat ψ`: the player's own\nspace, the expansion's ancilla, and the combining coefficients' ancilla that `lem:qld-padded-points`\ndilates its sandwich with. Its point measurement is the *sandwich* `M^X_a M^Z_b M^X_a` of the\nhatted point measurements, coarse-grained along `(a, b) ↦ α a + β b`, extended by the identity to\nthe last register; its line measurements are the padded line measurements `padLineMats`. Both are\nPOVMs and neither is projective, so the strategy is a family of POVMs, and one Naimark dilation at\nthe end (`clSoundness_ldc_one_deltaCL_of_povm`) makes it the projective strategy the soundness\ntheorem takes. The dilated point measurement of `lem:qld-padded-points` is not used: on the\nextended state the Born rule sees only compressions (`bornProb_extVec2`), so every bound proved\nfor it is a bound for the sandwich.\n\n## A function of the question\n\nThe seeded test asks for a measurement per *question*, while `padLineMats` is indexed by the\n*data* `⟨pt, s, raw⟩` a sample generates the question from. A line question carries the canonical\nbase point `u₀` of the line, the seed, and for a diagonal line the truncated direction `v'`; the\nstrategy answers it with the padded line measurement at the data `⟨u₀, s, raw⟩`, **averaged over\nthe raw directions that produce the question** (`rawFiber`). Two things make this the right\nchoice. The decider reads the answer polynomial at the parameter of the sampled point relative to\n`u₀`, and moving the data's point to the sampled point along the line does not change the padded\nline measurement (`pasteLine_subPair_padShift`), so what the decider reads is `padLineMats` at the\nsample's own data, coarse-grained by evaluation at the sample's point --- exactly the quantity\n`lem:qld-padded-lines` controls (`lineMeas_map_eval_mats`). And the sample distribution averages\nuniformly over the raw direction, so by linearity of the Born rule the strategy's failure at a\nquestion is the average of the per-sample quantities.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedStrategy.lean#L411-L439",
+  "source_path": "MIPRE/Background/QLD/PaddedStrategy.lean",
+  "lines": [
+   411,
+   439
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-setup",
+    "env": "lemma",
+    "title": "Admissible padded setup",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.xBlk_dir_sub"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.lineMats_pairCZ_padShift",
+  "source_name": "MIPRE.QLD.lineMats_pairCZ_padShift",
+  "formal_statement": "theorem MIPRE.QLD.lineMats_pairCZ_padShift (ty : CL.Ty) (PZ : LinePres F m hm .Z) (hfacZ : FactorsZ PZ)\n    (hdirZ : ∀ (D : LPData F m) (u : Point F m), PZ.dir (ofLPZ D u) = D.dir hm ty) (tau : F)\n    (P : LPData F (4 * m)) (e : SubRand F m) :\n    PZ.lineMats d M (pairCZ (subPair hm4 hm ty (padShift hm4 ty tau P) e))\n      = PZ.lineMats d M (pairCZ (subPair hm4 hm ty P e)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable (hm4 : 4 * m ∣ Fintype.card F)",
+   "variable (hm)",
+   "variable {dB : Type} [Fintype dB] [DecidableEq dB] {M : Question F m → POVM (Answer F m d) dB}"
+  ],
+  "docstring": "The `Z` line measurement of the pair of sublines is unchanged by the padded shift.",
+  "module": "MIPRE.Background.QLD.PaddedStrategy",
+  "module_doc": "/-!\n# The padded strategy for the seeded low individual degree test\n\nStage 4 of the Pauli basis test's analysis (`lem:qld-global-setup`, `lem:qld-global-success`)\nassembles the padded point and line measurements of `lem:qld-padded-points` and\n`lem:qld-padded-lines` into a strategy for the seeded test `clGame` at parameters\n`(q, 4m, d, 1)`, and shows that it succeeds with probability `1 - O(δ_combine + δ_Q + md/q)`.\nThis file defines the strategy and bounds its conditional failure at each of the seeded test's\nquestion pairs by an agreement defect of the measurements it is built from; the averages over the\nverifier's samples, and the value bound, are in `PaddedValue.lean`.\n\n## The registers, and why the strategy is a family of POVMs\n\nThe strategy lives on the registers `(dA × Anc F m) × (F × F)` of `extHat ψ`: the player's own\nspace, the expansion's ancilla, and the combining coefficients' ancilla that `lem:qld-padded-points`\ndilates its sandwich with. Its point measurement is the *sandwich* `M^X_a M^Z_b M^X_a` of the\nhatted point measurements, coarse-grained along `(a, b) ↦ α a + β b`, extended by the identity to\nthe last register; its line measurements are the padded line measurements `padLineMats`. Both are\nPOVMs and neither is projective, so the strategy is a family of POVMs, and one Naimark dilation at\nthe end (`clSoundness_ldc_one_deltaCL_of_povm`) makes it the projective strategy the soundness\ntheorem takes. The dilated point measurement of `lem:qld-padded-points` is not used: on the\nextended state the Born rule sees only compressions (`bornProb_extVec2`), so every bound proved\nfor it is a bound for the sandwich.\n\n## A function of the question\n\nThe seeded test asks for a measurement per *question*, while `padLineMats` is indexed by the\n*data* `⟨pt, s, raw⟩` a sample generates the question from. A line question carries the canonical\nbase point `u₀` of the line, the seed, and for a diagonal line the truncated direction `v'`; the\nstrategy answers it with the padded line measurement at the data `⟨u₀, s, raw⟩`, **averaged over\nthe raw directions that produce the question** (`rawFiber`). Two things make this the right\nchoice. The decider reads the answer polynomial at the parameter of the sampled point relative to\n`u₀`, and moving the data's point to the sampled point along the line does not change the padded\nline measurement (`pasteLine_subPair_padShift`), so what the decider reads is `padLineMats` at the\nsample's own data, coarse-grained by evaluation at the sample's point --- exactly the quantity\n`lem:qld-padded-lines` controls (`lineMeas_map_eval_mats`). And the sample distribution averages\nuniformly over the raw direction, so by linearity of the Born rule the strategy's failure at a\nquestion is the average of the per-sample quantities.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedStrategy.lean#L441-L469",
+  "source_path": "MIPRE/Background/QLD/PaddedStrategy.lean",
+  "lines": [
+   441,
+   469
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-setup",
+    "env": "lemma",
+    "title": "Admissible padded setup",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.zBlk_dir_sub"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.one_sub_sum_bornProb_le_avg_eval",
+  "source_name": "MIPRE.QLD.one_sub_sum_bornProb_le_avg_eval",
+  "formal_statement": "theorem MIPRE.QLD.one_sub_sum_bornProb_le_avg_eval {n : ℕ} {ψ : dA' × dB' → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)\n    (LA : POVM (LinePoly F n) dA') (LB : POVM (LinePoly F n) dB') :\n    1 - ∑ f, bornProb ψ ((LA.mats f).val) ((LB.mats f).val)\n      ≤ (Fintype.card F : ℝ)⁻¹ * ∑ t : F, (1 - ∑ a : F,\n          bornProb ψ (((LA.map fun f => LinePoly.eval f t).mats a).val)\n            (((LB.map fun f => LinePoly.eval f t).mats a).val))\n        + (n : ℝ) / Fintype.card F := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable (hm4 : 4 * m ∣ Fintype.card F)",
+   "variable (hm)",
+   "variable {dA' dB' : Type*} [Fintype dA'] [DecidableEq dA'] [Fintype dB'] [DecidableEq dB']"
+  ],
+  "docstring": "**Polynomial separation.**",
+  "module": "MIPRE.Background.QLD.PaddedStrategy",
+  "module_doc": "/-!\n# The padded strategy for the seeded low individual degree test\n\nStage 4 of the Pauli basis test's analysis (`lem:qld-global-setup`, `lem:qld-global-success`)\nassembles the padded point and line measurements of `lem:qld-padded-points` and\n`lem:qld-padded-lines` into a strategy for the seeded test `clGame` at parameters\n`(q, 4m, d, 1)`, and shows that it succeeds with probability `1 - O(δ_combine + δ_Q + md/q)`.\nThis file defines the strategy and bounds its conditional failure at each of the seeded test's\nquestion pairs by an agreement defect of the measurements it is built from; the averages over the\nverifier's samples, and the value bound, are in `PaddedValue.lean`.\n\n## The registers, and why the strategy is a family of POVMs\n\nThe strategy lives on the registers `(dA × Anc F m) × (F × F)` of `extHat ψ`: the player's own\nspace, the expansion's ancilla, and the combining coefficients' ancilla that `lem:qld-padded-points`\ndilates its sandwich with. Its point measurement is the *sandwich* `M^X_a M^Z_b M^X_a` of the\nhatted point measurements, coarse-grained along `(a, b) ↦ α a + β b`, extended by the identity to\nthe last register; its line measurements are the padded line measurements `padLineMats`. Both are\nPOVMs and neither is projective, so the strategy is a family of POVMs, and one Naimark dilation at\nthe end (`clSoundness_ldc_one_deltaCL_of_povm`) makes it the projective strategy the soundness\ntheorem takes. The dilated point measurement of `lem:qld-padded-points` is not used: on the\nextended state the Born rule sees only compressions (`bornProb_extVec2`), so every bound proved\nfor it is a bound for the sandwich.\n\n## A function of the question\n\nThe seeded test asks for a measurement per *question*, while `padLineMats` is indexed by the\n*data* `⟨pt, s, raw⟩` a sample generates the question from. A line question carries the canonical\nbase point `u₀` of the line, the seed, and for a diagonal line the truncated direction `v'`; the\nstrategy answers it with the padded line measurement at the data `⟨u₀, s, raw⟩`, **averaged over\nthe raw directions that produce the question** (`rawFiber`). Two things make this the right\nchoice. The decider reads the answer polynomial at the parameter of the sampled point relative to\n`u₀`, and moving the data's point to the sampled point along the line does not change the padded\nline measurement (`pasteLine_subPair_padShift`), so what the decider reads is `padLineMats` at the\nsample's own data, coarse-grained by evaluation at the sample's point --- exactly the quantity\n`lem:qld-padded-lines` controls (`lineMeas_map_eval_mats`). And the sample distribution averages\nuniformly over the raw direction, so by linearity of the Born rule the strategy's failure at a\nquestion is the average of the per-sample quantities.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedStrategy.lean#L704-L794",
+  "source_path": "MIPRE/Background/QLD/PaddedStrategy.lean",
+  "lines": [
+   704,
+   794
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-success",
+    "env": "lemma",
+    "title": "All padded subtests succeed",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb_map",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.sum_bornProb"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 82,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_inv_card_fiber_sum",
+  "source_name": "MIPRE.QLD.sum_inv_card_fiber_sum",
+  "formal_statement": "theorem MIPRE.QLD.sum_inv_card_fiber_sum {α β : Type*} [Fintype α] [Fintype β] [DecidableEq β] (π : α → β)\n    (h : α → ℝ) :\n    ∑ a, ((univ.filter fun a' => π a' = π a).card : ℝ)⁻¹\n        * ∑ a' ∈ univ.filter (fun a' => π a' = π a), h a'\n      = ∑ a', h a' := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.PaddedValue",
+  "module_doc": "/-!\n# The value of the padded strategy\n\n`lem:qld-global-success`: the padded strategy of `PaddedStrategy.lean` wins the seeded low\nindividual degree test at `(q, 4m, d, 1)` with probability `1 - O(δ_combine + δ_Q + md/q)`.\n\nThe failure probability is the average over the verifier's samples of the conditional failure at\nthe two questions the sample generates (`one_sub_povmValue_clGame`), and the sample splits into the\nordered pair of types and the ambient triple `(u, s, raw)` (`sum_sample_eq`). Each of the nine type\npairs is bounded by an agreement defect of two families of POVMs indexed by the ambient triple,\naveraged uniformly:\n\n* a line type against `point`, in either order, by the agreement of the line measurement read at\n  the sample's point with the opposite party's padded point measurement, which\n  `lem:qld-padded-lines`\n  bounds (`one_sub_agreeSum_lineEval_pt_le`, `one_sub_agreeSum_pt_lineEval_le`);\n* `point` against `point` by the agreement of the two padded point measurements, which\n  `lem:qld-combined-points` bounds through the compressions (`one_sub_agreeSum_pt_pt_le`);\n* a line type against itself by polynomial separation\n  (`one_sub_sum_bornProb_le_avg_eval`): the two line measurements disagree only if they disagree\n  when read at a uniformly random parameter, up to `(md + 1)/q`, and that disagreement is bounded\n  through the agreement triangle `fact:triangle-for-simeq` by the three defects above\n  (`one_sub_agreeSum_lineEval_lineEval_le`);\n* the two cross pairs are always accepted.\n\nThe parameter of the sample's point is uniform on the line once the raw direction is fixed, because\ntranslating the point along the line is a bijection of the sample space that fixes the line\n(`sum_lineEval_shift`); a degenerate diagonal direction, for which this fails, has probability at\nmost `1/q`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedValue.lean#L82-L102",
+  "source_path": "MIPRE/Background/QLD/PaddedValue.lean",
+  "lines": [
+   82,
+   102
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-success",
+    "env": "lemma",
+    "title": "All padded subtests succeed",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_rawSet_fiber",
+  "source_name": "MIPRE.QLD.sum_rawSet_fiber",
+  "formal_statement": "theorem MIPRE.QLD.sum_rawSet_fiber (ty : CL.Ty) (s : F) (h : Point F (4 * m) → ℝ) :\n    ∑ raw : Point F (4 * m), ((rawSet hm4 ty s raw).card : ℝ)⁻¹\n        * ∑ raw' ∈ rawSet hm4 ty s raw, h raw'\n      = ∑ raw', h raw' := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "The strategy's raw-direction average composed with the sample's is the plain average.",
+  "module": "MIPRE.Background.QLD.PaddedValue",
+  "module_doc": "/-!\n# The value of the padded strategy\n\n`lem:qld-global-success`: the padded strategy of `PaddedStrategy.lean` wins the seeded low\nindividual degree test at `(q, 4m, d, 1)` with probability `1 - O(δ_combine + δ_Q + md/q)`.\n\nThe failure probability is the average over the verifier's samples of the conditional failure at\nthe two questions the sample generates (`one_sub_povmValue_clGame`), and the sample splits into the\nordered pair of types and the ambient triple `(u, s, raw)` (`sum_sample_eq`). Each of the nine type\npairs is bounded by an agreement defect of two families of POVMs indexed by the ambient triple,\naveraged uniformly:\n\n* a line type against `point`, in either order, by the agreement of the line measurement read at\n  the sample's point with the opposite party's padded point measurement, which\n  `lem:qld-padded-lines`\n  bounds (`one_sub_agreeSum_lineEval_pt_le`, `one_sub_agreeSum_pt_lineEval_le`);\n* `point` against `point` by the agreement of the two padded point measurements, which\n  `lem:qld-combined-points` bounds through the compressions (`one_sub_agreeSum_pt_pt_le`);\n* a line type against itself by polynomial separation\n  (`one_sub_sum_bornProb_le_avg_eval`): the two line measurements disagree only if they disagree\n  when read at a uniformly random parameter, up to `(md + 1)/q`, and that disagreement is bounded\n  through the agreement triangle `fact:triangle-for-simeq` by the three defects above\n  (`one_sub_agreeSum_lineEval_lineEval_le`);\n* the two cross pairs are always accepted.\n\nThe parameter of the sample's point is uniform on the line once the raw direction is fixed, because\ntranslating the point along the line is a bijection of the sample space that fixes the line\n(`sum_lineEval_shift`); a degenerate diagonal direction, for which this fails, has probability at\nmost `1/q`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedValue.lean#L104-L121",
+  "source_path": "MIPRE/Background/QLD/PaddedValue.lean",
+  "lines": [
+   104,
+   121
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-success",
+    "env": "lemma",
+    "title": "All padded subtests succeed",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_inv_card_fiber_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_padGL_eq",
+  "source_name": "MIPRE.QLD.sum_padGL_eq",
+  "formal_statement": "theorem MIPRE.QLD.sum_padGL_eq (ty : CL.Ty) (s : F) (pt raw : Point F (4 * m)) :\n    ∑ eX : F × Point F m, ∑ eZ : F × Point F m,\n        padGL hm Ψ MA MB ty (alph pt) (bet pt) (subX hm4 hm ⟨pt, s, raw⟩ eX)\n          (subZ hm4 hm ty ⟨pt, s, raw⟩ eZ)\n      = (Fintype.card (SubRand F m) : ℝ) * lineTermL hm hm4 Ψ MA MB ty pt s raw := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "The inner sum of `avgSubAB` at a fixed padded point and raw direction, for Alice's line.",
+  "module": "MIPRE.Background.QLD.PaddedValue",
+  "module_doc": "/-!\n# The value of the padded strategy\n\n`lem:qld-global-success`: the padded strategy of `PaddedStrategy.lean` wins the seeded low\nindividual degree test at `(q, 4m, d, 1)` with probability `1 - O(δ_combine + δ_Q + md/q)`.\n\nThe failure probability is the average over the verifier's samples of the conditional failure at\nthe two questions the sample generates (`one_sub_povmValue_clGame`), and the sample splits into the\nordered pair of types and the ambient triple `(u, s, raw)` (`sum_sample_eq`). Each of the nine type\npairs is bounded by an agreement defect of two families of POVMs indexed by the ambient triple,\naveraged uniformly:\n\n* a line type against `point`, in either order, by the agreement of the line measurement read at\n  the sample's point with the opposite party's padded point measurement, which\n  `lem:qld-padded-lines`\n  bounds (`one_sub_agreeSum_lineEval_pt_le`, `one_sub_agreeSum_pt_lineEval_le`);\n* `point` against `point` by the agreement of the two padded point measurements, which\n  `lem:qld-combined-points` bounds through the compressions (`one_sub_agreeSum_pt_pt_le`);\n* a line type against itself by polynomial separation\n  (`one_sub_sum_bornProb_le_avg_eval`): the two line measurements disagree only if they disagree\n  when read at a uniformly random parameter, up to `(md + 1)/q`, and that disagreement is bounded\n  through the agreement triangle `fact:triangle-for-simeq` by the three defects above\n  (`one_sub_agreeSum_lineEval_lineEval_le`);\n* the two cross pairs are always accepted.\n\nThe parameter of the sample's point is uniform on the line once the raw direction is fixed, because\ntranslating the point along the line is a bijection of the sample space that fixes the line\n(`sum_lineEval_shift`); a degenerate diagonal direction, for which this fails, has probability at\nmost `1/q`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedValue.lean#L204-L223",
+  "source_path": "MIPRE/Background/QLD/PaddedValue.lean",
+  "lines": [
+   204,
+   223
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-success",
+    "env": "lemma",
+    "title": "All padded subtests succeed",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_padGR_eq",
+  "source_name": "MIPRE.QLD.sum_padGR_eq",
+  "formal_statement": "theorem MIPRE.QLD.sum_padGR_eq (ty : CL.Ty) (s : F) (pt raw : Point F (4 * m)) :\n    ∑ eX : F × Point F m, ∑ eZ : F × Point F m,\n        padGR hm Ψ MA MB ty (alph pt) (bet pt) (subX hm4 hm ⟨pt, s, raw⟩ eX)\n          (subZ hm4 hm ty ⟨pt, s, raw⟩ eZ)\n      = (Fintype.card (SubRand F m) : ℝ) * lineTermR hm hm4 Ψ MA MB ty pt s raw := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.PaddedValue",
+  "module_doc": "/-!\n# The value of the padded strategy\n\n`lem:qld-global-success`: the padded strategy of `PaddedStrategy.lean` wins the seeded low\nindividual degree test at `(q, 4m, d, 1)` with probability `1 - O(δ_combine + δ_Q + md/q)`.\n\nThe failure probability is the average over the verifier's samples of the conditional failure at\nthe two questions the sample generates (`one_sub_povmValue_clGame`), and the sample splits into the\nordered pair of types and the ambient triple `(u, s, raw)` (`sum_sample_eq`). Each of the nine type\npairs is bounded by an agreement defect of two families of POVMs indexed by the ambient triple,\naveraged uniformly:\n\n* a line type against `point`, in either order, by the agreement of the line measurement read at\n  the sample's point with the opposite party's padded point measurement, which\n  `lem:qld-padded-lines`\n  bounds (`one_sub_agreeSum_lineEval_pt_le`, `one_sub_agreeSum_pt_lineEval_le`);\n* `point` against `point` by the agreement of the two padded point measurements, which\n  `lem:qld-combined-points` bounds through the compressions (`one_sub_agreeSum_pt_pt_le`);\n* a line type against itself by polynomial separation\n  (`one_sub_sum_bornProb_le_avg_eval`): the two line measurements disagree only if they disagree\n  when read at a uniformly random parameter, up to `(md + 1)/q`, and that disagreement is bounded\n  through the agreement triangle `fact:triangle-for-simeq` by the three defects above\n  (`one_sub_agreeSum_lineEval_lineEval_le`);\n* the two cross pairs are always accepted.\n\nThe parameter of the sample's point is uniform on the line once the raw direction is fixed, because\ntranslating the point along the line is a bijection of the sample space that fixes the line\n(`sum_lineEval_shift`); a degenerate diagonal direction, for which this fails, has probability at\nmost `1/q`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedValue.lean#L225-L244",
+  "source_path": "MIPRE/Background/QLD/PaddedValue.lean",
+  "lines": [
+   225,
+   244
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-success",
+    "env": "lemma",
+    "title": "All padded subtests succeed",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.agreeSum_lineEvalFam_ptFam",
+  "source_name": "MIPRE.QLD.agreeSum_lineEvalFam_ptFam",
+  "formal_statement": "theorem MIPRE.QLD.agreeSum_lineEvalFam_ptFam (ty : CL.Ty) (hty : ty ≠ .point) :\n    agreeSum (uniform (Amb F m)) Ψ (lineEvalFam hm hm4 ty hMA) (ptFam hMB)\n      = (Fintype.card F : ℝ)⁻¹ * ∑ s : F, avgSubAB hm4 hm ty s (padGL hm Ψ MA MB ty) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**The agreement of Alice's line read at the sample's point with Bob's padded point measurement\nis the seed-average of the padded consistency quantity.**",
+  "module": "MIPRE.Background.QLD.PaddedValue",
+  "module_doc": "/-!\n# The value of the padded strategy\n\n`lem:qld-global-success`: the padded strategy of `PaddedStrategy.lean` wins the seeded low\nindividual degree test at `(q, 4m, d, 1)` with probability `1 - O(δ_combine + δ_Q + md/q)`.\n\nThe failure probability is the average over the verifier's samples of the conditional failure at\nthe two questions the sample generates (`one_sub_povmValue_clGame`), and the sample splits into the\nordered pair of types and the ambient triple `(u, s, raw)` (`sum_sample_eq`). Each of the nine type\npairs is bounded by an agreement defect of two families of POVMs indexed by the ambient triple,\naveraged uniformly:\n\n* a line type against `point`, in either order, by the agreement of the line measurement read at\n  the sample's point with the opposite party's padded point measurement, which\n  `lem:qld-padded-lines`\n  bounds (`one_sub_agreeSum_lineEval_pt_le`, `one_sub_agreeSum_pt_lineEval_le`);\n* `point` against `point` by the agreement of the two padded point measurements, which\n  `lem:qld-combined-points` bounds through the compressions (`one_sub_agreeSum_pt_pt_le`);\n* a line type against itself by polynomial separation\n  (`one_sub_sum_bornProb_le_avg_eval`): the two line measurements disagree only if they disagree\n  when read at a uniformly random parameter, up to `(md + 1)/q`, and that disagreement is bounded\n  through the agreement triangle `fact:triangle-for-simeq` by the three defects above\n  (`one_sub_agreeSum_lineEval_lineEval_le`);\n* the two cross pairs are always accepted.\n\nThe parameter of the sample's point is uniform on the line once the raw direction is fixed, because\ntranslating the point along the line is a bijection of the sample space that fixes the line\n(`sum_lineEval_shift`); a degenerate diagonal direction, for which this fails, has probability at\nmost `1/q`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedValue.lean#L280-L299",
+  "source_path": "MIPRE/Background/QLD/PaddedValue.lean",
+  "lines": [
+   280,
+   299
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-success",
+    "env": "lemma",
+    "title": "All padded subtests succeed",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_filter_padLineMats",
+   "MIPRE.QLD.rep_add_lineParam_smul",
+   "MIPRE.QLD.lineMats_pairCX_padShift",
+   "MIPRE.QLD.lineMats_pairCZ_padShift",
+   "MIPRE.QLD.padPt_mats",
+   "MIPRE.QLD.sum_padGL_eq",
+   "MIPRE.QLD.sum_rawSet_fiber",
+   "MIPRE.aOp_sum"
+  ],
+  "pasted_helpers": 36,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.agreeSum_ptFam_lineEvalFam",
+  "source_name": "MIPRE.QLD.agreeSum_ptFam_lineEvalFam",
+  "formal_statement": "theorem MIPRE.QLD.agreeSum_ptFam_lineEvalFam (ty : CL.Ty) (hty : ty ≠ .point) :\n    agreeSum (uniform (Amb F m)) Ψ (ptFam hMA) (lineEvalFam hm hm4 ty hMB)\n      = (Fintype.card F : ℝ)⁻¹ * ∑ s : F, avgSubAB hm4 hm ty s (padGR hm Ψ MA MB ty) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.PaddedValue",
+  "module_doc": "/-!\n# The value of the padded strategy\n\n`lem:qld-global-success`: the padded strategy of `PaddedStrategy.lean` wins the seeded low\nindividual degree test at `(q, 4m, d, 1)` with probability `1 - O(δ_combine + δ_Q + md/q)`.\n\nThe failure probability is the average over the verifier's samples of the conditional failure at\nthe two questions the sample generates (`one_sub_povmValue_clGame`), and the sample splits into the\nordered pair of types and the ambient triple `(u, s, raw)` (`sum_sample_eq`). Each of the nine type\npairs is bounded by an agreement defect of two families of POVMs indexed by the ambient triple,\naveraged uniformly:\n\n* a line type against `point`, in either order, by the agreement of the line measurement read at\n  the sample's point with the opposite party's padded point measurement, which\n  `lem:qld-padded-lines`\n  bounds (`one_sub_agreeSum_lineEval_pt_le`, `one_sub_agreeSum_pt_lineEval_le`);\n* `point` against `point` by the agreement of the two padded point measurements, which\n  `lem:qld-combined-points` bounds through the compressions (`one_sub_agreeSum_pt_pt_le`);\n* a line type against itself by polynomial separation\n  (`one_sub_sum_bornProb_le_avg_eval`): the two line measurements disagree only if they disagree\n  when read at a uniformly random parameter, up to `(md + 1)/q`, and that disagreement is bounded\n  through the agreement triangle `fact:triangle-for-simeq` by the three defects above\n  (`one_sub_agreeSum_lineEval_lineEval_le`);\n* the two cross pairs are always accepted.\n\nThe parameter of the sample's point is uniform on the line once the raw direction is fixed, because\ntranslating the point along the line is a bijection of the sample space that fixes the line\n(`sum_lineEval_shift`); a degenerate diagonal direction, for which this fails, has probability at\nmost `1/q`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedValue.lean#L301-L318",
+  "source_path": "MIPRE/Background/QLD/PaddedValue.lean",
+  "lines": [
+   301,
+   318
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-success",
+    "env": "lemma",
+    "title": "All padded subtests succeed",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_filter_padLineMats",
+   "MIPRE.QLD.rep_add_lineParam_smul",
+   "MIPRE.QLD.lineMats_pairCX_padShift",
+   "MIPRE.QLD.lineMats_pairCZ_padShift",
+   "MIPRE.QLD.padPt_mats",
+   "MIPRE.QLD.sum_padGR_eq",
+   "MIPRE.QLD.sum_rawSet_fiber"
+  ],
+  "pasted_helpers": 38,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.one_sub_inv_card_mul_sum_le",
+  "source_name": "MIPRE.QLD.one_sub_inv_card_mul_sum_le",
+  "formal_statement": "theorem MIPRE.QLD.one_sub_inv_card_mul_sum_le {A : F → ℝ} {B : ℝ} (h : ∀ s, 1 - A s ≤ B) :\n    1 - (Fintype.card F : ℝ)⁻¹ * ∑ s, A s ≤ B := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "Averaging a family of bounds over the seed.",
+  "module": "MIPRE.Background.QLD.PaddedValue",
+  "module_doc": "/-!\n# The value of the padded strategy\n\n`lem:qld-global-success`: the padded strategy of `PaddedStrategy.lean` wins the seeded low\nindividual degree test at `(q, 4m, d, 1)` with probability `1 - O(δ_combine + δ_Q + md/q)`.\n\nThe failure probability is the average over the verifier's samples of the conditional failure at\nthe two questions the sample generates (`one_sub_povmValue_clGame`), and the sample splits into the\nordered pair of types and the ambient triple `(u, s, raw)` (`sum_sample_eq`). Each of the nine type\npairs is bounded by an agreement defect of two families of POVMs indexed by the ambient triple,\naveraged uniformly:\n\n* a line type against `point`, in either order, by the agreement of the line measurement read at\n  the sample's point with the opposite party's padded point measurement, which\n  `lem:qld-padded-lines`\n  bounds (`one_sub_agreeSum_lineEval_pt_le`, `one_sub_agreeSum_pt_lineEval_le`);\n* `point` against `point` by the agreement of the two padded point measurements, which\n  `lem:qld-combined-points` bounds through the compressions (`one_sub_agreeSum_pt_pt_le`);\n* a line type against itself by polynomial separation\n  (`one_sub_sum_bornProb_le_avg_eval`): the two line measurements disagree only if they disagree\n  when read at a uniformly random parameter, up to `(md + 1)/q`, and that disagreement is bounded\n  through the agreement triangle `fact:triangle-for-simeq` by the three defects above\n  (`one_sub_agreeSum_lineEval_lineEval_le`);\n* the two cross pairs are always accepted.\n\nThe parameter of the sample's point is uniform on the line once the raw direction is fixed, because\ntranslating the point along the line is a bijection of the sample space that fixes the line\n(`sum_lineEval_shift`); a degenerate diagonal direction, for which this fails, has probability at\nmost `1/q`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedValue.lean#L440-L455",
+  "source_path": "MIPRE/Background/QLD/PaddedValue.lean",
+  "lines": [
+   440,
+   455
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-success",
+    "env": "lemma",
+    "title": "All padded subtests succeed",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.one_sub_agreeSum_pt_pt_le",
+  "source_name": "MIPRE.QLD.one_sub_agreeSum_pt_pt_le",
+  "formal_statement": "theorem MIPRE.QLD.one_sub_agreeSum_pt_pt_le (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA\n    MB ≤ ε)\n    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) :\n    1 - agreeSum (uniform (Amb F m)) (extHat (F := F) (m := m) ψ) (ptFam hprojA) (ptFam hprojB)\n      ≤ deltaQ ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**The identical-point subtest**: the two padded point measurements agree up to `δ_Q`, by the\nself-consistency item of `lem:qld-combined-points` read through the compressions.",
+  "module": "MIPRE.Background.QLD.PaddedValue",
+  "module_doc": "/-!\n# The value of the padded strategy\n\n`lem:qld-global-success`: the padded strategy of `PaddedStrategy.lean` wins the seeded low\nindividual degree test at `(q, 4m, d, 1)` with probability `1 - O(δ_combine + δ_Q + md/q)`.\n\nThe failure probability is the average over the verifier's samples of the conditional failure at\nthe two questions the sample generates (`one_sub_povmValue_clGame`), and the sample splits into the\nordered pair of types and the ambient triple `(u, s, raw)` (`sum_sample_eq`). Each of the nine type\npairs is bounded by an agreement defect of two families of POVMs indexed by the ambient triple,\naveraged uniformly:\n\n* a line type against `point`, in either order, by the agreement of the line measurement read at\n  the sample's point with the opposite party's padded point measurement, which\n  `lem:qld-padded-lines`\n  bounds (`one_sub_agreeSum_lineEval_pt_le`, `one_sub_agreeSum_pt_lineEval_le`);\n* `point` against `point` by the agreement of the two padded point measurements, which\n  `lem:qld-combined-points` bounds through the compressions (`one_sub_agreeSum_pt_pt_le`);\n* a line type against itself by polynomial separation\n  (`one_sub_sum_bornProb_le_avg_eval`): the two line measurements disagree only if they disagree\n  when read at a uniformly random parameter, up to `(md + 1)/q`, and that disagreement is bounded\n  through the agreement triangle `fact:triangle-for-simeq` by the three defects above\n  (`one_sub_agreeSum_lineEval_lineEval_le`);\n* the two cross pairs are always accepted.\n\nThe parameter of the sample's point is uniform on the line once the raw direction is fixed, because\ntranslating the point along the line is a bijection of the sample space that fixes the line\n(`sum_lineEval_shift`); a degenerate diagonal direction, for which this fails, has probability at\nmost `1/q`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedValue.lean#L500-L559",
+  "source_path": "MIPRE/Background/QLD/PaddedValue.lean",
+  "lines": [
+   500,
+   559
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-success",
+    "env": "lemma",
+    "title": "All padded subtests succeed",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.hatVec_unit",
+   "MIPRE.QLD.sum_point_pad",
+   "MIPRE.QLD.padPt_mats",
+   "MIPRE.QLD.combined_points_pts",
+   "MIPRE.ancillaEmbed_isometry",
+   "MIPRE.kron_one_mul_ancillaEmbed",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.sum_bornProb_le_fibSum",
+   "MIPRE.one_sub_sum_bornProb_eq",
+   "MIPRE.extVec2_unit"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 52,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_shift_param",
+  "source_name": "MIPRE.QLD.sum_shift_param",
+  "formal_statement": "theorem MIPRE.QLD.sum_shift_param {n : ℕ} {α β : Type*} (w : Point F n) (LA : Point F n → α)\n    (LB : Point F n → β) (τ : Point F n → F) (hLA : ∀ (u : Point F n) (t : F), LA (u + t • w) = LA\n        u)\n    (hLB : ∀ (u : Point F n) (t : F), LB (u + t • w) = LB u)\n    (hτ : ∀ (u : Point F n) (t : F), τ (u + t • w) = τ u + t)\n    (Φ : α → β → F → ℝ) :\n    ∑ u : Point F n, ∑ t : F, Φ (LA u) (LB u) t\n      = (Fintype.card F : ℝ) * ∑ u : Point F n, Φ (LA u) (LB u) (τ u) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**The parameter is uniform on the line.** For a quantity that depends on the sample's point\nonly through the line it generates and the parameter of the point on it, averaging over a uniform\nparameter is averaging over the point, when moving the point along the line shifts its parameter\nby the same amount.",
+  "module": "MIPRE.Background.QLD.PaddedValue",
+  "module_doc": "/-!\n# The value of the padded strategy\n\n`lem:qld-global-success`: the padded strategy of `PaddedStrategy.lean` wins the seeded low\nindividual degree test at `(q, 4m, d, 1)` with probability `1 - O(δ_combine + δ_Q + md/q)`.\n\nThe failure probability is the average over the verifier's samples of the conditional failure at\nthe two questions the sample generates (`one_sub_povmValue_clGame`), and the sample splits into the\nordered pair of types and the ambient triple `(u, s, raw)` (`sum_sample_eq`). Each of the nine type\npairs is bounded by an agreement defect of two families of POVMs indexed by the ambient triple,\naveraged uniformly:\n\n* a line type against `point`, in either order, by the agreement of the line measurement read at\n  the sample's point with the opposite party's padded point measurement, which\n  `lem:qld-padded-lines`\n  bounds (`one_sub_agreeSum_lineEval_pt_le`, `one_sub_agreeSum_pt_lineEval_le`);\n* `point` against `point` by the agreement of the two padded point measurements, which\n  `lem:qld-combined-points` bounds through the compressions (`one_sub_agreeSum_pt_pt_le`);\n* a line type against itself by polynomial separation\n  (`one_sub_sum_bornProb_le_avg_eval`): the two line measurements disagree only if they disagree\n  when read at a uniformly random parameter, up to `(md + 1)/q`, and that disagreement is bounded\n  through the agreement triangle `fact:triangle-for-simeq` by the three defects above\n  (`one_sub_agreeSum_lineEval_lineEval_le`);\n* the two cross pairs are always accepted.\n\nThe parameter of the sample's point is uniform on the line once the raw direction is fixed, because\ntranslating the point along the line is a bijection of the sample space that fixes the line\n(`sum_lineEval_shift`); a degenerate diagonal direction, for which this fails, has probability at\nmost `1/q`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedValue.lean#L578-L603",
+  "source_path": "MIPRE/Background/QLD/PaddedValue.lean",
+  "lines": [
+   578,
+   603
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-success",
+    "env": "lemma",
+    "title": "All padded subtests succeed",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_avg_evDef_le",
+  "source_name": "MIPRE.QLD.sum_avg_evDef_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_avg_evDef_le (hΨ : star Ψ ⬝ᵥ Ψ = 1) (ty : CL.Ty) (s : F) (raw : Point F (4 * m)) :\n    ∑ u : Point F (4 * m), (Fintype.card F : ℝ)⁻¹ * ∑ t : F,\n        evDef Ψ (lineFam hm hm4 ty hMA (u, s, raw)) (lineFam hm hm4 ty hMB (u, s, raw)) t\n      ≤ ∑ u : Point F (4 * m), evDef Ψ (lineFam hm hm4 ty hMA (u, s, raw))\n          (lineFam hm hm4 ty hMB (u, s, raw)) (lineTau hm4 ty u s raw)\n        + (if lineDir hm4 ty s raw = 0 then (Fintype.card (Point F (4 * m)) : ℝ) else 0) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**At a fixed seed and raw direction, averaging the evaluated disagreement over the parameter\nis averaging it over the point**, unless the direction is degenerate, in which case the average is\nat most one.",
+  "module": "MIPRE.Background.QLD.PaddedValue",
+  "module_doc": "/-!\n# The value of the padded strategy\n\n`lem:qld-global-success`: the padded strategy of `PaddedStrategy.lean` wins the seeded low\nindividual degree test at `(q, 4m, d, 1)` with probability `1 - O(δ_combine + δ_Q + md/q)`.\n\nThe failure probability is the average over the verifier's samples of the conditional failure at\nthe two questions the sample generates (`one_sub_povmValue_clGame`), and the sample splits into the\nordered pair of types and the ambient triple `(u, s, raw)` (`sum_sample_eq`). Each of the nine type\npairs is bounded by an agreement defect of two families of POVMs indexed by the ambient triple,\naveraged uniformly:\n\n* a line type against `point`, in either order, by the agreement of the line measurement read at\n  the sample's point with the opposite party's padded point measurement, which\n  `lem:qld-padded-lines`\n  bounds (`one_sub_agreeSum_lineEval_pt_le`, `one_sub_agreeSum_pt_lineEval_le`);\n* `point` against `point` by the agreement of the two padded point measurements, which\n  `lem:qld-combined-points` bounds through the compressions (`one_sub_agreeSum_pt_pt_le`);\n* a line type against itself by polynomial separation\n  (`one_sub_sum_bornProb_le_avg_eval`): the two line measurements disagree only if they disagree\n  when read at a uniformly random parameter, up to `(md + 1)/q`, and that disagreement is bounded\n  through the agreement triangle `fact:triangle-for-simeq` by the three defects above\n  (`one_sub_agreeSum_lineEval_lineEval_le`);\n* the two cross pairs are always accepted.\n\nThe parameter of the sample's point is uniform on the line once the raw direction is fixed, because\ntranslating the point along the line is a bijection of the sample space that fixes the line\n(`sum_lineEval_shift`); a degenerate diagonal direction, for which this fails, has probability at\nmost `1/q`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedValue.lean#L636-L683",
+  "source_path": "MIPRE/Background/QLD/PaddedValue.lean",
+  "lines": [
+   636,
+   683
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-success",
+    "env": "lemma",
+    "title": "All padded subtests succeed",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.CL.rep_add_lineParam_smul",
+   "MIPRE.QLD.sum_shift_param",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.POVM.sum_val",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 39,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_deg_le",
+  "source_name": "MIPRE.QLD.sum_deg_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_deg_le (ty : CL.Ty) (hty : ty ≠ .point) :\n    ∑ s : F, ∑ raw : Point F (4 * m), (if lineDir hm4 ty s raw = 0 then (1 : ℝ) else 0)\n      ≤ (Fintype.card (Point F (4 * m)) : ℝ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**Degenerate lines are rare**: over the seed and the raw direction, a line type other than\n`point` describes the zero direction on at most a `1/q` fraction of the samples.",
+  "module": "MIPRE.Background.QLD.PaddedValue",
+  "module_doc": "/-!\n# The value of the padded strategy\n\n`lem:qld-global-success`: the padded strategy of `PaddedStrategy.lean` wins the seeded low\nindividual degree test at `(q, 4m, d, 1)` with probability `1 - O(δ_combine + δ_Q + md/q)`.\n\nThe failure probability is the average over the verifier's samples of the conditional failure at\nthe two questions the sample generates (`one_sub_povmValue_clGame`), and the sample splits into the\nordered pair of types and the ambient triple `(u, s, raw)` (`sum_sample_eq`). Each of the nine type\npairs is bounded by an agreement defect of two families of POVMs indexed by the ambient triple,\naveraged uniformly:\n\n* a line type against `point`, in either order, by the agreement of the line measurement read at\n  the sample's point with the opposite party's padded point measurement, which\n  `lem:qld-padded-lines`\n  bounds (`one_sub_agreeSum_lineEval_pt_le`, `one_sub_agreeSum_pt_lineEval_le`);\n* `point` against `point` by the agreement of the two padded point measurements, which\n  `lem:qld-combined-points` bounds through the compressions (`one_sub_agreeSum_pt_pt_le`);\n* a line type against itself by polynomial separation\n  (`one_sub_sum_bornProb_le_avg_eval`): the two line measurements disagree only if they disagree\n  when read at a uniformly random parameter, up to `(md + 1)/q`, and that disagreement is bounded\n  through the agreement triangle `fact:triangle-for-simeq` by the three defects above\n  (`one_sub_agreeSum_lineEval_lineEval_le`);\n* the two cross pairs are always accepted.\n\nThe parameter of the sample's point is uniform on the line once the raw direction is fixed, because\ntranslating the point along the line is a bijection of the sample space that fixes the line\n(`sum_lineEval_shift`); a degenerate diagonal direction, for which this fails, has probability at\nmost `1/q`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedValue.lean#L685-L704",
+  "source_path": "MIPRE/Background/QLD/PaddedValue.lean",
+  "lines": [
+   685,
+   704
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-success",
+    "env": "lemma",
+    "title": "All padded subtests succeed",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.one_sub_agreeSum_lineEval_lineEval_le",
+  "source_name": "MIPRE.QLD.one_sub_agreeSum_lineEval_lineEval_le",
+  "formal_statement": "theorem MIPRE.QLD.one_sub_agreeSum_lineEval_lineEval_le {ψ : dA × dB → ℂ} {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (hε : 0 ≤ ε) (hd : 1 ≤ d) (ty : CL.Ty)\n    (hty : ty ≠ .point) :\n    1 - agreeSum (uniform (Amb F m)) (extHat (F := F) (m := m) ψ) (lineEvalFam hm hm4 ty hMA)\n        (lineEvalFam hm hm4 ty hMB)\n      ≤ 11 * ((m : ℝ) * m * deltaPairs ε ((m * d : ℝ) / Fintype.card F + (Fintype.card F : ℝ)⁻¹)\n          + deltaQ ε) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**The identical-line agreement, through the triangle**: Alice's line read at the sample's point\nagrees with Bob's, because each agrees with the padded point measurements there.",
+  "module": "MIPRE.Background.QLD.PaddedValue",
+  "module_doc": "/-!\n# The value of the padded strategy\n\n`lem:qld-global-success`: the padded strategy of `PaddedStrategy.lean` wins the seeded low\nindividual degree test at `(q, 4m, d, 1)` with probability `1 - O(δ_combine + δ_Q + md/q)`.\n\nThe failure probability is the average over the verifier's samples of the conditional failure at\nthe two questions the sample generates (`one_sub_povmValue_clGame`), and the sample splits into the\nordered pair of types and the ambient triple `(u, s, raw)` (`sum_sample_eq`). Each of the nine type\npairs is bounded by an agreement defect of two families of POVMs indexed by the ambient triple,\naveraged uniformly:\n\n* a line type against `point`, in either order, by the agreement of the line measurement read at\n  the sample's point with the opposite party's padded point measurement, which\n  `lem:qld-padded-lines`\n  bounds (`one_sub_agreeSum_lineEval_pt_le`, `one_sub_agreeSum_pt_lineEval_le`);\n* `point` against `point` by the agreement of the two padded point measurements, which\n  `lem:qld-combined-points` bounds through the compressions (`one_sub_agreeSum_pt_pt_le`);\n* a line type against itself by polynomial separation\n  (`one_sub_sum_bornProb_le_avg_eval`): the two line measurements disagree only if they disagree\n  when read at a uniformly random parameter, up to `(md + 1)/q`, and that disagreement is bounded\n  through the agreement triangle `fact:triangle-for-simeq` by the three defects above\n  (`one_sub_agreeSum_lineEval_lineEval_le`);\n* the two cross pairs are always accepted.\n\nThe parameter of the sample's point is uniform on the line once the raw direction is fixed, because\ntranslating the point along the line is a bijection of the sample space that fixes the line\n(`sum_lineEval_shift`); a degenerate diagonal direction, for which this fails, has probability at\nmost `1/q`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedValue.lean#L735-L759",
+  "source_path": "MIPRE/Background/QLD/PaddedValue.lean",
+  "lines": [
+   735,
+   759
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-success",
+    "env": "lemma",
+    "title": "All padded subtests succeed",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.eval_padLine",
+   "MIPRE.QLD.hatLinePOVM_consistency",
+   "MIPRE.QLD.rep_add_lineParam_smul",
+   "MIPRE.QLD.hatLinePOVM_point_consistency",
+   "MIPRE.QLD.hatVec_unit",
+   "MIPRE.QLD.sum_content_collProb_dPres",
+   "MIPRE.QLD.padded_lines_consistency",
+   "MIPRE.QLD.padded_lines_consistency_swap",
+   "MIPRE.QLD.agreeSum_lineEvalFam_ptFam",
+   "MIPRE.QLD.agreeSum_ptFam_lineEvalFam",
+   "MIPRE.QLD.one_sub_inv_card_mul_sum_le",
+   "MIPRE.QLD.one_sub_agreeSum_pt_pt_le",
+   "MIPRE.QLD.swapVec_unit",
+   "MIPRE.QLD.povmValue_swapped_le",
+   "MIPRE.sum_snorm_sq_triangle3",
+   "MIPRE.sum_stateSqNorm_le_one",
+   "MIPRE.ancillaEmbed_isometry",
+   "MIPRE.kron_one_mul_ancillaEmbed",
+   "MIPRE.xDev_eq",
+   "MIPRE.weightA_ge",
+   "MIPRE.weightB_ge",
+   "MIPRE.extVec2_unit",
+   "MIPRE.norm_stateVecB",
+   "MIPRE.swapVec_dotProduct"
+  ],
+  "pasted_helpers": 60,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.padW_line_line_le",
+  "source_name": "MIPRE.QLD.padW_line_line_le",
+  "formal_statement": "theorem MIPRE.QLD.padW_line_line_le (hε : 0 ≤ ε) (hd : 1 ≤ d) (ty : CL.Ty) (hty : ty ≠ .point) :\n    padW hm hm4 ψ hprojA hprojB ty ty\n      ≤ 11 * ((m : ℝ) * m * deltaPairs ε ((m * d : ℝ) / Fintype.card F + (Fintype.card F : ℝ)⁻¹)\n            + deltaQ ε)\n        + ((m : ℝ) * d + 1) / Fintype.card F + (Fintype.card F : ℝ)⁻¹ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)"
+  ],
+  "docstring": "**The identical-line subtests.**",
+  "module": "MIPRE.Background.QLD.PaddedValue",
+  "module_doc": "/-!\n# The value of the padded strategy\n\n`lem:qld-global-success`: the padded strategy of `PaddedStrategy.lean` wins the seeded low\nindividual degree test at `(q, 4m, d, 1)` with probability `1 - O(δ_combine + δ_Q + md/q)`.\n\nThe failure probability is the average over the verifier's samples of the conditional failure at\nthe two questions the sample generates (`one_sub_povmValue_clGame`), and the sample splits into the\nordered pair of types and the ambient triple `(u, s, raw)` (`sum_sample_eq`). Each of the nine type\npairs is bounded by an agreement defect of two families of POVMs indexed by the ambient triple,\naveraged uniformly:\n\n* a line type against `point`, in either order, by the agreement of the line measurement read at\n  the sample's point with the opposite party's padded point measurement, which\n  `lem:qld-padded-lines`\n  bounds (`one_sub_agreeSum_lineEval_pt_le`, `one_sub_agreeSum_pt_lineEval_le`);\n* `point` against `point` by the agreement of the two padded point measurements, which\n  `lem:qld-combined-points` bounds through the compressions (`one_sub_agreeSum_pt_pt_le`);\n* a line type against itself by polynomial separation\n  (`one_sub_sum_bornProb_le_avg_eval`): the two line measurements disagree only if they disagree\n  when read at a uniformly random parameter, up to `(md + 1)/q`, and that disagreement is bounded\n  through the agreement triangle `fact:triangle-for-simeq` by the three defects above\n  (`one_sub_agreeSum_lineEval_lineEval_le`);\n* the two cross pairs are always accepted.\n\nThe parameter of the sample's point is uniform on the line once the raw direction is fixed, because\ntranslating the point along the line is a bijection of the sample space that fixes the line\n(`sum_lineEval_shift`); a degenerate diagonal direction, for which this fails, has probability at\nmost `1/q`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedValue.lean#L831-L909",
+  "source_path": "MIPRE/Background/QLD/PaddedValue.lean",
+  "lines": [
+   831,
+   909
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-success",
+    "env": "lemma",
+    "title": "All padded subtests succeed",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.hatVec_unit",
+   "MIPRE.QLD.one_sub_sum_bornProb_le_avg_eval",
+   "MIPRE.QLD.sum_avg_evDef_le",
+   "MIPRE.QLD.sum_deg_le",
+   "MIPRE.QLD.one_sub_agreeSum_lineEval_lineEval_le",
+   "MIPRE.sum_bornProb_le_map",
+   "MIPRE.condFail_le_one_sub_sum_bornProb_diag",
+   "MIPRE.extVec2_unit"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 72,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.padStrat_value",
+  "source_name": "MIPRE.QLD.padStrat_value",
+  "formal_statement": "theorem MIPRE.QLD.padStrat_value (hε : 0 ≤ ε) (hlegA : LegalSupport MA) (hlegB : LegalSupport MB)\n    (hd : 1 ≤ d) :\n    1 - povmValue (clGame (d := d) (ldc := 1) hm4) (extHat (F := F) (m := m) ψ)\n        (padStrat hm hm4 hprojA) (padStrat hm hm4 hprojB)\n      ≤ 5 * ((m : ℝ) * m * deltaPairs ε ((m * d : ℝ) / Fintype.card F + (Fintype.card F : ℝ)⁻¹))\n        + 4 * deltaQ ε + ((m : ℝ) * d + 1) / Fintype.card F := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)"
+  ],
+  "docstring": "**`lem:qld-global-success`: the padded strategy wins the seeded low individual degree test at\n`(q, 4m, d, 1)` with probability `1 - O(δ_combine + δ_Q + md/q)`**, with\n`δ_combine = m² δ_P(ε, md/q + 1/q)`.",
+  "module": "MIPRE.Background.QLD.PaddedValue",
+  "module_doc": "/-!\n# The value of the padded strategy\n\n`lem:qld-global-success`: the padded strategy of `PaddedStrategy.lean` wins the seeded low\nindividual degree test at `(q, 4m, d, 1)` with probability `1 - O(δ_combine + δ_Q + md/q)`.\n\nThe failure probability is the average over the verifier's samples of the conditional failure at\nthe two questions the sample generates (`one_sub_povmValue_clGame`), and the sample splits into the\nordered pair of types and the ambient triple `(u, s, raw)` (`sum_sample_eq`). Each of the nine type\npairs is bounded by an agreement defect of two families of POVMs indexed by the ambient triple,\naveraged uniformly:\n\n* a line type against `point`, in either order, by the agreement of the line measurement read at\n  the sample's point with the opposite party's padded point measurement, which\n  `lem:qld-padded-lines`\n  bounds (`one_sub_agreeSum_lineEval_pt_le`, `one_sub_agreeSum_pt_lineEval_le`);\n* `point` against `point` by the agreement of the two padded point measurements, which\n  `lem:qld-combined-points` bounds through the compressions (`one_sub_agreeSum_pt_pt_le`);\n* a line type against itself by polynomial separation\n  (`one_sub_sum_bornProb_le_avg_eval`): the two line measurements disagree only if they disagree\n  when read at a uniformly random parameter, up to `(md + 1)/q`, and that disagreement is bounded\n  through the agreement triangle `fact:triangle-for-simeq` by the three defects above\n  (`one_sub_agreeSum_lineEval_lineEval_le`);\n* the two cross pairs are always accepted.\n\nThe parameter of the sample's point is uniform on the line once the raw direction is fixed, because\ntranslating the point along the line is a bijection of the sample space that fixes the line\n(`sum_lineEval_shift`); a degenerate diagonal direction, for which this fails, has probability at\nmost `1/q`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PaddedValue.lean#L944-L976",
+  "source_path": "MIPRE/Background/QLD/PaddedValue.lean",
+  "lines": [
+   944,
+   976
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-success",
+    "env": "lemma",
+    "title": "All padded subtests succeed",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.CL.one_sub_povmValue_clGame",
+   "MIPRE.QLD.eval_padLine",
+   "MIPRE.QLD.hatLinePOVM_consistency",
+   "MIPRE.QLD.rep_add_lineParam_smul",
+   "MIPRE.QLD.hatLinePOVM_point_consistency",
+   "MIPRE.QLD.hatVec_unit",
+   "MIPRE.QLD.sum_content_collProb_dPres",
+   "MIPRE.QLD.padded_lines_consistency",
+   "MIPRE.QLD.padded_lines_consistency_swap",
+   "MIPRE.QLD.padStrat_lineQ_map_rdEval",
+   "MIPRE.QLD.agreeSum_lineEvalFam_ptFam",
+   "MIPRE.QLD.agreeSum_ptFam_lineEvalFam",
+   "MIPRE.QLD.one_sub_inv_card_mul_sum_le",
+   "MIPRE.QLD.one_sub_agreeSum_pt_pt_le",
+   "MIPRE.QLD.padW_line_line_le",
+   "MIPRE.QLD.swapVec_unit",
+   "MIPRE.QLD.povmValue_swapped_le",
+   "MIPRE.ancillaEmbed_isometry",
+   "MIPRE.POVM.map_map",
+   "MIPRE.kron_one_mul_ancillaEmbed",
+   "MIPRE.condFail_le_one_sub_sum_bornProb_map",
+   "MIPRE.POVM.sum_val",
+   "MIPRE.extVec2_unit"
+  ],
+  "pasted_helpers": 85,
+  "prooflines": 23,
+  "is_target": false
+ }
+]

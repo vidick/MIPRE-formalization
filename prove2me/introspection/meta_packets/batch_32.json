@@ -1,0 +1,791 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.prefixProjector_weight",
+  "source_name": "MIPRE.Introspection.prefixProjector_weight",
+  "formal_statement": "theorem MIPRE.Introspection.prefixProjector_weight (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)\n    (k : ℕ) (y : ι → F) :\n    stateSqNorm (registerEPR (CLChecks.prefixRegister P k y → F)) (prefixProjector P k y) =\n      prefixWeight P k y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical MIPRE.Introspection.Honest",
+   "open scoped Kronecker",
+   "variable {F ι H K : Type*} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "The probability of the local used-register projector is precisely the\nuniform CL prefix probability, with no conditional normalization premise.",
+  "module": "MIPRE.Foundations.Introspection.PrefixConditioning",
+  "module_doc": "/-! # Concrete adaptive prefix conditioning\n\nThe used and remaining coordinates are those selected by the actual CL\nprefix. A residual operator is embedded with the concrete prefix projector.\nIts ambient squared error is exactly the actual prefix weight times its\nerror on the remaining EPR register and the original auxiliary state.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PrefixConditioning.lean#L40-L56",
+  "source_path": "MIPRE/Foundations/Introspection/PrefixConditioning.lean",
+  "lines": [
+   40,
+   56
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.norm_evec_expVec",
+   "MIPRE.mulVec_kron_expVec",
+   "MIPRE.Introspection.Honest.readout_ambientSplit",
+   "MIPRE.Introspection.CLChecks.truncate_fibre_of_agree",
+   "MIPRE.Introspection.bornProb_registerEPR_readout",
+   "MIPRE.Introspection.readout_isPVM",
+   "MIPRE.Introspection.registerEPR_equiv",
+   "MIPRE.Introspection.norm_evec_comp_equiv",
+   "MIPRE.Introspection.registerOp_mulVec",
+   "MIPRE.Introspection.registerOp_kronecker",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose"
+  ],
+  "pasted_helpers": 18,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SyncStrategy.value_copy_of_nonzero",
+  "source_name": "MIPRE.SyncStrategy.value_copy_of_nonzero",
+  "formal_statement": "theorem MIPRE.SyncStrategy.value_copy_of_nonzero (S : SyncStrategy G) (G' : SynchronousGame X A)\n    (hμ : ∀ x y, G'.μ x y = G.μ x y)\n    (hD : ∀ x y a b, S.P.M x a ≠ 0 → S.P.M y b ≠ 0 →\n      G'.D x y a b = G.D x y a b) : (S.copy G').value = S.value := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SyncStrategy",
+   "open Classical",
+   "variable {X A : Type*} [Fintype X] [Fintype A] [DecidableEq A]"
+  ],
+  "docstring": "Predicate agreement is needed only on nonzero measurement effects.",
+  "module": "MIPRE.Foundations.Introspection.PrefixGuardGame",
+  "module_doc": "/-! # Adding honest prefix guards preserves completeness\n\nChanging a predicate only on zero measurement effects preserves its value.\nApplying this observation to the local prefix guards keeps the honest state,\ndimension and PCC property, while guard rejection can only reduce arbitrary\nstrategies' success.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PrefixGuardGame.lean#L26-L43",
+  "source_path": "MIPRE/Foundations/Introspection/PrefixGuardGame.lean",
+  "lines": [
+   26,
+   43
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.introAliceZError_le_of_bob",
+  "source_name": "MIPRE.Introspection.TypedEstimates.introAliceZError_le_of_bob",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.introAliceZError_le_of_bob\n    (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)\n    (projectPauli : PauliAnswer → ι → F)\n    (D : (ι → F) → (ι → F) → A → A → Bool)\n    (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →\n      PauliAnswer → PauliAnswer → Bool)\n    (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)\n    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H))\n    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K))\n    (q : κ → ZMod 2) (hq : ∀ z, (P Z).eval z = q)\n    {ε η : ℝ}\n    (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP)\n      (registerState (ι → F) ξ) MA MB ≤ ε)\n    (hZ : introBobZError projectPauli Z q ξ MB ≤ η) :\n    introAliceZError projectPauli Z q ξ MA ≤\n      4 * (TypeGraph.edges E X Z ℓ).card * ε + 2 * η := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "Actual loop consistency transfers the primitive Z estimate to Alice,\nincluding the malformed Pauli outcome.",
+  "module": "MIPRE.Foundations.Introspection.PrimitivePauliTransfer",
+  "module_doc": "/-! # The tested Pauli loop supplies the second primitive Z estimate\n\nThe actual constant Pauli-Z loop compares both players' complete projected\nanswer alphabets. Combining it with Bob's extracted Z guarantee and the\nexact computational-readout mirror yields Alice's Z guarantee. No additional\nextraction hypothesis is needed when starting Bob's induction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PrimitivePauliTransfer.lean#L27-L77",
+  "source_path": "MIPRE/Foundations/Introspection/PrimitivePauliTransfer.lean",
+  "lines": [
+   27,
+   77
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-primitive-soundness",
+    "env": "lemma",
+    "title": "Finite-game soundness from the primitive Pauli guarantees",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.norm_evec_expVec",
+   "MIPRE.mulVec_kron_kron_expVec",
+   "MIPRE.Introspection.TypedEstimates.constant_edge_agreement_estimate",
+   "MIPRE.aOp_sub",
+   "MIPRE.dotProduct_star_self",
+   "MIPRE.Weyl.stateVec_epr"
+  ],
+  "pasted_helpers": 22,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.primitiveSoundness_power_bounds",
+  "source_name": "MIPRE.Introspection.primitiveSoundness_power_bounds",
+  "formal_statement": "theorem MIPRE.Introspection.primitiveSoundness_power_bounds (r : ℕ) {edges t : ℝ}\n    (hE : 0 ≤ edges) (ht : 0 ≤ t) :\n    let p := adaptiveSoundnessCoefficient r edges (2 * r) *\n      iteratedRoot (3 * (2 * r)) (primitiveBudgetCoefficient r edges * t)\n    p ≤ primitiveSoundnessCoefficient r edges * iteratedRoot (6 * r) t ∧\n    edges * p ≤ primitiveSoundnessCoefficient r edges * iteratedRoot (6 * r) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.PrimitiveSoundness",
+  "module_doc": "/-! # Finite-game introspection soundness from primitive Pauli estimates\n\nThe only operator estimates assumed here are the extracted Alice-X and\nBob-Z guarantees. Actual game success supplies all hiding estimates and\nAlice-Z consistency. Both adaptive inductions and terminal extraction are\nthen constructed. The explicit power bound covers every nonnegative input\nerror, including errors outside the smallness threshold of the induction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PrimitiveSoundness.lean#L63-L95",
+  "source_path": "MIPRE/Foundations/Introspection/PrimitiveSoundness.lean",
+  "lines": [
+   63,
+   95
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-primitive-soundness",
+    "env": "lemma",
+    "title": "Finite-game soundness from the primitive Pauli guarantees",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 6,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_primitive_pauli",
+  "source_name": "MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_primitive_pauli",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_primitive_pauli\n    (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)\n    (hL : ∀ w, (L w).ExactlyOn univ)\n    (projectPauli : PauliAnswer → ι → F)\n    (D : (ι → F) → (ι → F) → A → A → Bool)\n    (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →\n      PauliAnswer → PauliAnswer → Bool)\n    (G : Game (ι → F) (ι → F) A A)\n    (hμ : ∀ x y, G.μ x y = CL.clDist (L false).eval (L true).eval x y)\n    (hD : G.D = D) (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)\n    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H))\n    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K))\n    (hMA : ∀ q, IsPVM (fun a => ((MA q).mats a).val))\n    (hMB : ∀ q, IsPVM (fun a => ((MB q).mats a).val))\n    (qX qZ : κ → ZMod 2)\n    (hqX : ∀ z, (P X).eval z = qX) (hqZ : ∀ z, (P Z).eval z = qZ)\n    {t : ℝ} (ht : 0 ≤ t)\n    (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP)\n      (registerState (ι → F) ξ) MA MB ≤ t)\n    (hX : ∑ x, stateSqNorm (registerState (ι → F) ξ)\n      ((((MA (QuestionType.pauli X, qX)).map (pauliProjection projectPauli)).mats x).val -\n        (aOp (Honest.pauliXReadout x) : Matrix ((ι → F) × H) _ ℂ)) ≤ t)\n    (hZ : introBobZError projectPauli Z qZ ξ MB ≤ t) :\n    1 - primitiveSoundnessCoefficient ℓ (TypeGraph.edges E X Z ℓ).card *\n      iteratedRoot (6 * ℓ) t ≤ quantumValue G := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {F ι A H K : Type u} {PauliType PauliAnswer κ : Type*}"
+  ],
+  "docstring": "Complete finite-game soundness on an extracted register state. No hiding,\nprefix invariant, future measurement, or small-error hypothesis is assumed.",
+  "module": "MIPRE.Foundations.Introspection.PrimitiveSoundness",
+  "module_doc": "/-! # Finite-game introspection soundness from primitive Pauli estimates\n\nThe only operator estimates assumed here are the extracted Alice-X and\nBob-Z guarantees. Actual game success supplies all hiding estimates and\nAlice-Z consistency. Both adaptive inductions and terminal extraction are\nthen constructed. The explicit power bound covers every nonnegative input\nerror, including errors outside the smallness threshold of the induction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/PrimitiveSoundness.lean#L122-L197",
+  "source_path": "MIPRE/Foundations/Introspection/PrimitiveSoundness.lean",
+  "lines": [
+   122,
+   197
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-primitive-soundness",
+    "env": "lemma",
+    "title": "Finite-game soundness from the primitive Pauli guarantees",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.ancillaEmbed_isometry",
+   "MIPRE.Introspection.adaptiveFailureBudget_le_power",
+   "MIPRE.Introspection.one_le_soundness_power_of_threshold_le",
+   "MIPRE.Introspection.TypedEstimates.exists_intro_two_sided_iteration",
+   "MIPRE.Introspection.TypedEstimates.hiding_register_rigidity_of_pauli",
+   "MIPRE.Introspection.TypedEstimates.introAliceZError_le_of_bob",
+   "MIPRE.Introspection.primitiveSoundness_power_bounds",
+   "MIPRE.Introspection.TypedExtraction.exists_strategy_of_terminal_invariants",
+   "MIPRE.dotProduct_star_self",
+   "MIPRE.swapVec_dotProduct"
+  ],
+  "pasted_helpers": 22,
+  "prooflines": 44,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.introspect_read_full_estimate",
+  "source_name": "MIPRE.Introspection.TypedEstimates.introspect_read_full_estimate",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.introspect_read_full_estimate (w : Bool) :\n    (∑ z, xSqNorm (registerState (ι → F) ξ)\n      ((((MA (QuestionType.introspect w, 0)).map introFullPair).mats z).val)\n      ((((MB (QuestionType.read w, 0)).map readFullPair).mats z).val)) ≤\n      2 * (TypeGraph.edges E X Z ℓ).card * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.ProductStageReadTests",
+  "module_doc": "/-! # The actual Read joint measurement supplies the dual commutator\n\nThe two marginals are Introspect's full question/answer and one fixed\nprefix/dual readout. Their consistency follows from the actual reading test\nand hiding rigidity, respectively. Commutation is derived at this coarse\nalphabet; no fine commutator is subsequently coarse-grained.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ProductStageReadTests.lean#L54-L70",
+  "source_path": "MIPRE/Foundations/Introspection/ProductStageReadTests.lean",
+  "lines": [
+   54,
+   70
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-actual-product-commutators",
+    "env": "lemma",
+    "title": "Actual coarse commutators for product-form induction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.TypedEstimates.aux_agreement_estimate",
+   "MIPRE.Weyl.epr_unit"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.introspect_dual_commutator",
+  "source_name": "MIPRE.Introspection.TypedEstimates.introspect_dual_commutator",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.introspect_dual_commutator (w : Bool) (hL : (L w).SupportedOn univ)\n    (j : Fin ℓ)\n    (hMA : IsPVM (fun a => ((MA (QuestionType.hide w j, 0)).mats a).val))\n    (hMB : IsPVM (fun a => ((MB (QuestionType.read w, 0)).mats a).val)) {δ : ℝ}\n    (hfine : ∑ i, xSqNorm (registerState (ι → F) ξ)\n      ((((MA (QuestionType.hide w j, 0)).map (hidingCoarse (L w) j.val)).mats i).val)\n      (aOp (Honest.hideCoarseOp (L w) j.val hL i) : Matrix ((ι → F) × K) _ ℂ) ≤ δ) :\n    (∑ a, ∑ z, stateSqNorm (registerState (ι → F) ξ)\n      (((((MA (QuestionType.introspect w, 0)).map introFullPair).mats a).val) *\n          aOp (Honest.readDualOp (L w) j.val hL z) -\n        aOp (Honest.readDualOp (L w) j.val hL z) *\n          ((((MA (QuestionType.introspect w, 0)).map introFullPair).mats a).val))) ≤\n      16 * ((32 * ((ℓ - j.val : ℕ) : ℝ) ^ 2 + 6) *\n        (TypeGraph.edges E X Z ℓ).card * ε + 4 * δ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "The actual Read measurement supplies both tested marginals of the joint\nmeasurement used for the X/dual half of product-form induction.",
+  "module": "MIPRE.Foundations.Introspection.ProductStageReadTests",
+  "module_doc": "/-! # The actual Read joint measurement supplies the dual commutator\n\nThe two marginals are Introspect's full question/answer and one fixed\nprefix/dual readout. Their consistency follows from the actual reading test\nand hiding rigidity, respectively. Commutation is derived at this coarse\nalphabet; no fine commutator is subsequently coarse-grained.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ProductStageReadTests.lean#L72-L106",
+  "source_path": "MIPRE/Foundations/Introspection/ProductStageReadTests.lean",
+  "lines": [
+   72,
+   106
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-actual-product-commutators",
+    "env": "lemma",
+    "title": "Actual coarse commutators for product-form induction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.POVM.sum_mats_map_prod",
+   "MIPRE.POVM.sum_mats_map_prod'",
+   "MIPRE.Introspection.linear_measurements_commute",
+   "MIPRE.Introspection.coarse_joint_commutator_bound",
+   "MIPRE.Introspection.linear_measurement_isPVM",
+   "MIPRE.Introspection.TypedEstimates.introspect_read_full_estimate",
+   "MIPRE.Introspection.TypedEstimates.read_register_rigidity_bob",
+   "MIPRE.Introspection.registerOp_isPVM",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.IsPVM.aOp",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj"
+  ],
+  "pasted_helpers": 16,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.introspect_coarseZ_commutator_alice",
+  "source_name": "MIPRE.Introspection.TypedEstimates.introspect_coarseZ_commutator_alice",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.introspect_coarseZ_commutator_alice\n    (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)\n    (projectPauli : PauliAnswer → ι → F)\n    (D : (ι → F) → (ι → F) → A → A → Bool)\n    (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →\n      PauliAnswer → PauliAnswer → Bool)\n    (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)\n    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H))\n    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K))\n    {ε η : ℝ}\n    (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP)\n      (registerState (ι → F) ξ) MA MB ≤ ε)\n    (q : κ → ZMod 2) (hq : ∀ z, (P Z).eval z = q) (w : Bool)\n    (hS : IsPVM (fun a => ((MB (QuestionType.sample w, 0)).mats a).val))\n    (hZ : ∑ z, snorm (registerState (ι → F) ξ) (bOp\n      ((((MB (QuestionType.pauli Z, q)).map (pauliProjection projectPauli)).mats z).val -\n        (aOp (readout (some : (ι → F) → Option (ι → F)) z) :\n          Matrix ((ι → F) × K) _ ℂ))) ^ 2 ≤ η)\n    (g : (ι → F) → C) :\n    (∑ a, ∑ c, stateSqNorm (registerState (ι → F) ξ)\n      ((((MA (QuestionType.introspect w, 0)).map introspectPair).mats a).val *\n        (aOp (readout (fun z => some (g z)) c) : Matrix ((ι → F) × H) _ ℂ) -\n       (aOp (readout (fun z => some (g z)) c) : Matrix ((ι → F) × H) _ ℂ) *\n        (((MA (QuestionType.introspect w, 0)).map introspectPair).mats a).val)) ≤\n      64 * η + 224 * (TypeGraph.edges E X Z ℓ).card * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical MIPRE.Introspection.Honest",
+   "open scoped Kronecker",
+   "variable {PauliType PauliAnswer F ι κ A H K C : Type*}",
+   "variable [Fintype F] [DecidableEq F] [Fintype A] [Fintype PauliAnswer]",
+   "variable [Fintype PauliType] [DecidableEq PauliType] [Fintype κ] [DecidableEq κ]",
+   "variable [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "Alice's coarse Z commutator from the same primitive Bob-Z guarantee.\nThe actual Sample consistency loop transfers the fine seed estimate before\nany coarse-graining. There is no additional Alice extraction hypothesis.",
+  "module": "MIPRE.Foundations.Introspection.ProductStageZTests",
+  "module_doc": "/-! # Actual sampling tests imply coarse Z commutation\n\nThe common joint measurement is the actual Sample measurement: one marginal\nrecords its evaluated question and original answer, while the other records\nan arbitrary function of its seed. Both marginal estimates are obtained from\nthe parsed game and the extracted Pauli-Z estimate before applying the joint\ncommutation theorem. Malformed answers retain a dummy outcome throughout.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ProductStageZTests.lean#L195-L278",
+  "source_path": "MIPRE/Foundations/Introspection/ProductStageZTests.lean",
+  "lines": [
+   195,
+   278
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-actual-product-commutators",
+    "env": "lemma",
+    "title": "Actual coarse commutators for product-form induction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_xSqNorm_le_of_two_step",
+   "MIPRE.POVM.sum_mats_map_prod",
+   "MIPRE.POVM.sum_mats_map_prod'",
+   "MIPRE.POVM.map_map",
+   "MIPRE.norm_evec_expVec",
+   "MIPRE.mulVec_kron_kron_expVec",
+   "MIPRE.Introspection.coarse_joint_commutator_bound",
+   "MIPRE.Introspection.TypedEstimates.constant_edge_agreement_estimate",
+   "MIPRE.Introspection.readout_isPVM",
+   "MIPRE.Introspection.TypeGraph.symmetric",
+   "MIPRE.Introspection.TypedEstimates.aux_agreement_estimate",
+   "MIPRE.aOp_sub",
+   "MIPRE.aOp_sum",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.dotProduct_star_self",
+   "MIPRE.sum_bornProb_le_fibSum",
+   "MIPRE.IsPVM.aOp",
+   "MIPRE.one_sub_sum_bornProb_eq",
+   "MIPRE.Weyl.stateVec_epr"
+  ],
+  "pasted_helpers": 38,
+  "prooflines": 52,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.hiding_read_dual_chain_estimate",
+  "source_name": "MIPRE.Introspection.TypedEstimates.hiding_read_dual_chain_estimate",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.hiding_read_dual_chain_estimate (w : Bool) (hL : (L w).SupportedOn univ)\n    (j : Fin ℓ) :\n    (∑ z, stateSqNorm ψ\n      (((((MA (QuestionType.hide w j, 0)).map\n        (reportedDual (L w) j.val (.hide j))).mats z).val) -\n      ((((MA (QuestionType.read w, 0)).map\n        (reportedDual (L w) j.val .read)).mats z).val))) ≤\n      ((ℓ - j.val : ℕ) : ℝ) ^ 2 * (8 * (TypeGraph.edges E X Z ℓ).card * ε) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "Transport one fixed dual readout from its hiding level to Alice's Read.",
+  "module": "MIPRE.Foundations.Introspection.ReadChainEstimate",
+  "module_doc": "/-! # Quantitative transport of every dual readout from Hide to Read\n\nThe outcome map is chosen before applying the tested consistency estimate.\nConsequently the bound is quadratic in the path length and independent of\nthe size of every answer fibre.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ReadChainEstimate.lean#L72-L92",
+  "source_path": "MIPRE/Foundations/Introspection/ReadChainEstimate.lean",
+  "lines": [
+   72,
+   92
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-read-rigidity",
+    "env": "lemma",
+    "title": "Full Read rigidity",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.CLChecks.outputPrefix_outputPrefix",
+   "MIPRE.Introspection.hiding_chain_average",
+   "MIPRE.Introspection.TypedEstimates.check_hiding_next_dual",
+   "MIPRE.Introspection.TypedEstimates.aux_agreement_estimate",
+   "MIPRE.Introspection.TypedEstimates.prefixChainType_adj",
+   "MIPRE.aOp_sub"
+  ],
+  "pasted_helpers": 18,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.check_hiding_next_dual",
+  "source_name": "MIPRE.Introspection.TypedEstimates.check_hiding_next_dual",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.check_hiding_next_dual (w : Bool) (hL : (L w).SupportedOn univ)\n    (k j : Fin ℓ) (hk : k.val + 1 = j.val) (m : ℕ) (hm : m ≤ k.val)\n    {a b : ParsedAnswer (ι → F) A PauliAnswer}\n    (h : TypedPredicate.check L X Z projectPauli D DP\n      (QuestionType.hide w k) (QuestionType.hide w j) a b = true) :\n    reportedDual (L w) m (.hide k) a = reportedDual (L w) m (.hide j) b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Classical",
+   "variable {PauliType PauliAnswer F ι A : Type*}",
+   "variable [DecidableEq PauliType]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.ReadChainMaps",
+  "module_doc": "/-! # The dual readout retained along the actual hiding-to-Read chain\n\nThe stage and its preceding claimed prefix are fixed before coarse-graining.\nEvery later hiding edge preserves this same pair, including off-image answers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ReadChainMaps.lean#L80-L99",
+  "source_path": "MIPRE/Foundations/Introspection/ReadChainMaps.lean",
+  "lines": [
+   80,
+   99
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-read-rigidity",
+    "env": "lemma",
+    "title": "Full Read rigidity",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.CLChecks.outputPrefix_outputPrefix",
+   "MIPRE.Introspection.CLChecks.proj_outputPrefix_cons"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.read_register_rigidity_alice",
+  "source_name": "MIPRE.Introspection.TypedEstimates.read_register_rigidity_alice",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.read_register_rigidity_alice (w : Bool) (hL : (L w).SupportedOn univ)\n    (j : Fin ℓ)\n    (hMA : IsPVM (fun a => ((MA (QuestionType.hide w j, 0)).mats a).val)) {δ : ℝ}\n    (hfine : ∑ i, xSqNorm (registerState (ι → F) ξ)\n      ((((MA (QuestionType.hide w j, 0)).map (hidingCoarse (L w) j.val)).mats i).val)\n      (aOp (Honest.hideCoarseOp (L w) j.val hL i) : Matrix ((ι → F) × K) _ ℂ) ≤ δ) :\n    (∑ z, xSqNorm (registerState (ι → F) ξ)\n      ((((MA (QuestionType.read w, 0)).map (reportedDual (L w) j.val .read)).mats z).val)\n      (aOp (Honest.readDualOp (L w) j.val hL z) : Matrix ((ι → F) × K) _ ℂ)) ≤\n      16 * ((ℓ - j.val : ℕ) : ℝ) ^ 2 * (TypeGraph.edges E X Z ℓ).card * ε + 2 * δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "Every Read dual marginal is rigid once the corresponding hiding level is\nrigid. All intervening comparisons are supplied by the actual game.",
+  "module": "MIPRE.Foundations.Introspection.ReadRigidity",
+  "module_doc": "/-! # Read rigidity from the full hiding family\n\nFirst discard the unused X tail across the two players, using projective\nconsistency. Then transport the resulting fixed dual readout along the actual\nhiding-to-Read chain. No same-party coarse-distance contraction is used.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ReadRigidity.lean#L81-L121",
+  "source_path": "MIPRE/Foundations/Introspection/ReadRigidity.lean",
+  "lines": [
+   81,
+   121
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-read-rigidity",
+    "env": "lemma",
+    "title": "Full Read rigidity",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.POVM.map_map",
+   "MIPRE.Introspection.linear_measurements_commute",
+   "MIPRE.Introspection.linear_measurement_isPVM",
+   "MIPRE.Introspection.TypedEstimates.hiding_read_dual_chain_estimate",
+   "MIPRE.Introspection.registerOp_isPVM",
+   "MIPRE.aOp_sub",
+   "MIPRE.aOp_sum",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.sum_bornProb_le_fibSum",
+   "MIPRE.IsPVM.aOp",
+   "MIPRE.one_sub_sum_bornProb_eq",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj",
+   "MIPRE.Weyl.epr_unit"
+  ],
+  "pasted_helpers": 35,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.read_register_rigidity_bob",
+  "source_name": "MIPRE.Introspection.TypedEstimates.read_register_rigidity_bob",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.read_register_rigidity_bob (w : Bool) (hL : (L w).SupportedOn univ)\n    (j : Fin ℓ)\n    (hMA : IsPVM (fun a => ((MA (QuestionType.hide w j, 0)).mats a).val)) {δ : ℝ}\n    (hfine : ∑ i, xSqNorm (registerState (ι → F) ξ)\n      ((((MA (QuestionType.hide w j, 0)).map (hidingCoarse (L w) j.val)).mats i).val)\n      (aOp (Honest.hideCoarseOp (L w) j.val hL i) : Matrix ((ι → F) × K) _ ℂ) ≤ δ) :\n    (∑ z, xSqNorm (registerState (ι → F) ξ)\n      (aOp (Honest.readDualOp (L w) j.val hL z) : Matrix ((ι → F) × H) _ ℂ)\n      ((((MB (QuestionType.read w, 0)).map (reportedDual (L w) j.val .read)).mats z).val)) ≤\n      (32 * ((ℓ - j.val : ℕ) : ℝ) ^ 2 + 4) * (TypeGraph.edges E X Z ℓ).card * ε + 4 * δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "The actual Read consistency loop supplies rigidity on Bob's side too.",
+  "module": "MIPRE.Foundations.Introspection.ReadRigidity",
+  "module_doc": "/-! # Read rigidity from the full hiding family\n\nFirst discard the unused X tail across the two players, using projective\nconsistency. Then transport the resulting fixed dual readout along the actual\nhiding-to-Read chain. No same-party coarse-distance contraction is used.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ReadRigidity.lean#L123-L162",
+  "source_path": "MIPRE/Foundations/Introspection/ReadRigidity.lean",
+  "lines": [
+   123,
+   162
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-read-rigidity",
+    "env": "lemma",
+    "title": "Full Read rigidity",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.mulVec_kron_kron_expVec",
+   "MIPRE.Introspection.Honest.hideRegister_transpose",
+   "MIPRE.Introspection.TypedEstimates.read_register_rigidity_alice",
+   "MIPRE.Introspection.TypedEstimates.aux_agreement_estimate",
+   "MIPRE.aOp_sum",
+   "MIPRE.Weyl.epr_unit",
+   "MIPRE.Weyl.stateVec_epr"
+  ],
+  "pasted_helpers": 22,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.readout_isPVM",
+  "source_name": "MIPRE.Introspection.readout_isPVM",
+  "formal_statement": "theorem MIPRE.Introspection.readout_isPVM (f : I → X) : IsPVM (readout f) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {I X Y : Type*} [Fintype I] [DecidableEq I]"
+  ],
+  "docstring": "Reading a function of a classical basis label is a projective measurement.",
+  "module": "MIPRE.Foundations.Introspection.Readout",
+  "module_doc": "/-! # Exact classical readout of an EPR register\n\nThe last step of introspection reads the two original questions from the same\nuniform EPR seed. This works for arbitrary question maps, in particular for\nconditionally linear maps; linearity of the complete map is not required.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/Readout.lean#L32-L50",
+  "source_path": "MIPRE/Foundations/Introspection/Readout.lean",
+  "lines": [
+   32,
+   50
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-final-extraction",
+    "env": "lemma",
+    "title": "Exact final strategy extraction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.bornProb_registerEPR_readout",
+  "source_name": "MIPRE.Introspection.bornProb_registerEPR_readout",
+  "formal_statement": "theorem MIPRE.Introspection.bornProb_registerEPR_readout (f : I → X) (g : I → Y) (x : X) (y : Y) :\n    bornProb (registerEPR I) (readout f x) (readout g y) = SampledGame.dist f g x y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {I X Y : Type*} [Fintype I] [DecidableEq I]"
+  ],
+  "docstring": "EPR readouts have exactly the pushforward of the common uniform seed law.",
+  "module": "MIPRE.Foundations.Introspection.Readout",
+  "module_doc": "/-! # Exact classical readout of an EPR register\n\nThe last step of introspection reads the two original questions from the same\nuniform EPR seed. This works for arbitrary question maps, in particular for\nconditionally linear maps; linearity of the complete map is not required.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/Readout.lean#L52-L76",
+  "source_path": "MIPRE/Foundations/Introspection/Readout.lean",
+  "lines": [
+   52,
+   76
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-final-extraction",
+    "env": "lemma",
+    "title": "Exact final strategy extraction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.readout_eq_synOf",
+  "source_name": "MIPRE.Introspection.readout_eq_synOf",
+  "formal_statement": "theorem MIPRE.Introspection.readout_eq_synOf {F ι : Type*} [Field F] [Fintype F] [DecidableEq F]\n    [Algebra (ZMod 2) F] [Fintype ι] [DecidableEq ι]\n    (f : (ι → F) → X) (x : X) : readout f x = Weyl.synOf Weyl.wZ f x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {I X Y : Type*} [Fintype I] [DecidableEq I]"
+  ],
+  "docstring": "The computational readout is the usual coarse-grained Pauli-Z measurement.",
+  "module": "MIPRE.Foundations.Introspection.Readout",
+  "module_doc": "/-! # Exact classical readout of an EPR register\n\nThe last step of introspection reads the two original questions from the same\nuniform EPR seed. This works for arbitrary question maps, in particular for\nconditionally linear maps; linearity of the complete map is not required.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/Readout.lean#L78-L102",
+  "source_path": "MIPRE/Foundations/Introspection/Readout.lean",
+  "lines": [
+   78,
+   102
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-final-extraction",
+    "env": "lemma",
+    "title": "Exact final strategy extraction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Weyl.proj_wZ"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.registerEPR_equiv",
+  "source_name": "MIPRE.Introspection.registerEPR_equiv",
+  "formal_statement": "theorem MIPRE.Introspection.registerEPR_equiv (e : I ≃ J) :\n    registerEPR J ∘ e.prodCongr e = registerEPR I := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {I J R H K : Type*}"
+  ],
+  "docstring": "Simultaneous relabelling of both EPR halves leaves the state unchanged.",
+  "module": "MIPRE.Foundations.Introspection.RegisterEPR",
+  "module_doc": "/-! # Splitting the maximally entangled state along computational registers -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/RegisterEPR.lean#L32-L38",
+  "source_path": "MIPRE/Foundations/Introspection/RegisterEPR.lean",
+  "lines": [
+   32,
+   38
+  ],
+  "blueprint": [
+   {
+    "label": "lem:register-model",
+    "env": "lemma",
+    "title": "The register model",
+    "file": "08_downstream.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.stateSqNorm_registerExtend",
+  "source_name": "MIPRE.Introspection.stateSqNorm_registerExtend",
+  "formal_statement": "theorem MIPRE.Introspection.stateSqNorm_registerExtend [Nonempty R] (e : I ≃ J × R)\n    (ξ : H × K → ℂ) (M : Matrix (J × H) (J × H) ℂ) :\n    stateSqNorm (registerState I ξ) (registerExtend e M) =\n      stateSqNorm (registerState J ξ) M := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {I J R H K : Type*}"
+  ],
+  "docstring": "Extending a local operator by identity on complementary EPR coordinates costs no error.",
+  "module": "MIPRE.Foundations.Introspection.RegisterEPR",
+  "module_doc": "/-! # Splitting the maximally entangled state along computational registers -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/RegisterEPR.lean#L125-L143",
+  "source_path": "MIPRE/Foundations/Introspection/RegisterEPR.lean",
+  "lines": [
+   125,
+   143
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-mixing",
+    "env": "lemma",
+    "title": "Pauli mixing with a retained classical fibre",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.norm_evec_expVec",
+   "MIPRE.mulVec_kron_expVec",
+   "MIPRE.Introspection.registerEPR_equiv",
+   "MIPRE.Introspection.norm_evec_comp_equiv",
+   "MIPRE.Introspection.registerOp_mulVec",
+   "MIPRE.Introspection.registerOp_kronecker"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.exists_register_mixing_sqrt",
+  "source_name": "MIPRE.Introspection.exists_register_mixing_sqrt",
+  "formal_statement": "theorem MIPRE.Introspection.exists_register_mixing_sqrt\n    (D : X → ℝ) (hD0 : ∀ x, 0 ≤ D x) (hD1 : ∑ x, D x = 1)\n    (e : (x : X) → I x ≃ (Fin (n x) → F) × R x)\n    (L : (x : X) → (Fin (n x) → F) →ₗ[F] (Fin (n x) → F))\n    (ξ : H × K → ℂ) (hξ : ‖evec ξ‖ = 1)\n    (M : (x : X) → POVM ((Fin (n x) → F) × A) (I x × H))\n    (hM : ∀ x, IsPVM (fun p => ((M x).mats p).val))\n    {ε : ℝ} (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1)\n    (hmarg : ∑ x, D x * registerMarginalError (e x) (L x) ξ\n      (fun p => ((M x).mats p).val) ≤ ε)\n    (hZ : ∑ x, D x * registerCommutatorError (e x) ξ\n      (fun p => ((M x).mats p).val) wZ LinearMap.id ≤ ε)\n    (hX : ∑ x, D x * registerCommutatorError (e x) ξ\n      (fun p => ((M x).mats p).val) wX (CL.lperp (L x)) ≤ ε) :\n    ∃ Q : (x : X) → (Fin (n x) → F) → POVM A (R x × H),\n      (∑ x, D x * ∑ p : (Fin (n x) → F) × A, stateSqNorm (registerState (I x) ξ)\n        (((M x).mats p).val - registerOp (registerParty (e x) H)\n          (synOf wZ (L x) p.1 ⊗ₖ ((Q x p.1).mats p.2).val))) ≤ 56 * Real.sqrt ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix MIPRE.Weyl Classical",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {X : Type*} [Fintype X] {n : X → ℕ} {I R : X → Type*}"
+  ],
+  "docstring": "Pauli mixing on the original registers, with question-dependent coordinate splits.\nThe conclusion supplies genuine POVMs on the local complement, with no ambient complement\nadjoined to their support and no dimension factor in the error.",
+  "module": "MIPRE.Foundations.Introspection.RegisterMixing",
+  "module_doc": "/-! # Pauli mixing in the original local register\n\nThe basis equivalence explicitly splits the retained coordinates from the local\ncomplement. Hypotheses and the conclusion are stated on the original EPR state,\nand the output POVMs act only on that local complement and the original ancilla.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/RegisterMixing.lean#L90-L128",
+  "source_path": "MIPRE/Foundations/Introspection/RegisterMixing.lean",
+  "lines": [
+   90,
+   128
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-mixing",
+    "env": "lemma",
+    "title": "Pauli mixing with a retained classical fibre",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.norm_evec_expVec",
+   "MIPRE.Introspection.registerEPR_equiv",
+   "MIPRE.Introspection.registerOp_isPVM",
+   "MIPRE.Introspection.norm_evec_comp_equiv",
+   "MIPRE.Introspection.registerOp_mulVec",
+   "MIPRE.Introspection.registerOp_kronecker",
+   "MIPRE.Introspection.exists_pauli_mixing_varying"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.registerOp_isPVM",
+  "source_name": "MIPRE.Introspection.registerOp_isPVM",
+  "formal_statement": "theorem MIPRE.Introspection.registerOp_isPVM (e : I ≃ J) {M : A → Matrix J J ℂ} (hM : IsPVM M) :\n    IsPVM (fun a => registerOp e (M a)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {I J K L A : Type*}"
+  ],
+  "docstring": "A projective measurement remains projective after permuting its basis.",
+  "module": "MIPRE.Foundations.Introspection.RegisterTransport",
+  "module_doc": "/-! # Transporting finite register operators and their state distances\n\nAll transports below are explicit permutations of computational basis labels.\nIn particular they preserve positivity, projectivity and squared state norms.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/RegisterTransport.lean#L65-L70",
+  "source_path": "MIPRE/Foundations/Introspection/RegisterTransport.lean",
+  "lines": [
+   65,
+   70
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-mixing",
+    "env": "lemma",
+    "title": "Pauli mixing with a retained classical fibre",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.norm_evec_comp_equiv",
+  "source_name": "MIPRE.Introspection.norm_evec_comp_equiv",
+  "formal_statement": "theorem MIPRE.Introspection.norm_evec_comp_equiv (e : I ≃ J) (v : J → ℂ) :\n    ‖evec (v ∘ e)‖ = ‖evec v‖ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {I J K L A : Type*}"
+  ],
+  "docstring": "A computational-basis permutation preserves the Euclidean norm.",
+  "module": "MIPRE.Foundations.Introspection.RegisterTransport",
+  "module_doc": "/-! # Transporting finite register operators and their state distances\n\nAll transports below are explicit permutations of computational basis labels.\nIn particular they preserve positivity, projectivity and squared state norms.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/RegisterTransport.lean#L95-L100",
+  "source_path": "MIPRE/Foundations/Introspection/RegisterTransport.lean",
+  "lines": [
+   95,
+   100
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ }
+]

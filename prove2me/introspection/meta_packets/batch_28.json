@@ -1,0 +1,751 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.dilated_pvm_distance",
+  "source_name": "MIPRE.Introspection.dilated_pvm_distance",
+  "formal_statement": "theorem MIPRE.Introspection.dilated_pvm_distance (ψ : H × K → ℂ) (hψ : ‖evec ψ‖ = 1) (a₀ : T)\n    (M R : A → Matrix H H ℂ) (P : A → Matrix (H × T) (H × T) ℂ)\n    (hM : IsPVM M) (hP : IsPVM P)\n    (hk : ∀ a, (ancillaEmbed H a₀)ᴴ * (P a * ancillaEmbed H a₀) = R a)\n    {δ : ℝ} (hd : ∑ a, stateSqNorm ψ (M a - R a) ≤ δ) :\n    (∑ a, stateSqNorm (extVecA ψ a₀) (aOp (M a) - P a)) ≤ 2 * Real.sqrt δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {H K A T : Type*}"
+  ],
+  "docstring": "A fixed-state projective dilation remains close to an old PVM. The bound\nis uniform over every dilation with the displayed compression identity.",
+  "module": "MIPRE.Foundations.Introspection.HidingInductionDilation",
+  "module_doc": "/-! # Projectivizing a conditional residual measurement\n\nOne fixed ancilla is added on the residual side of every prefix. The prefix\nprojectors are unchanged. Squared distance to the old projective measurement\ncosts `2 sqrt(delta)`; a dilation does not in general preserve that distance.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingInductionDilation.lean#L56-L103",
+  "source_path": "MIPRE/Foundations/Introspection/HidingInductionDilation.lean",
+  "lines": [
+   56,
+   103
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-conditional-dilation",
+    "env": "lemma",
+    "title": "Conditional projectivization on a common ancilla",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.ancillaEmbed_isometry",
+   "MIPRE.Introspection.abs_sum_qform_mul_le",
+   "MIPRE.kron_one_mul_ancillaEmbed",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_sub",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.aOp_sum"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 40,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.hiding_next_accepts_guarded",
+  "source_name": "MIPRE.Introspection.TypedEstimates.hiding_next_accepts_guarded",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.hiding_next_accepts_guarded\n    [Fintype PauliType] [DecidableEq PauliType] [Fintype PauliAnswer]\n    [Fintype F] [DecidableEq F] [Fintype A]\n    (L : Bool → CL.CLFun F ι ℓ) (X Z : PauliType)\n    (projectPauli : PauliAnswer → ι → F)\n    (D : (ι → F) → (ι → F) → A → A → Bool)\n    (DP : PauliType → PauliType → PauliAnswer → PauliAnswer → Bool)\n    (w : Bool) (k j : Fin ℓ) (hk : k.val + 1 = j.val)\n    (hL : (L w).SupportedOn univ)\n    {a b : ParsedAnswer (ι → F) A PauliAnswer}\n    (h : TypedPredicate.check L X Z projectPauli D DP\n      (QuestionType.hide w k) (QuestionType.hide w j) a b = true) :\n    hidingNextGuarded (L w) k.val (hidingNextLater (L w) k.val b).1\n      (hidingCoarse (L w) k.val a) = (hidingNextLater (L w) k.val b).2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "The actual parsed check implies equality of the guarded coarse outcomes.\nNo support or in-image hypothesis on the answers is used.",
+  "module": "MIPRE.Foundations.Introspection.HidingMaps",
+  "module_doc": "/-! # Guarded coarse maps for the actual adjacent hiding test\n\nThe earlier fine label retains only its preceding prefix, current dual output,\nand remaining tail. The next map uses the later prefix as a key. A separate\ndummy outcome handles malformed answers and prefix mismatches, so each keyed\nmap is total on the entire answer alphabet and defines a complete measurement.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingMaps.lean#L59-L94",
+  "source_path": "MIPRE/Foundations/Introspection/HidingMaps.lean",
+  "lines": [
+   59,
+   94
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-guarded-hiding-maps",
+    "env": "lemma",
+    "title": "Guarded maps on arbitrary hiding answers",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.CLChecks.outputPrefix_outputPrefix",
+   "MIPRE.Introspection.CLChecks.dualReadout_proj_compl_prefix",
+   "MIPRE.Introspection.CLChecks.proj_outputPrefix_cons",
+   "MIPRE.Introspection.TypedEstimates.hiding_next_accepts_conditional"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.hiding_next_condWin_lower",
+  "source_name": "MIPRE.Introspection.TypedEstimates.hiding_next_condWin_lower",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.hiding_next_condWin_lower\n    (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)\n    (projectPauli : PauliAnswer → ι → F)\n    (D : (ι → F) → (ι → F) → A → A → Bool)\n    (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →\n      PauliAnswer → PauliAnswer → Bool)\n    (ψ : H × K → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1)\n    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) H)\n    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) K)\n    {ε : ℝ} (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP) ψ MA MB ≤ ε)\n    (w : Bool) (k j : Fin ℓ) (hk : k.val + 1 = j.val) :\n    1 - (TypeGraph.edges E X Z ℓ).card * ε ≤\n      condWin (parsedGame E X Z P L projectPauli D DP) ψ MA MB\n        (QuestionType.hide w k, 0) (QuestionType.hide w j, 0) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "Extract the success probability of an actual adjacent hiding edge from\nthe game's uniform ordered-edge distribution.",
+  "module": "MIPRE.Foundations.Introspection.HidingNormalizer",
+  "module_doc": "/-! # Normalizer replacement on the parsed adjacent hiding edge\n\nThe test error and conditional relation below are consequences of the actual\nparsed game's failure. The remaining inputs are the preceding fine rigidity\nestimate and the later prefix marginal estimate used in the induction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingNormalizer.lean#L49-L83",
+  "source_path": "MIPRE/Foundations/Introspection/HidingNormalizer.lean",
+  "lines": [
+   49,
+   83
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.TypeGraph.edges_nonempty",
+   "MIPRE.Introspection.TypedPresentation.mu_aux",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.sum_bornProb"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.hiding_next_guarded_estimate",
+  "source_name": "MIPRE.Introspection.TypedEstimates.hiding_next_guarded_estimate",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.hiding_next_guarded_estimate\n    (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)\n    (projectPauli : PauliAnswer → ι → F)\n    (D : (ι → F) → (ι → F) → A → A → Bool)\n    (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →\n      PauliAnswer → PauliAnswer → Bool)\n    (ψ : H × K → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1)\n    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) H)\n    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) K)\n    {ε : ℝ} (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP) ψ MA MB ≤ ε)\n    (w : Bool) (k j : Fin ℓ) (hk : k.val + 1 = j.val)\n    (hL : (L w).SupportedOn univ)\n    (hMB : IsPVM (fun b => ((MB (QuestionType.hide w j, 0)).mats b).val)) :\n    conditionalCoarseDistance ψ\n      ((MA (QuestionType.hide w k, 0)).map (hidingCoarse (L w) k.val))\n      (MB (QuestionType.hide w j, 0))\n      (hidingNextGuarded (L w) k.val) (hidingNextLater (L w) k.val) ≤\n        2 * (TypeGraph.edges E X Z ℓ).card * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "The parsed hiding test supplies conditional consistency after Alice's\nanswer has already been reduced to the preceding hiding label.",
+  "module": "MIPRE.Foundations.Introspection.HidingNormalizer",
+  "module_doc": "/-! # Normalizer replacement on the parsed adjacent hiding edge\n\nThe test error and conditional relation below are consequences of the actual\nparsed game's failure. The remaining inputs are the preceding fine rigidity\nestimate and the later prefix marginal estimate used in the induction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingNormalizer.lean#L85-L119",
+  "source_path": "MIPRE/Foundations/Introspection/HidingNormalizer.lean",
+  "lines": [
+   85,
+   119
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-guarded-hiding-maps",
+    "env": "lemma",
+    "title": "Guarded maps on arbitrary hiding answers",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.POVM.map_map",
+   "MIPRE.Introspection.TypedEstimates.hiding_next_accepts_guarded",
+   "MIPRE.Introspection.TypedEstimates.hiding_next_condWin_lower",
+   "MIPRE.Introspection.conditional_coarse_consistency"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.hiding_next_normalizer_estimate",
+  "source_name": "MIPRE.Introspection.TypedEstimates.hiding_next_normalizer_estimate",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.hiding_next_normalizer_estimate\n    (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)\n    (projectPauli : PauliAnswer → ι → F)\n    (D : (ι → F) → (ι → F) → A → A → Bool)\n    (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →\n      PauliAnswer → PauliAnswer → Bool)\n    (ψ : H × K → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1)\n    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) H)\n    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) K)\n    {ε η εfine : ℝ}\n    (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP) ψ MA MB ≤ ε)\n    (w : Bool) (k j : Fin ℓ) (hk : k.val + 1 = j.val)\n    (hL : (L w).SupportedOn univ)\n    (hMA : IsPVM (fun a => ((MA (QuestionType.hide w k, 0)).mats a).val))\n    (hMB : IsPVM (fun b => ((MB (QuestionType.hide w j, 0)).mats b).val))\n    (ideal : Option ((ι → F) × (ι → F) × (ι → F)) → Matrix K K ℂ)\n    (Q : Option (ι → F) → Matrix K K ℂ)\n    (hideal : IsPVM ideal) (hprefix : IsPVM Q)\n    (hcomm : ∀ y i, Commute (Q y) (ideal i))\n    (hfine : ∑ i, xSqNorm ψ\n      ((((MA (QuestionType.hide w k, 0)).map (hidingCoarse (L w) k.val)).mats i).val)\n      (ideal i) ≤ εfine)\n    (hnorm : ∑ y, snorm ψ (bOp\n      ((∑ z, (((MB (QuestionType.hide w j, 0)).map\n        (hidingNextLater (L w) k.val)).mats (y, z)).val) - Q y)) ^ 2 ≤ η) :\n    (∑ p, snorm ψ\n      (bOp ((((MB (QuestionType.hide w j, 0)).map\n        (hidingNextLater (L w) k.val)).mats p).val) -\n        bOp (conditionalIdeal ideal Q (hidingNextGuarded (L w) k.val) p)) ^ 2) ≤\n      6 * (TypeGraph.edges E X Z ℓ).card * ε + 3 * η + 3 * εfine := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "**Actual hiding normalizer step.** Replace the later conditional marginal\nby a commuting ideal prefix at error `6 |E| ε + 3 η + 3 εfine`. The keyed map\nacts on the preceding fine hiding label, and every parsed answer is included.",
+  "module": "MIPRE.Foundations.Introspection.HidingNormalizer",
+  "module_doc": "/-! # Normalizer replacement on the parsed adjacent hiding edge\n\nThe test error and conditional relation below are consequences of the actual\nparsed game's failure. The remaining inputs are the preceding fine rigidity\nestimate and the later prefix marginal estimate used in the induction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingNormalizer.lean#L121-L189",
+  "source_path": "MIPRE/Foundations/Introspection/HidingNormalizer.lean",
+  "lines": [
+   121,
+   189
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-guarded-hiding-maps",
+    "env": "lemma",
+    "title": "Guarded maps on arbitrary hiding answers",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_snorm_sq_triangle3",
+   "MIPRE.Introspection.conditional_coarse_ideal_distance",
+   "MIPRE.Introspection.conditional_normalizer_change",
+   "MIPRE.Introspection.TypedEstimates.hiding_next_guarded_estimate",
+   "MIPRE.IsPVM.coarse"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 33,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.hidingNormalizer_eq_reportedPrefix",
+  "source_name": "MIPRE.Introspection.TypedEstimates.hidingNormalizer_eq_reportedPrefix",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.hidingNormalizer_eq_reportedPrefix (P : CL.CLFun F ι ℓ) (k : ℕ) (j : Fin ℓ)\n    (N : POVM (ParsedAnswer (ι → F) A PauliAnswer) K) (y : Option (ι → F)) :\n    hidingNormalizer P k N y =\n      ((N.map (reportedPrefix P (k + 1) (.hide j))).mats y).val := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "Summing the tested later outcomes gives exactly its reported prefix PVM;\nthe dummy outcome is included on both sides of the identity.",
+  "module": "MIPRE.Foundations.Introspection.HidingNormalizerPrefix",
+  "module_doc": "/-! # The actual hiding normalizer is the propagated question prefix -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingNormalizerPrefix.lean#L25-L52",
+  "source_path": "MIPRE/Foundations/Introspection/HidingNormalizerPrefix.lean",
+  "lines": [
+   25,
+   52
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-actual-normalizer-prefix",
+    "env": "lemma",
+    "title": "The actual later normalizer from the prefix chain",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.POVM.sum_mats_map_prod"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.hidingNormalizer_estimate",
+  "source_name": "MIPRE.Introspection.TypedEstimates.hidingNormalizer_estimate",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.hidingNormalizer_estimate\n    (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)\n    (projectPauli : PauliAnswer → ι → F)\n    (D : (ι → F) → (ι → F) → A → A → Bool)\n    (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →\n      PauliAnswer → PauliAnswer → Bool)\n    (ψ : H × K → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1)\n    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) H)\n    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) K)\n    {ε δ : ℝ} (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP) ψ MA MB ≤ ε)\n    (w : Bool) (k j : Fin ℓ) (hk : k.val + 1 = j.val)\n    (hL : (L w).SupportedOn univ) (Q : Option (ι → F) → Matrix K K ℂ)\n    (hintro : ∑ y, snorm ψ (bOp\n      ((((MB (QuestionType.introspect w, 0)).map\n        (reportedPrefix (L w) (k.val + 1) .introspect)).mats y).val - Q y)) ^ 2 ≤ δ) :\n    (∑ y, snorm ψ (bOp\n      (hidingNormalizer (L w) k.val (MB (QuestionType.hide w j, 0)) y - Q y)) ^ 2) ≤\n      2 * (((ℓ - j.val + 1 : ℕ) : ℝ) ^ 2 *\n        (8 * (TypeGraph.edges E X Z ℓ).card * ε)) + 2 * δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}",
+   "variable [Fintype PauliType] [DecidableEq PauliType]"
+  ],
+  "docstring": "The actual prefix chain discharges the later hiding normalizer estimate\nfrom the single Introspect-prefix estimate. No assumption about later hiding\noperators or a supplied conditional marginal is needed.",
+  "module": "MIPRE.Foundations.Introspection.HidingNormalizerPrefix",
+  "module_doc": "/-! # The actual hiding normalizer is the propagated question prefix -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingNormalizerPrefix.lean#L57-L96",
+  "source_path": "MIPRE/Foundations/Introspection/HidingNormalizerPrefix.lean",
+  "lines": [
+   57,
+   96
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-actual-normalizer-prefix",
+    "env": "lemma",
+    "title": "The actual later normalizer from the prefix chain",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.TypedEstimates.hidingNormalizer_eq_reportedPrefix",
+   "MIPRE.Introspection.TypedEstimates.hiding_introspect_prefix_estimate_bob"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.CLChecks.outputPrefix_outputPrefix",
+  "source_name": "MIPRE.Introspection.CLChecks.outputPrefix_outputPrefix",
+  "formal_statement": "theorem MIPRE.Introspection.CLChecks.outputPrefix_outputPrefix {P : CL.CLFun F ι ℓ} {T : Finset ι}\n    (hP : P.SupportedOn T) (y : ι → F) {k m : ℕ} (hkm : k ≤ m) :\n    P.outputPrefix k (P.outputPrefix m y) = P.outputPrefix k y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.CLChecks",
+   "open Finset Classical",
+   "variable {F ι : Type*} [Field F] [Fintype ι] [DecidableEq ι] {ℓ : ℕ}"
+  ],
+  "docstring": "Taking a shorter prefix of a claimed prefix does not change it.",
+  "module": "MIPRE.Foundations.Introspection.HidingPrefix",
+  "module_doc": "/-! # The information retained by a hiding prefix\n\nThese identities hold for arbitrary claimed outputs. They justify processing\nthe next hiding test from the preceding coarse outcome, without assuming that\nan answer belongs to the image of the CL map.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingPrefix.lean#L36-L51",
+  "source_path": "MIPRE/Foundations/Introspection/HidingPrefix.lean",
+  "lines": [
+   36,
+   51
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-guarded-hiding-maps",
+    "env": "lemma",
+    "title": "Guarded maps on arbitrary hiding answers",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.CLChecks.proj_outputPrefix_cons"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.CLChecks.dualReadout_congr",
+  "source_name": "MIPRE.Introspection.CLChecks.dualReadout_congr",
+  "formal_statement": "theorem MIPRE.Introspection.CLChecks.dualReadout_congr {P : CL.CLFun F ι ℓ} {T : Finset ι}\n    (hP : P.SupportedOn T) (k : ℕ) (y : ι → F) {x t : ι → F}\n    (h : ∀ i ∈ T, x i = t i) : dualReadout P k y x = dualReadout P k y t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.CLChecks",
+   "open Finset Classical",
+   "variable {F ι : Type*} [Field F] [Fintype ι] [DecidableEq ι] {ℓ : ℕ}"
+  ],
+  "docstring": "A dual readout only uses coordinates in the presentation's support.",
+  "module": "MIPRE.Foundations.Introspection.HidingPrefix",
+  "module_doc": "/-! # The information retained by a hiding prefix\n\nThese identities hold for arbitrary claimed outputs. They justify processing\nthe next hiding test from the preceding coarse outcome, without assuming that\nan answer belongs to the image of the CL map.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingPrefix.lean#L62-L76",
+  "source_path": "MIPRE/Foundations/Introspection/HidingPrefix.lean",
+  "lines": [
+   62,
+   76
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-guarded-hiding-maps",
+    "env": "lemma",
+    "title": "Guarded maps on arbitrary hiding answers",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.CLChecks.dualReadout_proj_compl_prefix",
+  "source_name": "MIPRE.Introspection.CLChecks.dualReadout_proj_compl_prefix",
+  "formal_statement": "theorem MIPRE.Introspection.CLChecks.dualReadout_proj_compl_prefix {P : CL.CLFun F ι ℓ} {T : Finset ι}\n    (hP : P.SupportedOn T) (k : ℕ) (y x : ι → F) :\n    dualReadout P k y (CL.proj (prefixRegister P k y)ᶜ x) =\n      dualReadout P k y x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.CLChecks",
+   "open Finset Classical",
+   "variable {F ι : Type*} [Field F] [Fintype ι] [DecidableEq ι] {ℓ : ℕ}"
+  ],
+  "docstring": "The next dual readout can be computed from the tail retained by the\nprevious hiding measurement.",
+  "module": "MIPRE.Foundations.Introspection.HidingPrefix",
+  "module_doc": "/-! # The information retained by a hiding prefix\n\nThese identities hold for arbitrary claimed outputs. They justify processing\nthe next hiding test from the preceding coarse outcome, without assuming that\nan answer belongs to the image of the CL map.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingPrefix.lean#L78-L98",
+  "source_path": "MIPRE/Foundations/Introspection/HidingPrefix.lean",
+  "lines": [
+   78,
+   98
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-guarded-hiding-maps",
+    "env": "lemma",
+    "title": "Guarded maps on arbitrary hiding answers",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.CLChecks.dualReadout_congr"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.conditional_bornProb_map",
+  "source_name": "MIPRE.Introspection.conditional_bornProb_map",
+  "formal_statement": "theorem MIPRE.Introspection.conditional_bornProb_map (ψ : H × K → ℂ) (M : POVM A H) (N : POVM B K)\n    (f : Y → A → Z) (g : B → Y × Z) :\n    (∑ p : Y × Z, bornProb ψ (((M.map (f p.1)).mats p.2).val)\n      (((N.map g).mats p).val)) =\n    ∑ b, ∑ a, (if f (g b).1 a = (g b).2 then (1 : ℝ) else 0) *\n      bornProb ψ (M.mats a).val (N.mats b).val := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {H K A B Y Z : Type*}"
+  ],
+  "docstring": "Data processing when Alice's outcome map depends on a retained part of\nBob's outcome. The dependency remains inside the Born sum.",
+  "module": "MIPRE.Foundations.Introspection.HidingRigidity",
+  "module_doc": "/-! # The conditional estimate for the actual adjacent hiding test\n\nThe earlier answer is processed using the question reported in the later\nanswer. This is a conditional measurement, not a single fixed coarse-graining.\nThe resulting estimate is derived from the parsed game and its actual uniform\nordered-edge law, including the malformed-answer outcomes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingRigidity.lean#L40-L65",
+  "source_path": "MIPRE/Foundations/Introspection/HidingRigidity.lean",
+  "lines": [
+   40,
+   65
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.aOp_sum"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.conditional_coarse_consistency",
+  "source_name": "MIPRE.Introspection.conditional_coarse_consistency",
+  "formal_statement": "theorem MIPRE.Introspection.conditional_coarse_consistency (ψ : H × K → ℂ) (hψ : ‖evec ψ‖ = 1)\n    (M : POVM A H) (N : POVM B K) (hN : IsPVM (fun b => (N.mats b).val))\n    (f : Y → A → Z) (g : B → Y × Z) (test : A → B → Bool)\n    {δ : ℝ}\n    (hwin : 1 - δ ≤ ∑ a, ∑ b,\n      (if test a b = true then (1 : ℝ) else 0) * bornProb ψ (M.mats a).val (N.mats b).val)\n    (hcheck : ∀ a b, test a b = true → f (g b).1 a = (g b).2) :\n    conditionalCoarseDistance ψ M N f g ≤ 2 * δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {H K A B Y Z : Type*}"
+  ],
+  "docstring": "Conditional consistency for an actual pair of measurements and explicit\noutcome maps. The acceptance premise is solely a scalar tested probability.",
+  "module": "MIPRE.Foundations.Introspection.HidingRigidity",
+  "module_doc": "/-! # The conditional estimate for the actual adjacent hiding test\n\nThe earlier answer is processed using the question reported in the later\nanswer. This is a conditional measurement, not a single fixed coarse-graining.\nThe resulting estimate is derived from the parsed game and its actual uniform\nordered-edge law, including the malformed-answer outcomes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingRigidity.lean#L67-L114",
+  "source_path": "MIPRE/Foundations/Introspection/HidingRigidity.lean",
+  "lines": [
+   67,
+   114
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-adjacent-hiding",
+    "env": "lemma",
+    "title": "Conditional estimate for the actual adjacent hiding test",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.IsPVM.marg_left",
+   "MIPRE.Introspection.submeasurement_agreement_dist",
+   "MIPRE.Introspection.conditional_bornProb_map",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.POVM.sum_val",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.IsPVM.posSemidef",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.IsPVM.coarse"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 38,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.CLChecks.proj_outputPrefix_cons",
+  "source_name": "MIPRE.Introspection.CLChecks.proj_outputPrefix_cons",
+  "formal_statement": "theorem MIPRE.Introspection.CLChecks.proj_outputPrefix_cons {S T : Finset ι} {L : CL.RegLinear F S}\n    {next : (ι → F) → CL.CLFun F ι ℓ}\n    (hP : (CL.CLFun.cons S L next).SupportedOn T) (k : ℕ) (y : ι → F) :\n    CL.proj S ((CL.CLFun.cons S L next).outputPrefix (k + 1) y) = CL.proj S y ∧\n    CL.proj Sᶜ ((CL.CLFun.cons S L next).outputPrefix (k + 1) y) =\n      (next (CL.proj S y)).outputPrefix k (CL.proj Sᶜ y) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.CLChecks",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F ι : Type*} [Field F] [Fintype ι] [DecidableEq ι] {ℓ : ℕ}"
+  ],
+  "docstring": "Projecting an arbitrary claimed prefix recovers its first branch and the\nremaining claimed prefix. No image-membership hypothesis is needed.",
+  "module": "MIPRE.Foundations.Introspection.HidingRigidity",
+  "module_doc": "/-! # The conditional estimate for the actual adjacent hiding test\n\nThe earlier answer is processed using the question reported in the later\nanswer. This is a conditional measurement, not a single fixed coarse-graining.\nThe resulting estimate is derived from the parsed game and its actual uniform\nordered-edge law, including the malformed-answer outcomes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingRigidity.lean#L122-L140",
+  "source_path": "MIPRE/Foundations/Introspection/HidingRigidity.lean",
+  "lines": [
+   122,
+   140
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.CLChecks.proj_prefixRegister"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.hiding_next_accepts_conditional",
+  "source_name": "MIPRE.Introspection.TypedEstimates.hiding_next_accepts_conditional",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.hiding_next_accepts_conditional\n    (L : Bool → CL.CLFun F ι ℓ) (X Z : PauliType)\n    (projectPauli : PauliAnswer → ι → F)\n    (D : (ι → F) → (ι → F) → A → A → Bool)\n    (DP : PauliType → PauliType → PauliAnswer → PauliAnswer → Bool)\n    (w : Bool) (k j : Fin ℓ) (hk : k.val + 1 = j.val)\n    (hL : (L w).SupportedOn univ)\n    {a b : ParsedAnswer (ι → F) A PauliAnswer}\n    (h : TypedPredicate.check L X Z projectPauli D DP\n      (QuestionType.hide w k) (QuestionType.hide w j) a b = true) :\n    hidingNextEarlier (L w) k.val (hidingNextLater (L w) k.val b).1 a =\n      (hidingNextLater (L w) k.val b).2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "The parsed adjacent-hiding check supplies the conditional accepted-answer\nrelation; no condition on honestly sampled or in-image answers is imposed.",
+  "module": "MIPRE.Foundations.Introspection.HidingRigidity",
+  "module_doc": "/-! # The conditional estimate for the actual adjacent hiding test\n\nThe earlier answer is processed using the question reported in the later\nanswer. This is a conditional measurement, not a single fixed coarse-graining.\nThe resulting estimate is derived from the parsed game and its actual uniform\nordered-edge law, including the malformed-answer outcomes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingRigidity.lean#L210-L240",
+  "source_path": "MIPRE/Foundations/Introspection/HidingRigidity.lean",
+  "lines": [
+   210,
+   240
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-adjacent-hiding",
+    "env": "lemma",
+    "title": "Conditional estimate for the actual adjacent hiding test",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.CLChecks.proj_outputPrefix_cons"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.hiding_register_rigidity_of_pauli",
+  "source_name": "MIPRE.Introspection.TypedEstimates.hiding_register_rigidity_of_pauli",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.hiding_register_rigidity_of_pauli\n    (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)\n    (projectPauli : PauliAnswer → ι → F)\n    (D : (ι → F) → (ι → F) → A → A → Bool)\n    (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →\n      PauliAnswer → PauliAnswer → Bool)\n    (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)\n    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H))\n    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K))\n    {ε δX ηZ : ℝ}\n    (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP)\n      (registerState (ι → F) ξ) MA MB ≤ ε)\n    (qX qZ : κ → ZMod 2)\n    (hqX : ∀ z, (P X).eval z = qX) (hqZ : ∀ z, (P Z).eval z = qZ)\n    (hPX : IsPVM (fun a => ((MA (QuestionType.pauli X, qX)).mats a).val))\n    (hX : ∑ x, stateSqNorm (registerState (ι → F) ξ)\n      ((((MA (QuestionType.pauli X, qX)).map (pauliProjection projectPauli)).mats x).val -\n        (aOp (pauliXReadout x) : Matrix ((ι → F) × H) _ ℂ)) ≤ δX)\n    (hZ : ∑ z, snorm (registerState (ι → F) ξ) (bOp\n      ((((MB (QuestionType.pauli Z, qZ)).map (pauliProjection projectPauli)).mats z).val -\n        (aOp (readout (some : (ι → F) → Option (ι → F)) z) :\n          Matrix ((ι → F) × K) _ ℂ)))^2 ≤ ηZ)\n    (w : Bool) (hL : (L w).SupportedOn univ)\n    (hS : IsPVM (fun a => ((MA (QuestionType.sample w, 0)).mats a).val))\n    (hMA : ∀ j : Fin ℓ, IsPVM (fun a => ((MA (QuestionType.hide w j, 0)).mats a).val))\n    (hMB : ∀ j : Fin ℓ, IsPVM (fun b => ((MB (QuestionType.hide w j, 0)).mats b).val))\n    (j : Fin ℓ) :\n    hidingBobError L w hL ξ MB j ≤\n      hidingPauliBudget ℓ ((TypeGraph.edges E X Z ℓ).card*ε) δX ηZ ∧\n    hidingAliceError L w hL ξ MA j ≤ 4*(TypeGraph.edges E X Z ℓ).card*ε +\n      2*hidingPauliBudget ℓ ((TypeGraph.edges E X Z ℓ).card*ε) δX ηZ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical MIPRE.Introspection.Honest",
+   "open scoped Kronecker",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "Complete hiding rigidity in the extracted register state. There is no\nassumed hiding or prefix conclusion, and no symmetry premise on `DP`.\nThe two primitive Pauli errors are same-party distances: Alice X and Bob Z.",
+  "module": "MIPRE.Foundations.Introspection.HidingRigidityGame",
+  "module_doc": "/-! # Full hiding rigidity from the actual game and extracted Pauli bounds\n\nThe X/Hide-zero test supplies the induction base, and the Z/Sample/Introspect\ntests supply every prefix estimate. Consequently the final theorem assumes\nonly the primitive extracted Pauli bounds, actual game success, and the\nprojectivity needed for the cross-party coarse-grainings. Its bound is uniform\nover all hiding levels and includes malformed answer mass.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingRigidityGame.lean#L42-L97",
+  "source_path": "MIPRE/Foundations/Introspection/HidingRigidityGame.lean",
+  "lines": [
+   42,
+   97
+  ],
+  "blueprint": [
+   {
+    "label": "lem:hide-rigidity",
+    "env": "lemma",
+    "title": "Full hiding rigidity",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.norm_evec_expVec",
+   "MIPRE.mulVec_kron_kron_expVec",
+   "MIPRE.Introspection.TypedEstimates.hiding_first_register_rigidity_cross",
+   "MIPRE.Introspection.TypedEstimates.hiding_register_iteration",
+   "MIPRE.Introspection.TypedEstimates.introspect_prefix_register_rigidity_bob",
+   "MIPRE.aOp_sub",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.sum_bornProb",
+   "MIPRE.dotProduct_star_self",
+   "MIPRE.Weyl.stateVec_epr"
+  ],
+  "pasted_helpers": 30,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.hiding_register_recurrence",
+  "source_name": "MIPRE.Introspection.TypedEstimates.hiding_register_recurrence",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.hiding_register_recurrence (k j : Fin ℓ) (hk : k.val+1=j.val) {δ : ℝ}\n    (hintro : hidingIntroPrefixError L w ξ MB j ≤ δ) :\n    hidingBobError L w hL ξ MB j ≤ 6*hidingBobError L w hL ξ MB k +\n      hidingStepBudget ℓ ((TypeGraph.edges E X Z ℓ).card*ε) δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical MIPRE.Introspection.Honest",
+   "open scoped Kronecker",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "A single recurrence step uses actual tests in their given orientation.",
+  "module": "MIPRE.Foundations.Introspection.HidingRigidityIteration",
+  "module_doc": "/-! # Finite iteration of the actual hiding rigidity step\n\nWrite `e = |E| epsilon`. The actual same-type loop and adjacent hiding edge\ngive `A_k <= 4e + 2B_k` and `B_(k+1) <= 6B_k + C`, where\n`C = (18 + 48 ell^2)e + 6delta`. The closed bound has no dependence on the\nquestion or answer alphabet. The base and Introspect-prefix errors are the\nexplicit inputs, to be supplied by the Pauli-X and Pauli-Z tests.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingRigidityIteration.lean#L102-L120",
+  "source_path": "MIPRE/Foundations/Introspection/HidingRigidityIteration.lean",
+  "lines": [
+   102,
+   120
+  ],
+  "blueprint": [
+   {
+    "label": "lem:hide-rigidity",
+    "env": "lemma",
+    "title": "Full hiding rigidity",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.TypedEstimates.hiding_next_register_rigidity",
+   "MIPRE.Introspection.TypedEstimates.hiding_register_orientation"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.hiding_register_iteration",
+  "source_name": "MIPRE.Introspection.TypedEstimates.hiding_register_iteration",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.hiding_register_iteration (hℓ : 0 < ℓ) {δ β : ℝ}\n    (hbase : hidingBobError L w hL ξ MB ⟨0,hℓ⟩ ≤ β)\n    (hintro : ∀ j : Fin ℓ, hidingIntroPrefixError L w ξ MB j ≤ δ) (j : Fin ℓ) :\n    hidingBobError L w hL ξ MB j ≤\n      hidingIterationBudget ℓ ((TypeGraph.edges E X Z ℓ).card*ε) δ β j.val ∧\n    hidingAliceError L w hL ξ MA j ≤ 4*(TypeGraph.edges E X Z ℓ).card*ε +\n      2*hidingIterationBudget ℓ ((TypeGraph.edges E X Z ℓ).card*ε) δ β j.val := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical MIPRE.Introspection.Honest",
+   "open scoped Kronecker",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "Finite induction over every real hiding level, starting with Bob's\nactual level-zero estimate and the actual Introspect-prefix estimates.",
+  "module": "MIPRE.Foundations.Introspection.HidingRigidityIteration",
+  "module_doc": "/-! # Finite iteration of the actual hiding rigidity step\n\nWrite `e = |E| epsilon`. The actual same-type loop and adjacent hiding edge\ngive `A_k <= 4e + 2B_k` and `B_(k+1) <= 6B_k + C`, where\n`C = (18 + 48 ell^2)e + 6delta`. The closed bound has no dependence on the\nquestion or answer alphabet. The base and Introspect-prefix errors are the\nexplicit inputs, to be supplied by the Pauli-X and Pauli-Z tests.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingRigidityIteration.lean#L122-L145",
+  "source_path": "MIPRE/Foundations/Introspection/HidingRigidityIteration.lean",
+  "lines": [
+   122,
+   145
+  ],
+  "blueprint": [
+   {
+    "label": "lem:hide-rigidity",
+    "env": "lemma",
+    "title": "Full hiding rigidity",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.TypedEstimates.hiding_register_recurrence",
+   "MIPRE.Introspection.TypedEstimates.hiding_register_orientation"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.hiding_register_orientation",
+  "source_name": "MIPRE.Introspection.TypedEstimates.hiding_register_orientation",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.hiding_register_orientation\n    (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)\n    (projectPauli : PauliAnswer → ι → F)\n    (D : (ι → F) → (ι → F) → A → A → Bool)\n    (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →\n      PauliAnswer → PauliAnswer → Bool)\n    (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)\n    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H))\n    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K))\n    {ε : ℝ} (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP)\n      (registerState (ι → F) ξ) MA MB ≤ ε)\n    (w : Bool) (hL : (L w).SupportedOn univ) (j : Fin ℓ) :\n    hidingAliceError L w hL ξ MA j ≤\n      4 * (TypeGraph.edges E X Z ℓ).card * ε + 2 * hidingBobError L w hL ξ MB j := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "The same-type parsed test supplies the orientation transfer. The actual\nmeasurements may be arbitrary POVMs in this lemma.",
+  "module": "MIPRE.Foundations.Introspection.HidingRigidityOrientation",
+  "module_doc": "/-! # Transferring honest hiding rigidity through the actual consistency loop\n\nThe two ideal families are exact mirrors on the EPR register with arbitrary\nauxiliaries. The parsed game's same-type test therefore transfers Bob's\nestimate to Alice with error `4 |E| epsilon + 2 beta`. No symmetry of the\nPauli predicate or of the full game is required.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingRigidityOrientation.lean#L76-L111",
+  "source_path": "MIPRE/Foundations/Introspection/HidingRigidityOrientation.lean",
+  "lines": [
+   76,
+   111
+  ],
+  "blueprint": [
+   {
+    "label": "lem:hide-rigidity",
+    "env": "lemma",
+    "title": "Full hiding rigidity",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.mulVec_kron_kron_expVec",
+   "MIPRE.Introspection.Honest.hideRegister_transpose",
+   "MIPRE.Introspection.TypedEstimates.aux_agreement_estimate",
+   "MIPRE.Weyl.epr_unit",
+   "MIPRE.Weyl.stateVec_epr"
+  ],
+  "pasted_helpers": 19,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.hiding_chain_average",
+  "source_name": "MIPRE.Introspection.hiding_chain_average",
+  "formal_statement": "theorem MIPRE.Introspection.hiding_chain_average (ψ : H × K → ℂ) (D : J → ℝ) (hD : ∀ j, 0 ≤ D j)\n    (P : ℕ → J → C → Matrix H H ℂ) (n : ℕ) (δ : ℕ → ℝ)\n    (hstep : ∀ i < n, (∑ j, D j * ∑ z, stateSqNorm ψ (P i j z - P (i + 1) j z)) ≤ δ i) :\n    (∑ j, D j * ∑ z, stateSqNorm ψ (P 0 j z - P n j z)) ≤\n      (n : ℝ) * ∑ i ∈ Finset.range n, δ i := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "variable {X Y A B C J H K : Type*}"
+  ],
+  "docstring": "The averaged hiding chain, with one error bound per edge and no dependence on the\nnumber of outcomes or sampled question seeds.",
+  "module": "MIPRE.Foundations.Introspection.HidingTests",
+  "module_doc": "/-! # Hiding-test chains after coarse-graining consistency\n\nCoarse-graining is performed on the tests' accepted-answer relations. Only then\nare the two cross-party estimates combined into a same-side estimate. This is\nthe order required to avoid the exponentially large fibre loss discussed in\nthe paper's corrected proof of `lem:intro-sound-2`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingTests.lean#L97-L119",
+  "source_path": "MIPRE/Foundations/Introspection/HidingTests.lean",
+  "lines": [
+   97,
+   119
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-subtest-estimates",
+    "env": "lemma",
+    "title": "Sampling and hiding subtest estimates",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sq_sum_le_card_mul_sum_sq"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.source_commute",
+  "source_name": "MIPRE.Introspection.Honest.source_commute",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.source_commute (hR : R.IsPCC) (w v : Bool) (z : ι → F) (a b : A) :\n    Commute (R.P.M (w, (L w).eval z) a) (R.P.M (v, (L v).eval z) b) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {F ι A : Type*} [Field F] [Fintype F] [DecidableEq F]",
+   "variable (L : Bool → CL.CLFun F ι ℓ) (D : (ι → F) → (ι → F) → A → A → Bool)",
+   "variable (R : SyncStrategy (sourceGame L D).doubled)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.HonestCore",
+  "module_doc": "/-! # The honest Introspect and Sample measurements\n\nThese are the concrete measurements from the completeness proof in\n`introspection.tex`. Every answer label is retained. Their products vanish on\nunrealizable pairs of question labels; source PCC is only used for labels\ngenerated by a common seed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestCore.lean#L65-L77",
+  "source_path": "MIPRE/Foundations/Introspection/HonestCore.lean",
+  "lines": [
+   65,
+   77
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SampledGame.dist_eq_card"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 11,
+  "is_target": false
+ }
+]

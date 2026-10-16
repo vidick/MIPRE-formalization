@@ -1,0 +1,679 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.PauliAnswerProgram.answerRows_decodeRows",
+  "source_name": "MIPRE.QLD.PauliAnswerProgram.answerRows_decodeRows",
+  "formal_statement": "theorem MIPRE.QLD.PauliAnswerProgram.answerRows_decodeRows {k m d : ℕ} (E : BinField k)\n    (hE : ∀ bs : BitStr, bs.length = k → E.toBits (E.ofBits bs) = bs)\n    (T : Ty) (rows : List BitStr) (hn : rows.length = count T m d)\n    (hw : ∀ row ∈ rows, row.length = width T k) :\n    answerRows E (decodeRows E m d T rows) = rows := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.PauliAnswerProgram",
+   "open MIPRE.Cost MIPRE.SAT MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear MIPRE.Introspection.FieldTableProgram"
+  ],
+  "docstring": "Exact-width rows are recovered after semantic answer decoding.",
+  "module": "MIPRE.Background.QLD.PauliAnswerRoundtrip",
+  "module_doc": "/-! # Exact re-encoding of arbitrary valid Pauli payloads\n\nThe parser's width and count checks make every retained row canonical. For the\nimplemented Shoup field, decoding and re-encoding therefore recovers every\naccepted raw payload, not only payloads constructed from a semantic answer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliAnswerRoundtrip.lean#L49-L71",
+  "source_path": "MIPRE/Background/QLD/PauliAnswerRoundtrip.lean",
+  "lines": [
+   49,
+   71
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.conjTranspose_conv_mul_conv",
+  "source_name": "MIPRE.conjTranspose_conv_mul_conv",
+  "formal_statement": "theorem MIPRE.conjTranspose_conv_mul_conv (Z : C → Matrix dB dB ℂ) {T : C → Matrix anc' anc' ℂ}\n    (hT : IsPVM T) (c : C) :\n    (conv (dB := dB) Z T c)ᴴ * conv Z T c = conv (fun a => (Z a)ᴴ * Z a) T c := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {dA dB anc anc' C : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "Against a projective ancilla family the cross terms of `X̂ᴴ X̂` vanish: the ancilla outcome\ndetermines the other one.",
+  "module": "MIPRE.Background.QLD.PauliBasis",
+  "module_doc": "/-!\n# The point measurement and the Pauli basis reading, on one party\n\nThe repaired proof of `lem:qld-exact-paulis` needs the strategy's `(Point, W)` measurement to be\nclose to the low-degree reading of its `(Pauli, W)` answer **on the same party**: the Pauli basis\nanswer does not depend on the sampled point, which is what lets Schwartz--Zippel be applied to a\nuniform point independent of the operators.\n\nBoth inputs are items of `lem:qld-win-implications`, and both are *cross-party*: the point\nmeasurements of the two players agree (`item_consistency` at the type `(Point, W)`), and Alice's\npoint answer agrees with the evaluation at the sampled point of the low-degree encoding of Bob's\nPauli basis answer (`item_pauli_consistency`). They share Alice's family, so the triangle\ninequality of `normSq_stateVecB_sub_le` leaves a statement about Bob alone, at four times the\nerror: `688 ε`.\n\nNothing here is expanded or padded: this is the bare strategy, and the statement is the one the\nmass argument of `MIPRE/Background/QLD/NonMultilinear.lean` consumes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliBasis.lean#L50-L73",
+  "source_path": "MIPRE/Background/QLD/PauliBasis.lean",
+  "lines": [
+   50,
+   73
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.IsPVM.orthogonal"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_conv",
+  "source_name": "MIPRE.sum_conv",
+  "formal_statement": "theorem MIPRE.sum_conv (Z : C → Matrix dB dB ℂ) {T : C → Matrix anc' anc' ℂ} (hT : IsPVM T) :\n    ∑ c, conv (dB := dB) Z T c = (∑ a, Z a) ⊗ₖ (1 : Matrix anc' anc' ℂ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {dA dB anc anc' C : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "Summing a convolution over the outcome frees the ancilla factor.",
+  "module": "MIPRE.Background.QLD.PauliBasis",
+  "module_doc": "/-!\n# The point measurement and the Pauli basis reading, on one party\n\nThe repaired proof of `lem:qld-exact-paulis` needs the strategy's `(Point, W)` measurement to be\nclose to the low-degree reading of its `(Pauli, W)` answer **on the same party**: the Pauli basis\nanswer does not depend on the sampled point, which is what lets Schwartz--Zippel be applied to a\nuniform point independent of the operators.\n\nBoth inputs are items of `lem:qld-win-implications`, and both are *cross-party*: the point\nmeasurements of the two players agree (`item_consistency` at the type `(Point, W)`), and Alice's\npoint answer agrees with the evaluation at the sampled point of the low-degree encoding of Bob's\nPauli basis answer (`item_pauli_consistency`). They share Alice's family, so the triangle\ninequality of `normSq_stateVecB_sub_le` leaves a statement about Bob alone, at four times the\nerror: `688 ε`.\n\nNothing here is expanded or padded: this is the bare strategy, and the statement is the one the\nmass argument of `MIPRE/Background/QLD/NonMultilinear.lean` consumes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliBasis.lean#L75-L90",
+  "source_path": "MIPRE/Background/QLD/PauliBasis.lean",
+  "lines": [
+   75,
+   90
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.POVM.map_kron_map",
+  "source_name": "MIPRE.POVM.map_kron_map",
+  "formal_statement": "theorem MIPRE.POVM.map_kron_map {ι κ ι' κ' : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ]\n    [DecidableEq κ] [Fintype ι'] [DecidableEq ι'] [Fintype κ'] [DecidableEq κ']\n    (Y : POVM ι dB) (P : POVM κ anc') (f : ι → ι') (g : κ → κ') :\n    (Y.kron P).map (fun p => (f p.1, g p.2)) = (Y.map f).kron (P.map g) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.POVM",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {dA dB anc anc' C : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**The Kronecker product of two coarse-grainings is the coarse-graining of the product**,\nalong the product map on the outcomes.",
+  "module": "MIPRE.Background.QLD.PauliBasis",
+  "module_doc": "/-!\n# The point measurement and the Pauli basis reading, on one party\n\nThe repaired proof of `lem:qld-exact-paulis` needs the strategy's `(Point, W)` measurement to be\nclose to the low-degree reading of its `(Pauli, W)` answer **on the same party**: the Pauli basis\nanswer does not depend on the sampled point, which is what lets Schwartz--Zippel be applied to a\nuniform point independent of the operators.\n\nBoth inputs are items of `lem:qld-win-implications`, and both are *cross-party*: the point\nmeasurements of the two players agree (`item_consistency` at the type `(Point, W)`), and Alice's\npoint answer agrees with the evaluation at the sampled point of the low-degree encoding of Bob's\nPauli basis answer (`item_pauli_consistency`). They share Alice's family, so the triangle\ninequality of `normSq_stateVecB_sub_le` leaves a statement about Bob alone, at four times the\nerror: `688 ε`.\n\nNothing here is expanded or padded: this is the bare strategy, and the statement is the one the\nmass argument of `MIPRE/Background/QLD/NonMultilinear.lean` consumes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliBasis.lean#L92-L109",
+  "source_path": "MIPRE/Background/QLD/PauliBasis.lean",
+  "lines": [
+   92,
+   109
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_normSq_stateVecB_conv_eq",
+  "source_name": "MIPRE.sum_normSq_stateVecB_conv_eq",
+  "formal_statement": "theorem MIPRE.sum_normSq_stateVecB_conv_eq (ψ : dA × dB → ℂ) {e : anc × anc' → ℂ}\n    (he : star e ⬝ᵥ e = 1) (Z : C → Matrix dB dB ℂ) {T : C → Matrix anc' anc' ℂ} (hT : IsPVM T) :\n    ∑ c, ‖stateVecB (expVec ψ e) (conv Z T c)‖ ^ 2 = ∑ a, ‖stateVecB ψ (Z a)‖ ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {dA dB anc anc' C : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**The transfer**: on the expanded state, the same-party deviation of two convolutions with a\ncommon projective ancilla family is the deviation of the two families themselves.",
+  "module": "MIPRE.Background.QLD.PauliBasis",
+  "module_doc": "/-!\n# The point measurement and the Pauli basis reading, on one party\n\nThe repaired proof of `lem:qld-exact-paulis` needs the strategy's `(Point, W)` measurement to be\nclose to the low-degree reading of its `(Pauli, W)` answer **on the same party**: the Pauli basis\nanswer does not depend on the sampled point, which is what lets Schwartz--Zippel be applied to a\nuniform point independent of the operators.\n\nBoth inputs are items of `lem:qld-win-implications`, and both are *cross-party*: the point\nmeasurements of the two players agree (`item_consistency` at the type `(Point, W)`), and Alice's\npoint answer agrees with the evaluation at the sampled point of the low-degree encoding of Bob's\nPauli basis answer (`item_pauli_consistency`). They share Alice's family, so the triangle\ninequality of `normSq_stateVecB_sub_le` leaves a statement about Bob alone, at four times the\nerror: `688 ε`.\n\nNothing here is expanded or padded: this is the bare strategy, and the statement is the one the\nmass argument of `MIPRE/Background/QLD/NonMultilinear.lean` consumes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliBasis.lean#L111-L129",
+  "source_path": "MIPRE/Background/QLD/PauliBasis.lean",
+  "lines": [
+   111,
+   129
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.conjTranspose_conv_mul_conv",
+   "MIPRE.sum_conv",
+   "MIPRE.mulVec_kron_kron_expVec"
+  ],
+  "pasted_helpers": 19,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_normSq_point_sub_pauli_le",
+  "source_name": "MIPRE.QLD.sum_normSq_point_sub_pauli_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_normSq_point_sub_pauli_le (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :\n    ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *\n        ∑ o : F, ‖stateVecB ψ ((((MB (c.question hm (.point W))).map rdVal).mats o).val\n          - (((MB (c.question hm (.pauli W))).map (rdPauli (c.pt W))).mats o).val)‖ ^ 2\n      ≤ 688 * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The point measurement and the Pauli basis reading agree on Bob's side**, on average over the\nverifier's content and at `688 ε`: the two cross-party items of `lem:qld-win-implications` share\nAlice's point measurement, so the triangle inequality removes it.",
+  "module": "MIPRE.Background.QLD.PauliBasis",
+  "module_doc": "/-!\n# The point measurement and the Pauli basis reading, on one party\n\nThe repaired proof of `lem:qld-exact-paulis` needs the strategy's `(Point, W)` measurement to be\nclose to the low-degree reading of its `(Pauli, W)` answer **on the same party**: the Pauli basis\nanswer does not depend on the sampled point, which is what lets Schwartz--Zippel be applied to a\nuniform point independent of the operators.\n\nBoth inputs are items of `lem:qld-win-implications`, and both are *cross-party*: the point\nmeasurements of the two players agree (`item_consistency` at the type `(Point, W)`), and Alice's\npoint answer agrees with the evaluation at the sampled point of the low-degree encoding of Bob's\nPauli basis answer (`item_pauli_consistency`). They share Alice's family, so the triangle\ninequality of `normSq_stateVecB_sub_le` leaves a statement about Bob alone, at four times the\nerror: `688 ε`.\n\nNothing here is expanded or padded: this is the bare strategy, and the statement is the one the\nmass argument of `MIPRE/Background/QLD/NonMultilinear.lean` consumes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliBasis.lean#L146-L185",
+  "source_path": "MIPRE/Background/QLD/PauliBasis.lean",
+  "lines": [
+   146,
+   185
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.agree_subtest_le"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.hatPauli_map",
+  "source_name": "MIPRE.QLD.hatPauli_map",
+  "formal_statement": "theorem MIPRE.QLD.hatPauli_map {d' : Type} [Fintype d'] [DecidableEq d']\n    (M : Question F m → POVM (Answer F m d) d') (W : Bas) (u : Point F m) :\n    (hatPauli M W).map (fun k => dotF k (indVec u))\n      = (((M (.pauli W)).map (rdPauli u)).kron (synPOVM W u)).map fun p => p.1 + p.2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**Reading it at a point is the hatted Pauli basis measurement at that point.** The pairing is\nadditive, so coarse-graining commutes with the convolution.",
+  "module": "MIPRE.Background.QLD.PauliBasis",
+  "module_doc": "/-!\n# The point measurement and the Pauli basis reading, on one party\n\nThe repaired proof of `lem:qld-exact-paulis` needs the strategy's `(Point, W)` measurement to be\nclose to the low-degree reading of its `(Pauli, W)` answer **on the same party**: the Pauli basis\nanswer does not depend on the sampled point, which is what lets Schwartz--Zippel be applied to a\nuniform point independent of the operators.\n\nBoth inputs are items of `lem:qld-win-implications`, and both are *cross-party*: the point\nmeasurements of the two players agree (`item_consistency` at the type `(Point, W)`), and Alice's\npoint answer agrees with the evaluation at the sampled point of the low-degree encoding of Bob's\nPauli basis answer (`item_pauli_consistency`). They share Alice's family, so the triangle\ninequality of `normSq_stateVecB_sub_le` leaves a statement about Bob alone, at four times the\nerror: `688 ε`.\n\nNothing here is expanded or padded: this is the bare strategy, and the statement is the one the\nmass argument of `MIPRE/Background/QLD/NonMultilinear.lean` consumes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliBasis.lean#L235-L251",
+  "source_path": "MIPRE/Background/QLD/PauliBasis.lean",
+  "lines": [
+   235,
+   251
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.POVM.map_kron_map",
+   "MIPRE.POVM.map_map"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.abs_sum_bornProb_le",
+  "source_name": "MIPRE.QLD.abs_sum_bornProb_le",
+  "formal_statement": "theorem MIPRE.QLD.abs_sum_bornProb_le {C : Type*} [Fintype C] (Φ : RA × RB → ℂ) (hΦ : star Φ ⬝ᵥ Φ = 1)\n    {T : C → Matrix RA RA ℂ} (hT : IsPVM T) (D : C → Matrix RB RB ℂ) :\n    |∑ c, bornProb Φ (T c) (D c)| ≤ Real.sqrt (∑ c, ‖stateVecB Φ (D c)‖ ^ 2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {RA RB : Type*} [Fintype RA] [DecidableEq RA] [Fintype RB] [DecidableEq RB]"
+  ],
+  "docstring": "**The substitution estimate.** Against a projective family on one party, an agreement with a\nfamily on the other is bounded by the root of that family's total weight: the projective family's\nown weights sum to one, so one Cauchy--Schwarz over the outcomes leaves only the other root. This\nis what pays for replacing one measurement by another inside the helper's agreement.",
+  "module": "MIPRE.Background.QLD.PauliBasis",
+  "module_doc": "/-!\n# The point measurement and the Pauli basis reading, on one party\n\nThe repaired proof of `lem:qld-exact-paulis` needs the strategy's `(Point, W)` measurement to be\nclose to the low-degree reading of its `(Pauli, W)` answer **on the same party**: the Pauli basis\nanswer does not depend on the sampled point, which is what lets Schwartz--Zippel be applied to a\nuniform point independent of the operators.\n\nBoth inputs are items of `lem:qld-win-implications`, and both are *cross-party*: the point\nmeasurements of the two players agree (`item_consistency` at the type `(Point, W)`), and Alice's\npoint answer agrees with the evaluation at the sampled point of the low-degree encoding of Bob's\nPauli basis answer (`item_pauli_consistency`). They share Alice's family, so the triangle\ninequality of `normSq_stateVecB_sub_le` leaves a statement about Bob alone, at four times the\nerror: `688 ε`.\n\nNothing here is expanded or padded: this is the bare strategy, and the statement is the one the\nmass argument of `MIPRE/Background/QLD/NonMultilinear.lean` consumes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliBasis.lean#L270-L296",
+  "source_path": "MIPRE/Background/QLD/PauliBasis.lean",
+  "lines": [
+   270,
+   296
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.aOp_sum",
+   "MIPRE.sum_weighted_mul_le_sqrt"
+  ],
+  "pasted_helpers": 15,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_normSq_hat_point_sub_pauli_le",
+  "source_name": "MIPRE.QLD.sum_normSq_hat_point_sub_pauli_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_normSq_hat_point_sub_pauli_le (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (W : Bas) :\n    ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *\n        ∑ a : F, ‖stateVecB (hatVec (F := F) (m := m) ψ)\n          ((((hatPtPOVM MB W (c.pt W)).mats a).val)\n            - ((((((MB (.pauli W)).map (rdPauli (c.pt W))).kron (synPOVM W (c.pt W))).map\n              fun p => p.1 + p.2).mats a).val))‖ ^ 2\n      ≤ 688 * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The same-party closeness, on the expanded state.** The hatted point measurement and the\nhatted Pauli basis reading differ, on Bob's side of `hatVec ψ`, by what the bare measurements\ndiffer by: the shared ancilla factor drops out exactly, so the constant is unchanged.",
+  "module": "MIPRE.Background.QLD.PauliBasis",
+  "module_doc": "/-!\n# The point measurement and the Pauli basis reading, on one party\n\nThe repaired proof of `lem:qld-exact-paulis` needs the strategy's `(Point, W)` measurement to be\nclose to the low-degree reading of its `(Pauli, W)` answer **on the same party**: the Pauli basis\nanswer does not depend on the sampled point, which is what lets Schwartz--Zippel be applied to a\nuniform point independent of the operators.\n\nBoth inputs are items of `lem:qld-win-implications`, and both are *cross-party*: the point\nmeasurements of the two players agree (`item_consistency` at the type `(Point, W)`), and Alice's\npoint answer agrees with the evaluation at the sampled point of the low-degree encoding of Bob's\nPauli basis answer (`item_pauli_consistency`). They share Alice's family, so the triangle\ninequality of `normSq_stateVecB_sub_le` leaves a statement about Bob alone, at four times the\nerror: `688 ε`.\n\nNothing here is expanded or padded: this is the bare strategy, and the statement is the one the\nmass argument of `MIPRE/Background/QLD/NonMultilinear.lean` consumes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliBasis.lean#L319-L353",
+  "source_path": "MIPRE/Background/QLD/PauliBasis.lean",
+  "lines": [
+   319,
+   353
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_normSq_stateVecB_conv_eq",
+   "MIPRE.QLD.sum_normSq_point_sub_pauli_le",
+   "MIPRE.Weyl.epr_unit",
+   "MIPRE.Weyl.isPVM_synOf"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.PauliBooleanProgram.program_same_type",
+  "source_name": "MIPRE.QLD.PauliBooleanProgram.program_same_type",
+  "formal_statement": "theorem MIPRE.QLD.PauliBooleanProgram.program_same_type {k m : ℕ} (E : BinField k) (hk : 0 < k) (j : ℕ)\n    (π : E.carrier ≃ E.carrier) (T : Ty) (x y : Coord m → E.carrier)\n    (a b : Answer E.carrier m 1)\n    (ha : (ExplicitSeed.decode π T x).fmtOk a = true)\n    (hb : (ExplicitSeed.decode π T y).fmtOk b = true) :\n    program (encodedInput E j T T x y a b) = decide (a = b) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.PauliBooleanProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.SAT MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear MIPRE.QLD.PauliCL MIPRE.QLD.PauliAnswerProgram MIPRE.QLD.PauliQuestionProgram MIPRE.QLD.PauliArithmeticProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.PauliBooleanCorrect",
+  "module_doc": "/-! # Correctness of the uniform Pauli decision program -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliBooleanCorrect.lean#L78-L94",
+  "source_path": "MIPRE/Background/QLD/PauliBooleanCorrect.lean",
+  "lines": [
+   78,
+   94
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.BinField.width_vecBits"
+  ],
+  "pasted_helpers": 26,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.PauliBooleanProgram.program_axis",
+  "source_name": "MIPRE.QLD.PauliBooleanProgram.program_axis",
+  "formal_statement": "theorem MIPRE.QLD.PauliBooleanProgram.program_axis (k : ℕ) (hk : 1 ≤ k) (j : ℕ) (hj : j ≤ k)\n    (hm : 2 ^ j ∣ Fintype.card (shoupBinField k hk).carrier) (W : Bas)\n    (x y : Coord (2 ^ j) → (shoupBinField k hk).carrier)\n    (a : (shoupBinField k hk).carrier) (f : LIDT.LinePoly (shoupBinField k hk).carrier 1) :\n    program (encodedInput (shoupBinField k hk) j (.point W) (.aline W) x y (.val a) (.apoly f)) =\n      lowDeg (fun i => y (.point W i))\n        (Pi.single (LIDT.CL.chi hm (ExplicitSeed.seedPermutation (shoupBinField k hk) (y .seed))) 1)\n        (fun i => x (.point W i)) f a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.PauliBooleanProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.SAT MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear MIPRE.QLD.PauliCL MIPRE.QLD.PauliAnswerProgram MIPRE.QLD.PauliQuestionProgram MIPRE.QLD.PauliArithmeticProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.PauliBooleanCorrect",
+  "module_doc": "/-! # Correctness of the uniform Pauli decision program -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliBooleanCorrect.lean#L103-L128",
+  "source_path": "MIPRE/Background/QLD/PauliBooleanCorrect.lean",
+  "lines": [
+   103,
+   128
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.encode_injective",
+   "MIPRE.Introspection.FieldLineCheck.parameter_eq",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits",
+   "MIPRE.SAT.shoupInvProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.SAT.shoupMulProg_encoding",
+   "MIPRE.SAT.BinField.width_vecBits",
+   "MIPRE.SAT.shoupBinField_charP",
+   "MIPRE.SAT.shoupRoot_eval_toBits",
+   "MIPRE.SAT.shoupRoot_eval_eq_iff"
+  ],
+  "pasted_helpers": 54,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.PauliBooleanProgram.program_diagonal",
+  "source_name": "MIPRE.QLD.PauliBooleanProgram.program_diagonal",
+  "formal_statement": "theorem MIPRE.QLD.PauliBooleanProgram.program_diagonal (k : ℕ) (hk : 1 ≤ k) (j m : ℕ) (W : Bas)\n    (x y : Coord m → (shoupBinField k hk).carrier)\n    (a : (shoupBinField k hk).carrier) (f : LIDT.LinePoly (shoupBinField k hk).carrier (m * 1)) :\n    program (encodedInput (shoupBinField k hk) j (.point W) (.dline W) x y (.val a) (.dpoly f)) =\n      lowDeg (fun i => y (.point W i)) (fun i => y (.direction i))\n        (fun i => x (.point W i)) f a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.PauliBooleanProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.SAT MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear MIPRE.QLD.PauliCL MIPRE.QLD.PauliAnswerProgram MIPRE.QLD.PauliQuestionProgram MIPRE.QLD.PauliArithmeticProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.PauliBooleanCorrect",
+  "module_doc": "/-! # Correctness of the uniform Pauli decision program -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliBooleanCorrect.lean#L130-L152",
+  "source_path": "MIPRE/Background/QLD/PauliBooleanCorrect.lean",
+  "lines": [
+   130,
+   152
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.encode_injective",
+   "MIPRE.Introspection.FieldLineCheck.parameter_eq",
+   "MIPRE.SAT.shoupInvProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.SAT.shoupMulProg_encoding",
+   "MIPRE.SAT.BinField.width_vecBits",
+   "MIPRE.SAT.shoupBinField_charP"
+  ],
+  "pasted_helpers": 42,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.PauliBooleanProgram.program_table",
+  "source_name": "MIPRE.QLD.PauliBooleanProgram.program_table",
+  "formal_statement": "theorem MIPRE.QLD.PauliBooleanProgram.program_table (k : ℕ) (hk : 1 ≤ k) (j m : ℕ) (W : Bas)\n    (x y : Coord m → (shoupBinField k hk).carrier)\n    (a : (shoupBinField k hk).carrier) (h : (Fin m → Bool) → (shoupBinField k hk).carrier) :\n    program (encodedInput (shoupBinField k hk) j (.point W) (.pauli W) x y (.val a) (.pauliAns h)) =\n      decide (MvPolynomial.eval (fun i => x (.point W i)) (ldEnc h) = a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.PauliBooleanProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.SAT MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear MIPRE.QLD.PauliCL MIPRE.QLD.PauliAnswerProgram MIPRE.QLD.PauliQuestionProgram MIPRE.QLD.PauliArithmeticProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.PauliBooleanCorrect",
+  "module_doc": "/-! # Correctness of the uniform Pauli decision program -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliBooleanCorrect.lean#L154-L175",
+  "source_path": "MIPRE/Background/QLD/PauliBooleanCorrect.lean",
+  "lines": [
+   154,
+   175
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.FieldTableProgram.tableProg_correct",
+   "MIPRE.SAT.BinField.width_vecBits"
+  ],
+  "pasted_helpers": 24,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.PauliBooleanProgram.program_pair",
+  "source_name": "MIPRE.QLD.PauliBooleanProgram.program_pair",
+  "formal_statement": "theorem MIPRE.QLD.PauliBooleanProgram.program_pair (k : ℕ) (hk : 1 ≤ k) (j m : ℕ) (W : Bas)\n    (x y : Coord m → (shoupBinField k hk).carrier) (a : ZMod 2) (b : Bas → ZMod 2) :\n    program (encodedInput (shoupBinField k hk) j (.pairB W) .pair x y (.bit a) (.bitPair b)) =\n      (decide (gam (vectorContent y).omega ≠ 0) || decide (a = b W)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.PauliBooleanProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.SAT MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear MIPRE.QLD.PauliCL MIPRE.QLD.PauliAnswerProgram MIPRE.QLD.PauliQuestionProgram MIPRE.QLD.PauliArithmeticProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.PauliBooleanCorrect",
+  "module_doc": "/-! # Correctness of the uniform Pauli decision program -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliBooleanCorrect.lean#L185-L208",
+  "source_path": "MIPRE/Background/QLD/PauliBooleanCorrect.lean",
+  "lines": [
+   185,
+   208
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.PauliQuestionProgram.gammaProg_fieldEncoding",
+   "MIPRE.SAT.BinField.width_vecBits"
+  ],
+  "pasted_helpers": 22,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.PauliBooleanProgram.program_probe",
+  "source_name": "MIPRE.QLD.PauliBooleanProgram.program_probe",
+  "formal_statement": "theorem MIPRE.QLD.PauliBooleanProgram.program_probe (k : ℕ) (hk : 1 ≤ k) (j m : ℕ) (W : Bas)\n    (x y : Coord m → (shoupBinField k hk).carrier) (a : (shoupBinField k hk).carrier)\n    (b : ZMod 2) :\n    program (encodedInput (shoupBinField k hk) j (.point W) (.pairB W) x y (.val a) (.bit b)) =\n      (decide (gam (vectorContent y).omega ≠ 0) || decide (prb a (y (.scalar W)) = b)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.PauliBooleanProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.SAT MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear MIPRE.QLD.PauliCL MIPRE.QLD.PauliAnswerProgram MIPRE.QLD.PauliQuestionProgram MIPRE.QLD.PauliArithmeticProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.PauliBooleanCorrect",
+  "module_doc": "/-! # Correctness of the uniform Pauli decision program -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliBooleanCorrect.lean#L210-L233",
+  "source_path": "MIPRE/Background/QLD/PauliBooleanCorrect.lean",
+  "lines": [
+   210,
+   233
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.PauliQuestionProgram.gammaProg_fieldEncoding",
+   "MIPRE.SAT.shoupMulProg_encoding",
+   "MIPRE.SAT.BinField.width_vecBits",
+   "MIPRE.SAT.shoupTraceBitProg_correct"
+  ],
+  "pasted_helpers": 25,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.PauliBooleanProgram.program_magic",
+  "source_name": "MIPRE.QLD.PauliBooleanProgram.program_magic",
+  "formal_statement": "theorem MIPRE.QLD.PauliBooleanProgram.program_magic (k : ℕ) (hk : 1 ≤ k) (j m : ℕ)\n    (i : Fin LCS.MagicSquare.layout.r) (v : Fin LCS.MagicSquare.layout.s)\n    (x y : Coord m → (shoupBinField k hk).carrier) (a : Fin 3 → ZMod 2) (b : ZMod 2) :\n    program (encodedInput (shoupBinField k hk) j (.con i) (.var v) x y (.bitTriple a) (.bit b)) =\n      (decide (gam (vectorContent y).omega = 0) ||\n        (decide (v ∈ LCS.MagicSquare.layout.V i) &&\n          decide (∑ z, a z = LCS.MagicSquare.game.b i) &&\n            decide (a (LCS.MagicSquare.cellIdx i v) = b))) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.PauliBooleanProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.SAT MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear MIPRE.QLD.PauliCL MIPRE.QLD.PauliAnswerProgram MIPRE.QLD.PauliQuestionProgram MIPRE.QLD.PauliArithmeticProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.PauliBooleanCorrect",
+  "module_doc": "/-! # Correctness of the uniform Pauli decision program -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliBooleanCorrect.lean#L247-L271",
+  "source_path": "MIPRE/Background/QLD/PauliBooleanCorrect.lean",
+  "lines": [
+   247,
+   271
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.PauliQuestionProgram.gammaProg_fieldEncoding",
+   "MIPRE.SAT.BinField.width_vecBits"
+  ],
+  "pasted_helpers": 23,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.PauliBooleanProgram.program_magicProbe",
+  "source_name": "MIPRE.QLD.PauliBooleanProgram.program_magicProbe",
+  "formal_statement": "theorem MIPRE.QLD.PauliBooleanProgram.program_magicProbe (k : ℕ) (hk : 1 ≤ k) (j m : ℕ) (W : Bas)\n    (v : Fin LCS.MagicSquare.layout.s)\n    (x y : Coord m → (shoupBinField k hk).carrier) (a : (shoupBinField k hk).carrier) (b : ZMod 2) :\n    program (encodedInput (shoupBinField k hk) j (.point W) (.var v) x y (.val a) (.bit b)) =\n      (decide (gam (vectorContent y).omega = 0) ||\n        (PauliBooleanProgram.probeEligible (.point W, .var v) && decide (prb a (y (.scalar W)) = b))) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.PauliBooleanProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.SAT MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear MIPRE.QLD.PauliCL MIPRE.QLD.PauliAnswerProgram MIPRE.QLD.PauliQuestionProgram MIPRE.QLD.PauliArithmeticProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.PauliBooleanCorrect",
+  "module_doc": "/-! # Correctness of the uniform Pauli decision program -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliBooleanCorrect.lean#L273-L296",
+  "source_path": "MIPRE/Background/QLD/PauliBooleanCorrect.lean",
+  "lines": [
+   273,
+   296
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.PauliQuestionProgram.gammaProg_fieldEncoding",
+   "MIPRE.SAT.shoupMulProg_encoding",
+   "MIPRE.SAT.BinField.width_vecBits",
+   "MIPRE.SAT.shoupTraceBitProg_correct"
+  ],
+  "pasted_helpers": 25,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.PauliBooleanProgram.program_correct_formatted",
+  "source_name": "MIPRE.QLD.PauliBooleanProgram.program_correct_formatted",
+  "formal_statement": "theorem MIPRE.QLD.PauliBooleanProgram.program_correct_formatted (k : ℕ) (hk : 1 ≤ k) (j : ℕ) (hj : j ≤ k)\n    (hm : 2 ^ j ∣ Fintype.card (shoupBinField k hk).carrier) (T U : Ty)\n    (x y : Coord (2 ^ j) → (shoupBinField k hk).carrier)\n    (a b : Answer (shoupBinField k hk).carrier (2 ^ j) 1)\n    (ha : (ExplicitSeed.decode (ExplicitSeed.seedPermutation (shoupBinField k hk)) T x).fmtOk a = true)\n    (hb : (ExplicitSeed.decode (ExplicitSeed.seedPermutation (shoupBinField k hk)) U y).fmtOk b = true) :\n    program (encodedInput (shoupBinField k hk) j T U x y a b) =\n      accepts hm (ExplicitSeed.decode (ExplicitSeed.seedPermutation (shoupBinField k hk)) T x)\n        (ExplicitSeed.decode (ExplicitSeed.seedPermutation (shoupBinField k hk)) U y) a b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.PauliBooleanProgram",
+   "open MIPRE.Cost MIPRE.SAT MIPRE.QLD.PauliCL MIPRE.LowDegree MIPRE.LIDT MIPRE.LCS.MagicSquare"
+  ],
+  "docstring": "The executable Pauli predicate agrees with the transported QLD interface\non all raw question contents and all canonically encoded formatted answers.",
+  "module": "MIPRE.Background.QLD.PauliBooleanDispatch",
+  "module_doc": "/-! # Exact decision equality for every pair of Pauli types\n\nThe arithmetic branches are proved individually. The fixed finite type router\nthen selects a forward branch, its proved reversal, exact consistency, or the\nlegacy off-graph default. Question contents remain arbitrary throughout.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliBooleanDispatch.lean#L117-L150",
+  "source_path": "MIPRE/Background/QLD/PauliBooleanDispatch.lean",
+  "lines": [
+   117,
+   150
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.PauliBooleanProgram.program_pair",
+   "MIPRE.QLD.PauliBooleanProgram.program_probe",
+   "MIPRE.QLD.PauliBooleanProgram.program_magic",
+   "MIPRE.QLD.PauliBooleanProgram.program_magicProbe",
+   "MIPRE.QLD.PauliBooleanProgram.program_same_type",
+   "MIPRE.QLD.PauliBooleanProgram.program_axis",
+   "MIPRE.QLD.PauliBooleanProgram.program_diagonal",
+   "MIPRE.QLD.PauliBooleanProgram.program_table",
+   "MIPRE.SAT.BinField.width_vecBits"
+  ],
+  "pasted_helpers": 37,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.PauliCL.factorBits_correct",
+  "source_name": "MIPRE.QLD.PauliCL.factorBits_correct",
+  "formal_statement": "theorem MIPRE.QLD.PauliCL.factorBits_correct {F : Type*} [Field F] [Fintype F] [DecidableEq F]\n    [Algebra (ZMod 2) F] {m k : ℕ} [NeZero m]\n    (χ : F → Fin m) (b : Module.Basis (Fin k) (ZMod 2) F) (T : Ty)\n    (j r : ℕ) (hr1 : 1 ≤ r) (hr3 : r ≤ 3)\n    (u : Fin ((3 * m + 3) * k) → ZMod 2) :\n    factorBits ((unary k, unary j, unary m), r) =\n      CL.indicatorBits ((ExplicitSeed.binaryPresentation χ b T).factorOfPrefix (r - 1) u) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.PauliCL",
+   "open MIPRE.Cost MIPRE.Introspection.PauliStageProgram"
+  ],
+  "docstring": "Exact correctness for every type, every legal stage, every binary prefix,\nand any chosen field basis. No prefix validity assumption is needed.",
+  "module": "MIPRE.Background.QLD.PauliFactorPrograms",
+  "module_doc": "/-! # Exact factor masks for the binary Pauli sampler\n\nThe factor program is independent of the field basis and the question type.\nIts masks are the actual downsized, numbered factors on every binary prefix.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliFactorPrograms.lean#L120-L136",
+  "source_path": "MIPRE/Background/QLD/PauliFactorPrograms.lean",
+  "lines": [
+   120,
+   136
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-executable-pauli-queries",
+    "env": "lemma",
+    "title": "Executable binary Pauli queries",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.CLFun.factorOfPrefix_downsize",
+   "MIPRE.CL.CLFun.factorOfPrefix_reindex"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 8,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.PauliQuestionProgram.gammaProg_fieldEncoding",
+  "source_name": "MIPRE.QLD.PauliQuestionProgram.gammaProg_fieldEncoding",
+  "formal_statement": "theorem MIPRE.QLD.PauliQuestionProgram.gammaProg_fieldEncoding (k : ℕ) (hk : 1 ≤ k) {m : ℕ}\n    (x : Coord m → (shoupBinField k hk).carrier) :\n    Introspection.FieldGammaProgram.gammaProg (unary k,\n      (Introspection.PauliStageProgram.pointX (fieldEncoding (shoupBinField k hk) x)).zip\n        (Introspection.PauliStageProgram.pointZ (fieldEncoding (shoupBinField k hk) x)),\n      Introspection.PauliStageProgram.scalarX (fieldEncoding (shoupBinField k hk) x),\n      Introspection.PauliStageProgram.scalarZ (fieldEncoding (shoupBinField k hk) x)) =\n      LowDegree.BinaryLinear.bit (gam (vectorContent x).omega) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.PauliQuestionProgram",
+   "open MIPRE.Cost MIPRE.SAT MIPRE.Introspection.FieldQuestionProgram MIPRE.Introspection.SeedProgram MIPRE.QLD.PauliCL MIPRE.QLD.PauliBranchProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.PauliQuestionPrograms",
+  "module_doc": "/-! # Faithful extraction of the Pauli question's arithmetic fields\n\nThe basis metadata from finite routing selects the corresponding point and\nscalar. The explicit axis direction agrees with the original game after the\nsame seed permutation used by the sampled-game transport.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliQuestionPrograms.lean#L44-L63",
+  "source_path": "MIPRE/Background/QLD/PauliQuestionPrograms.lean",
+  "lines": [
+   44,
+   63
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.SAT.shoupMulProg_encoding",
+   "MIPRE.SAT.shoupBinField_charP",
+   "MIPRE.SAT.shoupRoot_eval_toBits",
+   "MIPRE.SAT.shoupRoot_eval_eq_iff",
+   "MIPRE.SAT.shoupTraceBitProg_correct"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 12,
+  "is_target": false
+ }
+]

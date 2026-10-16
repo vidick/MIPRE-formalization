@@ -1,0 +1,526 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.polynomial_sum_fiberwise",
+  "source_name": "MIPStarRE.LDT.polynomial_sum_fiberwise",
+  "formal_statement": "theorem MIPStarRE.LDT.polynomial_sum_fiberwise\n    (params : Parameters)\n    [FieldModel params.q]\n    (u : Point params)\n    {β : Type*} [AddCommMonoid β]\n    (f : Polynomial params → β) :\n    (∑ h : Polynomial params, f h) =\n      ∑ a : Fq params,\n        ∑ h ∈ Finset.univ.filter (fun h : Polynomial params => h u = a), f h := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators"
+  ],
+  "docstring": "Reindex a polynomial-indexed sum by the value of the polynomial at a fixed point.\n\nThe low individual degree test frequently groups global polynomial answers by\nthe fiber of the evaluation map `h ↦ h u`.  This lemma records that finite\nreindexing in the notation used throughout the LDT formalization.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.ParametersFiniteAnswers",
+  "module_doc": "/-!\n# Finite answer spaces for the low individual degree test\n\nFinite-type instances for the bounded polynomial answer spaces defined in\n`MIPStarRE.LDT.Basic.LowDegreePolynomial`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/ParametersFiniteAnswers.lean#L93-L108",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/ParametersFiniteAnswers.lean",
+  "lines": [
+   93,
+   108
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.QuantumState.IsNormalized.nonempty",
+  "source_name": "MIPStarRE.LDT.QuantumState.IsNormalized.nonempty",
+  "formal_statement": "theorem MIPStarRE.LDT.QuantumState.IsNormalized.nonempty {ι : Type*} [Fintype ι] [DecidableEq ι]\n    {ψ : QuantumState ι} (hψ : ψ.IsNormalized) : Nonempty ι := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.QuantumState",
+   "open MIPStarRE.LDT.QuantumState.IsNormalized",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "A normalized state has a nonempty carrier: if the carrier were empty, the\ntrace would vanish and `normalizedTrace = 0 / 0 = 0`, contradicting `= 1`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L113-L123",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   113,
+   123
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.PureState.toQuantumState_isNormalized",
+  "source_name": "MIPStarRE.LDT.PureState.toQuantumState_isNormalized",
+  "formal_statement": "theorem MIPStarRE.LDT.PureState.toQuantumState_isNormalized {ι : Type*} [Fintype ι] [DecidableEq ι] [Nonempty ι]\n    (ψ : PureState ι) :\n    (ψ : QuantumState ι).IsNormalized := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.PureState",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L198-L201",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   198,
+   201
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.leftTensor_one",
+  "source_name": "MIPStarRE.LDT.leftTensor_one",
+  "formal_statement": "theorem MIPStarRE.LDT.leftTensor_one\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂] :\n    leftTensor (ι₂ := ι₂) (1 : MIPStarRE.Quantum.Op ι₁) =\n      (1 : MIPStarRE.Quantum.Op (ι₁ × ι₂)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Left placement of the identity is the identity on the product space.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L280-L286",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   280,
+   286
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.rightTensor_one",
+  "source_name": "MIPStarRE.LDT.rightTensor_one",
+  "formal_statement": "theorem MIPStarRE.LDT.rightTensor_one\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂] :\n    rightTensor (ι₁ := ι₁) (1 : MIPStarRE.Quantum.Op ι₂) =\n      (1 : MIPStarRE.Quantum.Op (ι₁ × ι₂)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Right placement of the identity is the identity on the product space.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L288-L294",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   288,
+   294
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+  "source_name": "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+  "formal_statement": "theorem MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (A : MIPStarRE.Quantum.Op ι₁) (B : MIPStarRE.Quantum.Op ι₂) :\n    leftTensor (ι₂ := ι₂) A * rightTensor (ι₁ := ι₁) B = opTensor A B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Local tensor placements multiply to the full Kronecker product.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L296-L303",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   296,
+   303
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.opTensor_le_leftTensor",
+  "source_name": "MIPStarRE.LDT.opTensor_le_leftTensor",
+  "formal_statement": "theorem MIPStarRE.LDT.opTensor_le_leftTensor\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    {A : MIPStarRE.Quantum.Op ι₁} {B : MIPStarRE.Quantum.Op ι₂}\n    (hA : 0 ≤ A) (hB : B ≤ 1) :\n    opTensor A B ≤ leftTensor (ι₂ := ι₂) A := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "If `0 ≤ A` and `B ≤ 1`, then `A ⊗ B ≤ A ⊗ I`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L361-L368",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   361,
+   368
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.Quantum.kronecker_nonneg"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.opTensor_mono_left",
+  "source_name": "MIPStarRE.LDT.opTensor_mono_left",
+  "formal_statement": "theorem MIPStarRE.LDT.opTensor_mono_left\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    {A₁ A₂ : MIPStarRE.Quantum.Op ι₁} {B : MIPStarRE.Quantum.Op ι₂}\n    (hA : A₁ ≤ A₂) (hB : 0 ≤ B) :\n    opTensor A₁ B ≤ opTensor A₂ B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`opTensor` is monotone in the left factor against a PSD right factor.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L370-L376",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   370,
+   376
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.Quantum.kronecker_mono_left"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.leftTensor_mono",
+  "source_name": "MIPStarRE.LDT.leftTensor_mono",
+  "formal_statement": "theorem MIPStarRE.LDT.leftTensor_mono\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    {A₁ A₂ : MIPStarRE.Quantum.Op ι₁} (hA : A₁ ≤ A₂) :\n    leftTensor (ι₂ := ι₂) A₁ ≤ leftTensor (ι₂ := ι₂) A₂ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Left tensor placement is monotone.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L378-L383",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   378,
+   383
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.opTensor_mono_left"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.opTensor_mono_right",
+  "source_name": "MIPStarRE.LDT.opTensor_mono_right",
+  "formal_statement": "theorem MIPStarRE.LDT.opTensor_mono_right\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    {A : MIPStarRE.Quantum.Op ι₁} {B₁ B₂ : MIPStarRE.Quantum.Op ι₂}\n    (hA : 0 ≤ A) (hB : B₁ ≤ B₂) :\n    opTensor A B₁ ≤ opTensor A B₂ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`opTensor` is monotone in the right factor against a PSD left factor.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L385-L397",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   385,
+   397
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.Quantum.kronecker_nonneg"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+  "source_name": "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+  "formal_statement": "theorem MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (A : MIPStarRE.Quantum.Op ι₁) (B : MIPStarRE.Quantum.Op ι₂) :\n    rightTensor (ι₁ := ι₁) B * leftTensor (ι₂ := ι₂) A = opTensor A B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`rightTensor B * leftTensor A = opTensor A B`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L407-L414",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   407,
+   414
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+  "source_name": "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+  "formal_statement": "theorem MIPStarRE.LDT.leftTensor_mul_leftTensor\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (A B : MIPStarRE.Quantum.Op ι₁) :\n    leftTensor (ι₂ := ι₂) A * leftTensor (ι₂ := ι₂) B =\n      leftTensor (ι₂ := ι₂) (A * B) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`leftTensor A * leftTensor B = leftTensor (A * B)`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L416-L424",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   416,
+   424
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.leftTensor_mul_opTensor",
+  "source_name": "MIPStarRE.LDT.leftTensor_mul_opTensor",
+  "formal_statement": "theorem MIPStarRE.LDT.leftTensor_mul_opTensor\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (A B : MIPStarRE.Quantum.Op ι₁) (C : MIPStarRE.Quantum.Op ι₂) :\n    leftTensor (ι₂ := ι₂) A * opTensor B C = opTensor (A * B) C := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Multiplying a left tensor into a full tensor only affects the left factor.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L426-L442",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   426,
+   442
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.opTensor_mul_leftTensor",
+  "source_name": "MIPStarRE.LDT.opTensor_mul_leftTensor",
+  "formal_statement": "theorem MIPStarRE.LDT.opTensor_mul_leftTensor\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (A B : MIPStarRE.Quantum.Op ι₁) (C : MIPStarRE.Quantum.Op ι₂) :\n    opTensor A C * leftTensor (ι₂ := ι₂) B = opTensor (A * B) C := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Multiplying a full tensor by a left tensor only affects the left factor.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L444-L459",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   444,
+   459
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+   "MIPStarRE.LDT.leftTensor_mul_opTensor"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.rightTensor_mul_rightTensor",
+  "source_name": "MIPStarRE.LDT.rightTensor_mul_rightTensor",
+  "formal_statement": "theorem MIPStarRE.LDT.rightTensor_mul_rightTensor\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (A B : MIPStarRE.Quantum.Op ι₂) :\n    rightTensor (ι₁ := ι₁) A * rightTensor (ι₁ := ι₁) B =\n      rightTensor (ι₁ := ι₁) (A * B) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`rightTensor A * rightTensor B = rightTensor (A * B)`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L480-L488",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   480,
+   488
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.rightTensor_mul_opTensor",
+  "source_name": "MIPStarRE.LDT.rightTensor_mul_opTensor",
+  "formal_statement": "theorem MIPStarRE.LDT.rightTensor_mul_opTensor\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (A : MIPStarRE.Quantum.Op ι₂) (B : MIPStarRE.Quantum.Op ι₁)\n    (C : MIPStarRE.Quantum.Op ι₂) :\n    rightTensor (ι₁ := ι₁) A * opTensor B C = opTensor B (A * C) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Multiplying a right tensor into a full tensor only affects the right factor.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L490-L515",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   490,
+   515
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+   "MIPStarRE.LDT.rightTensor_mul_rightTensor"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.opTensor_mul",
+  "source_name": "MIPStarRE.LDT.opTensor_mul",
+  "formal_statement": "theorem MIPStarRE.LDT.opTensor_mul\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (A₁ A₂ : MIPStarRE.Quantum.Op ι₁) (B₁ B₂ : MIPStarRE.Quantum.Op ι₂) :\n    opTensor A₁ B₁ * opTensor A₂ B₂ = opTensor (A₁ * A₂) (B₁ * B₂) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`opTensor` distributes over multiplication.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L542-L547",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   542,
+   547
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.opTensor_sub_left",
+  "source_name": "MIPStarRE.LDT.opTensor_sub_left",
+  "formal_statement": "theorem MIPStarRE.LDT.opTensor_sub_left\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (A B : MIPStarRE.Quantum.Op ι₁) (C : MIPStarRE.Quantum.Op ι₂) :\n    opTensor A C - opTensor B C = opTensor (A - B) C := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`opTensor` is linear in the left factor: subtraction.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L549-L555",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   549,
+   555
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.leftTensor_sub",
+  "source_name": "MIPStarRE.LDT.leftTensor_sub",
+  "formal_statement": "theorem MIPStarRE.LDT.leftTensor_sub\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (A B : MIPStarRE.Quantum.Op ι₁) :\n    leftTensor (ι₂ := ι₂) A - leftTensor (ι₂ := ι₂) B =\n      leftTensor (ι₂ := ι₂) (A - B) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Left tensor placement commutes with subtraction.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L557-L564",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   557,
+   564
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.opTensor_sub_left"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.rightTensor_sub",
+  "source_name": "MIPStarRE.LDT.rightTensor_sub",
+  "formal_statement": "theorem MIPStarRE.LDT.rightTensor_sub\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (A B : MIPStarRE.Quantum.Op ι₂) :\n    rightTensor (ι₁ := ι₁) A - rightTensor (ι₁ := ι₁) B =\n      rightTensor (ι₁ := ι₁) (A - B) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Right tensor placement commutes with subtraction.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.QuantumState",
+  "module_doc": "/-!\n# Quantum states and tensor placement for the low individual degree test\n\nCore quantum-state definitions together with tensor-placement operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean#L566-L574",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/QuantumState.lean",
+  "lines": [
+   566,
+   574
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 3,
+  "is_target": false
+ }
+]

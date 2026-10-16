@@ -1,0 +1,593 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.routeOneCall_indirect",
+  "source_name": "MIPRE.Cost.Prog.routeOneCall_indirect",
+  "formal_statement": "theorem MIPRE.Cost.Prog.routeOneCall_indirect (route : PolyTimeFun Data (Bool × Data))\n    {p : Prog} (hp : p.WellScoped 1) (post : PolyTimeFun (Data × Data) Data)\n    (x a ctx r : Data) (time : ℕ) (h : route x = (true, .cons a ctx))\n    (hr : p.Runs a r time) :\n    ∃ t, (routeOneCall route p post).Runs x (post (ctx, r)) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.DetypingProgCall",
+  "module_doc": "/-! # A total query router with at most one sampler call\n\nThe preprocessing program either supplies a direct result, or an argument and\ncontinuation context. Only the latter branch calls the supplied sampler. The\npostprocessor is total on raw data, so malformed inputs preserve termination\nwhenever routing preserves the sampler index.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingProgCall.lean#L63-L75",
+  "source_path": "MIPRE/Foundations/CL/DetypingProgCall.lean",
+  "lines": [
+   63,
+   75
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 8,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.routeOneCall_halts",
+  "source_name": "MIPRE.Cost.Prog.routeOneCall_halts",
+  "formal_statement": "theorem MIPRE.Cost.Prog.routeOneCall_halts (route : PolyTimeFun Data (Bool × Data))\n    {p : Prog} (hp : p.WellScoped 1) (post : PolyTimeFun (Data × Data) Data)\n    (n : ℕ) (q : Data)\n    (halts : ∀ d, Halts p (.cons (encode n) d))\n    (preserves : ∀ a, route (.cons (encode n) q) = (true, a) →\n      ∃ d ctx, a = .cons (.cons (encode n) d) ctx) :\n    Halts (routeOneCall route p post) (.cons (encode n) q) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "Halting is preserved if each routed call retains the original index.",
+  "module": "MIPRE.Foundations.CL.DetypingProgCall",
+  "module_doc": "/-! # A total query router with at most one sampler call\n\nThe preprocessing program either supplies a direct result, or an argument and\ncontinuation context. Only the latter branch calls the supplied sampler. The\npostprocessor is total on raw data, so malformed inputs preserve termination\nwhenever routing preserves the sampler index.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingProgCall.lean#L77-L95",
+  "source_path": "MIPRE/Foundations/CL/DetypingProgCall.lean",
+  "lines": [
+   77,
+   95
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.routeOneCall_direct",
+   "MIPRE.Cost.Prog.routeOneCall_indirect"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.routeOneCall_haltsWithin",
+  "source_name": "MIPRE.Cost.Prog.routeOneCall_haltsWithin",
+  "formal_statement": "theorem MIPRE.Cost.Prog.routeOneCall_haltsWithin (route : PolyTimeFun Data (Bool × Data))\n    {p : Prog} (hp : p.WellScoped 1) (post : PolyTimeFun (Data × Data) Data)\n    (n B k : ℕ) (q : Data)\n    (bound : ∀ d, HaltsWithin p (.cons (encode n) d) (B * (d.size + 1) ^ k))\n    (preserves : ∀ a, route (.cons (encode n) q) = (true, a) →\n      ∃ d ctx, a = .cons (.cons (encode n) d) ctx) :\n    HaltsWithin (routeOneCall route p post) (.cons (encode n) q)\n      ((routeCost route post B k).eval (Data.cons (encode n) q).size) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.PolyTimeFun Polynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.DetypingProgCost",
+  "module_doc": "/-! # Polynomial runtime transfer for the detyping sampler\n\nThe bound follows the actual one-call program: preprocessing bounds the size\nof the forwarded query and continuation, the original sampler bounds the\nforwarded run, and postprocessing reads their combined output. Constants in\nthe graph table are fixed; no uniform graph-compilation bound is asserted.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingProgCost.lean#L111-L162",
+  "source_path": "MIPRE/Foundations/CL/DetypingProgCost.lean",
+  "lines": [
+   111,
+   162
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 4,
+  "prooflines": 44,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.Program.readBits_encode",
+  "source_name": "MIPRE.CL.Detyping.Program.readBits_encode",
+  "formal_statement": "theorem MIPRE.CL.Detyping.Program.readBits_encode (l : BitStr) : readBits (encode l) = l := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open MIPRE.CL.Detyping.Program",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.DetypingProgParse",
+  "module_doc": "/-! # Total parsing for the detyping sampler\n\nRaw trees are converted to canonical bit strings and binary naturals before\nthe fixed finite graph computation. Every parser is an actual polynomial-time\nambient program, including on malformed encodings.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingProgParse.lean#L46-L53",
+  "source_path": "MIPRE/Foundations/CL/DetypingProgParse.lean",
+  "lines": [
+   46,
+   53
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.Program.readNat_encode",
+  "source_name": "MIPRE.CL.Detyping.Program.readNat_encode",
+  "formal_statement": "theorem MIPRE.CL.Detyping.Program.readNat_encode (n : ℕ) : readNat (encode n) = n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open MIPRE.CL.Detyping.Program",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.DetypingProgParse",
+  "module_doc": "/-! # Total parsing for the detyping sampler\n\nRaw trees are converted to canonical bit strings and binary naturals before\nthe fixed finite graph computation. Every parser is an actual polynomial-time\nambient program, including on malformed encodings.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingProgParse.lean#L57-L59",
+  "source_path": "MIPRE/Foundations/CL/DetypingProgParse.lean",
+  "lines": [
+   57,
+   59
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.Program.readBits_encode"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.Program.parse_query",
+  "source_name": "MIPRE.CL.Detyping.Program.parse_query",
+  "formal_statement": "theorem MIPRE.CL.Detyping.Program.parse_query (n : ℕ) (q : Sampler.Query) :\n    parse (encode (n, q)) =\n      (encode n, q.toTuple.1, q.toTuple.2.1.toBool, q.toTuple.2.2.1,\n        q.toTuple.2.2.2.1, q.toTuple.2.2.2.2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open MIPRE.CL.Detyping.Program",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.DetypingProgParse",
+  "module_doc": "/-! # Total parsing for the detyping sampler\n\nRaw trees are converted to canonical bit strings and binary naturals before\nthe fixed finite graph computation. Every parser is an actual polynomial-time\nambient program, including on malformed encodings.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingProgParse.lean#L80-L89",
+  "source_path": "MIPRE/Foundations/CL/DetypingProgParse.lean",
+  "lines": [
+   80,
+   89
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.Program.readBits_encode",
+   "MIPRE.CL.Detyping.Program.readNat_encode"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.toBits_zero",
+  "source_name": "MIPRE.CL.Detyping.toBits_zero",
+  "formal_statement": "theorem MIPRE.CL.Detyping.toBits_zero (s : ℕ) : toBits (0 : Fin s → 𝔽₂) = List.replicate s false := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open Finset Classical",
+   "variable {T : Type*} [Fintype T] [DecidableEq T]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.DetypingProgQueries",
+  "module_doc": "/-! # Bit-list query formulas for the numbered detyping sampler\n\nThese identities connect the semantic CL construction to the executable\nrouter's graph-prefix and content-suffix operations. Prefix validity for\nforwarded content queries is derived from the original numbered prefix.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingProgQueries.lean#L24-L25",
+  "source_path": "MIPRE/Foundations/CL/DetypingProgQueries.lean",
+  "lines": [
+   24,
+   25
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.numbered_marginal_graph",
+  "source_name": "MIPRE.CL.Detyping.numbered_marginal_graph",
+  "formal_statement": "theorem MIPRE.CL.Detyping.numbered_marginal_graph {s ℓ : ℕ} (E : T → T → Prop) [DecidableRel E] (w : Player)\n    (P : T → CLFun 𝔽₂ (Fin s) ℓ) (j : ℕ) (hj : j ≤ 2)\n    (z : Cost.BitStr) (hz : z.length = graphDim T + s) :\n    toBits (((numbered E w P).truncate j).eval (ofBits (graphDim T + s) z)) =\n      graphBits (((Graph.presentation E w.toBool).truncate j).eval\n        (graphOfBits (z.take (graphDim T)))) ++ List.replicate s false := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open Finset Classical",
+   "variable {T : Type*} [Fintype T] [DecidableEq T]"
+  ],
+  "docstring": "Through the first two levels only graph bits are nonzero.",
+  "module": "MIPRE.Foundations.CL.DetypingProgQueries",
+  "module_doc": "/-! # Bit-list query formulas for the numbered detyping sampler\n\nThese identities connect the semantic CL construction to the executable\nrouter's graph-prefix and content-suffix operations. Prefix validity for\nforwarded content queries is derived from the original numbered prefix.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingProgQueries.lean#L56-L64",
+  "source_path": "MIPRE/Foundations/CL/DetypingProgQueries.lean",
+  "lines": [
+   56,
+   64
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.toBits_zero",
+   "MIPRE.CL.CLFun.truncate_concat_le",
+   "MIPRE.CL.pull_proj_compl"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.numbered_marginal_content",
+  "source_name": "MIPRE.CL.Detyping.numbered_marginal_content",
+  "formal_statement": "theorem MIPRE.CL.Detyping.numbered_marginal_content {s ℓ : ℕ} (E : T → T → Prop) [DecidableRel E] (w : Player)\n    (P : T → CLFun 𝔽₂ (Fin s) ℓ) (hP : ∀ t, (P t).ExactlyOn univ) (hℓ : 0 < ℓ)\n    (r : ℕ) (z : Cost.BitStr) (hz : z.length = graphDim T + s) :\n    toBits (((numbered E w P).truncate (r + 2)).eval (ofBits (graphDim T + s) z)) =\n      graphBits ((Graph.presentation E w.toBool).eval (graphOfBits (z.take (graphDim T)))) ++\n        toBits (((selected P (select E w.toBool (graphOfBits (z.take (graphDim T))))).truncate r).eval\n          (ofBits s (z.drop (graphDim T)))) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open Finset Classical",
+   "variable {T : Type*} [Fintype T] [DecidableEq T]"
+  ],
+  "docstring": "Later marginals append the selected typed marginal to the complete graph view.",
+  "module": "MIPRE.Foundations.CL.DetypingProgQueries",
+  "module_doc": "/-! # Bit-list query formulas for the numbered detyping sampler\n\nThese identities connect the semantic CL construction to the executable\nrouter's graph-prefix and content-suffix operations. Prefix validity for\nforwarded content queries is derived from the original numbered prefix.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingProgQueries.lean#L66-L77",
+  "source_path": "MIPRE/Foundations/CL/DetypingProgQueries.lean",
+  "lines": [
+   66,
+   77
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.marginal_content",
+   "MIPRE.CL.pull_proj_compl"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.numbered_linear_graph",
+  "source_name": "MIPRE.CL.Detyping.numbered_linear_graph",
+  "formal_statement": "theorem MIPRE.CL.Detyping.numbered_linear_graph {s ℓ : ℕ} (E : T → T → Prop) [DecidableRel E] (w : Player)\n    (P : T → CLFun 𝔽₂ (Fin s) ℓ) (k : ℕ) (hk : k < 2)\n    (u y : Cost.BitStr) (hu : u.length = graphDim T + s) (hy : y.length = graphDim T + s) :\n    toBits ((numbered E w P).mapOfPrefix k (ofBits (graphDim T + s) u) (ofBits (graphDim T + s) y)) =\n      graphBits ((Graph.presentation E w.toBool).mapOfPrefix k\n        (graphOfBits (u.take (graphDim T))) (graphOfBits (y.take (graphDim T)))) ++\n        List.replicate s false := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open Finset Classical",
+   "variable {T : Type*} [Fintype T] [DecidableEq T]"
+  ],
+  "docstring": "Graph-level linear queries append a zero content block.",
+  "module": "MIPRE.Foundations.CL.DetypingProgQueries",
+  "module_doc": "/-! # Bit-list query formulas for the numbered detyping sampler\n\nThese identities connect the semantic CL construction to the executable\nrouter's graph-prefix and content-suffix operations. Prefix validity for\nforwarded content queries is derived from the original numbered prefix.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingProgQueries.lean#L79-L95",
+  "source_path": "MIPRE/Foundations/CL/DetypingProgQueries.lean",
+  "lines": [
+   79,
+   95
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.toBits_zero",
+   "MIPRE.CL.pull_proj_compl"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 9,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.numbered_linear_content",
+  "source_name": "MIPRE.CL.Detyping.numbered_linear_content",
+  "formal_statement": "theorem MIPRE.CL.Detyping.numbered_linear_content {s ℓ : ℕ} (E : T → T → Prop) [DecidableRel E] (w : Player)\n    (P : T → CLFun 𝔽₂ (Fin s) ℓ) (r : ℕ)\n    (u y : Cost.BitStr) (hu : u.length = graphDim T + s) (hy : y.length = graphDim T + s) :\n    toBits ((numbered E w P).mapOfPrefix (r + 2)\n      (ofBits (graphDim T + s) u) (ofBits (graphDim T + s) y)) =\n      List.replicate (graphDim T) false ++\n        toBits ((selected P (select E w.toBool (graphOfBits (u.take (graphDim T))))).mapOfPrefix r\n          (ofBits s (u.drop (graphDim T))) (ofBits s (y.drop (graphDim T)))) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open Finset Classical",
+   "variable {T : Type*} [Fintype T] [DecidableEq T]"
+  ],
+  "docstring": "Content-level linear queries prepend a zero graph block.",
+  "module": "MIPRE.Foundations.CL.DetypingProgQueries",
+  "module_doc": "/-! # Bit-list query formulas for the numbered detyping sampler\n\nThese identities connect the semantic CL construction to the executable\nrouter's graph-prefix and content-suffix operations. Prefix validity for\nforwarded content queries is derived from the original numbered prefix.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingProgQueries.lean#L97-L107",
+  "source_path": "MIPRE/Foundations/CL/DetypingProgQueries.lean",
+  "lines": [
+   97,
+   107
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.toBits_zero",
+   "MIPRE.CL.pull_proj_compl"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.numbered_factor_graph",
+  "source_name": "MIPRE.CL.Detyping.numbered_factor_graph",
+  "formal_statement": "theorem MIPRE.CL.Detyping.numbered_factor_graph {s ℓ : ℕ} (E : T → T → Prop) [DecidableRel E] (w : Player)\n    (P : T → CLFun 𝔽₂ (Fin s) ℓ) (k : ℕ) (hk : k < 2)\n    (u : Cost.BitStr) (hu : u.length = graphDim T + s) :\n    indicatorBits ((numbered E w P).factorOfPrefix k (ofBits (graphDim T + s) u)) =\n      indicatorBits (((Graph.presentation E w.toBool).factorOfPrefix k\n        (graphOfBits (u.take (graphDim T)))).map graphEquiv.toEmbedding) ++ List.replicate s false := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open Finset Classical",
+   "variable {T : Type*} [Fintype T] [DecidableEq T]"
+  ],
+  "docstring": "Graph factors append zero membership bits for the content register.",
+  "module": "MIPRE.Foundations.CL.DetypingProgQueries",
+  "module_doc": "/-! # Bit-list query formulas for the numbered detyping sampler\n\nThese identities connect the semantic CL construction to the executable\nrouter's graph-prefix and content-suffix operations. Prefix validity for\nforwarded content queries is derived from the original numbered prefix.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingProgQueries.lean#L149-L161",
+  "source_path": "MIPRE/Foundations/CL/DetypingProgQueries.lean",
+  "lines": [
+   149,
+   161
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.toBits_zero",
+   "MIPRE.CL.pull_proj_compl"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.numbered_factor_content",
+  "source_name": "MIPRE.CL.Detyping.numbered_factor_content",
+  "formal_statement": "theorem MIPRE.CL.Detyping.numbered_factor_content {s ℓ : ℕ} (E : T → T → Prop) [DecidableRel E] (w : Player)\n    (P : T → CLFun 𝔽₂ (Fin s) ℓ) (r : ℕ)\n    (u : Cost.BitStr) (hu : u.length = graphDim T + s) :\n    indicatorBits ((numbered E w P).factorOfPrefix (r + 2) (ofBits (graphDim T + s) u)) =\n      List.replicate (graphDim T) false ++\n        indicatorBits ((selected P (select E w.toBool (graphOfBits (u.take (graphDim T))))).factorOfPrefix r\n          (ofBits s (u.drop (graphDim T)))) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open Finset Classical",
+   "variable {T : Type*} [Fintype T] [DecidableEq T]"
+  ],
+  "docstring": "Content factors prepend zero membership bits for the graph register.",
+  "module": "MIPRE.Foundations.CL.DetypingProgQueries",
+  "module_doc": "/-! # Bit-list query formulas for the numbered detyping sampler\n\nThese identities connect the semantic CL construction to the executable\nrouter's graph-prefix and content-suffix operations. Prefix validity for\nforwarded content queries is derived from the original numbered prefix.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingProgQueries.lean#L163-L172",
+  "source_path": "MIPRE/Foundations/CL/DetypingProgQueries.lean",
+  "lines": [
+   163,
+   172
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.toBits_zero",
+   "MIPRE.CL.pull_proj_compl"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.numbered_selected_prefix",
+  "source_name": "MIPRE.CL.Detyping.numbered_selected_prefix",
+  "formal_statement": "theorem MIPRE.CL.Detyping.numbered_selected_prefix {s ℓ : ℕ} (E : T → T → Prop) [DecidableRel E] (w : Player)\n    (P : T → CLFun 𝔽₂ (Fin s) ℓ) (hP : ∀ t, (P t).ExactlyOn univ) (hℓ : 0 < ℓ)\n    (r : ℕ) (hr : 1 ≤ r) (u : Cost.BitStr)\n    (hu : ∃ x, u = toBits (((numbered E w P).truncate (r + 1)).eval x))\n    {t : T} (ht : select E w.toBool (graphOfBits (u.take (graphDim T))) = some t) :\n    ∃ v, u.drop (graphDim T) = toBits (((P t).truncate (r - 1)).eval v) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open Finset Classical",
+   "variable {T : Type*} [Fintype T] [DecidableEq T]"
+  ],
+  "docstring": "A selected type receives a prefix that is valid for the original typed sampler.",
+  "module": "MIPRE.Foundations.CL.DetypingProgQueries",
+  "module_doc": "/-! # Bit-list query formulas for the numbered detyping sampler\n\nThese identities connect the semantic CL construction to the executable\nrouter's graph-prefix and content-suffix operations. Prefix validity for\nforwarded content queries is derived from the original numbered prefix.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingProgQueries.lean#L182-L197",
+  "source_path": "MIPRE/Foundations/CL/DetypingProgQueries.lean",
+  "lines": [
+   182,
+   197
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.select_output",
+   "MIPRE.CL.Detyping.numbered_marginal_content"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 9,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.Program.post_dimension",
+  "source_name": "MIPRE.CL.Detyping.Program.post_dimension",
+  "formal_statement": "theorem MIPRE.CL.Detyping.Program.post_dimension (g s : ℕ) : post g (.nil, encode s) = encode (s + g) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open MIPRE.CL.Detyping.Program",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun",
+   "variable {T : Type*} [Fintype T] [DecidableEq T] [SizedEncoding T]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.DetypingProgRoute",
+  "module_doc": "/-! # Executable routing of detyped queries\n\nThe fixed finite graph is compiled into a table. The variable content is\nprocessed by list operations and at most one call to the original typed\nsampler. Padding follows the supplied content vector, so malformed queries\nnever cause an unbounded dimension allocation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingProgRoute.lean#L159-L161",
+  "source_path": "MIPRE/Foundations/CL/DetypingProgRoute.lean",
+  "lines": [
+   159,
+   161
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.Program.readNat_encode"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.Program.post_prefix",
+  "source_name": "MIPRE.CL.Detyping.Program.post_prefix",
+  "formal_statement": "theorem MIPRE.CL.Detyping.Program.post_prefix (g : ℕ) (preBits result : BitStr) :\n    post g (withPrefix preBits, encode result) = encode (preBits ++ result) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open MIPRE.CL.Detyping.Program",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun",
+   "variable {T : Type*} [Fintype T] [DecidableEq T] [SizedEncoding T]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.DetypingProgRoute",
+  "module_doc": "/-! # Executable routing of detyped queries\n\nThe fixed finite graph is compiled into a table. The variable content is\nprocessed by list operations and at most one call to the original typed\nsampler. Padding follows the supplied content vector, so malformed queries\nnever cause an unbounded dimension allocation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingProgRoute.lean#L163-L166",
+  "source_path": "MIPRE/Foundations/CL/DetypingProgRoute.lean",
+  "lines": [
+   163,
+   166
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.Program.readBits_encode"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.Program.route_preserves",
+  "source_name": "MIPRE.CL.Detyping.Program.route_preserves",
+  "formal_statement": "theorem MIPRE.CL.Detyping.Program.route_preserves (E : T → T → Prop) [DecidableRel E] (n : ℕ) (q payload : Data)\n    (h : route E (.cons (encode n) q) = (true, payload)) :\n    ∃ d ctx, payload = .cons (.cons (encode n) d) ctx := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open MIPRE.CL.Detyping.Program",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun",
+   "variable {T : Type*} [Fintype T] [DecidableEq T] [SizedEncoding T]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.DetypingProgRoute",
+  "module_doc": "/-! # Executable routing of detyped queries\n\nThe fixed finite graph is compiled into a table. The variable content is\nprocessed by list operations and at most one call to the original typed\nsampler. Padding follows the supplied content vector, so malformed queries\nnever cause an unbounded dimension allocation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingProgRoute.lean#L176-L180",
+  "source_path": "MIPRE/Foundations/CL/DetypingProgRoute.lean",
+  "lines": [
+   176,
+   180
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.truncate_concat_le",
+  "source_name": "MIPRE.CL.CLFun.truncate_concat_le",
+  "formal_statement": "theorem MIPRE.CL.CLFun.truncate_concat_le (L : CLFun F ι k) (R : (ι → F) → CLFun F ι ℓ)\n    (j : ℕ) (hj : j ≤ k) : (L.concat R).truncate j = L.truncate j := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "open Finset Classical",
+   "variable {F ι : Type*} [Semiring F] [DecidableEq ι] {k ℓ : ℕ}"
+  ],
+  "docstring": "Truncation inside the first part never visits a concatenation's continuation.",
+  "module": "MIPRE.Foundations.CL.DetypingQueries",
+  "module_doc": "/-! # Query routing for the detyped CL presentation\n\nThe semantic specification of all branches of `types.tex`, `def:detyped-sampler`.\nThe level indices of factor and linear queries are zero based, as in `CLFun`.\nThese are equalities of the actual presentations' queries, not extra assumptions\non a future sampler program.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingQueries.lean#L36-L51",
+  "source_path": "MIPRE/Foundations/CL/DetypingQueries.lean",
+  "lines": [
+   36,
+   51
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.marginal_content",
+  "source_name": "MIPRE.CL.Detyping.marginal_content",
+  "formal_statement": "theorem MIPRE.CL.Detyping.marginal_content {ℓ : ℕ} (E : T → T → Prop) [DecidableRel E] (w : Bool)\n    (P : T → CLFun (ZMod 2) ι ℓ) (hP : ∀ t, (P t).ExactlyOn univ) (hℓ : 0 < ℓ)\n    (j : ℕ) (x : Coord T ι → ZMod 2) :\n    ((presentation E w P).truncate (j + 2)).eval x = Sum.elim\n      ((Graph.presentation E w).eval (pull .inl x))\n      (((selected P (select E w (pull .inl x))).truncate j).eval (pull .inr x)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open Finset Classical",
+   "variable {T ι : Type*} [Fintype T] [DecidableEq T] [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Later marginals pair the full graph question with the selected content marginal.",
+  "module": "MIPRE.Foundations.CL.DetypingQueries",
+  "module_doc": "/-! # Query routing for the detyped CL presentation\n\nThe semantic specification of all branches of `types.tex`, `def:detyped-sampler`.\nThe level indices of factor and linear queries are zero based, as in `CLFun`.\nThese are equalities of the actual presentations' queries, not extra assumptions\non a future sampler program.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingQueries.lean#L90-L107",
+  "source_path": "MIPRE/Foundations/CL/DetypingQueries.lean",
+  "lines": [
+   90,
+   107
+  ],
+  "blueprint": [
+   {
+    "label": "lem:detype-queries",
+    "env": "lemma",
+    "title": "Register embeddings and detyped query routing",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.select_output",
+   "MIPRE.CL.pull_proj_compl"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.valid_average_le",
+  "source_name": "MIPRE.CL.Detyping.valid_average_le",
+  "formal_statement": "theorem MIPRE.CL.Detyping.valid_average_le (E : T → T → Prop) [DecidableRel E] (hne : (Graph.edges E).Nonempty)\n    (f : (Graph.Coord T → ZMod 2) → (ι → ZMod 2) → ℝ) (hf : ∀ g v, 0 ≤ f g v) :\n    (∑ g ∈ Graph.validSeeds E, ∑ v, f g v) /\n        ((Graph.validSeeds E).card * Fintype.card (ι → ZMod 2)) ≤\n      (16 : ℝ) ^ Fintype.card T *\n        ((∑ g, ∑ v, f g v) / ((16 : ℝ) ^ Fintype.card T * Fintype.card (ι → ZMod 2))) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open Finset Classical",
+   "variable {T ι : Type*} [Fintype T] [DecidableEq T] [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Conditioning a nonnegative quantity on valid graph seeds costs at most `16 ^ |T|`.",
+  "module": "MIPRE.Foundations.CL.DetypingSoundness",
+  "module_doc": "/-! # Same-state soundness of finite-game detyping\n\nRestricting to the fixed graph views gives a strategy for the typed game on\nliterally the same state. The only loss is conditioning on the valid graph\nevent. This proves the finite-game core of `types.tex`, `lem:detyping-verifiers`;\nthe program's answer cutoff and runtime remain separate obligations.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingSoundness.lean#L23-L45",
+  "source_path": "MIPRE/Foundations/CL/DetypingSoundness.lean",
+  "lines": [
+   23,
+   45
+  ],
+  "blueprint": [
+   {
+    "label": "lem:detype-game-soundness",
+    "env": "lemma",
+    "title": "Finite-game detyping soundness",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 16,
+  "is_target": false
+ }
+]

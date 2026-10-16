@@ -1,0 +1,655 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.rerandomizeCoordWeight_rowSum",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.rerandomizeCoordWeight_rowSum",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.rerandomizeCoordWeight_rowSum (params : Parameters) (u : Point params) :\n    ∑ v, rerandomizeCoordWeight params u v = (hypercubeVertexCount params : Error)⁻¹ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The rerandomized-edge weight sums to the uniform point weight across each source row.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix",
+  "module_doc": "/-!\n# Section 7 hypercube graph: matrix-realization theorems\n\nTranslating the squared-difference expectation of the hypercube graph\noperators into the `ev`-based inner-product language of the matrix\nrealization model.\n\n## References\n\n- `references/ldt-paper/expansion.tex`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Matrix.lean#L309-L352",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Matrix.lean",
+  "lines": [
+   309,
+   352
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 41,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.rerandomizeCoordWeight_colSum",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.rerandomizeCoordWeight_colSum",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.rerandomizeCoordWeight_colSum (params : Parameters) (v : Point params) :\n    ∑ u, rerandomizeCoordWeight params u v = (hypercubeVertexCount params : Error)⁻¹ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The rerandomized-edge weight sums to the uniform point weight across each target column.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix",
+  "module_doc": "/-!\n# Section 7 hypercube graph: matrix-realization theorems\n\nTranslating the squared-difference expectation of the hypercube graph\noperators into the `ev`-based inner-product language of the matrix\nrealization model.\n\n## References\n\n- `references/ldt-paper/expansion.tex`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Matrix.lean#L421-L474",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Matrix.lean",
+  "lines": [
+   421,
+   474
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 51,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.matrixLocalVarianceTraceForm_eq_closedForm",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.matrixLocalVarianceTraceForm_eq_closedForm",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.matrixLocalVarianceTraceForm_eq_closedForm (params : Parameters)\n    (model : MatrixOperatorFamilyRealization params) :\n    matrixLocalVarianceTraceForm params model =\n      (hypercubeVertexCount params : Error)⁻¹ *\n          ∑ u, ev (matrixModelState model) ((model.family u)ᴴ * model.family u) -\n        ∑ u, ∑ v,\n          rerandomizeCoordWeight params u v *\n            ev (matrixModelState model) ((model.family v)ᴴ * model.family u) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Closed form for the matrix local-variance trace expression.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Matrix",
+  "module_doc": "/-!\n# Section 7 hypercube graph: matrix-realization theorems\n\nTranslating the squared-difference expectation of the hypercube graph\noperators into the `ev`-based inner-product language of the matrix\nrealization model.\n\n## References\n\n- `references/ldt-paper/expansion.tex`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Matrix.lean#L755-L872",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Matrix.lean",
+  "lines": [
+   755,
+   872
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.sum_sum_sub"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 109,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.avgOver_independentPointPair_eq_uniform_prod",
+  "source_name": "MIPStarRE.LDT.ExpansionHypercubeGraph.avgOver_independentPointPair_eq_uniform_prod",
+  "formal_statement": "theorem MIPStarRE.LDT.ExpansionHypercubeGraph.avgOver_independentPointPair_eq_uniform_prod\n    (params : Parameters) [FieldModel params.q]\n    (f : Point params × Point params → Error) :\n    avgOver (independentPointPair params) f =\n      avgOver (uniformDistribution (Point params × Point params)) f := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Averaging over two independently sampled hypercube points is the same as\naveraging over the uniform distribution on the product of point types.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.ExpansionHypercubeGraph.Theorems.Results",
+  "module_doc": "/-!\n# Section 7 hypercube graph: local-to-global variance theorems\n\nThis file assembles the public Section 7 results about the hypercube graph:\nthe Laplacian edge-difference formula, the local and global variance rewrites,\nand the local-to-global inequality.  The proof route passes through the\nmatrix-realization theorems and then exposes the statements in the\n`QuantumState` and operator-family language used elsewhere in the LDT\nformalization.\n\n## References\n\n- `references/ldt-paper/expansion.tex`, especially `prop:laplacian-rewrite`,\n  `lem:local-rewrite`, `lem:global-rewrite`, and `lem:local-to-global`\n- `blueprint/src/chapter/ch05_expansion.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Results.lean#L101-L108",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/ExpansionHypercubeGraph/Theorems/Results.lean",
+  "lines": [
+   101,
+   108
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.generalizeBDeviationAtPolynomial_eq_collisionResidual",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.generalizeBDeviationAtPolynomial_eq_collisionResidual",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.generalizeBDeviationAtPolynomial_eq_collisionResidual\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (ψbi : QuantumState (ι × ι))\n    (G : SubMeas (Polynomial params) ι)\n    (g : Polynomial params) :\n    generalizeBDeviationAtPolynomial params strategy ψbi G g =\n      generalizeBCollisionResidual params strategy ψbi G g := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Projective expansion for the pointwise `lem:generalize-b` deviation.\n\nFor incident line questions, the right event `f = g|_ℓ` is a subevent of the\nleft event `f(u)=g(u)`.  Since `B^ℓ` is projective, the squared difference is\nexactly the residual line-collision event `f(u)=g(u) ∧ f≠g|_ℓ`, with the\nright-register square root collapsed to `G_g`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity",
+  "module_doc": "/-! # Algebraic identities and variance reductions -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/AlgebraicIdentity.lean#L288-L314",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/AlgebraicIdentity.lean",
+  "lines": [
+   288,
+   314
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.opTensor_mul",
+   "MIPStarRE.LDT.opTensor_sub_left"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.pointConditionedLocalVarianceAtPolynomial_le_of_deviation",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.pointConditionedLocalVarianceAtPolynomial_le_of_deviation",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.pointConditionedLocalVarianceAtPolynomial_le_of_deviation\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (G : SubMeas (Polynomial params) ι) {g : Polynomial params} {η : Error}\n    (hdev : localVarianceDeviationAtPolynomial params strategy strategy.state G g ≤ η) :\n    pointConditionedLocalVarianceAtPolynomial params strategy G g ≤ η := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "A bound on the edgewise weighted norm expression implies the corresponding\nbound on the local variance. The factor `1/2` in `localVariance` only strengthens\nthe estimate.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity",
+  "module_doc": "/-! # Algebraic identities and variance reductions -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/AlgebraicIdentity.lean#L435-L462",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/AlgebraicIdentity.lean",
+  "lines": [
+   435,
+   462
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_nonneg",
+   "MIPStarRE.LDT.ev_adjoint_self_nonneg"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.globalVarianceDeviationAtPolynomial_le_m_localVarianceDeviationAtPolynomial",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.globalVarianceDeviationAtPolynomial_le_m_localVarianceDeviationAtPolynomial",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.globalVarianceDeviationAtPolynomial_le_m_localVarianceDeviationAtPolynomial\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (G : SubMeas (Polynomial params) ι) (g : Polynomial params) :\n    globalVarianceDeviationAtPolynomial params strategy strategy.state G g ≤\n      (params.m : Error) *\n        localVarianceDeviationAtPolynomial params strategy strategy.state G g := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Pointwise local-to-global transfer for the paper's weighted squared-norm\nform: the independent-points expression is at most `m` times the edge expression.\nThis combines `lem:local-to-global` with the two exact norm/variance identities\nabove, so no independent global-deviation hypothesis is needed.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.AlgebraicIdentity",
+  "module_doc": "/-! # Algebraic identities and variance reductions -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/AlgebraicIdentity.lean#L464-L494",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/AlgebraicIdentity.lean",
+  "lines": [
+   464,
+   494
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_zero",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.matrixLocalVarianceTraceForm_eq_closedForm",
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.matrixGlobalVariance_eq_closedForm"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.sddRel_unit_family_of_pointwise",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.sddRel_unit_family_of_pointwise",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.sddRel_unit_family_of_pointwise\n    {Question α : Type*}\n    [Fintype α] [DecidableEq α] [Nonempty α]\n    (ψ : QuantumState ι) (𝒟 : Distribution Question)\n    (MA MB : Question → SubMeas Unit ι)\n    (A B : Question → α → MIPStarRE.Quantum.Op ι)\n    (hMA :\n      ∀ q, (MA q).outcome () =\n        averageOperatorOverDistribution (uniformDistribution α) (fun a => A q a))\n    (hMB :\n      ∀ q, (MB q).outcome () =\n        averageOperatorOverDistribution (uniformDistribution α) (fun a => B q a))\n    (δ : Error)\n    (hpoint :\n      ∀ a, avgOver 𝒟 (fun q => ev ψ (((A q a - B q a)ᴴ) * (A q a - B q a))) ≤ δ) :\n    SDDRel ψ 𝒟 MA MB δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Lift pointwise operator deviation bounds to an `SDDRel` bound for\nunit-valued averaged families.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.Averaging",
+  "module_doc": "/-! ## Uniform averaging infrastructure -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/Averaging.lean#L289-L328",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/Averaging.lean",
+  "lines": [
+   289,
+   328
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_comm"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.avgOver_polynomialDistribution_le_of_pointwise",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.avgOver_polynomialDistribution_le_of_pointwise",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.avgOver_polynomialDistribution_le_of_pointwise\n    (params : Parameters)\n    [FieldModel params.q]\n    (f : Polynomial params → Error)\n    (δ : Error)\n    (hpoint : ∀ g : Polynomial params, f g ≤ δ) :\n    avgOver (polynomialDistribution params) f ≤ δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Average a pointwise polynomial bound over the uniform polynomial distribution.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.Averaging",
+  "module_doc": "/-! ## Uniform averaging infrastructure -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/Averaging.lean#L332-L347",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/Averaging.lean",
+  "lines": [
+   332,
+   347
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 8,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.avgOver_axisParallelLineQuestionDistribution",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.avgOver_axisParallelLineQuestionDistribution",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.avgOver_axisParallelLineQuestionDistribution\n    (params : Parameters) [FieldModel params.q]\n    (f : AxisParallelLineQuestion params → Error) :\n    avgOver (axisParallelLineQuestionDistribution params) f =\n      avgOver (uniformDistribution (AxisParallelLine params × Fq params))\n        (fun ℓt => f (ℓt.1, ℓt.1.pointAt ℓt.2)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Reindex the axis-parallel line-question distribution as a uniform average over\nline/parameter seeds `(ℓ,t)` with sampled point `u = ℓ(t)`.\n\nThis is the distributional bookkeeping used in `expansion.tex`, lines 281--288.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion",
+  "module_doc": "/-! # Collision expansion and Schwartz-Zippel bounds\n\nThis module contains the `generalizeB` theorem wrappers, finite reparametrization\nand distribution bookkeeping, and the Schwartz-Zippel collision expansion that\nbounds the line-collision residual.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/CollisionExpansion.lean#L145-L163",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/CollisionExpansion.lean",
+  "lines": [
+   145,
+   163
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.uniformOnFinset_filter_sum_smul_equiv"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 9,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.avgOver_axisParallelLineQuestionDistribution_to_axisParallelTestSample",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.avgOver_axisParallelLineQuestionDistribution_to_axisParallelTestSample",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.avgOver_axisParallelLineQuestionDistribution_to_axisParallelTestSample\n    (params : Parameters) [FieldModel params.q]\n    (f : AxisParallelTestSample params → Error) :\n    avgOver (axisParallelLineQuestionDistribution params)\n      (fun qu => f (qu.2, qu.1.direction)) =\n    avgOver (uniformDistribution (AxisParallelTestSample params)) f := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Combining the incident-pair distribution with the sampled-point marginal gives\nthe native base-point test distribution.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion",
+  "module_doc": "/-! # Collision expansion and Schwartz-Zippel bounds\n\nThis module contains the `generalizeB` theorem wrappers, finite reparametrization\nand distribution bookkeeping, and the Schwartz-Zippel collision expansion that\nbounds the line-collision residual.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/CollisionExpansion.lean#L217-L226",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/CollisionExpansion.lean",
+  "lines": [
+   217,
+   226
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.GlobalVariance.avgOver_axisParallelLineQuestionDistribution"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.generalizeBLineCollisionCoefficient_le",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.generalizeBLineCollisionCoefficient_le",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.generalizeBLineCollisionCoefficient_le\n    (params : Parameters)\n    [FieldModel params.q]\n    (g : Polynomial params) (ℓ : AxisParallelLine params) (f : AxisLinePolynomial params) :\n    avgOver (uniformDistribution (Fq params))\n      (fun t =>\n        if f t = (Polynomial.restrictToAxisParallelLine params g ℓ) t ∧\n            f.poly ≠ (Polynomial.restrictToAxisParallelLine params g ℓ).poly then\n          (1 : Error)\n        else 0) ≤ generalizeBError params := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Schwartz--Zippel coefficient bound for a fixed polynomial, line, and line answer.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion",
+  "module_doc": "/-! # Collision expansion and Schwartz-Zippel bounds\n\nThis module contains the `generalizeB` theorem wrappers, finite reparametrization\nand distribution bookkeeping, and the Schwartz-Zippel collision expansion that\nbounds the line-collision residual.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/CollisionExpansion.lean#L319-L347",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/CollisionExpansion.lean",
+  "lines": [
+   319,
+   347
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_zero",
+   "MIPStarRE.LDT.Polynomial.restrictToAxisParallelLine_apply",
+   "MIPStarRE.LDT.Preliminaries.axisLinePolynomialAgreement_avg_le_mdq"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.generalizeBSeedCollisionExpansion_eq_lineCollisionExpansion",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.generalizeBSeedCollisionExpansion_eq_lineCollisionExpansion",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.generalizeBSeedCollisionExpansion_eq_lineCollisionExpansion\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (ψbi : QuantumState (ι × ι))\n    (G : SubMeas (Polynomial params) ι)\n    (g : Polynomial params) :\n    generalizeBSeedCollisionExpansion params strategy ψbi G g =\n      generalizeBLineCollisionExpansion params strategy ψbi G g := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Commuting the uniform parameter average past the finite sum over line answers.\n\nThis is the purely finite-sum bookkeeping between the paper's seed average over\n`(ℓ,t)` and the coefficient-weighted display in `expansion.tex`, lines 286--288.\nThe remaining #753 residual is now only the incident-question/postprocess equality\nbetween `generalizeBCollisionResidual` and `generalizeBSeedCollisionExpansion`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion",
+  "module_doc": "/-! # Collision expansion and Schwartz-Zippel bounds\n\nThis module contains the `generalizeB` theorem wrappers, finite reparametrization\nand distribution bookkeeping, and the Schwartz-Zippel collision expansion that\nbounds the line-collision residual.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/CollisionExpansion.lean#L349-L438",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/CollisionExpansion.lean",
+  "lines": [
+   349,
+   438
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_prod",
+   "MIPStarRE.LDT.avgOver_mul_const",
+   "MIPStarRE.LDT.avgOver_sum",
+   "MIPStarRE.LDT.avgOver_congr"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 75,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.generalizeBLineCollisionExpansion_le_error",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.generalizeBLineCollisionExpansion_le_error",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.generalizeBLineCollisionExpansion_le_error\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (G : SubMeas (Polynomial params) ι)\n    (g : Polynomial params) :\n    generalizeBLineCollisionExpansion params strategy strategy.state G g ≤\n      generalizeBError params := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The explicit line/parameter collision expansion is bounded by `m*d/q`.\n\nThis proves the Schwartz--Zippel and normalization parts of the residual estimate\nfrom `expansion.tex`, lines 286--288.  The preceding\n`generalizeBCollisionResidual_eq_seedCollisionExpansion` theorem supplies the\nincident-question/postprocess identity needed to apply this bound to the original\ncollision residual.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion",
+  "module_doc": "/-! # Collision expansion and Schwartz-Zippel bounds\n\nThis module contains the `generalizeB` theorem wrappers, finite reparametrization\nand distribution bookkeeping, and the Schwartz-Zippel collision expansion that\nbounds the line-collision residual.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/CollisionExpansion.lean#L463-L530",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/CollisionExpansion.lean",
+  "lines": [
+   463,
+   530
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_le_const",
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.Polynomial.restrictToAxisParallelLine_apply",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.GlobalVariance.generalizeBLineCollisionCoefficient_le"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 53,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.generalizeBPointwiseSchwartzZippel",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.generalizeBPointwiseSchwartzZippel",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.generalizeBPointwiseSchwartzZippel\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (G : SubMeas (Polynomial params) ι)\n    (g : Polynomial params) :\n    generalizeBDeviationAtPolynomial params strategy strategy.state G g ≤\n      generalizeBError params := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Pointwise Schwartz--Zippel bound for the strategy-state form of\n`lem:generalize-b`.\n\nThis is the paper's estimate at `expansion.tex`, lines 281--288, after the\nprojective expansion converts the squared norm into the collision residual.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion",
+  "module_doc": "/-! # Collision expansion and Schwartz-Zippel bounds\n\nThis module contains the `generalizeB` theorem wrappers, finite reparametrization\nand distribution bookkeeping, and the Schwartz-Zippel collision expansion that\nbounds the line-collision residual.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/CollisionExpansion.lean#L564-L578",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/CollisionExpansion.lean",
+  "lines": [
+   564,
+   578
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.GlobalVariance.generalizeBDeviationAtPolynomial_eq_collisionResidual",
+   "MIPStarRE.LDT.GlobalVariance.generalizeBSeedCollisionExpansion_eq_lineCollisionExpansion",
+   "MIPStarRE.LDT.GlobalVariance.generalizeBLineCollisionExpansion_le_error",
+   "MIPStarRE.LDT.GlobalVariance.avgOver_axisParallelLineQuestionDistribution"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.generalizeBFromSchwartzZippel",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.generalizeBFromSchwartzZippel",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.generalizeBFromSchwartzZippel\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (_eps _delta _gamma : Error)\n    (_hgood : strategy.IsGood _eps _delta _gamma)\n    (G : SubMeas (Polynomial params) ι) :\n    GeneralizeBStatement params strategy strategy.state G := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "`lem:generalize-b` for the strategy state, with the pointwise\nSchwartz--Zippel estimate discharged internally.  The good-strategy hypothesis is\nkept in the statement to match the paper context of `expansion.tex`,\nlines 271--288, although the algebraic Schwartz--Zippel proof itself does not\nuse `ε`, `δ`, or `γ`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.CollisionExpansion",
+  "module_doc": "/-! # Collision expansion and Schwartz-Zippel bounds\n\nThis module contains the `generalizeB` theorem wrappers, finite reparametrization\nand distribution bookkeeping, and the Schwartz-Zippel collision expansion that\nbounds the line-collision residual.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/CollisionExpansion.lean#L580-L595",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/CollisionExpansion.lean",
+  "lines": [
+   580,
+   595
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.GlobalVariance.generalizeBPointwiseSchwartzZippel"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.localVarianceOfPointsFromEdgeDeviation",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.localVarianceOfPointsFromEdgeDeviation",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.localVarianceOfPointsFromEdgeDeviation\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta : Error)\n    (G : SubMeas (Polynomial params) ι)\n    (hedge :\n      ∀ g : Polynomial params,\n        localVarianceDeviationAtPolynomial params strategy strategy.state G g ≤\n          localVarianceOfPointsError params eps delta) :\n    LocalVarianceOfPointsStatement params strategy strategy.state G eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Strict reduction for `lem:local-variance-of-points` on the strategy state.\n\nCompared with the former supplied-bounds reduction, this theorem does not require\nthe local-variance bound as a separate hypothesis: it derives it from\nthe edgewise weighted squared-norm estimate using\n`localVarianceDeviationAtPolynomial_eq_two_pointConditionedLocalVarianceAtPolynomial`.\nThe remaining analytic input is exactly the paper's six-step edge transport\nbound, not a conclusion-shaped local-variance hypothesis.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.MainTheorems",
+  "module_doc": "/-! # Main variance theorem reductions\n\nThis module contains the high-level theorem reductions for\n`lem:local-variance-of-points`, `lem:global-variance-of-points`, and\n`lem:generalize-b`. These combine the algebraic identities, collision\nexpansions, and transport estimates from the preceding modules into the final\nstatement records used by downstream consumers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/MainTheorems.lean#L67-L114",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/MainTheorems.lean",
+  "lines": [
+   67,
+   114
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.GlobalVariance.pointConditionedLocalVarianceAtPolynomial_le_of_deviation",
+   "MIPStarRE.LDT.GlobalVariance.sddRel_unit_family_of_pointwise",
+   "MIPStarRE.LDT.GlobalVariance.avgOver_polynomialDistribution_le_of_pointwise"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.globalVarianceOfPointsFromLocalDeviation",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.globalVarianceOfPointsFromLocalDeviation",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.globalVarianceOfPointsFromLocalDeviation\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta : Error)\n    (G : SubMeas (Polynomial params) ι)\n    (hlocalDev :\n      ∀ g : Polynomial params,\n        localVarianceDeviationAtPolynomial params strategy strategy.state G g ≤\n          localVarianceOfPointsError params eps delta) :\n    GlobalVarianceOfPointsStatement params strategy strategy.state G eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Reduction for `lem:global-variance-of-points` on the strategy state.\n\nThis theorem proves the independent-points norm bound from the local edge norm\nestimate by applying `lem:local-to-global` to the weighted state and using the\nexact norm/variance identities above. The remaining analytic input is the local\nedge transport estimate from `lem:local-variance-of-points`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.MainTheorems",
+  "module_doc": "/-! # Main variance theorem reductions\n\nThis module contains the high-level theorem reductions for\n`lem:local-variance-of-points`, `lem:global-variance-of-points`, and\n`lem:generalize-b`. These combine the algebraic identities, collision\nexpansions, and transport estimates from the preceding modules into the final\nstatement records used by downstream consumers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/MainTheorems.lean#L118-L180",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/MainTheorems.lean",
+  "lines": [
+   118,
+   180
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_zero",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.matrixLocalVarianceTraceForm_eq_closedForm",
+   "MIPStarRE.LDT.ExpansionHypercubeGraph.matrixGlobalVariance_eq_closedForm",
+   "MIPStarRE.LDT.GlobalVariance.globalVarianceDeviationAtPolynomial_le_m_localVarianceDeviationAtPolynomial",
+   "MIPStarRE.LDT.GlobalVariance.sddRel_unit_family_of_pointwise",
+   "MIPStarRE.LDT.GlobalVariance.avgOver_polynomialDistribution_le_of_pointwise",
+   "MIPStarRE.LDT.GlobalVariance.localVarianceOfPointsFromEdgeDeviation"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 46,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.globalVarianceDeviation_sum_le_m_mul_localVarianceDeviation_sum",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.globalVarianceDeviation_sum_le_m_mul_localVarianceDeviation_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.globalVarianceDeviation_sum_le_m_mul_localVarianceDeviation_sum\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (G : SubMeas (Polynomial params) ι) :\n    (∑ g : Polynomial params,\n      globalVarianceDeviationAtPolynomial params strategy strategy.state G g) ≤\n      (params.m : Error) *\n        ∑ g : Polynomial params,\n          localVarianceDeviationAtPolynomial params strategy strategy.state G g := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Sum-level local-to-global transfer for the polynomial-indexed squared-norm\nform of `lem:global-variance-of-points`.\n\nThis is the unnormalized analogue of the pointwise\n`globalVarianceDeviationAtPolynomial_le_m_localVarianceDeviationAtPolynomial`:\nthe independent-points deviation summed over all polynomials is at most `m`\ntimes the corresponding edge-deviation sum.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.MainTheorems",
+  "module_doc": "/-! # Main variance theorem reductions\n\nThis module contains the high-level theorem reductions for\n`lem:local-variance-of-points`, `lem:global-variance-of-points`, and\n`lem:generalize-b`. These combine the algebraic identities, collision\nexpansions, and transport estimates from the preceding modules into the final\nstatement records used by downstream consumers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/MainTheorems.lean#L184-L213",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/MainTheorems.lean",
+  "lines": [
+   184,
+   213
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.GlobalVariance.globalVarianceDeviationAtPolynomial_le_m_localVarianceDeviationAtPolynomial"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.globalVarianceDeviation_sum_le_of_localVarianceDeviation_sum_le",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.globalVarianceDeviation_sum_le_of_localVarianceDeviation_sum_le",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.globalVarianceDeviation_sum_le_of_localVarianceDeviation_sum_le\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta : Error)\n    (G : SubMeas (Polynomial params) ι)\n    (hlocal :\n      (∑ g : Polynomial params,\n        localVarianceDeviationAtPolynomial params strategy strategy.state G g) ≤\n        localVarianceOfPointsError params eps delta) :\n    (∑ g : Polynomial params,\n      globalVarianceDeviationAtPolynomial params strategy strategy.state G g) ≤\n      globalVarianceOfPointsError params eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "A polynomial-sum local-variance bound implies the corresponding sum-form\nglobal-variance bound with the paper's `24m(ε + δ + md/q)` error term.\n\nThe hypothesis `hlocal` is the paper's `eq:equivalent-local-variance`\n(`references/ldt-paper/expansion.tex:317--321`). The conclusion is the\nsum-form squared-norm bound underlying `eq:global-variance-of-points-equation`\n(`references/ldt-paper/expansion.tex:325--353`).",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.MainTheorems",
+  "module_doc": "/-! # Main variance theorem reductions\n\nThis module contains the high-level theorem reductions for\n`lem:local-variance-of-points`, `lem:global-variance-of-points`, and\n`lem:generalize-b`. These combine the algebraic identities, collision\nexpansions, and transport estimates from the preceding modules into the final\nstatement records used by downstream consumers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/MainTheorems.lean#L217-L249",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/MainTheorems.lean",
+  "lines": [
+   217,
+   249
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.GlobalVariance.globalVarianceDeviation_sum_le_m_mul_localVarianceDeviation_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ }
+]

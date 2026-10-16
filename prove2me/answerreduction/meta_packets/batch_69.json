@@ -1,0 +1,634 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.shoupIrreducible_natDegree",
+  "source_name": "MIPRE.LowDegree.shoupIrreducible_natDegree",
+  "formal_statement": "theorem MIPRE.LowDegree.shoupIrreducible_natDegree (k : ℕ) (hk : 1 ≤ k) :\n    (polyOfBits (shoupIrreducible (unary k))).natDegree = k := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "The constructed polynomial has exactly the requested positive degree.",
+  "module": "MIPRE.Foundations.LowDegree.Shoup",
+  "module_doc": "/-!\n# Deterministic irreducible polynomials over the binary field\n\nThis file exposes the proved fixed-characteristic construction of Shoup 1990,\nTheorem 3.2. The specified program factors squarefree binary polynomials, constructs\nodd-prime auxiliary nonresidues and trace generators, builds the characteristic-two\nArtin–Schreier tower, and combines coprime prime-power degrees by composed sums.\n\nThe input is the unary requested degree. Every arithmetic operation and bounded loop\nis compiled into the ambient cost model, including coefficient printing and a fixed\nconstant output at degree zero. `BinaryPolynomial.irreducibleBitsProg_time_le` gives\nthe resulting polynomial runtime bound in the degree. The public names below retain\nthe interfaces used by the quotient-field and self-dual-normal-basis consumers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/Shoup.lean#L56-L59",
+  "source_path": "MIPRE/Foundations/LowDegree/Shoup.lean",
+  "lines": [
+   56,
+   59
+  ],
+  "blueprint": [
+   {
+    "label": "lem:binary-uniform-irreducible",
+    "env": "lemma",
+    "title": "Uniform deterministic binary irreducible polynomials",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.irreducibleBits_correct"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.DegreeArithmetic.mem_descendingUnary_iff",
+  "source_name": "MIPRE.LowDegree.DegreeArithmetic.mem_descendingUnary_iff",
+  "formal_statement": "theorem MIPRE.LowDegree.DegreeArithmetic.mem_descendingUnary_iff (u d : Unary) : d ∈ descendingUnary u ↔ d.length ≤ u.length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.DegreeArithmetic",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial"
+  ],
+  "docstring": "A unary value occurs in the descending enumeration exactly when it is bounded by the input.",
+  "module": "MIPRE.Foundations.LowDegree.UnaryDegreeArithmetic",
+  "module_doc": "/-! # Polynomial-time unary arithmetic for degree decomposition -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/UnaryDegreeArithmetic.lean#L151-L163",
+  "source_path": "MIPRE/Foundations/LowDegree/UnaryDegreeArithmetic.lean",
+  "lines": [
+   151,
+   163
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.DegreeArithmetic.rawPrimePower_correct",
+  "source_name": "MIPRE.LowDegree.DegreeArithmetic.rawPrimePower_correct",
+  "formal_statement": "theorem MIPRE.LowDegree.DegreeArithmetic.rawPrimePower_correct (n q : ℕ) (hq : q.Prime) :\n    rawPrimePower (unary n) (unary q) = unary (q ^ n.factorization q) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.DegreeArithmetic",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial"
+  ],
+  "docstring": "Unary input length supplies enough iterations to reach the maximal prime-power divisor.",
+  "module": "MIPRE.Foundations.LowDegree.UnaryPrimePower",
+  "module_doc": "/-! # A capped unary program for maximal prime-power divisors -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/UnaryPrimePower.lean#L114-L127",
+  "source_path": "MIPRE/Foundations/LowDegree/UnaryPrimePower.lean",
+  "lines": [
+   114,
+   127
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.exists_zero_basis",
+  "source_name": "MIPRE.LowDegree.exists_zero_basis",
+  "formal_statement": "theorem MIPRE.LowDegree.exists_zero_basis (f : MvPolynomial (Fin m) F) {d : ℕ}\n    (hd : ∀ i, f.degreeOf i ≤ d) (hf : ∀ y : Fin m → Bool, eval (pt y) f = 0) :\n    ∃ c : Fin m → MvPolynomial (Fin m) F,\n      f = ∑ i, c i * cubeZero i ∧ ∀ i j, (c i).degreeOf j ≤ d := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open Finset MvPolynomial",
+   "variable {F : Type*} [Field F] {m : ℕ}"
+  ],
+  "docstring": "**Boolean-cube zero basis**, with individual-degree bounds on every certificate.\nThe equality is an identity of polynomials, not only an equality of functions.",
+  "module": "MIPRE.Foundations.LowDegree.ZeroBasis",
+  "module_doc": "/-!\n# Certificates for polynomials vanishing on the Boolean cube\n\nThe paper's `prop:zero-basis`, used in classical PCP completeness. Reduction by\n`X i * (1 - X i)` preserves every individual-degree bound. This is stronger than\nthe total-degree bound in the general combinatorial Nullstellensatz.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/ZeroBasis.lean#L139-L164",
+  "source_path": "MIPRE/Foundations/LowDegree/ZeroBasis.lean",
+  "lines": [
+   139,
+   164
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-zero-basis",
+    "env": "lemma",
+    "title": "Boolean-cube zero certificates",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.aOp_conjTranspose",
+  "source_name": "MIPRE.aOp_conjTranspose",
+  "formal_statement": "theorem MIPRE.aOp_conjTranspose (X : Matrix HA HA ℂ) :\n    (aOp X : Matrix (HA × HB) _ ℂ)ᴴ = aOp (Xᴴ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "open Kronecker",
+   "variable {N : Type*} [Fintype N]",
+   "variable [DecidableEq N]",
+   "variable {HA HB : Type*} [Fintype HA] [DecidableEq HA] [Fintype HB] [DecidableEq HB]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.OpBound",
+  "module_doc": "/-!\n# Operator bounds on matrices, by hand\n\nThe rigidity arguments of the Pauli basis test's appendix are chains of estimates\n`‖M |ψ⟩‖ ≤ …`, and the only thing they need about the operators in front is a bound\n`‖M v‖ ≤ K ‖v‖`. `Bnd M K` is that bound, with the four closure properties the chains use ---\nsums, products, scalars, and the two sources: a self-adjoint contraction has `Bnd M 1`, and an\nisometry has `‖M v‖ = ‖v‖` on the nose.\n\nThis is the `ℓ²` operator norm, spelled as a relation instead of a number. That is deliberate.\nMathlib has the norm, through `Matrix.toEuclideanCLM` and the C*-algebra structure on\ncontinuous linear maps, but the Loewner order on `EuclideanSpace ℂ n →L[ℂ] EuclideanSpace ℂ n`\ncosts enough instance search to time out the elaborator on a statement as small as\n`T * T ≤ 1 → ‖T‖ ≤ 1`. The order the arguments actually need is the one on *matrices*\n(`Matrix.nonneg_iff_posSemidef`, which is cheap), so the bridge here goes from a matrix\ninequality straight to a vector-norm inequality and never mentions an operator norm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OpBound.lean#L338-L340",
+  "source_path": "MIPRE/Foundations/OpBound.lean",
+  "lines": [
+   338,
+   340
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.aOp_sum",
+  "source_name": "MIPRE.aOp_sum",
+  "formal_statement": "theorem MIPRE.aOp_sum {ι : Type*} (s : Finset ι) (f : ι → Matrix HA HA ℂ) :\n    aOp (∑ i ∈ s, f i) = ∑ i ∈ s, (aOp (f i) : Matrix (HA × HB) _ ℂ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "open Kronecker",
+   "variable {N : Type*} [Fintype N]",
+   "variable [DecidableEq N]",
+   "variable {HA HB : Type*} [Fintype HA] [DecidableEq HA] [Fintype HB] [DecidableEq HB]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.OpBound",
+  "module_doc": "/-!\n# Operator bounds on matrices, by hand\n\nThe rigidity arguments of the Pauli basis test's appendix are chains of estimates\n`‖M |ψ⟩‖ ≤ …`, and the only thing they need about the operators in front is a bound\n`‖M v‖ ≤ K ‖v‖`. `Bnd M K` is that bound, with the four closure properties the chains use ---\nsums, products, scalars, and the two sources: a self-adjoint contraction has `Bnd M 1`, and an\nisometry has `‖M v‖ = ‖v‖` on the nose.\n\nThis is the `ℓ²` operator norm, spelled as a relation instead of a number. That is deliberate.\nMathlib has the norm, through `Matrix.toEuclideanCLM` and the C*-algebra structure on\ncontinuous linear maps, but the Loewner order on `EuclideanSpace ℂ n →L[ℂ] EuclideanSpace ℂ n`\ncosts enough instance search to time out the elaborator on a statement as small as\n`T * T ≤ 1 → ‖T‖ ≤ 1`. The order the arguments actually need is the one on *matrices*\n(`Matrix.nonneg_iff_posSemidef`, which is cheap), so the bridge here goes from a matrix\ninequality straight to a vector-norm inequality and never mentions an operator norm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OpBound.lean#L346-L351",
+  "source_path": "MIPRE/Foundations/OpBound.lean",
+  "lines": [
+   346,
+   351
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SeededGame.oracleOp_mul_eq_zero",
+  "source_name": "MIPRE.SeededGame.oracleOp_mul_eq_zero",
+  "formal_statement": "theorem MIPRE.SeededGame.oracleOp_mul_eq_zero (T : SyncStrategy S.toGame.doubled) (hT : T.IsPCC)\n    (hval : T.value = 1) {p q : Role × V} (hμ : 0 < S.oDist p q) {u v : OAns A}\n    (hrej : S.oaccepts p q u v = false) :\n    S.oracleOp T p u * S.oracleOp T q v = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SeededGame",
+   "open Finset Matrix",
+   "variable {V A : Type*} [Fintype V] [DecidableEq V] [Nonempty V] [Fintype A] [DecidableEq A]",
+   "variable (S : SeededGame V A)",
+   "variable {S}",
+   "variable (S)",
+   "variable {S}",
+   "variable (S)",
+   "variable {S}"
+  ],
+  "docstring": "**No rejected outcome.** At any question pair of positive weight, the honest operators for\na rejected answer pair multiply to zero.",
+  "module": "MIPRE.Foundations.OracularComplete",
+  "module_doc": "/-!\n# Completeness of oracularization\n\nItem 1 of blueprint `thm:oracularization`: a value-`1` PCC strategy for the input game gives\none for the oracularized game of `MIPRE.SeededGame.oracular`.\n\nThe honest oracle measures the input strategy's *two* measurements jointly: at seed `z` its\noperator for the answer pair `(a, b)` is `M^{(false, L^𝖠 z)}_a · M^{(true, L^𝖡 z)}_b`. That\nproduct is a projection exactly because the two commute, which is what `IsPCC` supplies at the\nquestion pair the seed determines — and the seed always determines a pair of positive weight,\nsince `z` itself lies in its fibre (`dist_pos`).\n\nRepair 2 of `rem:oracularization-repairs` --- that the completeness witness has *identical\nmeasurement operators* for the two players rather than a symmetric state, the campaign having\nfound the symmetry claim unjustified --- is structural here: a `SyncStrategy` is one family of\nprojective measurements played by both players, so there is nothing to arrange.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularComplete.lean#L273-L307",
+  "source_path": "MIPRE/Foundations/OracularComplete.lean",
+  "lines": [
+   273,
+   307
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.re_eq_zero_of_tracialValue_eq_one"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SeededGame.oracleOp_commute",
+  "source_name": "MIPRE.SeededGame.oracleOp_commute",
+  "formal_statement": "theorem MIPRE.SeededGame.oracleOp_commute (T : SyncStrategy S.toGame.doubled) (hT : T.IsPCC)\n    {p q : Role × V} (hμ : 0 < S.oDist p q) (u v : OAns A) :\n    S.oracleOp T p u * S.oracleOp T q v = S.oracleOp T q v * S.oracleOp T p u := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SeededGame",
+   "open Finset Matrix",
+   "variable {V A : Type*} [Fintype V] [DecidableEq V] [Nonempty V] [Fintype A] [DecidableEq A]",
+   "variable (S : SeededGame V A)",
+   "variable {S}",
+   "variable (S)",
+   "variable {S}",
+   "variable (S)",
+   "variable {S}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.OracularComplete",
+  "module_doc": "/-!\n# Completeness of oracularization\n\nItem 1 of blueprint `thm:oracularization`: a value-`1` PCC strategy for the input game gives\none for the oracularized game of `MIPRE.SeededGame.oracular`.\n\nThe honest oracle measures the input strategy's *two* measurements jointly: at seed `z` its\noperator for the answer pair `(a, b)` is `M^{(false, L^𝖠 z)}_a · M^{(true, L^𝖡 z)}_b`. That\nproduct is a projection exactly because the two commute, which is what `IsPCC` supplies at the\nquestion pair the seed determines — and the seed always determines a pair of positive weight,\nsince `z` itself lies in its fibre (`dist_pos`).\n\nRepair 2 of `rem:oracularization-repairs` --- that the completeness witness has *identical\nmeasurement operators* for the two players rather than a symmetric state, the campaign having\nfound the symmetry claim unjustified --- is structural here: a `SyncStrategy` is one family of\nprojective measurements played by both players, so there is nothing to arrange.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularComplete.lean#L330-L381",
+  "source_path": "MIPRE/Foundations/OracularComplete.lean",
+  "lines": [
+   330,
+   381
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 49,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.OracleDecider.decode_bitStr_eq_some",
+  "source_name": "MIPRE.OracleDecider.decode_bitStr_eq_some",
+  "formal_statement": "theorem MIPRE.OracleDecider.decode_bitStr_eq_some {d : Data} {x : BitStr} :\n    (decode d : Option BitStr) = some x ↔ d = encode x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.OracleDecider",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun",
+   "open MIPRE.CL MIPRE.CL.Detyping.Program",
+   "variable {ℓ : ℕ} (S : Sampler ℓ)"
+  ],
+  "docstring": "A datum decodes to a bit string exactly when it is its encoding.",
+  "module": "MIPRE.Foundations.OracularDecider",
+  "module_doc": "/-!\n# The typed oracularized decider\n\nPiece O4 of `planning/oracularization.md` (issue #189): the decider of the paper's typed\noracularized verifier (`sec:orac-def`, `fig:oracle-decider`) as a total `CL.TypedDecider` over the\nthree roles, whose acceptance law is O2's bit-string predicate `oraclePred`.\n\nThe paper runs the input decider in its *timeout-counter form*, which halts within a bound\n`B_𝒟(n)` read off its description, and parses answers against that bound. The ambient model has\nno such form, and the detyping compiler needs a total typed decider, so the timeout is made\nexplicit: an *index routine* (`OracleDecider.Index`) supplies at index `n` a parse cut `B n` and a\nsimulation budget `K n`, and the decider runs an unclocked core under the clocked universal\nmachine for `K n` steps. Three programs, each fixed, with the input programs as data:\n\n* `gameProg j`, the **game check**: on `(S̄, D̄, n, z, a₁, a₂)`, ask the input sampler for the\n  marginals `L^𝖠_{≤ j} z` and `L^𝖡_{≤ j} z` and run the input decider on\n  `(n, L^𝖠 z, L^𝖡 z, a₁, a₂)`, all through the universal machine;\n* `core j`, on `((S̄, D̄, B), (n, t, x, u, y, a, b))`: parse each answer by its role against `B`,\n  run the game check for each oracle, and accept iff every check of `fig:oracle-decider` passes;\n* `shell j`, on `((S̄, D̄, Ī), input)`: ask the index routine `Ī` for `(K n, B n)` and run the core\n  on `((S̄, D̄, B n), input)` under the clocked universal machine with budget `K n`.\n\nThe decider is `hardcode (shell j) (encode (S̄, D̄, Ī))`, so its program is the s-m-n function of\nthe three programs. It halts on every input, whatever the input programs do\n(`oracleDecider_total`), and it accepts exactly when the core accepts within the budget\n(`oracleDecider_accepts_iff`). The core's acceptance law is `oraclePred` exactly, with no\nhypothesis on the input verifier (`core_accepts_iff`): the input decider need not halt on the\ninputs it rejects, which is why both directions go through inversion lemmas of the programs.\nSo the decider's acceptance implies `oraclePred` unconditionally (`accepts_sound`), and\n`oraclePred` implies acceptance once the core's run fits in the budget (`accepts_complete`) —\nthe role the timeout bound plays in the paper's completeness.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularDecider.lean#L301-L320",
+  "source_path": "MIPRE/Foundations/OracularDecider.lean",
+  "lines": [
+   301,
+   320
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.OAns.sum_eq",
+  "source_name": "MIPRE.OAns.sum_eq",
+  "formal_statement": "theorem MIPRE.OAns.sum_eq {M : Type*} [AddCommMonoid M] (f : OAns A → M) :\n    ∑ u, f u = (∑ p : A × A, f (.pair p.1 p.2)) + ∑ a, f (.single a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.OAns",
+   "open Finset",
+   "variable {V A : Type*} [Fintype V] [DecidableEq V] [Fintype A] [DecidableEq A]"
+  ],
+  "docstring": "A sum over `OAns A` splits into the pairs and the singles.",
+  "module": "MIPRE.Foundations.OracularGame",
+  "module_doc": "/-!\n# Oracularization, at the level of games\n\nBlueprint `thm:oracularization` (paper `oracularization.tex`, `sec:orac-def` and\n`fig:oracle-decider`) turns a normal form verifier into one where a single player --- the\n*oracle* --- receives the sampler's whole seed and answers *both* original questions, while the\nother player receives one of the two questions and must answer consistently. That makes the\npredicate a pointwise function of one player's answer, which is the format answer reduction\nneeds.\n\nThis file is the construction and its question distribution, at the level of games: no\nsamplers, no deciders, no types-as-Turing-machine-strings. What oracularization uses of a\nsampler is only the pair of maps `L^𝖠, L^𝖡` on the seed space, so the input here is a\n`SeededGame`: a finite seed space, two question maps, and a decision predicate. The original\ngame is the law of `(L^𝖠 z, L^𝖡 z)` for a uniform seed, the paper's CL distribution\n(`MIPRE.CL.clDist` is the same thing for `V = 𝔽^ι`).\n\nThe output `SeededGame.oracular` is a `SynchronousGame` on questions `Role × V` and answers\n`OAns A`, and its synchronicity is not an extra hypothesis: equal questions have equal roles,\nand check 2(a) of `fig:oracle-decider` rejects unequal answers there.\n\n## Scope, and what this file does not do\n\nTwo of the four repairs `rem:oracularization-repairs` records are about the *verifier*, not the\ngame, and are untouched here: grouping the decider's failed bounded parses into one\ndistinguished outcome (so the oracle families are projective measurements rather than\nsub-measurements), and the truncation of answers to `B_𝒟(n)`. At a finite game-level answer\nalphabet there is no parse to fail, so there is nothing to group; saying so is more honest than\nclaiming the repair is discharged. What *is* modelled is the shape check: an answer whose shape\ndoes not match the player's role is rejected (`shapeOk`), which is the game-level residue of\nthe parse.\n\nCompleteness --- a value-`1` PCC strategy for the input gives one for the output, with\n*identical measurement operators* rather than a symmetric state, which is repair 2 --- and\nsoundness, with its single square root, are separate pieces.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularGame.lean#L146-L151",
+  "source_path": "MIPRE/Foundations/OracularGame.lean",
+  "lines": [
+   146,
+   151
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.OracleSampler.size_call_le",
+  "source_name": "MIPRE.OracleSampler.size_call_le",
+  "formal_statement": "theorem MIPRE.OracleSampler.size_call_le (sD' nD' d q' : Data)\n    (h : route (.cons sD' (.cons nD' d)) = (true, .cons (.cons sD' (.cons nD' q')) .nil)) :\n    q'.size ≤ 2 * d.size + 9 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.OracleSampler",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun",
+   "open MIPRE.OracleSampler MIPRE.CL",
+   "open MIPRE.Repeat",
+   "variable {ℓ : ℕ} (S : Sampler (ℓ + 1))"
+  ],
+  "docstring": "**A forwarded query is at most twice the typed query**, plus a constant: it is the\ndimension query, or the typed query's own fields with the player replaced.",
+  "module": "MIPRE.Foundations.OracularSampler",
+  "module_doc": "/-!\n# The typed oracularized sampler\n\nPiece O3 of `planning/oracularization.md` (issue #189): the sampler of the paper's typed\noracularized verifier (`sec:orac-def`) as a `CL.TypedSampler` over the three roles, whose typed CL\nfunctions are `roleFamily` of the input sampler's (the identity for the oracle, the input's for the\nisolated players) — the half of `lem:oracle-effective-interface` about the sampler.\n\nThe program is the fixed core `OracleSampler.core`, run on the input sampler's program through\nthe s-m-n construction `hardcode`, as the repeated sampler is. The core routes a typed query with\nat most one call to the input sampler, through the universal machine:\n\n* the dimension query is forwarded unchanged;\n* a query at an isolated role is forwarded as the query of the corresponding original player;\n* a query at the oracle role is answered from the query itself, with no call at all: the\n  identity's marginals are the seed, its first stage map is the identity and its later ones zero,\n  its first factor space is everything and its later ones nothing. The zero vectors are written\n  over the supplied vector rather than over the dimension, so the core never allocates by a\n  dimension it has not been given.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularSampler.lean#L449-L486",
+  "source_path": "MIPRE/Foundations/OracularSampler.lean",
+  "lines": [
+   449,
+   486
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 33,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.OracleSampler.core_runs_within",
+  "source_name": "MIPRE.OracleSampler.core_runs_within",
+  "formal_statement": "theorem MIPRE.OracleSampler.core_runs_within (n : ℕ) {B k : ℕ} (hS : S.TimeBoundAt n B k) (d : Data) :\n    ∃ r t, t ≤ coreCost (Data.cons (encode S.prog) (.cons (encode n) d)).size B k (d.size + 1) ∧\n      core.Runs (.cons (encode S.prog) (.cons (encode n) d)) r t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.OracleSampler",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun",
+   "open MIPRE.OracleSampler MIPRE.CL",
+   "open MIPRE.Repeat",
+   "variable {ℓ : ℕ} (S : Sampler (ℓ + 1))",
+   "variable {ℓ : ℕ} (S : Sampler (ℓ + 1))"
+  ],
+  "docstring": "**The core halts within `coreCost`** on every input of the typed sampler, well formed or\nnot: the router, at most one call to the input sampler through the universal machine, and the\npostprocessing.",
+  "module": "MIPRE.Foundations.OracularSampler",
+  "module_doc": "/-!\n# The typed oracularized sampler\n\nPiece O3 of `planning/oracularization.md` (issue #189): the sampler of the paper's typed\noracularized verifier (`sec:orac-def`) as a `CL.TypedSampler` over the three roles, whose typed CL\nfunctions are `roleFamily` of the input sampler's (the identity for the oracle, the input's for the\nisolated players) — the half of `lem:oracle-effective-interface` about the sampler.\n\nThe program is the fixed core `OracleSampler.core`, run on the input sampler's program through\nthe s-m-n construction `hardcode`, as the repeated sampler is. The core routes a typed query with\nat most one call to the input sampler, through the universal machine:\n\n* the dimension query is forwarded unchanged;\n* a query at an isolated role is forwarded as the query of the corresponding original player;\n* a query at the oracle role is answered from the query itself, with no call at all: the\n  identity's marginals are the seed, its first stage map is the identity and its later ones zero,\n  its first factor space is everything and its later ones nothing. The zero vectors are written\n  over the supplied vector rather than over the dimension, so the core never allocates by a\n  dimension it has not been given.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularSampler.lean#L497-L549",
+  "source_path": "MIPRE/Foundations/OracularSampler.lean",
+  "lines": [
+   497,
+   549
+  ],
+  "blueprint": [
+   {
+    "label": "lem:oracle-typed-sampler",
+    "env": "lemma",
+    "title": "The typed oracularized sampler",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.OracleSampler.size_call_le"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 47,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.OracleSampler.oracleSampler_timeBound",
+  "source_name": "MIPRE.OracleSampler.oracleSampler_timeBound",
+  "formal_statement": "theorem MIPRE.OracleSampler.oracleSampler_timeBound : ∃ c m e, ∀ {ℓ : ℕ} (S : Sampler (ℓ + 1)) (n B k W : ℕ),\n    B ≤ W → esize S.prog ≤ W → n ≤ W → S.TimeBoundAt n B k →\n    (oracleSampler S).TimeBoundAt n (c * (W + 1) ^ m) (e * (k + 1)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.OracleSampler",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun",
+   "open MIPRE.OracleSampler MIPRE.CL",
+   "open MIPRE.Repeat",
+   "variable {ℓ : ℕ} (S : Sampler (ℓ + 1))",
+   "variable {ℓ : ℕ} (S : Sampler (ℓ + 1))"
+  ],
+  "docstring": "**The running time of the typed oracularized sampler**: constants `c, m, e` uniform in\neverything such that, whenever `W` dominates the input sampler's coefficient, its description\nlength and the index, and the input sampler runs within `B (|d| + 1)^k` at `n`, the typed\nsampler runs within `c (W + 1)^m (|d| + 1)^{e (k + 1)}`. A forwarded query is at most a constant\nfactor larger than the typed query, and since `|d| + 1 ≥ 2` that factor is absorbed into the\ndegree, so no term exponential in `k` enters the coefficient.",
+  "module": "MIPRE.Foundations.OracularSampler",
+  "module_doc": "/-!\n# The typed oracularized sampler\n\nPiece O3 of `planning/oracularization.md` (issue #189): the sampler of the paper's typed\noracularized verifier (`sec:orac-def`) as a `CL.TypedSampler` over the three roles, whose typed CL\nfunctions are `roleFamily` of the input sampler's (the identity for the oracle, the input's for the\nisolated players) — the half of `lem:oracle-effective-interface` about the sampler.\n\nThe program is the fixed core `OracleSampler.core`, run on the input sampler's program through\nthe s-m-n construction `hardcode`, as the repeated sampler is. The core routes a typed query with\nat most one call to the input sampler, through the universal machine:\n\n* the dimension query is forwarded unchanged;\n* a query at an isolated role is forwarded as the query of the corresponding original player;\n* a query at the oracle role is answered from the query itself, with no call at all: the\n  identity's marginals are the seed, its first stage map is the identity and its later ones zero,\n  its first factor space is everything and its later ones nothing. The zero vectors are written\n  over the supplied vector rather than over the dimension, so the core never allocates by a\n  dimension it has not been given.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularSampler.lean#L551-L613",
+  "source_path": "MIPRE/Foundations/OracularSampler.lean",
+  "lines": [
+   551,
+   613
+  ],
+  "blueprint": [
+   {
+    "label": "lem:oracle-typed-sampler",
+    "env": "lemma",
+    "title": "The typed oracularized sampler",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.hardcode_time",
+   "MIPRE.OracleSampler.core_runs_within"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 54,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SeededGame.sum_dist_mul",
+  "source_name": "MIPRE.SeededGame.sum_dist_mul",
+  "formal_statement": "theorem MIPRE.SeededGame.sum_dist_mul (F : V → V → ℝ) :\n    ∑ x, ∑ y, S.dist x y * F x y\n      = (Fintype.card V : ℝ)⁻¹ * ∑ z, F (S.LA z) (S.LB z) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SeededGame",
+   "open Finset Matrix",
+   "variable {A : Type*} [Inhabited A]",
+   "variable {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] [Fintype A] [DecidableEq A]",
+   "variable (S : SeededGame V A)"
+  ],
+  "docstring": "The input game's distribution, against a test function: an average over the seed.",
+  "module": "MIPRE.Foundations.OracularSound",
+  "module_doc": "/-!\n# Soundness of oracularization\n\nItem 2 of blueprint `thm:oracularization` (`lem:oracular-soundness`), at the level of games: a\nsynchronous strategy of value at least `1 - ε` for `MIPRE.SeededGame.oracular` yields one of\nvalue at least `1 - 24√ε` for the doubled input game.\n\nThe loss carries the **single square root** that repair 1 of `rem:oracularization-repairs`\ninsists on -- an earlier revision of the blueprint wrote `poly(ε)`, which the campaign found\n\"not merely imprecise but false as stated\". It is spent in exactly one place,\n`MIPRE.sum_ntr_mul_ge`; everything before it is linear in `ε`.\n\n## The shape of the argument\n\n* **The extracted strategy** (`soundStrategy`) is the two isolated players' own measurements,\n  relabelled along `OAns.singlePart` so that an oracle-shaped answer is grouped into one\n  distinguished outcome. Relabelling is what makes them *measurements* rather than\n  sub-measurements, which is the game-level residue of repair 3; `SyncStrategy.push` does it,\n  and a sum over a fibre is a projection because distinct outcomes are orthogonal.\n* **The budget** (`budget`) is all that is taken from the hypothesis. Each of the nine ordered\n  role pairs carries a ninth of the question weight, so at any one of them a set of outcome\n  pairs the decider rejects carries mass at most `9ε` on average over the seed. Three\n  instances (`gammaTerm_budget`, `betaTerm_budget`, `alphaTerm_budget`) are used: the oracle's\n  own pair is accepted, and each isolated player agrees with the oracle's component.\n* **The closeness estimate** (`sqDist_le`, from `MIPRE.sum_hsNormSq_sub_le`) bounds the\n  squared Hilbert--Schmidt distance between the oracle's relabelled measurement and the\n  product of the two isolated players' by three times the sum of the two disagreements --\n  linearly, with no square root.\n* **The value comparison** (`valSeed_ge`, from `MIPRE.sum_ntr_mul_ge`) is where the square\n  root enters, and one more Cauchy--Schwarz takes the average inside it.\n\nFor a synchronous strategy the state is the normalized trace, so the paper's state-dependent\n`≈_δ` is the normalized Hilbert--Schmidt distance of `MIPRE/Foundations/Distances.lean`; see\nblueprint `rem:distance-state`. `MIPRE/Foundations/Closeness.lean` is that calculus.\n\n## Scope\n\nNothing here inhabits `MIPRE.Oracularization`: that is done at the level of verifiers, in\n`Foundations/Pipeline/Oracularization.lean`, whose bipartite soundness rests on\n`Foundations/OracularTensor.lean` rather than on the synchronous argument here. The complexity\nclause, the bounded parse and its grouping, the truncation to `B_𝒟(n)` and the level accounting\nare all statements about a verifier and none of them appears at this level;\n`rem:oracular-game-level` records that.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularSound.lean#L86-L105",
+  "source_path": "MIPRE/Foundations/OracularSound.lean",
+  "lines": [
+   86,
+   105
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SeededGame.sum_oDist_mul",
+  "source_name": "MIPRE.SeededGame.sum_oDist_mul",
+  "formal_statement": "theorem MIPRE.SeededGame.sum_oDist_mul (F : Role × V → Role × V → ℝ) :\n    ∑ p, ∑ q, S.oDist p q * F p q\n      = (Fintype.card (Role × Role × V) : ℝ)⁻¹ *\n        ∑ s : Role × Role × V, F (S.oquestion s.1 s.2.2) (S.oquestion s.2.1 s.2.2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SeededGame",
+   "open Finset Matrix",
+   "variable {A : Type*} [Inhabited A]",
+   "variable {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V] [Fintype A] [DecidableEq A]",
+   "variable (S : SeededGame V A)"
+  ],
+  "docstring": "The oracularized game's distribution, against a test function: an average over the ordered\npair of roles and the seed.",
+  "module": "MIPRE.Foundations.OracularSound",
+  "module_doc": "/-!\n# Soundness of oracularization\n\nItem 2 of blueprint `thm:oracularization` (`lem:oracular-soundness`), at the level of games: a\nsynchronous strategy of value at least `1 - ε` for `MIPRE.SeededGame.oracular` yields one of\nvalue at least `1 - 24√ε` for the doubled input game.\n\nThe loss carries the **single square root** that repair 1 of `rem:oracularization-repairs`\ninsists on -- an earlier revision of the blueprint wrote `poly(ε)`, which the campaign found\n\"not merely imprecise but false as stated\". It is spent in exactly one place,\n`MIPRE.sum_ntr_mul_ge`; everything before it is linear in `ε`.\n\n## The shape of the argument\n\n* **The extracted strategy** (`soundStrategy`) is the two isolated players' own measurements,\n  relabelled along `OAns.singlePart` so that an oracle-shaped answer is grouped into one\n  distinguished outcome. Relabelling is what makes them *measurements* rather than\n  sub-measurements, which is the game-level residue of repair 3; `SyncStrategy.push` does it,\n  and a sum over a fibre is a projection because distinct outcomes are orthogonal.\n* **The budget** (`budget`) is all that is taken from the hypothesis. Each of the nine ordered\n  role pairs carries a ninth of the question weight, so at any one of them a set of outcome\n  pairs the decider rejects carries mass at most `9ε` on average over the seed. Three\n  instances (`gammaTerm_budget`, `betaTerm_budget`, `alphaTerm_budget`) are used: the oracle's\n  own pair is accepted, and each isolated player agrees with the oracle's component.\n* **The closeness estimate** (`sqDist_le`, from `MIPRE.sum_hsNormSq_sub_le`) bounds the\n  squared Hilbert--Schmidt distance between the oracle's relabelled measurement and the\n  product of the two isolated players' by three times the sum of the two disagreements --\n  linearly, with no square root.\n* **The value comparison** (`valSeed_ge`, from `MIPRE.sum_ntr_mul_ge`) is where the square\n  root enters, and one more Cauchy--Schwarz takes the average inside it.\n\nFor a synchronous strategy the state is the normalized trace, so the paper's state-dependent\n`≈_δ` is the normalized Hilbert--Schmidt distance of `MIPRE/Foundations/Distances.lean`; see\nblueprint `rem:distance-state`. `MIPRE/Foundations/Closeness.lean` is that calculus.\n\n## Scope\n\nNothing here inhabits `MIPRE.Oracularization`: that is done at the level of verifiers, in\n`Foundations/Pipeline/Oracularization.lean`, whose bipartite soundness rests on\n`Foundations/OracularTensor.lean` rather than on the synchronous argument here. The complexity\nclause, the bounded parse and its grouping, the truncation to `B_𝒟(n)` and the level accounting\nare all statements about a verifier and none of them appears at this level;\n`rem:oracular-game-level` records that.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularSound.lean#L107-L125",
+  "source_path": "MIPRE/Foundations/OracularSound.lean",
+  "lines": [
+   107,
+   125
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_snorm_sq_ge_of_close",
+  "source_name": "MIPRE.sum_snorm_sq_ge_of_close",
+  "formal_statement": "theorem MIPRE.sum_snorm_sq_ge_of_close (v : N → ℂ) (R O : ι → Matrix N N ℂ)\n    (hR : ∑ i, snorm v (R i) ^ 2 ≤ 1) (hO : ∑ i, snorm v (O i) ^ 2 ≤ 1) (acc : Finset ι) :\n    ∑ i ∈ acc, snorm v (O i) ^ 2 - 2 * √(∑ i, snorm v (R i - O i) ^ 2)\n      ≤ ∑ i ∈ acc, snorm v (R i) ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {N : Type*} [Fintype N] {ι : Type*} [Fintype ι]"
+  ],
+  "docstring": "**Close measurements have close values**, at the level of vectors (the paper's\n`fact:approx-implies-close-value`, NW19's Fact 4.31): two families of operators whose total\nsquared mass on `v` is at most one put masses within `2√δ` of each other on any set of outcomes,\n`δ` their summed squared deviation. For projections the squared mass is the Born probability.",
+  "module": "MIPRE.Foundations.OracularTensor",
+  "module_doc": "/-!\n# Soundness of oracularization, for bipartite strategies\n\nItem 2 of blueprint `thm:oracularization` (`lem:oracular-soundness-tensor`), at the level of\ngames and for **arbitrary tensor-product strategies**: a strategy of value at least `1 - ε` for\n`MIPRE.SeededGame.oracular` yields one of value at least `1 - 24√ε` for the input game, and so\n`val*` of the oracularization above `1 - ε` puts `val*` of the input at least `1 - 24√ε`.\n\n`MIPRE/Foundations/OracularSound.lean` proves the same bound for *synchronous* strategies. That\nis not the statement a verifier-level consumer can use: `Verifier.valStar` is a supremum over\n`TensorProductStrategy`, and so is the detyping transport (`restrictAmbient_value_ge`), while the\nonly bridge from synchronous to bipartite values, `thm:almost-sync`, is off the critical path.\nThe paper's `thm:oracle-soundness` is bipartite; this is its game-level form.\n\n## The argument\n\nEvery `TensorProductStrategy` is projective, so no Naimark dilation is needed. Fix a seed `z` and\nwrite, on the joint space, `O` for the first player's oracle measurement at `(oracle, z)`,\n`O^𝖠`, `O^𝖡` for its two component marginals (`OAns.aliceView`, `OAns.bobView`), `C` for the\nfirst player's isolated-Alice measurement at `L^𝖠 z`, and `P`, `Q` for the second player's\nisolated-Alice and isolated-Bob measurements at `L^𝖠 z` and `L^𝖡 z`. Then\n\n`C_u ⊗ Q_v - O^𝖠_u O^𝖡_v ⊗ Id = (Id ⊗ Q_v)(C_u ⊗ Id - Id ⊗ P_u)`\n  `+ (Id ⊗ Q_v)(Id ⊗ P_u - O^𝖠_u ⊗ Id) + (O^𝖠_u ⊗ Id)(Id ⊗ Q_v - O^𝖡_v ⊗ Id)`\n\n(`sum_snorm_sq_chain`). Each front factor is a projective measurement, so it costs nothing summed\nover its outcome (`sum_snorm_sq_mul_le`), and each of the three deviations is the cross-party\nconsistency of one role pair --- `(alice, alice)`, `(oracle, alice)`, `(oracle, bob)` --- hence at\nmost twice that pair's conditional failure (`xSqNorm_sum_le_condFail`). So the product strategy is\nwithin `6` times three conditional failures of the oracle's joint marginal, linearly in `ε`.\n\nThe single square root of repair 1 of `rem:oracularization-repairs` is spent once, in\n`sum_snorm_sq_ge_of_close`: the paper's `fact:approx-implies-close-value` (NW19's Fact 4.31) at\nthe level of vectors, which compares the mass two families with total mass at most one put on the\nset of outcome pairs the input decider accepts. The oracle's joint marginal puts mass at least the\noracle's own acceptance probability at `(oracle, oracle)` there.\n\nAveraging, the four role pairs used are distinct and each carries a ninth of the question weight,\nso their conditional failures average to at most `9ε` in total (`sum_failAt_four_le`), and\n`val ≥ 1 - 9ε - 2√(54ε) ≥ 1 - 24√ε`: the synchronous constant. Neither the paper's\nmarginalization step nor its commutation step is needed, because the oracle's measurement enters\nonly through its joint marginal and the second player's two isolated measurements are multiplied\nin one order only.\n\nThe extracted strategy (`tensorSound`) is the adapter `TensorProductStrategy.",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularTensor.lean#L91-L140",
+  "source_path": "MIPRE/Foundations/OracularTensor.lean",
+  "lines": [
+   91,
+   140
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_weighted_mul_le_sqrt"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 42,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_snorm_sq_chain",
+  "source_name": "MIPRE.sum_snorm_sq_chain",
+  "formal_statement": "theorem MIPRE.sum_snorm_sq_chain (ψ : HA × HB → ℂ) {K : Type*} [Fintype K] [DecidableEq K]\n    (C OA OB : K → Matrix HA HA ℂ) (P Q : K → Matrix HB HB ℂ) (hQ : IsPVM Q) (hOA : IsPVM OA) :\n    ∑ o : K × K,\n        snorm ψ ((aOp (C o.1) : Matrix (HA × HB) (HA × HB) ℂ) * bOp (Q o.2)\n          - aOp (OA o.1 * OB o.2)) ^ 2\n      ≤ 3 * ∑ u, snorm ψ ((aOp (C u) : Matrix (HA × HB) (HA × HB) ℂ) - bOp (P u)) ^ 2\n        + 3 * ∑ u, snorm ψ ((aOp (OA u) : Matrix (HA × HB) (HA × HB) ℂ) - bOp (P u)) ^ 2\n        + 3 * ∑ v, snorm ψ ((aOp (OB v) : Matrix (HA × HB) (HA × HB) ℂ) - bOp (Q v)) ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {HA HB : Type*} [Fintype HA] [DecidableEq HA] [Fintype HB] [DecidableEq HB]"
+  ],
+  "docstring": "**The per-seed algebra.** `C_u ⊗ Q_v - O^𝖠_u O^𝖡_v ⊗ Id` splits into three cross-party\ndeviations, each behind a front factor that is a projective measurement and so costs nothing\nsummed over its outcome.",
+  "module": "MIPRE.Foundations.OracularTensor",
+  "module_doc": "/-!\n# Soundness of oracularization, for bipartite strategies\n\nItem 2 of blueprint `thm:oracularization` (`lem:oracular-soundness-tensor`), at the level of\ngames and for **arbitrary tensor-product strategies**: a strategy of value at least `1 - ε` for\n`MIPRE.SeededGame.oracular` yields one of value at least `1 - 24√ε` for the input game, and so\n`val*` of the oracularization above `1 - ε` puts `val*` of the input at least `1 - 24√ε`.\n\n`MIPRE/Foundations/OracularSound.lean` proves the same bound for *synchronous* strategies. That\nis not the statement a verifier-level consumer can use: `Verifier.valStar` is a supremum over\n`TensorProductStrategy`, and so is the detyping transport (`restrictAmbient_value_ge`), while the\nonly bridge from synchronous to bipartite values, `thm:almost-sync`, is off the critical path.\nThe paper's `thm:oracle-soundness` is bipartite; this is its game-level form.\n\n## The argument\n\nEvery `TensorProductStrategy` is projective, so no Naimark dilation is needed. Fix a seed `z` and\nwrite, on the joint space, `O` for the first player's oracle measurement at `(oracle, z)`,\n`O^𝖠`, `O^𝖡` for its two component marginals (`OAns.aliceView`, `OAns.bobView`), `C` for the\nfirst player's isolated-Alice measurement at `L^𝖠 z`, and `P`, `Q` for the second player's\nisolated-Alice and isolated-Bob measurements at `L^𝖠 z` and `L^𝖡 z`. Then\n\n`C_u ⊗ Q_v - O^𝖠_u O^𝖡_v ⊗ Id = (Id ⊗ Q_v)(C_u ⊗ Id - Id ⊗ P_u)`\n  `+ (Id ⊗ Q_v)(Id ⊗ P_u - O^𝖠_u ⊗ Id) + (O^𝖠_u ⊗ Id)(Id ⊗ Q_v - O^𝖡_v ⊗ Id)`\n\n(`sum_snorm_sq_chain`). Each front factor is a projective measurement, so it costs nothing summed\nover its outcome (`sum_snorm_sq_mul_le`), and each of the three deviations is the cross-party\nconsistency of one role pair --- `(alice, alice)`, `(oracle, alice)`, `(oracle, bob)` --- hence at\nmost twice that pair's conditional failure (`xSqNorm_sum_le_condFail`). So the product strategy is\nwithin `6` times three conditional failures of the oracle's joint marginal, linearly in `ε`.\n\nThe single square root of repair 1 of `rem:oracularization-repairs` is spent once, in\n`sum_snorm_sq_ge_of_close`: the paper's `fact:approx-implies-close-value` (NW19's Fact 4.31) at\nthe level of vectors, which compares the mass two families with total mass at most one put on the\nset of outcome pairs the input decider accepts. The oracle's joint marginal puts mass at least the\noracle's own acceptance probability at `(oracle, oracle)` there.\n\nAveraging, the four role pairs used are distinct and each carries a ninth of the question weight,\nso their conditional failures average to at most `9ε` in total (`sum_failAt_four_le`), and\n`val ≥ 1 - 9ε - 2√(54ε) ≥ 1 - 24√ε`: the synchronous constant. Neither the paper's\nmarginalization step nor its commutation step is needed, because the oracle's measurement enters\nonly through its joint marginal and the second player's two isolated measurements are multiplied\nin one order only.\n\nThe extracted strategy (`tensorSound`) is the adapter `TensorProductStrategy.",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularTensor.lean#L200-L257",
+  "source_path": "MIPRE/Foundations/OracularTensor.lean",
+  "lines": [
+   200,
+   257
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_snorm_sq_mul_le",
+   "MIPRE.sum_snorm_sq_triangle3",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.aOp_sum"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 47,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SeededGame.sum_snorm_sq_joint_le",
+  "source_name": "MIPRE.SeededGame.sum_snorm_sq_joint_le",
+  "formal_statement": "theorem MIPRE.SeededGame.sum_snorm_sq_joint_le (N : TensorProductStrategy S.oracular.toGame) (z : V) :\n    ∑ o : OAns A × OAns A,\n        snorm N.ψ ((aOp (N.PA.M (Role.alice, S.LA z) o.1) :\n            Matrix (Fin N.dA × Fin N.dB) (Fin N.dA × Fin N.dB) ℂ)\n              * bOp (N.PB.M (Role.bob, S.LB z) o.2)\n          - aOp (oracleView N z OAns.aliceView o.1 * oracleView N z OAns.bobView o.2)) ^ 2\n      ≤ 6 * (N.failAt (Role.alice, S.LA z) (Role.alice, S.LA z)\n        + N.failAt (Role.oracle, z) (Role.alice, S.LA z)\n        + N.failAt (Role.oracle, z) (Role.bob, S.LB z)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SeededGame",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]",
+   "variable {A : Type*} [Fintype A] [DecidableEq A] [Inhabited A]",
+   "variable (S : SeededGame V A)",
+   "variable {S}"
+  ],
+  "docstring": "**The three cross-party deviations**, each bounded by its role pair's conditional failure, and\nchained: the product of the two isolated measurements is within `6` times three conditional\nfailures of the oracle's joint marginal. Linear in the failures; no square root yet.",
+  "module": "MIPRE.Foundations.OracularTensor",
+  "module_doc": "/-!\n# Soundness of oracularization, for bipartite strategies\n\nItem 2 of blueprint `thm:oracularization` (`lem:oracular-soundness-tensor`), at the level of\ngames and for **arbitrary tensor-product strategies**: a strategy of value at least `1 - ε` for\n`MIPRE.SeededGame.oracular` yields one of value at least `1 - 24√ε` for the input game, and so\n`val*` of the oracularization above `1 - ε` puts `val*` of the input at least `1 - 24√ε`.\n\n`MIPRE/Foundations/OracularSound.lean` proves the same bound for *synchronous* strategies. That\nis not the statement a verifier-level consumer can use: `Verifier.valStar` is a supremum over\n`TensorProductStrategy`, and so is the detyping transport (`restrictAmbient_value_ge`), while the\nonly bridge from synchronous to bipartite values, `thm:almost-sync`, is off the critical path.\nThe paper's `thm:oracle-soundness` is bipartite; this is its game-level form.\n\n## The argument\n\nEvery `TensorProductStrategy` is projective, so no Naimark dilation is needed. Fix a seed `z` and\nwrite, on the joint space, `O` for the first player's oracle measurement at `(oracle, z)`,\n`O^𝖠`, `O^𝖡` for its two component marginals (`OAns.aliceView`, `OAns.bobView`), `C` for the\nfirst player's isolated-Alice measurement at `L^𝖠 z`, and `P`, `Q` for the second player's\nisolated-Alice and isolated-Bob measurements at `L^𝖠 z` and `L^𝖡 z`. Then\n\n`C_u ⊗ Q_v - O^𝖠_u O^𝖡_v ⊗ Id = (Id ⊗ Q_v)(C_u ⊗ Id - Id ⊗ P_u)`\n  `+ (Id ⊗ Q_v)(Id ⊗ P_u - O^𝖠_u ⊗ Id) + (O^𝖠_u ⊗ Id)(Id ⊗ Q_v - O^𝖡_v ⊗ Id)`\n\n(`sum_snorm_sq_chain`). Each front factor is a projective measurement, so it costs nothing summed\nover its outcome (`sum_snorm_sq_mul_le`), and each of the three deviations is the cross-party\nconsistency of one role pair --- `(alice, alice)`, `(oracle, alice)`, `(oracle, bob)` --- hence at\nmost twice that pair's conditional failure (`xSqNorm_sum_le_condFail`). So the product strategy is\nwithin `6` times three conditional failures of the oracle's joint marginal, linearly in `ε`.\n\nThe single square root of repair 1 of `rem:oracularization-repairs` is spent once, in\n`sum_snorm_sq_ge_of_close`: the paper's `fact:approx-implies-close-value` (NW19's Fact 4.31) at\nthe level of vectors, which compares the mass two families with total mass at most one put on the\nset of outcome pairs the input decider accepts. The oracle's joint marginal puts mass at least the\noracle's own acceptance probability at `(oracle, oracle)` there.\n\nAveraging, the four role pairs used are distinct and each carries a ninth of the question weight,\nso their conditional failures average to at most `9ε` in total (`sum_failAt_four_le`), and\n`val ≥ 1 - 9ε - 2√(54ε) ≥ 1 - 24√ε`: the synchronous constant. Neither the paper's\nmarginalization step nor its commutation step is needed, because the oracle's measurement enters\nonly through its joint marginal and the second player's two isolated measurements are multiplied\nin one order only.\n\nThe extracted strategy (`tensorSound`) is the adapter `TensorProductStrategy.",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularTensor.lean#L452-L484",
+  "source_path": "MIPRE/Foundations/OracularTensor.lean",
+  "lines": [
+   452,
+   484
+  ],
+  "blueprint": [
+   {
+    "label": "lem:oracular-soundness-model",
+    "env": "lemma",
+    "title": "Soundness of oracularization, in a bipartite model",
+    "file": "08_downstream.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.xSqNorm_sum_le_two_mul",
+   "MIPRE.one_sub_sum_bornProb_le_condFail",
+   "MIPRE.sum_snorm_sq_chain",
+   "MIPRE.IsPVM.orthogonal"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SeededGame.succAt_oracle_le",
+  "source_name": "MIPRE.SeededGame.succAt_oracle_le",
+  "formal_statement": "theorem MIPRE.SeededGame.succAt_oracle_le (N : TensorProductStrategy S.oracular.toGame) (z : V) :\n    N.succAt (Role.oracle, z) (Role.oracle, z)\n      ≤ ∑ o ∈ (S.accPairs z).map singlePairEmb,\n          snorm N.ψ (aOp (oracleView N z OAns.aliceView o.1 * oracleView N z OAns.bobView o.2) :\n            Matrix (Fin N.dA × Fin N.dB) (Fin N.dA × Fin N.dB) ℂ) ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SeededGame",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]",
+   "variable {A : Type*} [Fintype A] [DecidableEq A] [Inhabited A]",
+   "variable (S : SeededGame V A)",
+   "variable {S}"
+  ],
+  "docstring": "**The oracle's joint marginal carries the oracle's acceptance.** On the accepted pairs of\nisolated answers it has at least the mass with which the oracle passes its own game check at\n`(oracle, oracle)`.",
+  "module": "MIPRE.Foundations.OracularTensor",
+  "module_doc": "/-!\n# Soundness of oracularization, for bipartite strategies\n\nItem 2 of blueprint `thm:oracularization` (`lem:oracular-soundness-tensor`), at the level of\ngames and for **arbitrary tensor-product strategies**: a strategy of value at least `1 - ε` for\n`MIPRE.SeededGame.oracular` yields one of value at least `1 - 24√ε` for the input game, and so\n`val*` of the oracularization above `1 - ε` puts `val*` of the input at least `1 - 24√ε`.\n\n`MIPRE/Foundations/OracularSound.lean` proves the same bound for *synchronous* strategies. That\nis not the statement a verifier-level consumer can use: `Verifier.valStar` is a supremum over\n`TensorProductStrategy`, and so is the detyping transport (`restrictAmbient_value_ge`), while the\nonly bridge from synchronous to bipartite values, `thm:almost-sync`, is off the critical path.\nThe paper's `thm:oracle-soundness` is bipartite; this is its game-level form.\n\n## The argument\n\nEvery `TensorProductStrategy` is projective, so no Naimark dilation is needed. Fix a seed `z` and\nwrite, on the joint space, `O` for the first player's oracle measurement at `(oracle, z)`,\n`O^𝖠`, `O^𝖡` for its two component marginals (`OAns.aliceView`, `OAns.bobView`), `C` for the\nfirst player's isolated-Alice measurement at `L^𝖠 z`, and `P`, `Q` for the second player's\nisolated-Alice and isolated-Bob measurements at `L^𝖠 z` and `L^𝖡 z`. Then\n\n`C_u ⊗ Q_v - O^𝖠_u O^𝖡_v ⊗ Id = (Id ⊗ Q_v)(C_u ⊗ Id - Id ⊗ P_u)`\n  `+ (Id ⊗ Q_v)(Id ⊗ P_u - O^𝖠_u ⊗ Id) + (O^𝖠_u ⊗ Id)(Id ⊗ Q_v - O^𝖡_v ⊗ Id)`\n\n(`sum_snorm_sq_chain`). Each front factor is a projective measurement, so it costs nothing summed\nover its outcome (`sum_snorm_sq_mul_le`), and each of the three deviations is the cross-party\nconsistency of one role pair --- `(alice, alice)`, `(oracle, alice)`, `(oracle, bob)` --- hence at\nmost twice that pair's conditional failure (`xSqNorm_sum_le_condFail`). So the product strategy is\nwithin `6` times three conditional failures of the oracle's joint marginal, linearly in `ε`.\n\nThe single square root of repair 1 of `rem:oracularization-repairs` is spent once, in\n`sum_snorm_sq_ge_of_close`: the paper's `fact:approx-implies-close-value` (NW19's Fact 4.31) at\nthe level of vectors, which compares the mass two families with total mass at most one put on the\nset of outcome pairs the input decider accepts. The oracle's joint marginal puts mass at least the\noracle's own acceptance probability at `(oracle, oracle)` there.\n\nAveraging, the four role pairs used are distinct and each carries a ninth of the question weight,\nso their conditional failures average to at most `9ε` in total (`sum_failAt_four_le`), and\n`val ≥ 1 - 9ε - 2√(54ε) ≥ 1 - 24√ε`: the synchronous constant. Neither the paper's\nmarginalization step nor its commutation step is needed, because the oracle's measurement enters\nonly through its joint marginal and the second player's two isolated measurements are multiplied\nin one order only.\n\nThe extracted strategy (`tensorSound`) is the adapter `TensorProductStrategy.",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularTensor.lean#L505-L571",
+  "source_path": "MIPRE/Foundations/OracularTensor.lean",
+  "lines": [
+   505,
+   571
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.aOp_sum",
+   "MIPRE.OAns.sum_eq",
+   "MIPRE.IsPVM.orthogonal"
+  ],
+  "pasted_helpers": 21,
+  "prooflines": 58,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SeededGame.succAt_tensorSound_ge",
+  "source_name": "MIPRE.SeededGame.succAt_tensorSound_ge",
+  "formal_statement": "theorem MIPRE.SeededGame.succAt_tensorSound_ge (N : TensorProductStrategy S.oracular.toGame) (z : V) :\n    1 - N.failAt (Role.oracle, z) (Role.oracle, z)\n        - 2 * √(6 * (N.failAt (Role.alice, S.LA z) (Role.alice, S.LA z)\n          + N.failAt (Role.oracle, z) (Role.alice, S.LA z)\n          + N.failAt (Role.oracle, z) (Role.bob, S.LB z)))\n      ≤ (S.tensorSound N).succAt (S.LA z) (S.LB z) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SeededGame",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]",
+   "variable {A : Type*} [Fintype A] [DecidableEq A] [Inhabited A]",
+   "variable (S : SeededGame V A)",
+   "variable {S}"
+  ],
+  "docstring": "**Soundness at one seed**, where the square root is spent.",
+  "module": "MIPRE.Foundations.OracularTensor",
+  "module_doc": "/-!\n# Soundness of oracularization, for bipartite strategies\n\nItem 2 of blueprint `thm:oracularization` (`lem:oracular-soundness-tensor`), at the level of\ngames and for **arbitrary tensor-product strategies**: a strategy of value at least `1 - ε` for\n`MIPRE.SeededGame.oracular` yields one of value at least `1 - 24√ε` for the input game, and so\n`val*` of the oracularization above `1 - ε` puts `val*` of the input at least `1 - 24√ε`.\n\n`MIPRE/Foundations/OracularSound.lean` proves the same bound for *synchronous* strategies. That\nis not the statement a verifier-level consumer can use: `Verifier.valStar` is a supremum over\n`TensorProductStrategy`, and so is the detyping transport (`restrictAmbient_value_ge`), while the\nonly bridge from synchronous to bipartite values, `thm:almost-sync`, is off the critical path.\nThe paper's `thm:oracle-soundness` is bipartite; this is its game-level form.\n\n## The argument\n\nEvery `TensorProductStrategy` is projective, so no Naimark dilation is needed. Fix a seed `z` and\nwrite, on the joint space, `O` for the first player's oracle measurement at `(oracle, z)`,\n`O^𝖠`, `O^𝖡` for its two component marginals (`OAns.aliceView`, `OAns.bobView`), `C` for the\nfirst player's isolated-Alice measurement at `L^𝖠 z`, and `P`, `Q` for the second player's\nisolated-Alice and isolated-Bob measurements at `L^𝖠 z` and `L^𝖡 z`. Then\n\n`C_u ⊗ Q_v - O^𝖠_u O^𝖡_v ⊗ Id = (Id ⊗ Q_v)(C_u ⊗ Id - Id ⊗ P_u)`\n  `+ (Id ⊗ Q_v)(Id ⊗ P_u - O^𝖠_u ⊗ Id) + (O^𝖠_u ⊗ Id)(Id ⊗ Q_v - O^𝖡_v ⊗ Id)`\n\n(`sum_snorm_sq_chain`). Each front factor is a projective measurement, so it costs nothing summed\nover its outcome (`sum_snorm_sq_mul_le`), and each of the three deviations is the cross-party\nconsistency of one role pair --- `(alice, alice)`, `(oracle, alice)`, `(oracle, bob)` --- hence at\nmost twice that pair's conditional failure (`xSqNorm_sum_le_condFail`). So the product strategy is\nwithin `6` times three conditional failures of the oracle's joint marginal, linearly in `ε`.\n\nThe single square root of repair 1 of `rem:oracularization-repairs` is spent once, in\n`sum_snorm_sq_ge_of_close`: the paper's `fact:approx-implies-close-value` (NW19's Fact 4.31) at\nthe level of vectors, which compares the mass two families with total mass at most one put on the\nset of outcome pairs the input decider accepts. The oracle's joint marginal puts mass at least the\noracle's own acceptance probability at `(oracle, oracle)` there.\n\nAveraging, the four role pairs used are distinct and each carries a ninth of the question weight,\nso their conditional failures average to at most `9ε` in total (`sum_failAt_four_le`), and\n`val ≥ 1 - 9ε - 2√(54ε) ≥ 1 - 24√ε`: the synchronous constant. Neither the paper's\nmarginalization step nor its commutation step is needed, because the oracle's measurement enters\nonly through its joint marginal and the second player's two isolated measurements are multiplied\nin one order only.\n\nThe extracted strategy (`tensorSound`) is the adapter `TensorProductStrategy.",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularTensor.lean#L590-L608",
+  "source_path": "MIPRE/Foundations/OracularTensor.lean",
+  "lines": [
+   590,
+   608
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TensorProductStrategy.succAt_adapt_eq",
+   "MIPRE.TensorProductStrategy.sum_born",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.aOp_sum",
+   "MIPRE.SeededGame.sum_snorm_sq_joint_le",
+   "MIPRE.SeededGame.succAt_oracle_le",
+   "MIPRE.sum_snorm_sq_ge_of_close",
+   "MIPRE.IsPVM.orthogonal"
+  ],
+  "pasted_helpers": 28,
+  "prooflines": 12,
+  "is_target": false
+ }
+]

@@ -1,0 +1,673 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sgn_add",
+  "source_name": "MIPRE.sgn_add",
+  "formal_statement": "theorem MIPRE.sgn_add (x y : ZMod 2) : sgn (x + y) = sgn x * sgn y := by sorry",
+  "preamble_opens": [
+   "open MIPRE"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Sign",
+  "module_doc": "/-!\n# The sign of a bit\n\n`sgn x = (-1)^x` for `x : ZMod 2`, as a complex number. It is the character group of `𝔽₂` written\nmultiplicatively, and it is what every `±1`-observable in this development is built from: the\nobservable of a two-outcome measurement, the phase of a Weyl operator in characteristic two, and\nthe sign a Magic Square constraint carries.\n\nCharacteristic two is why this is a *sign* and not a root of unity. Over `𝔽_p` the generalized\nPauli operators carry phases `e^{2πi/p}`; this project's fields are always of admissible size\n`q = 2^k`, so `p = 2` and every phase is real. That collapse is worth having in one place.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Sign.lean#L30-L34",
+  "source_path": "MIPRE/Foundations/Sign.lean",
+  "lines": [
+   30,
+   34
+  ],
+  "blueprint": [
+   {
+    "label": "def:generalized-pauli",
+    "env": "definition",
+    "title": "Generalized Pauli observables in characteristic two",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.star_sgn",
+  "source_name": "MIPRE.star_sgn",
+  "formal_statement": "theorem MIPRE.star_sgn (x : ZMod 2) : star (sgn x) = sgn x := by sorry",
+  "preamble_opens": [
+   "open MIPRE"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Sign",
+  "module_doc": "/-!\n# The sign of a bit\n\n`sgn x = (-1)^x` for `x : ZMod 2`, as a complex number. It is the character group of `𝔽₂` written\nmultiplicatively, and it is what every `±1`-observable in this development is built from: the\nobservable of a two-outcome measurement, the phase of a Weyl operator in characteristic two, and\nthe sign a Magic Square constraint carries.\n\nCharacteristic two is why this is a *sign* and not a root of unity. Over `𝔽_p` the generalized\nPauli operators carry phases `e^{2πi/p}`; this project's fields are always of admissible size\n`q = 2^k`, so `p = 2` and every phase is real. That collapse is worth having in one place.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Sign.lean#L39-L40",
+  "source_path": "MIPRE/Foundations/Sign.lean",
+  "lines": [
+   39,
+   40
+  ],
+  "blueprint": [
+   {
+    "label": "def:generalized-pauli",
+    "env": "definition",
+    "title": "Generalized Pauli observables in characteristic two",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.norm_stateVecB",
+  "source_name": "MIPRE.norm_stateVecB",
+  "formal_statement": "theorem MIPRE.norm_stateVecB (ψ : dA × dB → ℂ) (N : Matrix dB dB ℂ) :\n    ‖stateVecB ψ N‖ = stateNorm (swapVec ψ) N := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "variable {X : Type*} [Fintype X]",
+   "variable {dA dB : Type*} [Fintype dA] [Fintype dB] [DecidableEq dB]",
+   "variable [DecidableEq dA]"
+  ],
+  "docstring": "**Bob's norm is Alice's norm of the swapped state.**",
+  "module": "MIPRE.Foundations.StateDistance",
+  "module_doc": "/-!\n# The state-dependent distance on a bipartite state\n\nEvery soundness argument in the Pauli basis test's appendix compares operators in the distance\n\n`A^x ≈_δ B^x` ⟺ `𝔼_{x ∼ μ} ⟨ψ| (A^x - B^x)† (A^x - B^x) |ψ⟩ ≤ δ`,\n\nwhere the operators act on **Alice's factor** of a bipartite state `|ψ⟩ ∈ ℂ^{dA} ⊗ ℂ^{dB}`. That\nis not the distance `MIPRE/Foundations/Distances.lean` defines: `povmDistance` and\n`IsPOVMClose` use the normalized Hilbert--Schmidt norm, which is the *tracial* — synchronous —\nspecialization, and `MIPRE/Foundations/Closeness.lean` says so in its own docstring. This file\nis the state-dependent one, and it is what blueprint `def:state-distance` names.\n\nTwo deliberate departures from the paper's `qld-prelim.tex`:\n\n* **no `O(·)` inside the definition.** The paper writes `≤ O(δ)`; here the relation is\n  `stateDist μ ψ A B ≤ δ` and the constants appear in the lemmas that produce them. That is\n  stronger, not weaker: `stateSqNorm_avg_le` preserves `δ` exactly and `povm_to_obs` gives\n  exactly `|𝒜| · δ`.\n* **answer-indexed families as well.** The paper's `≈_δ` is for operators indexed by questions\n  but not answers; the applications also need the form summed over a common outcome set\n  (`cor:ortho-from-consistency` concludes `P_a ⊗ Id ≈ Q_a ⊗ Id`). Both are here, the second as\n  `povmStateDist`.\n\n## Implementation\n\n`stateVec ψ A = (A ⊗ Id)|ψ⟩`, carried in `EuclideanSpace ℂ (dA × dB)` so that the triangle\ninequality and `‖c • v‖ = ‖c‖‖v‖` are Mathlib's rather than rebuilt. The bridge to the\nblueprint's quadratic-form spelling is `stateSqNorm_eq`, which is the only place the Kronecker\nadjoint is used.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/StateDistance.lean#L277-L288",
+  "source_path": "MIPRE/Foundations/StateDistance.lean",
+  "lines": [
+   277,
+   288
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 8,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.swapVec_dotProduct",
+  "source_name": "MIPRE.swapVec_dotProduct",
+  "formal_statement": "theorem MIPRE.swapVec_dotProduct (ψ : dA × dB → ℂ) :\n    star (swapVec ψ) ⬝ᵥ swapVec ψ = star ψ ⬝ᵥ ψ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "variable {X : Type*} [Fintype X]",
+   "variable {dA dB : Type*} [Fintype dA] [Fintype dB] [DecidableEq dB]",
+   "variable [DecidableEq dA]"
+  ],
+  "docstring": "The swap is a reindexing, so it preserves the norm of the state.",
+  "module": "MIPRE.Foundations.StateDistance",
+  "module_doc": "/-!\n# The state-dependent distance on a bipartite state\n\nEvery soundness argument in the Pauli basis test's appendix compares operators in the distance\n\n`A^x ≈_δ B^x` ⟺ `𝔼_{x ∼ μ} ⟨ψ| (A^x - B^x)† (A^x - B^x) |ψ⟩ ≤ δ`,\n\nwhere the operators act on **Alice's factor** of a bipartite state `|ψ⟩ ∈ ℂ^{dA} ⊗ ℂ^{dB}`. That\nis not the distance `MIPRE/Foundations/Distances.lean` defines: `povmDistance` and\n`IsPOVMClose` use the normalized Hilbert--Schmidt norm, which is the *tracial* — synchronous —\nspecialization, and `MIPRE/Foundations/Closeness.lean` says so in its own docstring. This file\nis the state-dependent one, and it is what blueprint `def:state-distance` names.\n\nTwo deliberate departures from the paper's `qld-prelim.tex`:\n\n* **no `O(·)` inside the definition.** The paper writes `≤ O(δ)`; here the relation is\n  `stateDist μ ψ A B ≤ δ` and the constants appear in the lemmas that produce them. That is\n  stronger, not weaker: `stateSqNorm_avg_le` preserves `δ` exactly and `povm_to_obs` gives\n  exactly `|𝒜| · δ`.\n* **answer-indexed families as well.** The paper's `≈_δ` is for operators indexed by questions\n  but not answers; the applications also need the form summed over a common outcome set\n  (`cor:ortho-from-consistency` concludes `P_a ⊗ Id ≈ Q_a ⊗ Id`). Both are here, the second as\n  `povmStateDist`.\n\n## Implementation\n\n`stateVec ψ A = (A ⊗ Id)|ψ⟩`, carried in `EuclideanSpace ℂ (dA × dB)` so that the triangle\ninequality and `‖c • v‖ = ‖c‖‖v‖` are Mathlib's rather than rebuilt. The bridge to the\nblueprint's quadratic-form spelling is `stateSqNorm_eq`, which is the only place the Kronecker\nadjoint is used.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/StateDistance.lean#L303-L307",
+  "source_path": "MIPRE/Foundations/StateDistance.lean",
+  "lines": [
+   303,
+   307
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.stateSqNorm_avg_le",
+  "source_name": "MIPRE.stateSqNorm_avg_le",
+  "formal_statement": "theorem MIPRE.stateSqNorm_avg_le {μ : X → ℝ} (hμ0 : ∀ x, 0 ≤ μ x) (hμ1 : ∑ x, μ x = 1)\n    (ψ : dA × dB → ℂ) (A B : X → Matrix dA dA ℂ) (α : X → ℂ) (hα : ∀ x, ‖α x‖ ≤ 1) :\n    stateSqNorm ψ ((∑ x, ((μ x : ℂ) * α x) • A x) - ∑ x, ((μ x : ℂ) * α x) • B x)\n      ≤ stateDist μ ψ A B := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "variable {X : Type*} [Fintype X]",
+   "variable {dA dB : Type*} [Fintype dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**Averaging preserves closeness**, blueprint `lem:qld-averaging`: a weighted average with\nweights of modulus at most one is no further apart than the families are. Triangle inequality,\nthen Jensen for the square root (`sum_mul_sqrt_le`).",
+  "module": "MIPRE.Foundations.StateDistance",
+  "module_doc": "/-!\n# The state-dependent distance on a bipartite state\n\nEvery soundness argument in the Pauli basis test's appendix compares operators in the distance\n\n`A^x ≈_δ B^x` ⟺ `𝔼_{x ∼ μ} ⟨ψ| (A^x - B^x)† (A^x - B^x) |ψ⟩ ≤ δ`,\n\nwhere the operators act on **Alice's factor** of a bipartite state `|ψ⟩ ∈ ℂ^{dA} ⊗ ℂ^{dB}`. That\nis not the distance `MIPRE/Foundations/Distances.lean` defines: `povmDistance` and\n`IsPOVMClose` use the normalized Hilbert--Schmidt norm, which is the *tracial* — synchronous —\nspecialization, and `MIPRE/Foundations/Closeness.lean` says so in its own docstring. This file\nis the state-dependent one, and it is what blueprint `def:state-distance` names.\n\nTwo deliberate departures from the paper's `qld-prelim.tex`:\n\n* **no `O(·)` inside the definition.** The paper writes `≤ O(δ)`; here the relation is\n  `stateDist μ ψ A B ≤ δ` and the constants appear in the lemmas that produce them. That is\n  stronger, not weaker: `stateSqNorm_avg_le` preserves `δ` exactly and `povm_to_obs` gives\n  exactly `|𝒜| · δ`.\n* **answer-indexed families as well.** The paper's `≈_δ` is for operators indexed by questions\n  but not answers; the applications also need the form summed over a common outcome set\n  (`cor:ortho-from-consistency` concludes `P_a ⊗ Id ≈ Q_a ⊗ Id`). Both are here, the second as\n  `povmStateDist`.\n\n## Implementation\n\n`stateVec ψ A = (A ⊗ Id)|ψ⟩`, carried in `EuclideanSpace ℂ (dA × dB)` so that the triangle\ninequality and `‖c • v‖ = ‖c‖‖v‖` are Mathlib's rather than rebuilt. The bridge to the\nblueprint's quadratic-form spelling is `stateSqNorm_eq`, which is the only place the Kronecker\nadjoint is used.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/StateDistance.lean#L311-L342",
+  "source_path": "MIPRE/Foundations/StateDistance.lean",
+  "lines": [
+   311,
+   342
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-averaging",
+    "env": "lemma",
+    "title": "Averaging preserves closeness",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 8,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.bornProb_swapVec",
+  "source_name": "MIPRE.bornProb_swapVec",
+  "formal_statement": "theorem MIPRE.bornProb_swapVec (ψ : dA × dB → ℂ) (EA : Matrix dA dA ℂ) (EB : Matrix dB dB ℂ) :\n    bornProb (swapVec ψ) EB EA = bornProb ψ EA EB := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {X A dA dB : Type*} [Fintype X] [Fintype A] [Fintype dA] [DecidableEq dA]"
+  ],
+  "docstring": "**Swapping the state exchanges the two factors of a Born probability.**",
+  "module": "MIPRE.Foundations.Swap",
+  "module_doc": "/-!\n# Exchanging the two players\n\nA game whose question distribution and decision predicate are both symmetric in the players is\nunchanged by exchanging them, and so is the value of a strategy once the state is swapped\n(`povmValue_swapVec_of_symm`). That is what turns a one-sided soundness statement --- one proved\nabout Alice's measurements, with Bob's only as the other party --- into the statement about\n**Bob's**, with no second proof: apply it to `(MB, MA)` on `swapVec ψ`, and read the conclusion\nback through `norm_stateVecB`.\n\nThe Pauli basis test is such a game: every rule of its decider is written in both orientations\n(`MIPRE.QLD.accepts_symm`) and its sampler draws an *ordered* edge of a symmetric type graph\n(`MIPRE.QLD.qldGame_mu_symm`). Its combining stage needs both players' commutation bounds, which\nis why this is here.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Swap.lean#L35-L59",
+  "source_path": "MIPRE/Foundations/Swap.lean",
+  "lines": [
+   35,
+   59
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.povmValue_swapVec_of_symm",
+  "source_name": "MIPRE.povmValue_swapVec_of_symm",
+  "formal_statement": "theorem MIPRE.povmValue_swapVec_of_symm {G : Game X X A A} (ψ : dA × dB → ℂ)\n    (MA : X → POVM A dA) (MB : X → POVM A dB)\n    (hμ : ∀ x y, G.μ x y = G.μ y x) (hD : ∀ x y a b, G.D x y a b = G.D y x b a) :\n    povmValue G (swapVec ψ) MB MA = povmValue G ψ MA MB := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {X A dA dB : Type*} [Fintype X] [Fintype A] [Fintype dA] [DecidableEq dA]"
+  ],
+  "docstring": "**The value of a strategy for a symmetric game is unchanged by exchanging the players.** Both\nhalves of the hypothesis are needed, and both are properties of the *game*: the question\ndistribution is symmetric, and the decider accepts a swapped question pair with the answers\nswapped too.",
+  "module": "MIPRE.Foundations.Swap",
+  "module_doc": "/-!\n# Exchanging the two players\n\nA game whose question distribution and decision predicate are both symmetric in the players is\nunchanged by exchanging them, and so is the value of a strategy once the state is swapped\n(`povmValue_swapVec_of_symm`). That is what turns a one-sided soundness statement --- one proved\nabout Alice's measurements, with Bob's only as the other party --- into the statement about\n**Bob's**, with no second proof: apply it to `(MB, MA)` on `swapVec ψ`, and read the conclusion\nback through `norm_stateVecB`.\n\nThe Pauli basis test is such a game: every rule of its decider is written in both orientations\n(`MIPRE.QLD.accepts_symm`) and its sampler draws an *ordered* edge of a symmetric type graph\n(`MIPRE.QLD.qldGame_mu_symm`). Its combining stage needs both players' commutation bounds, which\nis why this is here.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Swap.lean#L64-L90",
+  "source_path": "MIPRE/Foundations/Swap.lean",
+  "lines": [
+   64,
+   90
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.bornProb_swapVec"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SyncStrategy.perfect_mergeAnswersByQuestion",
+  "source_name": "MIPRE.SyncStrategy.perfect_mergeAnswersByQuestion",
+  "formal_statement": "theorem MIPRE.SyncStrategy.perfect_mergeAnswersByQuestion (S : SyncStrategy G) (H : SynchronousGame X B)\n    (f : X → A → B) (hμ : ∀ x y, H.μ x y = G.μ x y)\n    (hD : ∀ x y a b, 0 < G.μ x y → S.P.M x a ≠ 0 → S.P.M y b ≠ 0 →\n      G.D x y a b = true → H.D x y (f x a) (f y b) = true)\n    (hv : S.value = 1) : (S.mergeAnswersByQuestion H f).value = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SyncStrategy",
+   "open Matrix Finset Classical",
+   "variable {X A B : Type*} [Fintype X] [Fintype A] [DecidableEq A]"
+  ],
+  "docstring": "Perfect play survives any encoder that preserves accepted supported pairs.",
+  "module": "MIPRE.Foundations.SyncMergeByQuestion",
+  "module_doc": "/-! # Perfect PCC strategies under question-dependent answer encoding\n\nAnswers can be encoded separately at each question. The encoding need only\npreserve acceptance for nonzero effects on question pairs of positive weight.\nThis allows format and range facts supplied by an honest strategy's support.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SyncMergeByQuestion.lean#L36-L66",
+  "source_path": "MIPRE/Foundations/SyncMergeByQuestion.lean",
+  "lines": [
+   36,
+   66
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.re_eq_zero_of_tracialValue_eq_one",
+   "MIPRE.tracialValue_eq_one_of_re_eq_zero"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Verifier.hasPerfectPCC_of_congr_at",
+  "source_name": "MIPRE.Verifier.hasPerfectPCC_of_congr_at",
+  "formal_statement": "theorem MIPRE.Verifier.hasPerfectPCC_of_congr_at (h : SamplerAgreement V W n)\n    (hD : ∀ x y a b, V.decider.Accepts n x y a b ↔ W.decider.Accepts n x y a b)\n    (hV : V.HasPerfectPCC n T) : W.HasPerfectPCC n T := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Verifier",
+   "open MIPRE.CL",
+   "variable {ℓ : ℕ} {V W : Verifier ℓ} {n T : ℕ}"
+  ],
+  "docstring": "Perfect PCC strategies also depend only on the game at the current index.",
+  "module": "MIPRE.Foundations.VerifierIndexTransport",
+  "module_doc": "/-! # Verifier transport at a single index\n\nWrappers may change a sampler at exceptional indices. Equality of its dimension\nand CL presentations at the index in question suffices to preserve both quantum\nvalue and perfect PCC strategies; the programs need not agree elsewhere.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/VerifierIndexTransport.lean#L71-L93",
+  "source_path": "MIPRE/Foundations/VerifierIndexTransport.lean",
+  "lines": [
+   71,
+   93
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SyncStrategy.value_relabel",
+   "MIPRE.SyncStrategy.isPCC_relabel"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Weyl.wX_mul_wZ",
+  "source_name": "MIPRE.Weyl.wX_mul_wZ",
+  "formal_statement": "theorem MIPRE.Weyl.wX_mul_wZ (a b : n → F) :\n    wX a * wZ b = sgn (trDot a b) • (wZ b * wX a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Weyl",
+   "open Finset Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]"
+  ],
+  "docstring": "**`τ^X(a) τ^Z(b) = (-1)^{tr(a · b)} τ^Z(b) τ^X(a)`.**",
+  "module": "MIPRE.Foundations.Weyl",
+  "module_doc": "/-!\n# Generalized Pauli operators over a field of characteristic two\n\nThe paper's `sec:generalized-pauli`: for `a ∈ F_q^n` the `X`-type operator shifts the\ncomputational basis of `(C^q)^{⊗ n}` by `a`, the `Z`-type operator is diagonal with the phase\n`ω^{tr(a · b)}`, and the two families *twisted-commute*,\n`τ^X(a) τ^Z(b) = ω^{-tr(a · b)} τ^Z(b) τ^X(a)`.\n\nThis is the missing half of the Pauli basis test's infrastructure. `MIPRE/LCS/Pauli.lean` is the\n`2 × 2` Pauli matrices for the Magic Square; what the appendix's expansion stage and its swap\nisometry both run on is the `F_q` Weyl system, and that is this file.\n\n## Two deliberate restrictions\n\n**Characteristic two.** The paper states the construction over `F_p` with `ω = e^{2πi/p}` and\nthen specializes. This file is only the `p = 2` case, where `ω = -1` and every phase is the real\nsign `MIPRE.sgn` of `MIPRE/Foundations/Sign.lean`. That is not a loss for this project: the\nPauli basis test's parameters are *admissible* (`def:admissible`), which means `q = 2^k`, and no\nconsumer instantiates it elsewhere. What it buys is large — there are no roots of unity, the\noperators are self-adjoint involutions rather than order-`p` unitaries, so they are genuine\n`±1`-observables, and `(τ^W(a))² = 1` is where the paper needs `(σ^W(a))^p = I`.\n\n**One matrix, not an iterated Kronecker product.** `(C^q)^{⊗ n}` is presented as\n`Matrix (n → F) (n → F) C`: the basis of the `n`-fold tensor power is indexed by the functions\n`n → F`, which *is* `F_q^n`. So `τ^W(a)` is a single matrix and the `n`-register statements are\nthe one-register statements with no associativity bookkeeping. The index type `n` is an arbitrary\nfinite type rather than `Fin n`, which is what lets the Pauli basis test use it at\n`n = (Fin m → Bool)`, the indexing `MIPRE.LowDegree` already uses for `F_q^M` with `M = 2^m`.\n\n## What is here\n\n`wX`, `wZ`, the group laws, self-adjointness, involutivity, unitarity, and the twisted\ncommutation `wX_mul_wZ`. Then the `Z`-eigenbasis projectors, the expansion of `wZ` in them, and\nthe Fourier inversion that recovers a projector from an average of operators --- the identity the\nexpansion stage's `E_r (-1)^{tr(ar)} Ŵ^r(u)` is an instance of. The `X` side and the maximally\nentangled state come next; they go through the Fourier transform conjugating one family into the\nother.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Weyl.lean#L239-L255",
+  "source_path": "MIPRE/Foundations/Weyl.lean",
+  "lines": [
+   239,
+   255
+  ],
+  "blueprint": [
+   {
+    "label": "def:generalized-pauli",
+    "env": "definition",
+    "title": "Generalized Pauli observables in characteristic two",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sgn_add"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Weyl.sum_sgn_trDot",
+  "source_name": "MIPRE.Weyl.sum_sgn_trDot",
+  "formal_statement": "theorem MIPRE.Weyl.sum_sgn_trDot {c : n → F} (hc : c ≠ 0) :\n    ∑ a : n → F, sgn (trDot a c) = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Weyl",
+   "open Finset Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]"
+  ],
+  "docstring": "**A nontrivial sign character sums to zero.**",
+  "module": "MIPRE.Foundations.Weyl",
+  "module_doc": "/-!\n# Generalized Pauli operators over a field of characteristic two\n\nThe paper's `sec:generalized-pauli`: for `a ∈ F_q^n` the `X`-type operator shifts the\ncomputational basis of `(C^q)^{⊗ n}` by `a`, the `Z`-type operator is diagonal with the phase\n`ω^{tr(a · b)}`, and the two families *twisted-commute*,\n`τ^X(a) τ^Z(b) = ω^{-tr(a · b)} τ^Z(b) τ^X(a)`.\n\nThis is the missing half of the Pauli basis test's infrastructure. `MIPRE/LCS/Pauli.lean` is the\n`2 × 2` Pauli matrices for the Magic Square; what the appendix's expansion stage and its swap\nisometry both run on is the `F_q` Weyl system, and that is this file.\n\n## Two deliberate restrictions\n\n**Characteristic two.** The paper states the construction over `F_p` with `ω = e^{2πi/p}` and\nthen specializes. This file is only the `p = 2` case, where `ω = -1` and every phase is the real\nsign `MIPRE.sgn` of `MIPRE/Foundations/Sign.lean`. That is not a loss for this project: the\nPauli basis test's parameters are *admissible* (`def:admissible`), which means `q = 2^k`, and no\nconsumer instantiates it elsewhere. What it buys is large — there are no roots of unity, the\noperators are self-adjoint involutions rather than order-`p` unitaries, so they are genuine\n`±1`-observables, and `(τ^W(a))² = 1` is where the paper needs `(σ^W(a))^p = I`.\n\n**One matrix, not an iterated Kronecker product.** `(C^q)^{⊗ n}` is presented as\n`Matrix (n → F) (n → F) C`: the basis of the `n`-fold tensor power is indexed by the functions\n`n → F`, which *is* `F_q^n`. So `τ^W(a)` is a single matrix and the `n`-register statements are\nthe one-register statements with no associativity bookkeeping. The index type `n` is an arbitrary\nfinite type rather than `Fin n`, which is what lets the Pauli basis test use it at\n`n = (Fin m → Bool)`, the indexing `MIPRE.LowDegree` already uses for `F_q^M` with `M = 2^m`.\n\n## What is here\n\n`wX`, `wZ`, the group laws, self-adjointness, involutivity, unitarity, and the twisted\ncommutation `wX_mul_wZ`. Then the `Z`-eigenbasis projectors, the expansion of `wZ` in them, and\nthe Fourier inversion that recovers a projector from an average of operators --- the identity the\nexpansion stage's `E_r (-1)^{tr(ar)} Ŵ^r(u)` is an instance of. The `X` side and the maximally\nentangled state come next; they go through the Fourier transform conjugating one family into the\nother.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Weyl.lean#L289-L316",
+  "source_path": "MIPRE/Foundations/Weyl.lean",
+  "lines": [
+   289,
+   316
+  ],
+  "blueprint": [
+   {
+    "label": "def:generalized-pauli",
+    "env": "definition",
+    "title": "Generalized Pauli observables in characteristic two",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.card_filter_ker_mul'"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Weyl.wZ_eq_sum_zProj",
+  "source_name": "MIPRE.Weyl.wZ_eq_sum_zProj",
+  "formal_statement": "theorem MIPRE.Weyl.wZ_eq_sum_zProj (b : n → F) :\n    wZ b = ∑ c : n → F, sgn (trDot b c) • zProj c := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Weyl",
+   "open Finset Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]"
+  ],
+  "docstring": "**`wZ` expands in the computational-basis projectors** with the sign coefficients: the\npaper's `eq:pauli-obs-proj`.",
+  "module": "MIPRE.Foundations.Weyl",
+  "module_doc": "/-!\n# Generalized Pauli operators over a field of characteristic two\n\nThe paper's `sec:generalized-pauli`: for `a ∈ F_q^n` the `X`-type operator shifts the\ncomputational basis of `(C^q)^{⊗ n}` by `a`, the `Z`-type operator is diagonal with the phase\n`ω^{tr(a · b)}`, and the two families *twisted-commute*,\n`τ^X(a) τ^Z(b) = ω^{-tr(a · b)} τ^Z(b) τ^X(a)`.\n\nThis is the missing half of the Pauli basis test's infrastructure. `MIPRE/LCS/Pauli.lean` is the\n`2 × 2` Pauli matrices for the Magic Square; what the appendix's expansion stage and its swap\nisometry both run on is the `F_q` Weyl system, and that is this file.\n\n## Two deliberate restrictions\n\n**Characteristic two.** The paper states the construction over `F_p` with `ω = e^{2πi/p}` and\nthen specializes. This file is only the `p = 2` case, where `ω = -1` and every phase is the real\nsign `MIPRE.sgn` of `MIPRE/Foundations/Sign.lean`. That is not a loss for this project: the\nPauli basis test's parameters are *admissible* (`def:admissible`), which means `q = 2^k`, and no\nconsumer instantiates it elsewhere. What it buys is large — there are no roots of unity, the\noperators are self-adjoint involutions rather than order-`p` unitaries, so they are genuine\n`±1`-observables, and `(τ^W(a))² = 1` is where the paper needs `(σ^W(a))^p = I`.\n\n**One matrix, not an iterated Kronecker product.** `(C^q)^{⊗ n}` is presented as\n`Matrix (n → F) (n → F) C`: the basis of the `n`-fold tensor power is indexed by the functions\n`n → F`, which *is* `F_q^n`. So `τ^W(a)` is a single matrix and the `n`-register statements are\nthe one-register statements with no associativity bookkeeping. The index type `n` is an arbitrary\nfinite type rather than `Fin n`, which is what lets the Pauli basis test use it at\n`n = (Fin m → Bool)`, the indexing `MIPRE.LowDegree` already uses for `F_q^M` with `M = 2^m`.\n\n## What is here\n\n`wX`, `wZ`, the group laws, self-adjointness, involutivity, unitarity, and the twisted\ncommutation `wX_mul_wZ`. Then the `Z`-eigenbasis projectors, the expansion of `wZ` in them, and\nthe Fourier inversion that recovers a projector from an average of operators --- the identity the\nexpansion stage's `E_r (-1)^{tr(ar)} Ŵ^r(u)` is an instance of. The `X` side and the maximally\nentangled state come next; they go through the Fourier transform conjugating one family into the\nother.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Weyl.lean#L353-L367",
+  "source_path": "MIPRE/Foundations/Weyl.lean",
+  "lines": [
+   353,
+   367
+  ],
+  "blueprint": [
+   {
+    "label": "def:generalized-pauli",
+    "env": "definition",
+    "title": "Generalized Pauli observables in characteristic two",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Weyl.sum_sgn_smul_wZ",
+  "source_name": "MIPRE.Weyl.sum_sgn_smul_wZ",
+  "formal_statement": "theorem MIPRE.Weyl.sum_sgn_smul_wZ (c : n → F) :\n    (Fintype.card (n → F) : ℂ)⁻¹ • ∑ b : n → F, sgn (trDot b c) • wZ b = zProj c := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Weyl",
+   "open Finset Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]"
+  ],
+  "docstring": "**The Fourier inversion**, the paper's `eq:pauli-inversion-0`: averaging `wZ` against the\nconjugate character recovers the projector onto a single computational basis vector.",
+  "module": "MIPRE.Foundations.Weyl",
+  "module_doc": "/-!\n# Generalized Pauli operators over a field of characteristic two\n\nThe paper's `sec:generalized-pauli`: for `a ∈ F_q^n` the `X`-type operator shifts the\ncomputational basis of `(C^q)^{⊗ n}` by `a`, the `Z`-type operator is diagonal with the phase\n`ω^{tr(a · b)}`, and the two families *twisted-commute*,\n`τ^X(a) τ^Z(b) = ω^{-tr(a · b)} τ^Z(b) τ^X(a)`.\n\nThis is the missing half of the Pauli basis test's infrastructure. `MIPRE/LCS/Pauli.lean` is the\n`2 × 2` Pauli matrices for the Magic Square; what the appendix's expansion stage and its swap\nisometry both run on is the `F_q` Weyl system, and that is this file.\n\n## Two deliberate restrictions\n\n**Characteristic two.** The paper states the construction over `F_p` with `ω = e^{2πi/p}` and\nthen specializes. This file is only the `p = 2` case, where `ω = -1` and every phase is the real\nsign `MIPRE.sgn` of `MIPRE/Foundations/Sign.lean`. That is not a loss for this project: the\nPauli basis test's parameters are *admissible* (`def:admissible`), which means `q = 2^k`, and no\nconsumer instantiates it elsewhere. What it buys is large — there are no roots of unity, the\noperators are self-adjoint involutions rather than order-`p` unitaries, so they are genuine\n`±1`-observables, and `(τ^W(a))² = 1` is where the paper needs `(σ^W(a))^p = I`.\n\n**One matrix, not an iterated Kronecker product.** `(C^q)^{⊗ n}` is presented as\n`Matrix (n → F) (n → F) C`: the basis of the `n`-fold tensor power is indexed by the functions\n`n → F`, which *is* `F_q^n`. So `τ^W(a)` is a single matrix and the `n`-register statements are\nthe one-register statements with no associativity bookkeeping. The index type `n` is an arbitrary\nfinite type rather than `Fin n`, which is what lets the Pauli basis test use it at\n`n = (Fin m → Bool)`, the indexing `MIPRE.LowDegree` already uses for `F_q^M` with `M = 2^m`.\n\n## What is here\n\n`wX`, `wZ`, the group laws, self-adjointness, involutivity, unitarity, and the twisted\ncommutation `wX_mul_wZ`. Then the `Z`-eigenbasis projectors, the expansion of `wZ` in them, and\nthe Fourier inversion that recovers a projector from an average of operators --- the identity the\nexpansion stage's `E_r (-1)^{tr(ar)} Ŵ^r(u)` is an instance of. The `X` side and the maximally\nentangled state come next; they go through the Fourier transform conjugating one family into the\nother.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Weyl.lean#L369-L392",
+  "source_path": "MIPRE/Foundations/Weyl.lean",
+  "lines": [
+   369,
+   392
+  ],
+  "blueprint": [
+   {
+    "label": "def:generalized-pauli",
+    "env": "definition",
+    "title": "Generalized Pauli observables in characteristic two",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sgn_add",
+   "MIPRE.Weyl.sum_sgn_trDot",
+   "MIPRE.Weyl.wZ_eq_sum_zProj"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Weyl.isWeylFamily_wZ",
+  "source_name": "MIPRE.Weyl.isWeylFamily_wZ",
+  "formal_statement": "theorem MIPRE.Weyl.isWeylFamily_wZ : IsWeylFamily (wZ (F := F) (n := n)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Weyl",
+   "open Finset Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Weyl",
+  "module_doc": "/-!\n# Generalized Pauli operators over a field of characteristic two\n\nThe paper's `sec:generalized-pauli`: for `a ∈ F_q^n` the `X`-type operator shifts the\ncomputational basis of `(C^q)^{⊗ n}` by `a`, the `Z`-type operator is diagonal with the phase\n`ω^{tr(a · b)}`, and the two families *twisted-commute*,\n`τ^X(a) τ^Z(b) = ω^{-tr(a · b)} τ^Z(b) τ^X(a)`.\n\nThis is the missing half of the Pauli basis test's infrastructure. `MIPRE/LCS/Pauli.lean` is the\n`2 × 2` Pauli matrices for the Magic Square; what the appendix's expansion stage and its swap\nisometry both run on is the `F_q` Weyl system, and that is this file.\n\n## Two deliberate restrictions\n\n**Characteristic two.** The paper states the construction over `F_p` with `ω = e^{2πi/p}` and\nthen specializes. This file is only the `p = 2` case, where `ω = -1` and every phase is the real\nsign `MIPRE.sgn` of `MIPRE/Foundations/Sign.lean`. That is not a loss for this project: the\nPauli basis test's parameters are *admissible* (`def:admissible`), which means `q = 2^k`, and no\nconsumer instantiates it elsewhere. What it buys is large — there are no roots of unity, the\noperators are self-adjoint involutions rather than order-`p` unitaries, so they are genuine\n`±1`-observables, and `(τ^W(a))² = 1` is where the paper needs `(σ^W(a))^p = I`.\n\n**One matrix, not an iterated Kronecker product.** `(C^q)^{⊗ n}` is presented as\n`Matrix (n → F) (n → F) C`: the basis of the `n`-fold tensor power is indexed by the functions\n`n → F`, which *is* `F_q^n`. So `τ^W(a)` is a single matrix and the `n`-register statements are\nthe one-register statements with no associativity bookkeeping. The index type `n` is an arbitrary\nfinite type rather than `Fin n`, which is what lets the Pauli basis test use it at\n`n = (Fin m → Bool)`, the indexing `MIPRE.LowDegree` already uses for `F_q^M` with `M = 2^m`.\n\n## What is here\n\n`wX`, `wZ`, the group laws, self-adjointness, involutivity, unitarity, and the twisted\ncommutation `wX_mul_wZ`. Then the `Z`-eigenbasis projectors, the expansion of `wZ` in them, and\nthe Fourier inversion that recovers a projector from an average of operators --- the identity the\nexpansion stage's `E_r (-1)^{tr(ar)} Ŵ^r(u)` is an instance of. The `X` side and the maximally\nentangled state come next; they go through the Fourier transform conjugating one family into the\nother.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Weyl.lean#L414-L417",
+  "source_path": "MIPRE/Foundations/Weyl.lean",
+  "lines": [
+   414,
+   417
+  ],
+  "blueprint": [
+   {
+    "label": "def:generalized-pauli",
+    "env": "definition",
+    "title": "Generalized Pauli observables in characteristic two",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Weyl.isWeylFamily_wX",
+  "source_name": "MIPRE.Weyl.isWeylFamily_wX",
+  "formal_statement": "theorem MIPRE.Weyl.isWeylFamily_wX : IsWeylFamily (wX (F := F) (n := n)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Weyl",
+   "open Finset Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Weyl",
+  "module_doc": "/-!\n# Generalized Pauli operators over a field of characteristic two\n\nThe paper's `sec:generalized-pauli`: for `a ∈ F_q^n` the `X`-type operator shifts the\ncomputational basis of `(C^q)^{⊗ n}` by `a`, the `Z`-type operator is diagonal with the phase\n`ω^{tr(a · b)}`, and the two families *twisted-commute*,\n`τ^X(a) τ^Z(b) = ω^{-tr(a · b)} τ^Z(b) τ^X(a)`.\n\nThis is the missing half of the Pauli basis test's infrastructure. `MIPRE/LCS/Pauli.lean` is the\n`2 × 2` Pauli matrices for the Magic Square; what the appendix's expansion stage and its swap\nisometry both run on is the `F_q` Weyl system, and that is this file.\n\n## Two deliberate restrictions\n\n**Characteristic two.** The paper states the construction over `F_p` with `ω = e^{2πi/p}` and\nthen specializes. This file is only the `p = 2` case, where `ω = -1` and every phase is the real\nsign `MIPRE.sgn` of `MIPRE/Foundations/Sign.lean`. That is not a loss for this project: the\nPauli basis test's parameters are *admissible* (`def:admissible`), which means `q = 2^k`, and no\nconsumer instantiates it elsewhere. What it buys is large — there are no roots of unity, the\noperators are self-adjoint involutions rather than order-`p` unitaries, so they are genuine\n`±1`-observables, and `(τ^W(a))² = 1` is where the paper needs `(σ^W(a))^p = I`.\n\n**One matrix, not an iterated Kronecker product.** `(C^q)^{⊗ n}` is presented as\n`Matrix (n → F) (n → F) C`: the basis of the `n`-fold tensor power is indexed by the functions\n`n → F`, which *is* `F_q^n`. So `τ^W(a)` is a single matrix and the `n`-register statements are\nthe one-register statements with no associativity bookkeeping. The index type `n` is an arbitrary\nfinite type rather than `Fin n`, which is what lets the Pauli basis test use it at\n`n = (Fin m → Bool)`, the indexing `MIPRE.LowDegree` already uses for `F_q^M` with `M = 2^m`.\n\n## What is here\n\n`wX`, `wZ`, the group laws, self-adjointness, involutivity, unitarity, and the twisted\ncommutation `wX_mul_wZ`. Then the `Z`-eigenbasis projectors, the expansion of `wZ` in them, and\nthe Fourier inversion that recovers a projector from an average of operators --- the identity the\nexpansion stage's `E_r (-1)^{tr(ar)} Ŵ^r(u)` is an instance of. The `X` side and the maximally\nentangled state come next; they go through the Fourier transform conjugating one family into the\nother.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Weyl.lean#L419-L422",
+  "source_path": "MIPRE/Foundations/Weyl.lean",
+  "lines": [
+   419,
+   422
+  ],
+  "blueprint": [
+   {
+    "label": "def:generalized-pauli",
+    "env": "definition",
+    "title": "Generalized Pauli observables in characteristic two",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Weyl.proj_wZ",
+  "source_name": "MIPRE.Weyl.proj_wZ",
+  "formal_statement": "theorem MIPRE.Weyl.proj_wZ (c : n → F) : proj (wZ (F := F) (n := n)) c = zProj c := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Weyl",
+   "open Finset Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]"
+  ],
+  "docstring": "The `Z`-family's spectral projectors are the computational-basis ones.",
+  "module": "MIPRE.Foundations.Weyl",
+  "module_doc": "/-!\n# Generalized Pauli operators over a field of characteristic two\n\nThe paper's `sec:generalized-pauli`: for `a ∈ F_q^n` the `X`-type operator shifts the\ncomputational basis of `(C^q)^{⊗ n}` by `a`, the `Z`-type operator is diagonal with the phase\n`ω^{tr(a · b)}`, and the two families *twisted-commute*,\n`τ^X(a) τ^Z(b) = ω^{-tr(a · b)} τ^Z(b) τ^X(a)`.\n\nThis is the missing half of the Pauli basis test's infrastructure. `MIPRE/LCS/Pauli.lean` is the\n`2 × 2` Pauli matrices for the Magic Square; what the appendix's expansion stage and its swap\nisometry both run on is the `F_q` Weyl system, and that is this file.\n\n## Two deliberate restrictions\n\n**Characteristic two.** The paper states the construction over `F_p` with `ω = e^{2πi/p}` and\nthen specializes. This file is only the `p = 2` case, where `ω = -1` and every phase is the real\nsign `MIPRE.sgn` of `MIPRE/Foundations/Sign.lean`. That is not a loss for this project: the\nPauli basis test's parameters are *admissible* (`def:admissible`), which means `q = 2^k`, and no\nconsumer instantiates it elsewhere. What it buys is large — there are no roots of unity, the\noperators are self-adjoint involutions rather than order-`p` unitaries, so they are genuine\n`±1`-observables, and `(τ^W(a))² = 1` is where the paper needs `(σ^W(a))^p = I`.\n\n**One matrix, not an iterated Kronecker product.** `(C^q)^{⊗ n}` is presented as\n`Matrix (n → F) (n → F) C`: the basis of the `n`-fold tensor power is indexed by the functions\n`n → F`, which *is* `F_q^n`. So `τ^W(a)` is a single matrix and the `n`-register statements are\nthe one-register statements with no associativity bookkeeping. The index type `n` is an arbitrary\nfinite type rather than `Fin n`, which is what lets the Pauli basis test use it at\n`n = (Fin m → Bool)`, the indexing `MIPRE.LowDegree` already uses for `F_q^M` with `M = 2^m`.\n\n## What is here\n\n`wX`, `wZ`, the group laws, self-adjointness, involutivity, unitarity, and the twisted\ncommutation `wX_mul_wZ`. Then the `Z`-eigenbasis projectors, the expansion of `wZ` in them, and\nthe Fourier inversion that recovers a projector from an average of operators --- the identity the\nexpansion stage's `E_r (-1)^{tr(ar)} Ŵ^r(u)` is an instance of. The `X` side and the maximally\nentangled state come next; they go through the Fourier transform conjugating one family into the\nother.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Weyl.lean#L439-L441",
+  "source_path": "MIPRE/Foundations/Weyl.lean",
+  "lines": [
+   439,
+   441
+  ],
+  "blueprint": [
+   {
+    "label": "def:generalized-pauli",
+    "env": "definition",
+    "title": "Generalized Pauli observables in characteristic two",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Weyl.sum_sgn_smul_wZ"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Weyl.proj_mul_proj",
+  "source_name": "MIPRE.Weyl.proj_mul_proj",
+  "formal_statement": "theorem MIPRE.Weyl.proj_mul_proj (hw : IsWeylFamily w) (e e' : n → F) :\n    proj w e * proj w e' = if e = e' then proj w e else 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Weyl",
+   "open Finset Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {w : (n → F) → Matrix (n → F) (n → F) ℂ}"
+  ],
+  "docstring": "**The projectors are mutually orthogonal idempotents.**",
+  "module": "MIPRE.Foundations.Weyl",
+  "module_doc": "/-!\n# Generalized Pauli operators over a field of characteristic two\n\nThe paper's `sec:generalized-pauli`: for `a ∈ F_q^n` the `X`-type operator shifts the\ncomputational basis of `(C^q)^{⊗ n}` by `a`, the `Z`-type operator is diagonal with the phase\n`ω^{tr(a · b)}`, and the two families *twisted-commute*,\n`τ^X(a) τ^Z(b) = ω^{-tr(a · b)} τ^Z(b) τ^X(a)`.\n\nThis is the missing half of the Pauli basis test's infrastructure. `MIPRE/LCS/Pauli.lean` is the\n`2 × 2` Pauli matrices for the Magic Square; what the appendix's expansion stage and its swap\nisometry both run on is the `F_q` Weyl system, and that is this file.\n\n## Two deliberate restrictions\n\n**Characteristic two.** The paper states the construction over `F_p` with `ω = e^{2πi/p}` and\nthen specializes. This file is only the `p = 2` case, where `ω = -1` and every phase is the real\nsign `MIPRE.sgn` of `MIPRE/Foundations/Sign.lean`. That is not a loss for this project: the\nPauli basis test's parameters are *admissible* (`def:admissible`), which means `q = 2^k`, and no\nconsumer instantiates it elsewhere. What it buys is large — there are no roots of unity, the\noperators are self-adjoint involutions rather than order-`p` unitaries, so they are genuine\n`±1`-observables, and `(τ^W(a))² = 1` is where the paper needs `(σ^W(a))^p = I`.\n\n**One matrix, not an iterated Kronecker product.** `(C^q)^{⊗ n}` is presented as\n`Matrix (n → F) (n → F) C`: the basis of the `n`-fold tensor power is indexed by the functions\n`n → F`, which *is* `F_q^n`. So `τ^W(a)` is a single matrix and the `n`-register statements are\nthe one-register statements with no associativity bookkeeping. The index type `n` is an arbitrary\nfinite type rather than `Fin n`, which is what lets the Pauli basis test use it at\n`n = (Fin m → Bool)`, the indexing `MIPRE.LowDegree` already uses for `F_q^M` with `M = 2^m`.\n\n## What is here\n\n`wX`, `wZ`, the group laws, self-adjointness, involutivity, unitarity, and the twisted\ncommutation `wX_mul_wZ`. Then the `Z`-eigenbasis projectors, the expansion of `wZ` in them, and\nthe Fourier inversion that recovers a projector from an average of operators --- the identity the\nexpansion stage's `E_r (-1)^{tr(ar)} Ŵ^r(u)` is an instance of. The `X` side and the maximally\nentangled state come next; they go through the Fourier transform conjugating one family into the\nother.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Weyl.lean#L457-L472",
+  "source_path": "MIPRE/Foundations/Weyl.lean",
+  "lines": [
+   457,
+   472
+  ],
+  "blueprint": [
+   {
+    "label": "def:generalized-pauli",
+    "env": "definition",
+    "title": "Generalized Pauli observables in characteristic two",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sgn_add",
+   "MIPRE.Weyl.sum_sgn_trDot"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Weyl.sum_proj",
+  "source_name": "MIPRE.Weyl.sum_proj",
+  "formal_statement": "theorem MIPRE.Weyl.sum_proj (hw : IsWeylFamily w) : ∑ e : n → F, proj w e = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Weyl",
+   "open Finset Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {w : (n → F) → Matrix (n → F) (n → F) ℂ}"
+  ],
+  "docstring": "**The projectors of a Weyl family sum to the identity.**",
+  "module": "MIPRE.Foundations.Weyl",
+  "module_doc": "/-!\n# Generalized Pauli operators over a field of characteristic two\n\nThe paper's `sec:generalized-pauli`: for `a ∈ F_q^n` the `X`-type operator shifts the\ncomputational basis of `(C^q)^{⊗ n}` by `a`, the `Z`-type operator is diagonal with the phase\n`ω^{tr(a · b)}`, and the two families *twisted-commute*,\n`τ^X(a) τ^Z(b) = ω^{-tr(a · b)} τ^Z(b) τ^X(a)`.\n\nThis is the missing half of the Pauli basis test's infrastructure. `MIPRE/LCS/Pauli.lean` is the\n`2 × 2` Pauli matrices for the Magic Square; what the appendix's expansion stage and its swap\nisometry both run on is the `F_q` Weyl system, and that is this file.\n\n## Two deliberate restrictions\n\n**Characteristic two.** The paper states the construction over `F_p` with `ω = e^{2πi/p}` and\nthen specializes. This file is only the `p = 2` case, where `ω = -1` and every phase is the real\nsign `MIPRE.sgn` of `MIPRE/Foundations/Sign.lean`. That is not a loss for this project: the\nPauli basis test's parameters are *admissible* (`def:admissible`), which means `q = 2^k`, and no\nconsumer instantiates it elsewhere. What it buys is large — there are no roots of unity, the\noperators are self-adjoint involutions rather than order-`p` unitaries, so they are genuine\n`±1`-observables, and `(τ^W(a))² = 1` is where the paper needs `(σ^W(a))^p = I`.\n\n**One matrix, not an iterated Kronecker product.** `(C^q)^{⊗ n}` is presented as\n`Matrix (n → F) (n → F) C`: the basis of the `n`-fold tensor power is indexed by the functions\n`n → F`, which *is* `F_q^n`. So `τ^W(a)` is a single matrix and the `n`-register statements are\nthe one-register statements with no associativity bookkeeping. The index type `n` is an arbitrary\nfinite type rather than `Fin n`, which is what lets the Pauli basis test use it at\n`n = (Fin m → Bool)`, the indexing `MIPRE.LowDegree` already uses for `F_q^M` with `M = 2^m`.\n\n## What is here\n\n`wX`, `wZ`, the group laws, self-adjointness, involutivity, unitarity, and the twisted\ncommutation `wX_mul_wZ`. Then the `Z`-eigenbasis projectors, the expansion of `wZ` in them, and\nthe Fourier inversion that recovers a projector from an average of operators --- the identity the\nexpansion stage's `E_r (-1)^{tr(ar)} Ŵ^r(u)` is an instance of. The `X` side and the maximally\nentangled state come next; they go through the Fourier transform conjugating one family into the\nother.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Weyl.lean#L474-L486",
+  "source_path": "MIPRE/Foundations/Weyl.lean",
+  "lines": [
+   474,
+   486
+  ],
+  "blueprint": [
+   {
+    "label": "def:generalized-pauli",
+    "env": "definition",
+    "title": "Generalized Pauli observables in characteristic two",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Weyl.sum_sgn_trDot"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Weyl.eq_sum_proj",
+  "source_name": "MIPRE.Weyl.eq_sum_proj",
+  "formal_statement": "theorem MIPRE.Weyl.eq_sum_proj (a : n → F) :\n    w a = ∑ e : n → F, sgn (trDot a e) • proj w e := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Weyl",
+   "open Finset Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {w : (n → F) → Matrix (n → F) (n → F) ℂ}"
+  ],
+  "docstring": "**A Weyl operator expands in its own projectors** with the sign coefficients: the paper's\n`eq:pauli-obs-proj` for either family.\n\nThe group law is *not* used: this is pure Fourier inversion on the index group, and holds for any\nfamily at all. What the group law buys is that the projectors are then mutually orthogonal\n(`proj_mul_proj`), which is what makes them a measurement.",
+  "module": "MIPRE.Foundations.Weyl",
+  "module_doc": "/-!\n# Generalized Pauli operators over a field of characteristic two\n\nThe paper's `sec:generalized-pauli`: for `a ∈ F_q^n` the `X`-type operator shifts the\ncomputational basis of `(C^q)^{⊗ n}` by `a`, the `Z`-type operator is diagonal with the phase\n`ω^{tr(a · b)}`, and the two families *twisted-commute*,\n`τ^X(a) τ^Z(b) = ω^{-tr(a · b)} τ^Z(b) τ^X(a)`.\n\nThis is the missing half of the Pauli basis test's infrastructure. `MIPRE/LCS/Pauli.lean` is the\n`2 × 2` Pauli matrices for the Magic Square; what the appendix's expansion stage and its swap\nisometry both run on is the `F_q` Weyl system, and that is this file.\n\n## Two deliberate restrictions\n\n**Characteristic two.** The paper states the construction over `F_p` with `ω = e^{2πi/p}` and\nthen specializes. This file is only the `p = 2` case, where `ω = -1` and every phase is the real\nsign `MIPRE.sgn` of `MIPRE/Foundations/Sign.lean`. That is not a loss for this project: the\nPauli basis test's parameters are *admissible* (`def:admissible`), which means `q = 2^k`, and no\nconsumer instantiates it elsewhere. What it buys is large — there are no roots of unity, the\noperators are self-adjoint involutions rather than order-`p` unitaries, so they are genuine\n`±1`-observables, and `(τ^W(a))² = 1` is where the paper needs `(σ^W(a))^p = I`.\n\n**One matrix, not an iterated Kronecker product.** `(C^q)^{⊗ n}` is presented as\n`Matrix (n → F) (n → F) C`: the basis of the `n`-fold tensor power is indexed by the functions\n`n → F`, which *is* `F_q^n`. So `τ^W(a)` is a single matrix and the `n`-register statements are\nthe one-register statements with no associativity bookkeeping. The index type `n` is an arbitrary\nfinite type rather than `Fin n`, which is what lets the Pauli basis test use it at\n`n = (Fin m → Bool)`, the indexing `MIPRE.LowDegree` already uses for `F_q^M` with `M = 2^m`.\n\n## What is here\n\n`wX`, `wZ`, the group laws, self-adjointness, involutivity, unitarity, and the twisted\ncommutation `wX_mul_wZ`. Then the `Z`-eigenbasis projectors, the expansion of `wZ` in them, and\nthe Fourier inversion that recovers a projector from an average of operators --- the identity the\nexpansion stage's `E_r (-1)^{tr(ar)} Ŵ^r(u)` is an instance of. The `X` side and the maximally\nentangled state come next; they go through the Fourier transform conjugating one family into the\nother.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Weyl.lean#L488-L512",
+  "source_path": "MIPRE/Foundations/Weyl.lean",
+  "lines": [
+   488,
+   512
+  ],
+  "blueprint": [
+   {
+    "label": "def:generalized-pauli",
+    "env": "definition",
+    "title": "Generalized Pauli observables in characteristic two",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sgn_add",
+   "MIPRE.Weyl.sum_sgn_trDot"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Weyl.sum_sgn_linear",
+  "source_name": "MIPRE.Weyl.sum_sgn_linear",
+  "formal_statement": "theorem MIPRE.Weyl.sum_sgn_linear {V : Type*} [AddCommGroup V] [Module (ZMod 2) V] [Fintype V]\n    [DecidableEq V] (τ : V →ₗ[ZMod 2] ZMod 2) (hτ : τ ≠ 0) : ∑ v : V, sgn (τ v) = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Weyl",
+   "open Finset Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {w : (n → F) → Matrix (n → F) (n → F) ℂ}"
+  ],
+  "docstring": "**A nonzero sign character of a finite `F_2`-space sums to zero.** `sum_sgn_trDot` and\n`sum_sgn_trMul` are its two instances; the content is the index-two kernel of\n`card_filter_ker_mul'`.",
+  "module": "MIPRE.Foundations.Weyl",
+  "module_doc": "/-!\n# Generalized Pauli operators over a field of characteristic two\n\nThe paper's `sec:generalized-pauli`: for `a ∈ F_q^n` the `X`-type operator shifts the\ncomputational basis of `(C^q)^{⊗ n}` by `a`, the `Z`-type operator is diagonal with the phase\n`ω^{tr(a · b)}`, and the two families *twisted-commute*,\n`τ^X(a) τ^Z(b) = ω^{-tr(a · b)} τ^Z(b) τ^X(a)`.\n\nThis is the missing half of the Pauli basis test's infrastructure. `MIPRE/LCS/Pauli.lean` is the\n`2 × 2` Pauli matrices for the Magic Square; what the appendix's expansion stage and its swap\nisometry both run on is the `F_q` Weyl system, and that is this file.\n\n## Two deliberate restrictions\n\n**Characteristic two.** The paper states the construction over `F_p` with `ω = e^{2πi/p}` and\nthen specializes. This file is only the `p = 2` case, where `ω = -1` and every phase is the real\nsign `MIPRE.sgn` of `MIPRE/Foundations/Sign.lean`. That is not a loss for this project: the\nPauli basis test's parameters are *admissible* (`def:admissible`), which means `q = 2^k`, and no\nconsumer instantiates it elsewhere. What it buys is large — there are no roots of unity, the\noperators are self-adjoint involutions rather than order-`p` unitaries, so they are genuine\n`±1`-observables, and `(τ^W(a))² = 1` is where the paper needs `(σ^W(a))^p = I`.\n\n**One matrix, not an iterated Kronecker product.** `(C^q)^{⊗ n}` is presented as\n`Matrix (n → F) (n → F) C`: the basis of the `n`-fold tensor power is indexed by the functions\n`n → F`, which *is* `F_q^n`. So `τ^W(a)` is a single matrix and the `n`-register statements are\nthe one-register statements with no associativity bookkeeping. The index type `n` is an arbitrary\nfinite type rather than `Fin n`, which is what lets the Pauli basis test use it at\n`n = (Fin m → Bool)`, the indexing `MIPRE.LowDegree` already uses for `F_q^M` with `M = 2^m`.\n\n## What is here\n\n`wX`, `wZ`, the group laws, self-adjointness, involutivity, unitarity, and the twisted\ncommutation `wX_mul_wZ`. Then the `Z`-eigenbasis projectors, the expansion of `wZ` in them, and\nthe Fourier inversion that recovers a projector from an average of operators --- the identity the\nexpansion stage's `E_r (-1)^{tr(ar)} Ŵ^r(u)` is an instance of. The `X` side and the maximally\nentangled state come next; they go through the Fourier transform conjugating one family into the\nother.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Weyl.lean#L580-L604",
+  "source_path": "MIPRE/Foundations/Weyl.lean",
+  "lines": [
+   580,
+   604
+  ],
+  "blueprint": [
+   {
+    "label": "def:generalized-pauli",
+    "env": "definition",
+    "title": "Generalized Pauli observables in characteristic two",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.card_filter_ker_mul'"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 20,
+  "is_target": false
+ }
+]

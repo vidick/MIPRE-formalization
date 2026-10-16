@@ -1,0 +1,649 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (eps delta gamma zeta : Error)\n    (hgamma_nonneg : 0 ≤ gamma) (hzeta_nonneg : 0 ≤ zeta)\n    (hgamma_le : gamma ≤ 1) (hzeta_le_one : zeta ≤ 1)\n    (hdq_le : params.d ≤ params.q)\n    (hgood : strategy.IsGood eps delta gamma)\n    (hcons : family.ConsistentWithPoints strategy zeta)\n    (hself : family.StronglySelfConsistent strategy.state zeta)\n    (hbound : IdxPolyFamily.SliceBoundednessInput strategy family zeta)\n    (k : ℕ) :\n    FromHToGStatement params strategy strategy.state family gamma zeta k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "`lem:from-H-to-G`, source-facing form at the strategy state.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G theorem\n\nDerivation of `lem:from-H-to-G`, from the `G`-hat facts, the half-sandwich\ncommutation theorem, and the telescoping Bernoulli-stage comparison.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG.lean#L125-L153",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG.lean",
+  "lines": [
+   125,
+   153
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.fromHToG_ofGHatFactsAndHalfSandwich",
+   "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_core",
+   "MIPStarRE.LDT.Pasting.gHatFacts"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_pointwise_finalLeftShape",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_pointwise_finalLeftShape",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_pointwise_finalLeftShape\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (ℓ n : ℕ) (x : Fq params) (xs : PointTuple params n) :\n    (∑ b : Bool, ∑ τ : GHatType n,\n      ∑ g ∈ (Finset.univ : Finset (GHatOutcome params)) with g.isSome = b,\n        ∑ gs ∈ (Finset.univ : Finset (GHatTupleOutcome params n)) with\n            gHatTupleType gs = τ,\n          let S := fromHToGRecurrenceWeight params family ℓ (prependTypeBit b τ)\n          let U := (gHatIdxMeas params family x).outcome g\n          let T := gHatHalfProductOutcomeOperator params family n xs gs\n          ev ψbi (leftTensor (ι₂ := ι) (T * Tᴴ * U) *\n            rightTensor (ι₁ := ι) (S * U))) =\n      ∑ g : GHatOutcome params, ∑ gs : GHatTupleOutcome params n,\n        let S := fromHToGRecurrenceWeight params family ℓ\n          (prependTypeBit g.isSome (gHatTupleType gs))\n        let U := (gHatIdxMeas params family x).outcome g\n        let T := gHatHalfProductOutcomeOperator params family n xs gs\n        ev ψbi ((leftTensor (ι₂ := ι) (T * Tᴴ) * rightTensor (ι₁ := ι) (S * U)) *\n          leftTensor (ι₂ := ι) U) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Pointwise rewrite of `M₃` to the left-action shape for the final move-right step.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.FinalMove",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G final move-right chain\n\nDefinition for `M₄` and the final move-right rewrite lemmas\nconnecting `M₃ → M₄`.\n\nThe preceding half-sandwich chain `M₁ → M₂ → M₃` lives in `Chain.HalfSandwich`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/FinalMove.lean#L55-L88",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/FinalMove.lean",
+  "lines": [
+   55,
+   88
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.fromHToG_moveRight_final_left_term",
+   "MIPStarRE.LDT.Pasting.fromHToG_bool_type_filtered_outcome_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM4_pointwise_finalRightShape",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM4_pointwise_finalRightShape",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM4_pointwise_finalRightShape\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (ℓ n : ℕ) (x : Fq params) (xs : PointTuple params n) :\n    (∑ b : Bool, ∑ τ : GHatType n,\n      ∑ g ∈ (Finset.univ : Finset (GHatOutcome params)) with g.isSome = b,\n        ∑ gs ∈ (Finset.univ : Finset (GHatTupleOutcome params n)) with\n            gHatTupleType gs = τ,\n          let S := fromHToGRecurrenceWeight params family ℓ (prependTypeBit b τ)\n          let U := (gHatIdxMeas params family x).outcome g\n          let T := gHatHalfProductOutcomeOperator params family n xs gs\n          ev ψbi (leftTensor (ι₂ := ι) (T * Tᴴ) *\n            rightTensor (ι₁ := ι) (S * U * U))) =\n      ∑ g : GHatOutcome params, ∑ gs : GHatTupleOutcome params n,\n        let S := fromHToGRecurrenceWeight params family ℓ\n          (prependTypeBit g.isSome (gHatTupleType gs))\n        let U := (gHatIdxMeas params family x).outcome g\n        let T := gHatHalfProductOutcomeOperator params family n xs gs\n        ev ψbi ((leftTensor (ι₂ := ι) (T * Tᴴ) * rightTensor (ι₁ := ι) (S * U)) *\n          rightTensor (ι₁ := ι) U) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Pointwise rewrite of `M₄` to the right-action shape for the final move-right step.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.FinalMove",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G final move-right chain\n\nDefinition for `M₄` and the final move-right rewrite lemmas\nconnecting `M₃ → M₄`.\n\nThe preceding half-sandwich chain `M₁ → M₂ → M₃` lives in `Chain.HalfSandwich`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/FinalMove.lean#L90-L123",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/FinalMove.lean",
+  "lines": [
+   90,
+   123
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.rightTensor_mul_rightTensor",
+   "MIPStarRE.LDT.Pasting.fromHToG_bool_type_filtered_outcome_sum"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_eq_finalLeftShape",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_eq_finalLeftShape",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_eq_finalLeftShape\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι) (k ℓ : ℕ) :\n    let n := k - (ℓ + 1)\n    fromHToGAdjacentStageM3 params ψbi family k ℓ =\n      avgOver (uniformDistribution (Fq params × PointTuple params n)) fun q =>\n        ∑ g : GHatOutcome params, ∑ gs : GHatTupleOutcome params n,\n          let S := fromHToGRecurrenceWeight params family ℓ\n            (prependTypeBit g.isSome (gHatTupleType gs))\n          let U := (gHatIdxMeas params family q.1).outcome g\n          let T := gHatHalfProductOutcomeOperator params family n q.2 gs\n          ev ψbi ((leftTensor (ι₂ := ι) (T * Tᴴ) * rightTensor (ι₁ := ι) (S * U)) *\n            leftTensor (ι₂ := ι) U) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Global rewrite of `M₃` to the left-action shape for the final move-right step.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.FinalMove",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G final move-right chain\n\nDefinition for `M₄` and the final move-right rewrite lemmas\nconnecting `M₃ → M₄`.\n\nThe preceding half-sandwich chain `M₁ → M₂ → M₃` lives in `Chain.HalfSandwich`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/FinalMove.lean#L146-L184",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/FinalMove.lean",
+  "lines": [
+   146,
+   184
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_pointwise_finalLeftShape",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStage_globalize_pointwiseShape"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM4_eq_finalRightShape",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM4_eq_finalRightShape",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM4_eq_finalRightShape\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι) (k ℓ : ℕ) :\n    let n := k - (ℓ + 1)\n    fromHToGAdjacentStageM4 params ψbi family k ℓ =\n      avgOver (uniformDistribution (Fq params × PointTuple params n)) fun q =>\n        ∑ g : GHatOutcome params, ∑ gs : GHatTupleOutcome params n,\n          let S := fromHToGRecurrenceWeight params family ℓ\n            (prependTypeBit g.isSome (gHatTupleType gs))\n          let U := (gHatIdxMeas params family q.1).outcome g\n          let T := gHatHalfProductOutcomeOperator params family n q.2 gs\n          ev ψbi ((leftTensor (ι₂ := ι) (T * Tᴴ) * rightTensor (ι₁ := ι) (S * U)) *\n            rightTensor (ι₁ := ι) U) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Global rewrite of `M₄` to the right-action shape for the final move-right step.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.FinalMove",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G final move-right chain\n\nDefinition for `M₄` and the final move-right rewrite lemmas\nconnecting `M₃ → M₄`.\n\nThe preceding half-sandwich chain `M₁ → M₂ → M₃` lives in `Chain.HalfSandwich`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/FinalMove.lean#L186-L224",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/FinalMove.lean",
+  "lines": [
+   186,
+   224
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM4_pointwise_finalRightShape",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStage_globalize_pointwiseShape"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_pointwise_halfSandwichLeftShape",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_pointwise_halfSandwichLeftShape",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_pointwise_halfSandwichLeftShape\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (ℓ n : ℕ) (x : Fq params) (xs : PointTuple params n) :\n    (∑ b : Bool, ∑ τ : GHatType n,\n      ∑ g ∈ (Finset.univ : Finset (GHatOutcome params)) with g.isSome = b,\n        ∑ gs ∈ (Finset.univ : Finset (GHatTupleOutcome params n)) with\n            gHatTupleType gs = τ,\n          let S := fromHToGRecurrenceWeight params family ℓ (prependTypeBit b τ)\n          let U := (gHatIdxMeas params family x).outcome g\n          let T := gHatHalfProductOutcomeOperator params family n xs gs\n          ev ψbi (leftTensor (ι₂ := ι) (U * T * Tᴴ) *\n            rightTensor (ι₁ := ι) (S * U))) =\n      ∑ g : GHatOutcome params, ∑ gs : GHatTupleOutcome params n,\n        let S := fromHToGRecurrenceWeight params family ℓ\n          (prependTypeBit g.isSome (gHatTupleType gs))\n        let U := (gHatIdxMeas params family x).outcome g\n        let T := gHatHalfProductOutcomeOperator params family n xs gs\n        ev ψbi (leftTensor (ι₂ := ι) (U * T) *\n          (leftTensor (ι₂ := ι) Tᴴ * rightTensor (ι₁ := ι) (S * U))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Pointwise rewrite of `M₁` to the half-sandwich source shape.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.HalfSandwich",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G half-sandwich chain\n\nDefinitions for `M₂` and `M₃`, and the half-sandwich rewrite lemmas\nconnecting `M₁ → M₂ → M₃` via approximate commutation of the G-half sandwich.\n\nThe final move-right chain `M₃ → M₄` lives in `Chain.FinalMove`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean#L97-L130",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean",
+  "lines": [
+   97,
+   130
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.Pasting.fromHToG_bool_type_filtered_outcome_sum"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_pointwise_halfSandwichRightShape",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_pointwise_halfSandwichRightShape",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_pointwise_halfSandwichRightShape\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (ℓ n : ℕ) (x : Fq params) (xs : PointTuple params n) :\n    (∑ b : Bool, ∑ τ : GHatType n,\n      ∑ g ∈ (Finset.univ : Finset (GHatOutcome params)) with g.isSome = b,\n        ∑ gs ∈ (Finset.univ : Finset (GHatTupleOutcome params n)) with\n            gHatTupleType gs = τ,\n          let S := fromHToGRecurrenceWeight params family ℓ (prependTypeBit b τ)\n          let U := (gHatIdxMeas params family x).outcome g\n          let T := gHatHalfProductOutcomeOperator params family n xs gs\n          ev ψbi (leftTensor (ι₂ := ι) (T * U * Tᴴ) *\n            rightTensor (ι₁ := ι) (S * U))) =\n      ∑ g : GHatOutcome params, ∑ gs : GHatTupleOutcome params n,\n        let S := fromHToGRecurrenceWeight params family ℓ\n          (prependTypeBit g.isSome (gHatTupleType gs))\n        let U := (gHatIdxMeas params family x).outcome g\n        let T := gHatHalfProductOutcomeOperator params family n xs gs\n        ev ψbi (leftTensor (ι₂ := ι) (T * U) *\n          (leftTensor (ι₂ := ι) Tᴴ * rightTensor (ι₁ := ι) (S * U))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Pointwise rewrite of `M₂` to the half-sandwich target shape.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.HalfSandwich",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G half-sandwich chain\n\nDefinitions for `M₂` and `M₃`, and the half-sandwich rewrite lemmas\nconnecting `M₁ → M₂ → M₃` via approximate commutation of the G-half sandwich.\n\nThe final move-right chain `M₃ → M₄` lives in `Chain.FinalMove`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean#L132-L165",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean",
+  "lines": [
+   132,
+   165
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.Pasting.fromHToG_bool_type_filtered_outcome_sum"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_pointwise_halfSandwichRightAdjointShape",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_pointwise_halfSandwichRightAdjointShape",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_pointwise_halfSandwichRightAdjointShape\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (ℓ n : ℕ) (x : Fq params) (xs : PointTuple params n) :\n    (∑ b : Bool, ∑ τ : GHatType n,\n      ∑ g ∈ (Finset.univ : Finset (GHatOutcome params)) with g.isSome = b,\n        ∑ gs ∈ (Finset.univ : Finset (GHatTupleOutcome params n)) with\n            gHatTupleType gs = τ,\n          let S := fromHToGRecurrenceWeight params family ℓ (prependTypeBit b τ)\n          let U := (gHatIdxMeas params family x).outcome g\n          let T := gHatHalfProductOutcomeOperator params family n xs gs\n          ev ψbi (leftTensor (ι₂ := ι) (T * U * Tᴴ) *\n            rightTensor (ι₁ := ι) (S * U))) =\n      ∑ g : GHatOutcome params, ∑ gs : GHatTupleOutcome params n,\n        let S := fromHToGRecurrenceWeight params family ℓ\n          (prependTypeBit g.isSome (gHatTupleType gs))\n        let U := (gHatIdxMeas params family x).outcome g\n        let T := gHatHalfProductOutcomeOperator params family n xs gs\n        ev ψbi (leftTensor (ι₂ := ι) T *\n          (leftTensor (ι₂ := ι) (U * Tᴴ) * rightTensor (ι₁ := ι) (S * U))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Pointwise rewrite of `M₂` to the adjoint half-sandwich source shape.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.HalfSandwich",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G half-sandwich chain\n\nDefinitions for `M₂` and `M₃`, and the half-sandwich rewrite lemmas\nconnecting `M₁ → M₂ → M₃` via approximate commutation of the G-half sandwich.\n\nThe final move-right chain `M₃ → M₄` lives in `Chain.FinalMove`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean#L167-L200",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean",
+  "lines": [
+   167,
+   200
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.Pasting.fromHToG_bool_type_filtered_outcome_sum"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_pointwise_halfSandwichLeftAdjointShape",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_pointwise_halfSandwichLeftAdjointShape",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_pointwise_halfSandwichLeftAdjointShape\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (ℓ n : ℕ) (x : Fq params) (xs : PointTuple params n) :\n    (∑ b : Bool, ∑ τ : GHatType n,\n      ∑ g ∈ (Finset.univ : Finset (GHatOutcome params)) with g.isSome = b,\n        ∑ gs ∈ (Finset.univ : Finset (GHatTupleOutcome params n)) with\n            gHatTupleType gs = τ,\n          let S := fromHToGRecurrenceWeight params family ℓ (prependTypeBit b τ)\n          let U := (gHatIdxMeas params family x).outcome g\n          let T := gHatHalfProductOutcomeOperator params family n xs gs\n          ev ψbi (leftTensor (ι₂ := ι) (T * Tᴴ * U) *\n            rightTensor (ι₁ := ι) (S * U))) =\n      ∑ g : GHatOutcome params, ∑ gs : GHatTupleOutcome params n,\n        let S := fromHToGRecurrenceWeight params family ℓ\n          (prependTypeBit g.isSome (gHatTupleType gs))\n        let U := (gHatIdxMeas params family x).outcome g\n        let T := gHatHalfProductOutcomeOperator params family n xs gs\n        ev ψbi (leftTensor (ι₂ := ι) T *\n          (leftTensor (ι₂ := ι) (Tᴴ * U) * rightTensor (ι₁ := ι) (S * U))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Pointwise rewrite of `M₃` to the adjoint half-sandwich target shape.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.HalfSandwich",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G half-sandwich chain\n\nDefinitions for `M₂` and `M₃`, and the half-sandwich rewrite lemmas\nconnecting `M₁ → M₂ → M₃` via approximate commutation of the G-half sandwich.\n\nThe final move-right chain `M₃ → M₄` lives in `Chain.FinalMove`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean#L202-L235",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean",
+  "lines": [
+   202,
+   235
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.Pasting.fromHToG_bool_type_filtered_outcome_sum"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_eq_halfSandwichLeftShape",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_eq_halfSandwichLeftShape",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_eq_halfSandwichLeftShape\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι) (k ℓ : ℕ) :\n    let n := k - (ℓ + 1)\n    fromHToGAdjacentStageM1 params ψbi family k ℓ =\n      avgOver (uniformDistribution (Fq params × PointTuple params n)) fun q =>\n        ∑ g : GHatOutcome params, ∑ gs : GHatTupleOutcome params n,\n          let S := fromHToGRecurrenceWeight params family ℓ\n            (prependTypeBit g.isSome (gHatTupleType gs))\n          let U := (gHatIdxMeas params family q.1).outcome g\n          let T := gHatHalfProductOutcomeOperator params family n q.2 gs\n          ev ψbi (leftTensor (ι₂ := ι) (U * T) *\n              (leftTensor (ι₂ := ι) Tᴴ * rightTensor (ι₁ := ι) (S * U))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Global rewrite of `M₁` to the half-sandwich source shape.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.HalfSandwich",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G half-sandwich chain\n\nDefinitions for `M₂` and `M₃`, and the half-sandwich rewrite lemmas\nconnecting `M₁ → M₂ → M₃` via approximate commutation of the G-half sandwich.\n\nThe final move-right chain `M₃ → M₄` lives in `Chain.FinalMove`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean#L237-L276",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean",
+  "lines": [
+   237,
+   276
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_pointwise_halfSandwichLeftShape",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStage_globalize_pointwiseShape"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_eq_halfSandwichRightShape",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_eq_halfSandwichRightShape",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_eq_halfSandwichRightShape\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι) (k ℓ : ℕ) :\n    let n := k - (ℓ + 1)\n    fromHToGAdjacentStageM2 params ψbi family k ℓ =\n      avgOver (uniformDistribution (Fq params × PointTuple params n)) fun q =>\n        ∑ g : GHatOutcome params, ∑ gs : GHatTupleOutcome params n,\n          let S := fromHToGRecurrenceWeight params family ℓ\n            (prependTypeBit g.isSome (gHatTupleType gs))\n          let U := (gHatIdxMeas params family q.1).outcome g\n          let T := gHatHalfProductOutcomeOperator params family n q.2 gs\n          ev ψbi (leftTensor (ι₂ := ι) (T * U) *\n              (leftTensor (ι₂ := ι) Tᴴ * rightTensor (ι₁ := ι) (S * U))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Global rewrite of `M₂` to the half-sandwich target shape.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.HalfSandwich",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G half-sandwich chain\n\nDefinitions for `M₂` and `M₃`, and the half-sandwich rewrite lemmas\nconnecting `M₁ → M₂ → M₃` via approximate commutation of the G-half sandwich.\n\nThe final move-right chain `M₃ → M₄` lives in `Chain.FinalMove`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean#L278-L317",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean",
+  "lines": [
+   278,
+   317
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_pointwise_halfSandwichRightShape",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStage_globalize_pointwiseShape"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_eq_halfSandwichRightAdjointShape",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_eq_halfSandwichRightAdjointShape",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_eq_halfSandwichRightAdjointShape\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι) (k ℓ : ℕ) :\n    let n := k - (ℓ + 1)\n    fromHToGAdjacentStageM2 params ψbi family k ℓ =\n      avgOver (uniformDistribution (Fq params × PointTuple params n)) fun q =>\n        ∑ g : GHatOutcome params, ∑ gs : GHatTupleOutcome params n,\n          let S := fromHToGRecurrenceWeight params family ℓ\n            (prependTypeBit g.isSome (gHatTupleType gs))\n          let U := (gHatIdxMeas params family q.1).outcome g\n          let T := gHatHalfProductOutcomeOperator params family n q.2 gs\n          ev ψbi (leftTensor (ι₂ := ι) T *\n            (leftTensor (ι₂ := ι) (U * Tᴴ) * rightTensor (ι₁ := ι) (S * U))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Global rewrite of `M₂` to the adjoint half-sandwich source shape.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.HalfSandwich",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G half-sandwich chain\n\nDefinitions for `M₂` and `M₃`, and the half-sandwich rewrite lemmas\nconnecting `M₁ → M₂ → M₃` via approximate commutation of the G-half sandwich.\n\nThe final move-right chain `M₃ → M₄` lives in `Chain.FinalMove`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean#L319-L358",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean",
+  "lines": [
+   319,
+   358
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_pointwise_halfSandwichRightAdjointShape",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStage_globalize_pointwiseShape"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_eq_halfSandwichLeftAdjointShape",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_eq_halfSandwichLeftAdjointShape",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_eq_halfSandwichLeftAdjointShape\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι) (k ℓ : ℕ) :\n    let n := k - (ℓ + 1)\n    fromHToGAdjacentStageM3 params ψbi family k ℓ =\n      avgOver (uniformDistribution (Fq params × PointTuple params n)) fun q =>\n        ∑ g : GHatOutcome params, ∑ gs : GHatTupleOutcome params n,\n          let S := fromHToGRecurrenceWeight params family ℓ\n            (prependTypeBit g.isSome (gHatTupleType gs))\n          let U := (gHatIdxMeas params family q.1).outcome g\n          let T := gHatHalfProductOutcomeOperator params family n q.2 gs\n          ev ψbi (leftTensor (ι₂ := ι) T *\n            (leftTensor (ι₂ := ι) (Tᴴ * U) * rightTensor (ι₁ := ι) (S * U))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Global rewrite of `M₃` to the adjoint half-sandwich target shape.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.HalfSandwich",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G half-sandwich chain\n\nDefinitions for `M₂` and `M₃`, and the half-sandwich rewrite lemmas\nconnecting `M₁ → M₂ → M₃` via approximate commutation of the G-half sandwich.\n\nThe final move-right chain `M₃ → M₄` lives in `Chain.FinalMove`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean#L360-L399",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean",
+  "lines": [
+   360,
+   399
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_pointwise_halfSandwichLeftAdjointShape",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStage_globalize_pointwiseShape"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_eq_halfSandwichRightAdjointLeftActionShape",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_eq_halfSandwichRightAdjointLeftActionShape",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_eq_halfSandwichRightAdjointLeftActionShape\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι) (k ℓ : ℕ) :\n    let n := k - (ℓ + 1)\n    fromHToGAdjacentStageM2 params ψbi family k ℓ =\n      avgOver (uniformDistribution (Fq params × PointTuple params n)) fun q =>\n        ∑ g : GHatOutcome params, ∑ gs : GHatTupleOutcome params n,\n          let S := fromHToGRecurrenceWeight params family ℓ\n            (prependTypeBit g.isSome (gHatTupleType gs))\n          let U := (gHatIdxMeas params family q.1).outcome g\n          let T := gHatHalfProductOutcomeOperator params family n q.2 gs\n          ev ψbi ((leftTensor (ι₂ := ι) T * rightTensor (ι₁ := ι) (S * U)) *\n            leftTensor (ι₂ := ι) (U * Tᴴ)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Global rewrite of `M₂` to the left-action adjoint half-sandwich source shape.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.HalfSandwich",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G half-sandwich chain\n\nDefinitions for `M₂` and `M₃`, and the half-sandwich rewrite lemmas\nconnecting `M₁ → M₂ → M₃` via approximate commutation of the G-half sandwich.\n\nThe final move-right chain `M₃ → M₄` lives in `Chain.FinalMove`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean#L401-L449",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean",
+  "lines": [
+   401,
+   449
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_eq_halfSandwichRightAdjointShape"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_eq_halfSandwichLeftAdjointLeftActionShape",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_eq_halfSandwichLeftAdjointLeftActionShape",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_eq_halfSandwichLeftAdjointLeftActionShape\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι) (k ℓ : ℕ) :\n    let n := k - (ℓ + 1)\n    fromHToGAdjacentStageM3 params ψbi family k ℓ =\n      avgOver (uniformDistribution (Fq params × PointTuple params n)) fun q =>\n        ∑ g : GHatOutcome params, ∑ gs : GHatTupleOutcome params n,\n          let S := fromHToGRecurrenceWeight params family ℓ\n            (prependTypeBit g.isSome (gHatTupleType gs))\n          let U := (gHatIdxMeas params family q.1).outcome g\n          let T := gHatHalfProductOutcomeOperator params family n q.2 gs\n          ev ψbi ((leftTensor (ι₂ := ι) T * rightTensor (ι₁ := ι) (S * U)) *\n            leftTensor (ι₂ := ι) (Tᴴ * U)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Global rewrite of `M₃` to the left-action adjoint half-sandwich target shape.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.Chain.HalfSandwich",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G half-sandwich chain\n\nDefinitions for `M₂` and `M₃`, and the half-sandwich rewrite lemmas\nconnecting `M₁ → M₂ → M₃` via approximate commutation of the G-half sandwich.\n\nThe final move-right chain `M₃ → M₄` lives in `Chain.FinalMove`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean#L451-L499",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/Chain/HalfSandwich.lean",
+  "lines": [
+   451,
+   499
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_eq_halfSandwichLeftAdjointShape"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGStageMass_eq_adjacentStageA0",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGStageMass_eq_adjacentStageA0",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGStageMass_eq_adjacentStageA0\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    {k ℓ : ℕ} (hℓ : ℓ < k) :\n    fromHToGStageMass params ψbi family k ℓ =\n      fromHToGAdjacentStageA0 params ψbi family k ℓ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "A nonterminal Lean stage is exactly the paper's adjacent-stage source scalar.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.StageA0M1",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G adjacent-stage source scalars\n\nDefinitions for the paper's adjacent-stage source scalars `A₀` and `M₁`, together\nwith their shape rewrites and the supporting move-right and half-sandwich context\nalgebra lemmas.\n\nThis file covers the definitions up to the first move-right step and the\nhalf-sandwich context algebra.  The downstream chain `M₁ → M₂ → M₃ → M₄` is\nsplit between `AdjacentStages.Chain.HalfSandwich` and\n`AdjacentStages.Chain.FinalMove`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/StageA0M1.lean#L81-L120",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/StageA0M1.lean",
+  "lines": [
+   81,
+   120
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.fromHToGStageMass_split_succ",
+   "MIPStarRE.LDT.Pasting.fromHToGTailStageMass_cons_eq_adjacentStageA0_branch"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_moveRight_left_term",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_moveRight_left_term",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_moveRight_left_term\n    (U T S : MIPStarRE.Quantum.Op ι) :\n    (leftTensor (ι₂ := ι) (U * T * Tᴴ) * rightTensor (ι₁ := ι) S) *\n        leftTensor (ι₂ := ι) U =\n      leftTensor (ι₂ := ι) (U * T * Tᴴ * U) * rightTensor (ι₁ := ι) S := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Algebra for the left-action term in the first move-right estimate.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.StageA0M1",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G adjacent-stage source scalars\n\nDefinitions for the paper's adjacent-stage source scalars `A₀` and `M₁`, together\nwith their shape rewrites and the supporting move-right and half-sandwich context\nalgebra lemmas.\n\nThis file covers the definitions up to the first move-right step and the\nhalf-sandwich context algebra.  The downstream chain `M₁ → M₂ → M₃ → M₄` is\nsplit between `AdjacentStages.Chain.HalfSandwich` and\n`AdjacentStages.Chain.FinalMove`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/StageA0M1.lean#L143-L164",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/StageA0M1.lean",
+  "lines": [
+   143,
+   164
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_moveRight_final_left_term",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_moveRight_final_left_term",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_moveRight_final_left_term\n    (U T S : MIPStarRE.Quantum.Op ι) :\n    (leftTensor (ι₂ := ι) (T * Tᴴ) * rightTensor (ι₁ := ι) (S * U)) *\n        leftTensor (ι₂ := ι) U =\n      leftTensor (ι₂ := ι) (T * Tᴴ * U) * rightTensor (ι₁ := ι) (S * U) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Algebra for the left-action term in the final move-right estimate.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.StageA0M1",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G adjacent-stage source scalars\n\nDefinitions for the paper's adjacent-stage source scalars `A₀` and `M₁`, together\nwith their shape rewrites and the supporting move-right and half-sandwich context\nalgebra lemmas.\n\nThis file covers the definitions up to the first move-right step and the\nhalf-sandwich context algebra.  The downstream chain `M₁ → M₂ → M₃ → M₄` is\nsplit between `AdjacentStages.Chain.HalfSandwich` and\n`AdjacentStages.Chain.FinalMove`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/StageA0M1.lean#L181-L202",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/StageA0M1.lean",
+  "lines": [
+   181,
+   202
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageA0_pointwise_leftShape",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageA0_pointwise_leftShape",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageA0_pointwise_leftShape\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (ℓ n : ℕ) (x : Fq params) (xs : PointTuple params n) :\n    (∑ b : Bool, ∑ τ : GHatType n,\n      ∑ g ∈ (Finset.univ : Finset (GHatOutcome params)) with g.isSome = b,\n        ∑ gs ∈ (Finset.univ : Finset (GHatTupleOutcome params n)) with\n            gHatTupleType gs = τ,\n          let S := fromHToGRecurrenceWeight params family ℓ (prependTypeBit b τ)\n          let U := (gHatIdxMeas params family x).outcome g\n          let T := gHatHalfProductOutcomeOperator params family n xs gs\n          ev ψbi (leftTensor (ι₂ := ι) (U * T * Tᴴ * U) *\n            rightTensor (ι₁ := ι) S)) =\n      ∑ g : GHatOutcome params, ∑ gs : GHatTupleOutcome params n,\n        let S := fromHToGRecurrenceWeight params family ℓ\n          (prependTypeBit g.isSome (gHatTupleType gs))\n        let U := (gHatIdxMeas params family x).outcome g\n        let T := gHatHalfProductOutcomeOperator params family n xs gs\n        ev ψbi ((leftTensor (ι₂ := ι) (U * T * Tᴴ) * rightTensor (ι₁ := ι) S) *\n          leftTensor (ι₂ := ι) U) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Pointwise rewrite of `A0` to the left-action shape used by `closenessOfIP`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.StageA0M1",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G adjacent-stage source scalars\n\nDefinitions for the paper's adjacent-stage source scalars `A₀` and `M₁`, together\nwith their shape rewrites and the supporting move-right and half-sandwich context\nalgebra lemmas.\n\nThis file covers the definitions up to the first move-right step and the\nhalf-sandwich context algebra.  The downstream chain `M₁ → M₂ → M₃ → M₄` is\nsplit between `AdjacentStages.Chain.HalfSandwich` and\n`AdjacentStages.Chain.FinalMove`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/StageA0M1.lean#L323-L356",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/StageA0M1.lean",
+  "lines": [
+   323,
+   356
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.fromHToG_moveRight_left_term",
+   "MIPStarRE.LDT.Pasting.fromHToG_bool_type_filtered_outcome_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_pointwise_rightShape",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_pointwise_rightShape",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_pointwise_rightShape\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (ℓ n : ℕ) (x : Fq params) (xs : PointTuple params n) :\n    (∑ b : Bool, ∑ τ : GHatType n,\n      ∑ g ∈ (Finset.univ : Finset (GHatOutcome params)) with g.isSome = b,\n        ∑ gs ∈ (Finset.univ : Finset (GHatTupleOutcome params n)) with\n            gHatTupleType gs = τ,\n          let S := fromHToGRecurrenceWeight params family ℓ (prependTypeBit b τ)\n          let U := (gHatIdxMeas params family x).outcome g\n          let T := gHatHalfProductOutcomeOperator params family n xs gs\n          ev ψbi (leftTensor (ι₂ := ι) (U * T * Tᴴ) *\n            rightTensor (ι₁ := ι) (S * U))) =\n      ∑ g : GHatOutcome params, ∑ gs : GHatTupleOutcome params n,\n        let S := fromHToGRecurrenceWeight params family ℓ\n          (prependTypeBit g.isSome (gHatTupleType gs))\n        let U := (gHatIdxMeas params family x).outcome g\n        let T := gHatHalfProductOutcomeOperator params family n xs gs\n        ev ψbi ((leftTensor (ι₂ := ι) (U * T * Tᴴ) * rightTensor (ι₁ := ι) S) *\n          rightTensor (ι₁ := ι) U) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Pointwise rewrite of `M₁` to the right-action shape used by `closenessOfIP`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.StageA0M1",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G adjacent-stage source scalars\n\nDefinitions for the paper's adjacent-stage source scalars `A₀` and `M₁`, together\nwith their shape rewrites and the supporting move-right and half-sandwich context\nalgebra lemmas.\n\nThis file covers the definitions up to the first move-right step and the\nhalf-sandwich context algebra.  The downstream chain `M₁ → M₂ → M₃ → M₄` is\nsplit between `AdjacentStages.Chain.HalfSandwich` and\n`AdjacentStages.Chain.FinalMove`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/StageA0M1.lean#L358-L391",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/StageA0M1.lean",
+  "lines": [
+   358,
+   391
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.rightTensor_mul_rightTensor",
+   "MIPStarRE.LDT.Pasting.fromHToG_bool_type_filtered_outcome_sum"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ }
+]

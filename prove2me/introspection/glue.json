@@ -1,0 +1,23 @@
+{
+ "items": [
+  {
+   "theorem_name": "MIPRE.Introspection.nonempty_seven",
+   "slug": "MIPRE_Introspection_nonempty_seven",
+   "kind": "leaf-closure",
+   "formal_statement": "theorem MIPRE.Introspection.nonempty_seven : Nonempty (MIPRE.Introspection 7) := by sorry",
+   "preamble": "import Definitions.Def_MIPRE_Background_Introspection_Compiler\nimport Definitions.Def_MIPRE_Foundations_Pipeline_Introspection",
+   "stub_file": null,
+   "stub_published": true,
+   "solution_file": "Solutions/Sol_MIPRE_Introspection_nonempty_seven.lean",
+   "imported_nodes": [],
+   "source": {
+    "file": "MIPRE/Background/Introspection/Compiler.lean",
+    "commit": "70cbf1c"
+   },
+   "witness": "\u27e8MIPRE.Introspection.seven\u27e9"
+  }
+ ],
+ "generated": [
+  "Solutions/Sol_MIPRE_Introspection_nonempty_seven.lean"
+ ]
+}

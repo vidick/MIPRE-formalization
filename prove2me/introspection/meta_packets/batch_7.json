@@ -1,0 +1,806 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_six_seven",
+  "source_name": "MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_six_seven",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_six_seven {hm : m ∣ Fintype.card F} {ε : ℝ}\n    (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)\n    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) (v : Anc F m) :\n    (∑ u, uniform (Point F m) u\n        * ∑ a : F, snorm M.physVec (M.chainT W v u 6 a - M.chainT W v u 7 a) ^ 2)\n      ≤ δ + 2 * Real.sqrt (172 * ε) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**And its cost**, which is display `eq:qld-pulling-10` complete, read on the second cut.",
+  "module": "MIPRE.Background.QLD.ChainAssembly",
+  "module_doc": "/-!\n# The pulling chain, assembled\n\n`MIPRE/Background/QLD/Chain.lean` proves the eleven displays of `lem:qld-pauli-selfcons`'s\nderivation one at a time. This file names the terms they run through and reads the displays as\nbounds on *consecutive deviations*, which is the form the chaining inequality consumes.\n\n`chainT` is the chain, on the physical cut: ten terms for nine steps. The four displays\n`eq:qld-pulling-0` to `-3` are local in the grouping the state `Phi` lives on and enter lifted;\neverything from `-5` on is local in the physical grouping and enters directly. The three terms\nbetween `-3` and `-5` are left out, the chain paying nothing for them\n(`physLift_chainU3b_mulVec`).\n\nThree of the nine steps are free --- `eq:qld-pulling-2` and `-2b`, then `-3a` to `-5`, then\n`-9a` --- and the six that are not cost, in order: item 1 of `lem:qld-helper`, the game's\npoint--point consistency, item 2 of `lem:qld-helper`, `eq:qld-pulling-10` complete, item 2 of\n`lem:qld-helper` again at the second cut, and Schwartz--Zippel. The chain's total is nine times\ntheir sum, not two to the ninth power, because a chain's deviation telescopes and Cauchy--Schwarz\nagainst the constant one turns the squared norm of a sum of nine terms into nine times the sum of\ntheir squares (`sum_snorm_sq_chain_le`).\n\nThe last thing this file needs that `Chain.lean` did not have is the cost of `eq:qld-pulling-3`:\n`sum_uniform_xSqNorm_pt_le` reads the game's point--point consistency on the cut the chain runs\non, which the padded state reproduces because it reproduces the expanded state's expectations and\nthe expanded state's pair contributes only its norm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ChainAssembly.lean#L365-L398",
+  "source_path": "MIPRE/Background/QLD/ChainAssembly.lean",
+  "lines": [
+   365,
+   398
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.SimulPair.sum_uniform_qform_ne_le",
+   "MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainQ_disagree_le",
+   "MIPRE.QLD.MirrorSimul.sum_qform_bobTail_eq",
+   "MIPRE.QLD.MirrorSimul.chainT_six_sub_seven",
+   "MIPRE.QLD.swapVec_unit",
+   "MIPRE.QLD.povmValue_swapped_le",
+   "MIPRE.mulVec_kron_kron_expVec",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.bornProb_reindex",
+   "MIPRE.bornProb_swapVec",
+   "MIPRE.Weyl.epr_unit"
+  ],
+  "pasted_helpers": 26,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.chainT_eight_sub_seven",
+  "source_name": "MIPRE.QLD.MirrorSimul.chainT_eight_sub_seven",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.chainT_eight_sub_seven (W : Bas) (v : Anc F m) (u : Point F m) (a : F) :\n    M.chainT W v u 8 a - M.chainT W v u 7 a\n      = ∑ q ∈ (univ.filter fun q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)\n            × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) =>\n            chainQShift u q = q.2.1.eval u).filter\n          fun q => dotF (chainLabel q.1.1 q.1.2) v = a,\n        M.chainQ W q\n          * M.bobLift (1 - (aOp (hatMats MB W u (q.2.1.eval u))\n              : Matrix ((dB × Anc F m) × M.Eb) _ ℂ)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**Step 7 to 8 is `eq:qld-pulling-11`**: dropping Bob's point measurement from his side.",
+  "module": "MIPRE.Background.QLD.ChainAssembly",
+  "module_doc": "/-!\n# The pulling chain, assembled\n\n`MIPRE/Background/QLD/Chain.lean` proves the eleven displays of `lem:qld-pauli-selfcons`'s\nderivation one at a time. This file names the terms they run through and reads the displays as\nbounds on *consecutive deviations*, which is the form the chaining inequality consumes.\n\n`chainT` is the chain, on the physical cut: ten terms for nine steps. The four displays\n`eq:qld-pulling-0` to `-3` are local in the grouping the state `Phi` lives on and enter lifted;\neverything from `-5` on is local in the physical grouping and enters directly. The three terms\nbetween `-3` and `-5` are left out, the chain paying nothing for them\n(`physLift_chainU3b_mulVec`).\n\nThree of the nine steps are free --- `eq:qld-pulling-2` and `-2b`, then `-3a` to `-5`, then\n`-9a` --- and the six that are not cost, in order: item 1 of `lem:qld-helper`, the game's\npoint--point consistency, item 2 of `lem:qld-helper`, `eq:qld-pulling-10` complete, item 2 of\n`lem:qld-helper` again at the second cut, and Schwartz--Zippel. The chain's total is nine times\ntheir sum, not two to the ninth power, because a chain's deviation telescopes and Cauchy--Schwarz\nagainst the constant one turns the squared norm of a sum of nine terms into nine times the sum of\ntheir squares (`sum_snorm_sq_chain_le`).\n\nThe last thing this file needs that `Chain.lean` did not have is the cost of `eq:qld-pulling-3`:\n`sum_uniform_xSqNorm_pt_le` reads the game's point--point consistency on the cut the chain runs\non, which the padded state reproduces because it reproduces the expanded state's expectations and\nthe expanded state's pair contributes only its norm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ChainAssembly.lean#L410-L442",
+  "source_path": "MIPRE/Background/QLD/ChainAssembly.lean",
+  "lines": [
+   410,
+   442
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_sub"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.chainT_eight_sub_nine",
+  "source_name": "MIPRE.QLD.MirrorSimul.chainT_eight_sub_nine",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.chainT_eight_sub_nine (W : Bas) (v : Anc F m) (u : Point F m) (a : F) :\n    M.chainT W v u 8 a - M.chainT W v u 9 a\n      = ∑ q ∈ (univ.filter fun q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)\n            × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) =>\n            MIPRE.QLD.chainQShift u q = q.2.1.eval u\n              ∧ ¬ ChainCoupled q.1.1 q.2.1 q.1.2 q.2.2).filter\n          fun q => dotF (chainLabel q.1.1 q.1.2) v = a,\n        M.chainQ W q := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**Step 8 to 9 is `eq:qld-pulling-12`**: what the chain drops is the pairs that agree at the\nsampled point without being coupled.",
+  "module": "MIPRE.Background.QLD.ChainAssembly",
+  "module_doc": "/-!\n# The pulling chain, assembled\n\n`MIPRE/Background/QLD/Chain.lean` proves the eleven displays of `lem:qld-pauli-selfcons`'s\nderivation one at a time. This file names the terms they run through and reads the displays as\nbounds on *consecutive deviations*, which is the form the chaining inequality consumes.\n\n`chainT` is the chain, on the physical cut: ten terms for nine steps. The four displays\n`eq:qld-pulling-0` to `-3` are local in the grouping the state `Phi` lives on and enter lifted;\neverything from `-5` on is local in the physical grouping and enters directly. The three terms\nbetween `-3` and `-5` are left out, the chain paying nothing for them\n(`physLift_chainU3b_mulVec`).\n\nThree of the nine steps are free --- `eq:qld-pulling-2` and `-2b`, then `-3a` to `-5`, then\n`-9a` --- and the six that are not cost, in order: item 1 of `lem:qld-helper`, the game's\npoint--point consistency, item 2 of `lem:qld-helper`, `eq:qld-pulling-10` complete, item 2 of\n`lem:qld-helper` again at the second cut, and Schwartz--Zippel. The chain's total is nine times\ntheir sum, not two to the ninth power, because a chain's deviation telescopes and Cauchy--Schwarz\nagainst the constant one turns the squared norm of a sum of nine terms into nine times the sum of\ntheir squares (`sum_snorm_sq_chain_le`).\n\nThe last thing this file needs that `Chain.lean` did not have is the cost of `eq:qld-pulling-3`:\n`sum_uniform_xSqNorm_pt_le` reads the game's point--point consistency on the cut the chain runs\non, which the padded state reproduces because it reproduces the expanded state's expectations and\nthe expanded state's pair contributes only its norm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ChainAssembly.lean#L473-L522",
+  "source_path": "MIPRE/Background/QLD/ChainAssembly.lean",
+  "lines": [
+   473,
+   522
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 6,
+  "prooflines": 40,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_le",
+  "source_name": "MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_le",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_le {hm : m ∣ Fintype.card F} {ε : ℝ}\n    (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)\n    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (hd : 1 ≤ d)\n    (W : Bas) (v : Anc F m) :\n    (∑ u, uniform (Point F m) u\n        * ∑ a : F, snorm M.physVec (M.chainT W v u 0 a - M.chainT W v u 9 a) ^ 2)\n      ≤ 9 * (10 * δ + 860 * ε + 2 * Real.sqrt (172 * ε)\n        + (m : ℝ) * d / Fintype.card F) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**The pulling chain, assembled.** Nine steps, of which three are free; the chain's total\ndeviation is at most nine times the sum of the steps', by Cauchy--Schwarz against the constant\none.",
+  "module": "MIPRE.Background.QLD.ChainAssembly",
+  "module_doc": "/-!\n# The pulling chain, assembled\n\n`MIPRE/Background/QLD/Chain.lean` proves the eleven displays of `lem:qld-pauli-selfcons`'s\nderivation one at a time. This file names the terms they run through and reads the displays as\nbounds on *consecutive deviations*, which is the form the chaining inequality consumes.\n\n`chainT` is the chain, on the physical cut: ten terms for nine steps. The four displays\n`eq:qld-pulling-0` to `-3` are local in the grouping the state `Phi` lives on and enter lifted;\neverything from `-5` on is local in the physical grouping and enters directly. The three terms\nbetween `-3` and `-5` are left out, the chain paying nothing for them\n(`physLift_chainU3b_mulVec`).\n\nThree of the nine steps are free --- `eq:qld-pulling-2` and `-2b`, then `-3a` to `-5`, then\n`-9a` --- and the six that are not cost, in order: item 1 of `lem:qld-helper`, the game's\npoint--point consistency, item 2 of `lem:qld-helper`, `eq:qld-pulling-10` complete, item 2 of\n`lem:qld-helper` again at the second cut, and Schwartz--Zippel. The chain's total is nine times\ntheir sum, not two to the ninth power, because a chain's deviation telescopes and Cauchy--Schwarz\nagainst the constant one turns the squared norm of a sum of nine terms into nine times the sum of\ntheir squares (`sum_snorm_sq_chain_le`).\n\nThe last thing this file needs that `Chain.lean` did not have is the cost of `eq:qld-pulling-3`:\n`sum_uniform_xSqNorm_pt_le` reads the game's point--point consistency on the cut the chain runs\non, which the padded state reproduces because it reproduces the expanded state's expectations and\nthe expanded state's pair contributes only its norm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ChainAssembly.lean#L587-L618",
+  "source_path": "MIPRE/Background/QLD/ChainAssembly.lean",
+  "lines": [
+   587,
+   618
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainQ_agree_le",
+   "MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainQ_notCoupled_le",
+   "MIPRE.QLD.MirrorSimul.physLift_chainU3b_mulVec",
+   "MIPRE.QLD.sum_snorm_sq_chain_le",
+   "MIPRE.QLD.qform_kron_one_of_unit",
+   "MIPRE.QLD.SimulPair.sum_uniform_snorm_sq_nearId_le",
+   "MIPRE.QLD.SimulPair.aOp_mTildeAnc_mul_nearId",
+   "MIPRE.QLD.SimulPair.sum_snorm_sq_insert_chain",
+   "MIPRE.QLD.SimulPair.chainS_three_mulVec",
+   "MIPRE.QLD.kron_mulVec_one",
+   "MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainP_le",
+   "MIPRE.QLD.MirrorSimul.chainT_five_sub_four",
+   "MIPRE.QLD.MirrorSimul.chainT_five_eq_six",
+   "MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_six_seven",
+   "MIPRE.QLD.MirrorSimul.chainT_eight_sub_seven",
+   "MIPRE.QLD.MirrorSimul.chainT_eight_sub_nine",
+   "MIPRE.QLD.SimulPair.sum_uniform_xSqNorm_pt_le",
+   "MIPRE.QLD.SimulPair.sum_snorm_sq_polyMarg_one_sub_le",
+   "MIPRE.QLD.swapVec_unit",
+   "MIPRE.QLD.povmValue_swapped_le",
+   "MIPRE.Weyl.epr_unit"
+  ],
+  "pasted_helpers": 40,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.degLE_combine_of_blocks_const",
+  "source_name": "MIPRE.QLD.degLE_combine_of_blocks_const",
+  "formal_statement": "theorem MIPRE.QLD.degLE_combine_of_blocks_const {aAff bAff xAff zAff : F × F} (fX fZ : LinePoly F n)\n    (hx : xAff.2 = 0) (hz : zAff.2 = 0) :\n    DegLE (combine aAff bAff xAff zAff fX fZ) 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {n : ℕ}"
+  ],
+  "docstring": "**When both blocks are constant along the padded line the combined polynomial is affine.** This\nis the case of a padded direction in the `alpha`, `beta` or dummy block.",
+  "module": "MIPRE.Background.QLD.Combine",
+  "module_doc": "/-!\n# The combining map and the padded line measurement\n\nBlueprint `lem:qld-padded-lines`, the definitional half. The pairs-of-lines stage measures a *pair*\nof line polynomials, one per basis; the low-degree test over the padded space\n`F_q^{4m}` wants a *single* polynomial on a single padded line. The bridge is the paper's combining\nmap: on the padded point `u = (x, z, alpha, beta, w)` the combined polynomial takes the value\n\n  `alpha * f_X(x) + beta * f_Z(z)`.\n\nThree things have to be said about it, and this file says them.\n\n* **It is a polynomial of degree at most `md + 1` on the padded line.** Restricted to the padded\n  line the two evaluations become evaluations of `f_X` and `f_Z` at *affine* functions of the padded\n  parameter --- which is exactly Property 2 of `lem:qld-sublines`, made quantitative --- and the\n  factors `alpha` and `beta` are affine in it too. So the whole thing is a product of an affine\n  polynomial with a degree-`md` one, and `combine` is that polynomial, built through Mathlib's\n  `Polynomial` and truncated back to a coefficient vector.\n* **On an axis-parallel padded line the degree drops to `d`.** The padded direction is a single\n  coordinate, and the case distinction is the one `padCase` already makes: in the `X` and `Z` blocks\n  `alpha` and `beta` are constant along the line, so the degree is that of `f_X` and `f_Z`; at\n  `alpha`, `beta` or a dummy coordinate *both* blocks are constant along the line, so the combined\n  polynomial is affine. The first case needs `f_X` and `f_Z` to have degree `d`, which is\n  `lem:qld-axis-degree`; the second needs only `d >= 1`.\n* **The measurement.** `padLineMats` is the paper's `Q-hat^l`: the conditional average, over the\n  fresh randomness the subline construction draws, of the pasted line measurement\n  `T^{l_X,l_Z}`, coarse-grained by the combining map. It is a POVM.\n\nWhat is *not* here is the consistency bound `delta_combine`; see the blueprint.\n\n## The affine data, and why the whole geometry is in `xBlk_dir_sub`\n\nThe one calculation behind the affine substitutions is this. Moving along the padded line moves the\n`X` block by `tau * xBlk(dir)`, and `xBlk_dir_sub` says that block is *either* the `X` subline's own\ndirection *or* zero. In the first case the parameter on the subline moves by exactly `tau`, in the\nsecond it does not move at all --- so in both cases it is `p0 + c * tau` with `c` one or zero, and\n`subAff` is that pair. Nothing else about the construction is used.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Combine.lean#L164-L180",
+  "source_path": "MIPRE/Background/QLD/Combine.lean",
+  "lines": [
+   164,
+   180
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-lines",
+    "env": "lemma",
+    "title": "Padded line POVM",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.degLE_padCombine_aline",
+  "source_name": "MIPRE.QLD.degLE_padCombine_aline",
+  "formal_statement": "theorem MIPRE.QLD.degLE_padCombine_aline (hd : 1 ≤ d) (P : LPData F (4 * m)) (eX eZ : F × Point F m)\n    (q : LinePoly F (m * d) × LinePoly F (m * d))\n    (hX : DegLE q.1 d) (hZ : DegLE q.2 d) :\n    DegLE (padCombine hm4 hm .aline d P eX eZ q) d := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable (hm4 : 4 * m ∣ Fintype.card F) (hm : m ∣ Fintype.card F)"
+  ],
+  "docstring": "**On an axis-parallel padded line the combined polynomial has degree at most `d`.** The three\nbranches are the paper's: a direction in the `X` or the `Z` block leaves `alpha` and `beta` constant,\nand a direction at `alpha`, `beta` or a dummy coordinate leaves both blocks constant, which gives\ndegree at most one.",
+  "module": "MIPRE.Background.QLD.Combine",
+  "module_doc": "/-!\n# The combining map and the padded line measurement\n\nBlueprint `lem:qld-padded-lines`, the definitional half. The pairs-of-lines stage measures a *pair*\nof line polynomials, one per basis; the low-degree test over the padded space\n`F_q^{4m}` wants a *single* polynomial on a single padded line. The bridge is the paper's combining\nmap: on the padded point `u = (x, z, alpha, beta, w)` the combined polynomial takes the value\n\n  `alpha * f_X(x) + beta * f_Z(z)`.\n\nThree things have to be said about it, and this file says them.\n\n* **It is a polynomial of degree at most `md + 1` on the padded line.** Restricted to the padded\n  line the two evaluations become evaluations of `f_X` and `f_Z` at *affine* functions of the padded\n  parameter --- which is exactly Property 2 of `lem:qld-sublines`, made quantitative --- and the\n  factors `alpha` and `beta` are affine in it too. So the whole thing is a product of an affine\n  polynomial with a degree-`md` one, and `combine` is that polynomial, built through Mathlib's\n  `Polynomial` and truncated back to a coefficient vector.\n* **On an axis-parallel padded line the degree drops to `d`.** The padded direction is a single\n  coordinate, and the case distinction is the one `padCase` already makes: in the `X` and `Z` blocks\n  `alpha` and `beta` are constant along the line, so the degree is that of `f_X` and `f_Z`; at\n  `alpha`, `beta` or a dummy coordinate *both* blocks are constant along the line, so the combined\n  polynomial is affine. The first case needs `f_X` and `f_Z` to have degree `d`, which is\n  `lem:qld-axis-degree`; the second needs only `d >= 1`.\n* **The measurement.** `padLineMats` is the paper's `Q-hat^l`: the conditional average, over the\n  fresh randomness the subline construction draws, of the pasted line measurement\n  `T^{l_X,l_Z}`, coarse-grained by the combining map. It is a POVM.\n\nWhat is *not* here is the consistency bound `delta_combine`; see the blueprint.\n\n## The affine data, and why the whole geometry is in `xBlk_dir_sub`\n\nThe one calculation behind the affine substitutions is this. Moving along the padded line moves the\n`X` block by `tau * xBlk(dir)`, and `xBlk_dir_sub` says that block is *either* the `X` subline's own\ndirection *or* zero. In the first case the parameter on the subline moves by exactly `tau`, in the\nsecond it does not move at all --- so in both cases it is `p0 + c * tau` with `c` one or zero, and\n`subAff` is that pair. Nothing else about the construction is used.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Combine.lean#L452-L488",
+  "source_path": "MIPRE/Background/QLD/Combine.lean",
+  "lines": [
+   452,
+   488
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-lines",
+    "env": "lemma",
+    "title": "Padded line POVM",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.degLE_combine_of_blocks_const"
+  ],
+  "pasted_helpers": 19,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_pasteLine",
+  "source_name": "MIPRE.QLD.sum_pasteLine",
+  "formal_statement": "theorem MIPRE.QLD.sum_pasteLine (hM : ∀ q, IsPVM fun a => (((M q).mats a).val))\n    (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z) (cX cZ : Content F m) :\n    ∑ q : LinePoly F (m * d) × LinePoly F (m * d),\n        (pasteLine PX PZ d M cX cZ q\n          : Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ) = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The pasted line measurement is a POVM**: a sandwich of projectors is positive, and the pairs\nof line polynomials exhaust it.",
+  "module": "MIPRE.Background.QLD.Combine",
+  "module_doc": "/-!\n# The combining map and the padded line measurement\n\nBlueprint `lem:qld-padded-lines`, the definitional half. The pairs-of-lines stage measures a *pair*\nof line polynomials, one per basis; the low-degree test over the padded space\n`F_q^{4m}` wants a *single* polynomial on a single padded line. The bridge is the paper's combining\nmap: on the padded point `u = (x, z, alpha, beta, w)` the combined polynomial takes the value\n\n  `alpha * f_X(x) + beta * f_Z(z)`.\n\nThree things have to be said about it, and this file says them.\n\n* **It is a polynomial of degree at most `md + 1` on the padded line.** Restricted to the padded\n  line the two evaluations become evaluations of `f_X` and `f_Z` at *affine* functions of the padded\n  parameter --- which is exactly Property 2 of `lem:qld-sublines`, made quantitative --- and the\n  factors `alpha` and `beta` are affine in it too. So the whole thing is a product of an affine\n  polynomial with a degree-`md` one, and `combine` is that polynomial, built through Mathlib's\n  `Polynomial` and truncated back to a coefficient vector.\n* **On an axis-parallel padded line the degree drops to `d`.** The padded direction is a single\n  coordinate, and the case distinction is the one `padCase` already makes: in the `X` and `Z` blocks\n  `alpha` and `beta` are constant along the line, so the degree is that of `f_X` and `f_Z`; at\n  `alpha`, `beta` or a dummy coordinate *both* blocks are constant along the line, so the combined\n  polynomial is affine. The first case needs `f_X` and `f_Z` to have degree `d`, which is\n  `lem:qld-axis-degree`; the second needs only `d >= 1`.\n* **The measurement.** `padLineMats` is the paper's `Q-hat^l`: the conditional average, over the\n  fresh randomness the subline construction draws, of the pasted line measurement\n  `T^{l_X,l_Z}`, coarse-grained by the combining map. It is a POVM.\n\nWhat is *not* here is the consistency bound `delta_combine`; see the blueprint.\n\n## The affine data, and why the whole geometry is in `xBlk_dir_sub`\n\nThe one calculation behind the affine substitutions is this. Moving along the padded line moves the\n`X` block by `tau * xBlk(dir)`, and `xBlk_dir_sub` says that block is *either* the `X` subline's own\ndirection *or* zero. In the first case the parameter on the subline moves by exactly `tau`, in the\nsecond it does not move at all --- so in both cases it is `p0 + c * tau` with `c` one or zero, and\n`subAff` is that pair. Nothing else about the construction is used.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Combine.lean#L506-L529",
+  "source_path": "MIPRE/Background/QLD/Combine.lean",
+  "lines": [
+   506,
+   529
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-lines",
+    "env": "lemma",
+    "title": "Padded line POVM",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_mul",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.IsPVM.aOp",
+   "MIPRE.Weyl.isPVM_synOf"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_padLineMats",
+  "source_name": "MIPRE.QLD.sum_padLineMats",
+  "formal_statement": "theorem MIPRE.QLD.sum_padLineMats (hm4 : 4 * m ∣ Fintype.card F) (ty : CL.Ty) (PX : LinePres F m hm .X)\n    (PZ : LinePres F m hm .Z) (hM : ∀ q, IsPVM fun a => (((M q).mats a).val))\n    (P : LPData F (4 * m)) :\n    ∑ f : LinePoly F (m * d + 1), padLineMats hm4 ty PX PZ M P f = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The padded line measurement is complete.** The fibres of the combining map partition the pairs\nof line polynomials, so the outcome sum is the pasted measurement's own.",
+  "module": "MIPRE.Background.QLD.Combine",
+  "module_doc": "/-!\n# The combining map and the padded line measurement\n\nBlueprint `lem:qld-padded-lines`, the definitional half. The pairs-of-lines stage measures a *pair*\nof line polynomials, one per basis; the low-degree test over the padded space\n`F_q^{4m}` wants a *single* polynomial on a single padded line. The bridge is the paper's combining\nmap: on the padded point `u = (x, z, alpha, beta, w)` the combined polynomial takes the value\n\n  `alpha * f_X(x) + beta * f_Z(z)`.\n\nThree things have to be said about it, and this file says them.\n\n* **It is a polynomial of degree at most `md + 1` on the padded line.** Restricted to the padded\n  line the two evaluations become evaluations of `f_X` and `f_Z` at *affine* functions of the padded\n  parameter --- which is exactly Property 2 of `lem:qld-sublines`, made quantitative --- and the\n  factors `alpha` and `beta` are affine in it too. So the whole thing is a product of an affine\n  polynomial with a degree-`md` one, and `combine` is that polynomial, built through Mathlib's\n  `Polynomial` and truncated back to a coefficient vector.\n* **On an axis-parallel padded line the degree drops to `d`.** The padded direction is a single\n  coordinate, and the case distinction is the one `padCase` already makes: in the `X` and `Z` blocks\n  `alpha` and `beta` are constant along the line, so the degree is that of `f_X` and `f_Z`; at\n  `alpha`, `beta` or a dummy coordinate *both* blocks are constant along the line, so the combined\n  polynomial is affine. The first case needs `f_X` and `f_Z` to have degree `d`, which is\n  `lem:qld-axis-degree`; the second needs only `d >= 1`.\n* **The measurement.** `padLineMats` is the paper's `Q-hat^l`: the conditional average, over the\n  fresh randomness the subline construction draws, of the pasted line measurement\n  `T^{l_X,l_Z}`, coarse-grained by the combining map. It is a POVM.\n\nWhat is *not* here is the consistency bound `delta_combine`; see the blueprint.\n\n## The affine data, and why the whole geometry is in `xBlk_dir_sub`\n\nThe one calculation behind the affine substitutions is this. Moving along the padded line moves the\n`X` block by `tau * xBlk(dir)`, and `xBlk_dir_sub` says that block is *either* the `X` subline's own\ndirection *or* zero. In the first case the parameter on the subline moves by exactly `tau`, in the\nsecond it does not move at all --- so in both cases it is `p0 + c * tau` with `c` one or zero, and\n`subAff` is that pair. Nothing else about the construction is used.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Combine.lean#L561-L587",
+  "source_path": "MIPRE/Background/QLD/Combine.lean",
+  "lines": [
+   561,
+   587
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-lines",
+    "env": "lemma",
+    "title": "Padded line POVM",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_pasteLine"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.posSemidef_padLineMats",
+  "source_name": "MIPRE.QLD.posSemidef_padLineMats",
+  "formal_statement": "theorem MIPRE.QLD.posSemidef_padLineMats (hm4 : 4 * m ∣ Fintype.card F) (ty : CL.Ty)\n    (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z)\n    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) (P : LPData F (4 * m))\n    (f : LinePoly F (m * d + 1)) :\n    (padLineMats hm4 ty PX PZ M P f).PosSemidef := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**Each outcome of the padded line measurement is positive.**",
+  "module": "MIPRE.Background.QLD.Combine",
+  "module_doc": "/-!\n# The combining map and the padded line measurement\n\nBlueprint `lem:qld-padded-lines`, the definitional half. The pairs-of-lines stage measures a *pair*\nof line polynomials, one per basis; the low-degree test over the padded space\n`F_q^{4m}` wants a *single* polynomial on a single padded line. The bridge is the paper's combining\nmap: on the padded point `u = (x, z, alpha, beta, w)` the combined polynomial takes the value\n\n  `alpha * f_X(x) + beta * f_Z(z)`.\n\nThree things have to be said about it, and this file says them.\n\n* **It is a polynomial of degree at most `md + 1` on the padded line.** Restricted to the padded\n  line the two evaluations become evaluations of `f_X` and `f_Z` at *affine* functions of the padded\n  parameter --- which is exactly Property 2 of `lem:qld-sublines`, made quantitative --- and the\n  factors `alpha` and `beta` are affine in it too. So the whole thing is a product of an affine\n  polynomial with a degree-`md` one, and `combine` is that polynomial, built through Mathlib's\n  `Polynomial` and truncated back to a coefficient vector.\n* **On an axis-parallel padded line the degree drops to `d`.** The padded direction is a single\n  coordinate, and the case distinction is the one `padCase` already makes: in the `X` and `Z` blocks\n  `alpha` and `beta` are constant along the line, so the degree is that of `f_X` and `f_Z`; at\n  `alpha`, `beta` or a dummy coordinate *both* blocks are constant along the line, so the combined\n  polynomial is affine. The first case needs `f_X` and `f_Z` to have degree `d`, which is\n  `lem:qld-axis-degree`; the second needs only `d >= 1`.\n* **The measurement.** `padLineMats` is the paper's `Q-hat^l`: the conditional average, over the\n  fresh randomness the subline construction draws, of the pasted line measurement\n  `T^{l_X,l_Z}`, coarse-grained by the combining map. It is a POVM.\n\nWhat is *not* here is the consistency bound `delta_combine`; see the blueprint.\n\n## The affine data, and why the whole geometry is in `xBlk_dir_sub`\n\nThe one calculation behind the affine substitutions is this. Moving along the padded line moves the\n`X` block by `tau * xBlk(dir)`, and `xBlk_dir_sub` says that block is *either* the `X` subline's own\ndirection *or* zero. In the first case the parameter on the subline moves by exactly `tau`, in the\nsecond it does not move at all --- so in both cases it is `p0 + c * tau` with `c` one or zero, and\n`subAff` is that pair. Nothing else about the construction is used.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Combine.lean#L589-L599",
+  "source_path": "MIPRE/Background/QLD/Combine.lean",
+  "lines": [
+   589,
+   599
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-lines",
+    "env": "lemma",
+    "title": "Padded line POVM",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_mul",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.IsPVM.aOp",
+   "MIPRE.Weyl.isPVM_synOf"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_filter_padLineMats",
+  "source_name": "MIPRE.QLD.sum_filter_padLineMats",
+  "formal_statement": "theorem MIPRE.QLD.sum_filter_padLineMats (hm4 : 4 * m ∣ Fintype.card F) (ty : CL.Ty)\n    (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z)\n    (hbaseX : ∀ c : Content F m, PX.base c = CL.rep (PX.dir c) (c.pt .X))\n    (hdirX : ∀ (D : LPData F m) (u : Point F m), PX.dir (ofLPX D u) = D.dir hm ty)\n    (hbaseZ : ∀ c : Content F m, PZ.base c = CL.rep (PZ.dir c) (c.pt .Z))\n    (hdirZ : ∀ (D : LPData F m) (u : Point F m), PZ.dir (ofLPZ D u) = D.dir hm ty)\n    (P : LPData F (4 * m)) (tau a : F) :\n    ∑ f ∈ univ.filter fun f : LinePoly F (m * d + 1) => LinePoly.eval f tau = a,\n        padLineMats hm4 ty PX PZ M P f\n      = ((Fintype.card (SubRand F m) : ℝ))⁻¹ • ∑ e : SubRand F m,\n          ∑ q ∈ univ.filter fun q : LinePoly F (m * d) × LinePoly F (m * d) =>\n              alph (padShift hm4 ty tau P).pt\n                    * LinePoly.eval q.1\n                        (PX.param (pairCX (subPair hm4 hm ty (padShift hm4 ty tau P) e)))\n                  + bet (padShift hm4 ty tau P).pt\n                    * LinePoly.eval q.2\n                        (PZ.param (pairCZ (subPair hm4 hm ty (padShift hm4 ty tau P) e))) = a,\n            pasteLine PX PZ d M (pairCX (subPair hm4 hm ty P e))\n              (pairCZ (subPair hm4 hm ty P e)) q := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The padded line measurement, coarse-grained by evaluation at the sampled padded point, is the\npasted line measurement coarse-grained by the combined evaluation.** This is the data-processing step\nthe paper's proof of `lem:qld-padded-lines` ends with, and it is the form in which\n`pairs_of_lines_prod` applies: on the right each side's polynomial is read at the parameter of its\n*own* subline, which is the outcome map the product form of the pairs-of-lines lemma bounds.",
+  "module": "MIPRE.Background.QLD.Combine",
+  "module_doc": "/-!\n# The combining map and the padded line measurement\n\nBlueprint `lem:qld-padded-lines`, the definitional half. The pairs-of-lines stage measures a *pair*\nof line polynomials, one per basis; the low-degree test over the padded space\n`F_q^{4m}` wants a *single* polynomial on a single padded line. The bridge is the paper's combining\nmap: on the padded point `u = (x, z, alpha, beta, w)` the combined polynomial takes the value\n\n  `alpha * f_X(x) + beta * f_Z(z)`.\n\nThree things have to be said about it, and this file says them.\n\n* **It is a polynomial of degree at most `md + 1` on the padded line.** Restricted to the padded\n  line the two evaluations become evaluations of `f_X` and `f_Z` at *affine* functions of the padded\n  parameter --- which is exactly Property 2 of `lem:qld-sublines`, made quantitative --- and the\n  factors `alpha` and `beta` are affine in it too. So the whole thing is a product of an affine\n  polynomial with a degree-`md` one, and `combine` is that polynomial, built through Mathlib's\n  `Polynomial` and truncated back to a coefficient vector.\n* **On an axis-parallel padded line the degree drops to `d`.** The padded direction is a single\n  coordinate, and the case distinction is the one `padCase` already makes: in the `X` and `Z` blocks\n  `alpha` and `beta` are constant along the line, so the degree is that of `f_X` and `f_Z`; at\n  `alpha`, `beta` or a dummy coordinate *both* blocks are constant along the line, so the combined\n  polynomial is affine. The first case needs `f_X` and `f_Z` to have degree `d`, which is\n  `lem:qld-axis-degree`; the second needs only `d >= 1`.\n* **The measurement.** `padLineMats` is the paper's `Q-hat^l`: the conditional average, over the\n  fresh randomness the subline construction draws, of the pasted line measurement\n  `T^{l_X,l_Z}`, coarse-grained by the combining map. It is a POVM.\n\nWhat is *not* here is the consistency bound `delta_combine`; see the blueprint.\n\n## The affine data, and why the whole geometry is in `xBlk_dir_sub`\n\nThe one calculation behind the affine substitutions is this. Moving along the padded line moves the\n`X` block by `tau * xBlk(dir)`, and `xBlk_dir_sub` says that block is *either* the `X` subline's own\ndirection *or* zero. In the first case the parameter on the subline moves by exactly `tau`, in the\nsecond it does not move at all --- so in both cases it is `p0 + c * tau` with `c` one or zero, and\n`subAff` is that pair. Nothing else about the construction is used.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Combine.lean#L616-L651",
+  "source_path": "MIPRE/Background/QLD/Combine.lean",
+  "lines": [
+   616,
+   651
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-lines",
+    "env": "lemma",
+    "title": "Padded line POVM",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.rep_add_lineParam_smul",
+   "MIPRE.QLD.xBlk_dir_sub",
+   "MIPRE.QLD.zBlk_dir_sub"
+  ],
+  "pasted_helpers": 28,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.trObs_synPOVM",
+  "source_name": "MIPRE.QLD.trObs_synPOVM",
+  "formal_statement": "theorem MIPRE.QLD.trObs_synPOVM (W : Bas) (u : Point F m) (r : F) :\n    trObs (fun a : F => (((synPOVM (F := F) (m := m) W u).mats a).val)) r\n      = weylOf W (r • indVec u) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "The ancilla's factor is the Weyl operator at `r . ind_m(u)`: the syndrome projectors are the\nspectral projectors of the Weyl family, so their signed sum is the operator itself.",
+  "module": "MIPRE.Background.QLD.Combined",
+  "module_doc": "/-!\n# Combining the two bases: the joint point measurement\n\nBlueprint `lem:qld-combined-points`, the paper's `lem:qld-4-10`. The expansion stage left two\nmeasurements per content --- one in each basis --- that *approximately commute*\n(`lem:qld-expanded-points`). This stage turns them into a single projective measurement returning\nboth values at once.\n\n## The route, and how it differs from the paper's\n\nThe paper builds the sandwich `R^w_{a,b} = M^Z_b M^X_a M^Z_b`, proves it approximately\nself-consistent and approximately linear in the two probes, *orthonormalizes* it\n(`cor:ortho-from-consistency`), and then applies the quantum linearity test\n(`thm:linearity`) to the resulting observables. Three of those four steps are unnecessary here,\nand the reason is that the strategy may be taken **projective** --- which is without loss of\ngenerality by Naimark dilation, and which the paper also assumes:\n\n* the sandwich is then already a POVM, and its terms are already projections;\n* the joint measurement is its **Naimark dilation**, which is projective by construction --- no\n  orthonormalization, and no `thm:linearity`;\n* the compression identity of the dilation carries every estimate about the sandwich to the\n  dilated measurement unchanged, so the estimates are proved once, about `R`.\n\nWhat remains is the analytic content: the sandwich is close to the ordered product\n(`hatSand_close`, one commutation), the ordered products are cross-party consistent, and the\nsandwich is therefore self-consistent. The commutation input arrives at the level of the\n**observables**, and Parseval is what moves it to the level of the measurement elements\n(`sum_stateSqNorm_hatComm_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Combined.lean#L125-L143",
+  "source_path": "MIPRE/Background/QLD/Combined.lean",
+  "lines": [
+   125,
+   143
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Weyl.eq_sum_proj"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_stateSqNorm_hatComm",
+  "source_name": "MIPRE.QLD.sum_stateSqNorm_hatComm",
+  "formal_statement": "theorem MIPRE.QLD.sum_stateSqNorm_hatComm (ψ : dA × dB → ℂ)\n    (M : Question F m → POVM (Answer F m d) dA) (x z : Point F m) :\n    ∑ p : F × F, stateSqNorm (hatVec (F := F) (m := m) ψ) (hatComm M x z p.1 p.2)\n      = ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹)\n        * ∑ p : F × F, stateSqNorm (hatVec (F := F) (m := m) ψ) (hatObsComm M x z p.1 p.2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**Parseval, for the commutator.**",
+  "module": "MIPRE.Background.QLD.Combined",
+  "module_doc": "/-!\n# Combining the two bases: the joint point measurement\n\nBlueprint `lem:qld-combined-points`, the paper's `lem:qld-4-10`. The expansion stage left two\nmeasurements per content --- one in each basis --- that *approximately commute*\n(`lem:qld-expanded-points`). This stage turns them into a single projective measurement returning\nboth values at once.\n\n## The route, and how it differs from the paper's\n\nThe paper builds the sandwich `R^w_{a,b} = M^Z_b M^X_a M^Z_b`, proves it approximately\nself-consistent and approximately linear in the two probes, *orthonormalizes* it\n(`cor:ortho-from-consistency`), and then applies the quantum linearity test\n(`thm:linearity`) to the resulting observables. Three of those four steps are unnecessary here,\nand the reason is that the strategy may be taken **projective** --- which is without loss of\ngenerality by Naimark dilation, and which the paper also assumes:\n\n* the sandwich is then already a POVM, and its terms are already projections;\n* the joint measurement is its **Naimark dilation**, which is projective by construction --- no\n  orthonormalization, and no `thm:linearity`;\n* the compression identity of the dilation carries every estimate about the sandwich to the\n  dilated measurement unchanged, so the estimates are proved once, about `R`.\n\nWhat remains is the analytic content: the sandwich is close to the ordered product\n(`hatSand_close`, one commutation), the ordered products are cross-party consistent, and the\nsandwich is therefore self-consistent. The commutation input arrives at the level of the\n**observables**, and Parseval is what moves it to the level of the measurement elements\n(`sum_stateSqNorm_hatComm_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Combined.lean#L181-L204",
+  "source_path": "MIPRE/Background/QLD/Combined.lean",
+  "lines": [
+   181,
+   204
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.fourierOf_pair_mul",
+   "MIPRE.fourierOf_pair_mul'",
+   "MIPRE.sum_stateSqNorm_fourierOf",
+   "MIPRE.trFourier_trObs"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.isPVM_hatMats",
+  "source_name": "MIPRE.QLD.isPVM_hatMats",
+  "formal_statement": "theorem MIPRE.QLD.isPVM_hatMats {d' : Type} [Fintype d'] [DecidableEq d']\n    {M : Question F m → POVM (Answer F m d) d'}\n    (hM : ∀ q, IsPVM fun a => (((M q).mats a).val)) (W : Bas) (u : Point F m) :\n    IsPVM (hatMats M W u) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The hatted point measurement is projective** when the strategy is.",
+  "module": "MIPRE.Background.QLD.Combined",
+  "module_doc": "/-!\n# Combining the two bases: the joint point measurement\n\nBlueprint `lem:qld-combined-points`, the paper's `lem:qld-4-10`. The expansion stage left two\nmeasurements per content --- one in each basis --- that *approximately commute*\n(`lem:qld-expanded-points`). This stage turns them into a single projective measurement returning\nboth values at once.\n\n## The route, and how it differs from the paper's\n\nThe paper builds the sandwich `R^w_{a,b} = M^Z_b M^X_a M^Z_b`, proves it approximately\nself-consistent and approximately linear in the two probes, *orthonormalizes* it\n(`cor:ortho-from-consistency`), and then applies the quantum linearity test\n(`thm:linearity`) to the resulting observables. Three of those four steps are unnecessary here,\nand the reason is that the strategy may be taken **projective** --- which is without loss of\ngenerality by Naimark dilation, and which the paper also assumes:\n\n* the sandwich is then already a POVM, and its terms are already projections;\n* the joint measurement is its **Naimark dilation**, which is projective by construction --- no\n  orthonormalization, and no `thm:linearity`;\n* the compression identity of the dilation carries every estimate about the sandwich to the\n  dilated measurement unchanged, so the estimates are proved once, about `R`.\n\nWhat remains is the analytic content: the sandwich is close to the ordered product\n(`hatSand_close`, one commutation), the ordered products are cross-party consistent, and the\nsandwich is therefore self-consistent. The commutation input arrives at the level of the\n**observables**, and Parseval is what moves it to the level of the measurement elements\n(`sum_stateSqNorm_hatComm_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Combined.lean#L218-L224",
+  "source_path": "MIPRE/Background/QLD/Combined.lean",
+  "lines": [
+   218,
+   224
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.Weyl.isPVM_synOf"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_content_avg_probe",
+  "source_name": "MIPRE.QLD.sum_content_avg_probe",
+  "formal_statement": "theorem MIPRE.QLD.sum_content_avg_probe (g : Point F m → Point F m → F → F → ℝ) :\n    ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *\n        ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹ * ∑ p : F × F, g c.uX c.uZ p.1 p.2)\n      = ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * g c.uX c.uZ c.rX c.rZ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The probe average is free.** Averaging a probe-independent quantity over the content's own\nprobes changes nothing, so a bound stated at the content's probes is a bound on the average over\nall probes --- which is the form Parseval produces.",
+  "module": "MIPRE.Background.QLD.Combined",
+  "module_doc": "/-!\n# Combining the two bases: the joint point measurement\n\nBlueprint `lem:qld-combined-points`, the paper's `lem:qld-4-10`. The expansion stage left two\nmeasurements per content --- one in each basis --- that *approximately commute*\n(`lem:qld-expanded-points`). This stage turns them into a single projective measurement returning\nboth values at once.\n\n## The route, and how it differs from the paper's\n\nThe paper builds the sandwich `R^w_{a,b} = M^Z_b M^X_a M^Z_b`, proves it approximately\nself-consistent and approximately linear in the two probes, *orthonormalizes* it\n(`cor:ortho-from-consistency`), and then applies the quantum linearity test\n(`thm:linearity`) to the resulting observables. Three of those four steps are unnecessary here,\nand the reason is that the strategy may be taken **projective** --- which is without loss of\ngenerality by Naimark dilation, and which the paper also assumes:\n\n* the sandwich is then already a POVM, and its terms are already projections;\n* the joint measurement is its **Naimark dilation**, which is projective by construction --- no\n  orthonormalization, and no `thm:linearity`;\n* the compression identity of the dilation carries every estimate about the sandwich to the\n  dilated measurement unchanged, so the estimates are proved once, about `R`.\n\nWhat remains is the analytic content: the sandwich is close to the ordered product\n(`hatSand_close`, one commutation), the ordered products are cross-party consistent, and the\nsandwich is therefore self-consistent. The commutation input arrives at the level of the\n**observables**, and Parseval is what moves it to the level of the measurement elements\n(`sum_stateSqNorm_hatComm_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Combined.lean#L258-L275",
+  "source_path": "MIPRE/Background/QLD/Combined.lean",
+  "lines": [
+   258,
+   275
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_content_hatComm_le",
+  "source_name": "MIPRE.QLD.sum_content_hatComm_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_content_hatComm_le (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :\n    ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ p : F × F,\n        stateSqNorm (hatVec (F := F) (m := m) ψ) (hatComm MA c.uX c.uZ p.1 p.2)\n      ≤ 57676416 * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "**The elements of the two bases' hatted point measurements commute on the expanded state**, on\naverage over the content, at the constant of `lem:qld-obs-commutation`. This is\n`hatObs_commutation` moved from the observables to the measurement elements by Parseval, which\ncosts nothing --- the probe average the transform introduces is the one the content already\ncarries.",
+  "module": "MIPRE.Background.QLD.Combined",
+  "module_doc": "/-!\n# Combining the two bases: the joint point measurement\n\nBlueprint `lem:qld-combined-points`, the paper's `lem:qld-4-10`. The expansion stage left two\nmeasurements per content --- one in each basis --- that *approximately commute*\n(`lem:qld-expanded-points`). This stage turns them into a single projective measurement returning\nboth values at once.\n\n## The route, and how it differs from the paper's\n\nThe paper builds the sandwich `R^w_{a,b} = M^Z_b M^X_a M^Z_b`, proves it approximately\nself-consistent and approximately linear in the two probes, *orthonormalizes* it\n(`cor:ortho-from-consistency`), and then applies the quantum linearity test\n(`thm:linearity`) to the resulting observables. Three of those four steps are unnecessary here,\nand the reason is that the strategy may be taken **projective** --- which is without loss of\ngenerality by Naimark dilation, and which the paper also assumes:\n\n* the sandwich is then already a POVM, and its terms are already projections;\n* the joint measurement is its **Naimark dilation**, which is projective by construction --- no\n  orthonormalization, and no `thm:linearity`;\n* the compression identity of the dilation carries every estimate about the sandwich to the\n  dilated measurement unchanged, so the estimates are proved once, about `R`.\n\nWhat remains is the analytic content: the sandwich is close to the ordered product\n(`hatSand_close`, one commutation), the ordered products are cross-party consistent, and the\nsandwich is therefore self-consistent. The commutation input arrives at the level of the\n**observables**, and Parseval is what moves it to the level of the measurement elements\n(`sum_stateSqNorm_hatComm_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Combined.lean#L283-L307",
+  "source_path": "MIPRE/Background/QLD/Combined.lean",
+  "lines": [
+   283,
+   307
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_content_avg_probe",
+   "MIPRE.QLD.trObs_synPOVM",
+   "MIPRE.QLD.sum_stateSqNorm_hatComm",
+   "MIPRE.QLD.signed_commutation",
+   "MIPRE.QLD.hatObs_comm_eq",
+   "MIPRE.obs2_map",
+   "MIPRE.norm_evec_expVec",
+   "MIPRE.mulVec_kron_expVec",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.sgn_add",
+   "MIPRE.Weyl.epr_unit"
+  ],
+  "pasted_helpers": 20,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_content_hatComm_le_B",
+  "source_name": "MIPRE.QLD.sum_content_hatComm_le_B",
+  "formal_statement": "theorem MIPRE.QLD.sum_content_hatComm_le_B (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :\n    ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ p : F × F,\n        ‖stateVecB (hatVec (F := F) (m := m) ψ) (hatComm MB c.uX c.uZ p.1 p.2)‖ ^ 2\n      ≤ 57676416 * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "The same for the other player, by the game's symmetry in the two players.",
+  "module": "MIPRE.Background.QLD.Combined",
+  "module_doc": "/-!\n# Combining the two bases: the joint point measurement\n\nBlueprint `lem:qld-combined-points`, the paper's `lem:qld-4-10`. The expansion stage left two\nmeasurements per content --- one in each basis --- that *approximately commute*\n(`lem:qld-expanded-points`). This stage turns them into a single projective measurement returning\nboth values at once.\n\n## The route, and how it differs from the paper's\n\nThe paper builds the sandwich `R^w_{a,b} = M^Z_b M^X_a M^Z_b`, proves it approximately\nself-consistent and approximately linear in the two probes, *orthonormalizes* it\n(`cor:ortho-from-consistency`), and then applies the quantum linearity test\n(`thm:linearity`) to the resulting observables. Three of those four steps are unnecessary here,\nand the reason is that the strategy may be taken **projective** --- which is without loss of\ngenerality by Naimark dilation, and which the paper also assumes:\n\n* the sandwich is then already a POVM, and its terms are already projections;\n* the joint measurement is its **Naimark dilation**, which is projective by construction --- no\n  orthonormalization, and no `thm:linearity`;\n* the compression identity of the dilation carries every estimate about the sandwich to the\n  dilated measurement unchanged, so the estimates are proved once, about `R`.\n\nWhat remains is the analytic content: the sandwich is close to the ordered product\n(`hatSand_close`, one commutation), the ordered products are cross-party consistent, and the\nsandwich is therefore self-consistent. The commutation input arrives at the level of the\n**observables**, and Parseval is what moves it to the level of the measurement elements\n(`sum_stateSqNorm_hatComm_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Combined.lean#L309-L321",
+  "source_path": "MIPRE/Background/QLD/Combined.lean",
+  "lines": [
+   309,
+   321
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_content_hatComm_le",
+   "MIPRE.QLD.swapVec_unit",
+   "MIPRE.QLD.povmValue_swapped_le",
+   "MIPRE.norm_stateVecB"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.xStateDist_ptObs_varObs_X",
+  "source_name": "MIPRE.QLD.xStateDist_ptObs_varObs_X",
+  "formal_statement": "theorem MIPRE.QLD.xStateDist_ptObs_varObs_X (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :\n    xStateDist (acommWeight F m) ψ (ptObs hm MA .X) (varObs hm MB (v 0)) ≤ 344 * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "**The `X` point observable agrees with the `Variable_1` observable across the two parties**,\non the anticommuting tuples. Item 7 for `X`, then `xStateDist_obsOf_le`.",
+  "module": "MIPRE.Background.QLD.Commutation",
+  "module_doc": "/-!\n# Signed commutation of the point observables, on the anticommuting tuples\n\nBlueprint `lem:qld-obs-commutation`, the anticommuting case. On a tuple `omega` with\n`gamma(omega) = 1` the two point observables **anticommute** on the state:\n\n```\nX^{r_X}(u_X) Z^{r_Z}(u_Z) (x) Id  ~  - Z^{r_Z}(u_Z) X^{r_X}(u_X) (x) Id .\n```\n\nThree inputs, all already proved:\n\n* **item 7** of `lem:qld-win` (`item_ms_consistency_X`, `item_ms_consistency_Z`): each point\n  probe agrees with one of the two distinguished `Variable` bits on the *other* side. At the\n  level of observables that is `X (x) Id ~ Id (x) V_1` and `Z (x) Id ~ Id (x) V_5`, at `344 eps`\n  each --- item 7 at the two-outcome probe, then `xStateDist_obsOf_le`;\n* **item 6** (`item_magicSquare`): those two `Variable` observables anticommute on the state, at\n  `16049664 eps`;\n* the **order reversal** `norm_stateVec_anticomm_le`, which is what carries an anticommutation\n  from Bob's side to Alice's --- and is where the sign comes from.\n\n## Why this case costs `eps` and not `sqrt(eps)`\n\nThe blueprint states `lem:qld-obs-commutation` at `O(sqrt(eps))`, and that is what the\n*commuting* case costs: it needs the `Pair` measurement to be projective, which a general POVM\nstrategy's is not, so it goes through `cor:ortho-from-consistency` and pays a square root. The\nanticommuting case does not: every input is already a squared-norm bound linear in `eps`, and the\nonly inequalities used are the triangle inequality and `(u+v+w)^2 <= 3(u^2+v^2+w^2)`. So the\nconstant here is honest and there is no square root --- `48157248 eps`, from\n`12 * 344 + 12 * 344 + 3 * 16049664`.\n\nThat asymmetry is worth recording rather than rounding away: when the commuting case is\nformalized the two halves will not combine into a single `O(sqrt(eps))` by adding constants, and\nthe square root will be attributable to exactly one of them.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Commutation.lean#L125-L143",
+  "source_path": "MIPRE/Background/QLD/Commutation.lean",
+  "lines": [
+   125,
+   143
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-obs-commutation-acomm",
+    "env": "lemma",
+    "title": "Signed commutation, the anticommuting case",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.agree_subtest_le",
+   "MIPRE.xStateDist_obsOf_le"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.xStateDist_ptObs_varObs_Z",
+  "source_name": "MIPRE.QLD.xStateDist_ptObs_varObs_Z",
+  "formal_statement": "theorem MIPRE.QLD.xStateDist_ptObs_varObs_Z (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :\n    xStateDist (acommWeight F m) ψ (ptObs hm MA .Z) (varObs hm MB (v 4)) ≤ 344 * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "**The `Z` point observable agrees with the `Variable_5` observable across the two parties**,\non the anticommuting tuples.",
+  "module": "MIPRE.Background.QLD.Commutation",
+  "module_doc": "/-!\n# Signed commutation of the point observables, on the anticommuting tuples\n\nBlueprint `lem:qld-obs-commutation`, the anticommuting case. On a tuple `omega` with\n`gamma(omega) = 1` the two point observables **anticommute** on the state:\n\n```\nX^{r_X}(u_X) Z^{r_Z}(u_Z) (x) Id  ~  - Z^{r_Z}(u_Z) X^{r_X}(u_X) (x) Id .\n```\n\nThree inputs, all already proved:\n\n* **item 7** of `lem:qld-win` (`item_ms_consistency_X`, `item_ms_consistency_Z`): each point\n  probe agrees with one of the two distinguished `Variable` bits on the *other* side. At the\n  level of observables that is `X (x) Id ~ Id (x) V_1` and `Z (x) Id ~ Id (x) V_5`, at `344 eps`\n  each --- item 7 at the two-outcome probe, then `xStateDist_obsOf_le`;\n* **item 6** (`item_magicSquare`): those two `Variable` observables anticommute on the state, at\n  `16049664 eps`;\n* the **order reversal** `norm_stateVec_anticomm_le`, which is what carries an anticommutation\n  from Bob's side to Alice's --- and is where the sign comes from.\n\n## Why this case costs `eps` and not `sqrt(eps)`\n\nThe blueprint states `lem:qld-obs-commutation` at `O(sqrt(eps))`, and that is what the\n*commuting* case costs: it needs the `Pair` measurement to be projective, which a general POVM\nstrategy's is not, so it goes through `cor:ortho-from-consistency` and pays a square root. The\nanticommuting case does not: every input is already a squared-norm bound linear in `eps`, and the\nonly inequalities used are the triangle inequality and `(u+v+w)^2 <= 3(u^2+v^2+w^2)`. So the\nconstant here is honest and there is no square root --- `48157248 eps`, from\n`12 * 344 + 12 * 344 + 3 * 16049664`.\n\nThat asymmetry is worth recording rather than rounding away: when the commuting case is\nformalized the two halves will not combine into a single `O(sqrt(eps))` by adding constants, and\nthe square root will be attributable to exactly one of them.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Commutation.lean#L145-L163",
+  "source_path": "MIPRE/Background/QLD/Commutation.lean",
+  "lines": [
+   145,
+   163
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-obs-commutation-acomm",
+    "env": "lemma",
+    "title": "Signed commutation, the anticommuting case",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.agree_subtest_le",
+   "MIPRE.xStateDist_obsOf_le"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sq_norm_ptObs_anticomm_le",
+  "source_name": "MIPRE.QLD.sq_norm_ptObs_anticomm_le",
+  "formal_statement": "theorem MIPRE.QLD.sq_norm_ptObs_anticomm_le (c : Content F m) :\n    ‖stateVec ψ (ptObs hm MA .X c * ptObs hm MA .Z c\n        + ptObs hm MA .Z c * ptObs hm MA .X c)‖ ^ 2\n      ≤ 12 * xSqNorm ψ (ptObs hm MA .X c) (varObs hm MB (v 0) c)\n        + 12 * xSqNorm ψ (ptObs hm MA .Z c) (varObs hm MB (v 4) c)\n        + 3 * ‖stateVecB ψ (MS.anti (msPOVM MB c.omega))‖ ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "The pointwise step: at a single content, the two point observables anticommute up to twice\neach cross-party deviation plus Bob's own anticommutator. `norm_stateVec_anticomm_le` at the four\ncontraction bounds, squared by `(a+b+c)^2 <= 3(a^2+b^2+c^2)`.",
+  "module": "MIPRE.Background.QLD.Commutation",
+  "module_doc": "/-!\n# Signed commutation of the point observables, on the anticommuting tuples\n\nBlueprint `lem:qld-obs-commutation`, the anticommuting case. On a tuple `omega` with\n`gamma(omega) = 1` the two point observables **anticommute** on the state:\n\n```\nX^{r_X}(u_X) Z^{r_Z}(u_Z) (x) Id  ~  - Z^{r_Z}(u_Z) X^{r_X}(u_X) (x) Id .\n```\n\nThree inputs, all already proved:\n\n* **item 7** of `lem:qld-win` (`item_ms_consistency_X`, `item_ms_consistency_Z`): each point\n  probe agrees with one of the two distinguished `Variable` bits on the *other* side. At the\n  level of observables that is `X (x) Id ~ Id (x) V_1` and `Z (x) Id ~ Id (x) V_5`, at `344 eps`\n  each --- item 7 at the two-outcome probe, then `xStateDist_obsOf_le`;\n* **item 6** (`item_magicSquare`): those two `Variable` observables anticommute on the state, at\n  `16049664 eps`;\n* the **order reversal** `norm_stateVec_anticomm_le`, which is what carries an anticommutation\n  from Bob's side to Alice's --- and is where the sign comes from.\n\n## Why this case costs `eps` and not `sqrt(eps)`\n\nThe blueprint states `lem:qld-obs-commutation` at `O(sqrt(eps))`, and that is what the\n*commuting* case costs: it needs the `Pair` measurement to be projective, which a general POVM\nstrategy's is not, so it goes through `cor:ortho-from-consistency` and pays a square root. The\nanticommuting case does not: every input is already a squared-norm bound linear in `eps`, and the\nonly inequalities used are the triangle inequality and `(u+v+w)^2 <= 3(u^2+v^2+w^2)`. So the\nconstant here is honest and there is no square root --- `48157248 eps`, from\n`12 * 344 + 12 * 344 + 3 * 16049664`.\n\nThat asymmetry is worth recording rather than rounding away: when the commuting case is\nformalized the two halves will not combine into a single `O(sqrt(eps))` by adding constants, and\nthe square root will be attributable to exactly one of them.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Commutation.lean#L221-L246",
+  "source_path": "MIPRE/Background/QLD/Commutation.lean",
+  "lines": [
+   221,
+   246
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-obs-commutation-acomm",
+    "env": "lemma",
+    "title": "Signed commutation, the anticommuting case",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.norm_stateVec_anticomm_le",
+   "MIPRE.POVM.sub_mul_self_le_one"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.acomm_signed_commutation",
+  "source_name": "MIPRE.QLD.acomm_signed_commutation",
+  "formal_statement": "theorem MIPRE.QLD.acomm_signed_commutation (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) :\n    ∑ c ∈ acommSet, (Fintype.card (Content F m) : ℝ)⁻¹ *\n        ‖stateVec ψ (ptObs hm MA .X c * ptObs hm MA .Z c\n          + ptObs hm MA .Z c * ptObs hm MA .X c)‖ ^ 2\n      ≤ 48157248 * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LCS.MagicSquare",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {hm : m ∣ Fintype.card F} {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "**The anticommuting half of `lem:qld-obs-commutation`.** On the anticommuting tuples the two\npoint observables anticommute on the state --- which is the blueprint's `(-1)^{gamma(omega)}` at\n`gamma = 1` --- at error `48157248 eps`, with no square root.",
+  "module": "MIPRE.Background.QLD.Commutation",
+  "module_doc": "/-!\n# Signed commutation of the point observables, on the anticommuting tuples\n\nBlueprint `lem:qld-obs-commutation`, the anticommuting case. On a tuple `omega` with\n`gamma(omega) = 1` the two point observables **anticommute** on the state:\n\n```\nX^{r_X}(u_X) Z^{r_Z}(u_Z) (x) Id  ~  - Z^{r_Z}(u_Z) X^{r_X}(u_X) (x) Id .\n```\n\nThree inputs, all already proved:\n\n* **item 7** of `lem:qld-win` (`item_ms_consistency_X`, `item_ms_consistency_Z`): each point\n  probe agrees with one of the two distinguished `Variable` bits on the *other* side. At the\n  level of observables that is `X (x) Id ~ Id (x) V_1` and `Z (x) Id ~ Id (x) V_5`, at `344 eps`\n  each --- item 7 at the two-outcome probe, then `xStateDist_obsOf_le`;\n* **item 6** (`item_magicSquare`): those two `Variable` observables anticommute on the state, at\n  `16049664 eps`;\n* the **order reversal** `norm_stateVec_anticomm_le`, which is what carries an anticommutation\n  from Bob's side to Alice's --- and is where the sign comes from.\n\n## Why this case costs `eps` and not `sqrt(eps)`\n\nThe blueprint states `lem:qld-obs-commutation` at `O(sqrt(eps))`, and that is what the\n*commuting* case costs: it needs the `Pair` measurement to be projective, which a general POVM\nstrategy's is not, so it goes through `cor:ortho-from-consistency` and pays a square root. The\nanticommuting case does not: every input is already a squared-norm bound linear in `eps`, and the\nonly inequalities used are the triangle inequality and `(u+v+w)^2 <= 3(u^2+v^2+w^2)`. So the\nconstant here is honest and there is no square root --- `48157248 eps`, from\n`12 * 344 + 12 * 344 + 3 * 16049664`.\n\nThat asymmetry is worth recording rather than rounding away: when the commuting case is\nformalized the two halves will not combine into a single `O(sqrt(eps))` by adding constants, and\nthe square root will be attributable to exactly one of them.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Commutation.lean#L248-L291",
+  "source_path": "MIPRE/Background/QLD/Commutation.lean",
+  "lines": [
+   248,
+   291
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-obs-commutation-acomm",
+    "env": "lemma",
+    "title": "Signed commutation, the anticommuting case",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sq_norm_ptObs_anticomm_le",
+   "MIPRE.QLD.xStateDist_ptObs_varObs_X",
+   "MIPRE.QLD.xStateDist_ptObs_varObs_Z",
+   "MIPRE.QLD.item_magicSquare"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 35,
+  "is_target": false
+ }
+]

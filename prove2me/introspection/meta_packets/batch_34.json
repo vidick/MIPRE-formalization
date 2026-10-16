@@ -1,0 +1,690 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.SourceDescriptionCompiler.exists_compiler_size",
+  "source_name": "MIPRE.Introspection.SourceDescriptionCompiler.exists_compiler_size",
+  "formal_statement": "theorem MIPRE.Introspection.SourceDescriptionCompiler.exists_compiler_size (F : PolyTimeFun Input β) :\n    ∃ C : ℕ, 1 ≤ C ∧ ∀ (S D : Prog) (lam : ℕ),\n      esize (compiler F ((S, D), lam)) ≤ C * (lam + 1) ^ C := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.SourceDescriptionCompiler",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial",
+   "variable {β : Type*} [SizedEncoding β]"
+  ],
+  "docstring": "A single constant absorbs the compiler's coefficient sum and degree.\nThere is no lower-bound assumption on the supplied parameter.",
+  "module": "MIPRE.Foundations.Introspection.SourceDescriptionCompiler",
+  "module_doc": "/-! # Uniformly bounded source descriptions for polynomial-time compilers\n\nThe compiler accepts arbitrary source descriptions. Each description exceeding\nthe supplied binary parameter is replaced by a fixed program before compilation.\nThis leaves every bounded verifier unchanged and gives a uniform polynomial\noutput-size bound in the parameter, including at zero.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SourceDescriptionCompiler.lean#L90-L107",
+  "source_path": "MIPRE/Foundations/Introspection/SourceDescriptionCompiler.lean",
+  "lines": [
+   90,
+   107
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.SourcePadding.strategy_value",
+  "source_name": "MIPRE.Introspection.SourcePadding.strategy_value",
+  "formal_statement": "theorem MIPRE.Introspection.SourcePadding.strategy_value (hR : R.IsPCC) (hv : R.value = 1) :\n    (strategy e L D R).value = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.SourcePadding",
+   "open Matrix Finset Classical",
+   "variable {F I J A : Type*} [Field F] [Fintype F] [DecidableEq F]",
+   "variable (R : SyncStrategy (Honest.sourceGame L D).doubled)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.SourcePadding",
+  "module_doc": "/-! # Padding the original CL source game without changing its strategy\n\nUnused seed coordinates are ignored. On every sampled padded question pair,\nthe pulled-back questions have one common original seed. This suffices to\npreserve perfect PCC play with exactly the original Hilbert-space dimension.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SourcePadding.lean#L134-L148",
+  "source_path": "MIPRE/Foundations/Introspection/SourcePadding.lean",
+  "lines": [
+   134,
+   148
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-binary-source-padding",
+    "env": "lemma",
+    "title": "Arbitrary binary source registers and exact padding",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.pull_proj_compl",
+   "MIPRE.Introspection.Honest.source_commute",
+   "MIPRE.re_eq_zero_of_tracialValue_eq_one",
+   "MIPRE.tracialValue_eq_one_of_re_eq_zero",
+   "MIPRE.SampledGame.dist_eq_card"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.SourcePadding.eval_truncate_embed_zeroOn",
+  "source_name": "MIPRE.Introspection.SourcePadding.eval_truncate_embed_zeroOn",
+  "formal_statement": "theorem MIPRE.Introspection.SourcePadding.eval_truncate_embed_zeroOn (e : I ↪ J) {ℓ : ℕ} (P : CLFun F I ℓ)\n    (O : Finset J) (hO : Disjoint (univ.map e) O) (j : ℕ) (x : J → F) :\n    (((P.embed e).directSum (CLFun.zeroOn O ℓ)).truncate j).eval x =\n      push e ((P.truncate j).eval (pull e x)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.SourcePadding",
+   "open Finset Classical MIPRE.CL",
+   "variable {F I J : Type*} [Field F]"
+  ],
+  "docstring": "Every padded marginal is the original marginal extended by zero.",
+  "module": "MIPRE.Foundations.Introspection.SourcePaddingQueries",
+  "module_doc": "/-! # Queries for source padding at unchanged depth\n\nThe extra zero register is consumed at the first factor. Linear queries are\nthe original queries extended by zero; subsequent factor queries have no\nextra coordinates. These equations hold for arbitrary prefixes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SourcePaddingQueries.lean#L28-L43",
+  "source_path": "MIPRE/Foundations/Introspection/SourcePaddingQueries.lean",
+  "lines": [
+   28,
+   43
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.SourcePadding.mapOfPrefix_embed_zeroOn",
+  "source_name": "MIPRE.Introspection.SourcePadding.mapOfPrefix_embed_zeroOn",
+  "formal_statement": "theorem MIPRE.Introspection.SourcePadding.mapOfPrefix_embed_zeroOn (e : I ↪ J) {ℓ : ℕ} (P : CLFun F I ℓ)\n    (O : Finset J) (hO : Disjoint (univ.map e) O) (j : ℕ) (u y : J → F) :\n    ((P.embed e).directSum (CLFun.zeroOn O ℓ)).mapOfPrefix j u y =\n      push e (P.mapOfPrefix j (pull e u) (pull e y)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.SourcePadding",
+   "open Finset Classical MIPRE.CL",
+   "variable {F I J : Type*} [Field F]"
+  ],
+  "docstring": "Zero padding does not change any source linear map query.",
+  "module": "MIPRE.Foundations.Introspection.SourcePaddingQueries",
+  "module_doc": "/-! # Queries for source padding at unchanged depth\n\nThe extra zero register is consumed at the first factor. Linear queries are\nthe original queries extended by zero; subsequent factor queries have no\nextra coordinates. These equations hold for arbitrary prefixes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SourcePaddingQueries.lean#L60-L75",
+  "source_path": "MIPRE/Foundations/Introspection/SourcePaddingQueries.lean",
+  "lines": [
+   60,
+   75
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.SourcePadding.factorOfPrefix_embed_zeroOn",
+  "source_name": "MIPRE.Introspection.SourcePadding.factorOfPrefix_embed_zeroOn",
+  "formal_statement": "theorem MIPRE.Introspection.SourcePadding.factorOfPrefix_embed_zeroOn (e : I ↪ J) {ℓ : ℕ} (P : CLFun F I ℓ)\n    (O : Finset J) (hO : Disjoint (univ.map e) O) (j : ℕ) (u : J → F) :\n    ((P.embed e).directSum (CLFun.zeroOn O ℓ)).factorOfPrefix j u =\n      (P.factorOfPrefix j (pull e u)).map e ∪ (if ℓ = 0 ∨ j ≠ 0 then ∅ else O) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.SourcePadding",
+   "open Finset Classical MIPRE.CL",
+   "variable {F I J : Type*} [Field F]"
+  ],
+  "docstring": "Only the first source factor also consumes the unused coordinates.",
+  "module": "MIPRE.Foundations.Introspection.SourcePaddingQueries",
+  "module_doc": "/-! # Queries for source padding at unchanged depth\n\nThe extra zero register is consumed at the first factor. Linear queries are\nthe original queries extended by zero; subsequent factor queries have no\nextra coordinates. These equations hold for arbitrary prefixes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SourcePaddingQueries.lean#L77-L92",
+  "source_path": "MIPRE/Foundations/Introspection/SourcePaddingQueries.lean",
+  "lines": [
+   77,
+   92
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.SourcePadding.Program.factorFromContext_legal",
+  "source_name": "MIPRE.Introspection.SourcePadding.Program.factorFromContext_legal",
+  "formal_statement": "theorem MIPRE.Introspection.SourcePadding.Program.factorFromContext_legal (U : ClockedUniversalMachine) {ℓ lam n Q : ℕ}\n    (V : Verifier ℓ) (hV : V.IsBounded lam) (hn : 1 ≤ n)\n    (hQ : V.sampler.dim (2 ^ n) ≤ Q) (w : Bool) (j : ℕ) (hj : j < ℓ)\n    (hjR : Nat.size (j + 1) ≤ (2 ^ n) ^ lam) (u : Fin Q → CL.𝔽₂)\n    (hu : ∃ x, u = ((depthFamily (firstEmbedding hQ) (sourceFamily V n) w).truncate j).eval x) :\n    factorFromContext U (queryContext V lam n w j u) =\n      CL.indicatorBits ((depthFamily (firstEmbedding hQ) (sourceFamily V n) w).factorOfPrefix j u) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.SourcePadding",
+   "open MIPRE.Introspection.SourcePadding.Program",
+   "open MIPRE.Cost MIPRE.LowDegree.BinaryLinear MIPRE.Introspection.AuxiliaryProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.SourcePaddingQueryCorrect",
+  "module_doc": "/-! # Legal source calls implement the padded query interface\n\nAn attained padded prefix restricts to an attained source prefix. The common\nexponent-five clock therefore answers every source call used to construct\nthe padded factor and matrix, including the runtime dimension call.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SourcePaddingQueryCorrect.lean#L47-L64",
+  "source_path": "MIPRE/Foundations/Introspection/SourcePaddingQueryCorrect.lean",
+  "lines": [
+   47,
+   64
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.Program.readBits_encode",
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Introspection.AuxiliaryProgram.ofBits_take_first",
+   "MIPRE.Introspection.SourceCompiler.bounded_dimensionResult",
+   "MIPRE.Introspection.SourcePadding.factorOfPrefix_embed_zeroOn",
+   "MIPRE.Introspection.SourcePadding.eval_truncate_embed_zeroOn"
+  ],
+  "pasted_helpers": 22,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.SourcePadding.Program.matrix_correct",
+  "source_name": "MIPRE.Introspection.SourcePadding.Program.matrix_correct",
+  "formal_statement": "theorem MIPRE.Introspection.SourcePadding.Program.matrix_correct (U : ClockedUniversalMachine) (ctx : QContext) {Q : ℕ}\n    (L : (Fin Q → CL.𝔽₂) →ₗ[CL.𝔽₂] (Fin Q → CL.𝔽₂))\n    (hn : (AuxiliarySource.inputPrefix ctx.2).length = Q)\n    (h : ∀ x : Fin Q → CL.𝔽₂, linear U (vectorBits x, ctx) = vectorBits (L x)) :\n    matrix U ctx = matrixBits (LinearMap.toMatrix' L) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.SourcePadding",
+   "open MIPRE.Introspection.SourcePadding.Program",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.LowDegree.BinaryLinear MIPRE.Introspection.AuxiliaryProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.SourcePaddingQueryProg",
+  "module_doc": "/-! # Uniform programs for queries to a padded source\n\nSource width is input data. The full register width is read from the prefix.\nSource queries receive only the original prefix and vector coordinates;\ntheir answers are extended to the full register. The first factor consumes\nthe unused suffix and all later factors leave it empty.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SourcePaddingQueryProg.lean#L116-L138",
+  "source_path": "MIPRE/Foundations/Introspection/SourcePaddingQueryProg.lean",
+  "lines": [
+   116,
+   138
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.transposeBits_matrixBits",
+   "MIPRE.LowDegree.BinaryLinear.identityBits_eq_matrixBits"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.qform_state_stability",
+  "source_name": "MIPRE.Introspection.qform_state_stability",
+  "formal_statement": "theorem MIPRE.Introspection.qform_state_stability (v w : N → ℂ) (hv : ‖evec v‖ = 1) (hw : ‖evec w‖ = 1)\n    (R : Matrix N N ℂ) (hR : Bnd R 1) :\n    |qform v R - qform w R| ≤ 2 * ‖evec (v - w)‖ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {N C : Type*} [Fintype N] [DecidableEq N] [Fintype C] [DecidableEq C]"
+  ],
+  "docstring": "A contraction's quadratic form is Lipschitz on the unit sphere.",
+  "module": "MIPRE.Foundations.Introspection.StateStability",
+  "module_doc": "/-! # Replacing the state after Pauli extraction\n\nFor fixed projective measurements, changing two normalized state vectors by\nsquared norm `eta` changes every test, and the whole game value, by at most\n`2 sqrt(eta)`. This supplies the actual value estimate used with the state\napproximation in introspection, in addition to its scalar error absorption.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/StateStability.lean#L26-L48",
+  "source_path": "MIPRE/Foundations/Introspection/StateStability.lean",
+  "lines": [
+   26,
+   48
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-value-stability",
+    "env": "lemma",
+    "title": "Quantitative measurement and state replacement",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.povmValue_state_stability",
+  "source_name": "MIPRE.Introspection.povmValue_state_stability",
+  "formal_statement": "theorem MIPRE.Introspection.povmValue_state_stability (G : Game X Y A B) (ψ φ : H × K → ℂ)\n    (hψ : ‖evec ψ‖ = 1) (hφ : ‖evec φ‖ = 1)\n    (MA : X → POVM A H) (MB : Y → POVM B K)\n    (hMA : ∀ x, IsPVM (fun a => ((MA x).mats a).val))\n    (hMB : ∀ y, IsPVM (fun b => ((MB y).mats b).val))\n    {η : ℝ} (hd : ‖evec (ψ - φ)‖ ^ 2 ≤ η) :\n    |povmValue G ψ MA MB - povmValue G φ MA MB| ≤ 2 * Real.sqrt η := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {N C : Type*} [Fintype N] [DecidableEq N] [Fintype C] [DecidableEq C]",
+   "variable {X Y A B H K : Type*} [Fintype X] [Fintype Y]"
+  ],
+  "docstring": "The full normalized question distribution preserves the same state-replacement bound.",
+  "module": "MIPRE.Foundations.Introspection.StateStability",
+  "module_doc": "/-! # Replacing the state after Pauli extraction\n\nFor fixed projective measurements, changing two normalized state vectors by\nsquared norm `eta` changes every test, and the whole game value, by at most\n`2 sqrt(eta)`. This supplies the actual value estimate used with the state\napproximation in introspection, in addition to its scalar error absorption.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/StateStability.lean#L91-L119",
+  "source_path": "MIPRE/Foundations/Introspection/StateStability.lean",
+  "lines": [
+   91,
+   119
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-value-stability",
+    "env": "lemma",
+    "title": "Quantitative measurement and state replacement",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.qform_state_stability",
+   "MIPRE.bnd_one_of_conjTranspose_mul_self_le",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.coarse"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.replaceExtended_value",
+  "source_name": "MIPRE.Introspection.replaceExtended_value",
+  "formal_statement": "theorem MIPRE.Introspection.replaceExtended_value (G : Game X Y A B) (ψ : H × K → ℂ)\n    (hψ : ‖evec ψ‖ = 1) (a₀ : T)\n    (MA : X → POVM A H) (MB : Y → POVM B K)\n    (q : X) (M : POVM C H) (R : POVM C (H × T)) (f : C → A)\n    (hMA : MA q = M.map f) (hM : IsPVM fun c => (M.mats c).val)\n    (hR : IsPVM fun c => (R.mats c).val)\n    (hMB : ∀ y, IsPVM fun b => ((MB y).mats b).val) {δ : ℝ}\n    (hd : ∑ c, stateSqNorm (extVecA ψ a₀)\n      (aOp (M.mats c).val - (R.mats c).val) ≤ δ) :\n    |povmValue G ψ MA MB -\n      povmValue G (extVecA ψ a₀) (replaceExtended MA q (R.map f)) MB| ≤ 2*Real.sqrt δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {X Y A B C H K T : Type*}"
+  ],
+  "docstring": "Quantitative value preservation for the actual replacement family.\nThe fine outcomes may be relabelled by any function, including a constructor\nin the common parsed-answer alphabet.",
+  "module": "MIPRE.Foundations.Introspection.StrategyReplacement",
+  "module_doc": "/-! # Replacing one measurement on a common ancillary extension\n\nThe new family is a function of the actual question. The selected question\nuses the supplied projective dilation; every other measurement is the old\nmeasurement tensored with identity. The state extension is independent of\nthe question and the opposite player is unchanged.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/StrategyReplacement.lean#L64-L88",
+  "source_path": "MIPRE/Foundations/Introspection/StrategyReplacement.lean",
+  "lines": [
+   64,
+   88
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-adaptive-strategy",
+    "env": "lemma",
+    "title": "A concrete strategy after one adaptive replacement",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.ancillaEmbed_isometry",
+   "MIPRE.Introspection.povmValue_stability_at",
+   "MIPRE.kron_one_mul_ancillaEmbed",
+   "MIPRE.aOp_sum",
+   "MIPRE.IsPVM.aOp"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.povmValue_stability_of_condWin",
+  "source_name": "MIPRE.Introspection.povmValue_stability_of_condWin",
+  "formal_statement": "theorem MIPRE.Introspection.povmValue_stability_of_condWin (G : Game X Y A B) (ψ : H × K → ℂ)\n    (MA RA : X → POVM A H) (MB : Y → POVM B K)\n    (err : X → ℝ) (herr : ∀ x, 0 ≤ err x)\n    (hpoint : ∀ x y, |condWin G ψ MA MB x y - condWin G ψ RA MB x y| ≤\n      2*Real.sqrt (err x)) {δ : ℝ}\n    (hd : ∑ x, ∑ y, G.μ x y * err x ≤ δ) :\n    |povmValue G ψ MA MB - povmValue G ψ RA MB| ≤ 2*Real.sqrt δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {X Y A B C H K : Type*}"
+  ],
+  "docstring": "Averaging conditional acceptance changes costs no question-count factor.",
+  "module": "MIPRE.Foundations.Introspection.StrategyReplacementValue",
+  "module_doc": "/-! # Game-value bounds for actual question-indexed replacements\n\nAcceptance is compared before relabelling the outcomes. This permits a common\nanswer alphabet without assuming that same-party squared distance contracts\nunder coarse-graining.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/StrategyReplacementValue.lean#L52-L84",
+  "source_path": "MIPRE/Foundations/Introspection/StrategyReplacementValue.lean",
+  "lines": [
+   52,
+   84
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_weighted_mul_le_sqrt"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.povmValue_stability_at",
+  "source_name": "MIPRE.Introspection.povmValue_stability_at",
+  "formal_statement": "theorem MIPRE.Introspection.povmValue_stability_at [DecidableEq X]\n    (G : Game X Y A B) (ψ : H × K → ℂ) (hψ : ‖evec ψ‖ = 1)\n    (MA RA : X → POVM A H) (MB : Y → POVM B K)\n    (q : X) (M R : POVM C H) (f : C → A)\n    (hMA : MA q = M.map f) (hRA : RA q = R.map f)\n    (hsame : ∀ x, x ≠ q → MA x = RA x)\n    (hM : IsPVM fun c => (M.mats c).val) (hR : IsPVM fun c => (R.mats c).val)\n    (hMB : ∀ y, IsPVM fun b => ((MB y).mats b).val) {δ : ℝ}\n    (hd : ∑ c, stateSqNorm ψ ((M.mats c).val - (R.mats c).val) ≤ δ) :\n    |povmValue G ψ MA MB - povmValue G ψ RA MB| ≤ 2*Real.sqrt δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {X Y A B C H K : Type*}"
+  ],
+  "docstring": "A single changed question, with an arbitrary outcome relabelling. All\nother questions are literally unchanged, and the error pays at most its\nconditional bound since the question's marginal probability is at most one.",
+  "module": "MIPRE.Foundations.Introspection.StrategyReplacementValue",
+  "module_doc": "/-! # Game-value bounds for actual question-indexed replacements\n\nAcceptance is compared before relabelling the outcomes. This permits a common\nanswer alphabet without assuming that same-party squared distance contracts\nunder coarse-graining.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/StrategyReplacementValue.lean#L86-L119",
+  "source_path": "MIPRE/Foundations/Introspection/StrategyReplacementValue.lean",
+  "lines": [
+   86,
+   119
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb_mapA",
+   "MIPRE.Introspection.povmValue_stability_of_condWin",
+   "MIPRE.Introspection.pvm_event_stability",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.quadForm_eq"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.submeasurement_completion_mass",
+  "source_name": "MIPRE.Introspection.submeasurement_completion_mass",
+  "formal_statement": "theorem MIPRE.Introspection.submeasurement_completion_mass (ψ : N → ℂ) (hψ : ‖evec ψ‖ = 1)\n    (B C : A → Matrix N N ℂ) (hB : ∀ a, 0 ≤ B a) (hC : ∀ a, 0 ≤ C a)\n    (hCsum : ∑ a, C a = 1) (hBC : ∀ a, B a ≤ C a) :\n    (∑ a, snorm ψ (B a - C a) ^ 2) ≤ 1 - ∑ a, qform ψ (B a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {N A : Type*} [Fintype N] [DecidableEq N] [Fintype A] [DecidableEq A]"
+  ],
+  "docstring": "Completing a positive submeasurement dominated by a POVM costs at most its missing mass.",
+  "module": "MIPRE.Foundations.Introspection.SubmeasurementCompletion",
+  "module_doc": "/-! # Completing a nearby submeasurement\n\nThe paper's `lem:replace-with-measurement`, with the explicit estimate\n`2 δ + 4 sqrt δ` for the squared state norm. The outcome alphabet contributes no factor.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SubmeasurementCompletion.lean#L22-L37",
+  "source_path": "MIPRE/Foundations/Introspection/SubmeasurementCompletion.lean",
+  "lines": [
+   22,
+   37
+  ],
+  "blueprint": [
+   {
+    "label": "lem:close-submeasurement",
+    "env": "lemma",
+    "title": "Completing a nearby submeasurement",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 13,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.submeasurement_completion_dist_avg",
+  "source_name": "MIPRE.Introspection.submeasurement_completion_dist_avg",
+  "formal_statement": "theorem MIPRE.Introspection.submeasurement_completion_dist_avg {X : Type*} [Fintype X]\n    (D : X → ℝ) (hD0 : ∀ x, 0 ≤ D x) (hD1 : ∑ x, D x = 1)\n    (ψ : N → ℂ) (hψ : ‖evec ψ‖ = 1)\n    (P B C : X → A → Matrix N N ℂ) (hP : ∀ x, IsPVM (P x))\n    (hB : ∀ x a, 0 ≤ B x a) (hC : ∀ x a, 0 ≤ C x a)\n    (hCsum : ∀ x, ∑ a, C x a = 1) (hBC : ∀ x a, B x a ≤ C x a)\n    {δ : ℝ} (hclose : ∑ x, D x * ∑ a, snorm ψ (P x a - B x a) ^ 2 ≤ δ) :\n    (∑ x, D x * ∑ a, snorm ψ (P x a - C x a) ^ 2) ≤\n      2 * δ + 4 * Real.sqrt δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {N A : Type*} [Fintype N] [DecidableEq N] [Fintype A] [DecidableEq A]"
+  ],
+  "docstring": "Averaging preserves the completion estimate, by concavity of the square root.",
+  "module": "MIPRE.Foundations.Introspection.SubmeasurementCompletion",
+  "module_doc": "/-! # Completing a nearby submeasurement\n\nThe paper's `lem:replace-with-measurement`, with the explicit estimate\n`2 δ + 4 sqrt δ` for the squared state norm. The outcome alphabet contributes no factor.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SubmeasurementCompletion.lean#L53-L76",
+  "source_path": "MIPRE/Foundations/Introspection/SubmeasurementCompletion.lean",
+  "lines": [
+   53,
+   76
+  ],
+  "blueprint": [
+   {
+    "label": "lem:close-submeasurement",
+    "env": "lemma",
+    "title": "Completing a nearby submeasurement",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.submeasurement_completion_mass",
+   "MIPRE.qform_sum_ge_of_close",
+   "MIPRE.sum_weighted_mul_le_sqrt"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.option_valid_acceptance_le_complete",
+  "source_name": "MIPRE.Introspection.option_valid_acceptance_le_complete",
+  "formal_statement": "theorem MIPRE.Introspection.option_valid_acceptance_le_complete (ψ : H × K → ℂ)\n    (Q : POVM (Option A) H) (R : POVM (Option B) K)\n    (a₀ : A) (b₀ : B) (D : A → B → Bool) :\n    (∑ a, ∑ b, (if D a b then (1 : ℝ) else 0) *\n      bornProb ψ (Q.mats (some a)).val (R.mats (some b)).val) ≤\n      ∑ a, ∑ b, (if D a b then (1 : ℝ) else 0) *\n        bornProb ψ ((completeOptionPOVM a₀ Q).mats a).val\n          ((completeOptionPOVM b₀ R).mats b).val := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {A B H K : Type*} [Fintype A] [DecidableEq A]"
+  ],
+  "docstring": "Accepted valid outcomes remain accepted after completion; all newly\naccepted malformed outcomes contribute nonnegative Born probabilities.",
+  "module": "MIPRE.Foundations.Introspection.TerminalOptionExtraction",
+  "module_doc": "/-! # Extracting ordinary answers from terminal option-valued measurements\n\nThe adaptive invariant retains malformed answers as `none`. Mapping this\noutcome to a fixed valid answer preserves projectivity and cannot decrease\nthe accepted mass of the original predicate. Applied to both concrete\nterminal invariants, this constructs an original-game strategy directly\nfrom the actual typed game, with no zero-malformed-mass assumption.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TerminalOptionExtraction.lean#L37-L70",
+  "source_path": "MIPRE/Foundations/Introspection/TerminalOptionExtraction.lean",
+  "lines": [
+   37,
+   70
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-terminal-option-extraction",
+    "env": "lemma",
+    "title": "Ordinary-answer extraction from actual terminal invariants",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb_mapB",
+   "MIPRE.sum_bornProb_mapA",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.readoutAcceptance_le_completedValue",
+  "source_name": "MIPRE.Introspection.readoutAcceptance_le_completedValue",
+  "formal_statement": "theorem MIPRE.Introspection.readoutAcceptance_le_completedValue (G : Game X Y A B)\n    (f : I → X) (g : I → Y)\n    (hμ : ∀ x y, G.μ x y = SampledGame.dist f g x y)\n    (ξ : H × K → ℂ) (Q : X → POVM (Option A) H) (R : Y → POVM (Option B) K)\n    (a₀ : A) (b₀ : B) :\n    readoutAcceptance f g ξ (fun x a => ((Q x).mats (some a)).val)\n      (fun y b => ((R y).mats (some b)).val) G.D ≤\n        povmValue G ξ (fun x => completeOptionPOVM a₀ (Q x))\n          (fun y => completeOptionPOVM b₀ (R y)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {I X Y A B H K : Type*}"
+  ],
+  "docstring": "The actual question law converts the valid part of the readout test\ninto a lower bound on the completed ordinary-answer strategy.",
+  "module": "MIPRE.Foundations.Introspection.TerminalOptionExtraction",
+  "module_doc": "/-! # Extracting ordinary answers from terminal option-valued measurements\n\nThe adaptive invariant retains malformed answers as `none`. Mapping this\noutcome to a fixed valid answer preserves projectivity and cannot decrease\nthe accepted mass of the original predicate. Applied to both concrete\nterminal invariants, this constructs an original-game strategy directly\nfrom the actual typed game, with no zero-malformed-mass assumption.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TerminalOptionExtraction.lean#L81-L119",
+  "source_path": "MIPRE/Foundations/Introspection/TerminalOptionExtraction.lean",
+  "lines": [
+   81,
+   119
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-terminal-option-extraction",
+    "env": "lemma",
+    "title": "Ordinary-answer extraction from actual terminal invariants",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.mulVec_kron_kron_expVec",
+   "MIPRE.Introspection.bornProb_registerEPR_readout",
+   "MIPRE.Introspection.option_valid_acceptance_le_complete",
+   "MIPRE.POVM.posSemidef"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.introspectPair_map_some",
+  "source_name": "MIPRE.Introspection.introspectPair_map_some",
+  "formal_statement": "theorem MIPRE.Introspection.introspectPair_map_some (N : POVM (ParsedAnswer (ι → F) A PauliAnswer) H)\n    (y : ι → F) (a : A) :\n    ((N.map TypedEstimates.introspectPair).mats (some (y, a))).val =\n      (N.mats (.pair y a)).val := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {F ι A H PauliAnswer : Type*}"
+  ],
+  "docstring": "A valid full-option outcome has a unique parsed-answer preimage.",
+  "module": "MIPRE.Foundations.Introspection.TerminalOptionExtraction",
+  "module_doc": "/-! # Extracting ordinary answers from terminal option-valued measurements\n\nThe adaptive invariant retains malformed answers as `none`. Mapping this\noutcome to a fixed valid answer preserves projectivity and cannot decrease\nthe accepted mass of the original predicate. Applied to both concrete\nterminal invariants, this constructs an original-game strategy directly\nfrom the actual typed game, with no zero-malformed-mass assumption.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TerminalOptionExtraction.lean#L129-L151",
+  "source_path": "MIPRE/Foundations/Introspection/TerminalOptionExtraction.lean",
+  "lines": [
+   129,
+   151
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedExtraction.exists_strategy_of_terminal_invariants",
+  "source_name": "MIPRE.Introspection.TypedExtraction.exists_strategy_of_terminal_invariants",
+  "formal_statement": "theorem MIPRE.Introspection.TypedExtraction.exists_strategy_of_terminal_invariants\n    (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)\n    (hL : ∀ w, (L w).ExactlyOn univ)\n    (projectPauli : PauliAnswer → ι → F)\n    (D : (ι → F) → (ι → F) → A → A → Bool)\n    (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →\n      PauliAnswer → PauliAnswer → Bool)\n    (G : Game (ι → F) (ι → F) A A)\n    (hμ : ∀ x y, G.μ x y = CL.clDist (L false).eval (L true).eval x y)\n    (hD : G.D = D) (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)\n    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H))\n    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K))\n    (IA : IntroPrefixInvariant (L false) ℓ\n      ((MA (QuestionType.introspect false, 0)).map TypedEstimates.introspectPair))\n    (IB : IntroPrefixInvariant (L true) ℓ\n      ((MB (QuestionType.introspect true, 0)).map TypedEstimates.introspectPair))\n    {ε : ℝ} (hfail :\n      1 - povmValue (TypedEstimates.parsedGame E X Z P L projectPauli D DP)\n        (registerState (ι → F) ξ) MA MB ≤ ε) :\n    ∃ S : TensorProductStrategy G,\n      S.dA = Fintype.card H ∧ S.dB = Fintype.card K ∧\n        1 - (TypeGraph.edges E X Z ℓ).card * ε ≤ S.value := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedExtraction",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "Both concrete terminal invariants construct an ordinary-answer original\nstrategy. Completing malformed outcomes costs no additional failure.",
+  "module": "MIPRE.Foundations.Introspection.TerminalOptionExtraction",
+  "module_doc": "/-! # Extracting ordinary answers from terminal option-valued measurements\n\nThe adaptive invariant retains malformed answers as `none`. Mapping this\noutcome to a fixed valid answer preserves projectivity and cannot decrease\nthe accepted mass of the original predicate. Applied to both concrete\nterminal invariants, this constructs an original-game strategy directly\nfrom the actual typed game, with no zero-malformed-mass assumption.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TerminalOptionExtraction.lean#L176-L235",
+  "source_path": "MIPRE/Foundations/Introspection/TerminalOptionExtraction.lean",
+  "lines": [
+   176,
+   235
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-terminal-option-extraction",
+    "env": "lemma",
+    "title": "Ordinary-answer extraction from actual terminal invariants",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.norm_evec_expVec",
+   "MIPRE.Introspection.IntroPrefixInvariant.terminal_some",
+   "MIPRE.Introspection.registerOp_isPVM",
+   "MIPRE.Introspection.readoutAcceptance_le_completedValue",
+   "MIPRE.Introspection.introspectPair_map_some",
+   "MIPRE.Introspection.TypedExtraction.condWin_cross_eq",
+   "MIPRE.Introspection.TypedExtraction.cross_failure_le",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.dotProduct_star_self",
+   "MIPRE.TensorProductStrategy.value_eq_povmValue",
+   "MIPRE.bornProb_reindex",
+   "MIPRE.SampledGame.dist_eq_card"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 33,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.unitaryTwirl_dist_le",
+  "source_name": "MIPRE.Introspection.unitaryTwirl_dist_le",
+  "formal_statement": "theorem MIPRE.Introspection.unitaryTwirl_dist_le (μ : I → ℝ) (hμ0 : ∀ u, 0 ≤ μ u) (hμ1 : ∑ u, μ u = 1)\n    (U : I → Matrix dA dA ℂ) (hU : ∀ u, (U u)ᴴ * U u = 1)\n    (ψ : dA × dB → ℂ) (M : Matrix dA dA ℂ) :\n    stateSqNorm ψ (unitaryTwirl μ U M - M) ≤\n      ∑ u, μ u * stateSqNorm ψ (M * (U u)ᴴ - (U u)ᴴ * M) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix",
+   "variable {dA dB I : Type*} [Fintype dA] [DecidableEq dA]"
+  ],
+  "docstring": "Jensen and left-unitary invariance bound the twirl error by the commutator error.",
+  "module": "MIPRE.Foundations.Introspection.TwirlDistance",
+  "module_doc": "/-! # Approximate commutation controls twirling in the state-dependent norm\n\nThis is the paper's `lem:mixing-U`, with constant one and all outcome sums explicit.\nThe state need not be invariant under any of the unitaries.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TwirlDistance.lean#L35-L56",
+  "source_path": "MIPRE/Foundations/Introspection/TwirlDistance.lean",
+  "lines": [
+   35,
+   56
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-unitary-mixing",
+    "env": "lemma",
+    "title": "Approximate commutation controls unitary mixing",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.stateSqNorm_avg_le",
+   "MIPRE.quadForm_eq"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.unitaryTwirl_outcome_dist_le",
+  "source_name": "MIPRE.Introspection.unitaryTwirl_outcome_dist_le",
+  "formal_statement": "theorem MIPRE.Introspection.unitaryTwirl_outcome_dist_le {X A : Type*} [Fintype X] [Fintype A]\n    (D : X → ℝ) (hD : ∀ x, 0 ≤ D x)\n    (μ : X → I → ℝ) (hμ0 : ∀ x u, 0 ≤ μ x u) (hμ1 : ∀ x, ∑ u, μ x u = 1)\n    (U : X → I → Matrix dA dA ℂ) (hU : ∀ x u, (U x u)ᴴ * U x u = 1)\n    (ψ : dA × dB → ℂ) (M : X → A → Matrix dA dA ℂ) :\n    (∑ x, D x * ∑ a, stateSqNorm ψ (unitaryTwirl (μ x) (U x) (M x a) - M x a)) ≤\n      ∑ x, D x * ∑ u, μ x u * ∑ a,\n        stateSqNorm ψ (M x a * (U x u)ᴴ - (U x u)ᴴ * M x a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix",
+   "variable {dA dB I : Type*} [Fintype dA] [DecidableEq dA]"
+  ],
+  "docstring": "The outcome-summed, question-averaged form, with no alphabet or dimension loss.",
+  "module": "MIPRE.Foundations.Introspection.TwirlDistance",
+  "module_doc": "/-! # Approximate commutation controls twirling in the state-dependent norm\n\nThis is the paper's `lem:mixing-U`, with constant one and all outcome sums explicit.\nThe state need not be invariant under any of the unitaries.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TwirlDistance.lean#L58-L81",
+  "source_path": "MIPRE/Foundations/Introspection/TwirlDistance.lean",
+  "lines": [
+   58,
+   81
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-unitary-mixing",
+    "env": "lemma",
+    "title": "Approximate commutation controls unitary mixing",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.unitaryTwirl_dist_le"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ }
+]

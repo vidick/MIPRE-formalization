@@ -1,0 +1,638 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SeededGame.sum_failAt_four_le",
+  "source_name": "MIPRE.SeededGame.sum_failAt_four_le",
+  "formal_statement": "theorem MIPRE.SeededGame.sum_failAt_four_le (N : TensorProductStrategy S.oracular.toGame) :\n    (Fintype.card V : ℝ)⁻¹ * ∑ z, (N.failAt (Role.oracle, z) (Role.oracle, z)\n        + (N.failAt (Role.alice, S.LA z) (Role.alice, S.LA z)\n          + N.failAt (Role.oracle, z) (Role.alice, S.LA z)\n          + N.failAt (Role.oracle, z) (Role.bob, S.LB z)))\n      ≤ 9 * (1 - N.value) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SeededGame",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]",
+   "variable {A : Type*} [Fintype A] [DecidableEq A] [Inhabited A]",
+   "variable (S : SeededGame V A)",
+   "variable {S}"
+  ],
+  "docstring": "**The budget.** The four role pairs the argument uses are distinct, and each carries a ninth\nof the question weight, so their conditional failures, averaged over the seed, add up to at most\nnine times the failure probability.",
+  "module": "MIPRE.Foundations.OracularTensor",
+  "module_doc": "/-!\n# Soundness of oracularization, for bipartite strategies\n\nItem 2 of blueprint `thm:oracularization` (`lem:oracular-soundness-tensor`), at the level of\ngames and for **arbitrary tensor-product strategies**: a strategy of value at least `1 - ε` for\n`MIPRE.SeededGame.oracular` yields one of value at least `1 - 24√ε` for the input game, and so\n`val*` of the oracularization above `1 - ε` puts `val*` of the input at least `1 - 24√ε`.\n\n`MIPRE/Foundations/OracularSound.lean` proves the same bound for *synchronous* strategies. That\nis not the statement a verifier-level consumer can use: `Verifier.valStar` is a supremum over\n`TensorProductStrategy`, and so is the detyping transport (`restrictAmbient_value_ge`), while the\nonly bridge from synchronous to bipartite values, `thm:almost-sync`, is off the critical path.\nThe paper's `thm:oracle-soundness` is bipartite; this is its game-level form.\n\n## The argument\n\nEvery `TensorProductStrategy` is projective, so no Naimark dilation is needed. Fix a seed `z` and\nwrite, on the joint space, `O` for the first player's oracle measurement at `(oracle, z)`,\n`O^𝖠`, `O^𝖡` for its two component marginals (`OAns.aliceView`, `OAns.bobView`), `C` for the\nfirst player's isolated-Alice measurement at `L^𝖠 z`, and `P`, `Q` for the second player's\nisolated-Alice and isolated-Bob measurements at `L^𝖠 z` and `L^𝖡 z`. Then\n\n`C_u ⊗ Q_v - O^𝖠_u O^𝖡_v ⊗ Id = (Id ⊗ Q_v)(C_u ⊗ Id - Id ⊗ P_u)`\n  `+ (Id ⊗ Q_v)(Id ⊗ P_u - O^𝖠_u ⊗ Id) + (O^𝖠_u ⊗ Id)(Id ⊗ Q_v - O^𝖡_v ⊗ Id)`\n\n(`sum_snorm_sq_chain`). Each front factor is a projective measurement, so it costs nothing summed\nover its outcome (`sum_snorm_sq_mul_le`), and each of the three deviations is the cross-party\nconsistency of one role pair --- `(alice, alice)`, `(oracle, alice)`, `(oracle, bob)` --- hence at\nmost twice that pair's conditional failure (`xSqNorm_sum_le_condFail`). So the product strategy is\nwithin `6` times three conditional failures of the oracle's joint marginal, linearly in `ε`.\n\nThe single square root of repair 1 of `rem:oracularization-repairs` is spent once, in\n`sum_snorm_sq_ge_of_close`: the paper's `fact:approx-implies-close-value` (NW19's Fact 4.31) at\nthe level of vectors, which compares the mass two families with total mass at most one put on the\nset of outcome pairs the input decider accepts. The oracle's joint marginal puts mass at least the\noracle's own acceptance probability at `(oracle, oracle)` there.\n\nAveraging, the four role pairs used are distinct and each carries a ninth of the question weight,\nso their conditional failures average to at most `9ε` in total (`sum_failAt_four_le`), and\n`val ≥ 1 - 9ε - 2√(54ε) ≥ 1 - 24√ε`: the synchronous constant. Neither the paper's\nmarginalization step nor its commutation step is needed, because the oracle's measurement enters\nonly through its joint marginal and the second player's two isolated measurements are multiplied\nin one order only.\n\nThe extracted strategy (`tensorSound`) is the adapter `TensorProductStrategy.",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularTensor.lean#L612-L655",
+  "source_path": "MIPRE/Foundations/OracularTensor.lean",
+  "lines": [
+   612,
+   655
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TensorProductStrategy.failAt_nonneg",
+   "MIPRE.SeededGame.sum_oDist_mul"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SeededGame.tensorSound_value_ge",
+  "source_name": "MIPRE.SeededGame.tensorSound_value_ge",
+  "formal_statement": "theorem MIPRE.SeededGame.tensorSound_value_ge (N : TensorProductStrategy S.oracular.toGame) {ε : ℝ}\n    (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1) (hval : 1 - ε ≤ N.value) :\n    1 - 24 * √ε ≤ (S.tensorSound N).value := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SeededGame",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]",
+   "variable {A : Type*} [Fintype A] [DecidableEq A] [Inhabited A]",
+   "variable (S : SeededGame V A)",
+   "variable {S}"
+  ],
+  "docstring": "**Soundness of oracularization, for bipartite strategies** (item 2 of blueprint\n`thm:oracularization`, `lem:oracular-soundness-tensor`): a tensor-product strategy of value at\nleast `1 - ε` for the oracularized game yields one of value at least `1 - 24√ε` for the input\ngame, on the same state. The loss carries the *single* square root of repair 1 of\n`rem:oracularization-repairs`, spent in exactly one place, `sum_snorm_sq_ge_of_close`.",
+  "module": "MIPRE.Foundations.OracularTensor",
+  "module_doc": "/-!\n# Soundness of oracularization, for bipartite strategies\n\nItem 2 of blueprint `thm:oracularization` (`lem:oracular-soundness-tensor`), at the level of\ngames and for **arbitrary tensor-product strategies**: a strategy of value at least `1 - ε` for\n`MIPRE.SeededGame.oracular` yields one of value at least `1 - 24√ε` for the input game, and so\n`val*` of the oracularization above `1 - ε` puts `val*` of the input at least `1 - 24√ε`.\n\n`MIPRE/Foundations/OracularSound.lean` proves the same bound for *synchronous* strategies. That\nis not the statement a verifier-level consumer can use: `Verifier.valStar` is a supremum over\n`TensorProductStrategy`, and so is the detyping transport (`restrictAmbient_value_ge`), while the\nonly bridge from synchronous to bipartite values, `thm:almost-sync`, is off the critical path.\nThe paper's `thm:oracle-soundness` is bipartite; this is its game-level form.\n\n## The argument\n\nEvery `TensorProductStrategy` is projective, so no Naimark dilation is needed. Fix a seed `z` and\nwrite, on the joint space, `O` for the first player's oracle measurement at `(oracle, z)`,\n`O^𝖠`, `O^𝖡` for its two component marginals (`OAns.aliceView`, `OAns.bobView`), `C` for the\nfirst player's isolated-Alice measurement at `L^𝖠 z`, and `P`, `Q` for the second player's\nisolated-Alice and isolated-Bob measurements at `L^𝖠 z` and `L^𝖡 z`. Then\n\n`C_u ⊗ Q_v - O^𝖠_u O^𝖡_v ⊗ Id = (Id ⊗ Q_v)(C_u ⊗ Id - Id ⊗ P_u)`\n  `+ (Id ⊗ Q_v)(Id ⊗ P_u - O^𝖠_u ⊗ Id) + (O^𝖠_u ⊗ Id)(Id ⊗ Q_v - O^𝖡_v ⊗ Id)`\n\n(`sum_snorm_sq_chain`). Each front factor is a projective measurement, so it costs nothing summed\nover its outcome (`sum_snorm_sq_mul_le`), and each of the three deviations is the cross-party\nconsistency of one role pair --- `(alice, alice)`, `(oracle, alice)`, `(oracle, bob)` --- hence at\nmost twice that pair's conditional failure (`xSqNorm_sum_le_condFail`). So the product strategy is\nwithin `6` times three conditional failures of the oracle's joint marginal, linearly in `ε`.\n\nThe single square root of repair 1 of `rem:oracularization-repairs` is spent once, in\n`sum_snorm_sq_ge_of_close`: the paper's `fact:approx-implies-close-value` (NW19's Fact 4.31) at\nthe level of vectors, which compares the mass two families with total mass at most one put on the\nset of outcome pairs the input decider accepts. The oracle's joint marginal puts mass at least the\noracle's own acceptance probability at `(oracle, oracle)` there.\n\nAveraging, the four role pairs used are distinct and each carries a ninth of the question weight,\nso their conditional failures average to at most `9ε` in total (`sum_failAt_four_le`), and\n`val ≥ 1 - 9ε - 2√(54ε) ≥ 1 - 24√ε`: the synchronous constant. Neither the paper's\nmarginalization step nor its commutation step is needed, because the oracle's measurement enters\nonly through its joint marginal and the second player's two isolated measurements are multiplied\nin one order only.\n\nThe extracted strategy (`tensorSound`) is the adapter `TensorProductStrategy.",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularTensor.lean#L667-L739",
+  "source_path": "MIPRE/Foundations/OracularTensor.lean",
+  "lines": [
+   667,
+   739
+  ],
+  "blueprint": [
+   {
+    "label": "lem:oracular-soundness-tensor",
+    "env": "lemma",
+    "title": "Soundness of oracularization, for bipartite strategies",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.TensorProductStrategy.failAt_nonneg",
+   "MIPRE.SeededGame.sum_dist_mul",
+   "MIPRE.SeededGame.succAt_tensorSound_ge",
+   "MIPRE.SeededGame.sum_failAt_four_le"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 65,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SeededGame.quantumValue_ge_of_oracular",
+  "source_name": "MIPRE.SeededGame.quantumValue_ge_of_oracular",
+  "formal_statement": "theorem MIPRE.SeededGame.quantumValue_ge_of_oracular {ε : ℝ} (hε : 0 < ε)\n    (h : 1 - ε < quantumValue S.oracular.toGame) :\n    1 - 24 * √ε ≤ quantumValue S.toGame := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SeededGame",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]",
+   "variable {A : Type*} [Fintype A] [DecidableEq A] [Inhabited A]",
+   "variable (S : SeededGame V A)",
+   "variable {S}",
+   "variable (S)"
+  ],
+  "docstring": "**Soundness of oracularization, in quantum values**: `val*` of the oracularized game above\n`1 - ε` puts `val*` of the input game at least `1 - 24√ε`. This is the form a verifier-level\nstatement consumes, `Verifier.valStar` being a quantum value.",
+  "module": "MIPRE.Foundations.OracularTensor",
+  "module_doc": "/-!\n# Soundness of oracularization, for bipartite strategies\n\nItem 2 of blueprint `thm:oracularization` (`lem:oracular-soundness-tensor`), at the level of\ngames and for **arbitrary tensor-product strategies**: a strategy of value at least `1 - ε` for\n`MIPRE.SeededGame.oracular` yields one of value at least `1 - 24√ε` for the input game, and so\n`val*` of the oracularization above `1 - ε` puts `val*` of the input at least `1 - 24√ε`.\n\n`MIPRE/Foundations/OracularSound.lean` proves the same bound for *synchronous* strategies. That\nis not the statement a verifier-level consumer can use: `Verifier.valStar` is a supremum over\n`TensorProductStrategy`, and so is the detyping transport (`restrictAmbient_value_ge`), while the\nonly bridge from synchronous to bipartite values, `thm:almost-sync`, is off the critical path.\nThe paper's `thm:oracle-soundness` is bipartite; this is its game-level form.\n\n## The argument\n\nEvery `TensorProductStrategy` is projective, so no Naimark dilation is needed. Fix a seed `z` and\nwrite, on the joint space, `O` for the first player's oracle measurement at `(oracle, z)`,\n`O^𝖠`, `O^𝖡` for its two component marginals (`OAns.aliceView`, `OAns.bobView`), `C` for the\nfirst player's isolated-Alice measurement at `L^𝖠 z`, and `P`, `Q` for the second player's\nisolated-Alice and isolated-Bob measurements at `L^𝖠 z` and `L^𝖡 z`. Then\n\n`C_u ⊗ Q_v - O^𝖠_u O^𝖡_v ⊗ Id = (Id ⊗ Q_v)(C_u ⊗ Id - Id ⊗ P_u)`\n  `+ (Id ⊗ Q_v)(Id ⊗ P_u - O^𝖠_u ⊗ Id) + (O^𝖠_u ⊗ Id)(Id ⊗ Q_v - O^𝖡_v ⊗ Id)`\n\n(`sum_snorm_sq_chain`). Each front factor is a projective measurement, so it costs nothing summed\nover its outcome (`sum_snorm_sq_mul_le`), and each of the three deviations is the cross-party\nconsistency of one role pair --- `(alice, alice)`, `(oracle, alice)`, `(oracle, bob)` --- hence at\nmost twice that pair's conditional failure (`xSqNorm_sum_le_condFail`). So the product strategy is\nwithin `6` times three conditional failures of the oracle's joint marginal, linearly in `ε`.\n\nThe single square root of repair 1 of `rem:oracularization-repairs` is spent once, in\n`sum_snorm_sq_ge_of_close`: the paper's `fact:approx-implies-close-value` (NW19's Fact 4.31) at\nthe level of vectors, which compares the mass two families with total mass at most one put on the\nset of outcome pairs the input decider accepts. The oracle's joint marginal puts mass at least the\noracle's own acceptance probability at `(oracle, oracle)` there.\n\nAveraging, the four role pairs used are distinct and each carries a ninth of the question weight,\nso their conditional failures average to at most `9ε` in total (`sum_failAt_four_le`), and\n`val ≥ 1 - 9ε - 2√(54ε) ≥ 1 - 24√ε`: the synchronous constant. Neither the paper's\nmarginalization step nor its commutation step is needed, because the oracle's measurement enters\nonly through its joint marginal and the second player's two isolated measurements are multiplied\nin one order only.\n\nThe extracted strategy (`tensorSound`) is the adapter `TensorProductStrategy.",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularTensor.lean#L743-L767",
+  "source_path": "MIPRE/Foundations/OracularTensor.lean",
+  "lines": [
+   743,
+   767
+  ],
+  "blueprint": [
+   {
+    "label": "lem:oracular-soundness-tensor",
+    "env": "lemma",
+    "title": "Soundness of oracularization, for bipartite strategies",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.SeededGame.tensorSound_value_ge"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.exactlyOn_roleFamily",
+  "source_name": "MIPRE.exactlyOn_roleFamily",
+  "formal_statement": "theorem MIPRE.exactlyOn_roleFamily {L : Player → CL.CLFun CL.𝔽₂ ι (ℓ + 1)}\n    (hL : ∀ w, (L w).ExactlyOn univ) (r : Role) : (roleFamily L r).ExactlyOn univ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι] {ℓ : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.OracularTyped",
+  "module_doc": "/-!\n# The typed oracularized game\n\nPiece O2 of `planning/oracularization.md` (issue #189): the game of the paper's typed\noracularized verifier (`sec:orac-def`) at one index, in the vocabulary the detyping compiler\nconsumes (`MIPRE.CL.Detyping.typedGame`), and its two value transfers to the input verifier.\n\n* **The typed sampler's distribution.** Types are the three roles, on the complete type graph with\n  loops (`roleGraph`); the CL functions are the identity for the oracle and the input sampler's\n  two functions for the isolated players (`roleFamily`, with `CL.CLFun.ident` the identity as an\n  `(ℓ + 1)`-level function). The typed game samples an ordered pair of roles and one common seed,\n  and its distribution is exactly that of `SeededGame.oracular` (`typedGame_mu`).\n* **Soundness.** For any typed predicate whose acceptance implies the oracularized predicate\n  after a question-dependent reading of the answers (`quantumValue_typedGame_le`), `val*` of the\n  typed game is at most `val*` of the oracularization, so by `lem:oracular-soundness-tensor`\n  it bounds the input verifier's value (`valStar_ge_of_typed`).\n* **Completeness.** For any typed predicate that accepts the honest encodings of accepted answer\n  pairs, a value-`1` PCC strategy of `𝒱_n` gives one of the *doubled* typed game\n  (`exists_typed_perfectPCC`) --- the form `CL.Detyping.DeciderProgram.verifier_hasPerfectPCC`\n  takes. It is `oracleStrategy` (identical operators for the two players), doubled, and pushed\n  forward along the encoding (`SyncStrategy.pushTo`).\n* **The bit-string predicate.** Answers of the typed verifier are bit strings. An oracle answers\n  the serialization of a pair (`pairEnc`, read back by `pairDec`), an isolated player a single\n  string; each is parsed against the cut `B` according to the role (`parseAns`), and a failed\n  parse is rejected (`oraclePred`). This is the predicate of `fig:oracle-decider`, with the\n  bounded parse that repairs 3 and 4 of `rem:oracularization-repairs` ask for, and it satisfies\n  both hypotheses (`valStar_ge_of_oraclePred`, `exists_oraclePred_perfectPCC`). The typed decider\n  program (piece O4) is to be shown to implement it.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularTyped.lean#L95-L100",
+  "source_path": "MIPRE/Foundations/OracularTyped.lean",
+  "lines": [
+   95,
+   100
+  ],
+  "blueprint": [
+   {
+    "label": "lem:oracular-typed-transfers",
+    "env": "lemma",
+    "title": "Value transfers of the typed oracularized game",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.xDev_eq",
+  "source_name": "MIPRE.xDev_eq",
+  "formal_statement": "theorem MIPRE.xDev_eq (M : X → POVM Λ dA) (N : X → POVM Λ dB) :\n    xDev μ ψ M N = weightA μ ψ M + weightB μ ψ N - 2 * agreeSum μ ψ M N := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {X Λ : Type*} [Fintype X] [Fintype Λ] {dA dB : Type*} [Fintype dA] [DecidableEq dA]",
+   "variable {μ : X → ℝ} {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "**The cross deviation expands**: `xDev = weightA + weightB - 2 agreeSum`.",
+  "module": "MIPRE.Foundations.POVMMix",
+  "module_doc": "/-!\n# Mixtures and extensions of POVMs, and the agreement triangle\n\nThree constructions on bundled POVMs that the padded strategy of the Pauli basis test's stage 4\nneeds, and one inequality.\n\n* `POVM.aOp` extends a POVM on `d` by the identity to `d × E`; `POVM.dirac a₀` answers `a₀` with\n  certainty; `POVM.mix w Q` is a convex combination of POVMs with the same outcomes. A strategy\n  that must be a *function of the question* while the analysis controls it *sample by sample* is\n  a mixture over the samples producing the question, and the Born rule's linearity\n  (`bornProb_mix_left`, `bornProb_mix_right`) turns a bound on the mixture into the average of the\n  per-sample bounds.\n* `agreeSum_triangle` is the paper's triangle-like inequality for the consistency relation\n  (`fact:triangle-for-simeq`, item 1): if Alice's `A` agrees with Bob's `B`, Alice's `C` agrees\n  with Bob's `B`, and Alice's `C` agrees with Bob's `D`, each with probability at least `1 - δ`,\n  then Alice's `A` agrees with Bob's `D` with probability at least `1 - 11 δ`. No projectivity is\n  assumed: for POVMs the agreement is not a squared distance, and the argument goes through the\n  vectors `(R_a ⊗ I)|ψ⟩`, whose weighted squared norms are at most one and, by Cauchy--Schwarz\n  against a partner they agree with, at least `1 - 2δ`. The paper pads these vectors to unit\n  vectors and gets `9 δ`; the unpadded argument here costs the extra `2 δ` and needs no auxiliary\n  space.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/POVMMix.lean#L424-L440",
+  "source_path": "MIPRE/Foundations/POVMMix.lean",
+  "lines": [
+   424,
+   440
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-success",
+    "env": "lemma",
+    "title": "All padded subtests succeed",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.agreeSum_le_sqrt_mul_sqrt",
+  "source_name": "MIPRE.agreeSum_le_sqrt_mul_sqrt",
+  "formal_statement": "theorem MIPRE.agreeSum_le_sqrt_mul_sqrt (hμ : ∀ x, 0 ≤ μ x) (M : X → POVM Λ dA) (N : X → POVM Λ dB) :\n    agreeSum μ ψ M N ≤ Real.sqrt (weightA μ ψ M) * Real.sqrt (weightB μ ψ N) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {X Λ : Type*} [Fintype X] [Fintype Λ] {dA dB : Type*} [Fintype dA] [DecidableEq dA]",
+   "variable {μ : X → ℝ} {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "**Cauchy--Schwarz for the agreement**: `agreeSum ≤ √weightA · √weightB`.",
+  "module": "MIPRE.Foundations.POVMMix",
+  "module_doc": "/-!\n# Mixtures and extensions of POVMs, and the agreement triangle\n\nThree constructions on bundled POVMs that the padded strategy of the Pauli basis test's stage 4\nneeds, and one inequality.\n\n* `POVM.aOp` extends a POVM on `d` by the identity to `d × E`; `POVM.dirac a₀` answers `a₀` with\n  certainty; `POVM.mix w Q` is a convex combination of POVMs with the same outcomes. A strategy\n  that must be a *function of the question* while the analysis controls it *sample by sample* is\n  a mixture over the samples producing the question, and the Born rule's linearity\n  (`bornProb_mix_left`, `bornProb_mix_right`) turns a bound on the mixture into the average of the\n  per-sample bounds.\n* `agreeSum_triangle` is the paper's triangle-like inequality for the consistency relation\n  (`fact:triangle-for-simeq`, item 1): if Alice's `A` agrees with Bob's `B`, Alice's `C` agrees\n  with Bob's `B`, and Alice's `C` agrees with Bob's `D`, each with probability at least `1 - δ`,\n  then Alice's `A` agrees with Bob's `D` with probability at least `1 - 11 δ`. No projectivity is\n  assumed: for POVMs the agreement is not a squared distance, and the argument goes through the\n  vectors `(R_a ⊗ I)|ψ⟩`, whose weighted squared norms are at most one and, by Cauchy--Schwarz\n  against a partner they agree with, at least `1 - 2δ`. The paper pads these vectors to unit\n  vectors and gets `9 δ`; the unpadded argument here costs the extra `2 δ` and needs no auxiliary\n  space.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/POVMMix.lean#L451-L475",
+  "source_path": "MIPRE/Foundations/POVMMix.lean",
+  "lines": [
+   451,
+   475
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-success",
+    "env": "lemma",
+    "title": "All padded subtests succeed",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_weighted_mul_le_sqrt"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.weightA_ge",
+  "source_name": "MIPRE.weightA_ge",
+  "formal_statement": "theorem MIPRE.weightA_ge (hμ : ∀ x, 0 ≤ μ x) (hμ1 : ∑ x, μ x = 1) (hψ : star ψ ⬝ᵥ ψ = 1)\n    (M : X → POVM Λ dA) (N : X → POVM Λ dB) {δ : ℝ} (h : 1 - agreeSum μ ψ M N ≤ δ) :\n    1 - 2 * δ ≤ weightA μ ψ M := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {X Λ : Type*} [Fintype X] [Fintype Λ] {dA dB : Type*} [Fintype dA] [DecidableEq dA]",
+   "variable {μ : X → ℝ} {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "A family that agrees with some partner with probability at least `1 - δ` has weight at least\n`1 - 2δ`.",
+  "module": "MIPRE.Foundations.POVMMix",
+  "module_doc": "/-!\n# Mixtures and extensions of POVMs, and the agreement triangle\n\nThree constructions on bundled POVMs that the padded strategy of the Pauli basis test's stage 4\nneeds, and one inequality.\n\n* `POVM.aOp` extends a POVM on `d` by the identity to `d × E`; `POVM.dirac a₀` answers `a₀` with\n  certainty; `POVM.mix w Q` is a convex combination of POVMs with the same outcomes. A strategy\n  that must be a *function of the question* while the analysis controls it *sample by sample* is\n  a mixture over the samples producing the question, and the Born rule's linearity\n  (`bornProb_mix_left`, `bornProb_mix_right`) turns a bound on the mixture into the average of the\n  per-sample bounds.\n* `agreeSum_triangle` is the paper's triangle-like inequality for the consistency relation\n  (`fact:triangle-for-simeq`, item 1): if Alice's `A` agrees with Bob's `B`, Alice's `C` agrees\n  with Bob's `B`, and Alice's `C` agrees with Bob's `D`, each with probability at least `1 - δ`,\n  then Alice's `A` agrees with Bob's `D` with probability at least `1 - 11 δ`. No projectivity is\n  assumed: for POVMs the agreement is not a squared distance, and the argument goes through the\n  vectors `(R_a ⊗ I)|ψ⟩`, whose weighted squared norms are at most one and, by Cauchy--Schwarz\n  against a partner they agree with, at least `1 - 2δ`. The paper pads these vectors to unit\n  vectors and gets `9 δ`; the unpadded argument here costs the extra `2 δ` and needs no auxiliary\n  space.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/POVMMix.lean#L477-L499",
+  "source_path": "MIPRE/Foundations/POVMMix.lean",
+  "lines": [
+   477,
+   499
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-success",
+    "env": "lemma",
+    "title": "All padded subtests succeed",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_stateSqNorm_le_one",
+   "MIPRE.agreeSum_le_sqrt_mul_sqrt"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.weightB_ge",
+  "source_name": "MIPRE.weightB_ge",
+  "formal_statement": "theorem MIPRE.weightB_ge (hμ : ∀ x, 0 ≤ μ x) (hμ1 : ∑ x, μ x = 1) (hψ : star ψ ⬝ᵥ ψ = 1)\n    (M : X → POVM Λ dA) (N : X → POVM Λ dB) {δ : ℝ} (h : 1 - agreeSum μ ψ M N ≤ δ) :\n    1 - 2 * δ ≤ weightB μ ψ N := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {X Λ : Type*} [Fintype X] [Fintype Λ] {dA dB : Type*} [Fintype dA] [DecidableEq dA]",
+   "variable {μ : X → ℝ} {ψ : dA × dB → ℂ}"
+  ],
+  "docstring": "Bob's version.",
+  "module": "MIPRE.Foundations.POVMMix",
+  "module_doc": "/-!\n# Mixtures and extensions of POVMs, and the agreement triangle\n\nThree constructions on bundled POVMs that the padded strategy of the Pauli basis test's stage 4\nneeds, and one inequality.\n\n* `POVM.aOp` extends a POVM on `d` by the identity to `d × E`; `POVM.dirac a₀` answers `a₀` with\n  certainty; `POVM.mix w Q` is a convex combination of POVMs with the same outcomes. A strategy\n  that must be a *function of the question* while the analysis controls it *sample by sample* is\n  a mixture over the samples producing the question, and the Born rule's linearity\n  (`bornProb_mix_left`, `bornProb_mix_right`) turns a bound on the mixture into the average of the\n  per-sample bounds.\n* `agreeSum_triangle` is the paper's triangle-like inequality for the consistency relation\n  (`fact:triangle-for-simeq`, item 1): if Alice's `A` agrees with Bob's `B`, Alice's `C` agrees\n  with Bob's `B`, and Alice's `C` agrees with Bob's `D`, each with probability at least `1 - δ`,\n  then Alice's `A` agrees with Bob's `D` with probability at least `1 - 11 δ`. No projectivity is\n  assumed: for POVMs the agreement is not a squared distance, and the argument goes through the\n  vectors `(R_a ⊗ I)|ψ⟩`, whose weighted squared norms are at most one and, by Cauchy--Schwarz\n  against a partner they agree with, at least `1 - 2δ`. The paper pads these vectors to unit\n  vectors and gets `9 δ`; the unpadded argument here costs the extra `2 δ` and needs no auxiliary\n  space.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/POVMMix.lean#L501-L522",
+  "source_path": "MIPRE/Foundations/POVMMix.lean",
+  "lines": [
+   501,
+   522
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-success",
+    "env": "lemma",
+    "title": "All padded subtests succeed",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_stateSqNorm_le_one",
+   "MIPRE.agreeSum_le_sqrt_mul_sqrt"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.POVM.sum_val",
+  "source_name": "MIPRE.POVM.sum_val",
+  "formal_statement": "theorem MIPRE.POVM.sum_val {A d : Type*} [Fintype A] [Fintype d] [DecidableEq d] (M : POVM A d) :\n    ∑ a, ((M.mats a).val) = (1 : Matrix d d ℂ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.POVM",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder"
+  ],
+  "docstring": "A POVM's elements sum to the identity matrix (its own `normalized` lives in the\nself-adjoint subalgebra).",
+  "module": "MIPRE.Foundations.POVMValue",
+  "module_doc": "/-!\n# The value of a POVM strategy, and its conditional failures\n\n`MIPRE.TensorProductStrategy` is projective by construction, which is the right definition of\nthe quantum value (`lem:povm-value-eq` says allowing POVMs changes nothing). But a *soundness*\nargument often has to start from an arbitrary POVM strategy --- blueprint\n`lem:ms-direct-anticomm` is stated for one, and its whole point is that no projectivity is\nassumed --- so this file gives the unbundled value of a POVM strategy and the conditional\nfailure probabilities that soundness arguments actually consume.\n\nNothing here is bundled into a structure: the data is a state and two question-indexed families\nof POVMs on arbitrary finite local spaces, which is how it arrives.\n\n## Main definitions\n\n- `MIPRE.bornProb`: `⟨ψ| E_A ⊗ E_B |ψ⟩`, as a real;\n- `MIPRE.povmValue`: the value of a POVM strategy;\n- `MIPRE.condFail`: the failure probability *conditioned* on a question pair.\n\n## Main statements\n\n- `MIPRE.sum_bornProb`: the Born probabilities of a pair of POVMs sum to one on a unit vector;\n- `MIPRE.one_sub_povmValue_eq`: the failure probability is the average of the conditional ones;\n- `MIPRE.condFail_le_div`: a conditional failure is at most the failure probability divided by\n  the question pair's weight. This is the step that turns \"fails with probability `ε`\" into a\n  bound on each subtest, and the division by the weight is why soundness constants carry the\n  number of subtests.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/POVMValue.lean#L73-L78",
+  "source_path": "MIPRE/Foundations/POVMValue.lean",
+  "lines": [
+   73,
+   78
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.POVM.posSemidef",
+  "source_name": "MIPRE.POVM.posSemidef",
+  "formal_statement": "theorem MIPRE.POVM.posSemidef {A d : Type*} [Fintype A] [Fintype d] [DecidableEq d] (M : POVM A d)\n    (a : A) : ((M.mats a).val).PosSemidef := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.POVM",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder"
+  ],
+  "docstring": "A POVM's elements are positive semidefinite, as bare matrices.",
+  "module": "MIPRE.Foundations.POVMValue",
+  "module_doc": "/-!\n# The value of a POVM strategy, and its conditional failures\n\n`MIPRE.TensorProductStrategy` is projective by construction, which is the right definition of\nthe quantum value (`lem:povm-value-eq` says allowing POVMs changes nothing). But a *soundness*\nargument often has to start from an arbitrary POVM strategy --- blueprint\n`lem:ms-direct-anticomm` is stated for one, and its whole point is that no projectivity is\nassumed --- so this file gives the unbundled value of a POVM strategy and the conditional\nfailure probabilities that soundness arguments actually consume.\n\nNothing here is bundled into a structure: the data is a state and two question-indexed families\nof POVMs on arbitrary finite local spaces, which is how it arrives.\n\n## Main definitions\n\n- `MIPRE.bornProb`: `⟨ψ| E_A ⊗ E_B |ψ⟩`, as a real;\n- `MIPRE.povmValue`: the value of a POVM strategy;\n- `MIPRE.condFail`: the failure probability *conditioned* on a question pair.\n\n## Main statements\n\n- `MIPRE.sum_bornProb`: the Born probabilities of a pair of POVMs sum to one on a unit vector;\n- `MIPRE.one_sub_povmValue_eq`: the failure probability is the average of the conditional ones;\n- `MIPRE.condFail_le_div`: a conditional failure is at most the failure probability divided by\n  the question pair's weight. This is the step that turns \"fails with probability `ε`\" into a\n  bound on each subtest, and the division by the weight is why soundness constants carry the\n  number of subtests.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/POVMValue.lean#L80-L83",
+  "source_path": "MIPRE/Foundations/POVMValue.lean",
+  "lines": [
+   80,
+   83
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_bornProb",
+  "source_name": "MIPRE.sum_bornProb",
+  "formal_statement": "theorem MIPRE.sum_bornProb {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) (MA : POVM A dA)\n    (MB : POVM B dB) :\n    ∑ a, ∑ b, bornProb ψ (((MA.mats a).val)) (((MB.mats b).val)) = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**The Born probabilities of a pair of POVMs sum to one.**",
+  "module": "MIPRE.Foundations.POVMValue",
+  "module_doc": "/-!\n# The value of a POVM strategy, and its conditional failures\n\n`MIPRE.TensorProductStrategy` is projective by construction, which is the right definition of\nthe quantum value (`lem:povm-value-eq` says allowing POVMs changes nothing). But a *soundness*\nargument often has to start from an arbitrary POVM strategy --- blueprint\n`lem:ms-direct-anticomm` is stated for one, and its whole point is that no projectivity is\nassumed --- so this file gives the unbundled value of a POVM strategy and the conditional\nfailure probabilities that soundness arguments actually consume.\n\nNothing here is bundled into a structure: the data is a state and two question-indexed families\nof POVMs on arbitrary finite local spaces, which is how it arrives.\n\n## Main definitions\n\n- `MIPRE.bornProb`: `⟨ψ| E_A ⊗ E_B |ψ⟩`, as a real;\n- `MIPRE.povmValue`: the value of a POVM strategy;\n- `MIPRE.condFail`: the failure probability *conditioned* on a question pair.\n\n## Main statements\n\n- `MIPRE.sum_bornProb`: the Born probabilities of a pair of POVMs sum to one on a unit vector;\n- `MIPRE.one_sub_povmValue_eq`: the failure probability is the average of the conditional ones;\n- `MIPRE.condFail_le_div`: a conditional failure is at most the failure probability divided by\n  the question pair's weight. This is the step that turns \"fails with probability `ε`\" into a\n  bound on each subtest, and the division by the weight is why soundness constants carry the\n  number of subtests.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/POVMValue.lean#L138-L162",
+  "source_path": "MIPRE/Foundations/POVMValue.lean",
+  "lines": [
+   138,
+   162
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.POVM.sum_val"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.IsPVM.nonneg",
+  "source_name": "MIPRE.IsPVM.nonneg",
+  "formal_statement": "theorem MIPRE.IsPVM.nonneg (h : IsPVM P) (a : Λ) : (0 : Matrix n n ℂ) ≤ P a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.IsPVM",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {n Λ : Type*} [Fintype n] [DecidableEq n] [Fintype Λ] [DecidableEq Λ]",
+   "variable {P : Λ → Matrix n n ℂ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.PVM",
+  "module_doc": "/-!\n# Observables of a projective measurement\n\nA projective measurement `P : Λ → Matrix n n ℂ` and a weighting `ε : Λ → ℂ` give the operator\n`pvmObs P ε = ∑_a ε a • P a`. The one fact worth isolating is that this is a **ring\nhomomorphism** in `ε`:\n\n`pvmObs P ε * pvmObs P δ = pvmObs P (ε * δ)`,  `pvmObs P 1 = 1`,\n\nbecause the projections are mutually orthogonal (`IsPVM.orthogonal`). Everything the rigidity\narguments want about signed sums of a projective measurement follows: with `ε` valued in\n`{±1}`, `pvmObs P ε` is a self-adjoint reflection; two weightings of the *same* measurement\ncommute, whatever they are; and if `ε δ η` is constantly `s` then `pvmObs P ε * pvmObs P δ *\npvmObs P η = s • 1` exactly.\n\nThat last one is what a linear-constraint-system game's Alice-side dilation buys: the three\nreflections of one constraint commute and multiply to the constraint's sign, with no error\nterm. Blueprint `lem:ms-direct-anticomm` is the consumer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/PVM.lean#L59-L61",
+  "source_path": "MIPRE/Foundations/PVM.lean",
+  "lines": [
+   59,
+   61
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.IsPVM.orthogonal",
+  "source_name": "MIPRE.IsPVM.orthogonal",
+  "formal_statement": "theorem MIPRE.IsPVM.orthogonal (h : IsPVM P) {a b : Λ} (hab : a ≠ b) : P a * P b = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.IsPVM",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {n Λ : Type*} [Fintype n] [DecidableEq n] [Fintype Λ] [DecidableEq Λ]",
+   "variable {P : Λ → Matrix n n ℂ}"
+  ],
+  "docstring": "**The elements of a projective measurement are mutually orthogonal.** Conjugating\n`∑_c P c = 1` by `P a` makes the off-diagonal compressions a family of positive matrices\nsumming to zero, so each is zero, and `P a P b P a = 0` forces `P b P a = 0`.",
+  "module": "MIPRE.Foundations.PVM",
+  "module_doc": "/-!\n# Observables of a projective measurement\n\nA projective measurement `P : Λ → Matrix n n ℂ` and a weighting `ε : Λ → ℂ` give the operator\n`pvmObs P ε = ∑_a ε a • P a`. The one fact worth isolating is that this is a **ring\nhomomorphism** in `ε`:\n\n`pvmObs P ε * pvmObs P δ = pvmObs P (ε * δ)`,  `pvmObs P 1 = 1`,\n\nbecause the projections are mutually orthogonal (`IsPVM.orthogonal`). Everything the rigidity\narguments want about signed sums of a projective measurement follows: with `ε` valued in\n`{±1}`, `pvmObs P ε` is a self-adjoint reflection; two weightings of the *same* measurement\ncommute, whatever they are; and if `ε δ η` is constantly `s` then `pvmObs P ε * pvmObs P δ *\npvmObs P η = s • 1` exactly.\n\nThat last one is what a linear-constraint-system game's Alice-side dilation buys: the three\nreflections of one constraint commute and multiply to the constraint's sign, with no error\nterm. Blueprint `lem:ms-direct-anticomm` is the consumer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/PVM.lean#L63-L98",
+  "source_path": "MIPRE/Foundations/PVM.lean",
+  "lines": [
+   63,
+   98
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.IsPVM.coarse",
+  "source_name": "MIPRE.IsPVM.coarse",
+  "formal_statement": "theorem MIPRE.IsPVM.coarse {Λ' : Type*} [Fintype Λ'] [DecidableEq Λ'] (h : IsPVM P) (f : Λ → Λ') :\n    IsPVM (fun c => ∑ a ∈ univ.filter fun a => f a = c, P a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.IsPVM",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {n Λ : Type*} [Fintype n] [DecidableEq n] [Fintype Λ] [DecidableEq Λ]",
+   "variable {P : Λ → Matrix n n ℂ}"
+  ],
+  "docstring": "**Coarse-graining a projective measurement gives a projective measurement.** Summing the\nelements over a level set of `f` preserves self-adjointness, and mutual orthogonality\n(`IsPVM.orthogonal`) makes the sum idempotent; the level sets partition the outcomes, so the sums\nstill add to one. This is what makes the expansion stage's convolutions projective.",
+  "module": "MIPRE.Foundations.PVM",
+  "module_doc": "/-!\n# Observables of a projective measurement\n\nA projective measurement `P : Λ → Matrix n n ℂ` and a weighting `ε : Λ → ℂ` give the operator\n`pvmObs P ε = ∑_a ε a • P a`. The one fact worth isolating is that this is a **ring\nhomomorphism** in `ε`:\n\n`pvmObs P ε * pvmObs P δ = pvmObs P (ε * δ)`,  `pvmObs P 1 = 1`,\n\nbecause the projections are mutually orthogonal (`IsPVM.orthogonal`). Everything the rigidity\narguments want about signed sums of a projective measurement follows: with `ε` valued in\n`{±1}`, `pvmObs P ε` is a self-adjoint reflection; two weightings of the *same* measurement\ncommute, whatever they are; and if `ε δ η` is constantly `s` then `pvmObs P ε * pvmObs P δ *\npvmObs P η = s • 1` exactly.\n\nThat last one is what a linear-constraint-system game's Alice-side dilation buys: the three\nreflections of one constraint commute and multiply to the constraint's sign, with no error\nterm. Blueprint `lem:ms-direct-anticomm` is the consumer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/PVM.lean#L100-L117",
+  "source_path": "MIPRE/Foundations/PVM.lean",
+  "lines": [
+   100,
+   117
+  ],
+  "blueprint": [
+   {
+    "label": "def:expanded-state",
+    "env": "definition",
+    "title": "The expanded state, and an inert ancilla",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.IsPVM.orthogonal"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.re_eq_zero_of_tracialValue_eq_one",
+  "source_name": "MIPRE.re_eq_zero_of_tracialValue_eq_one",
+  "formal_statement": "theorem MIPRE.re_eq_zero_of_tracialValue_eq_one (G : SynchronousGame X A) (τ : TracialState 𝒜)\n    (P : ProjectiveMeasurement X A 𝒜) (h : tracialValue G τ P = 1)\n    {x y : X} (hxy : 0 < G.μ x y) {a b : A} (hD : G.D x y a b = false) :\n    (τ (P.M x a * P.M y b)).re = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset",
+   "open scoped ComplexOrder",
+   "variable {X A : Type*} [Fintype X] [Fintype A] [DecidableEq A]",
+   "variable {𝒜 : Type*} [Ring 𝒜] [StarRing 𝒜] [Module ℂ 𝒜]"
+  ],
+  "docstring": "**A perfect strategy rejects nothing on the support.** If the value is `1` then every\nrejected answer pair has probability zero at every question pair of positive weight.",
+  "module": "MIPRE.Foundations.PerfectStrategy",
+  "module_doc": "/-!\n# Perfect strategies reject nothing on the support\n\nEvery completeness argument in the pipeline needs the same step: a strategy of value `1` does\nnot merely win on average, it assigns probability zero to each rejected answer pair at each\nquestion pair the verifier actually asks. That step was used implicitly inside\n`MIPRE.tracialValue_le_one` and nowhere available as a lemma; this file states it.\n\n* `sum_re_tracial` — at a fixed question pair the outcome probabilities sum to one. This was a\n  `have` inside `tracialValue_le_one`; it is the reason the value is at most one, and it is\n  wanted on its own.\n* `re_eq_zero_of_tracialValue_eq_one` — the characterization: if the value is `1` then\n  `τ(M^x_a M^y_b) = 0` whenever `μ(x, y) > 0` and `(a, b)` is rejected.\n\nBoth are at the generic tracial level, so they serve synchronous and commuting strategies\nalike; `SyncStrategy.re_eq_zero_of_value_eq_one` is the synchronous spelling, with the\nnormalized trace written out as `Tr(M^x_a M^y_b)/d`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/PerfectStrategy.lean#L61-L92",
+  "source_path": "MIPRE/Foundations/PerfectStrategy.lean",
+  "lines": [
+   61,
+   92
+  ],
+  "blueprint": [
+   {
+    "label": "lem:perfect-rejects-nothing",
+    "env": "lemma",
+    "title": "A perfect strategy rejects nothing on the support",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 4,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.tracialValue_eq_one_of_re_eq_zero",
+  "source_name": "MIPRE.tracialValue_eq_one_of_re_eq_zero",
+  "formal_statement": "theorem MIPRE.tracialValue_eq_one_of_re_eq_zero (G : SynchronousGame X A) (τ : TracialState 𝒜)\n    (P : ProjectiveMeasurement X A 𝒜)\n    (h : ∀ x y, 0 < G.μ x y → ∀ a b, G.D x y a b = false →\n      (τ (P.M x a * P.M y b)).re = 0) :\n    tracialValue G τ P = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset",
+   "open scoped ComplexOrder",
+   "variable {X A : Type*} [Fintype X] [Fintype A] [DecidableEq A]",
+   "variable {𝒜 : Type*} [Ring 𝒜] [StarRing 𝒜] [Module ℂ 𝒜]"
+  ],
+  "docstring": "The converse: if every rejected answer pair has probability zero at every question pair\nof positive weight, the value is `1`. Completeness arguments go this way -- one builds a\nstrategy, checks it never produces a rejected outcome, and concludes.",
+  "module": "MIPRE.Foundations.PerfectStrategy",
+  "module_doc": "/-!\n# Perfect strategies reject nothing on the support\n\nEvery completeness argument in the pipeline needs the same step: a strategy of value `1` does\nnot merely win on average, it assigns probability zero to each rejected answer pair at each\nquestion pair the verifier actually asks. That step was used implicitly inside\n`MIPRE.tracialValue_le_one` and nowhere available as a lemma; this file states it.\n\n* `sum_re_tracial` — at a fixed question pair the outcome probabilities sum to one. This was a\n  `have` inside `tracialValue_le_one`; it is the reason the value is at most one, and it is\n  wanted on its own.\n* `re_eq_zero_of_tracialValue_eq_one` — the characterization: if the value is `1` then\n  `τ(M^x_a M^y_b) = 0` whenever `μ(x, y) > 0` and `(a, b)` is rejected.\n\nBoth are at the generic tracial level, so they serve synchronous and commuting strategies\nalike; `SyncStrategy.re_eq_zero_of_value_eq_one` is the synchronous spelling, with the\nnormalized trace written out as `Tr(M^x_a M^y_b)/d`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/PerfectStrategy.lean#L94-L129",
+  "source_path": "MIPRE/Foundations/PerfectStrategy.lean",
+  "lines": [
+   94,
+   129
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Pipeline.PDom.poly",
+  "source_name": "MIPRE.Pipeline.PDom.poly",
+  "formal_statement": "theorem MIPRE.Pipeline.PDom.poly (hX : 1 ≤ X) (P : Polynomial ℕ) {c m e y : ℕ} (h : PDom W X K c m e y) :\n    PDom W X K ((∑ i ∈ Finset.range (P.natDegree + 1), P.coeff i + 1) * (c + 2) ^ P.natDegree)\n      (m * P.natDegree) (e * P.natDegree) (P.eval y) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Pipeline",
+   "open MIPRE.Pipeline.PDom",
+   "open MIPRE.Cost",
+   "variable {W X K : ℕ}"
+  ],
+  "docstring": "**A fixed polynomial of a dominated quantity.**",
+  "module": "MIPRE.Foundations.Pipeline.PowDom",
+  "module_doc": "/-!\n# Domination by a power of a monomial\n\nThe time bounds of the answer-reduced verifier (`thm:answer-reduction`) have the shape\n`(c (W + 1)^m X^e)^{K + 1}`: `W` a number dominating the parameters at index `n`, `X = |d| + 1`\nthe size of the input and `K = μ` the input sampler's degree. It is the shape of the contract's\n`outBound bound λ μ σ n = P(L + σ)^{μ + 1}` at degree `d (μ + 1)`: one call to a sampler of\ncoefficient `B ≤ W` and degree `K` on a query of size below `c (W + 1)^m X^e` costs\n`B (c (W + 1)^m X^e)^K`, which is of this shape (`ofCall`), and so is any fixed polynomial of\nsuch a cost (`poly`). `MIPRE.Repeat.Dom` is the unpowered shape `c (W + 1)^m X^{e (K + 1)}`,\nwhich suffices when the coefficient of the simulated program does not depend on `K`; here the\npowered coefficient carries the constants that a query larger than the input by a constant\nfactor raises to the power `K`, and the index-independent `K + 1 ≤ 2^{K + 1}` (`ofLeK`).\n\n`PDom W X K c m e v` says `v` is below `(c (W + 1)^m X^e)^{K + 1}`; the combinators assemble the\nconstants, and `le_final` reads off the coefficient `(c (W + 1)^m)^{K + 1}` and degree\n`e (K + 1)`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pipeline/PowDom.lean#L130-L144",
+  "source_path": "MIPRE/Foundations/Pipeline/PowDom.lean",
+  "lines": [
+   130,
+   144
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 7,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Pipeline.PDom.ofCallPow",
+  "source_name": "MIPRE.Pipeline.PDom.ofCallPow",
+  "formal_statement": "theorem MIPRE.Pipeline.PDom.ofCallPow {B q t c₀ m₀ c₁ m₁ e₁ e' : ℕ} (hB : B ≤ c₀ * (W + 1) ^ m₀)\n    (hq : q + 1 ≤ c₁ * (W + 1) ^ m₁ * X ^ e₁) (ht : t ≤ B * (q + 1) ^ (e' * (K + 1))) :\n    PDom W X K (c₀ * c₁ ^ e') (m₀ + m₁ * e') (e₁ * e') t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Pipeline",
+   "open MIPRE.Pipeline.PDom",
+   "open MIPRE.Cost",
+   "variable {W X K : ℕ}"
+  ],
+  "docstring": "**One call to a program** of coefficient `B ≤ c₀ (W + 1)^{m₀}` and degree `e' (K + 1)`, on a\nquery of size below the unpowered monomial `c₁ (W + 1)^{m₁} X^{e₁}`.",
+  "module": "MIPRE.Foundations.Pipeline.PowDom",
+  "module_doc": "/-!\n# Domination by a power of a monomial\n\nThe time bounds of the answer-reduced verifier (`thm:answer-reduction`) have the shape\n`(c (W + 1)^m X^e)^{K + 1}`: `W` a number dominating the parameters at index `n`, `X = |d| + 1`\nthe size of the input and `K = μ` the input sampler's degree. It is the shape of the contract's\n`outBound bound λ μ σ n = P(L + σ)^{μ + 1}` at degree `d (μ + 1)`: one call to a sampler of\ncoefficient `B ≤ W` and degree `K` on a query of size below `c (W + 1)^m X^e` costs\n`B (c (W + 1)^m X^e)^K`, which is of this shape (`ofCall`), and so is any fixed polynomial of\nsuch a cost (`poly`). `MIPRE.Repeat.Dom` is the unpowered shape `c (W + 1)^m X^{e (K + 1)}`,\nwhich suffices when the coefficient of the simulated program does not depend on `K`; here the\npowered coefficient carries the constants that a query larger than the input by a constant\nfactor raises to the power `K`, and the index-independent `K + 1 ≤ 2^{K + 1}` (`ofLeK`).\n\n`PDom W X K c m e v` says `v` is below `(c (W + 1)^m X^e)^{K + 1}`; the combinators assemble the\nconstants, and `le_final` reads off the coefficient `(c (W + 1)^m)^{K + 1}` and degree\n`e (K + 1)`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pipeline/PowDom.lean#L160-L177",
+  "source_path": "MIPRE/Foundations/Pipeline/PowDom.lean",
+  "lines": [
+   160,
+   177
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Pipeline.PDom.ofPoweredCall",
+  "source_name": "MIPRE.Pipeline.PDom.ofPoweredCall",
+  "formal_statement": "theorem MIPRE.Pipeline.PDom.ofPoweredCall {B q t c₀ m₀ c₁ m₁ e₁ e' : ℕ} (hB : B ≤ (c₀ * (W + 1) ^ m₀) ^ (K + 1))\n    (hq : q ≤ c₁ * (W + 1) ^ m₁ * X ^ e₁) (ht : t ≤ B * q ^ (e' * (K + 1))) :\n    PDom W X K (c₀ * c₁ ^ e') (m₀ + m₁ * e') (e₁ * e') t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Pipeline",
+   "open MIPRE.Pipeline.PDom",
+   "open MIPRE.Cost",
+   "variable {W X K : ℕ}"
+  ],
+  "docstring": "**A run of a program whose coefficient is already powered**, `B ≤ (c₀ (W + 1)^{m₀})^{K + 1}`,\nat degree `e' (K + 1)`, on an input of size below the unpowered monomial `c₁ (W + 1)^{m₁} X^{e₁}`.",
+  "module": "MIPRE.Foundations.Pipeline.PowDom",
+  "module_doc": "/-!\n# Domination by a power of a monomial\n\nThe time bounds of the answer-reduced verifier (`thm:answer-reduction`) have the shape\n`(c (W + 1)^m X^e)^{K + 1}`: `W` a number dominating the parameters at index `n`, `X = |d| + 1`\nthe size of the input and `K = μ` the input sampler's degree. It is the shape of the contract's\n`outBound bound λ μ σ n = P(L + σ)^{μ + 1}` at degree `d (μ + 1)`: one call to a sampler of\ncoefficient `B ≤ W` and degree `K` on a query of size below `c (W + 1)^m X^e` costs\n`B (c (W + 1)^m X^e)^K`, which is of this shape (`ofCall`), and so is any fixed polynomial of\nsuch a cost (`poly`). `MIPRE.Repeat.Dom` is the unpowered shape `c (W + 1)^m X^{e (K + 1)}`,\nwhich suffices when the coefficient of the simulated program does not depend on `K`; here the\npowered coefficient carries the constants that a query larger than the input by a constant\nfactor raises to the power `K`, and the index-independent `K + 1 ≤ 2^{K + 1}` (`ofLeK`).\n\n`PDom W X K c m e v` says `v` is below `(c (W + 1)^m X^e)^{K + 1}`; the combinators assemble the\nconstants, and `le_final` reads off the coefficient `(c (W + 1)^m)^{K + 1}` and degree\n`e (K + 1)`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pipeline/PowDom.lean#L179-L194",
+  "source_path": "MIPRE/Foundations/Pipeline/PowDom.lean",
+  "lines": [
+   179,
+   194
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Pipeline.toUnaryProg_time",
+  "source_name": "MIPRE.Pipeline.toUnaryProg_time",
+  "formal_statement": "theorem MIPRE.Pipeline.toUnaryProg_time (x : ℕ) :\n    ∃ t ≤ toUnaryInit.timeBound.eval (4 * x + 1) +\n        (x + 1) * (toUnaryStep.timeBound.eval (4 * x + 3) + 1) + 1,\n      toUnaryProg.Runs (encode x) (encode (unary x)) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Pipeline",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.LowDegree.DegreeArithmetic"
+  ],
+  "docstring": "**The running time of `toUnaryProg`**, polynomial in the value `x`.",
+  "module": "MIPRE.Foundations.Pipeline.PowDomRun",
+  "module_doc": "/-!\n# Runs within a powered monomial\n\n`PRuns W X K c m e p x r`: the program `p` runs from `x` to `r` at a cost below\n`(c (W + 1)^m X^e)^{K + 1}` (`MIPRE.Pipeline.PDom`). The combinators follow the program\nconstructors the pipeline's routines are built from — a polynomial-time function's code\n(`ptf`), sequencing (`seq`), a stage keeping a context (`stage`), hardcoding (`hardcode`), the\nuniversal machine (`univ`), and the two unary loops (`toUnary`, `pow`) — and each returns its\nconstants from those of its arguments, so that a chain of them has constants uniform in `W`, `X`,\n`K` and the data.\n\nThe explicit running times of the unary loops are `toUnaryProg_time` and `powProg_time`: they are\npolynomial in the *values* involved.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pipeline/PowDomRun.lean#L45-L70",
+  "source_path": "MIPRE/Foundations/Pipeline/PowDomRun.lean",
+  "lines": [
+   45,
+   70
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.Cost.whileProg_runs",
+   "MIPRE.Cost.seqProg_runs"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 21,
+  "is_target": false
+ }
+]

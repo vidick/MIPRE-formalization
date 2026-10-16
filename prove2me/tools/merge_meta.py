@@ -33,7 +33,9 @@ def check_text(label, t, minlen=120, maxlen=2500):
         return probs
     if len(t) > maxlen:
         probs.append(f"{label}: too long ({len(t)} > {maxlen})")
-    if t.count("$") % 2:
+    # a `$` in code (the Turing-machine tapes use it as a symbol) is literal: count math delimiters only
+    prose = re.sub(r"`[^`]*`", "", re.sub(r"```.*?```", "", t, flags=re.S))
+    if prose.count("$") % 2:
         probs.append(f"{label}: odd number of $")
     if re.search(r"\\\\[a-zA-Z]", t):
         probs.append(f"{label}: double backslash before a command (over-escaped?)")

@@ -1,0 +1,781 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.PauliCL.linearBits_correct",
+  "source_name": "MIPRE.QLD.PauliCL.linearBits_correct",
+  "formal_statement": "theorem MIPRE.QLD.PauliCL.linearBits_correct (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k)\n    (j : ℕ) (hj : j ≤ k) (T : Ty) (r : ℕ) (hr1 : 1 ≤ r) (hr3 : r ≤ 3)\n    (u x : Coord (2 ^ j) → (shoupBinField k hk).carrier) :\n    linearBits ((unary k, unary j, unary (2 ^ j)), programTag T, r,\n      CL.toBits (binaryVectorEquiv (shoupSelfDualNormalBasis k hk hodd) u),\n      CL.toBits (binaryVectorEquiv (shoupSelfDualNormalBasis k hk hodd) x)) =\n      CL.toBits ((ExplicitSeed.binaryPresentation\n        (Introspection.SeedProgram.selector (shoupBinField k hk) j hj)\n        (shoupSelfDualNormalBasis k hk hodd) T).mapOfPrefix (r - 1)\n        (binaryVectorEquiv (shoupSelfDualNormalBasis k hk hodd) u)\n        (binaryVectorEquiv (shoupSelfDualNormalBasis k hk hodd) x)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.PauliCL",
+   "open MIPRE.Cost MIPRE.SAT MIPRE.Introspection.PauliStageProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.PauliRowPrograms",
+  "module_doc": "/-! # Exact row and binary encodings for the executable Pauli queries -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliRowPrograms.lean#L133-L146",
+  "source_path": "MIPRE/Background/QLD/PauliRowPrograms.lean",
+  "lines": [
+   133,
+   146
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-executable-pauli-queries",
+    "env": "lemma",
+    "title": "Executable binary Pauli queries",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.pivots_line",
+   "MIPRE.QLD.PauliCL.binaryVectorEquiv_bits",
+   "MIPRE.QLD.PauliCL.representative_eq_canonLin",
+   "MIPRE.CL.CLFun.mapOfPrefix_downsize",
+   "MIPRE.CL.CLFun.mapOfPrefix_reindex",
+   "MIPRE.Introspection.LineProgram.lineRepresentativeProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.inverseRootMatrixProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.groupComponentsProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.transposeBits_matrixBits",
+   "MIPRE.LowDegree.BinaryLinear.mulBits_matrixBits",
+   "MIPRE.SAT.shoupInBasisProg_correct",
+   "MIPRE.SAT.shoupMulProg_encoding",
+   "MIPRE.SAT.shoupBinField_finrank",
+   "MIPRE.SAT.shoupActionProg_correct",
+   "MIPRE.SAT.shoupNormalBasis_normal",
+   "MIPRE.SAT.shoupTraceGramProg_correct"
+  ],
+  "pasted_helpers": 78,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.PauliCL.marginalBits_correct",
+  "source_name": "MIPRE.QLD.PauliCL.marginalBits_correct",
+  "formal_statement": "theorem MIPRE.QLD.PauliCL.marginalBits_correct (k : ℕ) (hk : 1 ≤ k) [NeZero k] (hodd : Odd k)\n    (j : ℕ) (hj : j ≤ k) (T : Ty) (r : ℕ) (hr1 : 1 ≤ r) (hr3 : r ≤ 3)\n    (u x : Coord (2 ^ j) → (shoupBinField k hk).carrier) :\n    marginalBits ((unary k, unary j, unary (2 ^ j)), programTag T, r,\n      CL.toBits (binaryVectorEquiv (shoupSelfDualNormalBasis k hk hodd) u),\n      CL.toBits (binaryVectorEquiv (shoupSelfDualNormalBasis k hk hodd) x)) =\n      CL.toBits (((ExplicitSeed.binaryPresentation\n        (Introspection.SeedProgram.selector (shoupBinField k hk) j hj)\n        (shoupSelfDualNormalBasis k hk hodd) T).truncate r).eval\n        (binaryVectorEquiv (shoupSelfDualNormalBasis k hk hodd) x)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.PauliCL",
+   "open MIPRE.Cost MIPRE.SAT MIPRE.Introspection.PauliStageProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.PauliRowPrograms",
+  "module_doc": "/-! # Exact row and binary encodings for the executable Pauli queries -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PauliRowPrograms.lean#L170-L182",
+  "source_path": "MIPRE/Background/QLD/PauliRowPrograms.lean",
+  "lines": [
+   170,
+   182
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-executable-pauli-queries",
+    "env": "lemma",
+    "title": "Executable binary Pauli queries",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.pivots_line",
+   "MIPRE.QLD.PauliCL.binaryVectorEquiv_bits",
+   "MIPRE.QLD.PauliCL.representative_eq_canonLin",
+   "MIPRE.CL.CLFun.truncate_reindex",
+   "MIPRE.CL.CLFun.eval_truncate_downsize",
+   "MIPRE.CL.CLFun.eval_reindex",
+   "MIPRE.Introspection.LineProgram.lineRepresentativeProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.inverseRootMatrixProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.groupComponentsProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.transposeBits_matrixBits",
+   "MIPRE.LowDegree.BinaryLinear.mulBits_matrixBits",
+   "MIPRE.SAT.shoupInBasisProg_correct",
+   "MIPRE.SAT.shoupMulProg_encoding",
+   "MIPRE.SAT.shoupBinField_finrank",
+   "MIPRE.SAT.shoupActionProg_correct",
+   "MIPRE.SAT.shoupNormalBasis_normal",
+   "MIPRE.SAT.shoupTraceGramProg_correct"
+  ],
+  "pasted_helpers": 82,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.physEmb_isometry",
+  "source_name": "MIPRE.QLD.physEmb_isometry",
+  "formal_statement": "theorem MIPRE.QLD.physEmb_isometry :\n    (physEmb (F := F) (m := m) (d := d) D)ᴴ * physEmb (F := F) (m := m) (d := d) D = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {D : Type*} [Fintype D] [DecidableEq D]"
+  ],
+  "docstring": "**`phi_0` is an isometry**: the pair is a unit vector (`epr_unit`) and the padding weight is\nthe indicator of one basis vector.",
+  "module": "MIPRE.Background.QLD.PhysEmbed",
+  "module_doc": "/-!\n# The physical embedding `phi`, and why the physical state is its image\n\nThe last step of `thm:qld` (`qld-isometry.tex`, the proof of `thm:pauli-appendix`) defines one\nisometry per player,\n\n```\nphi_A : |theta>_A  ↦  V_A (|theta>_A ⊗ |EPR_q>^M_{A'A''}),\n```\n\nand says that `phi_A ⊗ phi_B |psi> = V_A ⊗ V_B |psi-hat>` holds exactly, \"this is the definition\nof `psi-hat`\". So item 1 of the swap isometry lemma, which is about `V_A ⊗ V_B |psi-hat>`, is\nalready item 1 of the theorem, about `phi_A ⊗ phi_B |psi>` --- provided the physical state really is\nthe image of `psi` under a product of *local* isometries. This file proves that it is, for the\n`MirrorSimul` that `mirrorOfGlobalPairs` builds, with the isometry written down.\n\n## The embedding\n\n`physEmb D` maps a party's space `D` to its physical register `((D × A') × E) × A''` of\n`Mirror.lean`:\n\n```\n|theta>  ↦  |theta>_D ⊗ |EPR_q>^M_{A'A''} ⊗ |0>_E .\n```\n\n`E = (F × F) × CL.Answer F (4 m) d 1` is the padding of the projective dilation (`padState`), both\nregisters pinned at a basis vector; its weight is `padWeight`. The paper absorbs it into \"we assume\nthe state is padded with sufficiently many ancilla qubits\"; here it is one more tensor factor, and\nit is what the entry formula `physEmb_apply` carries besides the pair.\n\n## Why the physical state is a product image\n\nBecause both of its ingredients are explicit. `padState_reindex_apply` computes the first cut's\nstate pointwise --- the strategy's amplitude, one pair `A'A''` split across the cut, and the padding\n--- and `physVec` appends the second pair `B'B''` and pulls each party's far half home. On the\nphysical cut Alice then holds `A A' Ea A''` and Bob `B B' Eb B''`: **each pair is held by one party\nalone**. So the state is `psi` pushed forward by one isometry per party, which is what\n`physVec_mirrorOfGlobalPairs` says. The only thing to check is that the appended pair enters with\nits halves the other way round, `B''` before `B'`, which is `epr_symm`.\n\n## What else the descent needs\n\nThe paper's passage from `V`-conjugation to `phi`-conjugation rests on two identities, and both are\nhere at the level of the embedding, before the swap unitary is applied:\n\n* `physEmb_conj_aOp`: `phi_0^† (X ⊗ Id) phi_0 = X`, where `X ⊗ Id` is the triple `aOp` by which\n  `MirrorSimul.alicePauli` extends a strategy operator to the physical register. It is the\n  compression that makes a pairing on the embedded state a pairing on `psi`.\n* `physEmb_mul_mul_conjTranspose`: `phi_0 X phi_0^† = (X ⊗ Id) · P` with `P = phi_0 phi_0^†` the\n  projection onto `Id ⊗ |EPR><EPR| ⊗ |0><0|`, and `P` commutes with `X ⊗ Id`\n  (`aOp_mul_physEmbProj_comm`). Conjugated by `V_A`, this is the paper's\n  `phi_A M_h phi_A^† = V_A (M_h ⊗ Id) V_A^† · P`.\n\nFinally `physSwap_mulVec_physVec_mirrorOfGlobalPairs` composes with the two swap unitaries:\n`M.physSwap *ᵥ M.physVec` --- the vector item 1 of `lem:qld-swap` is about --- is\n`((V_A phi_0) ⊗ (V_B phi_0)) psi`, the paper's `phi_A ⊗ phi_B |psi>`, and `V_A ",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PhysEmbed.lean#L140-L157",
+  "source_path": "MIPRE/Background/QLD/PhysEmbed.lean",
+  "lines": [
+   140,
+   157
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Weyl.epr_unit"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.physVec_mirrorOfGlobalPairs",
+  "source_name": "MIPRE.QLD.physVec_mirrorOfGlobalPairs",
+  "formal_statement": "theorem MIPRE.QLD.physVec_mirrorOfGlobalPairs\n    (P : GlobalPair ψ hprojA hprojB δ)\n    (P' : GlobalPair (ψ ∘ Prod.swap) hprojB hprojA δ)\n    (hd : 1 ≤ d) (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε) (hq : 48 * m * d ≤ Fintype.card F) :\n    (mirrorOfGlobalPairs hm P P' hd hψ hfail hq).physVec\n      = (physEmb dA ⊗ₖ physEmb dB) *ᵥ ψ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "open MIPRE.LIDT.Adapter",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable [NeZero m] {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB]"
+  ],
+  "docstring": "**The physical state is the image of the strategy's state under `phi_0 ⊗ phi_0`.** For the\n`MirrorSimul` that `mirrorOfGlobalPairs` builds, the state on the two physical registers\n`A A' Ea A''` and `B B' Eb B''` is `psi` with each party's own pair and padding appended locally:\nthe first cut's state is explicit (`padState_reindex_apply`), the appended pair enters as\n`EPR_{B''B'}`, and `epr_symm` turns it round.",
+  "module": "MIPRE.Background.QLD.PhysEmbed",
+  "module_doc": "/-!\n# The physical embedding `phi`, and why the physical state is its image\n\nThe last step of `thm:qld` (`qld-isometry.tex`, the proof of `thm:pauli-appendix`) defines one\nisometry per player,\n\n```\nphi_A : |theta>_A  ↦  V_A (|theta>_A ⊗ |EPR_q>^M_{A'A''}),\n```\n\nand says that `phi_A ⊗ phi_B |psi> = V_A ⊗ V_B |psi-hat>` holds exactly, \"this is the definition\nof `psi-hat`\". So item 1 of the swap isometry lemma, which is about `V_A ⊗ V_B |psi-hat>`, is\nalready item 1 of the theorem, about `phi_A ⊗ phi_B |psi>` --- provided the physical state really is\nthe image of `psi` under a product of *local* isometries. This file proves that it is, for the\n`MirrorSimul` that `mirrorOfGlobalPairs` builds, with the isometry written down.\n\n## The embedding\n\n`physEmb D` maps a party's space `D` to its physical register `((D × A') × E) × A''` of\n`Mirror.lean`:\n\n```\n|theta>  ↦  |theta>_D ⊗ |EPR_q>^M_{A'A''} ⊗ |0>_E .\n```\n\n`E = (F × F) × CL.Answer F (4 m) d 1` is the padding of the projective dilation (`padState`), both\nregisters pinned at a basis vector; its weight is `padWeight`. The paper absorbs it into \"we assume\nthe state is padded with sufficiently many ancilla qubits\"; here it is one more tensor factor, and\nit is what the entry formula `physEmb_apply` carries besides the pair.\n\n## Why the physical state is a product image\n\nBecause both of its ingredients are explicit. `padState_reindex_apply` computes the first cut's\nstate pointwise --- the strategy's amplitude, one pair `A'A''` split across the cut, and the padding\n--- and `physVec` appends the second pair `B'B''` and pulls each party's far half home. On the\nphysical cut Alice then holds `A A' Ea A''` and Bob `B B' Eb B''`: **each pair is held by one party\nalone**. So the state is `psi` pushed forward by one isometry per party, which is what\n`physVec_mirrorOfGlobalPairs` says. The only thing to check is that the appended pair enters with\nits halves the other way round, `B''` before `B'`, which is `epr_symm`.\n\n## What else the descent needs\n\nThe paper's passage from `V`-conjugation to `phi`-conjugation rests on two identities, and both are\nhere at the level of the embedding, before the swap unitary is applied:\n\n* `physEmb_conj_aOp`: `phi_0^† (X ⊗ Id) phi_0 = X`, where `X ⊗ Id` is the triple `aOp` by which\n  `MirrorSimul.alicePauli` extends a strategy operator to the physical register. It is the\n  compression that makes a pairing on the embedded state a pairing on `psi`.\n* `physEmb_mul_mul_conjTranspose`: `phi_0 X phi_0^† = (X ⊗ Id) · P` with `P = phi_0 phi_0^†` the\n  projection onto `Id ⊗ |EPR><EPR| ⊗ |0><0|`, and `P` commutes with `X ⊗ Id`\n  (`aOp_mul_physEmbProj_comm`). Conjugated by `V_A`, this is the paper's\n  `phi_A M_h phi_A^† = V_A (M_h ⊗ Id) V_A^† · P`.\n\nFinally `physSwap_mulVec_physVec_mirrorOfGlobalPairs` composes with the two swap unitaries:\n`M.physSwap *ᵥ M.physVec` --- the vector item 1 of `lem:qld-swap` is about --- is\n`((V_A phi_0) ⊗ (V_B phi_0)) psi`, the paper's `phi_A ⊗ phi_B |psi>`, and `V_A ",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/PhysEmbed.lean#L267-L292",
+  "source_path": "MIPRE/Background/QLD/PhysEmbed.lean",
+  "lines": [
+   267,
+   292
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.combined_points_pts",
+  "source_name": "MIPRE.QLD.combined_points_pts",
+  "formal_statement": "theorem MIPRE.QLD.combined_points_pts (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)\n    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) :\n    ∃ (QA : Point F m × Point F m → F × F →\n        Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ)\n      (QB : Point F m × Point F m → F × F →\n        Matrix ((dB × Anc F m) × (F × F)) ((dB × Anc F m) × (F × F)) ℂ),\n      (∀ x, IsPVM (QA x)) ∧ (∀ x, IsPVM (QB x))\n      ∧ (∀ x p, (ancillaEmbed (dA × Anc F m) ((0 : F), (0 : F)))ᴴ\n            * (QA x p * ancillaEmbed (dA × Anc F m) ((0 : F), (0 : F)))\n          = sand (hatMats MA .X x.1) (hatMats MA .Z x.2) p)\n      ∧ (∀ x p, (ancillaEmbed (dB × Anc F m) ((0 : F), (0 : F)))ᴴ\n            * (QB x p * ancillaEmbed (dB × Anc F m) ((0 : F), (0 : F)))\n          = sand (hatMats MB .X x.1) (hatMats MB .Z x.2) p)\n      ∧ (∑ x : Point F m × Point F m, (Fintype.card (Point F m × Point F m) : ℝ)⁻¹ *\n            ∑ p : F × F, xSqNorm (extHat (m := m) ψ) (QA x p) (QB x p)\n          ≤ 2 * deltaQ ε)\n      ∧ (∑ x : Point F m × Point F m, (Fintype.card (Point F m × Point F m) : ℝ)⁻¹ *\n            ∑ p : F × F, xSqNorm (extHat (m := m) ψ) (QA x p)\n              (aOp (hatMats MB .Z x.2 p.2 * hatMats MB .X x.1 p.1))\n          ≤ 4 * deltaQ ε + 115352832 * ε)\n      ∧ (∑ x : Point F m × Point F m, (Fintype.card (Point F m × Point F m) : ℝ)⁻¹ *\n            ∑ p : F × F, xSqNorm (extHat (m := m) ψ) (QA x p)\n              (aOp (hatMats MB .X x.1 p.1 * hatMats MB .Z x.2 p.2))\n          ≤ 4 * deltaQ ε + 461411328 * ε) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ} [NeZero m]",
+   "variable [Algebra (ZMod 2) F] {hm : m ∣ Fintype.card F}",
+   "variable {d : ℕ} {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**`lem:qld-combined-points`, indexed by the pair of points.** Verbatim the content-indexed\nstatement with the content replaced by the two points it contributes, which is all four inputs of\nthe joint-measurement construction see.",
+  "module": "MIPRE.Background.QLD.Product",
+  "module_doc": "/-!\n# A content, and a product of two independent line-point pairs\n\n`lem:qld-pairs-of-lines` is proved on the Pauli basis test's own question distribution: one\n`Content`, carrying both sides' points but a **single** seed and a **single** raw direction, so the\n`X` line and the `Z` line it presents are not independent. `lem:qld-padded-lines` needs the same\nconclusion on a **product** of two independent line-point laws, which is what `lem:qld-sublines`\ndelivers.\n\nThe transfer is available, and the reason is worth stating before the machinery: **no hypothesis of\nthe pasting lemma involves both lines.** Each marginal consistency involves one line and the two\npoints; the fine self-consistency and the collision term involve one line only. So the only laws\nthat have to agree are\n\n* one side's line-point data on its own,\n* one side's line-point data together with the *other side's point*,\n* the two points.\n\nand each of those has the same law under a content as under a product, because a content's two\npoints and its seed and raw direction are independent and uniform. This file says that three times,\nand each proof is one line on top of `MIPRE.avg_comp_equiv_fst`: exhibit the splitting of each\nsample space that isolates the part the quantity depends on, and the marginals match.\n\nWhat the file does *not* claim is that the two laws agree on anything involving both lines --- they\ndo not, and that is the content of the paper's restriction to product distributions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Product.lean#L268-L331",
+  "source_path": "MIPRE/Background/QLD/Product.lean",
+  "lines": [
+   268,
+   331
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-lines",
+    "env": "lemma",
+    "title": "Padded line POVM",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.isPVM_hatMats",
+   "MIPRE.QLD.sum_content_hatComm_le",
+   "MIPRE.QLD.sum_content_hatComm_le_B",
+   "MIPRE.QLD.hatPOVM_consistency",
+   "MIPRE.QLD.hatVec_unit",
+   "MIPRE.avg_comp_equiv_fst",
+   "MIPRE.exists_projective_joint"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.avg_pair_eq_content_X",
+  "source_name": "MIPRE.QLD.avg_pair_eq_content_X",
+  "formal_statement": "theorem MIPRE.QLD.avg_pair_eq_content_X {PX : LinePres F m hm .X} (hfac : FactorsX PX)\n    (G : Point F m → Point F m → (F → Matrix (dB × Anc F m) (dB × Anc F m) ℂ) → ℝ) :\n    ∑ p : LPData F m × LPData F m, (Fintype.card (LPData F m × LPData F m) : ℝ)⁻¹ *\n        G p.1.pt p.2.pt (PX.lineEvalMats d M (pairCX p))\n      = ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *\n        G c.uX c.uZ (PX.lineEvalMats d M c) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ} [NeZero m]",
+   "variable [Algebra (ZMod 2) F] {hm : m ∣ Fintype.card F}",
+   "variable {d : ℕ} {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {M : Question F m → POVM (Answer F m d) dB}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.Product",
+  "module_doc": "/-!\n# A content, and a product of two independent line-point pairs\n\n`lem:qld-pairs-of-lines` is proved on the Pauli basis test's own question distribution: one\n`Content`, carrying both sides' points but a **single** seed and a **single** raw direction, so the\n`X` line and the `Z` line it presents are not independent. `lem:qld-padded-lines` needs the same\nconclusion on a **product** of two independent line-point laws, which is what `lem:qld-sublines`\ndelivers.\n\nThe transfer is available, and the reason is worth stating before the machinery: **no hypothesis of\nthe pasting lemma involves both lines.** Each marginal consistency involves one line and the two\npoints; the fine self-consistency and the collision term involve one line only. So the only laws\nthat have to agree are\n\n* one side's line-point data on its own,\n* one side's line-point data together with the *other side's point*,\n* the two points.\n\nand each of those has the same law under a content as under a product, because a content's two\npoints and its seed and raw direction are independent and uniform. This file says that three times,\nand each proof is one line on top of `MIPRE.avg_comp_equiv_fst`: exhibit the splitting of each\nsample space that isolates the part the quantity depends on, and the marginals match.\n\nWhat the file does *not* claim is that the two laws agree on anything involving both lines --- they\ndo not, and that is the content of the paper's restriction to product distributions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Product.lean#L449-L472",
+  "source_path": "MIPRE/Background/QLD/Product.lean",
+  "lines": [
+   449,
+   472
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-lines",
+    "env": "lemma",
+    "title": "Padded line POVM",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.avg_comp_equiv_fst"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.avg_pair_eq_content_Z",
+  "source_name": "MIPRE.QLD.avg_pair_eq_content_Z",
+  "formal_statement": "theorem MIPRE.QLD.avg_pair_eq_content_Z {PZ : LinePres F m hm .Z} (hfac : FactorsZ PZ)\n    (G : Point F m → Point F m → (F → Matrix (dB × Anc F m) (dB × Anc F m) ℂ) → ℝ) :\n    ∑ p : LPData F m × LPData F m, (Fintype.card (LPData F m × LPData F m) : ℝ)⁻¹ *\n        G p.1.pt p.2.pt (PZ.lineEvalMats d M (pairCZ p))\n      = ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *\n        G c.uX c.uZ (PZ.lineEvalMats d M c) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ} [NeZero m]",
+   "variable [Algebra (ZMod 2) F] {hm : m ∣ Fintype.card F}",
+   "variable {d : ℕ} {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {M : Question F m → POVM (Answer F m d) dB}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.Product",
+  "module_doc": "/-!\n# A content, and a product of two independent line-point pairs\n\n`lem:qld-pairs-of-lines` is proved on the Pauli basis test's own question distribution: one\n`Content`, carrying both sides' points but a **single** seed and a **single** raw direction, so the\n`X` line and the `Z` line it presents are not independent. `lem:qld-padded-lines` needs the same\nconclusion on a **product** of two independent line-point laws, which is what `lem:qld-sublines`\ndelivers.\n\nThe transfer is available, and the reason is worth stating before the machinery: **no hypothesis of\nthe pasting lemma involves both lines.** Each marginal consistency involves one line and the two\npoints; the fine self-consistency and the collision term involve one line only. So the only laws\nthat have to agree are\n\n* one side's line-point data on its own,\n* one side's line-point data together with the *other side's point*,\n* the two points.\n\nand each of those has the same law under a content as under a product, because a content's two\npoints and its seed and raw direction are independent and uniform. This file says that three times,\nand each proof is one line on top of `MIPRE.avg_comp_equiv_fst`: exhibit the splitting of each\nsample space that isolates the part the quantity depends on, and the marginals match.\n\nWhat the file does *not* claim is that the two laws agree on anything involving both lines --- they\ndo not, and that is the content of the paper's restriction to product distributions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Product.lean#L474-L497",
+  "source_path": "MIPRE/Background/QLD/Product.lean",
+  "lines": [
+   474,
+   497
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-lines",
+    "env": "lemma",
+    "title": "Padded line POVM",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.avg_comp_equiv_fst"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.avg_pair_eq_content_X_self",
+  "source_name": "MIPRE.QLD.avg_pair_eq_content_X_self",
+  "formal_statement": "theorem MIPRE.QLD.avg_pair_eq_content_X_self {PX : LinePres F m hm .X} (hfac : FactorsX PX)\n    (G : (LinePoly F (m * d) → Matrix (dA × Anc F m) (dA × Anc F m) ℂ) →\n      (LinePoly F (m * d) → Matrix (dB × Anc F m) (dB × Anc F m) ℂ) → ℝ) :\n    ∑ p : LPData F m × LPData F m, (Fintype.card (LPData F m × LPData F m) : ℝ)⁻¹ *\n        G (PX.lineMats d MA (pairCX p)) (PX.lineMats d MB (pairCX p))\n      = ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *\n        G (PX.lineMats d MA c) (PX.lineMats d MB c) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ} [NeZero m]",
+   "variable [Algebra (ZMod 2) F] {hm : m ∣ Fintype.card F}",
+   "variable {d : ℕ} {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {M : Question F m → POVM (Answer F m d) dB}"
+  ],
+  "docstring": "The fine self-consistency of the `X` line measurement involves no point at all, so the transfer\nis the point-free form of the same identity.",
+  "module": "MIPRE.Background.QLD.Product",
+  "module_doc": "/-!\n# A content, and a product of two independent line-point pairs\n\n`lem:qld-pairs-of-lines` is proved on the Pauli basis test's own question distribution: one\n`Content`, carrying both sides' points but a **single** seed and a **single** raw direction, so the\n`X` line and the `Z` line it presents are not independent. `lem:qld-padded-lines` needs the same\nconclusion on a **product** of two independent line-point laws, which is what `lem:qld-sublines`\ndelivers.\n\nThe transfer is available, and the reason is worth stating before the machinery: **no hypothesis of\nthe pasting lemma involves both lines.** Each marginal consistency involves one line and the two\npoints; the fine self-consistency and the collision term involve one line only. So the only laws\nthat have to agree are\n\n* one side's line-point data on its own,\n* one side's line-point data together with the *other side's point*,\n* the two points.\n\nand each of those has the same law under a content as under a product, because a content's two\npoints and its seed and raw direction are independent and uniform. This file says that three times,\nand each proof is one line on top of `MIPRE.avg_comp_equiv_fst`: exhibit the splitting of each\nsample space that isolates the part the quantity depends on, and the marginals match.\n\nWhat the file does *not* claim is that the two laws agree on anything involving both lines --- they\ndo not, and that is the content of the paper's restriction to product distributions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Product.lean#L499-L525",
+  "source_path": "MIPRE/Background/QLD/Product.lean",
+  "lines": [
+   499,
+   525
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-lines",
+    "env": "lemma",
+    "title": "Padded line POVM",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.avg_comp_equiv_fst"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.avg_pair_eq_content_X_collProb",
+  "source_name": "MIPRE.QLD.avg_pair_eq_content_X_collProb",
+  "formal_statement": "theorem MIPRE.QLD.avg_pair_eq_content_X_collProb {PX : LinePres F m hm .X} (hfac : FactorsX PX) :\n    ∑ p : LPData F m × LPData F m, (Fintype.card (LPData F m × LPData F m) : ℝ)⁻¹ *\n        collProb PX d (pairCX p)\n      = ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * collProb PX d c := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ} [NeZero m]",
+   "variable [Algebra (ZMod 2) F] {hm : m ∣ Fintype.card F}",
+   "variable {d : ℕ} {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {M : Question F m → POVM (Answer F m d) dB}"
+  ],
+  "docstring": "The collision probability reads only the direction, so it transfers the same way.",
+  "module": "MIPRE.Background.QLD.Product",
+  "module_doc": "/-!\n# A content, and a product of two independent line-point pairs\n\n`lem:qld-pairs-of-lines` is proved on the Pauli basis test's own question distribution: one\n`Content`, carrying both sides' points but a **single** seed and a **single** raw direction, so the\n`X` line and the `Z` line it presents are not independent. `lem:qld-padded-lines` needs the same\nconclusion on a **product** of two independent line-point laws, which is what `lem:qld-sublines`\ndelivers.\n\nThe transfer is available, and the reason is worth stating before the machinery: **no hypothesis of\nthe pasting lemma involves both lines.** Each marginal consistency involves one line and the two\npoints; the fine self-consistency and the collision term involve one line only. So the only laws\nthat have to agree are\n\n* one side's line-point data on its own,\n* one side's line-point data together with the *other side's point*,\n* the two points.\n\nand each of those has the same law under a content as under a product, because a content's two\npoints and its seed and raw direction are independent and uniform. This file says that three times,\nand each proof is one line on top of `MIPRE.avg_comp_equiv_fst`: exhibit the splitting of each\nsample space that isolates the part the quantity depends on, and the marginals match.\n\nWhat the file does *not* claim is that the two laws agree on anything involving both lines --- they\ndo not, and that is the content of the paper's restriction to product distributions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Product.lean#L527-L544",
+  "source_path": "MIPRE/Background/QLD/Product.lean",
+  "lines": [
+   527,
+   544
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-lines",
+    "env": "lemma",
+    "title": "Padded line POVM",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.avg_comp_equiv_fst"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.pairs_of_lines_prod_of_items",
+  "source_name": "MIPRE.QLD.pairs_of_lines_prod_of_items",
+  "formal_statement": "theorem MIPRE.QLD.pairs_of_lines_prod_of_items (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)\n    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val))\n    (PX : LinePres F m hm .X) (PZ : LinePres F m hm .Z)\n    (hfacX : FactorsX PX) (hfacZ : FactorsZ PZ)\n    (hX1 : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ f : LinePoly F (m * d),\n        xSqNorm (hatVec (F := F) (m := m) ψ) (PX.lineMats d MA c f)\n          (PX.lineMats d MB c f) ≤ 172 * ε)\n    (hX2 : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ a : F,\n        xSqNorm (hatVec (F := F) (m := m) ψ) (hatMats MA .X (c.pt .X) a)\n          (PX.lineEvalMats d MB c a) ≤ 172 * ε)\n    (hZ2 : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * ∑ b : F,\n        xSqNorm (hatVec (F := F) (m := m) ψ) (hatMats MA .Z (c.pt .Z) b)\n          (PZ.lineEvalMats d MB c b) ≤ 172 * ε)\n    {εc : ℝ} (hcoll : ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ *\n      collProb PX d c ≤ εc) :\n    ∃ QA : LPData F m × LPData F m → F × F →\n        Matrix ((dA × Anc F m) × (F × F)) ((dA × Anc F m) × (F × F)) ℂ,\n      (∀ p, IsPVM (QA p))\n      ∧ (∀ p r, (ancillaEmbed (dA × Anc F m) ((0 : F), (0 : F)))ᴴ\n            * (QA p r * ancillaEmbed (dA × Anc F m) ((0 : F), (0 : F)))\n          = sand (hatMats MA .X p.1.pt) (hatMats MA .Z p.2.pt) r)\n      ∧ 1 - ∑ p : LPData F m × LPData F m,\n          (Fintype.card (LPData F m × LPData F m) : ℝ)⁻¹ * ∑ r : F × F,\n          bornProb (extHat (m := m) ψ) (QA p r)\n            (∑ q ∈ univ.filter fun q : LinePoly F (m * d) × LinePoly F (m * d) =>\n                LinePoly.eval q.1 (PX.param (pairCX p)) = r.1\n                  ∧ LinePoly.eval q.2 (PZ.param (pairCZ p)) = r.2,\n              pasteLine PX PZ d MB (pairCX p) (pairCZ p) q)\n        ≤ deltaPairs ε εc := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ} [NeZero m]",
+   "variable [Algebra (ZMod 2) F] {hm : m ∣ Fintype.card F}",
+   "variable {d : ℕ} {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.Product",
+  "module_doc": "/-!\n# A content, and a product of two independent line-point pairs\n\n`lem:qld-pairs-of-lines` is proved on the Pauli basis test's own question distribution: one\n`Content`, carrying both sides' points but a **single** seed and a **single** raw direction, so the\n`X` line and the `Z` line it presents are not independent. `lem:qld-padded-lines` needs the same\nconclusion on a **product** of two independent line-point laws, which is what `lem:qld-sublines`\ndelivers.\n\nThe transfer is available, and the reason is worth stating before the machinery: **no hypothesis of\nthe pasting lemma involves both lines.** Each marginal consistency involves one line and the two\npoints; the fine self-consistency and the collision term involve one line only. So the only laws\nthat have to agree are\n\n* one side's line-point data on its own,\n* one side's line-point data together with the *other side's point*,\n* the two points.\n\nand each of those has the same law under a content as under a product, because a content's two\npoints and its seed and raw direction are independent and uniform. This file says that three times,\nand each proof is one line on top of `MIPRE.avg_comp_equiv_fst`: exhibit the splitting of each\nsample space that isolates the part the quantity depends on, and the marginals match.\n\nWhat the file does *not* claim is that the two laws agree on anything involving both lines --- they\ndo not, and that is the content of the paper's restriction to product distributions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Product.lean#L557-L661",
+  "source_path": "MIPRE/Background/QLD/Product.lean",
+  "lines": [
+   557,
+   661
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-lines",
+    "env": "lemma",
+    "title": "Padded line POVM",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.hatPOVM_consistency",
+   "MIPRE.QLD.sum_content_normSq_point_line_le",
+   "MIPRE.QLD.sum_content_marg_line_le",
+   "MIPRE.QLD.pairs_of_lines_gen",
+   "MIPRE.QLD.combined_points_pts",
+   "MIPRE.QLD.avg_pair_eq_content_X",
+   "MIPRE.QLD.avg_pair_eq_content_Z",
+   "MIPRE.QLD.avg_pair_eq_content_X_self",
+   "MIPRE.QLD.avg_pair_eq_content_X_collProb",
+   "MIPRE.avg_comp_equiv_fst",
+   "MIPRE.ancillaEmbed_isometry",
+   "MIPRE.kron_one_mul_ancillaEmbed",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.sum_bornProb",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.normSq_stateVecB_extVec2_aOp",
+   "MIPRE.Weyl.isPVM_synOf"
+  ],
+  "pasted_helpers": 33,
+  "prooflines": 73,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_snorm_sq_aOp_mul_bOp_le",
+  "source_name": "MIPRE.sum_snorm_sq_aOp_mul_bOp_le",
+  "formal_statement": "theorem MIPRE.sum_snorm_sq_aOp_mul_bOp_le {Λ C : Type*} [Fintype Λ] [Fintype C] [DecidableEq C]\n    (ψ : dA × dB → ℂ) {G : Λ → Matrix dA dA ℂ} (hG : IsPVM G) (f : Λ → C)\n    (D : C → Matrix dB dB ℂ) :\n    ∑ g, snorm ψ ((aOp (G g) : Matrix (dA × dB) _ ℂ) * bOp (D (f g))) ^ 2\n      ≤ ∑ c, ‖stateVecB ψ (D c)‖ ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "The deviation of a projective outcome family from a Bob-side operator family, grouped by a\nvalue map: the Alice projector `∑_{f g = c} G_g ≤ 1` is dropped.",
+  "module": "MIPRE.Background.QLD.Products",
+  "module_doc": "/-!\n# Ordered products with global outcome multipliers (`lem:qld-global-products`)\n\nThe global measurement of `lem:qld-global-pvm` is consistent, on average over a uniform padded\npoint `u = (x, z, α, β, w)`, with the *sandwich combination*\n`P_u(c) = ∑_{αa + βb = c} Z_b X_a Z_b` of Bob's expanded point measurements. Stage 4b needs the\nsame statement for the two *ordered products* `∑_{αa + βb = c} Z_b X_a` and\n`∑_{αa + βb = c} X_a Z_b`, in the state-distance form: with `v_g = (G_g ⊗ 1) Φ`,\n`∑_g E_u ‖v_g - (1 ⊗ B_u(g(u))) v_g‖² ≤ 2δ + 2κ`, where `δ` is the consistency error and `κ` the\naverage commutator weight `E_{x,z} ∑_{a,b} ‖(1 ⊗ [X_a, Z_b]) Φ‖²` of Bob's two measurements.\n\n## The argument\n\nTwo steps. `(1 ⊗ (1 - P)) v_g` is controlled by the consistency itself, because `0 ≤ P ≤ 1` gives\n`(1 - P)² ≤ 1 - P` and so `∑_g E ‖(G_g ⊗ (1 - P_u(g(u)))) Φ‖² ≤ ∑_g E ⟨G_g ⊗ (1 - P_u(g(u)))⟩ ≤ δ`.\n`(1 ⊗ (P - B)) v_g` is controlled by the commutators: grouping the outcomes by their value\n`c = g(u)` and dropping the projector `∑_{g(u) = c} G_g ≤ 1` leaves\n`∑_c ‖(1 ⊗ (P_u(c) - B_u(c))) Φ‖²`,\na fibre-summed family of the deviations `sand - ord`; these sum to zero over `(a, b)`, so Parseval\nover `F_q` (`sum_avg_norm_fibre_sq`) turns the average over `(α, β)` of the fibre sums into\n`(1 - 1/q) ∑_{a,b} ‖(1 ⊗ (sand - ord)(a, b)) Φ‖²` with no loss of a factor `q`, and each deviation\nis a contraction of a commutator: `Z X Z - Z X = Z [X, Z]` and `Z X Z - X Z = -(1 - Z) [X, Z]`.\n\nEverything here is stated for abstract projective families `X x`, `Z z` on Bob's register, with\nthe consistency and the commutator weight as hypotheses; `lem:qld-global-pvm` and\n`lem:qld-combined-points` supply them for the padded state.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Products.lean#L102-L121",
+  "source_path": "MIPRE/Background/QLD/Products.lean",
+  "lines": [
+   102,
+   121
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-products",
+    "env": "lemma",
+    "title": "Ordered products with global outcome multipliers",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_sum",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.IsPVM.posSemidef",
+   "MIPRE.bornProb_swapVec"
+  ],
+  "pasted_helpers": 24,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.stateSqNorm_extVec2_aOp",
+  "source_name": "MIPRE.stateSqNorm_extVec2_aOp",
+  "formal_statement": "theorem MIPRE.stateSqNorm_extVec2_aOp (ψ : dA × dB → ℂ) (a₀ : Anc) (b₀ : Bnc) (M : Matrix dA dA ℂ) :\n    stateSqNorm (extVec2 ψ a₀ b₀) (aOp M : Matrix (dA × Anc) _ ℂ) = stateSqNorm ψ M := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {dA dB Anc Bnc : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "Alice's squared state norm of an operator extended by the identity, on the twice-extended\nstate, is its squared state norm on the state.",
+  "module": "MIPRE.Background.QLD.Products",
+  "module_doc": "/-!\n# Ordered products with global outcome multipliers (`lem:qld-global-products`)\n\nThe global measurement of `lem:qld-global-pvm` is consistent, on average over a uniform padded\npoint `u = (x, z, α, β, w)`, with the *sandwich combination*\n`P_u(c) = ∑_{αa + βb = c} Z_b X_a Z_b` of Bob's expanded point measurements. Stage 4b needs the\nsame statement for the two *ordered products* `∑_{αa + βb = c} Z_b X_a` and\n`∑_{αa + βb = c} X_a Z_b`, in the state-distance form: with `v_g = (G_g ⊗ 1) Φ`,\n`∑_g E_u ‖v_g - (1 ⊗ B_u(g(u))) v_g‖² ≤ 2δ + 2κ`, where `δ` is the consistency error and `κ` the\naverage commutator weight `E_{x,z} ∑_{a,b} ‖(1 ⊗ [X_a, Z_b]) Φ‖²` of Bob's two measurements.\n\n## The argument\n\nTwo steps. `(1 ⊗ (1 - P)) v_g` is controlled by the consistency itself, because `0 ≤ P ≤ 1` gives\n`(1 - P)² ≤ 1 - P` and so `∑_g E ‖(G_g ⊗ (1 - P_u(g(u)))) Φ‖² ≤ ∑_g E ⟨G_g ⊗ (1 - P_u(g(u)))⟩ ≤ δ`.\n`(1 ⊗ (P - B)) v_g` is controlled by the commutators: grouping the outcomes by their value\n`c = g(u)` and dropping the projector `∑_{g(u) = c} G_g ≤ 1` leaves\n`∑_c ‖(1 ⊗ (P_u(c) - B_u(c))) Φ‖²`,\na fibre-summed family of the deviations `sand - ord`; these sum to zero over `(a, b)`, so Parseval\nover `F_q` (`sum_avg_norm_fibre_sq`) turns the average over `(α, β)` of the fibre sums into\n`(1 - 1/q) ∑_{a,b} ‖(1 ⊗ (sand - ord)(a, b)) Φ‖²` with no loss of a factor `q`, and each deviation\nis a contraction of a commutator: `Z X Z - Z X = Z [X, Z]` and `Z X Z - X Z = -(1 - Z) [X, Z]`.\n\nEverything here is stated for abstract projective families `X x`, `Z z` on Bob's register, with\nthe consistency and the commutator weight as hypotheses; `lem:qld-global-pvm` and\n`lem:qld-combined-points` supply them for the padded state.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Products.lean#L130-L135",
+  "source_path": "MIPRE/Background/QLD/Products.lean",
+  "lines": [
+   130,
+   135
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.ancillaEmbed_isometry",
+   "MIPRE.kron_one_mul_ancillaEmbed",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_avg_normSq_stateVecB_fibre_eq",
+  "source_name": "MIPRE.sum_avg_normSq_stateVecB_fibre_eq",
+  "formal_statement": "theorem MIPRE.sum_avg_normSq_stateVecB_fibre_eq (ψ : dA × dB → ℂ) {E : F × F → Matrix dB dB ℂ}\n    (hE : ∑ p, E p = 0) :\n    ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) *\n        ∑ c : F, ‖stateVecB ψ (QLD.ptComb E ab.1 ab.2 c)‖ ^ 2\n      = (1 - (Fintype.card F : ℝ)⁻¹) * ∑ p : F × F, ‖stateVecB ψ (E p)‖ ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "**Parseval over `F_q` for the fibre sums of a Bob-side family summing to zero**: the average\nover the combining coefficients of the squared norms of the fibre sums is `(1 - 1/q)` times the\nsum of the squared norms of the members.",
+  "module": "MIPRE.Background.QLD.Products",
+  "module_doc": "/-!\n# Ordered products with global outcome multipliers (`lem:qld-global-products`)\n\nThe global measurement of `lem:qld-global-pvm` is consistent, on average over a uniform padded\npoint `u = (x, z, α, β, w)`, with the *sandwich combination*\n`P_u(c) = ∑_{αa + βb = c} Z_b X_a Z_b` of Bob's expanded point measurements. Stage 4b needs the\nsame statement for the two *ordered products* `∑_{αa + βb = c} Z_b X_a` and\n`∑_{αa + βb = c} X_a Z_b`, in the state-distance form: with `v_g = (G_g ⊗ 1) Φ`,\n`∑_g E_u ‖v_g - (1 ⊗ B_u(g(u))) v_g‖² ≤ 2δ + 2κ`, where `δ` is the consistency error and `κ` the\naverage commutator weight `E_{x,z} ∑_{a,b} ‖(1 ⊗ [X_a, Z_b]) Φ‖²` of Bob's two measurements.\n\n## The argument\n\nTwo steps. `(1 ⊗ (1 - P)) v_g` is controlled by the consistency itself, because `0 ≤ P ≤ 1` gives\n`(1 - P)² ≤ 1 - P` and so `∑_g E ‖(G_g ⊗ (1 - P_u(g(u)))) Φ‖² ≤ ∑_g E ⟨G_g ⊗ (1 - P_u(g(u)))⟩ ≤ δ`.\n`(1 ⊗ (P - B)) v_g` is controlled by the commutators: grouping the outcomes by their value\n`c = g(u)` and dropping the projector `∑_{g(u) = c} G_g ≤ 1` leaves\n`∑_c ‖(1 ⊗ (P_u(c) - B_u(c))) Φ‖²`,\na fibre-summed family of the deviations `sand - ord`; these sum to zero over `(a, b)`, so Parseval\nover `F_q` (`sum_avg_norm_fibre_sq`) turns the average over `(α, β)` of the fibre sums into\n`(1 - 1/q) ∑_{a,b} ‖(1 ⊗ (sand - ord)(a, b)) Φ‖²` with no loss of a factor `q`, and each deviation\nis a contraction of a commutator: `Z X Z - Z X = Z [X, Z]` and `Z X Z - X Z = -(1 - Z) [X, Z]`.\n\nEverything here is stated for abstract projective families `X x`, `Z z` on Bob's register, with\nthe consistency and the commutator weight as hypotheses; `lem:qld-global-pvm` and\n`lem:qld-combined-points` supply them for the padded state.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Products.lean#L146-L165",
+  "source_path": "MIPRE/Background/QLD/Products.lean",
+  "lines": [
+   146,
+   165
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_avg_norm_fibre_sq"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_avg_fibre_sand_sub_ord_le",
+  "source_name": "MIPRE.QLD.sum_avg_fibre_sand_sub_ord_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_avg_fibre_sand_sub_ord_le (hX : IsPVM X) (hZ : IsPVM Z) (ψ : dA × RB → ℂ)\n    {ord : (F → Matrix RB RB ℂ) → (F → Matrix RB RB ℂ) → F × F → Matrix RB RB ℂ}\n    (hord1 : ∑ p : F × F, ord X Z p = 1)\n    (hordle : ∀ p, ‖stateVecB ψ (sand X Z p - ord X Z p)‖ ≤ ‖stateVecB ψ (comm X Z p)‖) :\n    ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) *\n        ∑ c : F, ‖stateVecB ψ (ptComb (fun p => sand X Z p - ord X Z p) ab.1 ab.2 c)‖ ^ 2\n      ≤ ∑ p : F × F, ‖stateVecB ψ (comm X Z p)‖ ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "**The fibre sums of `sand - ord` are controlled by the commutators**, on average over the\ncombining coefficients and without a factor `q`, for either order.",
+  "module": "MIPRE.Background.QLD.Products",
+  "module_doc": "/-!\n# Ordered products with global outcome multipliers (`lem:qld-global-products`)\n\nThe global measurement of `lem:qld-global-pvm` is consistent, on average over a uniform padded\npoint `u = (x, z, α, β, w)`, with the *sandwich combination*\n`P_u(c) = ∑_{αa + βb = c} Z_b X_a Z_b` of Bob's expanded point measurements. Stage 4b needs the\nsame statement for the two *ordered products* `∑_{αa + βb = c} Z_b X_a` and\n`∑_{αa + βb = c} X_a Z_b`, in the state-distance form: with `v_g = (G_g ⊗ 1) Φ`,\n`∑_g E_u ‖v_g - (1 ⊗ B_u(g(u))) v_g‖² ≤ 2δ + 2κ`, where `δ` is the consistency error and `κ` the\naverage commutator weight `E_{x,z} ∑_{a,b} ‖(1 ⊗ [X_a, Z_b]) Φ‖²` of Bob's two measurements.\n\n## The argument\n\nTwo steps. `(1 ⊗ (1 - P)) v_g` is controlled by the consistency itself, because `0 ≤ P ≤ 1` gives\n`(1 - P)² ≤ 1 - P` and so `∑_g E ‖(G_g ⊗ (1 - P_u(g(u)))) Φ‖² ≤ ∑_g E ⟨G_g ⊗ (1 - P_u(g(u)))⟩ ≤ δ`.\n`(1 ⊗ (P - B)) v_g` is controlled by the commutators: grouping the outcomes by their value\n`c = g(u)` and dropping the projector `∑_{g(u) = c} G_g ≤ 1` leaves\n`∑_c ‖(1 ⊗ (P_u(c) - B_u(c))) Φ‖²`,\na fibre-summed family of the deviations `sand - ord`; these sum to zero over `(a, b)`, so Parseval\nover `F_q` (`sum_avg_norm_fibre_sq`) turns the average over `(α, β)` of the fibre sums into\n`(1 - 1/q) ∑_{a,b} ‖(1 ⊗ (sand - ord)(a, b)) Φ‖²` with no loss of a factor `q`, and each deviation\nis a contraction of a commutator: `Z X Z - Z X = Z [X, Z]` and `Z X Z - X Z = -(1 - Z) [X, Z]`.\n\nEverything here is stated for abstract projective families `X x`, `Z z` on Bob's register, with\nthe consistency and the commutator weight as hypotheses; `lem:qld-global-pvm` and\n`lem:qld-combined-points` supply them for the padded state.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Products.lean#L249-L269",
+  "source_path": "MIPRE/Background/QLD/Products.lean",
+  "lines": [
+   249,
+   269
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-products",
+    "env": "lemma",
+    "title": "Ordered products with global outcome multipliers",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_avg_normSq_stateVecB_fibre_eq"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_uniform_pad4",
+  "source_name": "MIPRE.QLD.sum_uniform_pad4",
+  "formal_statement": "theorem MIPRE.QLD.sum_uniform_pad4 (f : Point F m → Point F m → F → F → ℝ) :\n    ∑ u, uniform (Point F (4 * m)) u * f (xBlk u) (zBlk u) (alph u) (bet u)\n      = ∑ x, ∑ z, (uniform (Point F m) x * uniform (Point F m) z)\n          * ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) * f x z ab.1 ab.2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ} [NeZero m]"
+  ],
+  "docstring": "**The uniform padded point, read through its blocks and combining coordinates**: the average\nover `u ∈ F^{4m}` of a function of `(xBlk u, zBlk u, alph u, bet u)` is the average over\nindependent uniform `x, z ∈ F^m` and `(α, β) ∈ F²`.",
+  "module": "MIPRE.Background.QLD.Products",
+  "module_doc": "/-!\n# Ordered products with global outcome multipliers (`lem:qld-global-products`)\n\nThe global measurement of `lem:qld-global-pvm` is consistent, on average over a uniform padded\npoint `u = (x, z, α, β, w)`, with the *sandwich combination*\n`P_u(c) = ∑_{αa + βb = c} Z_b X_a Z_b` of Bob's expanded point measurements. Stage 4b needs the\nsame statement for the two *ordered products* `∑_{αa + βb = c} Z_b X_a` and\n`∑_{αa + βb = c} X_a Z_b`, in the state-distance form: with `v_g = (G_g ⊗ 1) Φ`,\n`∑_g E_u ‖v_g - (1 ⊗ B_u(g(u))) v_g‖² ≤ 2δ + 2κ`, where `δ` is the consistency error and `κ` the\naverage commutator weight `E_{x,z} ∑_{a,b} ‖(1 ⊗ [X_a, Z_b]) Φ‖²` of Bob's two measurements.\n\n## The argument\n\nTwo steps. `(1 ⊗ (1 - P)) v_g` is controlled by the consistency itself, because `0 ≤ P ≤ 1` gives\n`(1 - P)² ≤ 1 - P` and so `∑_g E ‖(G_g ⊗ (1 - P_u(g(u)))) Φ‖² ≤ ∑_g E ⟨G_g ⊗ (1 - P_u(g(u)))⟩ ≤ δ`.\n`(1 ⊗ (P - B)) v_g` is controlled by the commutators: grouping the outcomes by their value\n`c = g(u)` and dropping the projector `∑_{g(u) = c} G_g ≤ 1` leaves\n`∑_c ‖(1 ⊗ (P_u(c) - B_u(c))) Φ‖²`,\na fibre-summed family of the deviations `sand - ord`; these sum to zero over `(a, b)`, so Parseval\nover `F_q` (`sum_avg_norm_fibre_sq`) turns the average over `(α, β)` of the fibre sums into\n`(1 - 1/q) ∑_{a,b} ‖(1 ⊗ (sand - ord)(a, b)) Φ‖²` with no loss of a factor `q`, and each deviation\nis a contraction of a commutator: `Z X Z - Z X = Z [X, Z]` and `Z X Z - X Z = -(1 - Z) [X, Z]`.\n\nEverything here is stated for abstract projective families `X x`, `Z z` on Bob's register, with\nthe consistency and the commutator weight as hypotheses; `lem:qld-global-pvm` and\n`lem:qld-combined-points` supply them for the padded state.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Products.lean#L340-L366",
+  "source_path": "MIPRE/Background/QLD/Products.lean",
+  "lines": [
+   340,
+   366
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-products",
+    "env": "lemma",
+    "title": "Ordered products with global outcome multipliers",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_point_pad"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_content_blocks",
+  "source_name": "MIPRE.QLD.sum_content_blocks",
+  "formal_statement": "theorem MIPRE.QLD.sum_content_blocks (g : Point F m → Point F m → ℝ) :\n    ∑ c : Content F m, (Fintype.card (Content F m) : ℝ)⁻¹ * g c.uX c.uZ\n      = ∑ x, ∑ z, (uniform (Point F m) x * uniform (Point F m) z) * g x z := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m : ℕ} [NeZero m]"
+  ],
+  "docstring": "The uniform content, read through `(uX, uZ)`, is a pair of independent uniform points.",
+  "module": "MIPRE.Background.QLD.Products",
+  "module_doc": "/-!\n# Ordered products with global outcome multipliers (`lem:qld-global-products`)\n\nThe global measurement of `lem:qld-global-pvm` is consistent, on average over a uniform padded\npoint `u = (x, z, α, β, w)`, with the *sandwich combination*\n`P_u(c) = ∑_{αa + βb = c} Z_b X_a Z_b` of Bob's expanded point measurements. Stage 4b needs the\nsame statement for the two *ordered products* `∑_{αa + βb = c} Z_b X_a` and\n`∑_{αa + βb = c} X_a Z_b`, in the state-distance form: with `v_g = (G_g ⊗ 1) Φ`,\n`∑_g E_u ‖v_g - (1 ⊗ B_u(g(u))) v_g‖² ≤ 2δ + 2κ`, where `δ` is the consistency error and `κ` the\naverage commutator weight `E_{x,z} ∑_{a,b} ‖(1 ⊗ [X_a, Z_b]) Φ‖²` of Bob's two measurements.\n\n## The argument\n\nTwo steps. `(1 ⊗ (1 - P)) v_g` is controlled by the consistency itself, because `0 ≤ P ≤ 1` gives\n`(1 - P)² ≤ 1 - P` and so `∑_g E ‖(G_g ⊗ (1 - P_u(g(u)))) Φ‖² ≤ ∑_g E ⟨G_g ⊗ (1 - P_u(g(u)))⟩ ≤ δ`.\n`(1 ⊗ (P - B)) v_g` is controlled by the commutators: grouping the outcomes by their value\n`c = g(u)` and dropping the projector `∑_{g(u) = c} G_g ≤ 1` leaves\n`∑_c ‖(1 ⊗ (P_u(c) - B_u(c))) Φ‖²`,\na fibre-summed family of the deviations `sand - ord`; these sum to zero over `(a, b)`, so Parseval\nover `F_q` (`sum_avg_norm_fibre_sq`) turns the average over `(α, β)` of the fibre sums into\n`(1 - 1/q) ∑_{a,b} ‖(1 ⊗ (sand - ord)(a, b)) Φ‖²` with no loss of a factor `q`, and each deviation\nis a contraction of a commutator: `Z X Z - Z X = Z [X, Z]` and `Z X Z - X Z = -(1 - Z) [X, Z]`.\n\nEverything here is stated for abstract projective families `X x`, `Z z` on Bob's register, with\nthe consistency and the commutator weight as hypotheses; `lem:qld-global-pvm` and\n`lem:qld-combined-points` supply them for the padded state.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Products.lean#L376-L400",
+  "source_path": "MIPRE/Background/QLD/Products.lean",
+  "lines": [
+   376,
+   400
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-products",
+    "env": "lemma",
+    "title": "Ordered products with global outcome multipliers",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_snorm_sq_ordComb_le",
+  "source_name": "MIPRE.QLD.sum_snorm_sq_ordComb_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_snorm_sq_ordComb_le {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)\n    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))\n      (Matrix RA RA ℂ))\n    (hX : ∀ x, IsPVM (X x)) (hZ : ∀ z, IsPVM (Z z))\n    {ord : (F → Matrix RB RB ℂ) → (F → Matrix RB RB ℂ) → F × F → Matrix RB RB ℂ}\n    (hord1 : ∀ x z, ∑ p : F × F, ord (X x) (Z z) p = 1)\n    (hordle : ∀ x z p, ‖stateVecB Φ (sand (X x) (Z z) p - ord (X x) (Z z) p)‖\n      ≤ ‖stateVecB Φ (comm (X x) (Z z) p)‖)\n    {δ κ : ℝ}\n    (hcons : 1 - δ ≤ ∑ u, uniform (Point F (4 * m)) u\n      * ∑ g, bornProb Φ (G.M () g) (sandComb X Z u (g.eval u)))\n    (hcomm : ∑ x, ∑ z, (uniform (Point F m) x * uniform (Point F m) z)\n      * ∑ p : F × F, ‖stateVecB Φ (comm (X x) (Z z) p)‖ ^ 2 ≤ κ) :\n    ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)\n        * bOp (1 - ordComb ord X Z u (g.eval u))) ^ 2\n      ≤ 2 * δ + 2 * κ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {X Z : Point F m → F → Matrix RB RB ℂ}"
+  ],
+  "docstring": "**`lem:qld-global-products`, for an abstract ordered product.** Let `G` be a projective\nmeasurement with outcomes polynomials on `F^{4m}`, consistent with error `δ`, on average over a\nuniform padded point, with the sandwich combination of two projective families `X x`, `Z z` on\nBob's register whose average commutator weight is `κ`; and let `ord` be an ordered product of the\ntwo families summing to one and deviating from the sandwich by a contraction of the commutator.\nThen `∑_g E_u ‖(G_g ⊗ (1 - ∑_{αa + βb = g(u)} ord(a, b))) Φ‖² ≤ 2δ + 2κ`.",
+  "module": "MIPRE.Background.QLD.Products",
+  "module_doc": "/-!\n# Ordered products with global outcome multipliers (`lem:qld-global-products`)\n\nThe global measurement of `lem:qld-global-pvm` is consistent, on average over a uniform padded\npoint `u = (x, z, α, β, w)`, with the *sandwich combination*\n`P_u(c) = ∑_{αa + βb = c} Z_b X_a Z_b` of Bob's expanded point measurements. Stage 4b needs the\nsame statement for the two *ordered products* `∑_{αa + βb = c} Z_b X_a` and\n`∑_{αa + βb = c} X_a Z_b`, in the state-distance form: with `v_g = (G_g ⊗ 1) Φ`,\n`∑_g E_u ‖v_g - (1 ⊗ B_u(g(u))) v_g‖² ≤ 2δ + 2κ`, where `δ` is the consistency error and `κ` the\naverage commutator weight `E_{x,z} ∑_{a,b} ‖(1 ⊗ [X_a, Z_b]) Φ‖²` of Bob's two measurements.\n\n## The argument\n\nTwo steps. `(1 ⊗ (1 - P)) v_g` is controlled by the consistency itself, because `0 ≤ P ≤ 1` gives\n`(1 - P)² ≤ 1 - P` and so `∑_g E ‖(G_g ⊗ (1 - P_u(g(u)))) Φ‖² ≤ ∑_g E ⟨G_g ⊗ (1 - P_u(g(u)))⟩ ≤ δ`.\n`(1 ⊗ (P - B)) v_g` is controlled by the commutators: grouping the outcomes by their value\n`c = g(u)` and dropping the projector `∑_{g(u) = c} G_g ≤ 1` leaves\n`∑_c ‖(1 ⊗ (P_u(c) - B_u(c))) Φ‖²`,\na fibre-summed family of the deviations `sand - ord`; these sum to zero over `(a, b)`, so Parseval\nover `F_q` (`sum_avg_norm_fibre_sq`) turns the average over `(α, β)` of the fibre sums into\n`(1 - 1/q) ∑_{a,b} ‖(1 ⊗ (sand - ord)(a, b)) Φ‖²` with no loss of a factor `q`, and each deviation\nis a contraction of a commutator: `Z X Z - Z X = Z [X, Z]` and `Z X Z - X Z = -(1 - Z) [X, Z]`.\n\nEverything here is stated for abstract projective families `X x`, `Z z` on Bob's register, with\nthe consistency and the commutator weight as hypotheses; `lem:qld-global-pvm` and\n`lem:qld-combined-points` supply them for the padded state.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Products.lean#L466-L582",
+  "source_path": "MIPRE/Background/QLD/Products.lean",
+  "lines": [
+   466,
+   582
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-products",
+    "env": "lemma",
+    "title": "Ordered products with global outcome multipliers",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_uniform_eq_one",
+   "MIPRE.QLD.sum_avg_fibre_sand_sub_ord_le",
+   "MIPRE.QLD.sum_uniform_pad4",
+   "MIPRE.sum_snorm_sq_aOp_mul_bOp_le",
+   "MIPRE.aOp_sum",
+   "MIPRE.bornProb_nonneg"
+  ],
+  "pasted_helpers": 32,
+  "prooflines": 95,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_snorm_sq_ordZX_le",
+  "source_name": "MIPRE.QLD.sum_snorm_sq_ordZX_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_snorm_sq_ordZX_le {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)\n    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))\n      (Matrix RA RA ℂ))\n    (hX : ∀ x, IsPVM (X x)) (hZ : ∀ z, IsPVM (Z z)) {δ κ : ℝ}\n    (hcons : 1 - δ ≤ ∑ u, uniform (Point F (4 * m)) u\n      * ∑ g, bornProb Φ (G.M () g) (sandComb X Z u (g.eval u)))\n    (hcomm : ∑ x, ∑ z, (uniform (Point F m) x * uniform (Point F m) z)\n      * ∑ p : F × F, ‖stateVecB Φ (comm (X x) (Z z) p)‖ ^ 2 ≤ κ) :\n    ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)\n        * bOp (1 - ordComb ordZX X Z u (g.eval u))) ^ 2\n      ≤ 2 * δ + 2 * κ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {X Z : Point F m → F → Matrix RB RB ℂ}"
+  ],
+  "docstring": "`lem:qld-global-products` for the order `Z_b X_a`.",
+  "module": "MIPRE.Background.QLD.Products",
+  "module_doc": "/-!\n# Ordered products with global outcome multipliers (`lem:qld-global-products`)\n\nThe global measurement of `lem:qld-global-pvm` is consistent, on average over a uniform padded\npoint `u = (x, z, α, β, w)`, with the *sandwich combination*\n`P_u(c) = ∑_{αa + βb = c} Z_b X_a Z_b` of Bob's expanded point measurements. Stage 4b needs the\nsame statement for the two *ordered products* `∑_{αa + βb = c} Z_b X_a` and\n`∑_{αa + βb = c} X_a Z_b`, in the state-distance form: with `v_g = (G_g ⊗ 1) Φ`,\n`∑_g E_u ‖v_g - (1 ⊗ B_u(g(u))) v_g‖² ≤ 2δ + 2κ`, where `δ` is the consistency error and `κ` the\naverage commutator weight `E_{x,z} ∑_{a,b} ‖(1 ⊗ [X_a, Z_b]) Φ‖²` of Bob's two measurements.\n\n## The argument\n\nTwo steps. `(1 ⊗ (1 - P)) v_g` is controlled by the consistency itself, because `0 ≤ P ≤ 1` gives\n`(1 - P)² ≤ 1 - P` and so `∑_g E ‖(G_g ⊗ (1 - P_u(g(u)))) Φ‖² ≤ ∑_g E ⟨G_g ⊗ (1 - P_u(g(u)))⟩ ≤ δ`.\n`(1 ⊗ (P - B)) v_g` is controlled by the commutators: grouping the outcomes by their value\n`c = g(u)` and dropping the projector `∑_{g(u) = c} G_g ≤ 1` leaves\n`∑_c ‖(1 ⊗ (P_u(c) - B_u(c))) Φ‖²`,\na fibre-summed family of the deviations `sand - ord`; these sum to zero over `(a, b)`, so Parseval\nover `F_q` (`sum_avg_norm_fibre_sq`) turns the average over `(α, β)` of the fibre sums into\n`(1 - 1/q) ∑_{a,b} ‖(1 ⊗ (sand - ord)(a, b)) Φ‖²` with no loss of a factor `q`, and each deviation\nis a contraction of a commutator: `Z X Z - Z X = Z [X, Z]` and `Z X Z - X Z = -(1 - Z) [X, Z]`.\n\nEverything here is stated for abstract projective families `X x`, `Z z` on Bob's register, with\nthe consistency and the commutator weight as hypotheses; `lem:qld-global-pvm` and\n`lem:qld-combined-points` supply them for the padded state.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Products.lean#L584-L597",
+  "source_path": "MIPRE/Background/QLD/Products.lean",
+  "lines": [
+   584,
+   597
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-products",
+    "env": "lemma",
+    "title": "Ordered products with global outcome multipliers",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_snorm_sq_ordComb_le",
+   "MIPRE.bnd_one_of_conjTranspose_mul_self_le"
+  ],
+  "pasted_helpers": 15,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_snorm_sq_ordXZ_le",
+  "source_name": "MIPRE.QLD.sum_snorm_sq_ordXZ_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_snorm_sq_ordXZ_le {Φ : RA × RB → ℂ} (hΦ : star Φ ⬝ᵥ Φ = 1)\n    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := 4 * m) (d := d))\n      (Matrix RA RA ℂ))\n    (hX : ∀ x, IsPVM (X x)) (hZ : ∀ z, IsPVM (Z z)) {δ κ : ℝ}\n    (hcons : 1 - δ ≤ ∑ u, uniform (Point F (4 * m)) u\n      * ∑ g, bornProb Φ (G.M () g) (sandComb X Z u (g.eval u)))\n    (hcomm : ∑ x, ∑ z, (uniform (Point F m) x * uniform (Point F m) z)\n      * ∑ p : F × F, ‖stateVecB Φ (comm (X x) (Z z) p)‖ ^ 2 ≤ κ) :\n    ∑ u, uniform (Point F (4 * m)) u * ∑ g, snorm Φ ((aOp (G.M () g) : Matrix (RA × RB) _ ℂ)\n        * bOp (1 - ordComb ordXZ X Z u (g.eval u))) ^ 2\n      ≤ 2 * δ + 2 * κ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {X Z : Point F m → F → Matrix RB RB ℂ}"
+  ],
+  "docstring": "`lem:qld-global-products` for the order `X_a Z_b`.",
+  "module": "MIPRE.Background.QLD.Products",
+  "module_doc": "/-!\n# Ordered products with global outcome multipliers (`lem:qld-global-products`)\n\nThe global measurement of `lem:qld-global-pvm` is consistent, on average over a uniform padded\npoint `u = (x, z, α, β, w)`, with the *sandwich combination*\n`P_u(c) = ∑_{αa + βb = c} Z_b X_a Z_b` of Bob's expanded point measurements. Stage 4b needs the\nsame statement for the two *ordered products* `∑_{αa + βb = c} Z_b X_a` and\n`∑_{αa + βb = c} X_a Z_b`, in the state-distance form: with `v_g = (G_g ⊗ 1) Φ`,\n`∑_g E_u ‖v_g - (1 ⊗ B_u(g(u))) v_g‖² ≤ 2δ + 2κ`, where `δ` is the consistency error and `κ` the\naverage commutator weight `E_{x,z} ∑_{a,b} ‖(1 ⊗ [X_a, Z_b]) Φ‖²` of Bob's two measurements.\n\n## The argument\n\nTwo steps. `(1 ⊗ (1 - P)) v_g` is controlled by the consistency itself, because `0 ≤ P ≤ 1` gives\n`(1 - P)² ≤ 1 - P` and so `∑_g E ‖(G_g ⊗ (1 - P_u(g(u)))) Φ‖² ≤ ∑_g E ⟨G_g ⊗ (1 - P_u(g(u)))⟩ ≤ δ`.\n`(1 ⊗ (P - B)) v_g` is controlled by the commutators: grouping the outcomes by their value\n`c = g(u)` and dropping the projector `∑_{g(u) = c} G_g ≤ 1` leaves\n`∑_c ‖(1 ⊗ (P_u(c) - B_u(c))) Φ‖²`,\na fibre-summed family of the deviations `sand - ord`; these sum to zero over `(a, b)`, so Parseval\nover `F_q` (`sum_avg_norm_fibre_sq`) turns the average over `(α, β)` of the fibre sums into\n`(1 - 1/q) ∑_{a,b} ‖(1 ⊗ (sand - ord)(a, b)) Φ‖²` with no loss of a factor `q`, and each deviation\nis a contraction of a commutator: `Z X Z - Z X = Z [X, Z]` and `Z X Z - X Z = -(1 - Z) [X, Z]`.\n\nEverything here is stated for abstract projective families `X x`, `Z z` on Bob's register, with\nthe consistency and the commutator weight as hypotheses; `lem:qld-global-pvm` and\n`lem:qld-combined-points` supply them for the padded state.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Products.lean#L599-L612",
+  "source_path": "MIPRE/Background/QLD/Products.lean",
+  "lines": [
+   599,
+   612
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-products",
+    "env": "lemma",
+    "title": "Ordered products with global outcome multipliers",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_snorm_sq_ordComb_le",
+   "MIPRE.bnd_one_of_conjTranspose_mul_self_le"
+  ],
+  "pasted_helpers": 15,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_kron_le_one",
+  "source_name": "MIPRE.sum_kron_le_one",
+  "formal_statement": "theorem MIPRE.sum_kron_le_one {B : X → Matrix dB dB ℂ} (hBsa : ∀ x, (B x)ᴴ = B x)\n    (hB : ∀ x, B x * B x = B x) {T : X → Matrix anc anc ℂ} (hT : IsPVM T) :\n    (∑ x, B x ⊗ₖ T x) ≤ (1 : Matrix (dB × anc) (dB × anc) ℂ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {dB anc X : Type*} [Fintype dB] [DecidableEq dB] [Fintype anc] [DecidableEq anc]"
+  ],
+  "docstring": "**A family of projectors tensored with a projective measurement sums to at most the\nidentity.** The complement is `∑_x (1 - B_x) ⊗ T_x`, a sum of positive semidefinite terms. This is\nwhat displays `eq:qld-pulling-8` and `eq:qld-pulling-10` use to discard the index the sandwich\nruns over.",
+  "module": "MIPRE.Background.QLD.Pulling",
+  "module_doc": "/-!\n# The estimates of `lem:qld-pauli-selfcons`, by polynomial outcome\n\n`MIPRE/Background/QLD/AncTransport.lean` closes the identities of the paper's pulling chain. Its\nestimates --- displays `eq:qld-pulling-7` and `eq:qld-pulling-11` --- consume the second item of\n`lem:qld-helper`, but not in the form that lemma is stated in. The helper is stated at an outcome\n`a` in `F_q`, which is what the expansion stage produces; the chain sums over the *polynomial*\noutcomes `g` of the simultaneous measurement, because the label `coded(g) . u-tilde` it carries is\na function of `g` and not of `g(u)`.\n\nThe two sums are equal, not merely comparable. Within a fibre of the evaluation the pair\nmeasurement's outcomes are orthogonal projectors, so every cross term of the squared norm\nvanishes, and the fibres partition the outcomes. That is `snorm_sq_sum_orthogonal` below, and the\nhelper in the chain's own indexing is its corollary.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Pulling.lean#L136-L156",
+  "source_path": "MIPRE/Background/QLD/Pulling.lean",
+  "lines": [
+   136,
+   156
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.posSemidef_of_proj",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.IsPVM.posSemidef"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 14,
+  "is_target": false
+ }
+]

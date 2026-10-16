@@ -1,0 +1,3069 @@
+[
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_HidingRigidity",
+  "module": "MIPRE.Foundations.Introspection.HidingRigidity",
+  "module_doc": "/-! # The conditional estimate for the actual adjacent hiding test\n\nThe earlier answer is processed using the question reported in the later\nanswer. This is a conditional measurement, not a single fixed coarse-graining.\nThe resulting estimate is derived from the parsed game and its actual uniform\nordered-edge law, including the malformed-answer outcomes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingRigidity.lean",
+  "source_path": "MIPRE/Foundations/Introspection/HidingRigidity.lean",
+  "defmat": [
+   "MIPRE.Introspection.TypedEstimates.hidingNextCondition",
+   "MIPRE.Introspection.TypedEstimates.hidingNextEarlier",
+   "MIPRE.Introspection.TypedEstimates.hidingNextLater",
+   "MIPRE.Introspection.conditionalCoarseDistance"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.TypedEstimates.hidingNextCondition",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     182,
+     187
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.TypedEstimates.hidingNextEarlier",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     189,
+     196
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.TypedEstimates.hidingNextLater",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     198,
+     208
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.conditionalCoarseDistance",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     32,
+     38
+    ]
+   }
+  ],
+  "lines": 188,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Types",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SamplingPrefix",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TwirlDistance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LinearMeasurement",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_CommutatorParseval",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockTwirl",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockPOVM",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_EPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockRetention",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterTransport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPredicate",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypeGraph",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPresentation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedEstimates"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.TypedEstimates.hidingNextCondition": [
+    "/-- Retain exactly the later hiding answer's preceding question prefix as",
+    "the conditioning index. Malformed answers retain a separate index. -/"
+   ],
+   "MIPRE.Introspection.TypedEstimates.hidingNextEarlier": [
+    "/-- Process the earlier answer using the later reported question. The output",
+    "retains the earlier prefix, the new dual readout, and the untouched tail. -/"
+   ],
+   "MIPRE.Introspection.TypedEstimates.hidingNextLater": [
+    "/-- The actual coarse later answer. Both the factor for the new dual output",
+    "and the tail projector use that answer's own reported question. -/"
+   ],
+   "MIPRE.Introspection.conditionalCoarseDistance": [
+    "/-- Squared error of the conditional coarse comparison, retaining Bob's",
+    "conditioning index and summing every coarse outcome. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_HonestHidingChecks",
+  "module": "MIPRE.Foundations.Introspection.HonestHidingChecks",
+  "module_doc": "/-! # Exact recursion of the honest hiding checks\n\nAdding one common local Z/dual outcome to two supported continuation answers\npreserves the actual parsed hiding predicate. These are identities for the\nsource checks, including the later-answer choice of adaptive registers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestHidingChecks.lean",
+  "source_path": "MIPRE/Foundations/Introspection/HonestHidingChecks.lean",
+  "defmat": [],
+  "embedded": [
+   "MIPRE.Introspection.Honest.proj_local_add",
+   "_private.MIPRE.Foundations.Introspection.HonestHidingChecks.0.MIPRE.Introspection.Honest.factorOfPrefix_subset",
+   "_private.MIPRE.Foundations.Introspection.HonestHidingChecks.0.MIPRE.Introspection.Honest.prefixRegister_local_add",
+   "_private.MIPRE.Foundations.Introspection.HonestHidingChecks.0.MIPRE.Introspection.Honest.proj_tail_local_add",
+   "_private.MIPRE.Foundations.Introspection.HonestHidingChecks.0.MIPRE.Introspection.Honest.proj_union_compl_tail",
+   "_private.MIPRE.Foundations.Introspection.HonestHidingChecks.0.MIPRE.Introspection.Honest.proj_union_local_add",
+   "_private.MIPRE.Foundations.Introspection.HonestHidingChecks.0.MIPRE.Introspection.Honest.supported_zero"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.Honest.proj_local_add",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     31,
+     44
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.HonestHidingChecks.0.MIPRE.Introspection.Honest.factorOfPrefix_subset",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     74,
+     81
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.HonestHidingChecks.0.MIPRE.Introspection.Honest.prefixRegister_local_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     91,
+     96
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.HonestHidingChecks.0.MIPRE.Introspection.Honest.proj_tail_local_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     46,
+     53
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.HonestHidingChecks.0.MIPRE.Introspection.Honest.proj_union_compl_tail",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     65,
+     72
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.HonestHidingChecks.0.MIPRE.Introspection.Honest.proj_union_local_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     55,
+     63
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.HonestHidingChecks.0.MIPRE.Introspection.Honest.supported_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     26,
+     29
+    ]
+   }
+  ],
+  "lines": 200,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_PerfectStrategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Types",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SamplingPrefix",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TwirlDistance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LinearMeasurement",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_CommutatorParseval",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockTwirl",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockPOVM",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_EPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockRetention",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterTransport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPredicate",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Readout",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_FinalExtraction",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypeGraph",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestCore",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestFirstHide",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestAdaptive",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestRead",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestXCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingStep",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHiding",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestLabelSupport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPresentation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedEstimates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingRigidity"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_HonestHidingAcceptance",
+  "module": "MIPRE.Foundations.Introspection.HonestHidingAcceptance",
+  "module_doc": "/-! # Perfect acceptance along the honest adaptive hiding chain\n\nA nonzero product of two neighboring honest measurements satisfies the actual\nCL hiding check. The proof follows the same adaptive branches as the concrete\noperators, using zero products to exclude incompatible earlier outcomes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestHidingAcceptance.lean",
+  "source_path": "MIPRE/Foundations/Introspection/HonestHidingAcceptance.lean",
+  "defmat": [],
+  "embedded": [
+   "_private.MIPRE.Foundations.Introspection.HonestHidingAcceptance.0.MIPRE.Introspection.Honest.exists_entry_ne_zero"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.HonestHidingAcceptance.0.MIPRE.Introspection.Honest.exists_entry_ne_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     26,
+     30
+    ]
+   }
+  ],
+  "lines": 144,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_PerfectStrategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Types",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SamplingPrefix",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TwirlDistance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LinearMeasurement",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_CommutatorParseval",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockTwirl",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockPOVM",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_EPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockRetention",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterTransport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPredicate",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Readout",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_FinalExtraction",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypeGraph",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestCore",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestFirstHide",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestAdaptive",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestRead",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestXCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingStep",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHiding",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestLabelSupport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPresentation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedEstimates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingRigidity",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingChecks"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_HidingMaps",
+  "module": "MIPRE.Foundations.Introspection.HidingMaps",
+  "module_doc": "/-! # Guarded coarse maps for the actual adjacent hiding test\n\nThe earlier fine label retains only its preceding prefix, current dual output,\nand remaining tail. The next map uses the later prefix as a key. A separate\ndummy outcome handles malformed answers and prefix mismatches, so each keyed\nmap is total on the entire answer alphabet and defines a complete measurement.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingMaps.lean",
+  "source_path": "MIPRE/Foundations/Introspection/HidingMaps.lean",
+  "defmat": [
+   "MIPRE.Introspection.TypedEstimates.hidingCoarse",
+   "MIPRE.Introspection.TypedEstimates.hidingNextGuarded"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.TypedEstimates.hidingCoarse",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     24,
+     31
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.TypedEstimates.hidingNextGuarded",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     33,
+     43
+    ]
+   }
+  ],
+  "lines": 143,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Types",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SamplingPrefix",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TwirlDistance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LinearMeasurement",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_CommutatorParseval",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockTwirl",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockPOVM",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_EPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockRetention",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterTransport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPredicate",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypeGraph",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPresentation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedEstimates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingRigidity"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.TypedEstimates.hidingCoarse": [
+    "/-- The fine outcome retained at hiding level `k+1`. Off-format answers have",
+    "their own outcome; unused coordinates of a well-formed answer are discarded. -/"
+   ],
+   "MIPRE.Introspection.TypedEstimates.hidingNextGuarded": [
+    "/-- Process a retained fine outcome using the later prefix. On a prefix",
+    "mismatch the output is the dummy label, rather than an incomplete family. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_ConditionalNormalizerIdeal",
+  "module": "MIPRE.Foundations.Introspection.ConditionalNormalizerIdeal",
+  "module_doc": "/-! # Concrete ideal prefixes for honest hiding\n\nThe next Z prefix is a marginal of the adjacent honest hiding PVM. Thus its\ncommutation with the preceding honest hiding family follows from the proved\nadjacent commutation, without a new commutation assumption.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ConditionalNormalizerIdeal.lean",
+  "source_path": "MIPRE/Foundations/Introspection/ConditionalNormalizerIdeal.lean",
+  "defmat": [
+   "MIPRE.Introspection.Honest.hideCoarseOp",
+   "MIPRE.Introspection.Honest.hideLabelAnswer",
+   "MIPRE.Introspection.Honest.hideLabelCoarse",
+   "MIPRE.Introspection.Honest.hideLabelNext",
+   "MIPRE.Introspection.Honest.hideNextRetain",
+   "MIPRE.Introspection.Honest.hidingPrefixOp"
+  ],
+  "embedded": [
+   "MIPRE.Introspection.Honest.hidingPrefixOp_none",
+   "MIPRE.Introspection.Honest.hidingPrefixOp_some"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.Honest.hideCoarseOp",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     171,
+     175
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.Honest.hideLabelAnswer",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     100,
+     102
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.Honest.hideLabelCoarse",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     104,
+     105
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.Honest.hideLabelNext",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     107,
+     109
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.Honest.hideNextRetain",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     197,
+     201
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.Honest.hidingPrefixOp",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     29,
+     32
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.Honest.hidingPrefixOp_none",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     34,
+     37
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.Honest.hidingPrefixOp_some",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     39,
+     42
+    ]
+   }
+  ],
+  "lines": 180,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_PerfectStrategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Types",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SamplingPrefix",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TwirlDistance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LinearMeasurement",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_CommutatorParseval",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockTwirl",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockPOVM",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_EPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockRetention",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterTransport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPredicate",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Readout",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_FinalExtraction",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypeGraph",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestCore",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ConditionalNormalizer",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestFirstHide",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestAdaptive",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestRead",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestXCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingStep",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHiding",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestLabelSupport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPresentation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedEstimates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingRigidity",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingAcceptance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingMaps"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.Honest.hideCoarseOp": [
+    "/-- The preceding ideal hiding family retains precisely the fine label used",
+    "by the parsed soundness induction. -/"
+   ],
+   "MIPRE.Introspection.Honest.hideLabelAnswer": [
+    "/-- Interpret a register hiding label as a correctly formatted parsed answer. -/"
+   ],
+   "MIPRE.Introspection.Honest.hideLabelCoarse": null,
+   "MIPRE.Introspection.Honest.hideLabelNext": null,
+   "MIPRE.Introspection.Honest.hideNextRetain": [
+    "/-- Discard the now redundant old prefix and retain the new prefix, current",
+    "dual label, and tail. Dummy or inconsistent formats remain a dummy outcome. -/"
+   ],
+   "MIPRE.Introspection.Honest.hidingPrefixOp": [
+    "/-- The ideal prefix retains an explicit zero operator for malformed labels. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_AdaptivePrefixFactor",
+  "module": "MIPRE.Foundations.Introspection.AdaptivePrefixFactor",
+  "module_doc": "/-! # Concrete tensor support of an adaptive CL prefix projector\n\nA claimed prefix selects its used coordinates even outside the image of the\nCL map. Membership in its fibre depends only on those coordinates. The ideal\nprefix projector therefore acts as identity on their complement under the\nexplicit coordinate restriction equivalence.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptivePrefixFactor.lean",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptivePrefixFactor.lean",
+  "defmat": [
+   "MIPRE.Introspection.Honest.prefixProjector"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.Honest.prefixProjector",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     88,
+     91
+    ]
+   }
+  ],
+  "lines": 158,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_PerfectStrategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Types",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SamplingPrefix",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TwirlDistance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LinearMeasurement",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_CommutatorParseval",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockTwirl",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockPOVM",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_EPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockRetention",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterTransport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPredicate",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Readout",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_FinalExtraction",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypeGraph",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestCore",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ConditionalNormalizer",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestFirstHide",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestAdaptive",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestRead",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestXCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingStep",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHiding",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestLabelSupport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPresentation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedEstimates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingRigidity",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingAcceptance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingMaps",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ConditionalNormalizerIdeal"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.Honest.prefixProjector": [
+    "/-- The actual prefix projector on exactly the already used coordinates. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_TypedPrefixChain",
+  "module": "MIPRE.Foundations.Introspection.TypedPrefixChain",
+  "module_doc": "/-! # Propagating reported question prefixes through the actual hiding chain\n\nThe adjacent hiding, terminal hiding/Read, and Read/Introspect tests preserve\nevery earlier question prefix. Coarse-graining these accepted-answer relations\nbefore using consistency loops gives a polynomial chain loss, without an\nanswer-cardinality factor or an assumption that claimed answers are CL images.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TypedPrefixChain.lean",
+  "source_path": "MIPRE/Foundations/Introspection/TypedPrefixChain.lean",
+  "defmat": [
+   "MIPRE.Introspection.TypedEstimates.prefixChainType",
+   "MIPRE.Introspection.TypedEstimates.reportedPrefix"
+  ],
+  "embedded": [
+   "MIPRE.Introspection.TypedEstimates.prefixChainType_end",
+   "MIPRE.Introspection.TypedEstimates.prefixChainType_zero"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.TypedEstimates.prefixChainType",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     87,
+     91
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.TypedEstimates.prefixChainType_end",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     96,
+     99
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.TypedEstimates.prefixChainType_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     93,
+     94
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.TypedEstimates.reportedPrefix",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     25,
+     33
+    ]
+   }
+  ],
+  "lines": 154,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Types",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SamplingPrefix",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TwirlDistance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LinearMeasurement",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_CommutatorParseval",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockTwirl",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockPOVM",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_EPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockRetention",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterTransport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPredicate",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypeGraph",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPresentation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedEstimates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingRigidity"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.TypedEstimates.prefixChainType": [
+    "/-- The actual auxiliary path starting at hiding level `j`, followed by Read",
+    "and Introspect. Beyond the endpoint it remains at Introspect. -/"
+   ],
+   "MIPRE.Introspection.TypedEstimates.reportedPrefix": [
+    "/-- The reported question prefix, with a shared dummy outcome for answer",
+    "constructors that do not fit the specified auxiliary question type. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_ReadChainMaps",
+  "module": "MIPRE.Foundations.Introspection.ReadChainMaps",
+  "module_doc": "/-! # The dual readout retained along the actual hiding-to-Read chain\n\nThe stage and its preceding claimed prefix are fixed before coarse-graining.\nEvery later hiding edge preserves this same pair, including off-image answers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ReadChainMaps.lean",
+  "source_path": "MIPRE/Foundations/Introspection/ReadChainMaps.lean",
+  "defmat": [
+   "MIPRE.Introspection.TypedEstimates.hidingForgetTail",
+   "MIPRE.Introspection.TypedEstimates.reportedDual"
+  ],
+  "embedded": [
+   "MIPRE.Introspection.TypedEstimates.prefixChainType_read"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.TypedEstimates.hidingForgetTail",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     65,
+     67
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.TypedEstimates.prefixChainType_read",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     117,
+     120
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.TypedEstimates.reportedDual",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     56,
+     63
+    ]
+   }
+  ],
+  "lines": 156,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Types",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SamplingPrefix",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TwirlDistance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LinearMeasurement",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_CommutatorParseval",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockTwirl",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockPOVM",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_EPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockRetention",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterTransport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPredicate",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypeGraph",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPresentation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedEstimates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingRigidity",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingMaps",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPrefixChain"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.TypedEstimates.hidingForgetTail": [
+    "/-- Forgetting only the unused tail of a fine hiding outcome. -/"
+   ],
+   "MIPRE.Introspection.TypedEstimates.reportedDual": [
+    "/-- The prefix and the dual answer on one fixed stage's selected register. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_AdaptiveResidual",
+  "module": "MIPRE.Foundations.Introspection.AdaptiveResidual",
+  "module_doc": "/-! # The actual CL continuation on the unvisited registers\n\nThe residual presentation follows a claimed output, including an off-image\none. It acts only on the complement of the registers already visited.\nThe next local map and register are computed from the original presentation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptiveResidual.lean",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptiveResidual.lean",
+  "defmat": [
+   "MIPRE.Introspection.CLChecks.residual",
+   "MIPRE.Introspection.CLChecks.residualDepth",
+   "MIPRE.Introspection.CLChecks.stageLinear"
+  ],
+  "embedded": [
+   "MIPRE.Introspection.CLChecks.residual_zero"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.CLChecks.residual",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     35,
+     40
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.CLChecks.residualDepth",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     23,
+     28
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.CLChecks.residual_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     42,
+     43
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.CLChecks.stageLinear",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     84,
+     89
+    ]
+   }
+  ],
+  "lines": 148,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Types",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SamplingPrefix",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TwirlDistance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LinearMeasurement",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_CommutatorParseval",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockTwirl",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockPOVM",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_EPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockRetention",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterTransport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPredicate",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypeGraph",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPresentation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedEstimates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingRigidity",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingMaps",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPrefixChain",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ReadChainMaps"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.CLChecks.residual": [
+    "/-- Continue after `k` reported components; the remaining depth is `ℓ-k`. -/"
+   ],
+   "MIPRE.Introspection.CLChecks.residualDepth": [
+    "/-- Recursively compute the remaining depth, retaining definitional equations. -/"
+   ],
+   "MIPRE.Introspection.CLChecks.stageLinear": [
+    "/-- The local linear map at a claimed prefix, with its actual finite-set support. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_AuxiliaryPrefixSolve",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryPrefixSolve",
+  "module_doc": "/-! # Witness-preserving attainable-prefix extension\n\nA source sampler only promises correct linear and factor queries on attained\nprefixes. The next witness is obtained by binary Gaussian elimination and\nreplacing only the fresh register in the preceding witness. This preserves\nall earlier outputs and avoids enumerating the exponentially larger seed set.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryPrefixSolve.lean",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryPrefixSolve.lean",
+  "defmat": [
+   "MIPRE.Introspection.AuxiliaryPrefix.replaceSeed",
+   "MIPRE.Introspection.AuxiliaryPrefix.solveStage"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.AuxiliaryPrefix.replaceSeed",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     46,
+     48
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryPrefix.solveStage",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     83,
+     86
+    ]
+   }
+  ],
+  "lines": 187,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_PerfectStrategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve_B",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Types",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SamplingPrefix",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TwirlDistance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LinearMeasurement",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_CommutatorParseval",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockTwirl",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockPOVM",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_EPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockRetention",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterTransport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPredicate",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Readout",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_FinalExtraction",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypeGraph",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestCore",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ConditionalNormalizer",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestFirstHide",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestAdaptive",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestRead",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestXCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingStep",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHiding",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestLabelSupport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPresentation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedEstimates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingRigidity",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingAcceptance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingMaps",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ConditionalNormalizerIdeal",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AdaptivePrefixFactor",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPrefixChain",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ReadChainMaps",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AdaptiveResidual"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.AuxiliaryPrefix.replaceSeed": [
+    "/-- Retain the old seed outside the fresh register and insert a solved seed there. -/"
+   ],
+   "MIPRE.Introspection.AuxiliaryPrefix.solveStage": [
+    "/-- The concrete polynomial-time matrix solver applied to the queried stage matrix. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_AuxiliaryMaskProgram",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryMaskProgram",
+  "module_doc": "/-! # Fixed-width register operations for the executable hiding scan -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryMaskProgram.lean",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryMaskProgram.lean",
+  "defmat": [
+   "MIPRE.Introspection.AuxiliaryBits.complement",
+   "MIPRE.Introspection.AuxiliaryBits.mask",
+   "MIPRE.Introspection.AuxiliaryBits.replace"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.AuxiliaryBits.complement",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     17,
+     18
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryBits.mask",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     14,
+     15
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryBits.replace",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     20,
+     22
+    ]
+   }
+  ],
+  "lines": 185,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_PerfectStrategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Types",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SamplingPrefix",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TwirlDistance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LinearMeasurement",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_CommutatorParseval",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockTwirl",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockPOVM",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_EPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockRetention",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterTransport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPredicate",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Readout",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_FinalExtraction",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypeGraph",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestCore",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ConditionalNormalizer",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestFirstHide",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestAdaptive",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestRead",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestXCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingStep",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHiding",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestLabelSupport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPresentation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedEstimates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingRigidity",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingAcceptance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingMaps",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ConditionalNormalizerIdeal",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AdaptivePrefixFactor",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPrefixChain",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ReadChainMaps",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AdaptiveResidual",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryPrefixSolve"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.AuxiliaryBits.complement": null,
+   "MIPRE.Introspection.AuxiliaryBits.mask": null,
+   "MIPRE.Introspection.AuxiliaryBits.replace": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_AuxiliaryCanonicalProgram",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryCanonicalProgram",
+  "module_doc": "/-! # Verified canonical binary elimination for auxiliary dual checks\n\nThe effective elimination library chooses the first nonzero coordinate at\neach insertion. Its resulting pivot set is exactly the dimension-defined\ncanonical pivot set used by `CL.canonLin`. Thus its residual, not merely an\narbitrary equivalent quotient representative, computes that canonical map.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryCanonicalProgram.lean",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryCanonicalProgram.lean",
+  "defmat": [
+   "MIPRE.Introspection.AuxiliaryCanonical.Leading",
+   "MIPRE.Introspection.AuxiliaryCanonical.canonicalProg"
+  ],
+  "embedded": [
+   "_private.MIPRE.Foundations.Introspection.AuxiliaryCanonicalProgram.0.MIPRE.Introspection.AuxiliaryCanonical.firstOne_before",
+   "_private.MIPRE.Foundations.Introspection.AuxiliaryCanonicalProgram.0.MIPRE.Introspection.AuxiliaryCanonical.firstOne_vector_before",
+   "_private.MIPRE.Foundations.Introspection.AuxiliaryCanonicalProgram.0.MIPRE.Introspection.AuxiliaryCanonical.reduce_sub_mem"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.AuxiliaryCanonical.Leading",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     44,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryCanonical.canonicalProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     165,
+     169
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.AuxiliaryCanonicalProgram.0.MIPRE.Introspection.AuxiliaryCanonical.firstOne_before",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     22,
+     34
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.AuxiliaryCanonicalProgram.0.MIPRE.Introspection.AuxiliaryCanonical.firstOne_vector_before",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     36,
+     42
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.Introspection.AuxiliaryCanonicalProgram.0.MIPRE.Introspection.AuxiliaryCanonical.reduce_sub_mem",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     130,
+     143
+    ]
+   }
+  ],
+  "lines": 124,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.AuxiliaryCanonical.Leading": null,
+   "MIPRE.Introspection.AuxiliaryCanonical.canonicalProg": [
+    "/-- A single uniform polynomial-time program for the exact canonical quotient",
+    "representative. The coefficient width is zero, since no certificate is output. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_AuxiliaryDualProgram",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryDualProgram",
+  "module_doc": "/-! # Executable canonical dual of a binary linear map\n\nThe rows of a matrix span the dot-product orthogonal complement of its\nkernel. Canonical elimination of those rows therefore computes the exact\n`CL.lperp`, including for singular matrices and in dimension zero.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryDualProgram.lean",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryDualProgram.lean",
+  "defmat": [
+   "MIPRE.Introspection.AuxiliaryDual.rowSpaceCheck"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.AuxiliaryDual.rowSpaceCheck",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     74,
+     79
+    ]
+   }
+  ],
+  "lines": 84,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryCanonicalProgram"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.AuxiliaryDual.rowSpaceCheck": [
+    "/-- Membership in the supplied row span, tested by exact canonical reduction.",
+    "The zero vector has the input vector's width, so malformed widths do not become",
+    "an implicit promise about the program's termination. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_AuxiliaryDualKernel",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryDualKernel",
+  "module_doc": "/-! # Coordinate-independent kernel tests for auxiliary dual answers\n\nThe semantic dual uses a chosen local enumeration, but equality of its outputs\nis characterized intrinsically by the ambient dot product. The general finite\nindex API permits coordinate transport without transporting chosen complements.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryDualKernel.lean",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryDualKernel.lean",
+  "defmat": [
+   "MIPRE.Introspection.AuxiliaryDual.registerDual"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.AuxiliaryDual.registerDual",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     20,
+     22
+    ]
+   }
+  ],
+  "lines": 135,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TwirlDistance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LinearMeasurement",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_CommutatorParseval",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockTwirl",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockPOVM",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_EPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockRetention",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterTransport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryCanonicalProgram",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryDualProgram"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.AuxiliaryDual.registerDual": [
+    "/-- The semantic local dual, inserted back into the ambient register. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_AuxiliaryQuotientProgram",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryQuotientProgram",
+  "module_doc": "/-! # The executable coordinate-independent hiding comparison -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryQuotientProgram.lean",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryQuotientProgram.lean",
+  "defmat": [
+   "MIPRE.Introspection.AuxiliaryBits.quotient"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.AuxiliaryBits.quotient",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     14,
+     17
+    ]
+   }
+  ],
+  "lines": 184,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_PerfectStrategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Types",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SamplingPrefix",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TwirlDistance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LinearMeasurement",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_CommutatorParseval",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockTwirl",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockPOVM",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_EPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockRetention",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterTransport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPredicate",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Readout",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_FinalExtraction",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypeGraph",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestCore",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ConditionalNormalizer",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestFirstHide",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestAdaptive",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestRead",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestXCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingStep",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHiding",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestLabelSupport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPresentation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedEstimates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingRigidity",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingAcceptance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingMaps",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ConditionalNormalizerIdeal",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AdaptivePrefixFactor",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPrefixChain",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ReadChainMaps",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AdaptiveResidual",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryPrefixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryMaskProgram",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryCanonicalProgram",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryDualProgram",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryDualKernel"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.AuxiliaryBits.quotient": [
+    "/-- Register mask, queried matrix, and the two full-register labels. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_AuxiliaryDualDecode",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryDualDecode",
+  "module_doc": "/-! # Decoding quotient-valued hiding answers\n\nThe executable dual check only compares cosets of a row space. Decode each\nreported register to the semantic canonical representative. This decoding is\nused to return soundness to the existing finite game; it is not part of the\nexecutable verifier and makes no computability claim about `Fintype.equivFin`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryDualDecode.lean",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryDualDecode.lean",
+  "defmat": [
+   "MIPRE.Introspection.AuxiliaryDual.decodeDual",
+   "MIPRE.Introspection.AuxiliaryDual.stageDual"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.AuxiliaryDual.decodeDual",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     61,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryDual.stageDual",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     33,
+     35
+    ]
+   }
+  ],
+  "lines": 169,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Types",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SamplingPrefix",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TwirlDistance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LinearMeasurement",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_CommutatorParseval",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockTwirl",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockPOVM",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_EPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockRetention",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterTransport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPredicate",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypeGraph",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPresentation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedEstimates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingRigidity",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingMaps",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPrefixChain",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ReadChainMaps",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AdaptiveResidual",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryCanonicalProgram",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryDualProgram",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryDualKernel"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.AuxiliaryDual.decodeDual": [
+    "/-- Decode all stage labels while preserving the original claimed output. -/"
+   ],
+   "MIPRE.Introspection.AuxiliaryDual.stageDual": [
+    "/-- The semantic dual map at a single reported stage. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_AuxiliaryQuotientChecks",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryQuotientChecks",
+  "module_doc": "/-! # Hiding tests using coordinate-independent quotient comparisons\n\nThe old exact dual comparison implies the quotient comparison, preserving\nhonest completeness. Conversely, quotient acceptance gives the old hiding\npredicate after deterministic answer decoding. Raw prefixes and tails retain\nthe original checks. Neither direction assumes that a claimed prefix is\nattainable; obtaining legal source queries is a separate executable obligation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryQuotientChecks.lean",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryQuotientChecks.lean",
+  "defmat": [
+   "MIPRE.Introspection.AuxiliaryQuotient.RegisterHideAnswer",
+   "MIPRE.Introspection.AuxiliaryQuotient.decodeHide",
+   "MIPRE.Introspection.AuxiliaryQuotient.decodeRead",
+   "MIPRE.Introspection.AuxiliaryQuotient.hidingNext",
+   "MIPRE.Introspection.AuxiliaryQuotient.hidingPauli"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.AuxiliaryQuotient.RegisterHideAnswer",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     22,
+     22
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryQuotient.decodeHide",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     26,
+     27
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryQuotient.decodeRead",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     29,
+     31
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryQuotient.hidingNext",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     33,
+     40
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryQuotient.hidingPauli",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     69,
+     72
+    ]
+   }
+  ],
+  "lines": 186,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Types",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SamplingPrefix",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TwirlDistance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LinearMeasurement",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_CommutatorParseval",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockTwirl",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockPOVM",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_EPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockRetention",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterTransport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPredicate",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypeGraph",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPresentation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedEstimates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingRigidity",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingMaps",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPrefixChain",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ReadChainMaps",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AdaptiveResidual",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryCanonicalProgram",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryDualProgram",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryDualKernel",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryDualDecode"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.AuxiliaryQuotient.RegisterHideAnswer": null,
+   "MIPRE.Introspection.AuxiliaryQuotient.decodeHide": null,
+   "MIPRE.Introspection.AuxiliaryQuotient.decodeRead": null,
+   "MIPRE.Introspection.AuxiliaryQuotient.hidingNext": [
+    "/-- Replace only the new dual block's representative by its quotient class. -/"
+   ],
+   "MIPRE.Introspection.AuxiliaryQuotient.hidingPauli": [
+    "/-- The first hiding edge uses the same quotient relaxation. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_AuxiliaryHidingCoreProgram",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryHidingCoreProgram",
+  "module_doc": "/-! # Executable comparisons for an interior hiding edge\n\nThe caller supplies the two extracted prefixes, the two raw triples, the\nvisited-register masks, and the queried next-factor matrix. This core performs\nthe four exact comparisons. The prefix scan separately certifies those inputs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryHidingCoreProgram.lean",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryHidingCoreProgram.lean",
+  "defmat": [
+   "MIPRE.Introspection.AuxiliaryHiding.CoreInput",
+   "MIPRE.Introspection.AuxiliaryHiding.Triple",
+   "MIPRE.Introspection.AuxiliaryHiding.answers",
+   "MIPRE.Introspection.AuxiliaryHiding.core",
+   "MIPRE.Introspection.AuxiliaryHiding.fresh",
+   "MIPRE.Introspection.AuxiliaryHiding.leftDual",
+   "MIPRE.Introspection.AuxiliaryHiding.leftTail",
+   "MIPRE.Introspection.AuxiliaryHiding.masks",
+   "MIPRE.Introspection.AuxiliaryHiding.nextMatrix",
+   "MIPRE.Introspection.AuxiliaryHiding.prefixes",
+   "MIPRE.Introspection.AuxiliaryHiding.remaining",
+   "MIPRE.Introspection.AuxiliaryHiding.rightDual",
+   "MIPRE.Introspection.AuxiliaryHiding.rightTail",
+   "MIPRE.Introspection.AuxiliaryHiding.visited"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.AuxiliaryHiding.CoreInput",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     22,
+     23
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryHiding.Triple",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     21,
+     21
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryHiding.answers",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     26,
+     26
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryHiding.core",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     37,
+     43
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryHiding.fresh",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     34,
+     34
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryHiding.leftDual",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     28,
+     28
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryHiding.leftTail",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     30,
+     30
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryHiding.masks",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     27,
+     27
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryHiding.nextMatrix",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     35,
+     35
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryHiding.prefixes",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     25,
+     25
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryHiding.remaining",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     33,
+     33
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryHiding.rightDual",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     29,
+     29
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryHiding.rightTail",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     31,
+     31
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryHiding.visited",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     32,
+     32
+    ]
+   }
+  ],
+  "lines": 257,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_PerfectStrategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith_B",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCost",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderProg",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingClock",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Introspection",
+   "import Definitions.Def_MIPRE_Foundations_Halting_PolyBounded",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ParserBits",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ParserAnswers",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_DynamicParserSlice",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_DynamicParser",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Clock",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockCost",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockSimulation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SourceCompilerGuard",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Types",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SamplingPrefix",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TwirlDistance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LinearMeasurement",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_CommutatorParseval",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockTwirl",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockPOVM",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_EPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockRetention",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterTransport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPredicate",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryReadProgram",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Readout",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_FinalExtraction",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypeGraph",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestCore",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ConditionalNormalizer",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestFirstHide",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestAdaptive",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestRead",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestXCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingStep",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHiding",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestLabelSupport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPresentation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedEstimates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingRigidity",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingAcceptance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingMaps",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ConditionalNormalizerIdeal",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AdaptivePrefixFactor",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPrefixChain",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ReadChainMaps",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AdaptiveResidual",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryPrefixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryMaskProgram",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryCanonicalProgram",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryDualProgram",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryDualKernel",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryQuotientProgram",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryDualDecode",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryQuotientChecks"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.AuxiliaryHiding.CoreInput": null,
+   "MIPRE.Introspection.AuxiliaryHiding.Triple": null,
+   "MIPRE.Introspection.AuxiliaryHiding.answers": null,
+   "MIPRE.Introspection.AuxiliaryHiding.core": null,
+   "MIPRE.Introspection.AuxiliaryHiding.fresh": null,
+   "MIPRE.Introspection.AuxiliaryHiding.leftDual": null,
+   "MIPRE.Introspection.AuxiliaryHiding.leftTail": null,
+   "MIPRE.Introspection.AuxiliaryHiding.masks": null,
+   "MIPRE.Introspection.AuxiliaryHiding.nextMatrix": null,
+   "MIPRE.Introspection.AuxiliaryHiding.prefixes": null,
+   "MIPRE.Introspection.AuxiliaryHiding.remaining": null,
+   "MIPRE.Introspection.AuxiliaryHiding.rightDual": null,
+   "MIPRE.Introspection.AuxiliaryHiding.rightTail": null,
+   "MIPRE.Introspection.AuxiliaryHiding.visited": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_AuxiliarySourceQueries",
+  "module": "MIPRE.Foundations.Introspection.AuxiliarySourceQueries",
+  "module_doc": "/-! # Executable source queries and matrix reconstruction\n\nThe clock is supplied once as unary data. Matrix reconstruction queries the\nlinear map on the standard basis and transposes those columns. All operations\nare polynomial in the explicit clock, source text, and register length.\nCorrectness is used only after the prefix scan establishes the source\ninterface's attained-prefix premise.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliarySourceQueries.lean",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliarySourceQueries.lean",
+  "defmat": [
+   "MIPRE.Introspection.AuxiliarySource.Context",
+   "MIPRE.Introspection.AuxiliarySource.budget",
+   "MIPRE.Introspection.AuxiliarySource.factor",
+   "MIPRE.Introspection.AuxiliarySource.index",
+   "MIPRE.Introspection.AuxiliarySource.inputPrefix",
+   "MIPRE.Introspection.AuxiliarySource.level",
+   "MIPRE.Introspection.AuxiliarySource.linear",
+   "MIPRE.Introspection.AuxiliarySource.player",
+   "MIPRE.Introspection.AuxiliarySource.query",
+   "MIPRE.Introspection.AuxiliarySource.queryInput",
+   "MIPRE.Introspection.AuxiliarySource.source"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.AuxiliarySource.Context",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     22,
+     22
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliarySource.budget",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     24,
+     24
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliarySource.factor",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     48,
+     49
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliarySource.index",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     26,
+     26
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliarySource.inputPrefix",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     29,
+     29
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliarySource.level",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     28,
+     28
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliarySource.linear",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     44,
+     46
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliarySource.player",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     27,
+     27
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliarySource.query",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     35,
+     36
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliarySource.queryInput",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     31,
+     33
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliarySource.source",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     25,
+     25
+    ]
+   }
+  ],
+  "lines": 109,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockedQueryProgram"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.AuxiliarySource.Context": null,
+   "MIPRE.Introspection.AuxiliarySource.budget": null,
+   "MIPRE.Introspection.AuxiliarySource.factor": null,
+   "MIPRE.Introspection.AuxiliarySource.index": null,
+   "MIPRE.Introspection.AuxiliarySource.inputPrefix": null,
+   "MIPRE.Introspection.AuxiliarySource.level": null,
+   "MIPRE.Introspection.AuxiliarySource.linear": [
+    "/-- Read a returned bit string; malformed results also terminate. -/"
+   ],
+   "MIPRE.Introspection.AuxiliarySource.player": null,
+   "MIPRE.Introspection.AuxiliarySource.query": null,
+   "MIPRE.Introspection.AuxiliarySource.queryInput": null,
+   "MIPRE.Introspection.AuxiliarySource.source": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Introspection_AuxiliaryScanStage",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryScanStage",
+  "module_doc": "/-! # One executable Gaussian stage of the hiding prefix scan\n\nThe stage queries the next register and its matrix, solves for the claimed\ncomponent, checks the solution by matrix multiplication, and replaces exactly\nthat register in the seed witness. The returned prefix is the old prefix plus\nthe claimed new component. Every operation has an ambient polynomial bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryScanStage.lean",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryScanStage.lean",
+  "defmat": [
+   "MIPRE.Introspection.AuxiliaryScan.StageInput",
+   "MIPRE.Introspection.AuxiliaryScan.State",
+   "MIPRE.Introspection.AuxiliaryScan.claimed",
+   "MIPRE.Introspection.AuxiliaryScan.context",
+   "MIPRE.Introspection.AuxiliaryScan.oldPrefix",
+   "MIPRE.Introspection.AuxiliaryScan.seed",
+   "MIPRE.Introspection.AuxiliaryScan.solution",
+   "MIPRE.Introspection.AuxiliaryScan.stage",
+   "MIPRE.Introspection.AuxiliaryScan.stageMask",
+   "MIPRE.Introspection.AuxiliaryScan.stageMatrix",
+   "MIPRE.Introspection.AuxiliaryScan.target"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.Introspection.AuxiliaryScan.StageInput",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     21,
+     21
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryScan.State",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     22,
+     22
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryScan.claimed",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     25,
+     25
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryScan.context",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     24,
+     24
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryScan.oldPrefix",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     27,
+     27
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryScan.seed",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     26,
+     26
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryScan.solution",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     34,
+     35
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryScan.stage",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     37,
+     40
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryScan.stageMask",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     28,
+     29
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryScan.stageMatrix",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     30,
+     31
+    ]
+   },
+   {
+    "name": "MIPRE.Introspection.AuxiliaryScan.target",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     32,
+     33
+    ]
+   }
+  ],
+  "lines": 251,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_PerfectStrategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound_B",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance_B",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_Sign",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency_B",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_PVM_B",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_Expanded",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Anticomm",
+   "import Definitions.Def_MIPRE_Foundations_Weyl",
+   "import Definitions.Def_MIPRE_Foundations_Parseval",
+   "import Definitions.Def_MIPRE_Foundations_Linearity",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_Pasting",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith_B",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCost",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderProg",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingClock",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Introspection",
+   "import Definitions.Def_MIPRE_Foundations_Halting_PolyBounded",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ParserBits",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ParserAnswers",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_DynamicParserSlice",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_DynamicParser",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Clock",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockCost",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockSimulation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SourceCompilerGuard",
+   "import Definitions.Def_MIPRE_Foundations_WeylEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Types",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SamplingPrefix",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TwirlDistance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LinearMeasurement",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_CommutatorParseval",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockTwirl",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockPOVM",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_EPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BlockRetention",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterTransport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterEPR",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterMixing",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_RegisterCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPredicate",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryReadProgram",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ClockedQueryProgram",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_Readout",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_FinalExtraction",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypeGraph",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestCore",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ConditionalNormalizer",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestFirstHide",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestAdaptive",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestRead",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestXCoordinates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingStep",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHiding",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestLabelSupport",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPresentation",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedEstimates",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingRigidity",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingChecks",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HonestHidingAcceptance",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_HidingMaps",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ConditionalNormalizerIdeal",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AdaptivePrefixFactor",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_TypedPrefixChain",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_ReadChainMaps",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AdaptiveResidual",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryPrefixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliaryMaskProgram",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_AuxiliarySourceQueries"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.Introspection.AuxiliaryScan.StageInput": null,
+   "MIPRE.Introspection.AuxiliaryScan.State": null,
+   "MIPRE.Introspection.AuxiliaryScan.claimed": null,
+   "MIPRE.Introspection.AuxiliaryScan.context": null,
+   "MIPRE.Introspection.AuxiliaryScan.oldPrefix": null,
+   "MIPRE.Introspection.AuxiliaryScan.seed": null,
+   "MIPRE.Introspection.AuxiliaryScan.solution": null,
+   "MIPRE.Introspection.AuxiliaryScan.stage": null,
+   "MIPRE.Introspection.AuxiliaryScan.stageMask": null,
+   "MIPRE.Introspection.AuxiliaryScan.stageMatrix": null,
+   "MIPRE.Introspection.AuxiliaryScan.target": null
+  }
+ }
+]

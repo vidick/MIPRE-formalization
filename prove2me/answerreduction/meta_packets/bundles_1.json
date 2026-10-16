@@ -1,0 +1,2580 @@
+[
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_POVMValue",
+  "module": "MIPRE.Foundations.POVMValue",
+  "module_doc": "/-!\n# The value of a POVM strategy, and its conditional failures\n\n`MIPRE.TensorProductStrategy` is projective by construction, which is the right definition of\nthe quantum value (`lem:povm-value-eq` says allowing POVMs changes nothing). But a *soundness*\nargument often has to start from an arbitrary POVM strategy --- blueprint\n`lem:ms-direct-anticomm` is stated for one, and its whole point is that no projectivity is\nassumed --- so this file gives the unbundled value of a POVM strategy and the conditional\nfailure probabilities that soundness arguments actually consume.\n\nNothing here is bundled into a structure: the data is a state and two question-indexed families\nof POVMs on arbitrary finite local spaces, which is how it arrives.\n\n## Main definitions\n\n- `MIPRE.bornProb`: `⟨ψ| E_A ⊗ E_B |ψ⟩`, as a real;\n- `MIPRE.povmValue`: the value of a POVM strategy;\n- `MIPRE.condFail`: the failure probability *conditioned* on a question pair.\n\n## Main statements\n\n- `MIPRE.sum_bornProb`: the Born probabilities of a pair of POVMs sum to one on a unit vector;\n- `MIPRE.one_sub_povmValue_eq`: the failure probability is the average of the conditional ones;\n- `MIPRE.condFail_le_div`: a conditional failure is at most the failure probability divided by\n  the question pair's weight. This is the step that turns \"fails with probability `ε`\" into a\n  bound on each subtest, and the division by the weight is why soundness constants carry the\n  number of subtests.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/POVMValue.lean",
+  "source_path": "MIPRE/Foundations/POVMValue.lean",
+  "defmat": [
+   "MIPRE.bornProb",
+   "MIPRE.condFail",
+   "MIPRE.condWin",
+   "MIPRE.povmValue"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.bornProb",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     129,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.condFail",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     178,
+     181
+    ]
+   },
+   {
+    "name": "MIPRE.condWin",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     166,
+     170
+    ]
+   },
+   {
+    "name": "MIPRE.povmValue",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     172,
+     176
+    ]
+   }
+  ],
+  "lines": 87,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.bornProb": [
+    "/-- `⟨ψ| E_A ⊗ E_B |ψ⟩`, the Born-rule probability of an outcome pair. -/"
+   ],
+   "MIPRE.condFail": [
+    "/-- The failure probability *conditioned* on the question pair `(x, y)`. -/"
+   ],
+   "MIPRE.condWin": [
+    "/-- The accepted probability at a fixed question pair. -/"
+   ],
+   "MIPRE.povmValue": [
+    "/-- **The value of a POVM strategy**: the average over question pairs of the accepted",
+    "probability. For a projective strategy this is `TensorProductStrategy.value`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_CrossConsistency",
+  "module": "MIPRE.Foundations.CrossConsistency",
+  "module_doc": "/-!\n# Cross-party consistency, and what winning a subtest buys\n\nThe Pauli appendix's `≃_δ` compares `A ⊗ Id` with `Id ⊗ B`: one player's operator against the\n*other* player's. `MIPRE.stateDist` of `def:state-distance` compares two families on the same\nside, which is what the orthonormalization step needs; this file is the cross-party form, and\nthe one lemma that produces it.\n\n## The engine\n\n`xSqNorm ψ A B = ‖(A ⊗ Id - Id ⊗ B)|ψ⟩‖²`, and `xPovmDist` averages its sum over outcomes\nagainst a question distribution. `xSqNorm_sum_le_two_mul` is the only analytic content:\n\n```\n∑_c ‖(A_c ⊗ Id - Id ⊗ B_c)|ψ⟩‖² ≤ 2 (1 - ∑_c ⟨ψ| A_c ⊗ B_c |ψ⟩)\n```\n\nfor any two POVMs indexed by the same outcome set. Expand each square; the two diagonal sums are\nat most one because a POVM element `A` has `A† A = A² ≤ A` and the elements sum to the identity,\nand the cross term is exactly the agreement probability. **No projectivity is used** --- which\nmatters, because the strategies this is applied to are arbitrary POVM strategies and the\nprojectivity only arrives later, through `cor:ortho-from-consistency`.\n\nPaired with `condFail_agree`, which says the right-hand side *is* twice the conditional failure\nof a subtest whose decider accepts iff two post-processings of the answers agree, this turns\neach item of `lem:qld-win` into an instance: name the two post-processings, check the decider,\nand the bound is `2 ε / μ`.\n\n## The weights\n\n`sum_mul_condFail_le` is the other half: the conditional failures of *any* set of question\npairs, weighted by their probabilities, add up to at most `ε`. `condFail_le_div` in\n`MIPRE/Foundations/POVMValue.lean` is its one-pair case. The useful corollary is\n`sum_condFail_le_of_le`: an auxiliary distribution `ν` on an index set that injects into the\nquestion pairs, with `c · ν i ≤ μ` at each, gives `∑_i ν i · condFail ≤ ε / c`. That is the\nblueprint's \"each item is the value of the corresponding subtest, divided by the probability\nthat the subtest is selected\", with `c` the selection probability and `ν` the conditional\nquestion distribution.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CrossConsistency.lean",
+  "source_path": "MIPRE/Foundations/CrossConsistency.lean",
+  "defmat": [
+   "MIPRE.xNorm",
+   "MIPRE.xSqNorm"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.xNorm",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     472,
+     474
+    ]
+   },
+   {
+    "name": "MIPRE.xSqNorm",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     62,
+     65
+    ]
+   }
+  ],
+  "lines": 179,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue"
+  ],
+  "blueprint": [
+   "def:cross-distance"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.xNorm": [
+    "/-- `‖(A ⊗ Id - Id ⊗ B)|ψ⟩‖`, the unsquared cross-party deviation. -/"
+   ],
+   "MIPRE.xSqNorm": [
+    "/-- `‖(A ⊗ Id - Id ⊗ B)|ψ⟩‖²`, the appendix's `A ⊗ Id ≃ Id ⊗ B` at a single pair of",
+    "operators. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_PVM",
+  "module": "MIPRE.Foundations.PVM",
+  "module_doc": "/-!\n# Observables of a projective measurement\n\nA projective measurement `P : Λ → Matrix n n ℂ` and a weighting `ε : Λ → ℂ` give the operator\n`pvmObs P ε = ∑_a ε a • P a`. The one fact worth isolating is that this is a **ring\nhomomorphism** in `ε`:\n\n`pvmObs P ε * pvmObs P δ = pvmObs P (ε * δ)`,  `pvmObs P 1 = 1`,\n\nbecause the projections are mutually orthogonal (`IsPVM.orthogonal`). Everything the rigidity\narguments want about signed sums of a projective measurement follows: with `ε` valued in\n`{±1}`, `pvmObs P ε` is a self-adjoint reflection; two weightings of the *same* measurement\ncommute, whatever they are; and if `ε δ η` is constantly `s` then `pvmObs P ε * pvmObs P δ *\npvmObs P η = s • 1` exactly.\n\nThat last one is what a linear-constraint-system game's Alice-side dilation buys: the three\nreflections of one constraint commute and multiply to the constraint's sign, with no error\nterm. Blueprint `lem:ms-direct-anticomm` is the consumer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/PVM.lean",
+  "source_path": "MIPRE/Foundations/PVM.lean",
+  "defmat": [
+   "MIPRE.IsPVM"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.IsPVM",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     38,
+     47
+    ]
+   }
+  ],
+  "lines": 63,
+  "published_bundle": null,
+  "imports": [],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.IsPVM": [
+    "/-- A **projective measurement** on `Matrix n n ℂ`: self-adjoint idempotents summing to one.",
+    "Stated as a predicate on a bare family rather than a bundled structure, because the families",
+    "this is applied to arrive from `exists_projective_dilation` in exactly this shape. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Commutation",
+  "module": "MIPRE.Foundations.Commutation",
+  "module_doc": "/-!\n# The commutation analysis\n\nBlueprint `lem:commutation-analysis` (the paper's, in `games.tex`), and the two facts it runs on.\nIt is the step that turns *consistency with a joint measurement on the other side* into\n*approximate commutation on one side*, and it is the only place in the Pauli appendix where\nprojectivity of a measurement is genuinely used.\n\n## The shape\n\nAlice has two POVMs `A_b` and `C_c`; Bob has one **projective** measurement `P_{b,c}` whose\noutcome is the pair. If each of Alice's is cross-party close to the corresponding marginal of\nBob's, then Alice's two commute on the state:\n\n```\nA_b (x) Id ~ Id (x) P_b   and   C_c (x) Id ~ Id (x) P_c    =>    [A_b, C_c] (x) Id ~ 0 .\n```\n\nThe proof moves both products to the *same* operator on Bob's side, `Id (x) P_{b,c}`, and that is\nwhere projectivity enters: for a projective measurement with a product outcome set the two\nmarginals commute and multiply to the joint element (`IsPVM.marg_mul_marg`). Nothing else about\n`P` is used.\n\n## What the steps need\n\nEach step multiplies a known deviation by an operator *in front*. The fact that lets it is the\npaper's `fact:add-a-proj`: if `sum_i F_i^dag F_i <= Id` then `sum_i ||F_i v||^2 <= ||v||^2`, so\nputting a family in front of a deviation costs nothing and *adds* its index to the sum. For a\nPOVM that hypothesis is `A_b^2 <= A_b` and `sum_b A_b = Id`, with no projectivity\n(`sum_aOp_conjTranspose_mul_self_le_one`).\n\nThe constant is `16 delta`: each side of the commutator reaches `Id (x) P_{b,c}` in two steps\n(`4 delta` after one triangle inequality), and the commutator is one more triangle\n(`2 * 4 + 2 * 4`). No square root anywhere.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Commutation.lean",
+  "source_path": "MIPRE/Foundations/Commutation.lean",
+  "defmat": [
+   "MIPRE.IsPVM.toPOVM"
+  ],
+  "embedded": [
+   "MIPRE.IsPVM.toPOVM_mats"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.IsPVM.toPOVM",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     241,
+     252
+    ]
+   },
+   {
+    "name": "MIPRE.IsPVM.toPOVM_mats",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     254,
+     256
+    ]
+   }
+  ],
+  "lines": 181,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_PVM"
+  ],
+  "blueprint": [
+   "def:expanded-state"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.IsPVM.toPOVM": [
+    "/-- **A projective measurement, as a POVM.** The same bridge as",
+    "`ProjectiveMeasurement.toPOVM`, for the bare-family form `IsPVM` that the rigidity arguments",
+    "produce. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_SchwartzZippel",
+  "module": "MIPRE.Foundations.LowDegree.SchwartzZippel",
+  "module_doc": "/-!\n# The Schwartz–Zippel lemma, in the form the low-degree machinery uses\n\nBlueprint `lem:schwartz-zippel`: two *unequal* polynomials `f, g : 𝔽_q^m → 𝔽_q` of total\ndegree at most `d` agree at a uniformly random point with probability at most `d / q`.\n\nMathlib proves the lemma for a single nonzero polynomial and a product of arbitrary finite\nsubsets (`MvPolynomial.schwartz_zippel_totalDegree`, `schwartz_zippel_sum_degreeOf`).\nEverything here is the specialization the paper and the blueprint actually quote:\n\n* the subsets are all of `F`, so the denominator is `q ^ m` rather than `∏ #(S i)`;\n* the event is `f = g` rather than `f - g = 0`;\n* the bound is stated over `ℝ`, which is where the low-degree machinery's error terms live.\n\nThree forms, because three different consumers want three different shapes:\n\n* `prob_agree_le_totalDegree` — the blueprint's statement, a probability over `ℝ`;\n* `prob_agree_le_individualDegree` — the individual-degree variant the blueprint asks for\n  alongside it (`m * d / q`, since a polynomial of individual degree `d` in `m` variables\n  has total degree at most `m * d`, and this route avoids that lossy step);\n* `card_agree_le_of_natDegree` — the univariate case as a count rather than a probability,\n  which is the form `lem:lidt-sync-transfer` uses (\"two distinct univariate polynomials of\n  degree `d` agree at no more than `d` of the `q` points\").\n\nThe `ℚ≥0`-valued intermediate is kept private: it is Mathlib's shape, not ours.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/SchwartzZippel.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/SchwartzZippel.lean",
+  "defmat": [
+   "MIPRE.LowDegree.agree"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.mem_agree",
+   "_private.MIPRE.Foundations.LowDegree.SchwartzZippel.0.MIPRE.LowDegree.agree_eq_filter"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.agree",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     47,
+     49
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.mem_agree",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     51,
+     53
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.SchwartzZippel.0.MIPRE.LowDegree.agree_eq_filter",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     55,
+     59
+    ]
+   }
+  ],
+  "lines": 65,
+  "published_bundle": null,
+  "imports": [],
+  "blueprint": [
+   "lem:schwartz-zippel"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.agree": [
+    "/-- The points of `𝔽_q^m` at which two polynomials agree. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_Sandwich",
+  "module": "MIPRE.Foundations.Sandwich",
+  "module_doc": "/-!\n# The sandwich of two approximately commuting projective measurements\n\nTwo projective measurements `{X_a}` and `{Z_b}` on one party that *approximately commute* on a\nstate cannot in general be measured jointly. The **sandwich**\n\n`R_{a,b} = Z_b X_a Z_b`\n\nalways can: it is a POVM --- exactly, by projectivity of `Z` alone --- so its Naimark dilation is\na genuine *projective* joint measurement, and the dilation's compression identity carries every\nBorn-rule estimate about `R` to the dilated measurement unchanged.\n\nWhat has to be proved is that the sandwich is approximately self-consistent across the two\nparties, and that is the content of `one_sub_sum_bornProb_sand_le`: a five-link chain from\n\n`sum_{a,b} <psi| R_{a,b} (x) R'_{a,b} |psi>`  to  `1`,\n\nwhose links are, in order, the two parties' commutators (each paid for by one Cauchy--Schwarz\nagainst a family of squared norms summing to at most one), the two parties' `X`-consistency\ncollapsed by `sum_a X'_a = Id`, and the `Z`-consistency. The one thing the chain must *not* do is\nbound the `q^2` outcome pairs one at a time: that would cost a factor `q` and the conclusion has\nto be `q`-independent. Every link here is therefore an estimate on a single operator product ---\neither a sum that telescopes exactly, or one Cauchy--Schwarz over the whole outcome set.\n\nThe statement carries an index `iota` with weights, because that is how it is used: the two\nmeasurements come from a question and the bound is an average over questions, and averaging a\nsquare root would otherwise need a second Jensen step.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Sandwich.lean",
+  "source_path": "MIPRE/Foundations/Sandwich.lean",
+  "defmat": [
+   "MIPRE.extVec2",
+   "MIPRE.sand",
+   "MIPRE.sandPOVM"
+  ],
+  "embedded": [
+   "MIPRE.sandPOVM_mats",
+   "MIPRE.sand_conjTranspose",
+   "MIPRE.sand_eq_gram",
+   "MIPRE.sand_posSemidef",
+   "MIPRE.sum_prod_id",
+   "MIPRE.sum_prod_swap",
+   "MIPRE.sum_sand"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.extVec2",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     728,
+     732
+    ]
+   },
+   {
+    "name": "MIPRE.sand",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     302,
+     305
+    ]
+   },
+   {
+    "name": "MIPRE.sandPOVM",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     338,
+     347
+    ]
+   },
+   {
+    "name": "MIPRE.sandPOVM_mats",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     349,
+     350
+    ]
+   },
+   {
+    "name": "MIPRE.sand_conjTranspose",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     317,
+     319
+    ]
+   },
+   {
+    "name": "MIPRE.sand_eq_gram",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     309,
+     315
+    ]
+   },
+   {
+    "name": "MIPRE.sand_posSemidef",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     321,
+     323
+    ]
+   },
+   {
+    "name": "MIPRE.sum_prod_id",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     110,
+     112
+    ]
+   },
+   {
+    "name": "MIPRE.sum_prod_swap",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     114,
+     117
+    ]
+   },
+   {
+    "name": "MIPRE.sum_sand",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     325,
+     336
+    ]
+   }
+  ],
+  "lines": 270,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel"
+  ],
+  "blueprint": [
+   "lem:qld-combined-points"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.extVec2": [
+    "/-- **The two-sided extension of a state**: one ancilla register in the fixed state `|a0>`",
+    "adjoined to *each* party. This is `def:expanded-state`'s shape with an inert ancilla, and it is",
+    "what a *pair* of Naimark dilations --- one per party --- is compressed back by. -/"
+   ],
+   "MIPRE.sand": [
+    "/-- **The sandwich** `R_{a,b} = Z_b X_a Z_b` of two projective measurements. -/"
+   ],
+   "MIPRE.sandPOVM": [
+    "/-- The sandwich, as a bundled POVM. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_POVMMix",
+  "module": "MIPRE.Foundations.POVMMix",
+  "module_doc": "/-!\n# Mixtures and extensions of POVMs, and the agreement triangle\n\nThree constructions on bundled POVMs that the padded strategy of the Pauli basis test's stage 4\nneeds, and one inequality.\n\n* `POVM.aOp` extends a POVM on `d` by the identity to `d × E`; `POVM.dirac a₀` answers `a₀` with\n  certainty; `POVM.mix w Q` is a convex combination of POVMs with the same outcomes. A strategy\n  that must be a *function of the question* while the analysis controls it *sample by sample* is\n  a mixture over the samples producing the question, and the Born rule's linearity\n  (`bornProb_mix_left`, `bornProb_mix_right`) turns a bound on the mixture into the average of the\n  per-sample bounds.\n* `agreeSum_triangle` is the paper's triangle-like inequality for the consistency relation\n  (`fact:triangle-for-simeq`, item 1): if Alice's `A` agrees with Bob's `B`, Alice's `C` agrees\n  with Bob's `B`, and Alice's `C` agrees with Bob's `D`, each with probability at least `1 - δ`,\n  then Alice's `A` agrees with Bob's `D` with probability at least `1 - 11 δ`. No projectivity is\n  assumed: for POVMs the agreement is not a squared distance, and the argument goes through the\n  vectors `(R_a ⊗ I)|ψ⟩`, whose weighted squared norms are at most one and, by Cauchy--Schwarz\n  against a partner they agree with, at least `1 - 2δ`. The paper pads these vectors to unit\n  vectors and gets `9 δ`; the unpadded argument here costs the extra `2 δ` and needs no auxiliary\n  space.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/POVMMix.lean",
+  "source_path": "MIPRE/Foundations/POVMMix.lean",
+  "defmat": [
+   "MIPRE.POVM.aOp",
+   "MIPRE.POVM.mix",
+   "MIPRE.POVM.ofPosSemidef",
+   "MIPRE.agreeSum",
+   "MIPRE.weightA",
+   "MIPRE.weightB",
+   "MIPRE.xDev"
+  ],
+  "embedded": [
+   "MIPRE.POVM.aOp_mats",
+   "MIPRE.POVM.mix_mats",
+   "MIPRE.POVM.ofPosSemidef_mats"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.POVM.aOp",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     45,
+     57
+    ]
+   },
+   {
+    "name": "MIPRE.POVM.aOp_mats",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     59,
+     60
+    ]
+   },
+   {
+    "name": "MIPRE.POVM.mix",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     97,
+     115
+    ]
+   },
+   {
+    "name": "MIPRE.POVM.mix_mats",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     117,
+     119
+    ]
+   },
+   {
+    "name": "MIPRE.POVM.ofPosSemidef",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     162,
+     172
+    ]
+   },
+   {
+    "name": "MIPRE.POVM.ofPosSemidef_mats",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     174,
+     175
+    ]
+   },
+   {
+    "name": "MIPRE.agreeSum",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     384,
+     387
+    ]
+   },
+   {
+    "name": "MIPRE.weightA",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     389,
+     391
+    ]
+   },
+   {
+    "name": "MIPRE.weightB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     393,
+     395
+    ]
+   },
+   {
+    "name": "MIPRE.xDev",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     397,
+     399
+    ]
+   }
+  ],
+  "lines": 218,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich"
+  ],
+  "blueprint": [
+   "lem:qld-global-setup",
+   "lem:qld-global-success"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.POVM.aOp": [
+    "/-- A POVM on `d`, extended by the identity to `d × E`. -/"
+   ],
+   "MIPRE.POVM.mix": [
+    "/-- **A convex combination of POVMs** with the same outcomes, with real weights `w` summing to",
+    "one. -/"
+   ],
+   "MIPRE.POVM.ofPosSemidef": [
+    "/-- A POVM from a family of positive semidefinite matrices summing to the identity. -/"
+   ],
+   "MIPRE.agreeSum": [
+    "/-- The agreement probability of two families of POVMs, one per party, on the same questions,",
+    "averaged over the question distribution `μ`: the paper's `p(R, S)`. -/"
+   ],
+   "MIPRE.weightA": [
+    "/-- The weighted squared norm of Alice's measurement vectors, `∑_x μ_x ∑_a ‖(M^x_a ⊗ I)ψ‖²`. -/"
+   ],
+   "MIPRE.weightB": [
+    "/-- Bob's version. -/"
+   ],
+   "MIPRE.xDev": [
+    "/-- The weighted cross-party deviation of two families. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_GameAdapt",
+  "module": "MIPRE.Foundations.GameAdapt",
+  "module_doc": "/-!\n# Playing a strategy for one game as a strategy for another\n\n`MIPRE.Foundations.GameTransport` compares games that share their question alphabets and their\ndistribution. This file drops both assumptions, which is what a *reduction* between two\ngenuinely different games needs: given a strategy `S` for `G`, a map `qA` of the target game's\nquestions into `G`'s and a coarse-graining `rA` of `G`'s answers into the target's, `S.adapt`\nplays `S` through them.\n\n## The conditional success probability\n\nEverything is organized around `succAt S x y`, the probability that `S` is accepted *given* the\nquestion pair `(x, y)`, and its complement `failAt`. The value is the `μ`-average of `succAt`\n(`value_eq_sum_succAt`), so\n\n`1 - S.value = ∑ x y, μ x y * failAt S x y`  (`one_sub_value_eq_sum_failAt`),\n\nwhich is the form a reduction compares across two games: an inequality between failure\nprobabilities, each weighted by its own game's distribution.\n\n## What the adapter costs\n\n`failAt_adapt_le` says the adapted strategy fails no more often at `(x', y')` than `S` does at\n`(qA x', qB y')`, provided every tuple `G` accepts is still accepted after coarse-graining\n(`hD`). The summed statements ask `hD` only where `G'.μ` is nonzero, and that is not a\nconvenience: a question pair outside the target's support may well be one the target *rejects*\nand the source accepts --- for the seeded CL test, a pair of two line questions, which the\ncanonical-line test has no subtest for --- so the unrestricted hypothesis would be false. Summing, the price is entirely in the distributions: `one_sub_value_adapt_le` asks that\nthe push-forward of `G'`'s distribution along `(qA, qB)` be dominated by `C` times `G`'s, and\nconcludes `1 - (S.adapt …).value ≤ C * (1 - S.value)`.\n\n## Derandomization\n\nA reduction usually cannot choose the question map canonically: the target's question is\ntypically a *coarser* object than `G`'s — a line rather than a seeded description of a line —\nso one has to pick a preimage, and for any fixed choice the push-forward bound is off by the\nsize of the fibre. `exists_one_sub_value_adapt_le` is the averaged form. It asks only that the\npush-forward bound hold on average over a finite family of question maps, and returns one\nmember of the family achieving the conclusion. That is the \"choose the best seed\" step, and the\naveraging is exactly where the fibre size is paid back.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/GameAdapt.lean",
+  "source_path": "MIPRE/Foundations/GameAdapt.lean",
+  "defmat": [
+   "MIPRE.ProjectiveMeasurement.mergeAt",
+   "MIPRE.TensorProductStrategy.adapt",
+   "MIPRE.TensorProductStrategy.born",
+   "MIPRE.TensorProductStrategy.failAt",
+   "MIPRE.TensorProductStrategy.succAt"
+  ],
+  "embedded": [
+   "MIPRE.ProjectiveMeasurement.mergeAt_M"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.ProjectiveMeasurement.mergeAt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     73,
+     93
+    ]
+   },
+   {
+    "name": "MIPRE.ProjectiveMeasurement.mergeAt_M",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     95,
+     99
+    ]
+   },
+   {
+    "name": "MIPRE.TensorProductStrategy.adapt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     211,
+     218
+    ]
+   },
+   {
+    "name": "MIPRE.TensorProductStrategy.born",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     145,
+     147
+    ]
+   },
+   {
+    "name": "MIPRE.TensorProductStrategy.failAt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     161,
+     163
+    ]
+   },
+   {
+    "name": "MIPRE.TensorProductStrategy.succAt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     157,
+     159
+    ]
+   }
+  ],
+  "lines": 142,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.ProjectiveMeasurement.mergeAt": [
+    "/-- Merge the outcomes of `P` along a coarse-graining that may depend on the question, while",
+    "reindexing the questions. `GameTransport`'s `merge` is the case of a coarse-graining that does",
+    "not depend on the question; a reduction generally needs the dependence, because how an answer",
+    "must be converted can depend on which question was asked --- the reparametrization of a line",
+    "answer depends on the line. -/"
+   ],
+   "MIPRE.TensorProductStrategy.adapt": [
+    "/-- **Play `S` on `G'`**, through a map `qA`, `qB` of `G'`'s questions into `G`'s and a",
+    "coarse-graining `rA`, `rB` of `G`'s answers into `G'`'s that may depend on the question: the",
+    "measurement at a question `x'` of `G'` is the one `S` uses at `qA x'`, with its outcomes merged",
+    "along `rA x'`. -/"
+   ],
+   "MIPRE.TensorProductStrategy.born": [
+    "/-- The Born-rule probability that `S` answers `(a, b)` to the question pair `(x, y)`. -/"
+   ],
+   "MIPRE.TensorProductStrategy.failAt": [
+    "/-- The probability that `S` is rejected, given the question pair `(x, y)`. -/"
+   ],
+   "MIPRE.TensorProductStrategy.succAt": [
+    "/-- The probability that `S` is accepted, given the question pair `(x, y)`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_RegisterReindex",
+  "module": "MIPRE.Foundations.RegisterReindex",
+  "module_doc": "/-!\n# Reindexing the registers of a bipartite strategy\n\n`TensorProductStrategy` (blueprint `def:tensor-strategy`) fixes the two players' registers to be\n`Fin dA` and `Fin dB`, and every soundness theorem proved through the vendored developments ---\n`MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL` in particular --- takes and returns its\nstrategies in that form. The rigidity arguments of `MIPRE.QLD`, on the other hand, build their\nstates and measurements on *structured* registers: a strategy's own space tensored with ancillas\nsuch as `(dA × Anc F m) × (F × F)`, where the block structure is what the proofs compute with. A\nstrategy in that form has a value (`povmValue`), but it is not a `TensorProductStrategy`, and\nnothing in the repository turned one into the other. This file is that bridge.\n\nEverything transports along an equivalence `e : d ≃ d'` of a register:\n\n* `reindexStarAlgEquiv e` is `Matrix.reindex e e` as a star-algebra equivalence, so that\n  `ProjectiveMeasurement.map` moves projective measurement families across it;\n* `POVM.reindex e` moves POVMs, and commutes with the relabelling `POVM.map`\n  (`POVM.map_reindex`) and with `ProjectiveMeasurement.toPOVM`\n  (`ProjectiveMeasurement.toPOVM_map_reindex`);\n* `reindexVec eA eB` moves a bipartite state, and the Born rule is invariant\n  (`quadForm_reindex`, `bornProb_reindex`), hence so are `povmValue` (`povmValue_reindex`) and\n  `inconsistency` (`inconsistency_reindex`).\n\n`TensorProductStrategy.ofProjective` then packages a projective strategy on arbitrary finite\nregisters as a `TensorProductStrategy` on `Fin (card dA) × Fin (card dB)`, with\n`TensorProductStrategy.value_ofProjective` identifying its value with the `povmValue` of the\noriginal; `TensorProductStrategy.ofPVM` is the same for measurements given as POVM families with\n`IsPVM` proofs, the form the rigidity arguments produce. A consumer applies a soundness theorem to\nthe packaged strategy and reads the conclusion back through `inconsistency_reindex` and the\n`reindex` lemmas: `MIPRE.Background.LIDT.Adapter.Registers` does exactly that for the seeded\nlow individual degree test.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/RegisterReindex.lean",
+  "source_path": "MIPRE/Foundations/RegisterReindex.lean",
+  "defmat": [
+   "MIPRE.POVM.reindex",
+   "MIPRE.ProjectiveMeasurement.ofIsPVM",
+   "MIPRE.TensorProductStrategy.ofProjective",
+   "MIPRE.reindexStarAlgEquiv",
+   "MIPRE.reindexVec"
+  ],
+  "embedded": [
+   "MIPRE.POVM.reindex_mats",
+   "MIPRE.ProjectiveMeasurement.toPOVM_ofIsPVM",
+   "MIPRE.reindexStarAlgEquiv_apply",
+   "MIPRE.reindexVec_unit"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.POVM.reindex",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     71,
+     88
+    ]
+   },
+   {
+    "name": "MIPRE.POVM.reindex_mats",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     90,
+     91
+    ]
+   },
+   {
+    "name": "MIPRE.ProjectiveMeasurement.ofIsPVM",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     120,
+     129
+    ]
+   },
+   {
+    "name": "MIPRE.ProjectiveMeasurement.toPOVM_ofIsPVM",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     131,
+     134
+    ]
+   },
+   {
+    "name": "MIPRE.TensorProductStrategy.ofProjective",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     226,
+     236
+    ]
+   },
+   {
+    "name": "MIPRE.reindexStarAlgEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     54,
+     57
+    ]
+   },
+   {
+    "name": "MIPRE.reindexStarAlgEquiv_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     59,
+     60
+    ]
+   },
+   {
+    "name": "MIPRE.reindexVec",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     144,
+     146
+    ]
+   },
+   {
+    "name": "MIPRE.reindexVec_unit",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     177,
+     181
+    ]
+   }
+  ],
+  "lines": 167,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_PVM"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.POVM.reindex": [
+    "/-- Reindex a POVM along an equivalence of its register. -/"
+   ],
+   "MIPRE.ProjectiveMeasurement.ofIsPVM": [
+    "/-- A family of POVMs whose elements are projective, as a `ProjectiveMeasurement`. This is the",
+    "form the rigidity arguments produce their measurements in (`IsPVM` on the bare matrices), and",
+    "`TensorProductStrategy` consumes the bundled form. -/"
+   ],
+   "MIPRE.TensorProductStrategy.ofProjective": [
+    "/-- A projective strategy on arbitrary finite registers `dA`, `dB`, packaged as a",
+    "`TensorProductStrategy` on `Fin (card dA) × Fin (card dB)` along `Fintype.equivFin`. -/"
+   ],
+   "MIPRE.reindexStarAlgEquiv": [
+    "/-- `Matrix.reindex e e` as a star-algebra equivalence of the two matrix algebras. -/"
+   ],
+   "MIPRE.reindexVec": [
+    "/-- Reindex a bipartite state along equivalences of the two registers. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_OracularTensor",
+  "module": "MIPRE.Foundations.OracularTensor",
+  "module_doc": "/-!\n# Soundness of oracularization, for bipartite strategies\n\nItem 2 of blueprint `thm:oracularization` (`lem:oracular-soundness-tensor`), at the level of\ngames and for **arbitrary tensor-product strategies**: a strategy of value at least `1 - ε` for\n`MIPRE.SeededGame.oracular` yields one of value at least `1 - 24√ε` for the input game, and so\n`val*` of the oracularization above `1 - ε` puts `val*` of the input at least `1 - 24√ε`.\n\n`MIPRE/Foundations/OracularSound.lean` proves the same bound for *synchronous* strategies. That\nis not the statement a verifier-level consumer can use: `Verifier.valStar` is a supremum over\n`TensorProductStrategy`, and so is the detyping transport (`restrictAmbient_value_ge`), while the\nonly bridge from synchronous to bipartite values, `thm:almost-sync`, is off the critical path.\nThe paper's `thm:oracle-soundness` is bipartite; this is its game-level form.\n\n## The argument\n\nEvery `TensorProductStrategy` is projective, so no Naimark dilation is needed. Fix a seed `z` and\nwrite, on the joint space, `O` for the first player's oracle measurement at `(oracle, z)`,\n`O^𝖠`, `O^𝖡` for its two component marginals (`OAns.aliceView`, `OAns.bobView`), `C` for the\nfirst player's isolated-Alice measurement at `L^𝖠 z`, and `P`, `Q` for the second player's\nisolated-Alice and isolated-Bob measurements at `L^𝖠 z` and `L^𝖡 z`. Then\n\n`C_u ⊗ Q_v - O^𝖠_u O^𝖡_v ⊗ Id = (Id ⊗ Q_v)(C_u ⊗ Id - Id ⊗ P_u)`\n  `+ (Id ⊗ Q_v)(Id ⊗ P_u - O^𝖠_u ⊗ Id) + (O^𝖠_u ⊗ Id)(Id ⊗ Q_v - O^𝖡_v ⊗ Id)`\n\n(`sum_snorm_sq_chain`). Each front factor is a projective measurement, so it costs nothing summed\nover its outcome (`sum_snorm_sq_mul_le`), and each of the three deviations is the cross-party\nconsistency of one role pair --- `(alice, alice)`, `(oracle, alice)`, `(oracle, bob)` --- hence at\nmost twice that pair's conditional failure (`xSqNorm_sum_le_condFail`). So the product strategy is\nwithin `6` times three conditional failures of the oracle's joint marginal, linearly in `ε`.\n\nThe single square root of repair 1 of `rem:oracularization-repairs` is spent once, in\n`sum_snorm_sq_ge_of_close`: the paper's `fact:approx-implies-close-value` (NW19's Fact 4.31) at\nthe level of vectors, which compares the mass two families with total mass at most one put on the\nset of outcome pairs the input decider accepts. The oracle's joint marginal puts mass at least the\noracle's own acceptance probability at `(oracle, oracle)` there.\n\nAveraging, the four role pairs used are distinct and each carries a ninth of the question weight,\nso their conditional failures average to at most `9ε` in total (`sum_failAt_four_le`), and\n`val ≥ 1 - 9ε - 2√(54ε) ≥ 1 - 24√ε`: the synchronous constant. Neither the paper's\nmarginalization step nor its commutation step is needed, because the oracle's measurement enters\nonly through its joint marginal and the second player's two isolated measurements are multiplied\nin one order only.\n\nThe extracted strategy (`tensorSound`) is the adapter `TensorProductStrategy.adapt`: the first\nplayer's isolated-Alice measurement and the second player's isolated-Bob measurement, relabelled\nalong `OAns.singlePart` so that an oracle-shaped answer is grouped into one distinguished outcome.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularTensor.lean",
+  "source_path": "MIPRE/Foundations/OracularTensor.lean",
+  "defmat": [
+   "MIPRE.OAns.aliceView",
+   "MIPRE.OAns.bobView",
+   "MIPRE.SeededGame.accPairs",
+   "MIPRE.SeededGame.oracleGood",
+   "MIPRE.SeededGame.oracleView",
+   "MIPRE.SeededGame.singlePairEmb",
+   "MIPRE.SeededGame.tensorSound"
+  ],
+  "embedded": [
+   "MIPRE.ProjectiveMeasurement.toPOVM_mats_val",
+   "MIPRE.SeededGame.singlePairEmb_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.OAns.aliceView",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     71,
+     76
+    ]
+   },
+   {
+    "name": "MIPRE.OAns.bobView",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     78,
+     81
+    ]
+   },
+   {
+    "name": "MIPRE.ProjectiveMeasurement.toPOVM_mats_val",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     190,
+     192
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.accPairs",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     403,
+     405
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.oracleGood",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     360,
+     364
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.oracleView",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     420,
+     423
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.singlePairEmb",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     407,
+     412
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.singlePairEmb_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     414,
+     416
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.tensorSound",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     390,
+     397
+    ]
+   }
+  ],
+  "lines": 229,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_OracularGame",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_PerfectStrategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_OracularSound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex"
+  ],
+  "blueprint": [
+   "lem:oracular-soundness-model",
+   "lem:oracular-soundness-tensor"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.OAns.aliceView": [
+    "/-- An oracularized answer read as the answer meant for the original Alice: an oracle's pair is",
+    "read as its first component; an isolated player's answer is left as it is (for an oracle it is",
+    "rejected by the shape check anyway). -/"
+   ],
+   "MIPRE.OAns.bobView": [
+    "/-- An oracularized answer read as the answer meant for the original Bob. -/"
+   ],
+   "MIPRE.SeededGame.accPairs": [
+    "/-- The answer pairs the input decider accepts at the question pair the seed determines. -/"
+   ],
+   "MIPRE.SeededGame.oracleGood": [
+    "/-- The oracle's own answer passes the game check: it is a pair, which the input decider accepts",
+    "at the question pair the seed determines. -/"
+   ],
+   "MIPRE.SeededGame.oracleView": [
+    "/-- The oracle's measurement at `(oracle, z)`, coarse-grained along a view of its answer. -/"
+   ],
+   "MIPRE.SeededGame.singlePairEmb": [
+    "/-- Pairs of isolated answers. -/"
+   ],
+   "MIPRE.SeededGame.tensorSound": [
+    "/-- **The strategy extracted from a bipartite strategy for the oracularization**: Alice plays the",
+    "first player's isolated-Alice measurement, Bob the second player's isolated-Bob measurement, both",
+    "relabelled along `OAns.singlePart`, so that an oracle-shaped answer is grouped into one",
+    "distinguished outcome. Same state, same Hilbert spaces. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_OracularComplete",
+  "module": "MIPRE.Foundations.OracularComplete",
+  "module_doc": "/-!\n# Completeness of oracularization\n\nItem 1 of blueprint `thm:oracularization`: a value-`1` PCC strategy for the input game gives\none for the oracularized game of `MIPRE.SeededGame.oracular`.\n\nThe honest oracle measures the input strategy's *two* measurements jointly: at seed `z` its\noperator for the answer pair `(a, b)` is `M^{(false, L^𝖠 z)}_a · M^{(true, L^𝖡 z)}_b`. That\nproduct is a projection exactly because the two commute, which is what `IsPCC` supplies at the\nquestion pair the seed determines — and the seed always determines a pair of positive weight,\nsince `z` itself lies in its fibre (`dist_pos`).\n\nRepair 2 of `rem:oracularization-repairs` --- that the completeness witness has *identical\nmeasurement operators* for the two players rather than a symmetric state, the campaign having\nfound the symmetry claim unjustified --- is structural here: a `SyncStrategy` is one family of\nprojective measurements played by both players, so there is nothing to arrange.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularComplete.lean",
+  "source_path": "MIPRE/Foundations/OracularComplete.lean",
+  "defmat": [
+   "MIPRE.SeededGame.oracleMeas",
+   "MIPRE.SeededGame.oracleOp",
+   "MIPRE.SeededGame.oracleStrategy"
+  ],
+  "embedded": [
+   "MIPRE.SeededGame.commute_of_isPCC",
+   "MIPRE.SeededGame.dist_pos",
+   "MIPRE.SeededGame.doubled_mu_pos",
+   "MIPRE.SeededGame.oracleMeas_M",
+   "MIPRE.SeededGame.oracleOp_alice_pair",
+   "MIPRE.SeededGame.oracleOp_alice_single",
+   "MIPRE.SeededGame.oracleOp_bob_pair",
+   "MIPRE.SeededGame.oracleOp_bob_single",
+   "MIPRE.SeededGame.oracleOp_oracle_pair",
+   "MIPRE.SeededGame.oracleOp_oracle_single",
+   "MIPRE.SeededGame.oracleStrategy_d"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.SeededGame.commute_of_isPCC",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     57,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.dist_pos",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     39,
+     46
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.doubled_mu_pos",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     48,
+     51
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.oracleMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     98,
+     145
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.oracleMeas_M",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     147,
+     148
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.oracleOp",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     67,
+     75
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.oracleOp_alice_pair",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     89,
+     90
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.oracleOp_alice_single",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     86,
+     87
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.oracleOp_bob_pair",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     95,
+     96
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.oracleOp_bob_single",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     92,
+     93
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.oracleOp_oracle_pair",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     79,
+     81
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.oracleOp_oracle_single",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     83,
+     84
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.oracleStrategy",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     259,
+     266
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.oracleStrategy_d",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     270,
+     271
+    ]
+   }
+  ],
+  "lines": 218,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_OracularGame",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_PerfectStrategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble"
+  ],
+  "blueprint": [
+   "lem:oracular-completeness"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.SeededGame.oracleMeas": [
+    "/-- The honest oracularized measurement family. Projectivity of the oracle's operators is",
+    "where the commutation of `IsPCC` is used. -/"
+   ],
+   "MIPRE.SeededGame.oracleOp": [
+    "/-- The operators of the honest oracularized strategy: an oracle measures the input strategy's",
+    "two measurements jointly, an isolated player the one the input strategy would have used, and a",
+    "shape that does not match the role gets `0`. -/"
+   ],
+   "MIPRE.SeededGame.oracleStrategy": [
+    "/-- The honest strategy for the oracularized game: the same Hilbert space as the input",
+    "strategy, the joint measurement for an oracle, and the input strategy's own measurement for an",
+    "isolated player. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_CL_Embedding",
+  "module": "MIPRE.Foundations.CL.Embedding",
+  "module_doc": "/-! # Embedding conditionally linear presentations in a larger register\n\nExtending a presentation by zero along an injection preserves its evaluation,\nmarginal, factor and linear-map queries. This puts the graph and content parts\nof detyping on disjoint registers without changing their query interfaces.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Embedding.lean",
+  "source_path": "MIPRE/Foundations/CL/Embedding.lean",
+  "defmat": [
+   "MIPRE.CL.CLFun.embed",
+   "MIPRE.CL.RegLinear.embed",
+   "MIPRE.CL.pull",
+   "MIPRE.CL.push"
+  ],
+  "embedded": [
+   "MIPRE.CL.RegLinear.embed_apply",
+   "MIPRE.CL.proj_push",
+   "MIPRE.CL.pull_add",
+   "MIPRE.CL.pull_proj",
+   "MIPRE.CL.pull_push",
+   "MIPRE.CL.pull_zero",
+   "MIPRE.CL.push_add",
+   "MIPRE.CL.push_apply",
+   "MIPRE.CL.push_inl_left",
+   "MIPRE.CL.push_inl_right",
+   "MIPRE.CL.push_inr_left",
+   "MIPRE.CL.push_inr_right",
+   "MIPRE.CL.push_zero"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.CL.CLFun.embed",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     120,
+     123
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.embed",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     95,
+     109
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.embed_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     111,
+     112
+    ]
+   },
+   {
+    "name": "MIPRE.CL.proj_push",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     81,
+     91
+    ]
+   },
+   {
+    "name": "MIPRE.CL.pull",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     25,
+     26
+    ]
+   },
+   {
+    "name": "MIPRE.CL.pull_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     52,
+     53
+    ]
+   },
+   {
+    "name": "MIPRE.CL.pull_proj",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     69,
+     73
+    ]
+   },
+   {
+    "name": "MIPRE.CL.pull_push",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     38,
+     40
+    ]
+   },
+   {
+    "name": "MIPRE.CL.pull_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     55,
+     55
+    ]
+   },
+   {
+    "name": "MIPRE.CL.push",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     28,
+     30
+    ]
+   },
+   {
+    "name": "MIPRE.CL.push_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     46,
+     50
+    ]
+   },
+   {
+    "name": "MIPRE.CL.push_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     32,
+     36
+    ]
+   },
+   {
+    "name": "MIPRE.CL.push_inl_left",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     57,
+     58
+    ]
+   },
+   {
+    "name": "MIPRE.CL.push_inl_right",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     63,
+     64
+    ]
+   },
+   {
+    "name": "MIPRE.CL.push_inr_left",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     66,
+     67
+    ]
+   },
+   {
+    "name": "MIPRE.CL.push_inr_right",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     60,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.CL.push_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     42,
+     44
+    ]
+   }
+  ],
+  "lines": 128,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic"
+  ],
+  "blueprint": [
+   "lem:detype-queries"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.CL.CLFun.embed": [
+    "/-- Extend every factor and map of a presentation along a coordinate injection. -/"
+   ],
+   "MIPRE.CL.RegLinear.embed": [
+    "/-- The same register-linear operation on an embedded register. -/"
+   ],
+   "MIPRE.CL.pull": [
+    "/-- Read the coordinates in the image of an embedding. -/"
+   ],
+   "MIPRE.CL.push": [
+    "/-- Extend by zero outside the image of an embedding. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_CL_Graph",
+  "module": "MIPRE.Foundations.CL.Graph",
+  "module_doc": "/-! # The two-level graph sampler\n\nThe graph may have loops. Its law is uniform on ordered adjacent pairs, so each\nloop is counted once. This file supplies the semantic CL presentations; compiling\ntheir finite graph table into an ambient sampler program is a separate obligation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Graph.lean",
+  "source_path": "MIPRE/Foundations/CL/Graph.lean",
+  "defmat": [
+   "MIPRE.CL.Graph.Coord",
+   "MIPRE.CL.Graph.decode",
+   "MIPRE.CL.Graph.edges",
+   "MIPRE.CL.Graph.encode",
+   "MIPRE.CL.Graph.localValid",
+   "MIPRE.CL.Graph.mask",
+   "MIPRE.CL.Graph.own",
+   "MIPRE.CL.Graph.pairSeed",
+   "MIPRE.CL.Graph.presentation",
+   "MIPRE.CL.Graph.second",
+   "MIPRE.CL.Graph.validSeeds"
+  ],
+  "embedded": [
+   "MIPRE.CL.Graph.mask_subset",
+   "MIPRE.CL.Graph.mem_own"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.CL.Graph.Coord",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     25,
+     26
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Graph.decode",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     40,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Graph.edges",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     224,
+     226
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Graph.encode",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     28,
+     30
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Graph.localValid",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     140,
+     143
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Graph.mask",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     68,
+     73
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Graph.mask_subset",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     75,
+     84
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Graph.mem_own",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     65,
+     66
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Graph.own",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     62,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Graph.pairSeed",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     183,
+     185
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Graph.presentation",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     93,
+     97
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Graph.second",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     86,
+     91
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Graph.validSeeds",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     228,
+     230
+    ]
+   }
+  ],
+  "lines": 98,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic"
+  ],
+  "blueprint": [
+   "lem:detype-graph"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.CL.Graph.Coord": [
+    "/-- Four binary blocks: player, vertex/neighbor indicator, vertex. -/"
+   ],
+   "MIPRE.CL.Graph.decode": [
+    "/-- Decode the finite graph table; malformed blocks have no decoded vertex. -/"
+   ],
+   "MIPRE.CL.Graph.edges": [
+    "/-- Ordered edges; a loop contributes once. -/"
+   ],
+   "MIPRE.CL.Graph.encode": [
+    "/-- A vertex's one-hot indicator together with its neighbor indicator. -/"
+   ],
+   "MIPRE.CL.Graph.localValid": [
+    "/-- The local valid-view predicate, stated on the seed before applying the graph sampler. -/"
+   ],
+   "MIPRE.CL.Graph.mask": [
+    "/-- The second stage keeps just the relevant opposite neighbor bit when decoding succeeds. -/"
+   ],
+   "MIPRE.CL.Graph.own": [
+    "/-- The first factor consists of the two blocks belonging to one player. -/"
+   ],
+   "MIPRE.CL.Graph.pairSeed": [
+    "/-- A seed encoding a pair of types. Each ordered pair has precisely this one seed. -/"
+   ],
+   "MIPRE.CL.Graph.presentation": [
+    "/-- The actual two-level CL presentation: own blocks, then one opposite neighbor bit. -/"
+   ],
+   "MIPRE.CL.Graph.second": [
+    "/-- The graph sampler's second-stage linear map, on the entire remaining factor. -/"
+   ],
+   "MIPRE.CL.Graph.validSeeds": [
+    "/-- The valid seeds, expressed as an image so their exact number is transparent. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_CL_Detyping",
+  "module": "MIPRE.Foundations.CL.Detyping",
+  "module_doc": "/-! # Detyped conditionally linear functions\n\nThe construction of `types.tex`, `def:detyped-CL`: run the graph sampler,\nthen the selected typed presentation on an independent register. An invalid\ngraph view selects a zero presentation that still consumes the whole content\nregister. The conditional law retains the common content seed of both players.\n\nThis file constructs the presentations and proves their law. The ambient\nprogram and its runtime are the separate `lem:detype-sampler` obligation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Detyping.lean",
+  "source_path": "MIPRE/Foundations/CL/Detyping.lean",
+  "defmat": [
+   "MIPRE.CL.CLFun.zeroOn",
+   "MIPRE.CL.Detyping.Coord",
+   "MIPRE.CL.Detyping.presentation",
+   "MIPRE.CL.Detyping.select",
+   "MIPRE.CL.Detyping.selected"
+  ],
+  "embedded": [
+   "MIPRE.CL.CLFun.eval_truncate_zeroOn",
+   "MIPRE.CL.CLFun.eval_zeroOn"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.CL.CLFun.eval_truncate_zeroOn",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     46,
+     54
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.eval_zeroOn",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     56,
+     58
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.zeroOn",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     32,
+     35
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Detyping.Coord",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     83,
+     84
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Detyping.presentation",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     162,
+     166
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Detyping.select",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     86,
+     92
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Detyping.selected",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     156,
+     160
+    ]
+   }
+  ],
+  "lines": 95,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph"
+  ],
+  "blueprint": [
+   "lem:detype-cl",
+   "lem:detype-queries"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.CL.CLFun.zeroOn": [
+    "/-- A zero presentation whose first factor consumes `S`, with empty later factors. -/"
+   ],
+   "MIPRE.CL.Detyping.Coord": [
+    "/-- The graph register followed by the content register. -/"
+   ],
+   "MIPRE.CL.Detyping.presentation": [
+    "/-- The detyped presentation has the two graph levels followed by the typed levels. -/"
+   ],
+   "MIPRE.CL.Detyping.select": [
+    "/-- A graph view selects its decoded vertex exactly when its opposite neighbor bit is one.",
+    "On graph-sampler outputs this is the paper's nonzero opposite-block test. -/"
+   ],
+   "MIPRE.CL.Detyping.selected": [
+    "/-- The selected content presentation, with a register-consuming zero fallback. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_CL_DetypingLaw",
+  "module": "MIPRE.Foundations.CL.DetypingLaw",
+  "module_doc": "/-! # The joint law of detyped questions\n\nOn an ordered edge the graph view depends only on the player's own type.\nConditioning on the valid-edge event gives the uniform ordered-edge law and\none shared uniform content seed, exactly as in `types.tex`, `def:detyped-CL`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingLaw.lean",
+  "source_path": "MIPRE/Foundations/CL/DetypingLaw.lean",
+  "defmat": [
+   "MIPRE.CL.Detyping.view"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.CL.Detyping.view",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     24,
+     26
+    ]
+   }
+  ],
+  "lines": 45,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.CL.Detyping.view": [
+    "/-- The fixed valid graph question of one type, independent of the neighboring type. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_SampledGame",
+  "module": "MIPRE.Foundations.SampledGame",
+  "module_doc": "/-! # Games generated from finite uniform samples\n\nUnlike `SeededGame`, the seed and the two question alphabets may differ.\nThis is needed for typed games, whose seed is an edge and a common vector.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SampledGame.lean",
+  "source_path": "MIPRE/Foundations/SampledGame.lean",
+  "defmat": [
+   "MIPRE.SampledGame.dist",
+   "MIPRE.SampledGame.game"
+  ],
+  "embedded": [
+   "MIPRE.SampledGame.dist_nonneg",
+   "MIPRE.SampledGame.sum_dist",
+   "MIPRE.SampledGame.sum_dist_mul"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.SampledGame.dist",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     25,
+     27
+    ]
+   },
+   {
+    "name": "MIPRE.SampledGame.dist_nonneg",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     52,
+     55
+    ]
+   },
+   {
+    "name": "MIPRE.SampledGame.game",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     63,
+     69
+    ]
+   },
+   {
+    "name": "MIPRE.SampledGame.sum_dist",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     57,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.SampledGame.sum_dist_mul",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     35,
+     50
+    ]
+   }
+  ],
+  "lines": 76,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt"
+  ],
+  "blueprint": [
+   "lem:detype-game-soundness"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.SampledGame.dist": [
+    "/-- Push forward the uniform law by the two question maps. -/"
+   ],
+   "MIPRE.SampledGame.game": [
+    "/-- The finite game generated by the question maps and decision predicate. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_CL_DetypingGame",
+  "module": "MIPRE.Foundations.CL.DetypingGame",
+  "module_doc": "/-! # The finite typed and detyped games\n\nThis is the game at a fixed verifier index, before ambient-program compilation.\nThe detyped predicate accepts outside valid edge views. On valid views it calls\nthe original predicate. The answer alphabets here are unchanged; the separate\nprogram-level cutoff and answer truncation obligations are not hidden here.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingGame.lean",
+  "source_path": "MIPRE/Foundations/CL/DetypingGame.lean",
+  "defmat": [
+   "MIPRE.CL.Detyping.Edge",
+   "MIPRE.CL.Detyping.Question",
+   "MIPRE.CL.Detyping.TypedSeed",
+   "MIPRE.CL.Detyping.accepts",
+   "MIPRE.CL.Detyping.game",
+   "MIPRE.CL.Detyping.question",
+   "MIPRE.CL.Detyping.restrict",
+   "MIPRE.CL.Detyping.typedGame",
+   "MIPRE.CL.Detyping.typedQuestion"
+  ],
+  "embedded": [
+   "_private.MIPRE.Foundations.CL.DetypingGame.0.MIPRE.CL.Detyping.sampled_dist_cl"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.CL.Detyping.Edge",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     85,
+     86
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Detyping.Question",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     37,
+     38
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Detyping.TypedSeed",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     88,
+     89
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Detyping.accepts",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     60,
+     69
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Detyping.game",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     104,
+     110
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Detyping.question",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     40,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Detyping.restrict",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     122,
+     127
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Detyping.typedGame",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     97,
+     102
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Detyping.typedQuestion",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     91,
+     95
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.CL.DetypingGame.0.MIPRE.CL.Detyping.sampled_dist_cl",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     22,
+     30
+    ]
+   }
+  ],
+  "lines": 116,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame"
+  ],
+  "blueprint": [
+   "lem:detype-game-soundness"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.CL.Detyping.Edge": [
+    "/-- Ordered adjacent pairs, including loops. -/"
+   ],
+   "MIPRE.CL.Detyping.Question": [
+    "/-- Typed questions carry a type and its sampled content. -/"
+   ],
+   "MIPRE.CL.Detyping.TypedSeed": [
+    "/-- The typed sample space is an ordered edge together with one common content seed. -/"
+   ],
+   "MIPRE.CL.Detyping.accepts": [
+    "/-- The detyped predicate: call the typed predicate on an edge view, otherwise accept. -/"
+   ],
+   "MIPRE.CL.Detyping.game": [
+    "/-- The actual finite detyped game, using the constructed CL presentations. -/"
+   ],
+   "MIPRE.CL.Detyping.question": [
+    "/-- Embed a typed question using the type's fixed local graph view. -/"
+   ],
+   "MIPRE.CL.Detyping.restrict": [
+    "/-- Restrict the strategy's measurements to fixed graph views; its state and dimensions persist. -/"
+   ],
+   "MIPRE.CL.Detyping.typedGame": [
+    "/-- The actual finite typed game, sampling a uniform ordered edge and common seed. -/"
+   ],
+   "MIPRE.CL.Detyping.typedQuestion": [
+    "/-- One player's typed question from an edge and common seed. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_OracularTyped",
+  "module": "MIPRE.Foundations.OracularTyped",
+  "module_doc": "/-!\n# The typed oracularized game\n\nPiece O2 of `planning/oracularization.md` (issue #189): the game of the paper's typed\noracularized verifier (`sec:orac-def`) at one index, in the vocabulary the detyping compiler\nconsumes (`MIPRE.CL.Detyping.typedGame`), and its two value transfers to the input verifier.\n\n* **The typed sampler's distribution.** Types are the three roles, on the complete type graph with\n  loops (`roleGraph`); the CL functions are the identity for the oracle and the input sampler's\n  two functions for the isolated players (`roleFamily`, with `CL.CLFun.ident` the identity as an\n  `(ℓ + 1)`-level function). The typed game samples an ordered pair of roles and one common seed,\n  and its distribution is exactly that of `SeededGame.oracular` (`typedGame_mu`).\n* **Soundness.** For any typed predicate whose acceptance implies the oracularized predicate\n  after a question-dependent reading of the answers (`quantumValue_typedGame_le`), `val*` of the\n  typed game is at most `val*` of the oracularization, so by `lem:oracular-soundness-tensor`\n  it bounds the input verifier's value (`valStar_ge_of_typed`).\n* **Completeness.** For any typed predicate that accepts the honest encodings of accepted answer\n  pairs, a value-`1` PCC strategy of `𝒱_n` gives one of the *doubled* typed game\n  (`exists_typed_perfectPCC`) --- the form `CL.Detyping.DeciderProgram.verifier_hasPerfectPCC`\n  takes. It is `oracleStrategy` (identical operators for the two players), doubled, and pushed\n  forward along the encoding (`SyncStrategy.pushTo`).\n* **The bit-string predicate.** Answers of the typed verifier are bit strings. An oracle answers\n  the serialization of a pair (`pairEnc`, read back by `pairDec`), an isolated player a single\n  string; each is parsed against the cut `B` according to the role (`parseAns`), and a failed\n  parse is rejected (`oraclePred`). This is the predicate of `fig:oracle-decider`, with the\n  bounded parse that repairs 3 and 4 of `rem:oracularization-repairs` ask for, and it satisfies\n  both hypotheses (`valStar_ge_of_oraclePred`, `exists_oraclePred_perfectPCC`). The typed decider\n  program (piece O4) is to be shown to implement it.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OracularTyped.lean",
+  "source_path": "MIPRE/Foundations/OracularTyped.lean",
+  "defmat": [
+   "MIPRE.CL.CLFun.ident",
+   "MIPRE.CL.CLFun.trivialOn",
+   "MIPRE.SeededGame.ofCL",
+   "MIPRE.SeededGame.typedSeedEquiv",
+   "MIPRE.Verifier.instInhabitedAnswers",
+   "MIPRE.Verifier.seeded",
+   "MIPRE.instDecidableRelRoleRoleGraph",
+   "MIPRE.pairDec",
+   "MIPRE.pairEnc",
+   "MIPRE.roleFamily",
+   "MIPRE.roleGraph"
+  ],
+  "embedded": [
+   "MIPRE.CL.CLFun.eval_ident",
+   "MIPRE.CL.CLFun.eval_trivialOn",
+   "MIPRE.SeededGame.typedSeedEquiv_apply",
+   "MIPRE.mem_roleGraph_edges",
+   "MIPRE.pairDec_pairEnc",
+   "MIPRE.roleGraph_nonempty"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.CL.CLFun.eval_ident",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     72,
+     74
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.eval_trivialOn",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     57,
+     60
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.ident",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     67,
+     70
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.trivialOn",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     52,
+     55
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.ofCL",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     124,
+     128
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.typedSeedEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     139,
+     142
+    ]
+   },
+   {
+    "name": "MIPRE.SeededGame.typedSeedEquiv_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     144,
+     146
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.instInhabitedAnswers",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     258,
+     258
+    ]
+   },
+   {
+    "name": "MIPRE.Verifier.seeded",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     260,
+     263
+    ]
+   },
+   {
+    "name": "MIPRE.instDecidableRelRoleRoleGraph",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     106,
+     106
+    ]
+   },
+   {
+    "name": "MIPRE.mem_roleGraph_edges",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     108,
+     109
+    ]
+   },
+   {
+    "name": "MIPRE.pairDec",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     332,
+     333
+    ]
+   },
+   {
+    "name": "MIPRE.pairDec_pairEnc",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     335,
+     336
+    ]
+   },
+   {
+    "name": "MIPRE.pairEnc",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     328,
+     330
+    ]
+   },
+   {
+    "name": "MIPRE.roleFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     87,
+     93
+    ]
+   },
+   {
+    "name": "MIPRE.roleGraph",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     102,
+     104
+    ]
+   },
+   {
+    "name": "MIPRE.roleGraph_nonempty",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     111,
+     112
+    ]
+   }
+  ],
+  "lines": 247,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_OracularGame",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_PerfectStrategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_OracularSound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_OracularTensor",
+   "import Definitions.Def_MIPRE_Foundations_OracularComplete",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions"
+  ],
+  "blueprint": [
+   "def:ar-seed-index",
+   "def:oracular-typed-game",
+   "lem:oracular-typed-transfers"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.CL.CLFun.ident": [
+    "/-- **The identity**, as an `(ℓ + 1)`-level CL function: the whole space at the first level,",
+    "trivial levels after it. The oracularized sampler gives it to the oracle, who receives the seed",
+    "itself. -/"
+   ],
+   "MIPRE.CL.CLFun.trivialOn": [
+    "/-- The zero function with `ℓ` levels, every level on the empty register. -/"
+   ],
+   "MIPRE.SeededGame.ofCL": [
+    "/-- The seeded game presented by a pair of CL functions and a decision predicate: the game of a",
+    "normal form verifier at one index, with the seed space its question space. -/"
+   ],
+   "MIPRE.SeededGame.typedSeedEquiv": [
+    "/-- The typed seeds of the complete graph are the ordered pairs of roles with a seed. -/"
+   ],
+   "MIPRE.Verifier.instInhabitedAnswers": null,
+   "MIPRE.Verifier.seeded": [
+    "/-- `𝒱_n` with answers of length at most `B`, as a seeded game: the seed space is the question",
+    "space, and the seed's two images are the questions. -/"
+   ],
+   "MIPRE.instDecidableRelRoleRoleGraph": null,
+   "MIPRE.pairDec": [
+    "/-- Reading a pair back from its serialization. -/"
+   ],
+   "MIPRE.pairEnc": [
+    "/-- The serialization of an oracle's pair of answers: the postorder bits of the encoded pair",
+    "(`Cost.Data.toBitsPost`), the format the repeated decider already parses. -/"
+   ],
+   "MIPRE.roleFamily": [
+    "/-- **The oracularized sampler's CL functions**, one per role and the same for both players: the",
+    "identity for the oracle, and the input sampler's function of the corresponding original player",
+    "for an isolated player. -/"
+   ],
+   "MIPRE.roleGraph": [
+    "/-- The complete type graph on the three roles, loops included: every ordered pair of roles is",
+    "sampled. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_AnswerReduction_AnswerFormat",
+  "module": "MIPRE.Background.AnswerReduction.AnswerFormat",
+  "module_doc": "/-!\n# The answers of the answer-reduced verifier, as bit strings\n\nPart of piece AR-3c of `planning/answer-reduction.md`: Table `tpcp` of `ld_compiler.tex`, the\nanswer formats of the eighteen PCP types, as bit strings.\n\nAn answer is a tuple of field elements of a length the type prescribes (`cnt`): one value, or the\n`d + 1` or `md + 1` coefficients of one polynomial, for the first five copies; `m' + 6` values, or\n`m' + 6` polynomials' coefficients, for the sixth. It is written as the list of the elements'\n`k`-bit representations, serialized as the postorder bits of its encoding (`enc`), the format the\noracularized verifier already uses for its answer pairs (`pairEnc`). Reading an answer back\n(`parse`) requires the list to decode, every block to have `k` bits and the count to be the\ntype's; a failed parse is rejected by the typed predicate, which is the format preamble of\n`fig:decider-pcp` with its length bounds.\n\n`parse_enc` is the round trip for an answer of the right format, and `length_enc_le` the bound\non the length of an honest answer: what completeness needs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/AnswerFormat.lean",
+  "source_path": "MIPRE/Background/AnswerReduction/AnswerFormat.lean",
+  "defmat": [
+   "MIPRE.AnswerReduction.cnt",
+   "MIPRE.AnswerReduction.elems",
+   "MIPRE.AnswerReduction.enc",
+   "MIPRE.AnswerReduction.ofElems",
+   "MIPRE.AnswerReduction.parse"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.AnswerReduction.cnt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     38,
+     50
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.elems",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     52,
+     60
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.enc",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     106,
+     108
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.ofElems",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     62,
+     73
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.parse",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     110,
+     117
+    ]
+   }
+  ],
+  "lines": 188,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_Presentation",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_PcpPresentation",
+   "import Definitions.Def_MIPRE_Foundations_OracularGame",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Predicate",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_PerfectStrategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_OracularSound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_OracularTensor",
+   "import Definitions.Def_MIPRE_Foundations_OracularComplete",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_OracularTyped"
+  ],
+  "blueprint": [
+   "def:ar-typed-game"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.AnswerReduction.cnt": [
+    "/-- The number of field elements in an answer of the PCP type `t` (Table `tpcp`). -/"
+   ],
+   "MIPRE.AnswerReduction.elems": [
+    "/-- The field elements of an answer, in order: the values, or the coefficients of each",
+    "polynomial in turn. -/"
+   ],
+   "MIPRE.AnswerReduction.enc": [
+    "/-- **The honest encoding** of an answer: its elements' `k`-bit blocks, serialized. -/"
+   ],
+   "MIPRE.AnswerReduction.ofElems": [
+    "/-- An answer of the type `t` from a list of field elements. -/"
+   ],
+   "MIPRE.AnswerReduction.parse": [
+    "/-- **The bounded parse** of an answer of the type `t`: a serialized list of `cnt t` blocks of",
+    "`k` bits. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_CL_Product",
+  "module": "MIPRE.Foundations.CL.Product",
+  "module_doc": "/-!\n# Padding to a given level, and the product of two presentations\n\nTwo constructions the answer-reduced sampler needs (`sec:ar-verifier`, `ld_compiler.tex`): its\nCL functions are the direct sums of the oracularized sampler's, with `ℓ` levels, and the\ndownsized PCP sampler's, with three, on disjoint registers, at the common level `max ℓ 3`.\n\n* `CLFun.liftTo T L h P` pads `P` with trivial levels to exactly `L ≥ ℓ` levels (`liftN` pads by\n  a number of levels, and `ℓ + (L - ℓ)` is not `L` by definition, so the level is cast along\n  `castLevel`). Evaluation and exactness are unchanged (`eval_liftTo`, `ExactlyOn.liftTo`).\n* `CLFun.prod P Q` is the presentation on `ι ⊕ κ` running `P` on the left coordinates and `Q` on\n  the right: the paper's direct sum on `V₁ ⊕ V₂`, as `directSum` of the two embeddings. It is\n  exact on everything when both are (`ExactlyOn.prod`), and evaluates componentwise\n  (`eval_prod`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Product.lean",
+  "source_path": "MIPRE/Foundations/CL/Product.lean",
+  "defmat": [
+   "MIPRE.CL.CLFun.castLevel",
+   "MIPRE.CL.CLFun.liftTo",
+   "MIPRE.CL.CLFun.prod"
+  ],
+  "embedded": [
+   "MIPRE.CL.CLFun.eval_castLevel",
+   "MIPRE.CL.CLFun.eval_liftTo",
+   "MIPRE.CL.CLFun.eval_truncate_lift",
+   "MIPRE.CL.CLFun.eval_truncate_liftN",
+   "MIPRE.CL.CLFun.eval_truncate_liftTo",
+   "MIPRE.CL.CLFun.factorOfPrefix_castLevel",
+   "MIPRE.CL.CLFun.mapOfPrefix_castLevel",
+   "MIPRE.CL.CLFun.mapOfPrefix_lift",
+   "MIPRE.CL.CLFun.mapOfPrefix_liftN",
+   "MIPRE.CL.CLFun.mapOfPrefix_liftTo",
+   "MIPRE.CL.CLFun.truncate_castLevel",
+   "_private.MIPRE.Foundations.CL.Product.0.MIPRE.CL.CLFun.sdiff_subset_compl",
+   "_private.MIPRE.Foundations.CL.Product.0.MIPRE.CL.CLFun.sdiff_subset_compl_union"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.CL.CLFun.castLevel",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     35,
+     36
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.eval_castLevel",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     42,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.eval_liftTo",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     68,
+     70
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.eval_truncate_lift",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     243,
+     250
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.eval_truncate_liftN",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     272,
+     276
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.eval_truncate_liftTo",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     290,
+     292
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.factorOfPrefix_castLevel",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     50,
+     52
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.liftTo",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     60,
+     62
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.mapOfPrefix_castLevel",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     54,
+     56
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.mapOfPrefix_lift",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     263,
+     270
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.mapOfPrefix_liftN",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     284,
+     288
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.mapOfPrefix_liftTo",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     299,
+     301
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.prod",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     74,
+     76
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.truncate_castLevel",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     46,
+     48
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.CL.Product.0.MIPRE.CL.CLFun.sdiff_subset_compl",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     157,
+     158
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.CL.Product.0.MIPRE.CL.CLFun.sdiff_subset_compl_union",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     151,
+     155
+    ]
+   }
+  ],
+  "lines": 145,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding"
+  ],
+  "blueprint": [
+   "def:ar-typed-game"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.CL.CLFun.castLevel": [
+    "/-- A presentation with `a` levels as one with `b = a` levels. -/"
+   ],
+   "MIPRE.CL.CLFun.liftTo": [
+    "/-- **Pad to exactly `L` levels**, the extra levels trivial on `V_T`. -/"
+   ],
+   "MIPRE.CL.CLFun.prod": [
+    "/-- **The product**: `P` on the left coordinates, `Q` on the right. -/"
+   ]
+  }
+ }
+]

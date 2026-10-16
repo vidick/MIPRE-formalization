@@ -1,0 +1,588 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.BinaryBlock.splitBlocksProg_apply",
+  "source_name": "MIPRE.Introspection.BinaryBlock.splitBlocksProg_apply",
+  "formal_statement": "theorem MIPRE.Introspection.BinaryBlock.splitBlocksProg_apply (n k : Unary) (v : BitStr) :\n    splitBlocksProg (n, k, v) = splitBlocks n.length k.length v := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.BinaryBlock",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial MIPRE.SAT MIPRE.LowDegree.BinaryLinear MIPRE.Introspection.BasisProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.BinaryBlockProg",
+  "module_doc": "/-! # Executable binary field blocks\n\nA bounded scan splits an explicitly supplied number of fixed-width blocks.\nShort inputs produce short or empty final blocks and long suffixes are ignored;\nthe program is total on all inputs. Canonical-width inputs split and flatten\nexactly. Combined conversion interprets the flat CL vector in the constructed\nself-dual basis and returns the field arithmetic's canonical Shoup rows.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/BinaryBlockProg.lean#L62-L63",
+  "source_path": "MIPRE/Foundations/Introspection/BinaryBlockProg.lean",
+  "lines": [
+   62,
+   63
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.FieldLineCheck.parameter_eq",
+  "source_name": "MIPRE.Introspection.FieldLineCheck.parameter_eq",
+  "formal_statement": "theorem MIPRE.Introspection.FieldLineCheck.parameter_eq {F : Type*} [Field F] [DecidableEq F] {m : ℕ}\n    (origin direction point : Fin m → F) :\n    parameter origin direction point =\n      if h : ∃ j, direction j ≠ 0 then\n        (point (Fin.find (fun j => direction j ≠ 0) h) -\n          origin (Fin.find (fun j => direction j ≠ 0) h)) /\n          direction (Fin.find (fun j => direction j ≠ 0) h)\n      else 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.FieldLineCheck",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.SAT MIPRE.LowDegree.BinaryPolynomial MIPRE.Introspection.LineProgram MIPRE.Introspection.FieldPolynomialProgram MIPRE.CL.Detyping.Program"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.FieldLineCheckProg",
+  "module_doc": "/-! # Executable line-versus-point arithmetic\n\nThe program finds the first nonzero direction coordinate, checks membership\nin the affine line, and evaluates the supplied polynomial at that parameter.\nThe zero direction denotes a singleton line and has parameter zero.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/FieldLineCheckProg.lean#L35-L54",
+  "source_path": "MIPRE/Foundations/Introspection/FieldLineCheckProg.lean",
+  "lines": [
+   35,
+   54
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.LineProgram.firstPair_ofFn"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.LineProgram.firstPair_ofFn",
+  "source_name": "MIPRE.Introspection.LineProgram.firstPair_ofFn",
+  "formal_statement": "theorem MIPRE.Introspection.LineProgram.firstPair_ofFn {F : Type*} [Zero F] [DecidableEq F] {n : ℕ}\n    (u v : Fin n → F) (hv : ∃ j, v j ≠ 0) :\n    firstPair (List.ofFn fun i => (u i, v i)) =\n      (u (Fin.find (fun j => v j ≠ 0) hv), v (Fin.find (fun j => v j ≠ 0) hv)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.LineProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear MIPRE.SAT"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.LineRepresentativeProg",
+  "module_doc": "/-! # Uniform executable line representatives\n\nThe program selects the first nonzero direction coordinate, divides the point\ncoordinate by it, and subtracts that multiple of the direction. Selection,\ninversion, multiplication and the coordinate scan are actual ambient programs.\nThe raw program is polynomial-time and total on every input; correctness is\nstated on canonical encodings in the constructed Shoup field.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/LineRepresentativeProg.lean#L43-L59",
+  "source_path": "MIPRE/Foundations/Introspection/LineRepresentativeProg.lean",
+  "lines": [
+   43,
+   59
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.LineProgram.lineRepresentativeProg_correct",
+  "source_name": "MIPRE.Introspection.LineProgram.lineRepresentativeProg_correct",
+  "formal_statement": "theorem MIPRE.Introspection.LineProgram.lineRepresentativeProg_correct (k : ℕ) (hk : 1 ≤ k) {n : ℕ}\n    (u v : Fin n → (shoupBinField k hk).carrier) :\n    lineRepresentativeProg (unary k, (shoupBinField k hk).vecBits u,\n      (shoupBinField k hk).vecBits v) =\n      (shoupBinField k hk).vecBits (representative u v) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.LineProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear MIPRE.SAT"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.LineRepresentativeProg",
+  "module_doc": "/-! # Uniform executable line representatives\n\nThe program selects the first nonzero direction coordinate, divides the point\ncoordinate by it, and subtracts that multiple of the direction. Selection,\ninversion, multiplication and the coordinate scan are actual ambient programs.\nThe raw program is polynomial-time and total on every input; correctness is\nstated on canonical encodings in the constructed Shoup field.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/LineRepresentativeProg.lean#L158-L183",
+  "source_path": "MIPRE/Foundations/Introspection/LineRepresentativeProg.lean",
+  "lines": [
+   158,
+   183
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-executable-lines",
+    "env": "lemma",
+    "title": "Executable canonical lines and explicit binary coordinates",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.SAT.shoupInvProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.SAT.shoupMulProg_encoding",
+   "MIPRE.SAT.shoupBinField_charP"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.SeedProgram.card_selector_fiber",
+  "source_name": "MIPRE.Introspection.SeedProgram.card_selector_fiber",
+  "formal_statement": "theorem MIPRE.Introspection.SeedProgram.card_selector_fiber {k : ℕ} (E : BinField k) (j : ℕ) (hj : j ≤ k) (i : Fin (2 ^ j)) :\n    Fintype.card {a : E.carrier // selector E j hj a = i} = 2 ^ (k - j) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.SeedProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.SAT"
+  ],
+  "docstring": "Every direction index occurs exactly `2^(k-j)` times.",
+  "module": "MIPRE.Foundations.Introspection.SeedSelectorProg",
+  "module_doc": "/-! # The executable seed enumeration for Pauli sampling\n\nField elements are numbered by their canonical little-endian bit strings.\nFor `m = 2^j` and a field of size `2^k`, the selector keeps the highest `j`\nbits. This is the paper's equal-block selector for this explicit enumeration;\nit does not identify the enumeration with `Fintype.equivFin`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/SeedSelectorProg.lean#L78-L95",
+  "source_path": "MIPRE/Foundations/Introspection/SeedSelectorProg.lean",
+  "lines": [
+   78,
+   95
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-executable-seeded-lines",
+    "env": "lemma",
+    "title": "An executable balanced seed selector and line stages",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryArtinSchreier.next_quadratic_irreducible",
+  "source_name": "MIPRE.LowDegree.BinaryArtinSchreier.next_quadratic_irreducible",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryArtinSchreier.next_quadratic_irreducible (a : K) (ha : Irreducible (quadratic a)) :\n    let : Fact (Irreducible (quadratic a)) := ⟨ha⟩\n    Irreducible (quadratic\n      (algebraMap K (AdjoinRoot (quadratic a)) a * AdjoinRoot.root (quadratic a))) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryArtinSchreier",
+   "open Polynomial Module",
+   "variable {K : Type*} [Field K]",
+   "variable [CharP K 2]"
+  ],
+  "docstring": "One no-root quadratic gives the next one over its explicitly presented extension.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryArtinSchreier",
+  "module_doc": "/-!\n# The characteristic-two Artin–Schreier tower step\n\nThe polynomial `X² + X + a` has no root exactly when its quadratic quotient is\nan extension field. In that extension, multiplication of `a` by the canonical\nroot supplies the next no-root parameter. These are algebraic correctness\nlemmas for the explicit binary tower constructor; they do not choose a root\nby searching through the field.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryArtinSchreier.lean#L96-L115",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryArtinSchreier.lean",
+  "lines": [
+   96,
+   115
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryArtinSchreier.comp_quadratic_cubic_irreducible",
+  "source_name": "MIPRE.LowDegree.BinaryArtinSchreier.comp_quadratic_cubic_irreducible",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryArtinSchreier.comp_quadratic_cubic_irreducible [Finite K] [Algebra (ZMod 2) K]\n    [FiniteDimensional (ZMod 2) K] (t : ℕ)\n    (hK : Module.finrank (ZMod 2) K = 2 ^ t)\n    (a : K) (ha : Irreducible (quadratic a))\n    (g : (ZMod 2)[X]) (hg : g.Monic) (hd : g.natDegree = 2 ^ t)\n    (hz : aeval a g = 0) :\n    let : Fact (Irreducible (g.comp (quadratic (0 : ZMod 2)))) :=\n      ⟨comp_quadratic_irreducible t hK a ha g hg hd hz⟩\n    Irreducible (quadratic\n      (AdjoinRoot.root (g.comp (quadratic (0 : ZMod 2))) ^ 3 +\n        AdjoinRoot.root (g.comp (quadratic (0 : ZMod 2))) ^ 2)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryArtinSchreier",
+   "open Polynomial Module",
+   "variable {K : Type*} [Field K]",
+   "variable [CharP K 2]"
+  ],
+  "docstring": "Flattening the quadratic extension preserves the cubic no-root invariant.\nOnly the canonical embedding of the flat quotient is required; no search for\nan isomorphism or a field element is part of this argument.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryArtinSchreier",
+  "module_doc": "/-!\n# The characteristic-two Artin–Schreier tower step\n\nThe polynomial `X² + X + a` has no root exactly when its quadratic quotient is\nan extension field. In that extension, multiplication of `a` by the canonical\nroot supplies the next no-root parameter. These are algebraic correctness\nlemmas for the explicit binary tower constructor; they do not choose a root\nby searching through the field.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryArtinSchreier.lean#L200-L237",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryArtinSchreier.lean",
+  "lines": [
+   200,
+   237
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryArtinSchreier.next_quadratic_irreducible"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBits_succ",
+  "source_name": "MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBits_succ",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBits_succ (t : ℕ) :\n    powerTwoBits (unary (2 ^ (t + 1))) = stage t ++ [true] := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryArtinSchreier",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree.BinaryPolynomial Polynomial"
+  ],
+  "docstring": "The complete constructor returns the chosen stage on every positive tower level.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop",
+  "module_doc": "/-!\n# The bounded power-of-two constructor\n\nThe input is the requested degree in unary. The loop caps all intermediate\nmoduli by this input degree, including on malformed states. The unbounded\nmathematical stage sequence below is used only to state the induction proof.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryArtinSchreierLoop.lean#L164-L180",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryArtinSchreierLoop.lean",
+  "lines": [
+   164,
+   180
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBits_correct",
+  "source_name": "MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBits_correct",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBits_correct (e : ℕ) :\n    (polyOfBits (powerTwoBits (unary (2 ^ e)))).Monic ∧\n      Irreducible (polyOfBits (powerTwoBits (unary (2 ^ e)))) ∧\n      (polyOfBits (powerTwoBits (unary (2 ^ e)))).natDegree = 2 ^ e := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryArtinSchreier",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree.BinaryPolynomial Polynomial"
+  ],
+  "docstring": "The globally polynomial-time program constructs a monic irreducible binary\npolynomial of every requested power-of-two degree, including degree one.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryArtinSchreierLoop",
+  "module_doc": "/-!\n# The bounded power-of-two constructor\n\nThe input is the requested degree in unary. The loop caps all intermediate\nmoduli by this input degree, including on malformed states. The unbounded\nmathematical stage sequence below is used only to state the induction proof.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryArtinSchreierLoop.lean#L187-L204",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryArtinSchreierLoop.lean",
+  "lines": [
+   187,
+   204
+  ],
+  "blueprint": [
+   {
+    "label": "lem:binary-power-two-irreducible",
+    "env": "lemma",
+    "title": "Effective irreducibles of every power-of-two degree",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryArtinSchreier.powerTwoBits_succ",
+   "MIPRE.LowDegree.BinaryPolynomial.natDegree_polyOfBits_append_true",
+   "MIPRE.LowDegree.BinaryPolynomial.monic_polyOfBits_append_true"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryPolynomial.polyOfBits_substituteArtinSchreierBits",
+  "source_name": "MIPRE.LowDegree.BinaryPolynomial.polyOfBits_substituteArtinSchreierBits",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryPolynomial.polyOfBits_substituteArtinSchreierBits (a : BitStr) :\n    polyOfBits (substituteArtinSchreierBits a) = (polyOfBits a).comp (X ^ 2 + X) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryPolynomial",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial"
+  ],
+  "docstring": "The executable substitution agrees with polynomial composition.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryArtinSchreierProg",
+  "module_doc": "/-! # Effective substitution by the Artin–Schreier polynomial -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryArtinSchreierProg.lean#L43-L47",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryArtinSchreierProg.lean",
+  "lines": [
+   43,
+   47
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_xor"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryArtinSchreier.towerStepBits_monic_natDegree",
+  "source_name": "MIPRE.LowDegree.BinaryArtinSchreier.towerStepBits_monic_natDegree",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryArtinSchreier.towerStepBits_monic_natDegree (p : BitStr)\n    [Fact (Irreducible (polyOfBits (p ++ [true])))] (hp : p ≠ []) :\n    (polyOfBits (towerStepBits p)).Monic ∧\n      (polyOfBits (towerStepBits p)).natDegree = 2 * p.length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryArtinSchreier",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree.BinaryPolynomial MIPRE.LowDegree.BinaryQuotient Polynomial"
+  ],
+  "docstring": "The normalized step output has exactly the doubled degree plus its leading bit.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryArtinSchreierTower",
+  "module_doc": "/-! # A uniform effective step of the binary Artin–Schreier tower -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryArtinSchreierTower.lean#L151-L167",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryArtinSchreierTower.lean",
+  "lines": [
+   151,
+   167
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.polyOfBits_substituteArtinSchreierBits"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryArtinSchreier.towerStepBits_cubic",
+  "source_name": "MIPRE.LowDegree.BinaryArtinSchreier.towerStepBits_cubic",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryArtinSchreier.towerStepBits_cubic (p : BitStr)\n    [Fact (Irreducible (polyOfBits (p ++ [true])))] (t : ℕ) (hd : p.length = 2 ^ t)\n    (hc : Irreducible (quadratic\n      (AdjoinRoot.root (polyOfBits (p ++ [true])) ^ 3 +\n        AdjoinRoot.root (polyOfBits (p ++ [true])) ^ 2))) :\n    let : Fact (Irreducible (polyOfBits (towerStepBits p))) :=\n      ⟨towerStepBits_irreducible p t hd hc⟩\n    Irreducible (quadratic\n      (AdjoinRoot.root (polyOfBits (towerStepBits p)) ^ 3 +\n        AdjoinRoot.root (polyOfBits (towerStepBits p)) ^ 2)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryArtinSchreier",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree.BinaryPolynomial MIPRE.LowDegree.BinaryQuotient Polynomial"
+  ],
+  "docstring": "The effective flat step preserves the invariant for its canonical quotient root.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryArtinSchreierTower",
+  "module_doc": "/-! # A uniform effective step of the binary Artin–Schreier tower -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryArtinSchreierTower.lean#L169-L191",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryArtinSchreierTower.lean",
+  "lines": [
+   169,
+   191
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryArtinSchreier.comp_quadratic_cubic_irreducible",
+   "MIPRE.LowDegree.BinaryPolynomial.polyOfBits_substituteArtinSchreierBits"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryArtinSchreier.initial_invariant",
+  "source_name": "MIPRE.LowDegree.BinaryArtinSchreier.initial_invariant",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryArtinSchreier.initial_invariant : TowerInvariant [true, true] 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryArtinSchreier",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree.BinaryPolynomial MIPRE.LowDegree.BinaryQuotient Polynomial"
+  ],
+  "docstring": "The initial stage satisfies the reusable tower invariant.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryArtinSchreierTower",
+  "module_doc": "/-! # A uniform effective step of the binary Artin–Schreier tower -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryArtinSchreierTower.lean#L226-L232",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryArtinSchreierTower.lean",
+  "lines": [
+   226,
+   232
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryArtinSchreier.next_quadratic_irreducible"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryArtinSchreier.towerStep_invariant",
+  "source_name": "MIPRE.LowDegree.BinaryArtinSchreier.towerStep_invariant",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryArtinSchreier.towerStep_invariant (p : BitStr) (t : ℕ) (h : TowerInvariant p t) :\n    TowerInvariant (towerStepBits p).dropLast (t + 1) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryArtinSchreier",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.LowDegree.BinaryPolynomial MIPRE.LowDegree.BinaryQuotient Polynomial"
+  ],
+  "docstring": "Dropping the normalized leading bit prepares the next supplied modulus.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryArtinSchreierTower",
+  "module_doc": "/-! # A uniform effective step of the binary Artin–Schreier tower -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryArtinSchreierTower.lean#L234-L249",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryArtinSchreierTower.lean",
+  "lines": [
+   234,
+   249
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryArtinSchreier.towerStepBits_monic_natDegree",
+   "MIPRE.LowDegree.BinaryArtinSchreier.towerStepBits_cubic",
+   "MIPRE.LowDegree.BinaryPolynomial.natDegree_polyOfBits_append_true"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.insertRow_pivotBits",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.insertRow_pivotBits",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.insertRow_pivotBits (b : List (Pivot n t)) (r : Row n t) :\n    insertRow (b.map pivotBits) (rowBits r) = (typedInsert b r).map pivotBits := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "variable {n t : ℕ}"
+  ],
+  "docstring": "Raw row insertion uses exactly the verified typed pivot rule.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryBasis",
+  "module_doc": "/-! # Correctness of the effective binary basis construction -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryBasis.lean#L37-L54",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryBasis.lean",
+  "lines": [
+   37,
+   54
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.getD_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.typedInsert_mem_iff",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.typedInsert_mem_iff",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.typedInsert_mem_iff (S : Submodule (ZMod 2) (Fin n → ZMod 2))\n    (b : List (Pivot n t)) (r : Row n t) :\n    (∀ p ∈ typedInsert b r, p.2.1 ∈ S) ↔ (∀ p ∈ b, p.2.1 ∈ S) ∧ r.1 ∈ S := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "variable {n t : ℕ}"
+  ],
+  "docstring": "Insertion preserves exactly the subspace generated by the old basis and new row.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryBasis",
+  "module_doc": "/-! # Correctness of the effective binary basis construction -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryBasis.lean#L122-L148",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryBasis.lean",
+  "lines": [
+   122,
+   148
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.binary_eq_zero_or_one"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.typedBasis_span",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.typedBasis_span",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.typedBasis_span (rows : List (Row n t)) : pivotSpan (typedBasis rows) = rowSpan rows := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "variable {n t : ℕ}"
+  ],
+  "docstring": "The constructed independent vectors span the original family.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryBasis",
+  "module_doc": "/-! # Correctness of the effective binary basis construction -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryBasis.lean#L173-L185",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryBasis.lean",
+  "lines": [
+   173,
+   185
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-binary-linear-algebra",
+    "env": "lemma",
+    "title": "Effective binary matrix arithmetic and elimination",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.typedInsert_mem_iff"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryPolynomial.monic_polyOfBits_append_true",
+  "source_name": "MIPRE.LowDegree.BinaryPolynomial.monic_polyOfBits_append_true",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryPolynomial.monic_polyOfBits_append_true (p : BitStr) :\n    (polyOfBits (p ++ [true])).Monic := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryPolynomial",
+   "open MIPRE.Cost Polynomial"
+  ],
+  "docstring": "Every lower-coefficient vector specifies a monic polynomial.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryCanonical",
+  "module_doc": "/-! # Canonical binary polynomial degrees and monic division -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryCanonical.lean#L26-L31",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryCanonical.lean",
+  "lines": [
+   26,
+   31
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 7,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryPolynomial.natDegree_polyOfBits_append_true",
+  "source_name": "MIPRE.LowDegree.BinaryPolynomial.natDegree_polyOfBits_append_true",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryPolynomial.natDegree_polyOfBits_append_true (p : BitStr) :\n    (polyOfBits (p ++ [true])).natDegree = p.length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryPolynomial",
+   "open MIPRE.Cost Polynomial"
+  ],
+  "docstring": "The degree of a supplied monic modulus is exactly its lower-coefficient width.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryCanonical",
+  "module_doc": "/-! # Canonical binary polynomial degrees and monic division -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryCanonical.lean#L33-L37",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryCanonical.lean",
+  "lines": [
+   33,
+   37
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 7,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.esize_rows_of_width",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.esize_rows_of_width",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.esize_rows_of_width (l : List BitStr) (N : ℕ)\n    (hl : ∀ e ∈ l, e.length ≤ N) : esize l ≤ l.length * (4 * N + 2) + 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.LowDegree.BinaryComponentsProg",
+  "module_doc": "/-! # Polynomial-time fixed-space component separation -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryComponentsProg.lean#L94-L103",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryComponentsProg.lean",
+  "lines": [
+   94,
+   103
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 8,
+  "is_target": false
+ }
+]

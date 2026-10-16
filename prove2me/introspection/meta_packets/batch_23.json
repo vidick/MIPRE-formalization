@@ -1,0 +1,715 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.readout_ambientSplit",
+  "source_name": "MIPRE.Introspection.Honest.readout_ambientSplit",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.readout_ambientSplit {Y : Type*} [Fintype Y] [DecidableEq Y]\n    (V : Finset ι) (f : (ι → F) → Y) (g : (V → F) → Y) (y : Y)\n    (hf : ∀ x, f x = y ↔ g (ambientSplit V x).1 = y) :\n    readout f y = registerOp (ambientSplit V)\n      (readout g y ⊗ₖ (1 : Matrix (↥(Vᶜ) → F) (↥(Vᶜ) → F) ℂ)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "A general diagonal readout factorization under a concrete register split.",
+  "module": "MIPRE.Foundations.Introspection.AdaptivePrefixFactor",
+  "module_doc": "/-! # Concrete tensor support of an adaptive CL prefix projector\n\nA claimed prefix selects its used coordinates even outside the image of the\nCL map. Membership in its fibre depends only on those coordinates. The ideal\nprefix projector therefore acts as identity on their complement under the\nexplicit coordinate restriction equivalence.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptivePrefixFactor.lean#L93-L110",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptivePrefixFactor.lean",
+  "lines": [
+   93,
+   110
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.advancePrefix_fibSum_sqNorm",
+  "source_name": "MIPRE.Introspection.advancePrefix_fibSum_sqNorm",
+  "formal_statement": "theorem MIPRE.Introspection.advancePrefix_fibSum_sqNorm (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)\n    (k : ℕ) (ψ : ((ι → F) × H) × K → ℂ)\n    (M : (p : (y : ι → F) × (Fin (Fintype.card (P.factorOfPrefix k y)) → F)) →\n      Matrix ((stageRemaining P k p.1 → F) × H) ((stageRemaining P k p.1 → F) × H) ℂ) :\n    (∑ v, stateSqNorm ψ (fibSum (fun p => prefixResidualOp P k p.1 (M p))\n      (fun p => advancePrefix P k p.1 p.2) v)) =\n      ∑ p, stateSqNorm ψ (prefixResidualOp P k p.1 (M p)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix MIPRE.Weyl Classical",
+   "variable {ι F H K A : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Advancing an arbitrary prefix-conditioned family preserves its total\nsquared state norm, without a measurement or state normalization premise.",
+  "module": "MIPRE.Foundations.Introspection.AdaptivePrefixMarginal",
+  "module_doc": "/-! # Exact marginal error at the next adaptive prefix\n\nAdvancing the old prefix and current-coordinate outcome preserves the\nsquared error exactly: this label map is injective on attainable prefixes,\nand all other prefix-conditioned operators vanish. The ideal coarse\nmarginal is the actual next-prefix measurement.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptivePrefixMarginal.lean#L59-L78",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptivePrefixMarginal.lean",
+  "lines": [
+   59,
+   78
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-adaptive-marginal",
+    "env": "lemma",
+    "title": "Exact reassembly of the next-prefix marginal error",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.advancePrefix_injective"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.prefixStageMarginalError_reassembled",
+  "source_name": "MIPRE.Introspection.prefixStageMarginalError_reassembled",
+  "formal_statement": "theorem MIPRE.Introspection.prefixStageMarginalError_reassembled (P : CL.CLFun F ι ℓ)\n    (hP : P.SupportedOn univ) (k : ℕ) (ξ : H × K → ℂ)\n    (M : (y : ι → F) → (Fin (Fintype.card (P.factorOfPrefix k y)) → F) × A →\n      Matrix ((stageRemaining P k y → F) × H) ((stageRemaining P k y → F) × H) ℂ) :\n    prefixStageMarginalError P hP k ξ M =\n      ∑ v, stateSqNorm (registerState (ι → F) ξ)\n        (fibSum\n          (fun p : (y : ι → F) × (Fin (Fintype.card (P.factorOfPrefix k y)) → F) =>\n            prefixResidualOp P k p.1 (∑ a, M p.1 (p.2, a)))\n          (fun p => advancePrefix P k p.1 p.2) v -\n          aOp (Honest.hidingPrefixOp P (k + 1) (some v))) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix MIPRE.Weyl Classical",
+   "variable {ι F H K A : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The current-stage marginal error is exactly the distance between its\nadvanced coarse marginal and the actual next-prefix PVM. No coarse-graining\ncontraction is assumed: the equality follows from attainable-label injectivity.",
+  "module": "MIPRE.Foundations.Introspection.AdaptivePrefixMarginal",
+  "module_doc": "/-! # Exact marginal error at the next adaptive prefix\n\nAdvancing the old prefix and current-coordinate outcome preserves the\nsquared error exactly: this label map is injective on attainable prefixes,\nand all other prefix-conditioned operators vanish. The ideal coarse\nmarginal is the actual next-prefix measurement.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptivePrefixMarginal.lean#L80-L105",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptivePrefixMarginal.lean",
+  "lines": [
+   80,
+   105
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-adaptive-marginal",
+    "env": "lemma",
+    "title": "Exact reassembly of the next-prefix marginal error",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.advancePrefix_eval",
+   "MIPRE.Introspection.adaptiveLinear_readout_factor",
+   "MIPRE.Introspection.advancePrefix_fibSum_sqNorm",
+   "MIPRE.aOp_sum"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.prefixResidualOp_orthogonal",
+  "source_name": "MIPRE.Introspection.prefixResidualOp_orthogonal",
+  "formal_statement": "theorem MIPRE.Introspection.prefixResidualOp_orthogonal (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)\n    (k : ℕ) (y z : ι → F) (hyz : y ≠ z)\n    (M : Matrix ((↥((CLChecks.prefixRegister P k y)ᶜ) → F) × H) _ ℂ)\n    (N : Matrix ((↥((CLChecks.prefixRegister P k z)ᶜ) → F) × H) _ ℂ) :\n    prefixResidualOp P k y M * prefixResidualOp P k z N = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical MIPRE.Introspection.Honest",
+   "open scoped Kronecker",
+   "variable {F ι H K : Type*} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "Residual operators from distinct prefixes have disjoint support in the\none ambient register, despite their different local coordinate types.",
+  "module": "MIPRE.Foundations.Introspection.AdaptivePrefixMeasurement",
+  "module_doc": "/-! # Reassembling measurements across actual adaptive CL prefixes\n\nThe CL prefix projectors give orthogonal branches even though their coordinate\nsplits depend on the prefix. Residual PVMs therefore assemble to a genuine PVM,\nand recombining a common answer alphabet preserves exactly the weighted\nresidual error, with no number-of-prefixes factor.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptivePrefixMeasurement.lean#L36-L57",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptivePrefixMeasurement.lean",
+  "lines": [
+   36,
+   57
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.Honest.readout_ambientSplit",
+   "MIPRE.Introspection.CLChecks.truncate_fibre_of_agree",
+   "MIPRE.Introspection.readout_isPVM",
+   "MIPRE.aOp_mul",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.aOp_zero"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.prefixResidual_isPVM",
+  "source_name": "MIPRE.Introspection.prefixResidual_isPVM",
+  "formal_statement": "theorem MIPRE.Introspection.prefixResidual_isPVM (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)\n    (k : ℕ) {A : (ι → F) → Type*} [∀ y, Fintype (A y)]\n    (M : (y : ι → F) → A y →\n      Matrix ((↥((CLChecks.prefixRegister P k y)ᶜ) → F) × H) _ ℂ)\n    (hM : ∀ y, IsPVM (M y)) :\n    IsPVM (fun p : (y : ι → F) × A y => prefixResidualOp P k p.1 (M p.1 p.2)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical MIPRE.Introspection.Honest",
+   "open scoped Kronecker",
+   "variable {F ι H K : Type*} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "Prefix-indexed residual PVMs give a projective joint measurement on the\nambient register. Residual answer alphabets may depend on the prefix.",
+  "module": "MIPRE.Foundations.Introspection.AdaptivePrefixMeasurement",
+  "module_doc": "/-! # Reassembling measurements across actual adaptive CL prefixes\n\nThe CL prefix projectors give orthogonal branches even though their coordinate\nsplits depend on the prefix. Residual PVMs therefore assemble to a genuine PVM,\nand recombining a common answer alphabet preserves exactly the weighted\nresidual error, with no number-of-prefixes factor.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptivePrefixMeasurement.lean#L59-L73",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptivePrefixMeasurement.lean",
+  "lines": [
+   59,
+   73
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-adaptive-reassembly",
+    "env": "lemma",
+    "title": "Projective reassembly across adaptive prefixes",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.Honest.readout_ambientSplit",
+   "MIPRE.Introspection.CLChecks.truncate_fibre_of_agree",
+   "MIPRE.Introspection.readout_isPVM",
+   "MIPRE.aOp_sum"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.stateSqNorm_sum_prefixResidualOp",
+  "source_name": "MIPRE.Introspection.stateSqNorm_sum_prefixResidualOp",
+  "formal_statement": "theorem MIPRE.Introspection.stateSqNorm_sum_prefixResidualOp (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)\n    (k : ℕ) (ψ : ((ι → F) × H) × K → ℂ)\n    (M : (y : ι → F) → Matrix ((↥((CLChecks.prefixRegister P k y)ᶜ) → F) × H) _ ℂ) :\n    stateSqNorm ψ (∑ y, prefixResidualOp P k y (M y)) =\n      ∑ y, stateSqNorm ψ (prefixResidualOp P k y (M y)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical MIPRE.Introspection.Honest",
+   "open scoped Kronecker",
+   "variable {F ι H K : Type*} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "Orthogonal prefix branches add their squared errors exactly. No\nprojectivity or self-adjointness is required of the residual errors.",
+  "module": "MIPRE.Foundations.Introspection.AdaptivePrefixMeasurement",
+  "module_doc": "/-! # Reassembling measurements across actual adaptive CL prefixes\n\nThe CL prefix projectors give orthogonal branches even though their coordinate\nsplits depend on the prefix. Residual PVMs therefore assemble to a genuine PVM,\nand recombining a common answer alphabet preserves exactly the weighted\nresidual error, with no number-of-prefixes factor.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptivePrefixMeasurement.lean#L101-L121",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptivePrefixMeasurement.lean",
+  "lines": [
+   101,
+   121
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.prefixResidualOp_orthogonal",
+   "MIPRE.Introspection.readout_isPVM",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.aOp_sum"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.stageRemaining_step",
+  "source_name": "MIPRE.Introspection.stageRemaining_step",
+  "formal_statement": "theorem MIPRE.Introspection.stageRemaining_step (P : CL.CLFun F ι ℓ) (k : ℕ) (y : ι → F) :\n    stageRemaining P k y \\ P.factorOfPrefix k y = stageRemaining P (k + 1) y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix MIPRE.Weyl Classical",
+   "open scoped Kronecker",
+   "variable {ι F H K A : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The output support of mixing is precisely the next unvisited register.",
+  "module": "MIPRE.Foundations.Introspection.AdaptivePrefixMixing",
+  "module_doc": "/-! # Mixing on the actual adaptive continuation\n\nThe prefix law, next linear map, and remaining coordinates are computed from\nthe CL presentation. Full-carrier errors of prefix-conditioned operators\ngive the weighted hypotheses of mixing exactly. The constructed residual\nPOVM acts on the complement of the next prefix, with the original ancilla.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptivePrefixMixing.lean#L40-L44",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptivePrefixMixing.lean",
+  "lines": [
+   40,
+   44
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-adaptive-extraction",
+    "env": "lemma",
+    "title": "Adaptive extraction and common-ancilla projectivization",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.adaptiveReplacement_distance",
+  "source_name": "MIPRE.Introspection.adaptiveReplacement_distance",
+  "formal_statement": "theorem MIPRE.Introspection.adaptiveReplacement_distance (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)\n    (k : ℕ) (ξ : H × K → ℂ) (a₀ : A)\n    (M : (y : ι → F) → POVM ((Fin (Fintype.card (P.factorOfPrefix k y)) → F) × A)\n      ((stageRemaining P k y → F) × H))\n    (hM : ∀ y, IsPVM (fun p => ((M y).mats p).val))\n    (D : AdaptiveDilationFamily P k H A) (hD : ∀ y z, IsPVM (D y z)) {δ : ℝ}\n    (hd : (∑ y, prefixWeight P k y * ∑ p,\n      stateSqNorm (extVecA (registerState (stageRemaining P k y → F) ξ) a₀)\n        (aOp ((M y).mats p).val - transportedConditionalDilation (stageSplit P hP k y)\n          (synOf wZ (coordinateLinear (CLChecks.stageLinear P k y))) (D y) p)) ≤ δ) :\n    (∑ p, stateSqNorm (extVecA (registerState (ι → F) ξ) a₀)\n      (aOp ((adaptiveOldJointPOVM P hP k M hM).mats p).val -\n        ((adaptiveReplacementPOVM P hP k D hD).mats p).val)) ≤ δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix MIPRE.Weyl Classical",
+   "open scoped Kronecker",
+   "variable {ι F H K A : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The local weighted dilation error is the squared error of the actual\nglobal replacement PVM. No number-of-prefixes loss is introduced.",
+  "module": "MIPRE.Foundations.Introspection.AdaptivePrefixReplacement",
+  "module_doc": "/-! # Actual adaptive residual projectors after mixing\n\nEvery conditioned prefix uses its actual remaining coordinates. Naimark\nproduces projective residual measurements with the single ancilla alphabet\n`A` and fixed state `a₀`. The original prefix and the next Z readout remain\nexplicit tensor factors, and the error is averaged with the actual CL law.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptivePrefixReplacement.lean#L87-L123",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptivePrefixReplacement.lean",
+  "lines": [
+   87,
+   123
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-adaptive-extraction",
+    "env": "lemma",
+    "title": "Adaptive extraction and common-ancilla projectivization",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.norm_evec_expVec",
+   "MIPRE.mulVec_kron_expVec",
+   "MIPRE.Introspection.prefixProjector_weight",
+   "MIPRE.Introspection.registerEPR_equiv",
+   "MIPRE.Introspection.norm_evec_comp_equiv",
+   "MIPRE.Introspection.registerOp_mulVec",
+   "MIPRE.Introspection.registerOp_kronecker"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.exists_adaptive_prefix_dilation",
+  "source_name": "MIPRE.Introspection.exists_adaptive_prefix_dilation",
+  "formal_statement": "theorem MIPRE.Introspection.exists_adaptive_prefix_dilation (P : CL.CLFun F ι ℓ) (hP : P.SupportedOn univ)\n    (k : ℕ) (ξ : H × K → ℂ) (hξ : ‖evec ξ‖ = 1) (a₀ : A)\n    (M : (y : ι → F) → POVM ((Fin (Fintype.card (P.factorOfPrefix k y)) → F) × A)\n      ((stageRemaining P k y → F) × H))\n    (hM : ∀ y, IsPVM (fun p => ((M y).mats p).val))\n    {ε : ℝ} (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1)\n    (hmarg : prefixStageMarginalError P hP k ξ (fun y p => ((M y).mats p).val) ≤ ε)\n    (hZ : prefixStageCommutatorError P hP k ξ (fun y p => ((M y).mats p).val)\n      (fun _ => wZ) (fun _ => LinearMap.id) ≤ ε)\n    (hX : prefixStageCommutatorError P hP k ξ (fun y p => ((M y).mats p).val)\n      (fun _ => wX) (fun y => CL.lperp (coordinateLinear (CLChecks.stageLinear P k y))) ≤ ε) :\n    ∃ D : (y : ι → F) → (Fin (Fintype.card (P.factorOfPrefix k y)) → F) →\n      A → Matrix (((↥(stageRemaining P k y \\ P.factorOfPrefix k y) → F) × H) × A)\n        (((↥(stageRemaining P k y \\ P.factorOfPrefix k y) → F) × H) × A) ℂ,\n      (∀ y z, IsPVM (D y z)) ∧\n      (∑ y, prefixWeight P k y * ∑ p,\n        stateSqNorm (extVecA (registerState (stageRemaining P k y → F) ξ) a₀)\n          (aOp ((M y).mats p).val - transportedConditionalDilation (stageSplit P hP k y)\n            (synOf wZ (coordinateLinear (CLChecks.stageLinear P k y))) (D y) p)) ≤\n        2*Real.sqrt (56*Real.sqrt ε) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix MIPRE.Weyl Classical",
+   "open scoped Kronecker",
+   "variable {ι F H K A : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The one shared answer ancilla suffices although the remaining coordinate\nspace and the next factor dimension depend on the prefix.",
+  "module": "MIPRE.Foundations.Introspection.AdaptivePrefixReplacement",
+  "module_doc": "/-! # Actual adaptive residual projectors after mixing\n\nEvery conditioned prefix uses its actual remaining coordinates. Naimark\nproduces projective residual measurements with the single ancilla alphabet\n`A` and fixed state `a₀`. The original prefix and the next Z readout remain\nexplicit tensor factors, and the error is averaged with the actual CL law.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptivePrefixReplacement.lean#L125-L190",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptivePrefixReplacement.lean",
+  "lines": [
+   125,
+   190
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-adaptive-extraction",
+    "env": "lemma",
+    "title": "Adaptive extraction and common-ancilla projectivization",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.exists_projective_dilation",
+   "MIPRE.norm_evec_expVec",
+   "MIPRE.mulVec_kron_expVec",
+   "MIPRE.Introspection.dilated_pvm_distance",
+   "MIPRE.Introspection.prefixProjector_weight",
+   "MIPRE.Introspection.readout_isPVM",
+   "MIPRE.Introspection.registerEPR_equiv",
+   "MIPRE.Introspection.stateSqNorm_registerExtend",
+   "MIPRE.Introspection.exists_register_mixing_sqrt",
+   "MIPRE.Introspection.registerOp_isPVM",
+   "MIPRE.Introspection.norm_evec_comp_equiv",
+   "MIPRE.Introspection.registerOp_mulVec",
+   "MIPRE.Introspection.registerOp_kronecker",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.POVM.sum_val",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.sum_weighted_mul_le_sqrt",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isPVM_synOf"
+  ],
+  "pasted_helpers": 30,
+  "prooflines": 44,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.CLChecks.stageFactor_subset_residual",
+  "source_name": "MIPRE.Introspection.CLChecks.stageFactor_subset_residual",
+  "formal_statement": "theorem MIPRE.Introspection.CLChecks.stageFactor_subset_residual {P : CL.CLFun F ι ℓ} {T : Finset ι}\n    (hP : P.SupportedOn T) (k : ℕ) (y : ι → F) :\n    P.factorOfPrefix k y ⊆ T \\ prefixRegister P k y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.CLChecks",
+   "open Finset Classical",
+   "variable {F ι : Type*} [Field F] [Fintype ι] [DecidableEq ι] {ℓ : ℕ}"
+  ],
+  "docstring": "This is the minimal residual support required by the product induction.",
+  "module": "MIPRE.Foundations.Introspection.AdaptiveResidual",
+  "module_doc": "/-! # The actual CL continuation on the unvisited registers\n\nThe residual presentation follows a claimed output, including an off-image\none. It acts only on the complement of the registers already visited.\nThe next local map and register are computed from the original presentation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptiveResidual.lean#L109-L114",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptiveResidual.lean",
+  "lines": [
+   109,
+   114
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-adaptive-prefix",
+    "env": "lemma",
+    "title": "Actual adaptive prefix law and residual registers",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.adaptiveOldJointPOVM_map_mats",
+  "source_name": "MIPRE.Introspection.adaptiveOldJointPOVM_map_mats",
+  "formal_statement": "theorem MIPRE.Introspection.adaptiveOldJointPOVM_map_mats (P : CL.CLFun F ι ℓ)\n    (hP : P.SupportedOn univ) (k : ℕ)\n    (M : (y : ι → F) → POVM ((Fin (Fintype.card (P.factorOfPrefix k y)) → F) × B)\n      ((stageRemaining P k y → F) × H))\n    (hM : ∀ y, IsPVM (fun p => ((M y).mats p).val))\n    (f : AdaptiveStageAnswer P k B → C) (c : C) :\n    (((adaptiveOldJointPOVM P hP k M hM).map f).mats c).val =\n      ∑ y, prefixResidualOp P k y\n        (((M y).map (fun p => f ⟨y, p⟩)).mats c).val := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "variable {F ι H A B C : Type*}"
+  ],
+  "docstring": "A dependent answer decoder commutes with the concrete prefix assembly.",
+  "module": "MIPRE.Foundations.Introspection.AdaptiveSelectedMeasurement",
+  "module_doc": "/-! # The actual selected measurement before an adaptive replacement\n\nThe local updating decoder recovers the old option-valued measurement on\neach prefix branch. Reassembly therefore recovers the full ambient option\nmeasurement. Canonicalization turns this into exactly the raw selected\nmeasurement required by the quantitative replacement theorem. No malformed\neffect is assumed to vanish.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptiveSelectedMeasurement.lean#L27-L48",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptiveSelectedMeasurement.lean",
+  "lines": [
+   27,
+   48
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.prefixResidual_isPVM"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.adaptiveRefinedJoint_decode",
+  "source_name": "MIPRE.Introspection.adaptiveRefinedJoint_decode",
+  "formal_statement": "theorem MIPRE.Introspection.adaptiveRefinedJoint_decode (P : CL.CLFun F ι ℓ)\n    (hP : P.SupportedOn univ) (k : ℕ)\n    (M : (y : ι → F) → POVM (Option ((ι → F) × A))\n      ((stageRemaining P k y → F) × H))\n    (hM : ∀ y, IsPVM (fun a => ((M y).mats a).val))\n    (N : POVM (Option ((ι → F) × A)) ((ι → F) × H))\n    (hform : ∀ a, (N.mats a).val = ∑ y, prefixResidualOp P k y ((M y).mats a).val)\n    (hsupport : ∀ y x a, P.outputPrefix k x ≠ y → ((M y).mats (some (x, a))).val = 0) :\n    (adaptiveOldJointPOVM P hP k\n      (fun y => stageAnswerRefinementPOVM P k y (M y))\n      (fun y => stageAnswerRefinementPOVM_isPVM P k y (M y) (hM y))).map\n        (fun p => stageAnswerDecode P k p.1 p.2.1 p.2.2) = N := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "variable {F ι H A B C : Type*}"
+  ],
+  "docstring": "Decoding the refined actual joint measurement recovers the complete\nold option-valued POVM, including its malformed effect.",
+  "module": "MIPRE.Foundations.Introspection.AdaptiveSelectedMeasurement",
+  "module_doc": "/-! # The actual selected measurement before an adaptive replacement\n\nThe local updating decoder recovers the old option-valued measurement on\neach prefix branch. Reassembly therefore recovers the full ambient option\nmeasurement. Canonicalization turns this into exactly the raw selected\nmeasurement required by the quantitative replacement theorem. No malformed\neffect is assumed to vanish.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptiveSelectedMeasurement.lean#L50-L79",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptiveSelectedMeasurement.lean",
+  "lines": [
+   50,
+   79
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.stageAnswerDecode_recover_some",
+   "MIPRE.Introspection.adaptiveOldJointPOVM_map_mats",
+   "MIPRE.Introspection.graphRefinementPOVM_decode"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.adaptiveStepLoss_le_root",
+  "source_name": "MIPRE.Introspection.adaptiveStepLoss_le_root",
+  "formal_statement": "theorem MIPRE.Introspection.adaptiveStepLoss_le_root (δ : ℝ) :\n    adaptiveStepLoss δ ≤ 8 * iteratedRoot 3 δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection"
+  ],
+  "docstring": "One replacement costs at most eight times the third iterated square\nroot of the common stage budget, with a universal coefficient.",
+  "module": "MIPRE.Foundations.Introspection.AdaptiveStageBudget",
+  "module_doc": "/-! # One common quantitative budget for the adaptive stage\n\nThe three actual-test estimates share one budget. The malformed-answer\ncontribution is included in the marginal constant. The replacement loss\nhas three square roots, and the same recurrence can be used at every level.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptiveStageBudget.lean#L60-L83",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptiveStageBudget.lean",
+  "lines": [
+   60,
+   83
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-game-stage",
+    "env": "lemma",
+    "title": "One stage budget from the actual game tests",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.prefixResidualOp_terminal",
+  "source_name": "MIPRE.Introspection.prefixResidualOp_terminal",
+  "formal_statement": "theorem MIPRE.Introspection.prefixResidualOp_terminal {P : CL.CLFun F ι ℓ}\n    (hP : P.ExactlyOn univ) (y : ι → F)\n    (M : Matrix ((stageRemaining P ℓ y → F) × H) _ ℂ) :\n    prefixResidualOp P ℓ y M = readout P.eval y ⊗ₖ registerOp (terminalResidualEquiv hP y) M := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {F ι A H : Type*} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "Reassembling a terminal residual operator is exactly a question readout\ntensored with the operator on the auxiliary register.",
+  "module": "MIPRE.Foundations.Introspection.AdaptiveTerminalInvariant",
+  "module_doc": "/-! # Terminal adaptive invariants are conditional readouts\n\nAn exact CL presentation has no remaining coordinates at its final level.\nThe terminal residual measurements therefore act on the auxiliary register\nalone. Valid answers have exactly the claimed question readout; the\nmalformed outcome remains an explicit sum of conditional auxiliary effects.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptiveTerminalInvariant.lean#L47-L83",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptiveTerminalInvariant.lean",
+  "lines": [
+   47,
+   83
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.CLChecks.prefixRegister_full"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 30,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.IntroPrefixInvariant.terminal_map_some",
+  "source_name": "MIPRE.Introspection.IntroPrefixInvariant.terminal_map_some",
+  "formal_statement": "theorem MIPRE.Introspection.IntroPrefixInvariant.terminal_map_some\n    (I : IntroPrefixInvariant P ℓ N) (hP : P.ExactlyOn univ)\n    (y : ι → F) (a : A) :\n    (((I.residual y).map terminalAnswerMap).mats (some a)).val =\n      ((I.residual y).mats (some (y, a))).val := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.IntroPrefixInvariant",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {F ι A H : Type*} [Field F] [Fintype F] [DecidableEq F]",
+   "variable {P : CL.CLFun F ι ℓ}"
+  ],
+  "docstring": "Coarsening a terminal branch loses no valid-answer effect: its question\ncomponent was already fixed by the structural support invariant.",
+  "module": "MIPRE.Foundations.Introspection.AdaptiveTerminalInvariant",
+  "module_doc": "/-! # Terminal adaptive invariants are conditional readouts\n\nAn exact CL presentation has no remaining coordinates at its final level.\nThe terminal residual measurements therefore act on the auxiliary register\nalone. Valid answers have exactly the claimed question readout; the\nmalformed outcome remains an explicit sum of conditional auxiliary effects.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptiveTerminalInvariant.lean#L98-L118",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptiveTerminalInvariant.lean",
+  "lines": [
+   98,
+   118
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.CLFun.ExactlyOn.outputPrefix_self"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.IntroPrefixInvariant.terminal_some",
+  "source_name": "MIPRE.Introspection.IntroPrefixInvariant.terminal_some",
+  "formal_statement": "theorem MIPRE.Introspection.IntroPrefixInvariant.terminal_some\n    (I : IntroPrefixInvariant P ℓ N) (hP : P.ExactlyOn univ)\n    (y : ι → F) (a : A) :\n    (N.mats (some (y, a))).val =\n      readout P.eval y ⊗ₖ ((terminalAuxPOVM hP I y).mats (some a)).val := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.IntroPrefixInvariant",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {F ι A H : Type*} [Field F] [Fintype F] [DecidableEq F]",
+   "variable {P : CL.CLFun F ι ℓ}"
+  ],
+  "docstring": "Every valid terminal answer is an exact conditional readout of the\nquestion, with the concrete auxiliary PVM constructed above.",
+  "module": "MIPRE.Foundations.Introspection.AdaptiveTerminalInvariant",
+  "module_doc": "/-! # Terminal adaptive invariants are conditional readouts\n\nAn exact CL presentation has no remaining coordinates at its final level.\nThe terminal residual measurements therefore act on the auxiliary register\nalone. Valid answers have exactly the claimed question readout; the\nmalformed outcome remains an explicit sum of conditional auxiliary effects.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptiveTerminalInvariant.lean#L160-L177",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptiveTerminalInvariant.lean",
+  "lines": [
+   160,
+   177
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-terminal-invariant",
+    "env": "lemma",
+    "title": "Terminal conditional readouts with malformed answers",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.prefixResidualOp_terminal",
+   "MIPRE.Introspection.IntroPrefixInvariant.terminal_map_some",
+   "MIPRE.CL.CLFun.ExactlyOn.outputPrefix_self"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.exists_intro_two_sided_iteration",
+  "source_name": "MIPRE.Introspection.TypedEstimates.exists_intro_two_sided_iteration",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.exists_intro_two_sided_iteration\n    (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)\n    (projectPauli : PauliAnswer → ι → F)\n    (D : (ι → F) → (ι → F) → A → A → Bool)\n    (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →\n      PauliAnswer → PauliAnswer → Bool)\n    (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)\n    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H))\n    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K))\n    (hMA : ∀ q, IsPVM (fun a => ((MA q).mats a).val))\n    (hMB : ∀ q, IsPVM (fun a => ((MB q).mats a).val))\n    (q : κ → ZMod 2) (hq : ∀ z, (P Z).eval z = q)\n    (hL : ∀ w, (L w).SupportedOn univ)\n    {initial η δ : ℝ} (hi0 : 0 ≤ initial) (hη0 : 0 ≤ η) (hδ0 : 0 ≤ δ)\n    (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP)\n      (registerState (ι → F) ξ) MA MB ≤ initial)\n    (hZA : introAliceZError projectPauli Z q ξ MA ≤ η)\n    (hZB : introBobZError projectPauli Z q ξ MB ≤ η)\n    (hhideA : ∀ j : Fin ℓ, hidingAliceError L false (hL false) ξ MA j ≤ δ)\n    (hhideB : ∀ j : Fin ℓ, hidingBobError L true (hL true) ξ MB j ≤ δ)\n    (hi : initial ≤ adaptiveSmallThreshold ℓ (TypeGraph.edges E X Z ℓ).card (2 * ℓ))\n    (hη : η ≤ adaptiveSmallThreshold ℓ (TypeGraph.edges E X Z ℓ).card (2 * ℓ))\n    (hδ : δ ≤ adaptiveSmallThreshold ℓ (TypeGraph.edges E X Z ℓ).card (2 * ℓ)) :\n    ∃ (MAN : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n        POVM (ParsedAnswer (ι → F) A PauliAnswer)\n          ((ι → F) × introIterationAux H (Option ((ι → F) × A)) ℓ))\n      (MBN : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n        POVM (ParsedAnswer (ι → F) A PauliAnswer)\n          ((ι → F) × introIterationAux K (Option ((ι → F) × A)) ℓ))\n      (_ : IntroPrefixInvariant (L false) ℓ\n        ((MAN (QuestionType.introspect false, 0)).map introspectPair))\n      (_ : IntroPrefixInvariant (L true) ℓ\n        ((MBN (QuestionType.introspect true, 0)).map introspectPair)),\n      (∀ t, IsPVM (fun a => ((MAN t).mats a).val)) ∧\n      (∀ t, IsPVM (fun a => ((MBN t).mats a).val)) ∧\n      1 - povmValue (parsedGame E X Z P L projectPauli D DP)\n        (registerState (ι → F) (introTwoSidedState ξ ℓ)) MAN MBN ≤\n          adaptiveFailureBudget ℓ (TypeGraph.edges E X Z ℓ).card η δ initial (2 * ℓ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {F ι A H K : Type u}",
+   "variable {PauliType PauliAnswer κ : Type*}"
+  ],
+  "docstring": "Two concrete projective measurement families with both terminal prefix\ninvariants, from actual game success and fixed primitive errors. No future\nmeasurement, structural invariant, or stage-success premise is assumed.",
+  "module": "MIPRE.Foundations.Introspection.AdaptiveTwoSidedIteration",
+  "module_doc": "/-! # Both actual introspection measurements reach terminal form\n\nAlice's false-role block is followed by Bob's true-role block. The second\nblock leaves the completed Alice measurement unchanged. All its primitive\ninputs are transported from the original strategy, and a single numerical\nrecurrence accounts for the full `2 * ℓ` replacements.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptiveTwoSidedIteration.lean#L54-L131",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptiveTwoSidedIteration.lean",
+  "lines": [
+   54,
+   131
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-two-sided-iteration",
+    "env": "lemma",
+    "title": "Both actual terminal measurements",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.ancillaEmbed_isometry",
+   "MIPRE.Introspection.TypedEstimates.exists_intro_bob_iteration",
+   "MIPRE.Introspection.TypedEstimates.exists_intro_iteration",
+   "MIPRE.Introspection.adaptiveFailureBudget_le_threshold",
+   "MIPRE.Introspection.norm_evec_comp_equiv",
+   "MIPRE.Introspection.registerOp_mulVec",
+   "MIPRE.Introspection.registerOp_kronecker",
+   "MIPRE.kron_one_mul_ancillaEmbed",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_sub",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.aOp_sum",
+   "MIPRE.dotProduct_star_self",
+   "MIPRE.POVM.map_reindex"
+  ],
+  "pasted_helpers": 49,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.synX_split_second",
+  "source_name": "MIPRE.Introspection.Honest.synX_split_second",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.synX_split_second\n    (e : (I → F) ≃ (J → F) × (K → F))\n    (he : ∀ z, proj wX z = registerOp e (proj wX (e z).1 ⊗ₖ proj wX (e z).2))\n    (f : (K → F) → Y) (y : Y) :\n    synOf wX (fun z => f (e z).2) y = registerOp e\n      ((1 : Matrix (J → F) (J → F) ℂ) ⊗ₖ synOf wX f y) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F I J K Y : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "A spectral readout depending only on the second coordinate factor acts\nas identity on the first one. The split of each X projector is explicit.",
+  "module": "MIPRE.Foundations.Introspection.AdaptiveXSplit",
+  "module_doc": "/-! # Exact Pauli-X readouts under adaptive coordinate splits -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptiveXSplit.lean#L25-L53",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptiveXSplit.lean",
+  "lines": [
+   25,
+   53
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-adaptive-factorization",
+    "env": "lemma",
+    "title": "Concrete adaptive Z and dual-X factorization",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.sum_proj"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.synX_split_first",
+  "source_name": "MIPRE.Introspection.Honest.synX_split_first",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.synX_split_first\n    (e : (I → F) ≃ (J → F) × (K → F))\n    (he : ∀ z, proj wX z = registerOp e (proj wX (e z).1 ⊗ₖ proj wX (e z).2))\n    (f : (J → F) → Y) (y : Y) :\n    synOf wX (fun z => f (e z).1) y = registerOp e\n      (synOf wX f y ⊗ₖ (1 : Matrix (K → F) (K → F) ℂ)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F I J K Y : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.AdaptiveXSplit",
+  "module_doc": "/-! # Exact Pauli-X readouts under adaptive coordinate splits -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptiveXSplit.lean#L55-L76",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptiveXSplit.lean",
+  "lines": [
+   55,
+   76
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.Honest.synX_split_second"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.dualReadout_tail_split",
+  "source_name": "MIPRE.Introspection.Honest.dualReadout_tail_split",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.dualReadout_tail_split {ℓ : ℕ} {S V : Finset ι} (L : CL.RegLinear F S)\n    (next : (ι → F) → CL.CLFun F ι ℓ)\n    (h : (CL.CLFun.cons S L next).SupportedOn V) (k : ℕ) (y yp : ι → F) :\n    synOf wX (fun x : V → F => CLChecks.dualReadout (.cons S L next) (k+1) y\n      (insertRegister V x)) yp =\n      registerOp (coordinateSplit S V h.1)\n        ((1 : Matrix (Fin (Fintype.card S) → F) _ ℂ) ⊗ₖ\n          synOf wX (fun x : ↥(V \\ S) → F =>\n            CLChecks.dualReadout (next (CL.proj S y)) k (CL.proj Sᶜ y)\n              (insertRegister (V \\ S) x)) yp) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F I J K Y : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The dual readout at any later stage ignores the first register.",
+  "module": "MIPRE.Foundations.Introspection.AdaptiveXSplit",
+  "module_doc": "/-! # Exact Pauli-X readouts under adaptive coordinate splits -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AdaptiveXSplit.lean#L126-L149",
+  "source_path": "MIPRE/Foundations/Introspection/AdaptiveXSplit.lean",
+  "lines": [
+   126,
+   149
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.Honest.synX_split_second",
+   "MIPRE.Introspection.CLChecks.dualReadout_congr",
+   "MIPRE.Introspection.Honest.pauliX_entry",
+   "MIPRE.sgn_add"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 13,
+  "is_target": false
+ }
+]

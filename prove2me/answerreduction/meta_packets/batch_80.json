@@ -1,0 +1,597 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.skipTree_scan",
+  "source_name": "MIPRE.TM.Interp.skipTree_scan",
+  "formal_statement": "theorem MIPRE.TM.Interp.skipTree_scan {k : ProgId} {pc : Fin maxPc} {src : WT}\n    (hins : instrAt k pc = .copyTree src none false) (hpc : pc.val + 1 < maxPc)\n    (hsc : src ≠ CNT) (v : Data) :\n    ∀ (c : Cfg input) (d : ℕ), c.state = some ⟨k, pc, p1⟩ → 1 ≤ d →\n      Unary (c.workTapes CNT) d → c.workTapePos CNT = d →\n      Holds (c.workTapes src) (c.workTapePos src) (S v) →\n    ∃ n ≤ 3 * v.size, ∃ c', Reach c n c' [] ∧ c'.state = scanExit k pc hpc d ∧\n      Untouched c c' [] [src, CNT] ∧\n      c'.workTapes src = c.workTapes src ∧ c'.workTapePos src = c.workTapePos src + v.size ∧\n      Unary (c'.workTapes CNT) (d - 1) ∧ c'.workTapePos CNT = d - 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "The scan of `copyTree src none false` (a skip) over `S(v)` from `d ≥ 1` pending\nsubtrees.",
+  "module": "MIPRE.TM.Interp.CopyTree",
+  "module_doc": "/-!\n# The `copyTree` routine\n\nCopying (or skipping) a preorder-serialized value: a scan with a unary counter of the\npending subtrees on `CNT`, one more per `1` (a node with two children, itself consumed) and\none fewer per `0` (a leaf), finishing when none is pending. The scan from `d ≥ 1` pending\nsubtrees over `S(v)` leaves `d - 1` pending (`copyTree_scan`), finishing when `d = 1`; the\ninstruction starts with one (`exec_copyTree`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/CopyTree.lean#L234-L360",
+  "source_path": "MIPRE/TM/Interp/CopyTree.lean",
+  "lines": [
+   234,
+   360
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 30,
+  "prooflines": 115,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.exec_copyTree",
+  "source_name": "MIPRE.TM.Interp.exec_copyTree",
+  "formal_statement": "theorem MIPRE.TM.Interp.exec_copyTree {k : ProgId} {pc : Fin maxPc} {src t : WT}\n    (hins : instrAt k pc = .copyTree src (some t) false) (hpc : pc.val + 1 < maxPc)\n    (hst : src ≠ t) (hsc : src ≠ CNT) (htc : t ≠ CNT) (v : Data) (c : Cfg input)\n    (hq : c.state = at_ k pc) (hcnt : Unary (c.workTapes CNT) 0) (hcp : c.workTapePos CNT = 0)\n    (hsrc : Holds (c.workTapes src) (c.workTapePos src) (S v)) :\n    ∃ n ≤ 3 * v.size + 1, ∃ c', Reach c n c' [] ∧ c'.state = next_ k pc hpc ∧\n      Untouched c c' [] [src, CNT, t] ∧\n      c'.workTapes src = c.workTapes src ∧ c'.workTapePos src = c.workTapePos src + v.size ∧\n      Unary (c'.workTapes CNT) 0 ∧ c'.workTapePos CNT = 0 ∧ DstEff t c c' (S v) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "**`copyTree src (some t) false`**: copy `S(v)` from the head of `src` to the head of\n`t`, in at most `3 |v| + 1` steps.",
+  "module": "MIPRE.TM.Interp.CopyTree",
+  "module_doc": "/-!\n# The `copyTree` routine\n\nCopying (or skipping) a preorder-serialized value: a scan with a unary counter of the\npending subtrees on `CNT`, one more per `1` (a node with two children, itself consumed) and\none fewer per `0` (a leaf), finishing when none is pending. The scan from `d ≥ 1` pending\nsubtrees over `S(v)` leaves `d - 1` pending (`copyTree_scan`), finishing when `d = 1`; the\ninstruction starts with one (`exec_copyTree`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/CopyTree.lean#L379-L403",
+  "source_path": "MIPRE/TM/Interp/CopyTree.lean",
+  "lines": [
+   379,
+   403
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.copyTree_scan"
+  ],
+  "pasted_helpers": 20,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.copyTree_scan_charge",
+  "source_name": "MIPRE.TM.Interp.copyTree_scan_charge",
+  "formal_statement": "theorem MIPRE.TM.Interp.copyTree_scan_charge {k : ProgId} {pc : Fin maxPc} {src t : WT}\n    (hins : instrAt k pc = .copyTree src (some t) true) (hpc : pc.val + 1 < maxPc)\n    (hst : src ≠ t) (hsc : src ≠ CNT) (htc : t ≠ CNT) (hsb : src ≠ BUD) (htb : t ≠ BUD) (v : Data) :\n    ∀ (c : Cfg input) (d r : ℕ), c.state = some ⟨k, pc, p1⟩ → 1 ≤ d →\n      Unary (c.workTapes CNT) d → c.workTapePos CNT = d →\n      Unary (c.workTapes BUD) r → c.workTapePos BUD = r → v.size ≤ r →\n      Holds (c.workTapes src) (c.workTapePos src) (S v) →\n    ∃ n ≤ 4 * v.size, ∃ c', Reach c n c' [] ∧ c'.state = scanExit k pc hpc d ∧\n      Untouched c c' [] [src, CNT, t, BUD] ∧\n      c'.workTapes src = c.workTapes src ∧ c'.workTapePos src = c.workTapePos src + v.size ∧\n      Unary (c'.workTapes CNT) (d - 1) ∧ c'.workTapePos CNT = d - 1 ∧\n      Unary (c'.workTapes BUD) (r - v.size) ∧ c'.workTapePos BUD = ((r - v.size : ℕ) : ℤ) ∧\n      DstEff t c c' (S v) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "The scan of the charged copy over `S(v)` from `d ≥ 1` pending subtrees and a budget of\n`r ≥ |v|`.",
+  "module": "MIPRE.TM.Interp.CopyTreeCharge",
+  "module_doc": "/-!\n# The charged `copyTree`\n\n`copyTree src (some t) true` copies `S(v)` and pops one budget cell per bit: with a budget\nof at least `|v|` it succeeds (`exec_copyTree_charge`), otherwise it halts\n(`exec_copyTree_charge_fail`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/CopyTreeCharge.lean#L22-L268",
+  "source_path": "MIPRE/TM/Interp/CopyTreeCharge.lean",
+  "lines": [
+   22,
+   268
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 37,
+  "prooflines": 232,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.exec_copyTree_charge",
+  "source_name": "MIPRE.TM.Interp.exec_copyTree_charge",
+  "formal_statement": "theorem MIPRE.TM.Interp.exec_copyTree_charge {k : ProgId} {pc : Fin maxPc} {src t : WT}\n    (hins : instrAt k pc = .copyTree src (some t) true) (hpc : pc.val + 1 < maxPc)\n    (hst : src ≠ t) (hsc : src ≠ CNT) (htc : t ≠ CNT) (hsb : src ≠ BUD) (htb : t ≠ BUD) (v : Data)\n    (c : Cfg input) (hq : c.state = at_ k pc) (hcnt : Unary (c.workTapes CNT) 0)\n    (hcp : c.workTapePos CNT = 0) {r : ℕ} (hbud : Unary (c.workTapes BUD) r)\n    (hbp : c.workTapePos BUD = r) (hr : v.size ≤ r)\n    (hsrc : Holds (c.workTapes src) (c.workTapePos src) (S v)) :\n    ∃ n ≤ 4 * v.size + 1, ∃ c', Reach c n c' [] ∧ c'.state = next_ k pc hpc ∧\n      Untouched c c' [] [src, CNT, t, BUD] ∧\n      c'.workTapes src = c.workTapes src ∧ c'.workTapePos src = c.workTapePos src + v.size ∧\n      Unary (c'.workTapes CNT) 0 ∧ c'.workTapePos CNT = 0 ∧\n      Unary (c'.workTapes BUD) (r - v.size) ∧ c'.workTapePos BUD = ((r - v.size : ℕ) : ℤ) ∧\n      DstEff t c c' (S v) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "**`copyTree src (some t) true`** with a sufficient budget.",
+  "module": "MIPRE.TM.Interp.CopyTreeCharge",
+  "module_doc": "/-!\n# The charged `copyTree`\n\n`copyTree src (some t) true` copies `S(v)` and pops one budget cell per bit: with a budget\nof at least `|v|` it succeeds (`exec_copyTree_charge`), otherwise it halts\n(`exec_copyTree_charge_fail`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/CopyTreeCharge.lean#L270-L301",
+  "source_path": "MIPRE/TM/Interp/CopyTreeCharge.lean",
+  "lines": [
+   270,
+   301
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.copyTree_scan_charge"
+  ],
+  "pasted_helpers": 20,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.copyTree_scan_fail",
+  "source_name": "MIPRE.TM.Interp.copyTree_scan_fail",
+  "formal_statement": "theorem MIPRE.TM.Interp.copyTree_scan_fail {k : ProgId} {pc : Fin maxPc} {src t : WT}\n    (hins : instrAt k pc = .copyTree src (some t) true) (hpc : pc.val + 1 < maxPc)\n    (hst : src ≠ t) (hsc : src ≠ CNT) (htc : t ≠ CNT) (hsb : src ≠ BUD) (htb : t ≠ BUD) (v : Data) :\n    ∀ (c : Cfg input) (d r : ℕ), c.state = some ⟨k, pc, p1⟩ → 1 ≤ d →\n      Unary (c.workTapes CNT) d → c.workTapePos CNT = d →\n      Unary (c.workTapes BUD) r → c.workTapePos BUD = r → r < v.size →\n      Holds (c.workTapes src) (c.workTapePos src) (S v) →\n    HaltsIn c (4 * v.size) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "The scan of the charged copy over `S(v)` with a budget `r < |v|` halts silently.",
+  "module": "MIPRE.TM.Interp.CopyTreeCharge",
+  "module_doc": "/-!\n# The charged `copyTree`\n\n`copyTree src (some t) true` copies `S(v)` and pops one budget cell per bit: with a budget\nof at least `|v|` it succeeds (`exec_copyTree_charge`), otherwise it halts\n(`exec_copyTree_charge_fail`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/CopyTreeCharge.lean#L304-L433",
+  "source_path": "MIPRE/TM/Interp/CopyTreeCharge.lean",
+  "lines": [
+   304,
+   433
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.copyTree_scan_charge"
+  ],
+  "pasted_helpers": 32,
+  "prooflines": 121,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.TapeIs.of_overwrite",
+  "source_name": "MIPRE.TM.Interp.TapeIs.of_overwrite",
+  "formal_statement": "theorem MIPRE.TM.Interp.TapeIs.of_overwrite {l : List Sym} {p : ℕ} (h : TapeIs τ pos ⟨l, p⟩) (hp : p ≤ l.length)\n    {τ' : Tape} {pos' : ℤ} {p' : ℕ} {w : List Sym} (hw : Holds τ' p w)\n    (hout : ∀ q : ℤ, (q < p ∨ (p : ℤ) + w.length ≤ q) → τ' q = τ q) (hpos : pos' = p') :\n    TapeIs τ' pos' ⟨overwrite l p w, p'⟩ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open MIPRE.TM.Interp.TapeIs",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}",
+   "variable {τ : Tape} {pos : ℤ} {s : TapeSt}"
+  ],
+  "docstring": "`w` written from `p`, the rest as before.",
+  "module": "MIPRE.TM.Interp.Desc",
+  "module_doc": "/-!\n# Tape descriptions\n\nA work tape is described by the list it holds from cell `0` (blank elsewhere) and its head\nposition; a configuration by its control and the six descriptions (`Desc`). Every routine\nbecomes a transformation of descriptions (`D_write`, `D_copyTree`, …), so that the\ncorrectness of a step of the evaluation machine is a chain of such transformations followed\nby list algebra (`overwrite`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Desc.lean#L122-L154",
+  "source_path": "MIPRE/TM/Interp/Desc.lean",
+  "lines": [
+   122,
+   154
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 7,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.TapeIs.of_truncate",
+  "source_name": "MIPRE.TM.Interp.TapeIs.of_truncate",
+  "formal_statement": "theorem MIPRE.TM.Interp.TapeIs.of_truncate {l : List Sym} {p : ℕ} (h : TapeIs τ pos ⟨l, p⟩) {n : ℕ} (hn : n ≤ l.length)\n    {τ' : Tape} {pos' : ℤ} {p' : ℕ}\n    (hout : ∀ q : ℤ, (q < n ∨ (l.length : ℤ) ≤ q) → τ' q = τ q)\n    (hbl : BlankFrom τ' n (l.length - n)) (hpos : pos' = p') :\n    TapeIs τ' pos' ⟨l.take n, p'⟩ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open MIPRE.TM.Interp.TapeIs",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}",
+   "variable {τ : Tape} {pos : ℤ} {s : TapeSt}"
+  ],
+  "docstring": "Erased from `n` to the end.",
+  "module": "MIPRE.TM.Interp.Desc",
+  "module_doc": "/-!\n# Tape descriptions\n\nA work tape is described by the list it holds from cell `0` (blank elsewhere) and its head\nposition; a configuration by its control and the six descriptions (`Desc`). Every routine\nbecomes a transformation of descriptions (`D_write`, `D_copyTree`, …), so that the\ncorrectness of a step of the evaluation machine is a chain of such transformations followed\nby list algebra (`overwrite`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Desc.lean#L156-L181",
+  "source_path": "MIPRE/TM/Interp/Desc.lean",
+  "lines": [
+   156,
+   181
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.D_write",
+  "source_name": "MIPRE.TM.Interp.D_write",
+  "formal_statement": "theorem MIPRE.TM.Interp.D_write {t : WT} {s : Sym} (hins : instrAt k pc = .write t s) (hpc : pc.val + 1 < maxPc)\n    (hd : Desc c (at_ k pc) ds) (hp : (ds t).p ≤ (ds t).l.length) :\n    ∃ c', Reach c 1 c' [] ∧\n      Desc c' (next_ k pc hpc) (Function.update ds t ⟨overwrite (ds t).l (ds t).p [s], (ds t).p + 1⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}",
+   "variable {k : ProgId} {pc : Fin maxPc} {c : Cfg input} {ds : WT → TapeSt}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Desc",
+  "module_doc": "/-!\n# Tape descriptions\n\nA work tape is described by the list it holds from cell `0` (blank elsewhere) and its head\nposition; a configuration by its control and the six descriptions (`Desc`). Every routine\nbecomes a transformation of descriptions (`D_write`, `D_copyTree`, …), so that the\ncorrectness of a step of the evaluation machine is a chain of such transformations followed\nby list algebra (`overwrite`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Desc.lean#L243-L259",
+  "source_path": "MIPRE/TM/Interp/Desc.lean",
+  "lines": [
+   243,
+   259
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.TapeIs.of_overwrite"
+  ],
+  "pasted_helpers": 21,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.D_rewind",
+  "source_name": "MIPRE.TM.Interp.D_rewind",
+  "formal_statement": "theorem MIPRE.TM.Interp.D_rewind {t : WT} (hins : instrAt k pc = .rewind t) (hpc : pc.val + 1 < maxPc)\n    (hd : Desc c (at_ k pc) ds) (hp : (ds t).p ≤ (ds t).l.length) :\n    ∃ c', Reach c ((ds t).p + 2) c' [] ∧ Desc c' (next_ k pc hpc) (Function.update ds t ⟨(ds t).l, 0⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}",
+   "variable {k : ProgId} {pc : Fin maxPc} {c : Cfg input} {ds : WT → TapeSt}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Desc",
+  "module_doc": "/-!\n# Tape descriptions\n\nA work tape is described by the list it holds from cell `0` (blank elsewhere) and its head\nposition; a configuration by its control and the six descriptions (`Desc`). Every routine\nbecomes a transformation of descriptions (`D_write`, `D_copyTree`, …), so that the\ncorrectness of a step of the evaluation machine is a chain of such transformations followed\nby list algebra (`overwrite`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Desc.lean#L287-L306",
+  "source_path": "MIPRE/TM/Interp/Desc.lean",
+  "lines": [
+   287,
+   306
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.exec_rewind"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.D_toEnd",
+  "source_name": "MIPRE.TM.Interp.D_toEnd",
+  "formal_statement": "theorem MIPRE.TM.Interp.D_toEnd {t : WT} (hins : instrAt k pc = .toEnd t) (hpc : pc.val + 1 < maxPc)\n    (hd : Desc c (at_ k pc) ds) (hp : (ds t).p ≤ (ds t).l.length) :\n    ∃ c', Reach c ((ds t).l.length - (ds t).p + 1) c' [] ∧\n      Desc c' (next_ k pc hpc) (Function.update ds t ⟨(ds t).l, (ds t).l.length⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}",
+   "variable {k : ProgId} {pc : Fin maxPc} {c : Cfg input} {ds : WT → TapeSt}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Desc",
+  "module_doc": "/-!\n# Tape descriptions\n\nA work tape is described by the list it holds from cell `0` (blank elsewhere) and its head\nposition; a configuration by its control and the six descriptions (`Desc`). Every routine\nbecomes a transformation of descriptions (`D_write`, `D_copyTree`, …), so that the\ncorrectness of a step of the evaluation machine is a chain of such transformations followed\nby list algebra (`overwrite`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Desc.lean#L308-L322",
+  "source_path": "MIPRE/TM/Interp/Desc.lean",
+  "lines": [
+   308,
+   322
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.exec_toEnd"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.D_eraseRight",
+  "source_name": "MIPRE.TM.Interp.D_eraseRight",
+  "formal_statement": "theorem MIPRE.TM.Interp.D_eraseRight {t : WT} (hins : instrAt k pc = .eraseRight t) (hpc : pc.val + 1 < maxPc)\n    (hd : Desc c (at_ k pc) ds) (hp : (ds t).p ≤ (ds t).l.length)\n    (hfr : ∀ s ∈ (ds t).l.drop (ds t).p, s ≠ .fr) :\n    ∃ c', Reach c (2 * ((ds t).l.length - (ds t).p) + 1) c' [] ∧\n      Desc c' (next_ k pc hpc) (Function.update ds t ⟨(ds t).l.take (ds t).p, (ds t).p⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}",
+   "variable {k : ProgId} {pc : Fin maxPc} {c : Cfg input} {ds : WT → TapeSt}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Desc",
+  "module_doc": "/-!\n# Tape descriptions\n\nA work tape is described by the list it holds from cell `0` (blank elsewhere) and its head\nposition; a configuration by its control and the six descriptions (`Desc`). Every routine\nbecomes a transformation of descriptions (`D_write`, `D_copyTree`, …), so that the\ncorrectness of a step of the evaluation machine is a chain of such transformations followed\nby list algebra (`overwrite`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Desc.lean#L324-L348",
+  "source_path": "MIPRE/TM/Interp/Desc.lean",
+  "lines": [
+   324,
+   348
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.TapeIs.of_truncate",
+   "MIPRE.TM.Interp.exec_eraseRight"
+  ],
+  "pasted_helpers": 15,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.D_copyUntil",
+  "source_name": "MIPRE.TM.Interp.D_copyUntil",
+  "formal_statement": "theorem MIPRE.TM.Interp.D_copyUntil {m : Option Sym} {src dst : WT} (hins : instrAt k pc = .copyUntil m src dst)\n    (hpc : pc.val + 1 < maxPc) (hsd : src ≠ dst) (hd : Desc c (at_ k pc) ds)\n    {l₁ w l₂ : List Sym} (hsrc : (ds src).l = l₁ ++ w ++ l₂) (hsp : (ds src).p = l₁.length)\n    (hm : ∀ s ∈ w, some s ≠ m) (hend : l₂[0]? = m) (hdp : (ds dst).p ≤ (ds dst).l.length) :\n    ∃ c', Reach c (w.length + 1) c' [] ∧\n      Desc c' (next_ k pc hpc)\n        (Function.update (Function.update ds src ⟨(ds src).l, l₁.length + w.length⟩) dst\n          ⟨overwrite (ds dst).l (ds dst).p w, (ds dst).p + w.length⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}",
+   "variable {k : ProgId} {pc : Fin maxPc} {c : Cfg input} {ds : WT → TapeSt}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Desc",
+  "module_doc": "/-!\n# Tape descriptions\n\nA work tape is described by the list it holds from cell `0` (blank elsewhere) and its head\nposition; a configuration by its control and the six descriptions (`Desc`). Every routine\nbecomes a transformation of descriptions (`D_write`, `D_copyTree`, …), so that the\ncorrectness of a step of the evaluation machine is a chain of such transformations followed\nby list algebra (`overwrite`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Desc.lean#L350-L379",
+  "source_path": "MIPRE/TM/Interp/Desc.lean",
+  "lines": [
+   350,
+   379
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.TapeIs.of_overwrite",
+   "MIPRE.TM.Interp.exec_copyUntil"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.D_leftToMarker",
+  "source_name": "MIPRE.TM.Interp.D_leftToMarker",
+  "formal_statement": "theorem MIPRE.TM.Interp.D_leftToMarker {m : Sym} {t : WT} (hins : instrAt k pc = .leftToMarker m t)\n    (hpc : pc.val + 1 < maxPc) (hd : Desc c (at_ k pc) ds) {l₁ w l₂ : List Sym}\n    (hl : (ds t).l = l₁ ++ w ++ l₂) (hp : (ds t).p = l₁.length + w.length)\n    (hm : ∀ s ∈ w, s ≠ m) (hl₁ : l₁ = [] ∨ ∃ l₀, l₁ = l₀ ++ [m]) :\n    ∃ c', Reach c (w.length + 2) c' [] ∧ Desc c' (next_ k pc hpc) (Function.update ds t ⟨(ds t).l, l₁.length⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}",
+   "variable {k : ProgId} {pc : Fin maxPc} {c : Cfg input} {ds : WT → TapeSt}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Desc",
+  "module_doc": "/-!\n# Tape descriptions\n\nA work tape is described by the list it holds from cell `0` (blank elsewhere) and its head\nposition; a configuration by its control and the six descriptions (`Desc`). Every routine\nbecomes a transformation of descriptions (`D_write`, `D_copyTree`, …), so that the\ncorrectness of a step of the evaluation machine is a chain of such transformations followed\nby list algebra (`overwrite`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Desc.lean#L412-L441",
+  "source_path": "MIPRE/TM/Interp/Desc.lean",
+  "lines": [
+   412,
+   441
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.exec_leftToMarker"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.D_popBack",
+  "source_name": "MIPRE.TM.Interp.D_popBack",
+  "formal_statement": "theorem MIPRE.TM.Interp.D_popBack {m : Sym} {t : WT} (hins : instrAt k pc = .popBack m t)\n    (hpc : pc.val + 1 < maxPc) (hd : Desc c (at_ k pc) ds) {l₁ w : List Sym} {a : Sym}\n    (hl : (ds t).l = l₁ ++ w ++ [a]) (hp : (ds t).p = (ds t).l.length)\n    (hm : ∀ s ∈ w, s ≠ m) (hl₁ : l₁ = [] ∨ ∃ l₀, l₁ = l₀ ++ [m]) :\n    ∃ c', Reach c (w.length + 3) c' [] ∧ Desc c' (next_ k pc hpc) (Function.update ds t ⟨l₁, l₁.length⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}",
+   "variable {k : ProgId} {pc : Fin maxPc} {c : Cfg input} {ds : WT → TapeSt}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Desc",
+  "module_doc": "/-!\n# Tape descriptions\n\nA work tape is described by the list it holds from cell `0` (blank elsewhere) and its head\nposition; a configuration by its control and the six descriptions (`Desc`). Every routine\nbecomes a transformation of descriptions (`D_write`, `D_copyTree`, …), so that the\ncorrectness of a step of the evaluation machine is a chain of such transformations followed\nby list algebra (`overwrite`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Desc.lean#L443-L490",
+  "source_path": "MIPRE/TM/Interp/Desc.lean",
+  "lines": [
+   443,
+   490
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.TapeIs.of_truncate",
+   "MIPRE.TM.Interp.exec_popBack"
+  ],
+  "pasted_helpers": 16,
+  "prooflines": 43,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.D_popBack_empty",
+  "source_name": "MIPRE.TM.Interp.D_popBack_empty",
+  "formal_statement": "theorem MIPRE.TM.Interp.D_popBack_empty {m : Sym} {t : WT} (hins : instrAt k pc = .popBack m t)\n    (hpc : pc.val + 1 < maxPc) (hd : Desc c (at_ k pc) ds) (hl : (ds t).l = [])\n    (hp : (ds t).p = 0) :\n    ∃ c', Reach c 2 c' [] ∧ Desc c' (next_ k pc hpc) ds := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}",
+   "variable {k : ProgId} {pc : Fin maxPc} {c : Cfg input} {ds : WT → TapeSt}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Desc",
+  "module_doc": "/-!\n# Tape descriptions\n\nA work tape is described by the list it holds from cell `0` (blank elsewhere) and its head\nposition; a configuration by its control and the six descriptions (`Desc`). Every routine\nbecomes a transformation of descriptions (`D_write`, `D_copyTree`, …), so that the\ncorrectness of a step of the evaluation machine is a chain of such transformations followed\nby list algebra (`overwrite`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Desc.lean#L492-L507",
+  "source_path": "MIPRE/TM/Interp/Desc.lean",
+  "lines": [
+   492,
+   507
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.exec_popBack_empty"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.D_charge",
+  "source_name": "MIPRE.TM.Interp.D_charge",
+  "formal_statement": "theorem MIPRE.TM.Interp.D_charge (hins : instrAt k pc = .charge false) (hpc : pc.val + 1 < maxPc)\n    (hd : Desc c (at_ k pc) ds) {r : ℕ} (hb : ds BUD = ⟨List.replicate (r + 1) .one, r + 1⟩) :\n    ∃ c', Reach c 2 c' [] ∧ Desc c' (next_ k pc hpc) (Function.update ds BUD ⟨List.replicate r .one, r⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}",
+   "variable {k : ProgId} {pc : Fin maxPc} {c : Cfg input} {ds : WT → TapeSt}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Desc",
+  "module_doc": "/-!\n# Tape descriptions\n\nA work tape is described by the list it holds from cell `0` (blank elsewhere) and its head\nposition; a configuration by its control and the six descriptions (`Desc`). Every routine\nbecomes a transformation of descriptions (`D_write`, `D_copyTree`, …), so that the\ncorrectness of a step of the evaluation machine is a chain of such transformations followed\nby list algebra (`overwrite`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Desc.lean#L509-L523",
+  "source_path": "MIPRE/TM/Interp/Desc.lean",
+  "lines": [
+   509,
+   523
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.exec_charge_one"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.D_getEnv",
+  "source_name": "MIPRE.TM.Interp.D_getEnv",
+  "formal_statement": "theorem MIPRE.TM.Interp.D_getEnv (hins : instrAt k pc = .getEnv) (hpc : pc.val + 1 < maxPc)\n    (hd : Desc c (at_ k pc) ds) {env : Env} (hE : ds E = ⟨envRepr env, (envRepr env).length⟩)\n    {i : ℕ} {l₁ l₂ : List Sym} (hC : (ds C).l = l₁ ++ S (Data.ofNat i) ++ l₂)\n    (hCp : (ds C).p = l₁.length) (hX : (ds X).p ≤ (ds X).l.length) :\n    ∃ n ≤ 3 * i + 3 * (envRepr env).length + 9, ∃ c', Reach c n c' [] ∧\n      Desc c' (next_ k pc hpc)\n        (Function.update (Function.update ds C ⟨(ds C).l, l₁.length + (2 * i + 1)⟩) X\n          ⟨overwrite (ds X).l (ds X).p (S (Env.get env i)), (ds X).p + (S (Env.get env i)).length⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}",
+   "variable {k : ProgId} {pc : Fin maxPc} {c : Cfg input} {ds : WT → TapeSt}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Desc",
+  "module_doc": "/-!\n# Tape descriptions\n\nA work tape is described by the list it holds from cell `0` (blank elsewhere) and its head\nposition; a configuration by its control and the six descriptions (`Desc`). Every routine\nbecomes a transformation of descriptions (`D_write`, `D_copyTree`, …), so that the\ncorrectness of a step of the evaluation machine is a chain of such transformations followed\nby list algebra (`overwrite`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Desc.lean#L531-L560",
+  "source_path": "MIPRE/TM/Interp/Desc.lean",
+  "lines": [
+   531,
+   560
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.TapeIs.of_overwrite",
+   "MIPRE.TM.Interp.exec_getEnv"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.D_copyTree",
+  "source_name": "MIPRE.TM.Interp.D_copyTree",
+  "formal_statement": "theorem MIPRE.TM.Interp.D_copyTree {src t : WT} (hins : instrAt k pc = .copyTree src (some t) false)\n    (hpc : pc.val + 1 < maxPc) (hst : src ≠ t) (hsc : src ≠ CNT) (htc : t ≠ CNT)\n    (hd : Desc c (at_ k pc) ds) (hcnt : ds CNT = ⟨[], 0⟩) {v : Data} {l₁ l₂ : List Sym}\n    (hsrc : (ds src).l = l₁ ++ S v ++ l₂) (hsp : (ds src).p = l₁.length)\n    (htp : (ds t).p ≤ (ds t).l.length) :\n    ∃ n ≤ 3 * v.size + 1, ∃ c', Reach c n c' [] ∧\n      Desc c' (next_ k pc hpc)\n        (Function.update (Function.update ds src ⟨(ds src).l, l₁.length + v.size⟩) t\n          ⟨overwrite (ds t).l (ds t).p (S v), (ds t).p + v.size⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}",
+   "variable {k : ProgId} {pc : Fin maxPc} {c : Cfg input} {ds : WT → TapeSt}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Desc",
+  "module_doc": "/-!\n# Tape descriptions\n\nA work tape is described by the list it holds from cell `0` (blank elsewhere) and its head\nposition; a configuration by its control and the six descriptions (`Desc`). Every routine\nbecomes a transformation of descriptions (`D_write`, `D_copyTree`, …), so that the\ncorrectness of a step of the evaluation machine is a chain of such transformations followed\nby list algebra (`overwrite`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Desc.lean#L562-L594",
+  "source_path": "MIPRE/TM/Interp/Desc.lean",
+  "lines": [
+   562,
+   594
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.exec_copyTree",
+   "MIPRE.TM.Interp.TapeIs.of_overwrite"
+  ],
+  "pasted_helpers": 18,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.D_skipTree",
+  "source_name": "MIPRE.TM.Interp.D_skipTree",
+  "formal_statement": "theorem MIPRE.TM.Interp.D_skipTree {src : WT} (hins : instrAt k pc = .copyTree src none false)\n    (hpc : pc.val + 1 < maxPc) (hsc : src ≠ CNT) (hd : Desc c (at_ k pc) ds)\n    (hcnt : ds CNT = ⟨[], 0⟩) {v : Data} {l₁ l₂ : List Sym}\n    (hsrc : (ds src).l = l₁ ++ S v ++ l₂) (hsp : (ds src).p = l₁.length) :\n    ∃ n ≤ 3 * v.size + 1, ∃ c', Reach c n c' [] ∧\n      Desc c' (next_ k pc hpc) (Function.update ds src ⟨(ds src).l, l₁.length + v.size⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}",
+   "variable {k : ProgId} {pc : Fin maxPc} {c : Cfg input} {ds : WT → TapeSt}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Desc",
+  "module_doc": "/-!\n# Tape descriptions\n\nA work tape is described by the list it holds from cell `0` (blank elsewhere) and its head\nposition; a configuration by its control and the six descriptions (`Desc`). Every routine\nbecomes a transformation of descriptions (`D_write`, `D_copyTree`, …), so that the\ncorrectness of a step of the evaluation machine is a chain of such transformations followed\nby list algebra (`overwrite`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Desc.lean#L596-L619",
+  "source_path": "MIPRE/TM/Interp/Desc.lean",
+  "lines": [
+   596,
+   619
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.skipTree_scan"
+  ],
+  "pasted_helpers": 37,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.D_copyTree_charge",
+  "source_name": "MIPRE.TM.Interp.D_copyTree_charge",
+  "formal_statement": "theorem MIPRE.TM.Interp.D_copyTree_charge {src t : WT} (hins : instrAt k pc = .copyTree src (some t) true)\n    (hpc : pc.val + 1 < maxPc) (hst : src ≠ t) (hsc : src ≠ CNT) (htc : t ≠ CNT) (hsb : src ≠ BUD)\n    (htb : t ≠ BUD) (hd : Desc c (at_ k pc) ds) (hcnt : ds CNT = ⟨[], 0⟩) {r : ℕ}\n    (hbud : ds BUD = ⟨List.replicate r .one, r⟩) {v : Data} {l₁ l₂ : List Sym}\n    (hsrc : (ds src).l = l₁ ++ S v ++ l₂) (hsp : (ds src).p = l₁.length)\n    (htp : (ds t).p ≤ (ds t).l.length) (hr : v.size ≤ r) :\n    ∃ n ≤ 4 * v.size + 1, ∃ c', Reach c n c' [] ∧\n      Desc c' (next_ k pc hpc)\n        (Function.update (Function.update (Function.update ds src ⟨(ds src).l, l₁.length + v.size⟩) t\n          ⟨overwrite (ds t).l (ds t).p (S v), (ds t).p + v.size⟩) BUD\n          ⟨List.replicate (r - v.size) .one, r - v.size⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}",
+   "variable {k : ProgId} {pc : Fin maxPc} {c : Cfg input} {ds : WT → TapeSt}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Desc",
+  "module_doc": "/-!\n# Tape descriptions\n\nA work tape is described by the list it holds from cell `0` (blank elsewhere) and its head\nposition; a configuration by its control and the six descriptions (`Desc`). Every routine\nbecomes a transformation of descriptions (`D_write`, `D_copyTree`, …), so that the\ncorrectness of a step of the evaluation machine is a chain of such transformations followed\nby list algebra (`overwrite`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Desc.lean#L621-L662",
+  "source_path": "MIPRE/TM/Interp/Desc.lean",
+  "lines": [
+   621,
+   662
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.exec_copyTree_charge",
+   "MIPRE.TM.Interp.TapeIs.of_overwrite"
+  ],
+  "pasted_helpers": 18,
+  "prooflines": 31,
+  "is_target": false
+ }
+]

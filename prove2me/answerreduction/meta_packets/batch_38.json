@@ -1,0 +1,652 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.lineConsistentNonglobalMass_le_indicatorMass",
+  "source_name": "MIPStarRE.LDT.Pasting.lineConsistentNonglobalMass_le_indicatorMass",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.lineConsistentNonglobalMass_le_indicatorMass\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι) (k : ℕ) :\n    overAllOutcomesDistinctLineConsistentNonglobalMass params strategy family k ≤\n      overAllOutcomesDistinctLineConsistentIndicatorMass params strategy family k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Averaged line-consistent residual after the explicit line answer is summed out.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.OverAllOutcomes.NonglobalDecomposition",
+  "module_doc": "/-!\n# Section 12 pasting: over all outcomes — nonglobal-mass decomposition\n\nNonglobal-mass definitions, the vertical-line insertion, and the line-consistency\ndecomposition that splits the nonglobal eligible mass into the bad-line event and\nthe line-consistent residual.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/OverAllOutcomes/NonglobalDecomposition.lean#L441-L454",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/OverAllOutcomes/NonglobalDecomposition.lean",
+  "lines": [
+   441,
+   454
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.overAllOutcomes_distinct_nonglobal_mass_le_bad_line_mass_add_lineConsistent",
+  "source_name": "MIPStarRE.LDT.Pasting.overAllOutcomes_distinct_nonglobal_mass_le_bad_line_mass_add_lineConsistent",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.overAllOutcomes_distinct_nonglobal_mass_le_bad_line_mass_add_lineConsistent\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι) (k : ℕ) :\n    overAllOutcomesDistinctNonglobalMass params strategy family k ≤\n      overAllOutcomesDistinctBadLineMass params strategy family k +\n        overAllOutcomesDistinctLineConsistentNonglobalMass params strategy family k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Strict reduction of the old local residual: the nonglobal mass is bounded by\nthe already-isolated line-mismatch mass plus the narrower line-consistent nonglobal\nresidual.\n\nThis proves the insertion and finite-sum split from `ld-pasting.tex` lines\n1174--1228.  The following indicator lemma then sums out the inserted measurement;\ntogether they reduce the residual to the Schwartz--Zippel estimate at lines\n1235--1275.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.OverAllOutcomes.NonglobalDecomposition",
+  "module_doc": "/-!\n# Section 12 pasting: over all outcomes — nonglobal-mass decomposition\n\nNonglobal-mass definitions, the vertical-line insertion, and the line-consistency\ndecomposition that splits the nonglobal eligible mass into the bad-line event and\nthe line-consistent residual.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/OverAllOutcomes/NonglobalDecomposition.lean#L456-L528",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/OverAllOutcomes/NonglobalDecomposition.lean",
+  "lines": [
+   456,
+   528
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_const",
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.avgOver_comm",
+   "MIPStarRE.LDT.avgOver_congr"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 58,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.qSDD_completePart_le_slice",
+  "source_name": "MIPStarRE.LDT.Pasting.qSDD_completePart_le_slice",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.qSDD_completePart_le_slice\n    (params : Parameters)\n    [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (x : Fq params) :\n    qSDD ψbi\n        ((completePartSubMeas params family x).liftLeft)\n        ((completePartSubMeas params family x).liftRight)\n      ≤\n    qSDD ψbi\n        (((family.meas x).toSubMeas).liftLeft)\n        (((family.meas x).toSubMeas).liftRight) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "`lem:q-sdd-complete-part-slice-bound`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Core.CompletePart",
+  "module_doc": "/-!\n# Section 12 pasting: complete and incomplete part self-consistency\n\nScalar and state-dependent-distance consequences for the complete and incomplete\nparts of the pasted slice family.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Core/CompletePart.lean#L209-L383",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Core/CompletePart.lean",
+  "lines": [
+   209,
+   383
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.rightTensor_mul_rightTensor",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.leftTensor_nonneg",
+   "MIPStarRE.LDT.rightTensor_nonneg",
+   "MIPStarRE.LDT.leftTensor_finset_sum",
+   "MIPStarRE.LDT.rightTensor_finset_sum",
+   "MIPStarRE.LDT.Preliminaries.projSubMeas_total_proj"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 161,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.gBotSelfConsistency_ofCompleteSelfConsistency",
+  "source_name": "MIPStarRE.LDT.Pasting.gBotSelfConsistency_ofCompleteSelfConsistency",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.gBotSelfConsistency_ofCompleteSelfConsistency\n    (params : Parameters)\n    [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (zeta : Error)\n    (_hperm : PermInvState ψbi)\n    (hcomplete : GCompleteSelfConsistencyStatement params ψbi family zeta) :\n    GBotSelfConsistencyStatement params ψbi family zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Internal form of `cor:g-bot-self-consistency` after applying\n`lem:g-complete-self-consistency`.\n\n**Source:** The proof in `references/ldt-paper/ld-pasting.tex:537-558`\nuses `lem:g-complete-self-consistency` internally.  The paper-facing theorem\n`gBotSelfConsistency` below derives that input from strong self-consistency\nrather than exposing it as a public hypothesis.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Core.CompletePart",
+  "module_doc": "/-!\n# Section 12 pasting: complete and incomplete part self-consistency\n\nScalar and state-dependent-distance consequences for the complete and incomplete\nparts of the pasted slice family.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Core/CompletePart.lean#L399-L508",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Core/CompletePart.lean",
+  "lines": [
+   399,
+   508
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.Pasting.qSDD_completePart_le_slice"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 94,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldDnoteq",
+  "source_name": "MIPStarRE.LDT.Pasting.ldDnoteq",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldDnoteq\n    (params : Parameters) (k : ℕ) :\n    totalVariationDistance (uniformDistribution (PointTuple params k))\n        (distinctTupleDistribution params k)\n      ≤ ((k : Error) ^ (2 : ℕ)) / (params.q : Error) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open scoped BigOperators"
+  ],
+  "docstring": "`prop:ld-dnoteq`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Core.DDistinct",
+  "module_doc": "/-!\n# Section 12 pasting: distinct tuple distribution bound\n\nThe total variation distance between the uniform distribution on all point tuples\nand the distribution restricted to distinct tuples.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Core/DDistinct.lean#L105-L247",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Core/DDistinct.lean",
+  "lines": [
+   105,
+   247
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "PMF.totalVariationDistance_uniformOfFintype_uniformOfFinset_eq"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 137,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.pointVerticalLineSdd_of_axis_self",
+  "source_name": "MIPStarRE.LDT.Pasting.pointVerticalLineSdd_of_axis_self",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.pointVerticalLineSdd_of_axis_self\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta : Error)\n    (haxis : strategy.axisParallelFailureProbability ≤ eps)\n    (hself : strategy.selfConsistencyFailureProbability ≤ delta) :\n    SDDRel strategy.state\n      (uniformDistribution (Point params.next))\n      (IdxSubMeas.liftRight (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement))\n      (IdxSubMeas.liftRight (IdxMeas.toIdxSubMeas (ldGbconVerticalLineMeasurement params strategy)))\n      (8 * (params.m : Error) * eps + 4 * delta) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Axis/self-consistency form of `lem:point-vertical-line-sdd`.\n\nThe proof of the point-to-vertical-line transfer uses only the axis-parallel\ntest and point self-consistency.  The diagonal-line test is not part of this\ncalculation.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Core.LdGbcon",
+  "module_doc": "/-!\n# Section 12 pasting: vertical-line consistency transfer\n\nThe `ldGbcon` transfer compares the slice family `G^x` with the vertical-line\nanswers `B^u`.  It combines the conditioned axis-parallel consistency estimate\nwith the point-to-vertical-line state-dependent-distance bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Core/LdGbcon.lean#L285-L414",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Core/LdGbcon.lean",
+  "lines": [
+   285,
+   414
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.simeqToApprox",
+   "MIPStarRE.LDT.Preliminaries.stateDependentDistanceRel_triangle",
+   "MIPStarRE.LDT.Preliminaries.bipartiteSSCRel_of_consRel_self_measurement",
+   "MIPStarRE.LDT.Preliminaries.otherTwoNotionsOfSelfConsistency",
+   "MIPStarRE.LDT.Preliminaries.sddRel_symm",
+   "MIPStarRE.LDT.bipartiteConsError_nonneg"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 113,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.pointVerticalLineSdd_liftedVerticalLine_of_axis_self",
+  "source_name": "MIPStarRE.LDT.Pasting.pointVerticalLineSdd_liftedVerticalLine_of_axis_self",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.pointVerticalLineSdd_liftedVerticalLine_of_axis_self\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta : Error)\n    (haxis : strategy.axisParallelFailureProbability ≤ eps)\n    (hself : strategy.selfConsistencyFailureProbability ≤ delta) :\n    SDDRel strategy.state\n      (uniformDistribution (Point params.next))\n      (IdxSubMeas.liftRight (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement))\n      (IdxSubMeas.liftRight (liftedVerticalLineAnswerFamily params strategy))\n      (8 * (params.m : Error) * eps + 4 * delta) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Named submeasurement-family form of `pointVerticalLineSdd_of_axis_self`.\n\nThe proof above constructs the vertical-line measurement as a complete\nmeasurement-valued family.  The degree-zero estimates use only its underlying\nsubmeasurement family, namely `liftedVerticalLineAnswerFamily`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Core.LdGbcon",
+  "module_doc": "/-!\n# Section 12 pasting: vertical-line consistency transfer\n\nThe `ldGbcon` transfer compares the slice family `G^x` with the vertical-line\nanswers `B^u`.  It combines the conditioned axis-parallel consistency estimate\nwith the point-to-vertical-line state-dependent-distance bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Core/LdGbcon.lean#L416-L438",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Core/LdGbcon.lean",
+  "lines": [
+   416,
+   438
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.pointVerticalLineSdd_of_axis_self"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldGbcon_of_axis_self",
+  "source_name": "MIPStarRE.LDT.Pasting.ldGbcon_of_axis_self",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldGbcon_of_axis_self\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta zeta : Error)\n    (haxis : strategy.axisParallelFailureProbability ≤ eps)\n    (hself : strategy.selfConsistencyFailureProbability ≤ delta)\n    (family : IdxPolyFamily params ι)\n    (hcons : family.ConsistentWithPoints strategy zeta) :\n    ConsRel strategy.state\n      (uniformDistribution (Point params.next))\n      (evaluateFiberFamilyAtNextPoint params\n        (IdxProjSubMeas.toIdxSubMeas family.meas))\n      (fun u =>\n        postprocess\n          (verticalLineMeasurementFamily params strategy (truncatePoint params u))\n          (fun f => f (pointHeight params u)))\n      (zeta + Real.sqrt (8 * (params.m : Error) * eps + 4 * delta)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "`lem:ld-gbcon`.\n\nThis is the direct consistency transfer from the slice family `G^x` to the\nvertical line answers `B^u`, obtained by composing the hypothesis\n`item:ld-pasting-consistency` with the conditioned axis-parallel test relation.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Core.LdGbcon",
+  "module_doc": "/-!\n# Section 12 pasting: vertical-line consistency transfer\n\nThe `ldGbcon` transfer compares the slice family `G^x` with the vertical-line\nanswers `B^u`.  It combines the conditioned axis-parallel consistency estimate\nwith the point-to-vertical-line state-dependent-distance bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Core/LdGbcon.lean#L457-L628",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Core/LdGbcon.lean",
+  "lines": [
+   457,
+   628
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.simeqToApprox",
+   "MIPStarRE.LDT.Preliminaries.stateDependentDistanceRel_triangle",
+   "MIPStarRE.LDT.Preliminaries.bipartiteSSCRel_of_consRel_self_measurement",
+   "MIPStarRE.LDT.Preliminaries.otherTwoNotionsOfSelfConsistency",
+   "MIPStarRE.LDT.Preliminaries.triangleSub_right",
+   "MIPStarRE.LDT.Preliminaries.sddRel_symm",
+   "MIPStarRE.LDT.bipartiteConsError_nonneg",
+   "MIPStarRE.LDT.consRel_symm_of_density_fixed"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 149,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldGbcon_liftedVerticalLine_of_axis_self",
+  "source_name": "MIPStarRE.LDT.Pasting.ldGbcon_liftedVerticalLine_of_axis_self",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldGbcon_liftedVerticalLine_of_axis_self\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta zeta : Error)\n    (haxis : strategy.axisParallelFailureProbability ≤ eps)\n    (hself : strategy.selfConsistencyFailureProbability ≤ delta)\n    (family : IdxPolyFamily params ι)\n    (hcons : family.ConsistentWithPoints strategy zeta) :\n    ConsRel strategy.state\n      (uniformDistribution (Point params.next))\n      family.evaluatedAtNextPoint\n      (liftedVerticalLineAnswerFamily params strategy)\n      (zeta + Real.sqrt (8 * (params.m : Error) * eps + 4 * delta)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Named-family form of `lem:ld-gbcon`.\n\nThis is the same consistency transfer as `ldGbcon`, restated with the two\nfamilies used in the degree-zero branch of `thm:ld-pasting`: the evaluated slice\nfamily `family.evaluatedAtNextPoint` and the lifted vertical-line family\n`liftedVerticalLineAnswerFamily`.  In the degree-zero branch, these are the two\nfamilies whose pointwise invariance properties must be combined to control\nheight dependence.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Core.LdGbcon",
+  "module_doc": "/-!\n# Section 12 pasting: vertical-line consistency transfer\n\nThe `ldGbcon` transfer compares the slice family `G^x` with the vertical-line\nanswers `B^u`.  It combines the conditioned axis-parallel consistency estimate\nwith the point-to-vertical-line state-dependent-distance bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Core/LdGbcon.lean#L655-L685",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Core/LdGbcon.lean",
+  "lines": [
+   655,
+   685
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.ldGbcon_of_axis_self"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 9,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldGbcon_liftedVerticalLine",
+  "source_name": "MIPStarRE.LDT.Pasting.ldGbcon_liftedVerticalLine",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldGbcon_liftedVerticalLine\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma zeta : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (family : IdxPolyFamily params ι)\n    (hcons : family.ConsistentWithPoints strategy zeta) :\n    ConsRel strategy.state\n      (uniformDistribution (Point params.next))\n      family.evaluatedAtNextPoint\n      (liftedVerticalLineAnswerFamily params strategy)\n      (zeta + Real.sqrt (8 * (params.m : Error) * eps + 4 * delta)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Named-family form of `lem:ld-gbcon`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Core.LdGbcon",
+  "module_doc": "/-!\n# Section 12 pasting: vertical-line consistency transfer\n\nThe `ldGbcon` transfer compares the slice family `G^x` with the vertical-line\nanswers `B^u`.  It combines the conditioned axis-parallel consistency estimate\nwith the point-to-vertical-line state-dependent-distance bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Core/LdGbcon.lean#L687-L702",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Core/LdGbcon.lean",
+  "lines": [
+   687,
+   702
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.ldGbcon_liftedVerticalLine_of_axis_self"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.gHatIdxMeas_proj",
+  "source_name": "MIPStarRE.LDT.Pasting.gHatIdxMeas_proj",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.gHatIdxMeas_proj\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι) (x : Fq params) (g : GHatOutcome params) :\n    (gHatIdxMeas params family x).outcome g * (gHatIdxMeas params family x).outcome g =\n      (gHatIdxMeas params family x).outcome g := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Each completed `\\widehat G` outcome is projective.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Families",
+  "module_doc": "/-!\n# Section 12 — Definitions: consistency and families\n\nGlobal-consistency predicates and the completed-slice family constructions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Defs/Families.lean#L177-L196",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Defs/Families.lean",
+  "lines": [
+   177,
+   196
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ProjSubMeas.outcome_mul_total_eq_outcome"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.distinctTupleDistribution_weight_sum_le_one",
+  "source_name": "MIPStarRE.LDT.Pasting.distinctTupleDistribution_weight_sum_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.distinctTupleDistribution_weight_sum_le_one (params : Parameters) (k : ℕ) :\n    ∑ xs ∈ (distinctTupleDistribution params k).support,\n      (distinctTupleDistribution params k).weight xs ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The distinct-tuple distribution has total mass at most `1`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Tuples",
+  "module_doc": "/-!\n# Section 12 — Definitions: tuples and operators\n\nTuple distributions, type abbreviations, and basic operator helpers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Defs/Tuples.lean#L129-L134",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Defs/Tuples.lean",
+  "lines": [
+   129,
+   134
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.bernoulliTailOperator_leftTensor",
+  "source_name": "MIPStarRE.LDT.Pasting.bernoulliTailOperator_leftTensor",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.bernoulliTailOperator_leftTensor (A : MIPStarRE.Quantum.Op ι)\n    (k degree : ℕ) :\n    bernoulliTailOperator k degree (leftTensor (ι₂ := ι) A) =\n      leftTensor (ι₂ := ι) (bernoulliTailOperator k degree A) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The Bernoulli-tail polynomial commutes with left tensor placement.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Tuples",
+  "module_doc": "/-!\n# Section 12 — Definitions: tuples and operators\n\nTuple distributions, type abbreviations, and basic operator helpers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Defs/Tuples.lean#L220-L236",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Defs/Tuples.lean",
+  "lines": [
+   220,
+   236
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_one",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.leftTensor_sub",
+   "MIPStarRE.LDT.leftTensor_finset_sum"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.gHatFacts_ofSelfConsistencyAndCommutation",
+  "source_name": "MIPStarRE.LDT.Pasting.gHatFacts_ofSelfConsistencyAndCommutation",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.gHatFacts_ofSelfConsistencyAndCommutation\n    (params : Parameters)\n    [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error)\n    (hgamma_nonneg : 0 ≤ gamma) (hgamma : gamma ≤ 1)\n    (_hzeta_nonneg : 0 ≤ zeta) (hzeta : zeta ≤ 1)\n    (hd_le_q : params.d ≤ params.q)\n    (hselfComplete : GCompleteSelfConsistencyStatement params ψbi family zeta)\n    (hselfIncomplete : GBotSelfConsistencyStatement params ψbi family zeta)\n    (hcommComplete : CommutingWithGCompleteStatement params ψbi family gamma zeta)\n    (hcommIncomplete : CommutingWithGIncompleteStatement params ψbi family gamma zeta) :\n    GHatFactsStatement params ψbi family gamma zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Internal form of `cor:G-hat-facts` after applying\n`lem:g-complete-self-consistency`, `cor:g-bot-self-consistency`,\n`cor:commuting-with-G-complete`, and `cor:commuting-with-G-incomplete`.\n\n**Source:** The proof in `references/ldt-paper/ld-pasting.tex:817-862`\nuses these four preceding Section 12 results internally.  The paper-facing\ntheorem `gHatFacts` below derives them from the source hypotheses rather than\nexposing them as public hypotheses.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.GHatFacts",
+  "module_doc": "/-!\n# Section 12 pasting: G-hat facts\n\nQuadrant decompositions and `GHat` bookkeeping facts.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/GHatFacts.lean#L274-L567",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/GHatFacts.lean",
+  "lines": [
+   274,
+   567
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_equiv",
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.Preliminaries.qSDDOp_symm",
+   "MIPStarRE.LDT.sddError_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 272,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.gHatFacts",
+  "source_name": "MIPStarRE.LDT.Pasting.gHatFacts",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.gHatFacts\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (eps delta gamma zeta : Error)\n    (hgamma_nonneg : 0 ≤ gamma) (hgamma : gamma ≤ 1)\n    (hzeta_nonneg : 0 ≤ zeta) (hzeta : zeta ≤ 1)\n    (hd_le_q : params.d ≤ params.q)\n    (hgood : strategy.IsGood eps delta gamma)\n    (hcons : family.ConsistentWithPoints strategy zeta)\n    (hself : family.StronglySelfConsistent strategy.state zeta)\n    (hbound : IdxPolyFamily.SliceBoundednessInput strategy family zeta) :\n    GHatFactsStatement params strategy.state family gamma zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "`cor:G-hat-facts`, source-facing form.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.GHatFacts",
+  "module_doc": "/-!\n# Section 12 pasting: G-hat facts\n\nQuadrant decompositions and `GHat` bookkeeping facts.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/GHatFacts.lean#L569-L597",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/GHatFacts.lean",
+  "lines": [
+   569,
+   597
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Commutativity.comMain",
+   "MIPStarRE.LDT.Pasting.commutingWithGComplete_ofComMainAndSelfConsistency",
+   "MIPStarRE.LDT.Pasting.commutingWithGIncomplete_ofComplete",
+   "MIPStarRE.LDT.Pasting.gBotSelfConsistency_ofCompleteSelfConsistency",
+   "MIPStarRE.LDT.Pasting.gHatFacts_ofSelfConsistencyAndCommutation"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.gHatFacts_ofComMainAndSelfConsistency",
+  "source_name": "MIPStarRE.LDT.Pasting.gHatFacts_ofComMainAndSelfConsistency",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.gHatFacts_ofComMainAndSelfConsistency\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error)\n    (hgamma_nonneg : 0 ≤ gamma) (hgamma : gamma ≤ 1)\n    (hzeta_nonneg : 0 ≤ zeta) (hzeta : zeta ≤ 1)\n    (hd_le_q : params.d ≤ params.q)\n    (hcom : Commutativity.ComMainConclusion params strategy family gamma zeta)\n    (hself : family.StronglySelfConsistent strategy.state zeta) :\n    GHatFactsStatement params strategy.state family gamma zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Internal form of `cor:G-hat-facts` after applying `thm:com-main`.\n\nThe construction of the `\\widehat G` estimates needs the commutativity\nconclusion of Section 11 and the strong self-consistency of the slice family.\nThe full good-strategy hypothesis is therefore not part of this passage; it is\nused only upstream when proving `thm:com-main`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.GHatFacts",
+  "module_doc": "/-!\n# Section 12 pasting: G-hat facts\n\nQuadrant decompositions and `GHat` bookkeeping facts.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/GHatFacts.lean#L599-L629",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/GHatFacts.lean",
+  "lines": [
+   599,
+   629
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.commutingWithGComplete_ofComMainAndSelfConsistency",
+   "MIPStarRE.LDT.Pasting.commutingWithGIncomplete_ofComplete",
+   "MIPStarRE.LDT.Pasting.gBotSelfConsistency_ofCompleteSelfConsistency",
+   "MIPStarRE.LDT.Pasting.gHatFacts_ofSelfConsistencyAndCommutation"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.binomialOperatorTerm_nonneg",
+  "source_name": "MIPStarRE.LDT.Pasting.binomialOperatorTerm_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.binomialOperatorTerm_nonneg {G : MIPStarRE.Quantum.Op ι} (n r : ℕ)\n    (hG : 0 ≤ G) (hGle : G ≤ 1) :\n    0 ≤ (Nat.choose n r : ℂ) • (G ^ r * (1 - G) ^ (n - r)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type u} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Each binomial term in the Bernoulli tail operator is positive semidefinite.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Sandwich.GHatSandwich",
+  "module_doc": "/-!\n# Section 12 — Sandwich constructions: `GHat` sandwich families\n\nCompleted-slice sandwich families and restriction helpers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Sandwich/GHatSandwich.lean#L122-L138",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Sandwich/GHatSandwich.lean",
+  "lines": [
+   122,
+   138
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.bernoulliTailOperator_nonneg",
+  "source_name": "MIPStarRE.LDT.Pasting.bernoulliTailOperator_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.bernoulliTailOperator_nonneg\n    (k degree : ℕ) (G : MIPStarRE.Quantum.Op ι)\n    (hG : 0 ≤ G) (hGle : G ≤ 1) :\n    0 ≤ bernoulliTailOperator k degree G := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type u} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Positivity of the Bernoulli tail operator for a PSD contraction.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Sandwich.GHatSandwich",
+  "module_doc": "/-!\n# Section 12 — Sandwich constructions: `GHat` sandwich families\n\nCompleted-slice sandwich families and restriction helpers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Sandwich/GHatSandwich.lean#L140-L147",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Sandwich/GHatSandwich.lean",
+  "lines": [
+   140,
+   147
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.binomialOperatorTerm_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.bernoulliTailOperator_le_one",
+  "source_name": "MIPStarRE.LDT.Pasting.bernoulliTailOperator_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.bernoulliTailOperator_le_one\n    (k degree : ℕ) (G : MIPStarRE.Quantum.Op ι)\n    (hG : 0 ≤ G) (hGle : G ≤ 1) :\n    bernoulliTailOperator k degree G ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type u} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The Bernoulli tail operator is bounded by the identity for a PSD contraction.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Sandwich.GHatSandwich",
+  "module_doc": "/-!\n# Section 12 — Sandwich constructions: `GHat` sandwich families\n\nCompleted-slice sandwich families and restriction helpers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Sandwich/GHatSandwich.lean#L149-L187",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Sandwich/GHatSandwich.lean",
+  "lines": [
+   149,
+   187
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.binomialOperatorTerm_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.evaluateAt_averagedSliceAppendedSubMeas",
+  "source_name": "MIPStarRE.LDT.Pasting.evaluateAt_averagedSliceAppendedSubMeas",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.evaluateAt_averagedSliceAppendedSubMeas\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι) (u : Point params.next) :\n    evaluateAt params.next u (averagedSliceAppendedSubMeas params family) =\n      evaluateAt params (truncatePoint params u) family.averagedSubMeas := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Evaluating the averaged appended-slice submeasurement at a next-level point\nis the same as evaluating the averaged slice family at the truncated point.\n\nThis is the first formal step in the degree-zero branch of `thm:ld-pasting`;\nthe later consistency rectangle compares this averaged slice construction with\nthe point measurement.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Sandwich.PastedFamilies",
+  "module_doc": "/-!\n# Section 12 — Sandwich constructions: pasted families\n\nPasted interpolation families, recurrence weights, and final operator families.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Sandwich/PastedFamilies.lean#L142-L159",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Sandwich/PastedFamilies.lean",
+  "lines": [
+   142,
+   159
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 7,
+  "is_target": false
+ }
+]

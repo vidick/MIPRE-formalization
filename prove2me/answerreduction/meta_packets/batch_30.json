@@ -1,0 +1,636 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStage_globalize_pointwiseShape",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStage_globalize_pointwiseShape",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStage_globalize_pointwiseShape\n    (params : Parameters) [FieldModel params.q]\n    {n : ℕ}\n    (source : Bool → GHatType n → Fq params → PointTuple params n → Error)\n    (target : Fq params → PointTuple params n → Error)\n    (hpoint : ∀ x xs,\n      (∑ b : Bool, ∑ τ : GHatType n, source b τ x xs) = target x xs) :\n    (∑ b : Bool, ∑ τ : GHatType n,\n      avgOver (uniformDistribution (Fq params)) fun x =>\n        avgOver (uniformDistribution (PointTuple params n)) fun xs =>\n          source b τ x xs) =\n      avgOver (uniformDistribution (Fq params × PointTuple params n)) fun q =>\n        target q.1 q.2 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Globalize the common adjacent-stage pointwise rewrite skeleton.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.StageA0M1",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G adjacent-stage source scalars\n\nDefinitions for the paper's adjacent-stage source scalars `A₀` and `M₁`, together\nwith their shape rewrites and the supporting move-right and half-sandwich context\nalgebra lemmas.\n\nThis file covers the definitions up to the first move-right step and the\nhalf-sandwich context algebra.  The downstream chain `M₁ → M₂ → M₃ → M₄` is\nsplit between `AdjacentStages.Chain.HalfSandwich` and\n`AdjacentStages.Chain.FinalMove`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/StageA0M1.lean#L393-L432",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/StageA0M1.lean",
+  "lines": [
+   393,
+   432
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_prod",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.Pasting.fromHToG_sum₂_avgOver₂"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageA0_eq_leftShape",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageA0_eq_leftShape",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageA0_eq_leftShape\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι) (k ℓ : ℕ) :\n    let n := k - (ℓ + 1)\n    fromHToGAdjacentStageA0 params ψbi family k ℓ =\n      avgOver (uniformDistribution (Fq params × PointTuple params n)) fun q =>\n        ∑ g : GHatOutcome params, ∑ gs : GHatTupleOutcome params n,\n          let S := fromHToGRecurrenceWeight params family ℓ\n            (prependTypeBit g.isSome (gHatTupleType gs))\n          let U := (gHatIdxMeas params family q.1).outcome g\n          let T := gHatHalfProductOutcomeOperator params family n q.2 gs\n          ev ψbi ((leftTensor (ι₂ := ι) (U * T * Tᴴ) * rightTensor (ι₁ := ι) S) *\n            leftTensor (ι₂ := ι) U) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Global rewrite of `A0` to the left-action shape used by `closenessOfIP`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.StageA0M1",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G adjacent-stage source scalars\n\nDefinitions for the paper's adjacent-stage source scalars `A₀` and `M₁`, together\nwith their shape rewrites and the supporting move-right and half-sandwich context\nalgebra lemmas.\n\nThis file covers the definitions up to the first move-right step and the\nhalf-sandwich context algebra.  The downstream chain `M₁ → M₂ → M₃ → M₄` is\nsplit between `AdjacentStages.Chain.HalfSandwich` and\n`AdjacentStages.Chain.FinalMove`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/StageA0M1.lean#L434-L472",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/StageA0M1.lean",
+  "lines": [
+   434,
+   472
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageA0_pointwise_leftShape",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStage_globalize_pointwiseShape"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_eq_rightShape",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_eq_rightShape",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_eq_rightShape\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι) (k ℓ : ℕ) :\n    let n := k - (ℓ + 1)\n    fromHToGAdjacentStageM1 params ψbi family k ℓ =\n      avgOver (uniformDistribution (Fq params × PointTuple params n)) fun q =>\n        ∑ g : GHatOutcome params, ∑ gs : GHatTupleOutcome params n,\n          let S := fromHToGRecurrenceWeight params family ℓ\n            (prependTypeBit g.isSome (gHatTupleType gs))\n          let U := (gHatIdxMeas params family q.1).outcome g\n          let T := gHatHalfProductOutcomeOperator params family n q.2 gs\n          ev ψbi ((leftTensor (ι₂ := ι) (U * T * Tᴴ) * rightTensor (ι₁ := ι) S) *\n            rightTensor (ι₁ := ι) U) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Global rewrite of `M₁` to the right-action shape used by `closenessOfIP`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.AdjacentStages.StageA0M1",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G adjacent-stage source scalars\n\nDefinitions for the paper's adjacent-stage source scalars `A₀` and `M₁`, together\nwith their shape rewrites and the supporting move-right and half-sandwich context\nalgebra lemmas.\n\nThis file covers the definitions up to the first move-right step and the\nhalf-sandwich context algebra.  The downstream chain `M₁ → M₂ → M₃ → M₄` is\nsplit between `AdjacentStages.Chain.HalfSandwich` and\n`AdjacentStages.Chain.FinalMove`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/StageA0M1.lean#L474-L512",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/AdjacentStages/StageA0M1.lean",
+  "lines": [
+   474,
+   512
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_pointwise_rightShape",
+   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStage_globalize_pointwiseShape"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_incompletePart_average_total_eq",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_incompletePart_average_total_eq",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_incompletePart_average_total_eq\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι) :\n    averageOperatorOverDistribution (uniformDistribution (Fq params))\n      (fun x => (incompletePartSubMeas params family x).total) =\n        1 - family.averagedSubMeas.total := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The incomplete branch of `\\widehat G` averages to `I - G`, matching\n`references/ldt-paper/ld-pasting.tex:1408--1415` for the `τ_ℓ = 0` case.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.AveragesAndOps",
+  "module_doc": "/-!\n# Section 12 pasting: operator averages and projective submeasurement lemmas\n\nAverages over uniform distributions, tensor placement identities, and\nprojective submeasurement algebraic lemmas for the `fromHToG` reduction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/AveragesAndOps.lean#L99-L127",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/AveragesAndOps.lean",
+  "lines": [
+   99,
+   127
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.total_nonneg"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_averagedSandwichByTypeSubMeas_zero_total_eq_one",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_averagedSandwichByTypeSubMeas_zero_total_eq_one",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_averagedSandwichByTypeSubMeas_zero_total_eq_one\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι) (τ : GHatType 0) :\n    (averagedSandwichByTypeSubMeas params family 0 τ).total = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The empty suffix sandwich has total identity.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.AveragesAndOps",
+  "module_doc": "/-!\n# Section 12 pasting: operator averages and projective submeasurement lemmas\n\nAverages over uniform distributions, tensor placement identities, and\nprojective submeasurement algebraic lemmas for the `fromHToG` reduction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/AveragesAndOps.lean#L146-L162",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/AveragesAndOps.lean",
+  "lines": [
+   146,
+   162
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Measurement.outcome_hermitian",
+   "MIPStarRE.LDT.Pasting.gHatIdxMeas_proj",
+   "MIPStarRE.LDT.Pasting.gHatHalfProductTotalOperator_eq_one",
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_gHatIdxMeas_sum_isSome_true",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_gHatIdxMeas_sum_isSome_true",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_gHatIdxMeas_sum_isSome_true\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι) (x : Fq params) :\n    (∑ g ∈ (Finset.univ : Finset (GHatOutcome params)) with g.isSome = true,\n        (gHatIdxMeas params family x).outcome g) =\n      (completePartSubMeas params family x).total := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Summing completed outcomes with `isSome = true` gives the complete branch.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.AveragesAndOps",
+  "module_doc": "/-!\n# Section 12 pasting: operator averages and projective submeasurement lemmas\n\nAverages over uniform distributions, tensor placement identities, and\nprojective submeasurement algebraic lemmas for the `fromHToG` reduction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/AveragesAndOps.lean#L186-L216",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/AveragesAndOps.lean",
+  "lines": [
+   186,
+   216
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_gHatIdxMeas_sum_isSome_false",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_gHatIdxMeas_sum_isSome_false",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_gHatIdxMeas_sum_isSome_false\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι) (x : Fq params) :\n    (∑ g ∈ (Finset.univ : Finset (GHatOutcome params)) with g.isSome = false,\n        (gHatIdxMeas params family x).outcome g) =\n      (incompletePartSubMeas params family x).total := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Summing completed outcomes with `isSome = false` gives the incomplete branch.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.AveragesAndOps",
+  "module_doc": "/-!\n# Section 12 pasting: operator averages and projective submeasurement lemmas\n\nAverages over uniform distributions, tensor placement identities, and\nprojective submeasurement algebraic lemmas for the `fromHToG` reduction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/AveragesAndOps.lean#L218-L242",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/AveragesAndOps.lean",
+  "lines": [
+   218,
+   242
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_gHatIdxMeas_sum_isSome_true_weight",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_gHatIdxMeas_sum_isSome_true_weight",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_gHatIdxMeas_sum_isSome_true_weight\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι) (x : Fq params) (S : MIPStarRE.Quantum.Op ι) :\n    (∑ g ∈ (Finset.univ : Finset (GHatOutcome params)) with g.isSome = true,\n        S * (gHatIdxMeas params family x).outcome g *\n          (gHatIdxMeas params family x).outcome g) =\n      S * (completePartSubMeas params family x).total := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Weighted complete-branch sum after using completed-outcome projectivity.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.AveragesAndOps",
+  "module_doc": "/-!\n# Section 12 pasting: operator averages and projective submeasurement lemmas\n\nAverages over uniform distributions, tensor placement identities, and\nprojective submeasurement algebraic lemmas for the `fromHToG` reduction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/AveragesAndOps.lean#L244-L266",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/AveragesAndOps.lean",
+  "lines": [
+   244,
+   266
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.fromHToG_gHatIdxMeas_sum_isSome_true",
+   "MIPStarRE.LDT.Pasting.gHatIdxMeas_proj"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_gHatIdxMeas_sum_isSome_false_weight",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_gHatIdxMeas_sum_isSome_false_weight",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_gHatIdxMeas_sum_isSome_false_weight\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι) (x : Fq params) (S : MIPStarRE.Quantum.Op ι) :\n    (∑ g ∈ (Finset.univ : Finset (GHatOutcome params)) with g.isSome = false,\n        S * (gHatIdxMeas params family x).outcome g *\n          (gHatIdxMeas params family x).outcome g) =\n      S * (incompletePartSubMeas params family x).total := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Weighted incomplete-branch sum after using completed-outcome projectivity.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.AveragesAndOps",
+  "module_doc": "/-!\n# Section 12 pasting: operator averages and projective submeasurement lemmas\n\nAverages over uniform distributions, tensor placement identities, and\nprojective submeasurement algebraic lemmas for the `fromHToG` reduction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/AveragesAndOps.lean#L268-L290",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/AveragesAndOps.lean",
+  "lines": [
+   268,
+   290
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.fromHToG_gHatIdxMeas_sum_isSome_false",
+   "MIPStarRE.LDT.Pasting.gHatIdxMeas_proj"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_ev_sum_isSome_true_weight",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_ev_sum_isSome_true_weight",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_ev_sum_isSome_true_weight\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι) (x : Fq params)\n    (A S : MIPStarRE.Quantum.Op ι) :\n    (∑ g ∈ (Finset.univ : Finset (GHatOutcome params)) with g.isSome = true,\n        ev ψbi (leftTensor (ι₂ := ι) A *\n          rightTensor (ι₁ := ι)\n            (S * (gHatIdxMeas params family x).outcome g *\n              (gHatIdxMeas params family x).outcome g))) =\n      ev ψbi (leftTensor (ι₂ := ι) A *\n        rightTensor (ι₁ := ι) (S * (completePartSubMeas params family x).total)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Expectation-level weighted complete-branch sum.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.AveragesAndOps",
+  "module_doc": "/-!\n# Section 12 pasting: operator averages and projective submeasurement lemmas\n\nAverages over uniform distributions, tensor placement identities, and\nprojective submeasurement algebraic lemmas for the `fromHToG` reduction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/AveragesAndOps.lean#L292-L328",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/AveragesAndOps.lean",
+  "lines": [
+   292,
+   328
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.rightTensor_finset_sum",
+   "MIPStarRE.LDT.Pasting.fromHToG_gHatIdxMeas_sum_isSome_true_weight"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_ev_sum_isSome_false_weight",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_ev_sum_isSome_false_weight",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_ev_sum_isSome_false_weight\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι) (x : Fq params)\n    (A S : MIPStarRE.Quantum.Op ι) :\n    (∑ g ∈ (Finset.univ : Finset (GHatOutcome params)) with g.isSome = false,\n        ev ψbi (leftTensor (ι₂ := ι) A *\n          rightTensor (ι₁ := ι)\n            (S * (gHatIdxMeas params family x).outcome g *\n              (gHatIdxMeas params family x).outcome g))) =\n      ev ψbi (leftTensor (ι₂ := ι) A *\n        rightTensor (ι₁ := ι) (S * (incompletePartSubMeas params family x).total)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Expectation-level weighted incomplete-branch sum.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.AveragesAndOps",
+  "module_doc": "/-!\n# Section 12 pasting: operator averages and projective submeasurement lemmas\n\nAverages over uniform distributions, tensor placement identities, and\nprojective submeasurement algebraic lemmas for the `fromHToG` reduction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/AveragesAndOps.lean#L330-L366",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/AveragesAndOps.lean",
+  "lines": [
+   330,
+   366
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.rightTensor_finset_sum",
+   "MIPStarRE.LDT.Pasting.fromHToG_gHatIdxMeas_sum_isSome_false_weight"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_truncatedTypeSums_full_as_finset_sum",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_truncatedTypeSums_full_as_finset_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_truncatedTypeSums_full_as_finset_sum\n    (G : MIPStarRE.Quantum.Op ι) (d k : ℕ) :\n    truncatedTypeSums G d k (default : GHatType 0) =\n      ∑ s : Finset (Fin k),\n        if d + 1 ≤ s.card then G ^ s.card * (1 - G) ^ (k - s.card) else 0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Rewrite the terminal truncated type sum as a sum over support finsets.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.BernoulliTail",
+  "module_doc": "/-!\n# Section 12 pasting: Bernoulli tail polynomial combinatorics\n\nFinset re-indexing and cardinality-grouping lemmas for the Bernoulli-tail\noperator endpoint of the `fromHToG` recurrence.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/BernoulliTail.lean#L106-L137",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/BernoulliTail.lean",
+  "lines": [
+   106,
+   137
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_sum_finsets_by_card_indicator",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_sum_finsets_by_card_indicator",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_sum_finsets_by_card_indicator\n    (G : MIPStarRE.Quantum.Op ι) (d k : ℕ) :\n    (∑ s : Finset (Fin k),\n        if d + 1 ≤ s.card then G ^ s.card * (1 - G) ^ (k - s.card) else 0) =\n      ∑ r ∈ Finset.Icc (d + 1) k,\n        (Nat.choose k r : ℂ) • (G ^ r * (1 - G) ^ (k - r)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Group the terminal support-finset sum by cardinality, producing the binomial\ncoefficients in the Bernoulli-tail polynomial.  The key combinatorial step is\nMathlib's `Finset.sum_powerset_apply_card`, applied to `Finset.univ : Finset (Fin k)`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.BernoulliTail",
+  "module_doc": "/-!\n# Section 12 pasting: Bernoulli tail polynomial combinatorics\n\nFinset re-indexing and cardinality-grouping lemmas for the Bernoulli-tail\noperator endpoint of the `fromHToG` recurrence.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/BernoulliTail.lean#L139-L186",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/BernoulliTail.lean",
+  "lines": [
+   139,
+   186
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 39,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGPaperTotalError_le",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGPaperTotalError_le",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGPaperTotalError_le\n    (params : Parameters) (gamma zeta : Error) (k : ℕ)\n    (hgamma_nonneg : 0 ≤ gamma)\n    (hzeta_nonneg : 0 ≤ zeta) (hzeta_le_one : zeta ≤ 1) :\n    fromHToGPaperTotalError params gamma zeta k ≤\n      fromHToGError params gamma zeta k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The paper's scalar absorption line for `lem:from-H-to-G`.\n\nUnder the side conditions needed for the `√(2ζ)` term (`γ, ζ ≥ 0` and\n`ζ ≤ 1`), the paper-total error from\n`references/ldt-paper/ld-pasting.tex:1372--1375` is bounded by the displayed\n`fromHToGError`.  The proof follows the paper arithmetic: bound\n`√(2ζ)` by `2 ζ^(1/32)`, bound `√426` by `21`, and use\n`√(γ^(1/16)+ζ^(1/16)+(d/q)^(1/16)) ≤ γ^(1/32)+ζ^(1/32)+(d/q)^(1/32)`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.FactBundles",
+  "module_doc": "/-!\n# Section 12 pasting: exact identities and error-bound lemma\n\nExact recurrence identities and the paper-total error absorption lemma that\nassemble the final `fromHToG` telescope conclusion.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/FactBundles.lean#L138-L335",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/FactBundles.lean",
+  "lines": [
+   138,
+   335
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 184,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGStageMass_terminal_eq",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGStageMass_terminal_eq",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGStageMass_terminal_eq\n    (params : Parameters)\n    [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι) (k : ℕ) :\n    fromHToGStageMass params ψbi family k k =\n      fromHToGBernoulliTailMass params ψbi family k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Terminal endpoint identification for the Lean `fromHToG` stage mass: at stage `k`,\nthe tail is empty, the suffix sandwich contributes identity, and the recurrence weight\nis the Bernoulli-tail operator.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.StageMass",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G stage-mass bookkeeping\n\nStage-`0` identification, terminal identification, adjacent-stage split, and\ntelescoping lemmas that connect the Lean recurrence stages to the paper scalars.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/StageMass.lean#L105-L128",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/StageMass.lean",
+  "lines": [
+   105,
+   128
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_one",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.Pasting.fromHToG_averagedSandwichByTypeSubMeas_zero_total_eq_one",
+   "MIPStarRE.LDT.Pasting.fromHToG_truncatedTypeSums_full_as_finset_sum",
+   "MIPStarRE.LDT.Pasting.fromHToG_sum_finsets_by_card_indicator"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM4_head_sum",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM4_head_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM4_head_sum\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι) (ℓ n : ℕ)\n    (b : Bool) (τ : GHatType n) (x : Fq params) (xs : PointTuple params n) :\n    (∑ g ∈ (Finset.univ : Finset (GHatOutcome params)) with g.isSome = b,\n        ∑ gs ∈ (Finset.univ : Finset (GHatTupleOutcome params n)) with\n            gHatTupleType gs = τ,\n          let S := fromHToGRecurrenceWeight params family ℓ (prependTypeBit b τ)\n          let U := (gHatIdxMeas params family x).outcome g\n          let T := gHatHalfProductOutcomeOperator params family n xs gs\n          ev ψbi (leftTensor (ι₂ := ι) (T * Tᴴ) *\n            rightTensor (ι₁ := ι) (S * U * U))) =\n      ∑ gs ∈ (Finset.univ : Finset (GHatTupleOutcome params n)) with\n          gHatTupleType gs = τ,\n        let S := fromHToGRecurrenceWeight params family ℓ (prependTypeBit b τ)\n        let T := gHatHalfProductOutcomeOperator params family n xs gs\n        let B := if b then (completePartSubMeas params family x).total\n          else (incompletePartSubMeas params family x).total\n        ev ψbi (leftTensor (ι₂ := ι) (T * Tᴴ) * rightTensor (ι₁ := ι) (S * B)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Collapse the head outcome sum in `M₄` for fixed tail point and type.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.StageMass",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G stage-mass bookkeeping\n\nStage-`0` identification, terminal identification, adjacent-stage split, and\ntelescoping lemmas that connect the Lean recurrence stages to the paper scalars.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/StageMass.lean#L130-L165",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/StageMass.lean",
+  "lines": [
+   130,
+   165
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.fromHToG_ev_sum_isSome_true_weight",
+   "MIPStarRE.LDT.Pasting.fromHToG_ev_sum_isSome_false_weight"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_interpolationEligibleSandwich_total_eq_type_sum",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_interpolationEligibleSandwich_total_eq_type_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_interpolationEligibleSandwich_total_eq_type_sum\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι) (k : ℕ) (xs : PointTuple params k) :\n    (interpolationEligibleSandwichFamily params family k xs).total =\n      ∑ τ : GHatType k,\n        if params.d + 1 ≤ gHatTypeWeight τ then\n          ∑ gs ∈ (Finset.univ : Finset (GHatTupleOutcome params k)) with\n            gHatTupleType gs = τ,\n            (gHatSandwichFamily params family k xs).outcome gs\n        else 0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Split the eligible sandwich total into a sum over exact Boolean outcome types.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.StageMass",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G stage-mass bookkeeping\n\nStage-`0` identification, terminal identification, adjacent-stage split, and\ntelescoping lemmas that connect the Lean recurrence stages to the paper scalars.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/StageMass.lean#L184-L247",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/StageMass.lean",
+  "lines": [
+   184,
+   247
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 53,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_avgOver_tail_type_ev",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_avgOver_tail_type_ev",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_avgOver_tail_type_ev\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι) (n : ℕ) (τ : GHatType n)\n    (B : MIPStarRE.Quantum.Op ι) :\n    avgOver (uniformDistribution (PointTuple params n)) (fun xs =>\n      ∑ gs ∈ (Finset.univ : Finset (GHatTupleOutcome params n)) with\n          gHatTupleType gs = τ,\n        let T := gHatHalfProductOutcomeOperator params family n xs gs\n        ev ψbi (leftTensor (ι₂ := ι) (T * Tᴴ) * rightTensor (ι₁ := ι) B)) =\n      ev ψbi (leftTensor (ι₂ := ι)\n        (averagedSandwichByTypeSubMeas params family n τ).total *\n          rightTensor (ι₁ := ι) B) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Fold the tail point/outcome average of a fixed type into\n`averagedSandwichByTypeSubMeas`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.StageMass",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G stage-mass bookkeeping\n\nStage-`0` identification, terminal identification, adjacent-stage split, and\ntelescoping lemmas that connect the Lean recurrence stages to the paper scalars.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/StageMass.lean#L271-L298",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/StageMass.lean",
+  "lines": [
+   271,
+   298
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.averageOperatorOverDistribution_congr",
+   "MIPStarRE.LDT.averageOperatorOverDistribution_sum",
+   "MIPStarRE.LDT.averageOperatorOverDistribution_nonneg",
+   "MIPStarRE.LDT.averageOperatorOverDistribution_le_one_of_weight_sum_le_one",
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_scale",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.leftTensor_finset_sum"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToG_averagedEligibleSandwich_total_eq_type_sum",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToG_averagedEligibleSandwich_total_eq_type_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToG_averagedEligibleSandwich_total_eq_type_sum\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι) (k : ℕ) :\n    (averagedEligibleSandwichSubMeas params family k).total =\n      ∑ τ : GHatType k,\n        if params.d + 1 ≤ gHatTypeWeight τ then\n          (averagedSandwichByTypeSubMeas params family k τ).total\n        else 0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The eligible averaged sandwich total is the sum of the eligible exact-type\naveraged totals.  This is the exact stage-`0` bookkeeping identity used in\n`lem:from-H-to-G`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.StageMass",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G stage-mass bookkeeping\n\nStage-`0` identification, terminal identification, adjacent-stage split, and\ntelescoping lemmas that connect the Lean recurrence stages to the paper scalars.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/StageMass.lean#L353-L420",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/StageMass.lean",
+  "lines": [
+   353,
+   420
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.averageOperatorOverDistribution_congr",
+   "MIPStarRE.LDT.averageOperatorOverDistribution_sum",
+   "MIPStarRE.LDT.averageOperatorOverDistribution_nonneg",
+   "MIPStarRE.LDT.averageOperatorOverDistribution_le_one_of_weight_sum_le_one",
+   "MIPStarRE.LDT.Pasting.fromHToG_interpolationEligibleSandwich_total_eq_type_sum"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 57,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.fromHToGStageMass_zero_eq",
+  "source_name": "MIPStarRE.LDT.Pasting.fromHToGStageMass_zero_eq",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.fromHToGStageMass_zero_eq\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι) (k : ℕ) :\n    fromHToGStageMass params ψbi family k 0 =\n      fromHToGAllOutcomesMass params strategy ψbi family k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Stage `0` of the Lean recurrence is exactly the all-outcomes expansion mass:\nthe zero-prefix recurrence weight is the eligibility indicator, and the exact-type\nfibers partition the eligible sandwich total.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Bernoulli.FromHToG.Core.StageMass",
+  "module_doc": "/-!\n# Section 12 pasting: from-H-to-G stage-mass bookkeeping\n\nStage-`0` identification, terminal identification, adjacent-stage split, and\ntelescoping lemmas that connect the Lean recurrence stages to the paper scalars.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/StageMass.lean#L422-L485",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Bernoulli/FromHToG/Core/StageMass.lean",
+  "lines": [
+   422,
+   485
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.leftTensor_finset_sum",
+   "MIPStarRE.LDT.Pasting.fromHToG_averagedEligibleSandwich_total_eq_type_sum"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 53,
+  "is_target": false
+ }
+]

@@ -1,0 +1,565 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.getEnv_scan3",
+  "source_name": "MIPRE.TM.Interp.getEnv_scan3",
+  "formal_statement": "theorem MIPRE.TM.Interp.getEnv_scan3 {k : ProgId} {pc : Fin maxPc} (hins : instrAt k pc = .getEnv) (l : List Sym)\n    (hl : ∀ s ∈ l, s = .zero ∨ s = .one) :\n    ∀ (c : Cfg input), c.state = some ⟨k, pc, p3⟩ →\n      Holds (c.workTapes E) (c.workTapePos E + 1 - l.length) l →\n    ∃ c', Reach c l.length c' [] ∧ c'.state = some ⟨k, pc, p3⟩ ∧ Untouched c c' [] [E] ∧\n      c'.workTapes E = c.workTapes E ∧ c'.workTapePos E = c.workTapePos E - l.length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "Phase `p3`: over the bits `l` held on `p₀ … p₀ + |l| - 1`, from the last, to `p₀ - 1`.",
+  "module": "MIPRE.TM.Interp.GetEnv",
+  "module_doc": "/-!\n# The `getEnv` routine\n\nWith the unary index `S(ofNat i)` under the head of `C` and the environment `envRepr env` on\n`E` with its head at the end, `getEnv` writes `S(env.get i)` at the head of `X`: it walks\nleft over `i` separators (phases `p1`–`p3`), then to the start of the element (`p4`), copies\nit (`p5`) and returns the head of `E` to the end (`p8`); past the start of the environment\nthe index is out of range, the rest of it is consumed (`p6`, `p7`) and `nil` is written\n(`p9`). The proof is by induction on the index, over the suffix of the environment not yet\npassed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/GetEnv.lean#L63-L106",
+  "source_path": "MIPRE/TM/Interp/GetEnv.lean",
+  "lines": [
+   63,
+   106
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 23,
+  "prooflines": 37,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.getEnv_scan4",
+  "source_name": "MIPRE.TM.Interp.getEnv_scan4",
+  "formal_statement": "theorem MIPRE.TM.Interp.getEnv_scan4 {k : ProgId} {pc : Fin maxPc} (hins : instrAt k pc = .getEnv) (l : List Sym)\n    (hl : ∀ s ∈ l, s = .zero ∨ s = .one) :\n    ∀ (c : Cfg input), c.state = some ⟨k, pc, p4⟩ →\n      Holds (c.workTapes E) (c.workTapePos E + 1 - l.length) l →\n      (c.workTapes E (c.workTapePos E - l.length) = some .sep ∨\n        c.workTapes E (c.workTapePos E - l.length) = none) →\n    ∃ c', Reach c (l.length + 1) c' [] ∧ c'.state = some ⟨k, pc, p5⟩ ∧ Untouched c c' [] [E] ∧\n      c'.workTapes E = c.workTapes E ∧ c'.workTapePos E = c.workTapePos E - l.length + 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "Phase `p4`: over the bits `l`, from the last, to `p₀ - 1`, then one right to `p₀` at `p5`.",
+  "module": "MIPRE.TM.Interp.GetEnv",
+  "module_doc": "/-!\n# The `getEnv` routine\n\nWith the unary index `S(ofNat i)` under the head of `C` and the environment `envRepr env` on\n`E` with its head at the end, `getEnv` writes `S(env.get i)` at the head of `X`: it walks\nleft over `i` separators (phases `p1`–`p3`), then to the start of the element (`p4`), copies\nit (`p5`) and returns the head of `E` to the end (`p8`); past the start of the environment\nthe index is out of range, the rest of it is consumed (`p6`, `p7`) and `nil` is written\n(`p9`). The proof is by induction on the index, over the suffix of the environment not yet\npassed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/GetEnv.lean#L108-L168",
+  "source_path": "MIPRE/TM/Interp/GetEnv.lean",
+  "lines": [
+   108,
+   168
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 21,
+  "prooflines": 52,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.getEnv_copy5",
+  "source_name": "MIPRE.TM.Interp.getEnv_copy5",
+  "formal_statement": "theorem MIPRE.TM.Interp.getEnv_copy5 {k : ProgId} {pc : Fin maxPc} (hins : instrAt k pc = .getEnv) (l : List Sym)\n    (hl : ∀ s ∈ l, s = .zero ∨ s = .one) :\n    ∀ (c : Cfg input), c.state = some ⟨k, pc, p5⟩ →\n      Holds (c.workTapes E) (c.workTapePos E) l →\n      c.workTapes E (c.workTapePos E + l.length) = some .sep →\n    ∃ c', Reach c (l.length + 1) c' [] ∧ c'.state = some ⟨k, pc, p8⟩ ∧ Untouched c c' [] [E, X] ∧\n      c'.workTapes E = c.workTapes E ∧ c'.workTapePos E = c.workTapePos E + l.length ∧\n      DstEff X c c' l := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "Phase `p5`: copy the bits `l` under the head of `E` to `X`, to the `#` after them.",
+  "module": "MIPRE.TM.Interp.GetEnv",
+  "module_doc": "/-!\n# The `getEnv` routine\n\nWith the unary index `S(ofNat i)` under the head of `C` and the environment `envRepr env` on\n`E` with its head at the end, `getEnv` writes `S(env.get i)` at the head of `X`: it walks\nleft over `i` separators (phases `p1`–`p3`), then to the start of the element (`p4`), copies\nit (`p5`) and returns the head of `E` to the end (`p8`); past the start of the environment\nthe index is out of range, the rest of it is consumed (`p6`, `p7`) and `nil` is written\n(`p9`). The proof is by induction on the index, over the suffix of the environment not yet\npassed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/GetEnv.lean#L170-L227",
+  "source_path": "MIPRE/TM/Interp/GetEnv.lean",
+  "lines": [
+   170,
+   227
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 30,
+  "prooflines": 49,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.getEnv_toEnd",
+  "source_name": "MIPRE.TM.Interp.getEnv_toEnd",
+  "formal_statement": "theorem MIPRE.TM.Interp.getEnv_toEnd {k : ProgId} {pc : Fin maxPc} (hins : instrAt k pc = .getEnv)\n    (hpc : pc.val + 1 < maxPc) (ph : Phase) (hph : ph = p8 ∨ ph = p9) (l : List Sym) :\n    ∀ (c : Cfg input), c.state = some ⟨k, pc, ph⟩ → Holds (c.workTapes E) (c.workTapePos E) l →\n      c.workTapes E (c.workTapePos E + l.length) = none →\n    ∃ c', Reach c (l.length + 1) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [E] ∧\n      c'.workTapes E = c.workTapes E ∧ c'.workTapePos E = c.workTapePos E + l.length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "Phases `p8`/`p9`: the head of `E` right to the first blank.",
+  "module": "MIPRE.TM.Interp.GetEnv",
+  "module_doc": "/-!\n# The `getEnv` routine\n\nWith the unary index `S(ofNat i)` under the head of `C` and the environment `envRepr env` on\n`E` with its head at the end, `getEnv` writes `S(env.get i)` at the head of `X`: it walks\nleft over `i` separators (phases `p1`–`p3`), then to the start of the element (`p4`), copies\nit (`p5`) and returns the head of `E` to the end (`p8`); past the start of the environment\nthe index is out of range, the rest of it is consumed (`p6`, `p7`) and `nil` is written\n(`p9`). The proof is by induction on the index, over the suffix of the environment not yet\npassed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/GetEnv.lean#L229-L274",
+  "source_path": "MIPRE/TM/Interp/GetEnv.lean",
+  "lines": [
+   229,
+   274
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 20,
+  "prooflines": 39,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.getEnv_consume",
+  "source_name": "MIPRE.TM.Interp.getEnv_consume",
+  "formal_statement": "theorem MIPRE.TM.Interp.getEnv_consume {k : ProgId} {pc : Fin maxPc} (hins : instrAt k pc = .getEnv) (j : ℕ) :\n    ∀ (c : Cfg input), c.state = some ⟨k, pc, p6⟩ →\n      Holds (c.workTapes C) (c.workTapePos C) (S (Data.ofNat j)) →\n    ∃ c', Reach c (2 * j + 1) c' [] ∧ c'.state = some ⟨k, pc, p9⟩ ∧ Untouched c c' [] [C, E, X] ∧\n      c'.workTapes C = c.workTapes C ∧ c'.workTapePos C = c.workTapePos C + (2 * j + 1 : ℕ) ∧\n      c'.workTapes E = c.workTapes E ∧ c'.workTapePos E = c.workTapePos E + 1 ∧\n      DstEff X c c' [.zero] := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "Phases `p6`/`p7`: consume the index `S(ofNat j)` on `C`, then write `nil` on `X` and move\n`E` one right, at `p9`.",
+  "module": "MIPRE.TM.Interp.GetEnv",
+  "module_doc": "/-!\n# The `getEnv` routine\n\nWith the unary index `S(ofNat i)` under the head of `C` and the environment `envRepr env` on\n`E` with its head at the end, `getEnv` writes `S(env.get i)` at the head of `X`: it walks\nleft over `i` separators (phases `p1`–`p3`), then to the start of the element (`p4`), copies\nit (`p5`) and returns the head of `E` to the end (`p8`); past the start of the environment\nthe index is out of range, the rest of it is consumed (`p6`, `p7`) and `nil` is written\n(`p9`). The proof is by induction on the index, over the suffix of the environment not yet\npassed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/GetEnv.lean#L276-L348",
+  "source_path": "MIPRE/TM/Interp/GetEnv.lean",
+  "lines": [
+   276,
+   348
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 28,
+  "prooflines": 64,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.EnvTape.suffix_cells",
+  "source_name": "MIPRE.TM.Interp.EnvTape.suffix_cells",
+  "formal_statement": "theorem MIPRE.TM.Interp.EnvTape.suffix_cells {τ : Tape} {env : Env} (h : EnvTape τ env) (v : Data) (rest : Env)\n    {l₀ : List Sym} (hpre : envRepr env = envRepr (v :: rest) ++ l₀) :\n    Holds τ (envRepr rest).length (S v) ∧\n    τ ((envRepr rest).length + (S v).length) = some .sep ∧\n    (τ ((envRepr rest).length - 1) = some .sep ∨ τ ((envRepr rest).length - 1) = none) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open MIPRE.TM.Interp.EnvTape",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "Cells of a suffix of the environment: for `env' = v :: rest` a prefix of `env`, `S v` sits\nat `|envRepr rest|`, followed by `#`, and preceded by `#` or the blank before the tape.",
+  "module": "MIPRE.TM.Interp.GetEnv",
+  "module_doc": "/-!\n# The `getEnv` routine\n\nWith the unary index `S(ofNat i)` under the head of `C` and the environment `envRepr env` on\n`E` with its head at the end, `getEnv` writes `S(env.get i)` at the head of `X`: it walks\nleft over `i` separators (phases `p1`–`p3`), then to the start of the element (`p4`), copies\nit (`p5`) and returns the head of `E` to the end (`p8`); past the start of the environment\nthe index is out of range, the rest of it is consumed (`p6`, `p7`) and `nil` is written\n(`p9`). The proof is by induction on the index, over the suffix of the environment not yet\npassed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/GetEnv.lean#L352-L376",
+  "source_path": "MIPRE/TM/Interp/GetEnv.lean",
+  "lines": [
+   352,
+   376
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 5,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.getEnv_walk",
+  "source_name": "MIPRE.TM.Interp.getEnv_walk",
+  "formal_statement": "theorem MIPRE.TM.Interp.getEnv_walk {k : ProgId} {pc : Fin maxPc} (hins : instrAt k pc = .getEnv)\n    (hpc : pc.val + 1 < maxPc) (env : Env) (j : ℕ) :\n    ∀ (env' : Env) (c : Cfg input), c.state = some ⟨k, pc, p1⟩ →\n      EnvTape (c.workTapes E) env → (∃ l₀, envRepr env = envRepr env' ++ l₀) →\n      c.workTapePos E = (envRepr env').length - 1 →\n      Holds (c.workTapes C) (c.workTapePos C) (S (Data.ofNat j)) →\n    ∃ n ≤ 3 * j + 2 * (envRepr env).length + (envRepr env').length + 8,\n    ∃ c', Reach c n c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [C, E, X] ∧\n      c'.workTapes C = c.workTapes C ∧ c'.workTapePos C = c.workTapePos C + (2 * j + 1 : ℕ) ∧\n      c'.workTapes E = c.workTapes E ∧ c'.workTapePos E = (envRepr env).length ∧\n      DstEff X c c' (S (Env.get env' j)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "The walk from phase `p1`: at the separator of the last element of the suffix `env'` of\n`env` (or before the tape if `env'` is empty), with the index `S(ofNat j)` on `C`.",
+  "module": "MIPRE.TM.Interp.GetEnv",
+  "module_doc": "/-!\n# The `getEnv` routine\n\nWith the unary index `S(ofNat i)` under the head of `C` and the environment `envRepr env` on\n`E` with its head at the end, `getEnv` writes `S(env.get i)` at the head of `X`: it walks\nleft over `i` separators (phases `p1`–`p3`), then to the start of the element (`p4`), copies\nit (`p5`) and returns the head of `E` to the end (`p8`); past the start of the environment\nthe index is out of range, the rest of it is consumed (`p6`, `p7`) and `nil` is written\n(`p9`). The proof is by induction on the index, over the suffix of the environment not yet\npassed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/GetEnv.lean#L392-L671",
+  "source_path": "MIPRE/TM/Interp/GetEnv.lean",
+  "lines": [
+   392,
+   671
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.getEnv_toEnd",
+   "MIPRE.TM.Interp.getEnv_consume",
+   "MIPRE.TM.Interp.EnvTape.suffix_cells",
+   "MIPRE.TM.Interp.getEnv_scan3",
+   "MIPRE.TM.Interp.getEnv_scan4",
+   "MIPRE.TM.Interp.getEnv_copy5"
+  ],
+  "pasted_helpers": 28,
+  "prooflines": 267,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.exec_getEnv",
+  "source_name": "MIPRE.TM.Interp.exec_getEnv",
+  "formal_statement": "theorem MIPRE.TM.Interp.exec_getEnv {k : ProgId} {pc : Fin maxPc} (hins : instrAt k pc = .getEnv)\n    (hpc : pc.val + 1 < maxPc) (env : Env) (i : ℕ) (c : Cfg input) (hq : c.state = at_ k pc)\n    (hE : EnvTape (c.workTapes E) env) (hpos : c.workTapePos E = (envRepr env).length)\n    (hC : Holds (c.workTapes C) (c.workTapePos C) (S (Data.ofNat i))) :\n    ∃ n ≤ 3 * i + 3 * (envRepr env).length + 9,\n    ∃ c', Reach c n c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [C, E, X] ∧\n      c'.workTapes C = c.workTapes C ∧ c'.workTapePos C = c.workTapePos C + (2 * i + 1 : ℕ) ∧\n      c'.workTapes E = c.workTapes E ∧ c'.workTapePos E = (envRepr env).length ∧\n      DstEff X c c' (S (Env.get env i)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "**`getEnv`**: with `S(ofNat i)` under the head of `C` and the environment on `E` with\nits head at the end, write `S(env.get i)` at the head of `X`.",
+  "module": "MIPRE.TM.Interp.GetEnv",
+  "module_doc": "/-!\n# The `getEnv` routine\n\nWith the unary index `S(ofNat i)` under the head of `C` and the environment `envRepr env` on\n`E` with its head at the end, `getEnv` writes `S(env.get i)` at the head of `X`: it walks\nleft over `i` separators (phases `p1`–`p3`), then to the start of the element (`p4`), copies\nit (`p5`) and returns the head of `E` to the end (`p8`); past the start of the environment\nthe index is out of range, the rest of it is consumed (`p6`, `p7`) and `nil` is written\n(`p9`). The proof is by induction on the index, over the suffix of the environment not yet\npassed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/GetEnv.lean#L673-L706",
+  "source_path": "MIPRE/TM/Interp/GetEnv.lean",
+  "lines": [
+   673,
+   706
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.getEnv_walk"
+  ],
+  "pasted_helpers": 16,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.exec_copyUnary",
+  "source_name": "MIPRE.TM.Interp.exec_copyUnary",
+  "formal_statement": "theorem MIPRE.TM.Interp.exec_copyUnary {k : ProgId} {pc : Fin maxPc} {j : IT} {dst : WT}\n    (hins : instrAt k pc = .copyUnary j dst) (hpc : pc.val + 1 < maxPc) (m : ℕ) :\n    ∀ (c : Cfg input) (q : ℕ), c.state = at_ k pc → (c.inputPos j : ℕ) = q + 1 →\n      (input j).length = q + m →\n    ∃ c', Reach c (m + 1) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [j] [dst] ∧\n      (c'.inputPos j : ℕ) = (input j).length + 1 ∧ WEff dst c c' (List.replicate m .one) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "From position `q + 1` of input `j`: one `1` per remaining symbol.",
+  "module": "MIPRE.TM.Interp.InputRoutines",
+  "module_doc": "/-!\n# The input-tape routines\n\n`copyUnary`, `copyInputBits`, `checkLen` and `buildAnswer` read an input tape from its\nhead to the blank after the input, writing on a work tape; their specifications are by\ninduction on the remaining suffix of the input.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/InputRoutines.lean#L66-L106",
+  "source_path": "MIPRE/TM/Interp/InputRoutines.lean",
+  "lines": [
+   66,
+   106
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 33,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.exec_copyInputBits",
+  "source_name": "MIPRE.TM.Interp.exec_copyInputBits",
+  "formal_statement": "theorem MIPRE.TM.Interp.exec_copyInputBits {k : ProgId} {pc : Fin maxPc} {j : IT} {dst : WT}\n    (hins : instrAt k pc = .copyInputBits j dst) (hpc : pc.val + 1 < maxPc) (m : ℕ) :\n    ∀ (c : Cfg input) (q : ℕ), c.state = at_ k pc → (c.inputPos j : ℕ) = q + 1 →\n      (input j).length = q + m →\n    ∃ c', Reach c (m + 1) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [j] [dst] ∧\n      (c'.inputPos j : ℕ) = (input j).length + 1 ∧ WEff dst c c' ((input j).drop q) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "From position `q + 1` of input `j`: the remaining symbols.",
+  "module": "MIPRE.TM.Interp.InputRoutines",
+  "module_doc": "/-!\n# The input-tape routines\n\n`copyUnary`, `copyInputBits`, `checkLen` and `buildAnswer` read an input tape from its\nhead to the blank after the input, writing on a work tape; their specifications are by\ninduction on the remaining suffix of the input.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/InputRoutines.lean#L110-L153",
+  "source_path": "MIPRE/TM/Interp/InputRoutines.lean",
+  "lines": [
+   110,
+   153
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 33,
+  "prooflines": 37,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.exec_checkLen",
+  "source_name": "MIPRE.TM.Interp.exec_checkLen",
+  "formal_statement": "theorem MIPRE.TM.Interp.exec_checkLen {k : ProgId} {pc : Fin maxPc} {j ref : IT}\n    (hins : instrAt k pc = .checkLen j ref) (hpc : pc.val + 1 < maxPc) (hjr : j ≠ ref) (m : ℕ) :\n    ∀ (c : Cfg input) (q : ℕ), c.state = at_ k pc → (c.inputPos j : ℕ) = q + 1 →\n      (c.inputPos ref : ℕ) = q + 1 → (input j).length = q + m → q + m ≤ (input ref).length →\n    ∃ c', Reach c (m + 1) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [j, ref] [] ∧\n      (c'.inputPos j : ℕ) = (input j).length + 1 ∧ (c'.inputPos ref : ℕ) = (input j).length + 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "From position `q + 1` on both `j` and `ref`, with `|j| - q ≤ |ref| - q`: both heads advance\nto the end of `j`.",
+  "module": "MIPRE.TM.Interp.InputRoutines",
+  "module_doc": "/-!\n# The input-tape routines\n\n`copyUnary`, `copyInputBits`, `checkLen` and `buildAnswer` read an input tape from its\nhead to the blank after the input, writing on a work tape; their specifications are by\ninduction on the remaining suffix of the input.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/InputRoutines.lean#L157-L193",
+  "source_path": "MIPRE/TM/Interp/InputRoutines.lean",
+  "lines": [
+   157,
+   193
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 20,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.exec_buildAnswer",
+  "source_name": "MIPRE.TM.Interp.exec_buildAnswer",
+  "formal_statement": "theorem MIPRE.TM.Interp.exec_buildAnswer {k : ProgId} {pc : Fin maxPc} {j : IT} {dst : WT}\n    (hins : instrAt k pc = .buildAnswer j dst) (hpc : pc.val + 1 < maxPc)\n    (hbits : ∀ s ∈ input j, s = .zero ∨ s = .one) (m : ℕ) :\n    ∀ (c : Cfg input) (q : ℕ), c.state = at_ k pc → (c.inputPos j : ℕ) = q + 1 →\n      (input j).length = q + m →\n    ∃ n ≤ 4 * m + 1, ∃ c', Reach c n c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [j] [dst] ∧\n      (c'.inputPos j : ℕ) = (input j).length + 1 ∧ WEff dst c c' (answerBits ((input j).drop q)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "From position `q + 1` of a bit input `j`: `S(encode)` of the remaining bits.",
+  "module": "MIPRE.TM.Interp.InputRoutines",
+  "module_doc": "/-!\n# The input-tape routines\n\n`copyUnary`, `copyInputBits`, `checkLen` and `buildAnswer` read an input tape from its\nhead to the blank after the input, writing on a work tape; their specifications are by\ninduction on the remaining suffix of the input.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/InputRoutines.lean#L244-L334",
+  "source_path": "MIPRE/TM/Interp/InputRoutines.lean",
+  "lines": [
+   244,
+   334
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 36,
+  "prooflines": 83,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.mem_frameBody",
+  "source_name": "MIPRE.TM.Interp.mem_frameBody",
+  "formal_statement": "theorem MIPRE.TM.Interp.mem_frameBody (f : Frame) : ∀ s ∈ frameBody f, s ≠ .fr := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open MIPRE.Cost MIPRE.Cost.Machine"
+  ],
+  "docstring": "No `$` in the body of a frame.",
+  "module": "MIPRE.TM.Interp.Repr",
+  "module_doc": "/-!\n# The tape representation of configurations\n\nValues as their preorder bits (`S`), the control (`ctrlRepr`), the environment\n(`envRepr`, innermost value at the right end, `#`-separated), the frames (`frameRepr`) and\nthe stack (`kontRepr`), as lists of symbols; and their lengths in terms of the sizes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Repr.lean#L98-L137",
+  "source_path": "MIPRE/TM/Interp/Repr.lean",
+  "lines": [
+   98,
+   137
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 38,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.length_frameRepr_le",
+  "source_name": "MIPRE.TM.Interp.length_frameRepr_le",
+  "formal_statement": "theorem MIPRE.TM.Interp.length_frameRepr_le {V L P : ℕ} {f : Frame} (h : FrameBound V L P f) :\n    (frameRepr f).length ≤ V + P + L * V + L + 4 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open MIPRE.Cost MIPRE.Cost.Machine"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Repr",
+  "module_doc": "/-!\n# The tape representation of configurations\n\nValues as their preorder bits (`S`), the control (`ctrlRepr`), the environment\n(`envRepr`, innermost value at the right end, `#`-separated), the frames (`frameRepr`) and\nthe stack (`kontRepr`), as lists of symbols; and their lengths in terms of the sizes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Repr.lean#L149-L188",
+  "source_path": "MIPRE/TM/Interp/Repr.lean",
+  "lines": [
+   149,
+   188
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 38,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.exec_toEnd",
+  "source_name": "MIPRE.TM.Interp.exec_toEnd",
+  "formal_statement": "theorem MIPRE.TM.Interp.exec_toEnd {k : ProgId} {pc : Fin maxPc} {t : WT}\n    (hins : instrAt k pc = .toEnd t) (hpc : pc.val + 1 < maxPc) (l : List Sym) :\n    ∀ (c : Cfg input), c.state = at_ k pc → Holds (c.workTapes t) (c.workTapePos t) l →\n      c.workTapes t (c.workTapePos t + l.length) = none →\n    ∃ c', Reach c (l.length + 1) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [t] ∧\n      c'.workTapes t = c.workTapes t ∧ c'.workTapePos t = c.workTapePos t + l.length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Routines",
+  "module_doc": "/-!\n# The routines: specifications of the instructions\n\nEach instruction's specification is a reachability statement: from a configuration at\nthe instruction's first phase, with the tapes it reads in a stated shape, a bounded\nnumber of steps leads to the configuration at the next instruction, with the stated\neffect on the tapes it touches and none on the others (`Untouched`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Routines.lean#L148-L191",
+  "source_path": "MIPRE/TM/Interp/Routines.lean",
+  "lines": [
+   148,
+   191
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 20,
+  "prooflines": 38,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.scan_rewind",
+  "source_name": "MIPRE.TM.Interp.scan_rewind",
+  "formal_statement": "theorem MIPRE.TM.Interp.scan_rewind {k : ProgId} {pc : Fin maxPc} {t : WT}\n    (hins : instrAt k pc = .rewind t) (hpc : pc.val + 1 < maxPc) (n : ℕ) :\n    ∀ (c : Cfg input), c.state = some ⟨k, pc, p1⟩ →\n      (∀ q, c.workTapePos t - n < q → q ≤ c.workTapePos t → c.workTapes t q ≠ none) →\n      c.workTapes t (c.workTapePos t - n) = none →\n    ∃ c', Reach c (n + 1) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [t] ∧\n      c'.workTapes t = c.workTapes t ∧ c'.workTapePos t = c.workTapePos t - n + 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "The scan of `rewind` from `p1`: cells `pos - n + 1 … pos` not blank, `pos - n` blank.",
+  "module": "MIPRE.TM.Interp.Routines",
+  "module_doc": "/-!\n# The routines: specifications of the instructions\n\nEach instruction's specification is a reachability statement: from a configuration at\nthe instruction's first phase, with the tapes it reads in a stated shape, a bounded\nnumber of steps leads to the configuration at the next instruction, with the stated\neffect on the tapes it touches and none on the others (`Untouched`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Routines.lean#L195-L244",
+  "source_path": "MIPRE/TM/Interp/Routines.lean",
+  "lines": [
+   195,
+   244
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 17,
+  "prooflines": 42,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.exec_rewind",
+  "source_name": "MIPRE.TM.Interp.exec_rewind",
+  "formal_statement": "theorem MIPRE.TM.Interp.exec_rewind {k : ProgId} {pc : Fin maxPc} {t : WT}\n    (hins : instrAt k pc = .rewind t) (hpc : pc.val + 1 < maxPc) (n : ℕ)\n    (c : Cfg input) (hq : c.state = at_ k pc)\n    (hne : ∀ q, c.workTapePos t - n ≤ q → q < c.workTapePos t → c.workTapes t q ≠ none)\n    (hbl : c.workTapes t (c.workTapePos t - n - 1) = none) :\n    ∃ c', Reach c (n + 2) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [t] ∧\n      c'.workTapes t = c.workTapes t ∧ c'.workTapePos t = c.workTapePos t - n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "From cell `p + n` with cells `p … p + n - 1` not blank and `p - 1` blank, `rewind`\nreaches cell `p` (the head may start on the blank after the content).",
+  "module": "MIPRE.TM.Interp.Routines",
+  "module_doc": "/-!\n# The routines: specifications of the instructions\n\nEach instruction's specification is a reachability statement: from a configuration at\nthe instruction's first phase, with the tapes it reads in a stated shape, a bounded\nnumber of steps leads to the configuration at the next instruction, with the stated\neffect on the tapes it touches and none on the others (`Untouched`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Routines.lean#L246-L276",
+  "source_path": "MIPRE/TM/Interp/Routines.lean",
+  "lines": [
+   246,
+   276
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.scan_rewind"
+  ],
+  "pasted_helpers": 15,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.scan_erase",
+  "source_name": "MIPRE.TM.Interp.scan_erase",
+  "formal_statement": "theorem MIPRE.TM.Interp.scan_erase {k : ProgId} {pc : Fin maxPc} {t : WT}\n    (hins : instrAt k pc = .eraseRight t) (l : List Sym) :\n    ∀ (c : Cfg input), c.state = some ⟨k, pc, p1⟩ → Holds (c.workTapes t) (c.workTapePos t) l →\n      c.workTapes t (c.workTapePos t + l.length) = none →\n    ∃ c', Reach c (l.length + 1) c' [] ∧ c'.state = some ⟨k, pc, p2⟩ ∧ Untouched c c' [] [t] ∧\n      (∀ q, (q < c.workTapePos t ∨ c.workTapePos t + l.length ≤ q) →\n        c'.workTapes t q = c.workTapes t q) ∧\n      BlankFrom (c'.workTapes t) (c.workTapePos t) l.length ∧\n      c'.workTapePos t = c.workTapePos t + l.length - 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "The erasing scan of `eraseRight` (`p1`): erase the `l` held from the head, then one\nleft.",
+  "module": "MIPRE.TM.Interp.Routines",
+  "module_doc": "/-!\n# The routines: specifications of the instructions\n\nEach instruction's specification is a reachability statement: from a configuration at\nthe instruction's first phase, with the tapes it reads in a stated shape, a bounded\nnumber of steps leads to the configuration at the next instruction, with the stated\neffect on the tapes it touches and none on the others (`Untouched`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Routines.lean#L280-L340",
+  "source_path": "MIPRE/TM/Interp/Routines.lean",
+  "lines": [
+   280,
+   340
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 22,
+  "prooflines": 50,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.scan_eraseBack",
+  "source_name": "MIPRE.TM.Interp.scan_eraseBack",
+  "formal_statement": "theorem MIPRE.TM.Interp.scan_eraseBack {k : ProgId} {pc : Fin maxPc} {t : WT}\n    (hins : instrAt k pc = .eraseRight t) (hpc : pc.val + 1 < maxPc) (n : ℕ) :\n    ∀ (c : Cfg input), c.state = some ⟨k, pc, p2⟩ →\n      BlankFrom (c.workTapes t) (c.workTapePos t - n + 1) n →\n      c.workTapes t (c.workTapePos t - n) = some .fr →\n    ∃ c', Reach c (n + 1) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [t] ∧\n      c'.workTapes t = Function.update (c.workTapes t) (c.workTapePos t - n) none ∧\n      c'.workTapePos t = c.workTapePos t - n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "The return scan of `eraseRight` (`p2`): back over `n` blanks to the `$`, erase it.",
+  "module": "MIPRE.TM.Interp.Routines",
+  "module_doc": "/-!\n# The routines: specifications of the instructions\n\nEach instruction's specification is a reachability statement: from a configuration at\nthe instruction's first phase, with the tapes it reads in a stated shape, a bounded\nnumber of steps leads to the configuration at the next instruction, with the stated\neffect on the tapes it touches and none on the others (`Untouched`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Routines.lean#L342-L393",
+  "source_path": "MIPRE/TM/Interp/Routines.lean",
+  "lines": [
+   342,
+   393
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 19,
+  "prooflines": 43,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.exec_eraseRight",
+  "source_name": "MIPRE.TM.Interp.exec_eraseRight",
+  "formal_statement": "theorem MIPRE.TM.Interp.exec_eraseRight {k : ProgId} {pc : Fin maxPc} {t : WT}\n    (hins : instrAt k pc = .eraseRight t) (hpc : pc.val + 1 < maxPc) (l : List Sym)\n    (c : Cfg input) (hq : c.state = at_ k pc) (hl : Holds (c.workTapes t) (c.workTapePos t) l)\n    (hend : c.workTapes t (c.workTapePos t + l.length) = none) :\n    ∃ c', Reach c (2 * l.length + 1) c' [] ∧ c'.state = next_ k pc hpc ∧ Untouched c c' [] [t] ∧\n      (∀ q, (q < c.workTapePos t ∨ c.workTapePos t + l.length ≤ q) →\n        c'.workTapes t q = c.workTapes t q) ∧\n      BlankFrom (c'.workTapes t) (c.workTapePos t) l.length ∧\n      c'.workTapePos t = c.workTapePos t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "Erase the `l` held from the head (no `$` among its symbols), ending where it started.",
+  "module": "MIPRE.TM.Interp.Routines",
+  "module_doc": "/-!\n# The routines: specifications of the instructions\n\nEach instruction's specification is a reachability statement: from a configuration at\nthe instruction's first phase, with the tapes it reads in a stated shape, a bounded\nnumber of steps leads to the configuration at the next instruction, with the stated\neffect on the tapes it touches and none on the others (`Untouched`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Routines.lean#L395-L463",
+  "source_path": "MIPRE/TM/Interp/Routines.lean",
+  "lines": [
+   395,
+   463
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.scan_erase",
+   "MIPRE.TM.Interp.scan_eraseBack"
+  ],
+  "pasted_helpers": 23,
+  "prooflines": 59,
+  "is_target": false
+ }
+]

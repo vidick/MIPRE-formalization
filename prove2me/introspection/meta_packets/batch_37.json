@@ -1,0 +1,632 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.groupComponents_primitive",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.groupComponents_primitive",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.groupComponents_primitive (k : ℕ) [NeZero k] :\n    ∀ e ∈ groupComponents k, PrimitiveBinaryComponent e := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.LowDegree.BinaryComponents",
+  "module_doc": "/-! # Primitive components computed by fixed-space separation -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryComponents.lean#L48-L51",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryComponents.lean",
+  "lines": [
+   48,
+   51
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-normal-element",
+    "env": "lemma",
+    "title": "Effective normal element by fixed-space projections",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.typedBasis_span",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.append_reduced",
+   "MIPRE.LowDegree.BinaryLinear.binary_eq_zero_or_one",
+   "MIPRE.LowDegree.BinaryLinear.getD_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.eq_zero_of_pivots_zero",
+   "MIPRE.LowDegree.ComponentFamily.split",
+   "MIPRE.LowDegree.decidesComponent_of_mem_span"
+  ],
+  "pasted_helpers": 39,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.splitBits_width",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.splitBits_width",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.splitBits_width (e b : BitStr) : ∀ x ∈ splitBits e b, x.length = e.length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.LowDegree.BinaryComponents",
+  "module_doc": "/-! # Primitive components computed by fixed-space separation -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryComponents.lean#L119-L125",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryComponents.lean",
+  "lines": [
+   119,
+   125
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.groupComponentsProg_correct",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.groupComponentsProg_correct",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.groupComponentsProg_correct (k : ℕ) [NeZero k] :\n    groupComponentsProg (unary k) =\n      (groupComponents k).map (fun z => vectorBits (groupCoordinates k z)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial"
+  ],
+  "docstring": "The raw program prints precisely the nonzero primitive components, in deterministic order.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryComponentsProg",
+  "module_doc": "/-! # Polynomial-time fixed-space component separation -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryComponentsProg.lean#L164-L182",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryComponentsProg.lean",
+  "lines": [
+   164,
+   182
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-normal-element",
+    "env": "lemma",
+    "title": "Effective normal element by fixed-space projections",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.typedBasis_span",
+   "MIPRE.LowDegree.BinaryLinear.circulantBitsProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.append_reduced",
+   "MIPRE.LowDegree.BinaryLinear.binary_eq_zero_or_one",
+   "MIPRE.LowDegree.BinaryLinear.getD_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.kernelGeneratorsProg_encoding",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.transposeBits_matrixBits",
+   "MIPRE.LowDegree.BinaryLinear.identityBits_eq_matrixBits",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.eq_zero_of_pivots_zero",
+   "MIPRE.LowDegree.ComponentFamily.split",
+   "MIPRE.LowDegree.ComponentFamily.linearIndependent"
+  ],
+  "pasted_helpers": 47,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.linearIndependent",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.linearIndependent",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.IsPivotBasis.linearIndependent {b : List (Pivot n t)} (hb : IsPivotBasis b) :\n    LinearIndependent (ZMod 2) (pivotVectors b) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "open MIPRE.LowDegree.BinaryLinear.IsPivotBasis",
+   "variable {n t : ℕ}"
+  ],
+  "docstring": "Triangular pivots certify linear independence of the stored vectors.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryEchelon",
+  "module_doc": "/-! # Triangular pivot bases and certified binary reduction -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryEchelon.lean#L86-L105",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryEchelon.lean",
+  "lines": [
+   86,
+   105
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.mulBits_matrixBits",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.mulBits_matrixBits",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.mulBits_matrixBits {m n r : ℕ}\n    (A : Matrix (Fin m) (Fin r) (ZMod 2)) (B : Matrix (Fin r) (Fin n) (ZMod 2)) :\n    mulBits n (matrixBits A) (matrixBits B) = matrixBits (A * B) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "The executable matrix product is the ordinary product over the binary field.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryLinear",
+  "module_doc": "/-! # Executable binary vector and matrix arithmetic -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryLinear.lean#L150-L165",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryLinear.lean",
+  "lines": [
+   150,
+   165
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-binary-linear-algebra",
+    "env": "lemma",
+    "title": "Effective binary matrix arithmetic and elimination",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.transposeBits_matrixBits"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.identityBits_eq_matrixBits",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.identityBits_eq_matrixBits",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.identityBits_eq_matrixBits (n : ℕ) :\n    identityBits n = matrixBits (1 : Matrix (Fin n) (Fin n) (ZMod 2)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.LowDegree.BinaryMatrixSolve",
+  "module_doc": "/-! # A uniform solver for binary matrices -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryMatrixSolve.lean#L28-L38",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryMatrixSolve.lean",
+  "lines": [
+   28,
+   38
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 9,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.typedReduceStep_error",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.typedReduceStep_error",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.typedReduceStep_error\n    (L : (Fin t → ZMod 2) →ₗ[ZMod 2] (Fin n → ZMod 2))\n    (r : Row n t) (p : Pivot n t) (hp : Represents L p.2) :\n    (typedReduceStep r p).1 + L (typedReduceStep r p).2 = r.1 + L r.2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun",
+   "variable {n t : ℕ}"
+  ],
+  "docstring": "The vector plus the image of its certificate is unchanged by reduction.",
+  "module": "MIPRE.Foundations.LowDegree.BinarySolve",
+  "module_doc": "/-! # Solving binary linear systems with certified elimination -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinarySolve.lean#L93-L108",
+  "source_path": "MIPRE/Foundations/LowDegree/BinarySolve.lean",
+  "lines": [
+   93,
+   108
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.basisSolveProg_encoding",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.basisSolveProg_encoding",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.basisSolveProg_encoding (rows : List (Row n t)) (v : Fin n → ZMod 2) :\n    basisSolveProg (unary t, rows.map rowBits, vectorBits v) =\n      vectorBits (typedReduce (typedBasis rows) (v, 0)).2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun",
+   "variable {n t : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.LowDegree.BinarySolve",
+  "module_doc": "/-! # Solving binary linear systems with certified elimination -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinarySolve.lean#L174-L178",
+  "source_path": "MIPRE/Foundations/LowDegree/BinarySolve.lean",
+  "lines": [
+   174,
+   178
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.insertRow_pivotBits",
+   "MIPRE.LowDegree.BinaryLinear.getD_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.getD_rootBits",
+  "source_name": "MIPRE.LowDegree.getD_rootBits",
+  "formal_statement": "theorem MIPRE.LowDegree.getD_rootBits (l : List α) (fallback : α) (hodd : Odd l.length)\n    {i : ℕ} (hi : i < l.length) :\n    (rootBits l).getD i fallback = l.getD ((i + i) % l.length) fallback := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.Cost",
+   "variable {α : Type*}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.LowDegree.BinarySquareRoot",
+  "module_doc": "/-!\n# A polynomial-time square root in the binary cyclic group algebra\n\nFor an odd-length coefficient vector, reading the doubled indices means reading\nthe even positions followed by the odd positions. Splitting those two lists and\nappending them is polynomial-time in the ambient cost model. This implements the\nsquare-root step of self-dualization; it does not compute the inverse Gram element\nor the initial normal basis.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinarySquareRoot.lean#L69-L87",
+  "source_path": "MIPRE/Foundations/LowDegree/BinarySquareRoot.lean",
+  "lines": [
+   69,
+   87
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.totalDegree_ind_le",
+  "source_name": "MIPRE.LowDegree.totalDegree_ind_le",
+  "formal_statement": "theorem MIPRE.LowDegree.totalDegree_ind_le [Nontrivial F] (y : Fin m → Bool) :\n    (ind y : MvPolynomial (Fin m) F).totalDegree ≤ m := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open Finset MvPolynomial",
+   "variable {F : Type*} [CommRing F] {m : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.LowDegree.Encoding",
+  "module_doc": "/-!\n# The low-degree code\n\nThe paper's `sec:ld-encoding`: the multilinear indicator polynomials of the Boolean subcube,\nthe *low-degree encoding* `g_a` of a vector indexed by the subcube, and the decoding map\n`Coded_H`. This is the code the PCP of `thm:pcp-decider` commits to, and the `a = Coded(g₁)`\nof its soundness conclusion.\n\n* `ind y = ∏_{i : yᵢ = 1} Xᵢ · ∏_{i : yᵢ = 0} (1 - Xᵢ)` — on the subcube, `1` at `y` and `0`\n  elsewhere (`eval_ind`);\n* `pt y` is the subcube point of `y : Fin m → Bool`, identifying `{0,1}` with `{0, 1} ⊆ F`;\n* `ldEnc a = ∑_y a y · ind y` — the multilinear polynomial with `g_a(y) = a y`\n  (`eval_ldEnc`), of individual degree at most `1` (`degreeOf_ldEnc_le`);\n* `codedOn H g` reads `g` back off the subcube, replacing a value outside `H` by `0`. It is a\n  left inverse of `ldEnc` on `H`-valued vectors (`codedOn_ldEnc`), and `coded = codedOn {0,1}`\n  is the Boolean decoding map, which always returns a `{0,1}`-valued vector (`coded_eq`).\n\nNothing here is about the cost model: these are polynomials, and the verifier's arithmetic on\ntheir bit representations is a separate matter (the admissible field of `lem:self-dual-basis`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/Encoding.lean#L109-L121",
+  "source_path": "MIPRE/Foundations/LowDegree/Encoding.lean",
+  "lines": [
+   109,
+   121
+  ],
+  "blueprint": [
+   {
+    "label": "def:ld-encoding",
+    "env": "definition",
+    "title": "The low-degree code",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.add_self_injective",
+  "source_name": "MIPRE.LowDegree.add_self_injective",
+  "formal_statement": "theorem MIPRE.LowDegree.add_self_injective (hG : Odd (Fintype.card G)) :\n    Function.Injective fun g : G => g + g := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open Finset",
+   "variable {G : Type*} [AddCommGroup G] [Fintype G]"
+  ],
+  "docstring": "In a finite abelian group of odd order, doubling is injective.",
+  "module": "MIPRE.Foundations.LowDegree.SelfDualize",
+  "module_doc": "/-!\n# Self-dualization in characteristic two\n\nThe step that turns a normal basis into a *self-dual* normal basis (blueprint\n`lem:self-dual-basis`, ledger nodes `1.1.6.1.7` and `1.1.6.1.8`).\n\nWritten in the group algebra, where the whole step is two short lemmas. If `α` is a normal\nelement of `K / F` with Galois group `G`, the Gram matrix of its orbit is circulant, i.e. it is\nthe element `c ∈ F[G]` with `c g = tr(α · g α)`; it is a unit, and it is fixed by the involution\n`τ` induced by `g ↦ g⁻¹`. Replacing `α` by `a • α` replaces `c` by `a · τ a · c`, so a self-dual\nnormal basis is exactly a solution `a` of `a · τ a = c⁻¹`.\n\n* `exists_mul_involute_eq` — that equation is solvable in any commutative ring on which\n  squaring is bijective: take the square root of the right-hand side, which is unique and\n  therefore fixed by `τ` because the right-hand side is.\n* `sq_bijective` — and squaring *is* bijective on `F[G]` when `F` is a finite field of\n  characteristic two and `G` is a finite abelian group of odd order, because squaring is then\n  the composite of the Frobenius of `F` on coefficients with the doubling bijection of `G` on\n  indices.\n\nBetween them they replace the circulant Gram manipulation the campaign's two nodes carry.\nNothing here is about fields yet: `MIPRE/Foundations/LowDegree/SelfDual.lean` has the\ndefinitions `IsSelfDualBasis` and `IsNormalBasis`, and assembling these lemmas into a basis is\nthe remaining work of issue #105.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/SelfDualize.lean#L56-L69",
+  "source_path": "MIPRE/Foundations/LowDegree/SelfDualize.lean",
+  "lines": [
+   56,
+   69
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.coeff_mul_self",
+  "source_name": "MIPRE.LowDegree.coeff_mul_self",
+  "formal_statement": "theorem MIPRE.LowDegree.coeff_mul_self (hF : CharP F 2) (hG : Odd (Fintype.card G))\n    (z : AddMonoidAlgebra F G) (g : G) :\n    (z * z).coeff (g + g) = z.coeff g * z.coeff g := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open Finset",
+   "variable {G : Type*} [AddCommGroup G] [Fintype G]",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq G]"
+  ],
+  "docstring": "The coefficient of a square, at a doubled index: squaring `F[G]` is the Frobenius of `F`\non coefficients composed with doubling on indices.",
+  "module": "MIPRE.Foundations.LowDegree.SelfDualize",
+  "module_doc": "/-!\n# Self-dualization in characteristic two\n\nThe step that turns a normal basis into a *self-dual* normal basis (blueprint\n`lem:self-dual-basis`, ledger nodes `1.1.6.1.7` and `1.1.6.1.8`).\n\nWritten in the group algebra, where the whole step is two short lemmas. If `α` is a normal\nelement of `K / F` with Galois group `G`, the Gram matrix of its orbit is circulant, i.e. it is\nthe element `c ∈ F[G]` with `c g = tr(α · g α)`; it is a unit, and it is fixed by the involution\n`τ` induced by `g ↦ g⁻¹`. Replacing `α` by `a • α` replaces `c` by `a · τ a · c`, so a self-dual\nnormal basis is exactly a solution `a` of `a · τ a = c⁻¹`.\n\n* `exists_mul_involute_eq` — that equation is solvable in any commutative ring on which\n  squaring is bijective: take the square root of the right-hand side, which is unique and\n  therefore fixed by `τ` because the right-hand side is.\n* `sq_bijective` — and squaring *is* bijective on `F[G]` when `F` is a finite field of\n  characteristic two and `G` is a finite abelian group of odd order, because squaring is then\n  the composite of the Frobenius of `F` on coefficients with the doubling bijection of `G` on\n  indices.\n\nBetween them they replace the circulant Gram manipulation the campaign's two nodes carry.\nNothing here is about fields yet: `MIPRE/Foundations/LowDegree/SelfDual.lean` has the\ndefinitions `IsSelfDualBasis` and `IsNormalBasis`, and assembling these lemmas into a basis is\nthe remaining work of issue #105.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/SelfDualize.lean#L92-L115",
+  "source_path": "MIPRE/Foundations/LowDegree/SelfDualize.lean",
+  "lines": [
+   92,
+   115
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.add_self_injective"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.mul_self_bijective",
+  "source_name": "MIPRE.LowDegree.mul_self_bijective",
+  "formal_statement": "theorem MIPRE.LowDegree.mul_self_bijective (hF : CharP F 2) (hG : Odd (Fintype.card G)) :\n    Function.Bijective fun x : AddMonoidAlgebra F G => x * x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open Finset",
+   "variable {G : Type*} [AddCommGroup G] [Fintype G]",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq G]"
+  ],
+  "docstring": "**Squaring is bijective on `F[G]`** when `F` has characteristic two and `G` is a finite\nabelian group of odd order.",
+  "module": "MIPRE.Foundations.LowDegree.SelfDualize",
+  "module_doc": "/-!\n# Self-dualization in characteristic two\n\nThe step that turns a normal basis into a *self-dual* normal basis (blueprint\n`lem:self-dual-basis`, ledger nodes `1.1.6.1.7` and `1.1.6.1.8`).\n\nWritten in the group algebra, where the whole step is two short lemmas. If `α` is a normal\nelement of `K / F` with Galois group `G`, the Gram matrix of its orbit is circulant, i.e. it is\nthe element `c ∈ F[G]` with `c g = tr(α · g α)`; it is a unit, and it is fixed by the involution\n`τ` induced by `g ↦ g⁻¹`. Replacing `α` by `a • α` replaces `c` by `a · τ a · c`, so a self-dual\nnormal basis is exactly a solution `a` of `a · τ a = c⁻¹`.\n\n* `exists_mul_involute_eq` — that equation is solvable in any commutative ring on which\n  squaring is bijective: take the square root of the right-hand side, which is unique and\n  therefore fixed by `τ` because the right-hand side is.\n* `sq_bijective` — and squaring *is* bijective on `F[G]` when `F` is a finite field of\n  characteristic two and `G` is a finite abelian group of odd order, because squaring is then\n  the composite of the Frobenius of `F` on coefficients with the doubling bijection of `G` on\n  indices.\n\nBetween them they replace the circulant Gram manipulation the campaign's two nodes carry.\nNothing here is about fields yet: `MIPRE/Foundations/LowDegree/SelfDual.lean` has the\ndefinitions `IsSelfDualBasis` and `IsNormalBasis`, and assembling these lemmas into a basis is\nthe remaining work of issue #105.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/SelfDualize.lean#L117-L131",
+  "source_path": "MIPRE/Foundations/LowDegree/SelfDualize.lean",
+  "lines": [
+   117,
+   131
+  ],
+  "blueprint": [
+   {
+    "label": "lem:group-algebra-selfdualization",
+    "env": "lemma",
+    "title": "Self-dualization in the group algebra",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.coeff_mul_self"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.bnd_one_of_conjTranspose_mul_self_le",
+  "source_name": "MIPRE.bnd_one_of_conjTranspose_mul_self_le",
+  "formal_statement": "theorem MIPRE.bnd_one_of_conjTranspose_mul_self_le {M : Matrix N N ℂ}\n    (h : (Mᴴ * M) ≤ (1 : Matrix N N ℂ)) : Bnd M 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {N : Type*} [Fintype N]",
+   "variable [DecidableEq N]"
+  ],
+  "docstring": "**A self-adjoint contraction is bounded by one.** The hypothesis is the *matrix*\ninequality `M† M ≤ 1`, which is `Matrix.PosSemidef` of the difference.",
+  "module": "MIPRE.Foundations.OpBound",
+  "module_doc": "/-!\n# Operator bounds on matrices, by hand\n\nThe rigidity arguments of the Pauli basis test's appendix are chains of estimates\n`‖M |ψ⟩‖ ≤ …`, and the only thing they need about the operators in front is a bound\n`‖M v‖ ≤ K ‖v‖`. `Bnd M K` is that bound, with the four closure properties the chains use ---\nsums, products, scalars, and the two sources: a self-adjoint contraction has `Bnd M 1`, and an\nisometry has `‖M v‖ = ‖v‖` on the nose.\n\nThis is the `ℓ²` operator norm, spelled as a relation instead of a number. That is deliberate.\nMathlib has the norm, through `Matrix.toEuclideanCLM` and the C*-algebra structure on\ncontinuous linear maps, but the Loewner order on `EuclideanSpace ℂ n →L[ℂ] EuclideanSpace ℂ n`\ncosts enough instance search to time out the elaborator on a statement as small as\n`T * T ≤ 1 → ‖T‖ ≤ 1`. The order the arguments actually need is the one on *matrices*\n(`Matrix.nonneg_iff_posSemidef`, which is cheap), so the bridge here goes from a matrix\ninequality straight to a vector-norm inequality and never mentions an operator norm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OpBound.lean#L232-L250",
+  "source_path": "MIPRE/Foundations/OpBound.lean",
+  "lines": [
+   232,
+   250
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.aOp_mul",
+  "source_name": "MIPRE.aOp_mul",
+  "formal_statement": "theorem MIPRE.aOp_mul (X Y : Matrix HA HA ℂ) :\n    aOp (X * Y) = (aOp X : Matrix (HA × HB) _ ℂ) * aOp Y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "open Kronecker",
+   "variable {N : Type*} [Fintype N]",
+   "variable [DecidableEq N]",
+   "variable {HA HB : Type*} [Fintype HA] [DecidableEq HA] [Fintype HB] [DecidableEq HB]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.OpBound",
+  "module_doc": "/-!\n# Operator bounds on matrices, by hand\n\nThe rigidity arguments of the Pauli basis test's appendix are chains of estimates\n`‖M |ψ⟩‖ ≤ …`, and the only thing they need about the operators in front is a bound\n`‖M v‖ ≤ K ‖v‖`. `Bnd M K` is that bound, with the four closure properties the chains use ---\nsums, products, scalars, and the two sources: a self-adjoint contraction has `Bnd M 1`, and an\nisometry has `‖M v‖ = ‖v‖` on the nose.\n\nThis is the `ℓ²` operator norm, spelled as a relation instead of a number. That is deliberate.\nMathlib has the norm, through `Matrix.toEuclideanCLM` and the C*-algebra structure on\ncontinuous linear maps, but the Loewner order on `EuclideanSpace ℂ n →L[ℂ] EuclideanSpace ℂ n`\ncosts enough instance search to time out the elaborator on a statement as small as\n`T * T ≤ 1 → ‖T‖ ≤ 1`. The order the arguments actually need is the one on *matrices*\n(`Matrix.nonneg_iff_posSemidef`, which is cheap), so the bridge here goes from a matrix\ninequality straight to a vector-norm inequality and never mentions an operator norm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OpBound.lean#L306-L308",
+  "source_path": "MIPRE/Foundations/OpBound.lean",
+  "lines": [
+   306,
+   308
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.aOp_add",
+  "source_name": "MIPRE.aOp_add",
+  "formal_statement": "theorem MIPRE.aOp_add (X Y : Matrix HA HA ℂ) :\n    aOp (X + Y) = (aOp X : Matrix (HA × HB) _ ℂ) + aOp Y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "open Kronecker",
+   "variable {N : Type*} [Fintype N]",
+   "variable [DecidableEq N]",
+   "variable {HA HB : Type*} [Fintype HA] [DecidableEq HA] [Fintype HB] [DecidableEq HB]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.OpBound",
+  "module_doc": "/-!\n# Operator bounds on matrices, by hand\n\nThe rigidity arguments of the Pauli basis test's appendix are chains of estimates\n`‖M |ψ⟩‖ ≤ …`, and the only thing they need about the operators in front is a bound\n`‖M v‖ ≤ K ‖v‖`. `Bnd M K` is that bound, with the four closure properties the chains use ---\nsums, products, scalars, and the two sources: a self-adjoint contraction has `Bnd M 1`, and an\nisometry has `‖M v‖ = ‖v‖` on the nose.\n\nThis is the `ℓ²` operator norm, spelled as a relation instead of a number. That is deliberate.\nMathlib has the norm, through `Matrix.toEuclideanCLM` and the C*-algebra structure on\ncontinuous linear maps, but the Loewner order on `EuclideanSpace ℂ n →L[ℂ] EuclideanSpace ℂ n`\ncosts enough instance search to time out the elaborator on a statement as small as\n`T * T ≤ 1 → ‖T‖ ≤ 1`. The order the arguments actually need is the one on *matrices*\n(`Matrix.nonneg_iff_posSemidef`, which is cheap), so the bridge here goes from a matrix\ninequality straight to a vector-norm inequality and never mentions an operator norm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OpBound.lean#L314-L315",
+  "source_path": "MIPRE/Foundations/OpBound.lean",
+  "lines": [
+   314,
+   315
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.aOp_smul",
+  "source_name": "MIPRE.aOp_smul",
+  "formal_statement": "theorem MIPRE.aOp_smul (c : ℂ) (X : Matrix HA HA ℂ) :\n    aOp (c • X) = c • (aOp X : Matrix (HA × HB) _ ℂ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "open Kronecker",
+   "variable {N : Type*} [Fintype N]",
+   "variable [DecidableEq N]",
+   "variable {HA HB : Type*} [Fintype HA] [DecidableEq HA] [Fintype HB] [DecidableEq HB]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.OpBound",
+  "module_doc": "/-!\n# Operator bounds on matrices, by hand\n\nThe rigidity arguments of the Pauli basis test's appendix are chains of estimates\n`‖M |ψ⟩‖ ≤ …`, and the only thing they need about the operators in front is a bound\n`‖M v‖ ≤ K ‖v‖`. `Bnd M K` is that bound, with the four closure properties the chains use ---\nsums, products, scalars, and the two sources: a self-adjoint contraction has `Bnd M 1`, and an\nisometry has `‖M v‖ = ‖v‖` on the nose.\n\nThis is the `ℓ²` operator norm, spelled as a relation instead of a number. That is deliberate.\nMathlib has the norm, through `Matrix.toEuclideanCLM` and the C*-algebra structure on\ncontinuous linear maps, but the Loewner order on `EuclideanSpace ℂ n →L[ℂ] EuclideanSpace ℂ n`\ncosts enough instance search to time out the elaborator on a statement as small as\n`T * T ≤ 1 → ‖T‖ ≤ 1`. The order the arguments actually need is the one on *matrices*\n(`Matrix.nonneg_iff_posSemidef`, which is cheap), so the bridge here goes from a matrix\ninequality straight to a vector-norm inequality and never mentions an operator norm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OpBound.lean#L320-L321",
+  "source_path": "MIPRE/Foundations/OpBound.lean",
+  "lines": [
+   320,
+   321
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.aOp_sub",
+  "source_name": "MIPRE.aOp_sub",
+  "formal_statement": "theorem MIPRE.aOp_sub (X Y : Matrix HA HA ℂ) :\n    aOp (X - Y) = (aOp X : Matrix (HA × HB) _ ℂ) - aOp Y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "open Kronecker",
+   "variable {N : Type*} [Fintype N]",
+   "variable [DecidableEq N]",
+   "variable {HA HB : Type*} [Fintype HA] [DecidableEq HA] [Fintype HB] [DecidableEq HB]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.OpBound",
+  "module_doc": "/-!\n# Operator bounds on matrices, by hand\n\nThe rigidity arguments of the Pauli basis test's appendix are chains of estimates\n`‖M |ψ⟩‖ ≤ …`, and the only thing they need about the operators in front is a bound\n`‖M v‖ ≤ K ‖v‖`. `Bnd M K` is that bound, with the four closure properties the chains use ---\nsums, products, scalars, and the two sources: a self-adjoint contraction has `Bnd M 1`, and an\nisometry has `‖M v‖ = ‖v‖` on the nose.\n\nThis is the `ℓ²` operator norm, spelled as a relation instead of a number. That is deliberate.\nMathlib has the norm, through `Matrix.toEuclideanCLM` and the C*-algebra structure on\ncontinuous linear maps, but the Loewner order on `EuclideanSpace ℂ n →L[ℂ] EuclideanSpace ℂ n`\ncosts enough instance search to time out the elaborator on a statement as small as\n`T * T ≤ 1 → ‖T‖ ≤ 1`. The order the arguments actually need is the one on *matrices*\n(`Matrix.nonneg_iff_posSemidef`, which is cheap), so the bridge here goes from a matrix\ninequality straight to a vector-norm inequality and never mentions an operator norm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/OpBound.lean#L326-L330",
+  "source_path": "MIPRE/Foundations/OpBound.lean",
+  "lines": [
+   326,
+   330
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.aOp_add",
+   "MIPRE.aOp_smul"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.condFail_le_one_sub_sum_bornProb_map",
+  "source_name": "MIPRE.condFail_le_one_sub_sum_bornProb_map",
+  "formal_statement": "theorem MIPRE.condFail_le_one_sub_sum_bornProb_map {G : Game X Y A B} {MA : X → POVM A dA}\n    {MB : Y → POVM B dB} (f : A → C) (g : B → C)\n    (hD : ∀ a b, ((MA x).mats a).val ≠ 0 → ((MB y).mats b).val ≠ 0 → f a = g b →\n      G.D x y a b = true) :\n    condFail G ψ MA MB x y\n      ≤ 1 - ∑ c, bornProb ψ ((((MA x).map f).mats c).val) ((((MB y).map g).mats c).val) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {X Y A B C : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B] [Fintype C]"
+  ],
+  "docstring": "**Agreement on the support implies acceptance bounds the conditional failure by the\ndisagreement of the relabelled POVMs.** Only outcomes both parties can produce are asked to be\naccepted, which is what a strategy answering every question in its own format needs.",
+  "module": "MIPRE.Foundations.POVMMix",
+  "module_doc": "/-!\n# Mixtures and extensions of POVMs, and the agreement triangle\n\nThree constructions on bundled POVMs that the padded strategy of the Pauli basis test's stage 4\nneeds, and one inequality.\n\n* `POVM.aOp` extends a POVM on `d` by the identity to `d × E`; `POVM.dirac a₀` answers `a₀` with\n  certainty; `POVM.mix w Q` is a convex combination of POVMs with the same outcomes. A strategy\n  that must be a *function of the question* while the analysis controls it *sample by sample* is\n  a mixture over the samples producing the question, and the Born rule's linearity\n  (`bornProb_mix_left`, `bornProb_mix_right`) turns a bound on the mixture into the average of the\n  per-sample bounds.\n* `agreeSum_triangle` is the paper's triangle-like inequality for the consistency relation\n  (`fact:triangle-for-simeq`, item 1): if Alice's `A` agrees with Bob's `B`, Alice's `C` agrees\n  with Bob's `B`, and Alice's `C` agrees with Bob's `D`, each with probability at least `1 - δ`,\n  then Alice's `A` agrees with Bob's `D` with probability at least `1 - 11 δ`. No projectivity is\n  assumed: for POVMs the agreement is not a squared distance, and the argument goes through the\n  vectors `(R_a ⊗ I)|ψ⟩`, whose weighted squared norms are at most one and, by Cauchy--Schwarz\n  against a partner they agree with, at least `1 - 2δ`. The paper pads these vectors to unit\n  vectors and gets `9 δ`; the unpadded argument here costs the extra `2 δ` and needs no auxiliary\n  space.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/POVMMix.lean#L306-L331",
+  "source_path": "MIPRE/Foundations/POVMMix.lean",
+  "lines": [
+   306,
+   331
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-setup",
+    "env": "lemma",
+    "title": "Admissible padded setup",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb_map",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.condFail_le_one_sub_sum_bornProb_diag",
+  "source_name": "MIPRE.condFail_le_one_sub_sum_bornProb_diag",
+  "formal_statement": "theorem MIPRE.condFail_le_one_sub_sum_bornProb_diag {G : Game X Y A A} {MA : X → POVM A dA}\n    {MB : Y → POVM A dB}\n    (hD : ∀ a, ((MA x).mats a).val ≠ 0 → ((MB y).mats a).val ≠ 0 → G.D x y a a = true) :\n    condFail G ψ MA MB x y\n      ≤ 1 - ∑ a, bornProb ψ (((MA x).mats a).val) (((MB y).mats a).val) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {X Y A B C : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B] [Fintype C]"
+  ],
+  "docstring": "The same with both parties' outcomes read as they are: acceptance of every diagonal pair\non the support bounds the conditional failure by the diagonal disagreement.",
+  "module": "MIPRE.Foundations.POVMMix",
+  "module_doc": "/-!\n# Mixtures and extensions of POVMs, and the agreement triangle\n\nThree constructions on bundled POVMs that the padded strategy of the Pauli basis test's stage 4\nneeds, and one inequality.\n\n* `POVM.aOp` extends a POVM on `d` by the identity to `d × E`; `POVM.dirac a₀` answers `a₀` with\n  certainty; `POVM.mix w Q` is a convex combination of POVMs with the same outcomes. A strategy\n  that must be a *function of the question* while the analysis controls it *sample by sample* is\n  a mixture over the samples producing the question, and the Born rule's linearity\n  (`bornProb_mix_left`, `bornProb_mix_right`) turns a bound on the mixture into the average of the\n  per-sample bounds.\n* `agreeSum_triangle` is the paper's triangle-like inequality for the consistency relation\n  (`fact:triangle-for-simeq`, item 1): if Alice's `A` agrees with Bob's `B`, Alice's `C` agrees\n  with Bob's `B`, and Alice's `C` agrees with Bob's `D`, each with probability at least `1 - δ`,\n  then Alice's `A` agrees with Bob's `D` with probability at least `1 - 11 δ`. No projectivity is\n  assumed: for POVMs the agreement is not a squared distance, and the argument goes through the\n  vectors `(R_a ⊗ I)|ψ⟩`, whose weighted squared norms are at most one and, by Cauchy--Schwarz\n  against a partner they agree with, at least `1 - 2δ`. The paper pads these vectors to unit\n  vectors and gets `9 δ`; the unpadded argument here costs the extra `2 δ` and needs no auxiliary\n  space.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/POVMMix.lean#L333-L356",
+  "source_path": "MIPRE/Foundations/POVMMix.lean",
+  "lines": [
+   333,
+   356
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-setup",
+    "env": "lemma",
+    "title": "Admissible padded setup",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 17,
+  "is_target": false
+ }
+]

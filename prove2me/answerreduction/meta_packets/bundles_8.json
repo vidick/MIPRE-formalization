@@ -1,0 +1,3095 @@
+[
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_LineRestrict",
+  "module": "MIPRE.Foundations.LowDegree.LineRestrict",
+  "module_doc": "/-!\n# Restricting a polynomial to a line\n\nThe expansion stage's line measurements are indexed by the *restriction to a line* of the\nlow-degree encoding of the ancilla's measurement outcome. This file is that operation: substitute\nthe affine parametrization `t -> u0 + t . w` into a multivariate polynomial and read off the\nunivariate coefficients.\n\nTwo facts are all the consumers need:\n\n* `eval_lineRestrict` --- evaluating the restriction at `t` is evaluating the polynomial at the\n  point `u0 + t . w`, so the restriction carries the same information along the line;\n* `natDegree_lineRestrict_le` --- the restriction has degree at most the total degree, so a\n  multilinear polynomial in `m` variables restricts to degree at most `m` and the coefficient\n  vector fits in a `LinePoly F m`.\n\n`lineCoeffs` packages the coefficients as the `LinePoly` the games use, and `eval_lineCoeffs`\nis the composite of the two.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/LineRestrict.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/LineRestrict.lean",
+  "defmat": [
+   "MIPRE.LowDegree.lineRestrict"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.lineRestrict_zero"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.lineRestrict",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     42,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.lineRestrict_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     47,
+     49
+    ]
+   }
+  ],
+  "lines": 56,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding"
+  ],
+  "blueprint": [
+   "def:line-restriction"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.lineRestrict": [
+    "/-- **The restriction of a multivariate polynomial to the line** `t ↦ u₀ + t • w`, as a",
+    "univariate polynomial. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_CLHonest",
+  "module": "MIPRE.Background.LIDT.CLHonest",
+  "module_doc": "/-!\n# Honest answers in the seeded CL low-degree test\n\nPiece AR-4 of `planning/answer-reduction.md` needs the completeness of the seeded CL test\n(`def:lidt-cl`, `MIPRE.LIDT.CL.accepts`): a tuple of polynomials of individual degree at most `d`,\nanswered honestly — its values at a point, its restrictions to a line — passes the test on any\ntwo questions of one sample.\n\n* `honest` — the honest answer of a tuple `G` of `ldc` polynomials to a question: the values at\n  a point, the coefficients of the restrictions (`MIPRE.LowDegree.lineRestrict`) to an axis-parallel\n  or diagonal line.\n* `accepts_honest` — the test accepts the honest answers to the two questions of a sample.\n* `Regs.sampleOf_eval_question` — reading a sample back off the presentation's output gives the\n  question the presentation computes: the base points it outputs are already canonical, so the\n  decider's re-derivation of the base point (`rep`) changes nothing. This is what lets a decider\n  that reads the sample off a question vector be fed the presentation's questions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/CLHonest.lean",
+  "source_path": "MIPRE/Background/LIDT/CLHonest.lean",
+  "defmat": [
+   "MIPRE.LIDT.CL.honest",
+   "MIPRE.LIDT.CL.lineCo",
+   "MIPRE.LIDT.CL.recanon"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.LIDT.CL.honest",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     102,
+     107
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.CL.lineCo",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     73,
+     76
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.CL.recanon",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     151,
+     158
+    ]
+   }
+  ],
+  "lines": 104,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_Presentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict"
+  ],
+  "blueprint": [
+   "lem:ar-completeness"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LIDT.CL.honest": [
+    "/-- **The honest answer** of the tuple `G` to a question: its values at a point, its",
+    "restrictions to a line. -/"
+   ],
+   "MIPRE.LIDT.CL.lineCo": [
+    "/-- The coefficients of the restriction of `p` to the line `u₀ + t w`, as a `LinePoly` of",
+    "degree `n`. -/"
+   ],
+   "MIPRE.LIDT.CL.recanon": [
+    "/-- The decider's re-derivation of a question from the sample it reads: the base point made",
+    "canonical, the diagonal direction zeroed below the seed's block. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_AnswerReduction_Honest",
+  "module": "MIPRE.Background.AnswerReduction.Honest",
+  "module_doc": "/-!\n# Honest answers of the answer-reduced verifier\n\nPiece AR-4 of `planning/answer-reduction.md`, the combinatorial half: the decision predicate\n`accepts` of `fig:decider-pcp` accepts the honest answers of two players who answer from\npolynomial data that is consistent in the ways the five steps check.\n\nA player's data (`HPolys`) is five `m`-variate polynomials `g₁ … g₅`, one for each of the first\nfive copies of the low-degree test, and `m' + 6` `m'`-variate polynomials `c`, the codewords of the\nsixth copy. Its honest answer to a question of type `(i, τ)` (`honestAns`) is the honest answer\n(`LIDT.CL.honest`) of `gᵢ`, or of `c` for the sixth copy, to the seeded question the type's\npresentation computes. In the paper (`ld_compiler.tex`, the completeness part of `thm:ar`):\n\n* an oracle's data is the PCP proof of its pair of answers: `g₁, g₂` the low-degree encodings of\n  the two answers, `g₃ … g₅` the proof's other answer polynomials, and `c` the five `gᵢ` read on\n  their blocks of `F^{m'}` followed by the constraint polynomials (`HPolys.Oracle`);\n* an isolated player's data has for `g_v` the low-degree encoding of its own answer, `v` its\n  role's index, and anything of low degree elsewhere (zero, in AR-4's instance).\n\n`accepts_honest` is the statement: for two questions read off one PCP vector, players whose data\nis of individual degree at most `d = 7` (`HPolys.LowDeg`), equal for equal roles, with the oracle's\n`g_v` the isolated player `v`'s, and with an oracle's data passing its PCP check at every point,\nare accepted.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/Honest.lean",
+  "source_path": "MIPRE/Background/AnswerReduction/Honest.lean",
+  "defmat": [
+   "MIPRE.AnswerReduction.Consistent",
+   "MIPRE.AnswerReduction.HPolys",
+   "MIPRE.AnswerReduction.HPolys.LowDeg",
+   "MIPRE.AnswerReduction.HPolys.Oracle",
+   "MIPRE.AnswerReduction.HPolys.idx6",
+   "MIPRE.AnswerReduction.honestAns"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.AnswerReduction.Consistent",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     199,
+     203
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.HPolys",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     42,
+     48
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.HPolys.LowDeg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     52,
+     54
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.HPolys.Oracle",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     59,
+     64
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.HPolys.idx6",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     56,
+     57
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.honestAns",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     71,
+     75
+    ]
+   }
+  ],
+  "lines": 154,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_Presentation",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_PcpPresentation",
+   "import Definitions.Def_MIPRE_Foundations_OracularGame",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Predicate",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLHonest"
+  ],
+  "blueprint": [
+   "lem:ar-completeness"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.AnswerReduction.Consistent": [
+    "/-- **The consistency of two players' data** that the five steps read: equal roles have equal",
+    "data, and an isolated player `v`'s `g_v` is an oracle's. -/"
+   ],
+   "MIPRE.AnswerReduction.HPolys": [
+    "/-- **A player's polynomial data**: the answer polynomials of the first five copies, and the",
+    "codewords of the sixth. -/"
+   ],
+   "MIPRE.AnswerReduction.HPolys.LowDeg": [
+    "/-- Every polynomial has individual degree at most `d = 7`. -/"
+   ],
+   "MIPRE.AnswerReduction.HPolys.Oracle": [
+    "/-- An oracle's data: the sixth copy's first five codewords are the `gⱼ` read on their blocks,",
+    "and every point's evaluations pass the check `chk`. -/"
+   ],
+   "MIPRE.AnswerReduction.HPolys.idx6": [
+    "/-- The index `j ≤ 5` of a first-five copy among the sixth copy's codewords. -/"
+   ],
+   "MIPRE.AnswerReduction.honestAns": [
+    "/-- **The honest answer** of a player with data `H` to the question of PCP type `t` read off `y`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_SyncPushQ",
+  "module": "MIPRE.Foundations.SyncPushQ",
+  "module_doc": "/-!\n# Playing a synchronous strategy through a reading of the questions\n\nThe honest strategy of a compiled game often measures an old strategy at a question computed from\nthe new one, and post-processes the outcome with a map that may depend on the new question. For\nanswer reduction (AR-4 of `planning/answer-reduction.md`) the old game is the oracularized one:\neach player measures at the oracularized question its seed's oracle half determines, and answers\nthe low-degree encoding of the outcome that its PCP question asks for.\n\n`SyncStrategy.pushQ` is that strategy: at a new question `x'`, the operator for `a'` is the sum\nof the old operators at `g x'` over the outcomes `f x'` sends to `a'`. It is projective because\ndistinct old outcomes are orthogonal.\n\n* `isPCC_pushQ` — it is PCC when the old one is, provided every new pair of positive weight is\n  read as an old pair of positive weight.\n* `value_pushQ_eq_one` — it has value `1` when the old strategy's operators for a rejected pair\n  at a pair of positive weight multiply to zero, and every old pair accepted there (with both\n  old answers accepted against themselves wherever that pair is asked) is read as an accepted\n  new pair.\n\nThis generalizes `SyncStrategy.pushTo` of `MIPRE/Foundations/OracularTyped` (the case of the\nidentity reading and an answer map independent of the question), but proves value `1` rather\nthan monotonicity, which is what a question-dependent answer map allows.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SyncPushQ.lean",
+  "source_path": "MIPRE/Foundations/SyncPushQ.lean",
+  "defmat": [
+   "MIPRE.SyncStrategy.pushQ",
+   "MIPRE.SyncStrategy.pushQMeas"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.SyncStrategy.pushQ",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     61,
+     65
+    ]
+   },
+   {
+    "name": "MIPRE.SyncStrategy.pushQMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     42,
+     59
+    ]
+   }
+  ],
+  "lines": 79,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_PerfectStrategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport"
+  ],
+  "blueprint": [
+   "lem:ar-completeness"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.SyncStrategy.pushQ": [
+    "/-- **The strategy read through `g` and `f`**, on another synchronous game. -/"
+   ],
+   "MIPRE.SyncStrategy.pushQMeas": [
+    "/-- The measurement played at `x'`: the old measurement at `g x'`, its outcomes pushed forward",
+    "along `f x'`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_AnswerReduction_TypedComplete",
+  "module": "MIPRE.Background.AnswerReduction.TypedComplete",
+  "module_doc": "/-!\n# Completeness of the typed answer-reduced game\n\nPiece AR-4 of `planning/answer-reduction.md`: a value-`1` PCC strategy of the input verifier gives\none of the (doubled) typed answer-reduced game (`exists_typedGame_perfectPCC`), for any PCP proofs\nof the accepted answer pairs — the paper's completeness argument for `thm:ar`\n(`ld_compiler.tex`), with the PCP's completeness left as a hypothesis (`ProofGood`), discharged in\n`MIPRE/Background/AnswerReduction/Complete`.\n\nThe strategy is the oracularized game's honest strategy (`SeededGame.oracleStrategy`, the\noracularization's completeness), read through the question map that keeps a question's role and\nits oracle half (`SyncStrategy.pushQ`), and answered honestly (`honestAns`) from data computed from\nthe role, the oracle half and the outcome (`hdata`):\n\n* an oracle answering the pair `(a, b)` at seed `x` holds the PCP proof `pfOf x a b` (`ofProof`);\n* an isolated player answering `a` holds the low-degree encoding of `a` at its own copy\n  (`ofAnswer`), and zero elsewhere.\n\nTwo questions of positive weight are read off one seed; their oracle halves are then an\noracularized question pair of positive weight, and their PCP halves questions of one PCP vector.\nThere the oracularized predicate's checks are exactly the consistency `accepts_honestAns` needs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/TypedComplete.lean",
+  "source_path": "MIPRE/Background/AnswerReduction/TypedComplete.lean",
+  "defmat": [
+   "MIPRE.AnswerReduction.ProofGood",
+   "MIPRE.AnswerReduction.blockEmb",
+   "MIPRE.AnswerReduction.hdata",
+   "MIPRE.AnswerReduction.honestQ",
+   "MIPRE.AnswerReduction.ofAnswer",
+   "MIPRE.AnswerReduction.ofProof"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.AnswerReduction.ProofGood",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     94,
+     99
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.blockEmb",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     70,
+     75
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.hdata",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     169,
+     175
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.honestQ",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     276,
+     279
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.ofAnswer",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     89,
+     92
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.ofProof",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     82,
+     87
+    ]
+   }
+  ],
+  "lines": 319,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_Presentation",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_PcpPresentation",
+   "import Definitions.Def_MIPRE_Foundations_OracularGame",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Predicate",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_PerfectStrategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_OracularSound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_OracularTensor",
+   "import Definitions.Def_MIPRE_Foundations_OracularComplete",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_OracularTyped",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_AnswerFormat",
+   "import Definitions.Def_MIPRE_Foundations_CL_Product",
+   "import Definitions.Def_MIPRE_Foundations_CL_Downsize",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_ProductSampler",
+   "import Definitions.Def_MIPRE_Background_LIDT_PresentationQueries",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleConstructor",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Shoup",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_ShoupCoefficients",
+   "import Definitions.Def_MIPRE_Foundations_SAT_QuotientField",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldTrace",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldCoordinates",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Layout",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Family",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_TypedGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLHonest",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Honest",
+   "import Definitions.Def_MIPRE_Foundations_SyncPushQ"
+  ],
+  "blueprint": [
+   "lem:ar-completeness"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.AnswerReduction.ProofGood": [
+    "/-- A PCP proof is good for the pair `(a, b)` at seed `x`: its first two answer polynomials encode",
+    "`a` and `b`, and every point's evaluations pass the check. -/"
+   ],
+   "MIPRE.AnswerReduction.blockEmb": [
+    "/-- The embedding of the `i`-th block of `m` coordinates into the `m'` of the sixth copy. -/"
+   ],
+   "MIPRE.AnswerReduction.hdata": [
+    "/-- **A player's data**, from its role, the oracle half of its question and the oracularized",
+    "strategy's outcome. -/"
+   ],
+   "MIPRE.AnswerReduction.honestQ": [
+    "/-- **The honest answer** to a typed question, from the oracularized strategy's outcome. -/"
+   ],
+   "MIPRE.AnswerReduction.ofAnswer": [
+    "/-- **An isolated player's data**: the low-degree encoding of its answer at its own copy `v`. -/"
+   ],
+   "MIPRE.AnswerReduction.ofProof": [
+    "/-- **An oracle's data**, from a PCP proof: the answer polynomials, and for the sixth copy the",
+    "answer polynomials read on their blocks followed by the constraint polynomials. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_CL_DetypingCompleteSupport",
+  "module": "MIPRE.Foundations.CL.DetypingCompleteSupport",
+  "module_doc": "/-! # The common measurement rule and support of detyping\n\nBoth players use one decoder of graph views. It agrees with their own type\nselector on sampled questions, and otherwise selects a deterministic fallback.\nThis is the player-independent rule in `types.tex`, `lem:detyping-verifiers`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingCompleteSupport.lean",
+  "source_path": "MIPRE/Foundations/CL/DetypingCompleteSupport.lean",
+  "defmat": [
+   "MIPRE.CL.Detyping.decodeQuestion",
+   "MIPRE.CL.Detyping.decodeView"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.CL.Detyping.decodeQuestion",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     89,
+     92
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Detyping.decodeView",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     25,
+     30
+    ]
+   }
+  ],
+  "lines": 65,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.CL.Detyping.decodeQuestion": [
+    "/-- Decode a full question, retaining its content register. -/"
+   ],
+   "MIPRE.CL.Detyping.decodeView": [
+    "/-- The common decoder recognizes either player's full valid graph view. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_CL_DetypingComplete",
+  "module": "MIPRE.Foundations.CL.DetypingComplete",
+  "module_doc": "/-! # PCC completeness of finite-game detyping\n\nThe complete strategy uses the input strategy's dimension and one common\nmeasurement rule for both players. Invalid local graph views select a constant\nmeasurement. On jointly valid views, the original strategy is played on the\nsame ordered edge and common content seed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingComplete.lean",
+  "source_path": "MIPRE/Foundations/CL/DetypingComplete.lean",
+  "defmat": [
+   "MIPRE.CL.Detyping.complete"
+  ],
+  "embedded": [
+   "_private.MIPRE.Foundations.CL.DetypingComplete.0.MIPRE.CL.Detyping.failAt_zero_of_accepts",
+   "_private.MIPRE.Foundations.CL.DetypingComplete.0.MIPRE.CL.Detyping.sample_dist_pos_iff",
+   "_private.MIPRE.Foundations.CL.DetypingComplete.0.MIPRE.CL.Detyping.sample_failAt_zero"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.CL.Detyping.complete",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     50,
+     74
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.CL.DetypingComplete.0.MIPRE.CL.Detyping.failAt_zero_of_accepts",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     39,
+     43
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.CL.DetypingComplete.0.MIPRE.CL.Detyping.sample_dist_pos_iff",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     21,
+     26
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.CL.DetypingComplete.0.MIPRE.CL.Detyping.sample_failAt_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     28,
+     37
+    ]
+   }
+  ],
+  "lines": 110,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingCompleteSupport"
+  ],
+  "blueprint": [
+   "lem:detype-game-completeness"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.CL.Detyping.complete": [
+    "/-- The input measurements on decoded questions, with a deterministic fallback.",
+    "The outer doubling tag is ignored, so both players use literally the same rule. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_CL_DetypingDeciderTransport",
+  "module": "MIPRE.Foundations.CL.DetypingDeciderTransport",
+  "module_doc": "/-! # Same-state soundness for the actual detyped verifier\n\nThe actual sampler's numbered CL presentations have precisely the finite\ndetyping distribution after the coordinate permutation. Together with the\nproved executable predicate law, this transports the existing finite-game\nrestriction to strategies for the compiled ambient verifier.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingDeciderTransport.lean",
+  "source_path": "MIPRE/Foundations/CL/DetypingDeciderTransport.lean",
+  "defmat": [
+   "MIPRE.CL.Detyping.DeciderProgram.doubledVectorEquiv",
+   "MIPRE.CL.Detyping.DeciderProgram.fromFiniteSync",
+   "MIPRE.CL.Detyping.DeciderProgram.restrictAmbient",
+   "MIPRE.CL.Detyping.DeciderProgram.sourceFamily",
+   "MIPRE.CL.Detyping.DeciderProgram.toFinite",
+   "MIPRE.CL.Detyping.DeciderProgram.vectorEquiv"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.CL.Detyping.DeciderProgram.doubledVectorEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     126,
+     129
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Detyping.DeciderProgram.fromFiniteSync",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     171,
+     175
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Detyping.DeciderProgram.restrictAmbient",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     92,
+     96
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Detyping.DeciderProgram.sourceFamily",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     38,
+     38
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Detyping.DeciderProgram.toFinite",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     73,
+     77
+    ]
+   },
+   {
+    "name": "MIPRE.CL.Detyping.DeciderProgram.vectorEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     28,
+     36
+    ]
+   }
+  ],
+  "lines": 139,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderProg",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDecider",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingCompleteSupport",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingComplete"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.CL.Detyping.DeciderProgram.doubledVectorEquiv": [
+    "/-- Undo coordinate numbering while preserving the doubling tag. -/"
+   ],
+   "MIPRE.CL.Detyping.DeciderProgram.fromFiniteSync": [
+    "/-- Transport a synchronous finite-game strategy to the actual compiled verifier. -/"
+   ],
+   "MIPRE.CL.Detyping.DeciderProgram.restrictAmbient": [
+    "/-- Restrict an actual compiled-verifier strategy to valid typed graph views. -/"
+   ],
+   "MIPRE.CL.Detyping.DeciderProgram.sourceFamily": null,
+   "MIPRE.CL.Detyping.DeciderProgram.toFinite": [
+    "/-- Read the actual compiled-verifier strategy in the unnumbered finite game. -/"
+   ],
+   "MIPRE.CL.Detyping.DeciderProgram.vectorEquiv": [
+    "/-- The coordinate numbering is an equivalence of the complete question spaces. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_AnswerReduction_Complete",
+  "module": "MIPRE.Background.AnswerReduction.Complete",
+  "module_doc": "/-!\n# Completeness of answer reduction\n\nPiece AR-4 of `planning/answer-reduction.md`, concluded (`lem:ar-completeness`, with\n`lem:oracle-timeout-pcc` in the ambient form the contract uses): for `λ, μ ≥ 1`, an input within\nits budget whose decider has size at most `σ` and which has a value-`1` PCC strategy at the answer\nbound `2^{(λn + 1)^μ}` gives an answer-reduced verifier with a value-`1` PCC strategy at the answer\ncut (`arVerifier_hasPerfectPCC`), hence at the output bound (`arVerifier_completeness`).\n\nThe typed game's completeness (`exists_typedGame_perfectPCC`) asks for good PCP proofs of the\npairs the input decider accepts. They are the PCP decider's (`SAT.PcpDecider.completeness`), under\nthree facts:\n\n* **the decider accepts within the PCP's time bound** `T = 2^{(Q + 5)(μ + 1)}`\n  (`acceptsWithin_of_accepts`): an input within its budget runs within `2^Q (|d| + 1)^μ` on every\n  input, and on answers of length at most `2^Q` that is at most `T` — the timeout the paper's\n  `lem:oracle-timeout-pcc` handles by truncation is here a consequence of determinism, since the\n  answer alphabet is already cut at `2^Q`;\n* **the PCP's input is valid** (`valid_of`): `Q ≤ T`, `2 log n ≤ T`, `|𝒟| ≤ σ` and questions of\n  length at most `Q`. The second is where `λ, μ ≥ 1` is needed (`Q ≥ n + 1`);\n* **the PCP's field is the Shoup field** the answer-reduced sampler downsizes along\n  (`ShoupField`, a hypothesis on the PCP decider like `ParamsBound`): the game check hands the PCP\n  verifier the view in the Shoup representation, and the PCP's completeness is stated in its own.\n\nThen the detyping compiler's completeness (`CL.Detyping.DeciderProgram.verifier_hasPerfectPCC`)\ncarries the typed strategy to the output verifier, its typed predicate being the typed game's at\nthe answer cut (`typedDecider`'s `accepts_iff`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/Complete.lean",
+  "source_path": "MIPRE/Background/AnswerReduction/Complete.lean",
+  "defmat": [
+   "MIPRE.AnswerReduction.ShoupField",
+   "MIPRE.AnswerReduction.arPf",
+   "MIPRE.AnswerReduction.zeroProof"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.AnswerReduction.ShoupField",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     45,
+     47
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.arPf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     172,
+     177
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.zeroProof",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     168,
+     170
+    ]
+   }
+  ],
+  "lines": 376,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_Presentation",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_PcpPresentation",
+   "import Definitions.Def_MIPRE_Foundations_OracularGame",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Predicate",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_PerfectStrategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_OracularSound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_OracularTensor",
+   "import Definitions.Def_MIPRE_Foundations_OracularComplete",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_OracularTyped",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_AnswerFormat",
+   "import Definitions.Def_MIPRE_Foundations_CL_Product",
+   "import Definitions.Def_MIPRE_Foundations_CL_Downsize",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_ProductSampler",
+   "import Definitions.Def_MIPRE_Background_LIDT_PresentationQueries",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleConstructor",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Shoup",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_ShoupCoefficients",
+   "import Definitions.Def_MIPRE_Foundations_SAT_QuotientField",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldTrace",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldCoordinates",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Layout",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Family",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_TypedGame",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Stages",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_StageLists",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SeedSelectorProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFold",
+   "import Definitions.Def_MIPRE_Foundations_SAT_NormalElementProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryInverse",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_LineRepresentativeProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_BinaryCompare",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_SeededLineProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgFinite",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgParse",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_BinaryBlockProg",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_StageProg",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_StageCorrect",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgBits",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCall",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgRoute",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Interpreter_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Toolkit_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Universal_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_ProductSamplerProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_FiniteEncoding",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_PcpSampler",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_FieldPolynomialProg",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_FieldLineCheckProg",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_PauliStageProg",
+   "import Definitions.Def_MIPRE_Foundations_Introspection_FieldQuestionProg",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_DecideSpec",
+   "import Definitions.Def_MIPRE_Foundations_Cost_SizeProgram",
+   "import Definitions.Def_MIPRE_Foundations_SAT_PcpFormat",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Lists_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Growth",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Arith",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Prims",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_MapLoop",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_Repeat",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Bits",
+   "import Definitions.Def_MIPRE_Foundations_VerifierValue",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Budget",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_Repetition",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_RepSampler",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_Dom",
+   "import Definitions.Def_MIPRE_Foundations_Repeat_SamplerCost",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgQueries",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingProgCost",
+   "import Definitions.Def_MIPRE_Foundations_OracularSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderRoute",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderProg",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDecider",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderGame",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Serial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Kleene_B",
+   "import Definitions.Def_MIPRE_Foundations_OracularDecider",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_DecideProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_While",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_UnaryArith",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_AnswerReduction",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Params",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_ArSampler",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_ArDecider",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_PowDom",
+   "import Definitions.Def_MIPRE_Foundations_Pipeline_PowDomRun",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_ParamsCost",
+   "import Definitions.Def_MIPRE_Foundations_CL_ProductSamplerCost",
+   "import Definitions.Def_MIPRE_Foundations_CL_ProgBuild",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Construction",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLHonest",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Honest",
+   "import Definitions.Def_MIPRE_Foundations_SyncPushQ",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_TypedComplete",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingCompleteSupport",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingComplete",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingDeciderTransport"
+  ],
+  "blueprint": [
+   "lem:ar-completeness"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.AnswerReduction.ShoupField": [
+    "/-- **The PCP's field is the Shoup field**, for every admissible extension degree. -/"
+   ],
+   "MIPRE.AnswerReduction.arPf": [
+    "/-- **The oracles' PCP proofs**: a good proof where there is one. -/"
+   ],
+   "MIPRE.AnswerReduction.zeroProof": [
+    "/-- The zero PCP proof. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_PresentationEmbed",
+  "module": "MIPRE.Background.LIDT.PresentationEmbed",
+  "module_doc": "/-!\n# The presentation's output is a function of its question\n\nPiece AR-5b of `planning/answer-reduction.md` needs the converse of `Regs.questionOf_eval`: the\nvector a type's presentation outputs is supported on the copy's own registers, and is a fixed\nfunction (`Regs.embedQ`) of the seeded question it computes (`Regs.pres_eval`). So a strategy\nthat answers a question vector of the answer-reduced verifier answers, through `embedQ`, the\nseeded low-degree test's question, and the two games' questions correspond one to one.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/PresentationEmbed.lean",
+  "source_path": "MIPRE/Background/LIDT/PresentationEmbed.lean",
+  "defmat": [
+   "MIPRE.LIDT.CL.Question.ty",
+   "MIPRE.LIDT.CL.Regs.embedQ",
+   "MIPRE.LIDT.CL.Sample.equiv",
+   "MIPRE.LIDT.CL.Sample.retype"
+  ],
+  "embedded": [
+   "MIPRE.LIDT.CL.Sample.question_retype",
+   "MIPRE.LIDT.CL.Sample.question_ty"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LIDT.CL.Question.ty",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     23,
+     27
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.CL.Regs.embedQ",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     42,
+     47
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.CL.Sample.equiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     135,
+     140
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.CL.Sample.question_retype",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     129,
+     133
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.CL.Sample.question_ty",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     29,
+     32
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.CL.Sample.retype",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     125,
+     127
+    ]
+   }
+  ],
+  "lines": 107,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_Presentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLHonest"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LIDT.CL.Question.ty": [
+    "/-- The type of a question. -/"
+   ],
+   "MIPRE.LIDT.CL.Regs.embedQ": [
+    "/-- **The vector a question is presented as**: the point written in the point register, the",
+    "seed decoded by the permutation in the seed register, the direction in the direction register. -/"
+   ],
+   "MIPRE.LIDT.CL.Sample.equiv": [
+    "/-- A sample is its two types, point, seed and direction. -/"
+   ],
+   "MIPRE.LIDT.CL.Sample.retype": [
+    "/-- A sample with its two types replaced. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_AnswerReduction_SoundCopy",
+  "module": "MIPRE.Background.AnswerReduction.SoundCopy",
+  "module_doc": "/-!\n# Soundness of answer reduction: the low-degree test inside the predicate\n\nPiece AR-5b of `planning/answer-reduction.md` (`claim:ar-3`, `claim:ar-4`): on the nine type\npairs of one copy of the low-degree test, at a role pair where the answer-reduced predicate runs\nthat copy's test, acceptance of the predicate implies acceptance of the seeded CL test on the\nquestions the copy's presentation computes (`cl_accepts_of_accepts`, `cl_accepts_of_accepts6`).\nThe copies tested are copy `v` for the isolated player `v` (step 3), copies `3`, `4`, `5` and the\nsixth for two oracles (step 4); an oracle's copies `1` and `2` are tested only through the\nisolated players.\n\nThe CL test's equality subtest on equal types is the predicate's step 1, its format check is the\npreamble, and its point-against-line subtests are steps 3 and 4, in either order of the players\n(`CL.accepts_comm`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundCopy.lean",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundCopy.lean",
+  "defmat": [
+   "MIPRE.AnswerReduction.LDStep"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.AnswerReduction.LDStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     53,
+     55
+    ]
+   }
+  ],
+  "lines": 111,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_Presentation",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_PcpPresentation",
+   "import Definitions.Def_MIPRE_Foundations_OracularGame",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Predicate",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLHonest",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Honest",
+   "import Definitions.Def_MIPRE_Background_LIDT_PresentationEmbed"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.AnswerReduction.LDStep": [
+    "/-- The role pairs and copies at which the predicate runs a copy's low-degree test: copy `v` for",
+    "the isolated player `v`, copies `3`, `4`, `5` for two oracles. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_AnswerReduction_SoundIsolate",
+  "module": "MIPRE.Background.AnswerReduction.SoundIsolate",
+  "module_doc": "/-!\n# Soundness of answer reduction: the per-seed low-degree games\n\nPiece AR-5b of `planning/answer-reduction.md` (`claim:ar-3`, `claim:ar-4`, `def:ar-seed-index`).\nA strategy for the typed answer-reduced game, restricted to one copy of the low-degree test at a\nrole pair where that copy is tested and to one seed of the input sampler, is a strategy for the\nseeded CL test of the copy's parameters (`copyStrategy`): its question maps a CL question to the\ntyped question whose PCP half the copy's presentation computes (`Regs.embedQ`) and whose oracle\nhalf the seed's role family gives, and its answers are parsed and read as answers of the copy's\ntest. The seeds are indexed by the full seed of the input sampler, as the blueprint's\n`def:ar-seed-index` asks.\n\nThe per-seed failures average to at most a constant times the typed failure\n(`sum_one_sub_value_copyStrategy_le`): the copy's nine type pairs are a fixed fraction of the\ntyped game's, and the copy's registers of a uniform PCP vector carry a uniform sample\n(`Regs.sum_sampleOf`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundIsolate.lean",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundIsolate.lean",
+  "defmat": [
+   "MIPRE.AnswerReduction.arQ1",
+   "MIPRE.AnswerReduction.arQ6",
+   "MIPRE.AnswerReduction.copyFail",
+   "MIPRE.AnswerReduction.copyFail6",
+   "MIPRE.AnswerReduction.copyStrategy",
+   "MIPRE.AnswerReduction.copyStrategy6",
+   "MIPRE.AnswerReduction.edgeFail",
+   "MIPRE.AnswerReduction.pcpBits",
+   "MIPRE.AnswerReduction.pcpBitsEquiv",
+   "MIPRE.AnswerReduction.readAns1",
+   "MIPRE.AnswerReduction.readAns6"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.AnswerReduction.arQ1",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     79,
+     82
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.arQ6",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     286,
+     289
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.copyFail",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     119,
+     123
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.copyFail6",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     323,
+     327
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.copyStrategy",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     90,
+     98
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.copyStrategy6",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     297,
+     303
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.edgeFail",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     157,
+     162
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.pcpBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     62,
+     64
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.pcpBitsEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     137,
+     140
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.readAns1",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     84,
+     88
+    ]
+   },
+   {
+    "name": "MIPRE.AnswerReduction.readAns6",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     291,
+     295
+    ]
+   }
+  ],
+  "lines": 331,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_Presentation",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Decoupled",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Pcp",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_PcpPresentation",
+   "import Definitions.Def_MIPRE_Foundations_OracularGame",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Predicate",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_PerfectStrategy",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameDouble",
+   "import Definitions.Def_MIPRE_Foundations_OracularSound",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_POVMMix",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Foundations_OracularTensor",
+   "import Definitions.Def_MIPRE_Foundations_OracularComplete",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Graph",
+   "import Definitions.Def_MIPRE_Foundations_CL_Detyping",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingLaw",
+   "import Definitions.Def_MIPRE_Foundations_SampledGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_DetypingGame",
+   "import Definitions.Def_MIPRE_Foundations_GapCompression",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Halting_Descriptions",
+   "import Definitions.Def_MIPRE_Foundations_OracularTyped",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_AnswerFormat",
+   "import Definitions.Def_MIPRE_Foundations_CL_Product",
+   "import Definitions.Def_MIPRE_Foundations_CL_Downsize",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_ProductSampler",
+   "import Definitions.Def_MIPRE_Background_LIDT_PresentationQueries",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotient",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDivision",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasisProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryEchelon",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryBasis",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySolve",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryMatrixSolve",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Iterates",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCirculantProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryKernel",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGroupAlgebra",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_FiniteReducedComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_IdempotentSplit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComponentsProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFrobenius",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientComponents",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryGCD",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryFactorization",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCyclotomicSeed",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinarySubstitution",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNonresidueCorrectness",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryTraceBits",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOrbitDescent",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientTranslation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryCoprimeDegree",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryComposedSumProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryOddPrimeProgram",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerTrace",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreier",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierTower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryArtinSchreierLoop",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryDegreeArithmetic",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimality",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_UnaryPrimePower",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeFactors",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryDegreeDecomposition",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPrimePowerDispatch",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleAssembly",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryIrreducibleConstructor",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Shoup",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_ShoupCoefficients",
+   "import Definitions.Def_MIPRE_Foundations_SAT_QuotientField",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldTrace",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FieldCoordinates",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Layout",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Family",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_TypedGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_LineRestrict",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLHonest",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_Honest",
+   "import Definitions.Def_MIPRE_Background_LIDT_PresentationEmbed",
+   "import Definitions.Def_MIPRE_Background_AnswerReduction_SoundCopy"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.AnswerReduction.arQ1": [
+    "/-- **The typed question of a CL question** of copy `i ≤ 5`, at role `r` and oracle half `x`. -/"
+   ],
+   "MIPRE.AnswerReduction.arQ6": [
+    "/-- **The typed question of a CL question** of the sixth copy, at role `r` and oracle half `x`. -/"
+   ],
+   "MIPRE.AnswerReduction.copyFail": [
+    "/-- `T`'s failure at the typed question pair of sample `sm` at oracle half `y`. -/"
+   ],
+   "MIPRE.AnswerReduction.copyFail6": [
+    "/-- `T`'s failure at the typed question pair of sample `sm` of the sixth copy at oracle half `y`. -/"
+   ],
+   "MIPRE.AnswerReduction.copyStrategy": [
+    "/-- **The per-seed low-degree strategy** of copy `i ≤ 5` at role `r` and oracle half `y`: the",
+    "typed strategy played through `arQ1` and `readAns1`, both players at role `r`. At the seed `x₀` of",
+    "the input sampler the oracle half is `(roleFamily L r).eval x₀`: the seed itself for an oracle,",
+    "the original player's question for an isolated player, whose measurements see nothing else. -/"
+   ],
+   "MIPRE.AnswerReduction.copyStrategy6": [
+    "/-- **The per-seed simultaneous low-degree strategy** of the sixth copy at oracle half `y`: the",
+    "typed strategy played through `arQ6` and `readAns6`, both players oracles. -/"
+   ],
+   "MIPRE.AnswerReduction.edgeFail": [
+    "/-- `T`'s failure at the typed question pair of the type pair `uv`, on the vector whose oracle half",
+    "is `x` and whose PCP half is `w`. -/"
+   ],
+   "MIPRE.AnswerReduction.pcpBits": [
+    "/-- The bits of a vector of `V^pcp`, in the numbering of a question's PCP half. -/"
+   ],
+   "MIPRE.AnswerReduction.pcpBitsEquiv": [
+    "/-- The bits of a vector of `V^pcp`, as an equivalence. -/"
+   ],
+   "MIPRE.AnswerReduction.readAns1": [
+    "/-- **An answer read as an answer of copy `i`'s test**: parsed at the question's type, then read by",
+    "`ans1`; a failed parse reads as the zero point answer. -/"
+   ],
+   "MIPRE.AnswerReduction.readAns6": [
+    "/-- **An answer read as an answer of the sixth copy's test**: parsed at the question's type, then",
+    "read by `ans6`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_Coefficients",
+  "module": "MIPRE.Background.LIDT.Coefficients",
+  "module_doc": "/-!\n# Coefficient vectors of low-individual-degree polynomials\n\n`LowIndDegPoly F n d` is a coefficient vector indexed by exponent vectors with entries at most `d`.\nThis file is the algebra of those vectors that more than one analysis needs, moved here from the\nPauli basis test's `Dummy.lean` and `Linear.lean` (where it was first written) so that the\nsimultaneous low-degree test, which sits below the Pauli test in the import graph, can use it.\nThe names are unchanged.\n\n* **Schwartz--Zippel for any finite variable type** (`prob_agreeOn_le_individualDegree`), and the\n  bridge `LowIndDegPoly.toMv` to `MvPolynomial` with its evaluation, coefficient and\n  individual-degree facts; `card_eval_eq_zero_le` is the form a nonzero coefficient vector needs.\n* **Coefficients of a monomial pattern.** `LowIndDegPoly.coef g T t` is the coefficient vector, in\n  the variables outside `T`, of the monomial `∏_{k ∈ T} u_k^{t k}`, and `eval_eq_sum_coef` is the\n  decomposition `g(u) = ∑_t u^t_T · (coef g T t)(u)`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Coefficients.lean",
+  "source_path": "MIPRE/Background/LIDT/Coefficients.lean",
+  "defmat": [
+   "MIPRE.LIDT.LowIndDegPoly.toMv",
+   "MIPRE.LIDT.expFinsupp",
+   "MIPRE.LowDegree.agreeOn"
+  ],
+  "embedded": [
+   "MIPRE.LIDT.expFinsupp_apply",
+   "MIPRE.LowDegree.mem_agreeOn"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LIDT.LowIndDegPoly.toMv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     89,
+     91
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.expFinsupp",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     79,
+     81
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.expFinsupp_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     83,
+     84
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.agreeOn",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     36,
+     37
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.mem_agreeOn",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     39,
+     41
+    ]
+   }
+  ],
+  "lines": 92,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel"
+  ],
+  "blueprint": [
+   "lem:lidt-ldc-extraction",
+   "lem:qld-global-dummy"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LIDT.LowIndDegPoly.toMv": [
+    "/-- **The polynomial a coefficient vector denotes.** -/"
+   ],
+   "MIPRE.LIDT.expFinsupp": [
+    "/-- An exponent vector with entries at most `d`, as a finitely supported function. -/"
+   ],
+   "MIPRE.LowDegree.agreeOn": [
+    "/-- The points of `F^σ` at which two polynomials agree. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_Extraction",
+  "module": "MIPRE.Background.LIDT.Extraction",
+  "module_doc": "/-!\n# Extracting exactly linear combined codewords\n\nBlueprint `lem:lidt-ldc-extraction`, the paper's Step 4 of the proof of `lem:ld-soundness` for\ngeneral `ldc` (`ldt.tex`, Claims 4 and 5 and the measurements `H`, `G`). The simultaneous test with\n`r` codewords is reduced to the single-codeword test in `K + m` variables by *combining*: a point\n`(x, y) ∈ F^K × F^m` is answered by `∑_{j < r} x_j b_j`, where `b ∈ F^r` is the original point\nanswer at `y`. The single-codeword theorem then returns a measurement `R` of polynomials `g` in the\n`K + m` variables, consistent with the combined point answers. This file turns `R` back into a\nmeasurement of `r`-tuples of polynomials in the `m` original variables.\n\n## The extraction\n\nA polynomial `g(x, y)` is **exactly `x`-linear** (`IsXLin`) if it is `∑_i x_i g_i(y)`: every\nmonomial has exactly one `x`-variable, to the first power. `extract` reads off `(g_1, …, g_r)` from\nsuch a `g` and returns `0` otherwise; it is a deterministic relabelling of outcomes, so applied to a\nprojective measurement it gives a projective measurement.\n\n## The estimate\n\n`inconsistency_extract_right_le` (and `_left_le`, the extracted measurement on the other\nparty): the extracted tuple, evaluated at a uniform `y`, disagrees with\nthe original point answer at most `(K + m) d / q` more often than `g(x, y)` disagrees with the\ncombined answer at a uniform `(x, y)`. Fix `y`, the original answer `b` and the outcome `g`, and\naverage over `x` alone --- the Born probabilities do not see `x`, since the original point\nmeasurement is asked `y` only and `R` is asked nothing:\n\n* if `g` is exactly `x`-linear and its extracted tuple is `b` at `y`, there is nothing to prove;\n* if `g` is exactly `x`-linear and the tuple differs from `b`, then `x ↦ g(x, y)` and the combined\n  answer are two different linear forms, so they agree at a uniform `x` with probability at most\n  `K d / q` (`pevY_eq_linPoly`, then Schwartz--Zippel in `K` variables, `card_agree_le`);\n* if `g` is not exactly `x`-linear, a monomial with a forbidden `x`-part has a nonzero coefficient\n  `Q_g`, a polynomial in `y` alone. Where `Q_g(y) ≠ 0` the same Schwartz--Zippel step applies; and\n  `Q_g(y) = 0` has probability at most `m d / q` over `y`, which is paid once per outcome `g`,\n  weighted by `g`'s total Born weight, because summing the Born probabilities over `b` removes `y`\n  (`sum_agreeX_le`, `sum_uniform_badInd_le`).\n\nThe paper splits the last case the same way (its Claims 4 and 5). The linear-forms case costs\n`K d / q` here rather than the paper's `1 / q`: the same Schwartz--Zippel lemma serves all three\ncases, and the difference is absorbed by the final constants.\n\n## The partial evaluation\n\n`pevY g y` is the coefficient vector, in the `K` combining variables, of `x ↦ g(x, y)`\n(`eval_pevY`). It is what lets Schwartz--Zippel in `K` variables be applied with `y` fixed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Extraction.lean",
+  "source_path": "MIPRE/Background/LIDT/Extraction.lean",
+  "defmat": [
+   "MIPRE.LIDT.Simul.IsXLin",
+   "MIPRE.LIDT.Simul.agreeX",
+   "MIPRE.LIDT.Simul.badInd",
+   "MIPRE.LIDT.Simul.badQ",
+   "MIPRE.LIDT.Simul.combPOVM",
+   "MIPRE.LIDT.Simul.evalTuplePOVM",
+   "MIPRE.LIDT.Simul.extEval",
+   "MIPRE.LIDT.Simul.extract",
+   "MIPRE.LIDT.Simul.extractPM",
+   "MIPRE.LIDT.Simul.linPoly",
+   "MIPRE.LIDT.Simul.padB",
+   "MIPRE.LIDT.Simul.pevY",
+   "MIPRE.LIDT.Simul.unitExp",
+   "MIPRE.LIDT.Simul.xCoef",
+   "MIPRE.LIDT.Simul.xOf",
+   "MIPRE.LIDT.Simul.yOf"
+  ],
+  "embedded": [
+   "MIPRE.LIDT.Simul.exists_badCoef",
+   "MIPRE.LIDT.Simul.isPVM_pm"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LIDT.Simul.IsXLin",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     142,
+     146
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.agreeX",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     247,
+     253
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.badInd",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     266,
+     270
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.badQ",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     205,
+     210
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.combPOVM",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     710,
+     714
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.evalTuplePOVM",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     696,
+     700
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.exists_badCoef",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     167,
+     177
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.extEval",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     200,
+     203
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.extract",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     193,
+     198
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.extractPM",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     674,
+     686
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.isPVM_pm",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     667,
+     672
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.linPoly",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     115,
+     117
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.padB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     185,
+     187
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.pevY",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     71,
+     75
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.unitExp",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     97,
+     99
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.xCoef",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     148,
+     151
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.xOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     468,
+     469
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.yOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     471,
+     472
+    ]
+   }
+  ],
+  "lines": 252,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients"
+  ],
+  "blueprint": [
+   "lem:lidt-ldc-extraction"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LIDT.Simul.IsXLin": [
+    "/-- **Exactly `x`-linear**: every monomial with a nonzero coefficient has an `x`-part equal to a",
+    "single variable to the first power. -/"
+   ],
+   "MIPRE.LIDT.Simul.agreeX": [
+    "/-- The agreement, at a uniform `x`, of the combined answer with the outcome `g` evaluated at",
+    "`(x, y)`, as a fraction. -/"
+   ],
+   "MIPRE.LIDT.Simul.badInd": [
+    "/-- The indicator that `g` is not exactly `x`-linear and its forbidden coefficient vanishes at",
+    "`y`. -/"
+   ],
+   "MIPRE.LIDT.Simul.badQ": [
+    "/-- The forbidden coefficient of a polynomial that is not exactly `x`-linear (`0` for one that",
+    "is). -/"
+   ],
+   "MIPRE.LIDT.Simul.combPOVM": [
+    "/-- The combined point measurement: at the padded point `(x, y)`, measure the original point",
+    "measurement at `y` and answer `∑_{j < r} x_j b_j`. -/"
+   ],
+   "MIPRE.LIDT.Simul.evalTuplePOVM": [
+    "/-- A measurement of `r`-tuples of polynomials, evaluated at `y`. -/"
+   ],
+   "MIPRE.LIDT.Simul.extEval": [
+    "/-- The extracted tuple, evaluated at `y`. -/"
+   ],
+   "MIPRE.LIDT.Simul.extract": [
+    "/-- **The extraction**: the first `r` coefficients of an exactly `x`-linear polynomial, and the",
+    "zero tuple otherwise. -/"
+   ],
+   "MIPRE.LIDT.Simul.extractPM": [
+    "/-- **The extracted measurement**: `R` coarse-grained by `extract`, still projective. -/"
+   ],
+   "MIPRE.LIDT.Simul.linPoly": [
+    "/-- **The linear form `x ↦ ∑_i c_i x_i`**, as a coefficient vector. -/"
+   ],
+   "MIPRE.LIDT.Simul.padB": [
+    "/-- The answer `b ∈ F^r`, padded with zeros to the `K` combining coordinates. -/"
+   ],
+   "MIPRE.LIDT.Simul.pevY": [
+    "/-- **The partial evaluation at `y`**: the coefficient vector, in the `K` combining variables, of",
+    "`x ↦ g(x, y)`. -/"
+   ],
+   "MIPRE.LIDT.Simul.unitExp": [
+    "/-- The exponent vector of the variable `x_i`. -/"
+   ],
+   "MIPRE.LIDT.Simul.xCoef": [
+    "/-- The coefficient of `x_i`, a polynomial in `y`. -/"
+   ],
+   "MIPRE.LIDT.Simul.xOf": [
+    "/-- The combining coordinates of a padded point. -/"
+   ],
+   "MIPRE.LIDT.Simul.yOf": [
+    "/-- The original coordinates of a padded point. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_Adapter_Seeds",
+  "module": "MIPRE.Background.LIDT.Adapter.Seeds",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 3: choosing a seed\n\nThe adapter must turn a line of the canonical-line test into a *seeded* description of that\nline, which means choosing one of the `q/m` seeds in the relevant `χ`-fibre\n(`MIPRE.LIDT.CL.card_chi_fiber`). `seedOf` is the explicit choice, indexed by the fibre\nposition: `seedOf hm i r` is the `r`-th seed with `χ = i`, and `chi_seedOf` says so.\n\n`card_chi_fiber` proves the fibre has `q/m` elements by exhibiting an equivalence with\n`Fin (q/m)`; `seedOf` is that equivalence's inverse, extracted so that the adapter can name a\nseed rather than merely know one exists. `seedOf_injective` is the other half, and it is what\nmakes the averaging count: the `q/m` seeds `seedOf hm i r` are distinct, so averaging a choice\nover `r` is averaging over the whole fibre, which is where the reduction pays back the factor\n`q/m` that a fixed choice would cost (see `MIPRE.TensorProductStrategy.exists_one_sub_value_adapt_le`\nand the discussion in `planning/lidt-cl-adapter.md`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Seeds.lean",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Seeds.lean",
+  "defmat": [
+   "MIPRE.LIDT.Adapter.seedOf"
+  ],
+  "embedded": [
+   "MIPRE.LIDT.Adapter.chi_seedOf",
+   "MIPRE.LIDT.Adapter.equivFin_seedOf"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LIDT.Adapter.chi_seedOf",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     49,
+     56
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.equivFin_seedOf",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     42,
+     47
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.seedOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     31,
+     40
+    ]
+   }
+  ],
+  "lines": 77,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LIDT.Adapter.seedOf": [
+    "/-- The `r`-th seed of the `χ`-fibre over `i`, under the fixed bijection `F ≃ Fin q`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_Adapter_Reparam",
+  "module": "MIPRE.Background.LIDT.Adapter.Reparam",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 2: affine reparametrization of a line answer\n\nBoth tests answer a line question with a univariate polynomial in *the parameter of the line*,\nand they parametrize the same line differently: the base points differ by a multiple of the\ndirection and the directions differ by a scalar (see\n`MIPRE.Background.LIDT.Adapter.Geometry`, and the correction in\n`planning/lidt-cl-adapter.md`). So converting an answer means substituting an affine map\n`t ↦ a t + b` into the polynomial — the \"canonicalization and rebasing\" of\n`rem:lidt-cl-adapter`.\n\nAnswers are coefficient vectors (`LinePoly F k = Fin (k+1) → F`), and the substitution has to\npreserve the degree bound exactly, since the bound *is* the answer alphabet: an adapter that\nraised the degree would not be producing an answer of the canonical-line test at all.\n\nDoing this directly on coefficient vectors means a Taylor shift, hence the binomial theorem by\nhand. Going through `Polynomial F` avoids that entirely: `toPoly` and `ofPoly` are mutually\ninverse between coefficient vectors and polynomials of degree at most `k`\n(`ofPoly_toPoly`, `toPoly_ofPoly`), `natDegree_comp_le` gives the degree bound for free, and\nthe inverse substitution is the composition with the inverse affine map, so `reparamEquiv` is a\nbijection with no computation on coefficients at all.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Reparam.lean",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Reparam.lean",
+  "defmat": [
+   "MIPRE.LIDT.Adapter.affineMap",
+   "MIPRE.LIDT.Adapter.ofPoly",
+   "MIPRE.LIDT.Adapter.reparam",
+   "MIPRE.LIDT.Adapter.toPoly"
+  ],
+  "embedded": [
+   "MIPRE.LIDT.Adapter.coeff_toPoly",
+   "MIPRE.LIDT.Adapter.eval_affineMap",
+   "MIPRE.LIDT.Adapter.eval_ofPoly",
+   "MIPRE.LIDT.Adapter.eval_reparam",
+   "MIPRE.LIDT.Adapter.eval_toPoly",
+   "MIPRE.LIDT.Adapter.natDegree_affineMap_le",
+   "MIPRE.LIDT.Adapter.natDegree_comp_affineMap_le",
+   "MIPRE.LIDT.Adapter.natDegree_toPoly_le",
+   "MIPRE.LIDT.Adapter.ofPoly_apply",
+   "MIPRE.LIDT.Adapter.ofPoly_toPoly",
+   "MIPRE.LIDT.Adapter.toPoly_ofPoly"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LIDT.Adapter.affineMap",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     91,
+     92
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.coeff_toPoly",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     57,
+     62
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.eval_affineMap",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     99,
+     100
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.eval_ofPoly",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     84,
+     87
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.eval_reparam",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     115,
+     118
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.eval_toPoly",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     68,
+     71
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.natDegree_affineMap_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     94,
+     97
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.natDegree_comp_affineMap_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     107,
+     113
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.natDegree_toPoly_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     50,
+     55
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.ofPoly",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     44,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.ofPoly_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     47,
+     48
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.ofPoly_toPoly",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     64,
+     66
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.reparam",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     102,
+     105
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.toPoly",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     40,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.toPoly_ofPoly",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     73,
+     82
+    ]
+   }
+  ],
+  "lines": 131,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LIDT.Adapter.affineMap": [
+    "/-- The affine map to substitute. -/"
+   ],
+   "MIPRE.LIDT.Adapter.ofPoly": [
+    "/-- A polynomial's coefficients, truncated to degree `k`. -/"
+   ],
+   "MIPRE.LIDT.Adapter.reparam": [
+    "/-- **Affine reparametrization of an answer**: `reparam a b f` is the coefficient vector of",
+    "`t ↦ f (a t + b)`, of the same degree bound. -/"
+   ],
+   "MIPRE.LIDT.Adapter.toPoly": [
+    "/-- A coefficient vector, as a polynomial. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_Padding",
+  "module": "MIPRE.Background.LIDT.Padding",
+  "module_doc": "/-!\n# The padded game adapter\n\nBlueprint `lem:lidt-ldc-adapter`, the paper's Steps 1--2 and Claims 1--3 of the general-`ldc`\nproof of `lem:ld-soundness` (`ldt.tex`). A strategy for the seeded test with `r` codewords in\n`m` variables is played as a strategy for the seeded test with one codeword in `K + m` variables:\na combined point `(x, y)` is answered by `∑_{j<r} x_j b_j` from the original point answer `b` at\n`y`, and a combined line by the matching polynomial built from the original line answer.\n\n## The seed choice, and how it differs from the paper's\n\nEach combined question is sent to an original question. The only freedom is the original seed,\nand the paper draws it independently for each player, diagonal seeds from a law proportional to\n`q^{j-1}`; the independence then has to be paid for on the two same-type line subtests, by a\nchain of three consistency links and a `d / q` term.\n\nHere both players share one seed *offset* `σ`, and the original seed's block is determined by the\ncombined seed's block `i` as `j = max(i - K, 0)`. Then **every simulated question pair is the\nimage of a single original sample**: `sampleMap` sends the combined sample `(u, s, v)` to the\noriginal sample `(y-part of u, seedOf j σ, y-part of v)`, with types collapsed to `point` where\nthe combined line does not move the original coordinates (`qmap_question`). Acceptance transfers\nsubtest by subtest --- the same-type line subtests to the original equality subtest --- and the\npush-forward bound is a count of the fibres of `sampleMap`.\n\n## The decider on a sample\n\n`accepts_sample_imp` and `accepts_sample_of` characterize the seeded test's decider on the two\nquestions of one sample: formats, then equality for equal types, nothing for the two cross\npairs, and otherwise equality of the two answers' *values at the sample's point* (`valAt`). Both\ngames are instances, and the transfer is checked on values.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Padding.lean",
+  "source_path": "MIPRE/Background/LIDT/Padding.lean",
+  "defmat": [
+   "MIPRE.LIDT.Simul.IsCross",
+   "MIPRE.LIDT.Simul.SampleRel",
+   "MIPRE.LIDT.Simul.affPoly",
+   "MIPRE.LIDT.Simul.instDecidableIsCross",
+   "MIPRE.LIDT.Simul.jIdx",
+   "MIPRE.LIDT.Simul.jOf",
+   "MIPRE.LIDT.Simul.linEval",
+   "MIPRE.LIDT.Simul.lineAns",
+   "MIPRE.LIDT.Simul.padded",
+   "MIPRE.LIDT.Simul.polysOf",
+   "MIPRE.LIDT.Simul.qmap",
+   "MIPRE.LIDT.Simul.rmap",
+   "MIPRE.LIDT.Simul.sampleEquiv",
+   "MIPRE.LIDT.Simul.sampleMap",
+   "MIPRE.LIDT.Simul.shiftOf",
+   "MIPRE.LIDT.Simul.tuplePOVMA",
+   "MIPRE.LIDT.Simul.tuplePOVMB",
+   "MIPRE.LIDT.Simul.tyMap",
+   "MIPRE.LIDT.Simul.valAt",
+   "MIPRE.LIDT.Simul.valsOf",
+   "MIPRE.LIDT.Simul.wyOf",
+   "MIPRE.LIDT.Simul.xr"
+  ],
+  "embedded": [
+   "MIPRE.LIDT.Simul.xOf_add",
+   "MIPRE.LIDT.Simul.xOf_smul",
+   "MIPRE.LIDT.Simul.xr_add",
+   "MIPRE.LIDT.Simul.xr_smul",
+   "MIPRE.LIDT.Simul.xr_zero",
+   "MIPRE.LIDT.Simul.yOf_add",
+   "MIPRE.LIDT.Simul.yOf_smul",
+   "MIPRE.LIDT.Simul.yOf_zero"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LIDT.Simul.IsCross",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     66,
+     70
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.SampleRel",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     75,
+     81
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.affPoly",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     366,
+     368
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.instDecidableIsCross",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     72,
+     73
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.jIdx",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     192,
+     194
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.jOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     275,
+     276
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.linEval",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     348,
+     349
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.lineAns",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     408,
+     411
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.padded",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     864,
+     867
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.polysOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     400,
+     404
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.qmap",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     285,
+     294
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.rmap",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     415,
+     419
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.sampleEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     645,
+     650
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.sampleMap",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     299,
+     302
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.shiftOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     149,
+     153
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.tuplePOVMA",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     845,
+     849
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.tuplePOVMB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     851,
+     854
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.tyMap",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     278,
+     283
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.valAt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     57,
+     64
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.valsOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     395,
+     398
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.wyOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     296,
+     297
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.xOf_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     188,
+     188
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.xOf_smul",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     189,
+     189
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.xr",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     338,
+     339
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.xr_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     341,
+     342
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.xr_smul",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     344,
+     344
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.xr_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     346,
+     346
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.yOf_add",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     186,
+     186
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.yOf_smul",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     187,
+     187
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Simul.yOf_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     190,
+     190
+    ]
+   }
+  ],
+  "lines": 319,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_Closeness",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_OpBound",
+   "import Definitions.Def_MIPRE_Foundations_StateDistance",
+   "import Definitions.Def_MIPRE_Foundations_POVMValue",
+   "import Definitions.Def_MIPRE_Foundations_CrossConsistency",
+   "import Definitions.Def_MIPRE_Foundations_PVM",
+   "import Definitions.Def_MIPRE_Foundations_Commutation",
+   "import Definitions.Def_MIPRE_Foundations_Dilation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_SchwartzZippel",
+   "import Definitions.Def_MIPRE_Foundations_Sandwich",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Foundations_RegisterReindex",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Background_LIDT_Coefficients",
+   "import Definitions.Def_MIPRE_Background_LIDT_Extraction",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Seeds",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Reparam"
+  ],
+  "blueprint": [
+   "lem:lidt-ldc-adapter"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LIDT.Simul.IsCross": [
+    "/-- The two cross type pairs, on which the decider checks nothing but the formats. -/"
+   ],
+   "MIPRE.LIDT.Simul.SampleRel": [
+    "/-- The relation the decider checks on the answers to a sample's two questions, once the",
+    "formats are right. -/"
+   ],
+   "MIPRE.LIDT.Simul.affPoly": [
+    "/-- The affine-in-`t` combination `∑_k (α_k + β_k t) P_k(t + c)`. -/"
+   ],
+   "MIPRE.LIDT.Simul.instDecidableIsCross": null,
+   "MIPRE.LIDT.Simul.jIdx": [
+    "/-- The original block index of a combined index: `i - K`, or `0` for a combining index. -/"
+   ],
+   "MIPRE.LIDT.Simul.jOf": [
+    "/-- The original seed block of a combined seed. -/"
+   ],
+   "MIPRE.LIDT.Simul.linEval": [
+    "/-- **The combined point answer** `∑_{k<r} x_k b_k`. -/"
+   ],
+   "MIPRE.LIDT.Simul.lineAns": [
+    "/-- The combined line answer on the line through `u₀` in direction `w`: at the parameter `t`,",
+    "the combined point answer at `u₀ + t w`. -/"
+   ],
+   "MIPRE.LIDT.Simul.padded": [
+    "/-- The padded strategy for the seeded test with one codeword in `K + m` variables. -/"
+   ],
+   "MIPRE.LIDT.Simul.polysOf": [
+    "/-- The `r` polynomials an answer carries: constants for a point answer. -/"
+   ],
+   "MIPRE.LIDT.Simul.qmap": [
+    "/-- **The question map**, with the shared seed offset `σ`. -/"
+   ],
+   "MIPRE.LIDT.Simul.rmap": [
+    "/-- **The answer map.** -/"
+   ],
+   "MIPRE.LIDT.Simul.sampleEquiv": [
+    "/-- The samples as a product. -/"
+   ],
+   "MIPRE.LIDT.Simul.sampleMap": [
+    "/-- **The sample map**: one original sample for the whole combined sample. -/"
+   ],
+   "MIPRE.LIDT.Simul.shiftOf": [
+    "/-- The shift from a point to the canonical base point of the line through it. -/"
+   ],
+   "MIPRE.LIDT.Simul.tuplePOVMA": [
+    "/-- The point measurements of player A in a strategy for the seeded test with `r` codewords, as",
+    "POVMs with outcomes in `F^r`; answers of the wrong format are read as `0`. -/"
+   ],
+   "MIPRE.LIDT.Simul.tuplePOVMB": [
+    "/-- The point measurements of player B, as for `tuplePOVMA`. -/"
+   ],
+   "MIPRE.LIDT.Simul.tyMap": [
+    "/-- **The type map**: an axis-parallel line along a combining coordinate, and a diagonal line",
+    "whose original part is constant, become point questions. -/"
+   ],
+   "MIPRE.LIDT.Simul.valAt": [
+    "/-- **The value of an answer at a point**: a point answer itself, a line answer evaluated at the",
+    "parameter of the point on the question's line. This is what the decider compares in the",
+    "line-versus-point subtests. -/"
+   ],
+   "MIPRE.LIDT.Simul.valsOf": [
+    "/-- The coordinates of a point answer; `0` for the wrong format. -/"
+   ],
+   "MIPRE.LIDT.Simul.wyOf": [
+    "/-- The original part of a combined sample's diagonal direction. -/"
+   ],
+   "MIPRE.LIDT.Simul.xr": [
+    "/-- The first `r` combining coordinates. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_Adapter_Parameters",
+  "module": "MIPRE.Background.LIDT.Adapter.Parameters",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 7: the parameter corollary\n\nThe reduction of `Adapter/Reduction.lean` concludes with the *canonical-line* error\n`lidtError m d q k (3m ε)`, with `k` free subject to `k ≥ 400 m d`. Blueprint\n`thm:lidt-cl-soundness` asks instead for\n\n`δ_CL(ε, q, m, d, 1) = a (dm)^a (ε^b + q^{-b} + 2^{-bmd})`,\n\nfor universal `a ≥ 1` and `0 < b < 1`. `rem:lidt-cl-adapter` lists turning one into the other as\na separate quantitative obligation, to be done \"honestly against the explicit constants\"; this\nfile does it, and is stated separately from the reduction so that a failure here could not\nsilently weaken the reduction.\n\nThe choice is `b = 1/40000`, `a = 2·10^11` and `k = 400 m³ d + 400 m`. Term by term, with\n`ε' = 3 m ε`:\n\n* `ε'^b = (3m)^b ε^b ≤ 3m · ε^b`, since `x^b ≤ x` for `x ≥ 1` and `b ≤ 1`;\n* `(d/q)^b = d^b · q^{-b} ≤ d · q^{-b}`, likewise;\n* `exp(-k / (2560000 m²)) ≤ 2^{-bmd}`, which is where `k` is chosen: it needs\n  `k ≥ 2560000 · b · m³ d · ln 2 = 64 (ln 2) m³ d ≈ 44.4 m³ d`, and `400 m³ d` clears it with\n  room. The `400 m` summand is there only so that `k > 0` and `k ≥ 400 m d` hold for every\n  `m, d ≥ 1`.\n\nThe prefactor is then `100000 k² m⁴ · 3md ≤ 1.92·10^11 (dm)^11`, using `k ≤ 800 m³ d`, and\n`(dm)^11 ≤ (dm)^a`.\n\n`d ≥ 1` is needed and not cosmetic: at `d = 0` the blueprint's `δ_CL` is identically zero, so no\npositive error can be bounded by it.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Parameters.lean",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Parameters.lean",
+  "defmat": [
+   "MIPRE.LIDT.clA",
+   "MIPRE.LIDT.clB",
+   "MIPRE.LIDT.clK",
+   "MIPRE.LIDT.deltaCL"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.LIDT.clA",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     47,
+     48
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.clB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     44,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.clK",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     50,
+     51
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.deltaCL",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     53,
+     56
+    ]
+   }
+  ],
+  "lines": 77,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game"
+  ],
+  "blueprint": [
+   "lem:lidt-cl-adapter-params"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LIDT.clA": [
+    "/-- The constant of `δ_CL`. -/"
+   ],
+   "MIPRE.LIDT.clB": [
+    "/-- The exponent of `δ_CL`. -/"
+   ],
+   "MIPRE.LIDT.clK": [
+    "/-- The sampling parameter the corollary chooses for the canonical-line theorem. -/"
+   ],
+   "MIPRE.LIDT.deltaCL": [
+    "/-- **`δ_CL` at `ldc = 1`** (blueprint `thm:lidt-cl-soundness`). -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_Adapter_Strategy",
+  "module": "MIPRE.Background.LIDT.Adapter.Strategy",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 4: the question and answer maps\n\nThe reduction plays a strategy for the seeded CL test as a strategy for the canonical-line\ntest, through `MIPRE.TensorProductStrategy.adapt`. That needs two maps, and this file defines\nthem and the bookkeeping that identifies them.\n\n`qmap hm σ` sends a question of the canonical-line test to the seeded question it is played\nthrough:\n\n* a point `u` to the point `ρ u`, reversal exchanging the two diagonal conventions;\n* an axis-parallel line to `(ρ ℓ.1, s)` — no `rep` is needed, the two tests' base points agree\n  exactly there (`rep_single_eq_through`) — with `s` the chosen seed of the fibre over\n  `rev (axisIdx ℓ)`;\n* a diagonal line to `(rep (ρ ℓ.2) (ρ ℓ.1), s, ρ ℓ.2)`, carrying the direction *unrescaled*.\n  That is legitimate because the seeded test's `DLine` questions carry the raw direction, and it\n  is what makes the answer conversion a pure shift rather than a shift and a scaling.\n\n`amap` sends a seeded answer to a canonical-line answer, and depends on the question — the\nshift does. Its unreachable branches are unreachable because `clGame` *rejects* an answer\nwhose format does not match its question's type; before that was repaired the branches would\nhave been live.\n\n`shiftOf ℓ` is the shift, read off `rep_eq`: the two base points differ by `shiftOf ℓ` times the\ndirection (`rep_rev_eq`), so the two parameters of a point of the line differ by `shiftOf ℓ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Strategy.lean",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Strategy.lean",
+  "defmat": [
+   "MIPRE.LIDT.Adapter.amap",
+   "MIPRE.LIDT.Adapter.axisIdx",
+   "MIPRE.LIDT.Adapter.diagIdx",
+   "MIPRE.LIDT.Adapter.idx0",
+   "MIPRE.LIDT.Adapter.qmap",
+   "MIPRE.LIDT.Adapter.shiftOf"
+  ],
+  "embedded": [
+   "MIPRE.LIDT.Adapter.axisIdx_eq",
+   "MIPRE.LIDT.Adapter.single_inj"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LIDT.Adapter.amap",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     152,
+     162
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.axisIdx",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     56,
+     58
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.axisIdx_eq",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     60,
+     65
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.diagIdx",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     67,
+     78
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.idx0",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     53,
+     54
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.qmap",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     134,
+     150
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.shiftOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     93,
+     98
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.single_inj",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     46,
+     51
+    ]
+   }
+  ],
+  "lines": 167,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Seeds",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Reparam"
+  ],
+  "blueprint": [
+   "lem:lidt-cl-adapter-maps"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LIDT.Adapter.amap": [
+    "/-- The canonical-line answer a seeded answer becomes. It depends on the question because the",
+    "shift does, and on the scale `c`; the branches not listed are the ones `clGame` rejects on",
+    "format.",
+    "",
+    "A point of the line at the target's parameter `t` sits at the source's parameter",
+    "`(t + shiftOf ℓ) / c`, so the substitution to undo is `t ↦ c⁻¹ t + c⁻¹ · shiftOf ℓ`. -/"
+   ],
+   "MIPRE.LIDT.Adapter.axisIdx": [
+    "/-- The direction index of an axis-parallel line. -/"
+   ],
+   "MIPRE.LIDT.Adapter.diagIdx": [
+    "/-- The `χ`-index the adapter uses for a diagonal line: the first nonzero coordinate of the",
+    "reversed direction, which is the pivot of its span and so the coordinate `rep` zeroes.",
+    "",
+    "The fallback for a *singleton* line (direction zero) is `rev idx0 = m - 1`, not `idx0`, and the",
+    "choice is forced by the weight bookkeeping rather than free. The seeded test's `DLine` samples",
+    "with `zeroBelow (χ s) V = 0` number `q^{χ s}`, so its mass on `(u₀, s, 0)` grows with `χ s`;",
+    "the canonical-line test puts mass `≈ 1/(6 m q^m q)` on a singleton line, which only the largest",
+    "`χ` can dominate. Sending singleton lines to `χ = 0` costs a factor `q^{m-1}`, which the error",
+    "term of `thm:lidt-cl-soundness` does not allow. See `planning/lidt-cl-adapter.md`. -/"
+   ],
+   "MIPRE.LIDT.Adapter.idx0": [
+    "/-- A default index, for the branches of the maps below that the support never reaches. -/"
+   ],
+   "MIPRE.LIDT.Adapter.qmap": [
+    "/-- The seeded question a canonical-line question is played through, for the seed choice `σ` and",
+    "the direction scale `c`.",
+    "",
+    "The scale is averaged over along with the seed, and it has to be: the seeded test's `DLine`",
+    "questions carry the raw direction, so one geometric line has `q - 1` of them, and an adapter",
+    "using only one would concentrate its push-forward on a `1/(q-1)` fraction of them and need a",
+    "`q`-dependent constant. See the second correction in `planning/lidt-cl-adapter.md`.",
+    "",
+    "Scaling the direction does not move the base point, `rep` depending only on the span. -/"
+   ],
+   "MIPRE.LIDT.Adapter.shiftOf": [
+    "/-- The shift between the two presentations of a line. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_Adapter_Weights",
+  "module": "MIPRE.Background.LIDT.Adapter.Weights",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 5: both tests' distributions, as counts\n\nThe reduction's remaining obligation is a push-forward bound between the two tests' question\ndistributions, and both are defined as sums over a `Sample` type against an indicator. So the\nfirst thing to do is to turn each into a *count*, after which the bound is arithmetic on\ncardinalities rather than on sums.\n\n* `clGame`'s distribution is uniform over its samples, so it is the number of samples producing\n  the question pair, over the total (`clGame_μ_eq`).\n* `lidtGame`'s is not uniform — its three subtests are weighted `1/3` each and its diagonal\n  directions carry a factor `q^{-(j+1)}` — so the best that can be said in general is that it is\n  the sum of the weights of the samples producing the pair (`lidtGame_μ_eq`). That sum is a\n  singleton for the point and axis-parallel shapes and a geometric series over the admissible\n  `j` for the diagonal one, which is where the `q^{χ s}` against `q^{j+1}` matching of\n  `planning/lidt-cl-adapter.md` lives.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Weights.lean",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Weights.lean",
+  "defmat": [
+   "MIPRE.LIDT.Adapter.Seed",
+   "MIPRE.LIDT.Adapter.blk",
+   "MIPRE.LIDT.Adapter.clSwap",
+   "MIPRE.LIDT.Adapter.clSwapEquiv",
+   "MIPRE.LIDT.Adapter.diagKey",
+   "MIPRE.LIDT.Adapter.qmapS",
+   "MIPRE.LIDT.Adapter.swapEquiv",
+   "MIPRE.LIDT.Adapter.swapSample"
+  ],
+  "embedded": [
+   "MIPRE.LIDT.Adapter.clSwap_clSwap",
+   "MIPRE.LIDT.Adapter.extend_zero",
+   "MIPRE.LIDT.Adapter.qmapS_axis",
+   "MIPRE.LIDT.Adapter.qmapS_diag",
+   "MIPRE.LIDT.Adapter.qmapS_point",
+   "MIPRE.LIDT.Adapter.revPoint_zero",
+   "MIPRE.LIDT.Adapter.swapSample_questions",
+   "MIPRE.LIDT.Adapter.swapSample_swapSample",
+   "MIPRE.LIDT.Adapter.swapSample_weight",
+   "MIPRE.LIDT.Adapter.through_zero"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LIDT.Adapter.Seed",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     521,
+     525
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.blk",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     900,
+     901
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.clSwap",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     701,
+     702
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.clSwapEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     707,
+     708
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.clSwap_clSwap",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     704,
+     705
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.diagKey",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     245,
+     249
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.extend_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     1157,
+     1164
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.qmapS",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     527,
+     530
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.qmapS_axis",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     783,
+     786
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.qmapS_diag",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     788,
+     791
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.qmapS_point",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     532,
+     533
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.revPoint_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     1153,
+     1155
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.swapEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     684,
+     686
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.swapSample",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     659,
+     663
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.swapSample_questions",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     665,
+     671
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.swapSample_swapSample",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     677,
+     682
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.swapSample_weight",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     673,
+     675
+    ]
+   },
+   {
+    "name": "MIPRE.LIDT.Adapter.through_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     1166,
+     1171
+    ]
+   }
+  ],
+  "lines": 251,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_GameTransport",
+   "import Definitions.Def_MIPRE_Foundations_GameAdapt",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Seeds",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Reparam",
+   "import Definitions.Def_MIPRE_Background_LIDT_Adapter_Strategy"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LIDT.Adapter.Seed": [
+    "/-- The averaging family: a fibre position for each direction index, and one global nonzero",
+    "direction scale. The scale is there because of the second correction in",
+    "`planning/lidt-cl-adapter.md`. -/"
+   ],
+   "MIPRE.LIDT.Adapter.blk": [
+    "/-- The block size, as a real. -/"
+   ],
+   "MIPRE.LIDT.Adapter.clSwap": [
+    "/-- Exchanging the two players' types in a seeded sample. -/"
+   ],
+   "MIPRE.LIDT.Adapter.clSwapEquiv": [
+    "/-- The type exchange as an equivalence of seeded samples. -/"
+   ],
+   "MIPRE.LIDT.Adapter.diagKey": [
+    "/-- The key `(j, c)` of a diagonal sample, read at a coordinate `p`. Two samples producing the",
+    "same line with the same key are equal, which is what bounds the count. -/"
+   ],
+   "MIPRE.LIDT.Adapter.qmapS": [
+    "/-- The seeded question a canonical-line question is played through, for a family member. -/"
+   ],
+   "MIPRE.LIDT.Adapter.swapEquiv": [
+    "/-- The swap as an equivalence of samples. -/"
+   ],
+   "MIPRE.LIDT.Adapter.swapSample": [
+    "/-- Flipping a sample's swap bit. -/"
+   ]
+  }
+ }
+]

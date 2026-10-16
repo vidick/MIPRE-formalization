@@ -1,0 +1,632 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.dq_le_q_of_mainInductionError_lt_one",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.dq_le_q_of_mainInductionError_lt_one",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.dq_le_q_of_mainInductionError_lt_one\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    {eps delta gamma : Error} {k : ℕ}\n    (hgood : strategy.IsGood eps delta gamma)\n    (hsmall : mainInductionError params.next k eps delta gamma < 1) :\n    params.d ≤ params.q := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Internal helper: under `mainInductionError < 1`, `params.d ≤ params.q`.\n\nExposed for cross-module use in `MainTheorems`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.MainError",
+  "module_doc": "/-!\n# Section 6 — Main-Induction Error Bounds\n\nThis file is one leaf of `InductionParameterBounds`. It contains the scalar\nconsequences of the non-vacuous hypothesis `mainInductionError < 1`, including\nthe bounds `eps ≤ 1`, `delta ≤ 1`, `gamma ≤ 1`, `params.d ≤ params.q`, and\n`mainInductionNu < 1`.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n- `references/ldt-paper/inductive_step.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean#L449-L494",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean",
+  "lines": [
+   449,
+   494
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.delta_nonneg_of_isGood",
+   "MIPStarRE.LDT.gamma_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.answer_eps_le_one_of_mainInductionError_lt_one",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.answer_eps_le_one_of_mainInductionError_lt_one",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.answer_eps_le_one_of_mainInductionError_lt_one\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : AnswerSymStrat params.next ι)\n    {eps delta gamma : Error} {k : ℕ}\n    (hgood : strategy.IsGood eps delta gamma)\n    (hsmall : mainInductionError params.next k eps delta gamma < 1) :\n    eps ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Answer-valued analogue of `eps_le_one_of_mainInductionError_lt_one`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.MainError",
+  "module_doc": "/-!\n# Section 6 — Main-Induction Error Bounds\n\nThis file is one leaf of `InductionParameterBounds`. It contains the scalar\nconsequences of the non-vacuous hypothesis `mainInductionError < 1`, including\nthe bounds `eps ≤ 1`, `delta ≤ 1`, `gamma ≤ 1`, `params.d ≤ params.q`, and\n`mainInductionNu < 1`.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n- `references/ldt-paper/inductive_step.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean#L498-L537",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean",
+  "lines": [
+   498,
+   537
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.answer_eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.answer_delta_nonneg_of_isGood",
+   "MIPStarRE.LDT.answer_gamma_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.answer_delta_le_one_of_mainInductionError_lt_one",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.answer_delta_le_one_of_mainInductionError_lt_one",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.answer_delta_le_one_of_mainInductionError_lt_one\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : AnswerSymStrat params.next ι)\n    {eps delta gamma : Error} {k : ℕ}\n    (hgood : strategy.IsGood eps delta gamma)\n    (hsmall : mainInductionError params.next k eps delta gamma < 1) :\n    delta ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Answer-valued analogue of `delta_le_one_of_mainInductionError_lt_one`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.MainError",
+  "module_doc": "/-!\n# Section 6 — Main-Induction Error Bounds\n\nThis file is one leaf of `InductionParameterBounds`. It contains the scalar\nconsequences of the non-vacuous hypothesis `mainInductionError < 1`, including\nthe bounds `eps ≤ 1`, `delta ≤ 1`, `gamma ≤ 1`, `params.d ≤ params.q`, and\n`mainInductionNu < 1`.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n- `references/ldt-paper/inductive_step.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean#L539-L579",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean",
+  "lines": [
+   539,
+   579
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.answer_eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.answer_delta_nonneg_of_isGood",
+   "MIPStarRE.LDT.answer_gamma_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.answer_gamma_le_one_of_mainInductionError_lt_one",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.answer_gamma_le_one_of_mainInductionError_lt_one",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.answer_gamma_le_one_of_mainInductionError_lt_one\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : AnswerSymStrat params.next ι)\n    {eps delta gamma : Error} {k : ℕ}\n    (hgood : strategy.IsGood eps delta gamma)\n    (hsmall : mainInductionError params.next k eps delta gamma < 1) :\n    gamma ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Answer-valued analogue of `gamma_le_one_of_mainInductionError_lt_one`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.MainError",
+  "module_doc": "/-!\n# Section 6 — Main-Induction Error Bounds\n\nThis file is one leaf of `InductionParameterBounds`. It contains the scalar\nconsequences of the non-vacuous hypothesis `mainInductionError < 1`, including\nthe bounds `eps ≤ 1`, `delta ≤ 1`, `gamma ≤ 1`, `params.d ≤ params.q`, and\n`mainInductionNu < 1`.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n- `references/ldt-paper/inductive_step.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean#L581-L621",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean",
+  "lines": [
+   581,
+   621
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.answer_eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.answer_delta_nonneg_of_isGood",
+   "MIPStarRE.LDT.answer_gamma_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.answer_dq_le_q_of_mainInductionError_lt_one",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.answer_dq_le_q_of_mainInductionError_lt_one",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.answer_dq_le_q_of_mainInductionError_lt_one\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : AnswerSymStrat params.next ι)\n    {eps delta gamma : Error} {k : ℕ}\n    (hgood : strategy.IsGood eps delta gamma)\n    (hsmall : mainInductionError params.next k eps delta gamma < 1) :\n    params.d ≤ params.q := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Answer-valued analogue of `dq_le_q_of_mainInductionError_lt_one`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.MainError",
+  "module_doc": "/-!\n# Section 6 — Main-Induction Error Bounds\n\nThis file is one leaf of `InductionParameterBounds`. It contains the scalar\nconsequences of the non-vacuous hypothesis `mainInductionError < 1`, including\nthe bounds `eps ≤ 1`, `delta ≤ 1`, `gamma ≤ 1`, `params.d ≤ params.q`, and\n`mainInductionNu < 1`.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n- `references/ldt-paper/inductive_step.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean#L623-L666",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean",
+  "lines": [
+   623,
+   666
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.answer_eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.answer_delta_nonneg_of_isGood",
+   "MIPStarRE.LDT.answer_gamma_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.answer_three_le_k_sq_mul_next_m_of_hsmall",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.answer_three_le_k_sq_mul_next_m_of_hsmall",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.answer_three_le_k_sq_mul_next_m_of_hsmall\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : AnswerSymStrat params.next ι)\n    {eps delta gamma : Error} {k : ℕ}\n    (hgood : strategy.IsGood eps delta gamma)\n    (hsmall : mainInductionError params.next k eps delta gamma < 1) :\n    (3 : Error) ≤ ((k : Error) ^ (2 : ℕ)) * (params.next.m : Error) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Answer-valued analogue of `three_le_k_sq_mul_next_m_of_hsmall`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.MainError",
+  "module_doc": "/-!\n# Section 6 — Main-Induction Error Bounds\n\nThis file is one leaf of `InductionParameterBounds`. It contains the scalar\nconsequences of the non-vacuous hypothesis `mainInductionError < 1`, including\nthe bounds `eps ≤ 1`, `delta ≤ 1`, `gamma ≤ 1`, `params.d ≤ params.q`, and\n`mainInductionNu < 1`.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n- `references/ldt-paper/inductive_step.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean#L668-L759",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/MainError.lean",
+  "lines": [
+   668,
+   759
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.answer_eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.answer_delta_nonneg_of_isGood",
+   "MIPStarRE.LDT.answer_gamma_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 83,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.throughPoint_eq_zeroPoint_of_m_eq_one",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.throughPoint_eq_zeroPoint_of_m_eq_one",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.throughPoint_eq_zeroPoint_of_m_eq_one\n    (params : Parameters) [FieldModel params.q]\n    (hm1 : params.m = 1)\n    (u : Point params) (i : Fin params.m) :\n    AxisParallelLine.throughPoint (params := params) u i =\n      AxisParallelLine.throughPoint (params := params) zeroPoint i := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "At `m = 1`, `AxisParallelLine.throughPoint u i` does not depend on the\nbase point `u`: all axis-parallel lines in direction `i` are geometrically the\nunique line and share the same canonical representative.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries",
+  "module_doc": "/-!\n# Section 6 — Induction Parameter Bound Preliminaries\n\nThis file is one leaf of `InductionParameterBounds`. It contains the elementary\npoint-line reduction for the base case, the real-variable comparison lemmas used\nby the small-parameter estimates, and the bound `d/q ≤ 1`.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n- `references/ldt-paper/inductive_step.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/Preliminaries.lean#L90-L110",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/Preliminaries.lean",
+  "lines": [
+   90,
+   110
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.le_one_of_rpow_le_one",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.le_one_of_rpow_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.le_one_of_rpow_le_one {x c : Error}\n    (hc_pos : 0 < c) (h : Real.rpow x c ≤ 1) :\n    x ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries",
+  "module_doc": "/-!\n# Section 6 — Induction Parameter Bound Preliminaries\n\nThis file is one leaf of `InductionParameterBounds`. It contains the elementary\npoint-line reduction for the base case, the real-variable comparison lemmas used\nby the small-parameter estimates, and the bound `d/q ≤ 1`.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n- `references/ldt-paper/inductive_step.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/Preliminaries.lean#L122-L128",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/Preliminaries.lean",
+  "lines": [
+   122,
+   128
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.min_eps_one_le_mainInductionError_of_m_eq_one",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.min_eps_one_le_mainInductionError_of_m_eq_one",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.min_eps_one_le_mainInductionError_of_m_eq_one\n    (params : Parameters)\n    [FieldModel params.q]\n    (k : ℕ) (eps delta gamma : Error)\n    (hm1 : params.m = 1)\n    (heps_nonneg : 0 ≤ eps) (hdelta_nonneg : 0 ≤ delta) (hgamma_nonneg : 0 ≤ gamma) :\n    min eps 1 ≤ mainInductionError params k eps delta gamma := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Internal helper: `min eps 1 ≤ mainInductionError` when `params.m = 1`.\n\nExposed for cross-module use in `MainTheorems`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.Preliminaries",
+  "module_doc": "/-!\n# Section 6 — Induction Parameter Bound Preliminaries\n\nThis file is one leaf of `InductionParameterBounds`. It contains the elementary\npoint-line reduction for the base case, the real-variable comparison lemmas used\nby the small-parameter estimates, and the bound `d/q ≤ 1`.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n- `references/ldt-paper/inductive_step.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/Preliminaries.lean#L143-L227",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/Preliminaries.lean",
+  "lines": [
+   143,
+   227
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 75,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.eps_le_one_of_selfImprovementInInductionError_le_one",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.eps_le_one_of_selfImprovementInInductionError_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.eps_le_one_of_selfImprovementInInductionError_le_one\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    {eps delta gamma : Error}\n    (hgood : strategy.IsGood eps delta gamma)\n    (hzeta_le : selfImprovementInInductionError params.next eps delta gamma ≤ 1) :\n    eps ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Internal helper: under `selfImprovementInInductionError ≤ 1`, the axis-parallel error `eps ≤ 1`.\n\nExposed for cross-module use in `AvgSliceErrors` and `PastingAssembly`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.SelfImprovement",
+  "module_doc": "/-!\n# Section 6 — Self-Improvement Error Bounds\n\nThis file is one leaf of `InductionParameterBounds`. It contains the scalar\nconsequences of the non-vacuous hypothesis\n`selfImprovementInInductionError ≤ 1`, namely the bounds `eps ≤ 1` and\n`delta ≤ 1` used before applying self-improvement inside the induction step.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n- `references/ldt-paper/inductive_step.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/SelfImprovement.lean#L116-L152",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/SelfImprovement.lean",
+  "lines": [
+   116,
+   152
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.delta_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.delta_le_one_of_selfImprovementInInductionError_le_one",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.delta_le_one_of_selfImprovementInInductionError_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.delta_le_one_of_selfImprovementInInductionError_le_one\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    {eps delta gamma : Error}\n    (hgood : strategy.IsGood eps delta gamma)\n    (hzeta_le : selfImprovementInInductionError params.next eps delta gamma ≤ 1) :\n    delta ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Internal helper: under `selfImprovementInInductionError ≤ 1`,\nthe self-consistency error `delta ≤ 1`.\n\nExposed for cross-module use in `AvgSliceErrors` and `PastingAssembly`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.InductionParameterBounds.SelfImprovement",
+  "module_doc": "/-!\n# Section 6 — Self-Improvement Error Bounds\n\nThis file is one leaf of `InductionParameterBounds`. It contains the scalar\nconsequences of the non-vacuous hypothesis\n`selfImprovementInInductionError ≤ 1`, namely the bounds `eps ≤ 1` and\n`delta ≤ 1` used before applying self-improvement inside the induction step.\n\n## References\n\n- `blueprint/src/chapter/ch10_induction.tex`\n- `references/ldt-paper/inductive_step.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/SelfImprovement.lean#L154-L191",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/InductionParameterBounds/SelfImprovement.lean",
+  "lines": [
+   154,
+   191
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.delta_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.mainInductionBaseCase",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.mainInductionBaseCase",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.mainInductionBaseCase\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (k : ℕ)\n    (hm1 : params.m = 1)\n    (hgood : strategy.IsGood eps delta gamma) :\n    ∃ G : Measurement (Polynomial params) ι,\n      ConsRel strategy.state (uniformDistribution (Point params))\n        (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)\n        (polynomialEvaluationFamily params G.toSubMeas)\n        (mainInductionError params k eps delta gamma) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Direct base case of `thm:main-induction` when `m = 1`.\n\nThe paper uses the unique axis-parallel line measurement as the global\npolynomial measurement in this case.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.MainTheorems.Base",
+  "module_doc": "/-!\n# Section 6 — Main Induction Theorems: Base and Large-Error Branches\n\nThis module contains the base cases and the trivial large-error branches for the\nordinary and answer-valued main induction statements.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/MainTheorems/Base.lean#L81-L236",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/MainTheorems/Base.lean",
+  "lines": [
+   81,
+   236
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.axisLinePolynomialToPolynomial_apply",
+   "MIPStarRE.LDT.SubMeas.ext",
+   "MIPStarRE.LDT.SubMeas.postprocess_comp",
+   "MIPStarRE.LDT.MainInductionStep.throughPoint_eq_zeroPoint_of_m_eq_one",
+   "MIPStarRE.LDT.MainInductionStep.min_eps_one_le_mainInductionError_of_m_eq_one",
+   "MIPStarRE.LDT.Preliminaries.consRel_uniform_equiv",
+   "MIPStarRE.LDT.bipartiteConsError_nonneg",
+   "MIPStarRE.LDT.qBipartiteConsDefect_le_one_of_isNormalized",
+   "MIPStarRE.LDT.bipartiteSSCError_nonneg",
+   "MIPStarRE.LDT.AxisParallelCovariantMeasurement.reparamInvariant"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 139,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.answerMainInductionBaseCase",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.answerMainInductionBaseCase",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.answerMainInductionBaseCase\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : AnswerSymStrat params ι)\n    (eps delta gamma : Error)\n    (k : ℕ)\n    (hm1 : params.m = 1)\n    (hgood : strategy.IsGood eps delta gamma) :\n    AnswerMainInductionConclusion params strategy eps delta gamma k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Answer-valued base case of the main induction when `m = 1`.\n\nPaper origin: `references/ldt-paper/inductive_step.tex:441-454`, specialized\nto the base dimension.\n\nThe proof is the same one-dimensional argument as `mainInductionBaseCase`.\nOnly the axis-parallel line measurement is used to construct the global\npolynomial measurement, so the function-valued diagonal answer interface plays\nno role in this case.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.MainTheorems.Base",
+  "module_doc": "/-!\n# Section 6 — Main Induction Theorems: Base and Large-Error Branches\n\nThis module contains the base cases and the trivial large-error branches for the\nordinary and answer-valued main induction statements.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/MainTheorems/Base.lean#L238-L402",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/MainTheorems/Base.lean",
+  "lines": [
+   238,
+   402
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.axisLinePolynomialToPolynomial_apply",
+   "MIPStarRE.LDT.SubMeas.ext",
+   "MIPStarRE.LDT.SubMeas.postprocess_comp",
+   "MIPStarRE.LDT.MainInductionStep.throughPoint_eq_zeroPoint_of_m_eq_one",
+   "MIPStarRE.LDT.MainInductionStep.min_eps_one_le_mainInductionError_of_m_eq_one",
+   "MIPStarRE.LDT.ConsRel.mono",
+   "MIPStarRE.LDT.Preliminaries.consRel_uniform_equiv",
+   "MIPStarRE.LDT.bipartiteConsError_nonneg",
+   "MIPStarRE.LDT.qBipartiteConsDefect_le_one_of_isNormalized",
+   "MIPStarRE.LDT.bipartiteSSCError_nonneg",
+   "MIPStarRE.LDT.AxisParallelCovariantMeasurement.reparamInvariant"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 147,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.answerMainInduction",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.answerMainInduction",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.answerMainInduction.{uF, vι}\n    (params : Parameters)\n    [FieldModel.{uF} params.q] :\n    AnswerMainInductionHypothesis.{uF, vι} params := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Answer-valued corrected large-`k` induction theorem.\n\nPaper origin: `references/ldt-paper/inductive_step.tex:441-551`, as an internal\nsimultaneous-induction strengthening used to prove the ordinary main induction.\n\nThis theorem is not advertised as `thm:main-induction`.  It records the\nanswer-valued induction statement needed for the recursive restricted slices.\nThe proof is a genuine strong induction on the dimension.  In the successor\nbranch the predecessor hypothesis is applied to the restricted answer-valued\nslices, and the checked successor reduction then carries the result through\nthe slice restriction, self-improvement, averaging, and scalar estimates.\n\nThe answer-valued pasting invocation is now proved from the answer-valued point\ncommutativity theorem and the Section 11 scalar commutativity chain.  Thus the\nsuccessor branch does not require an ordinary dummy diagonal carrier or an\nadditional pasting datum in the theorem statement.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.MainTheorems.Successor",
+  "module_doc": "/-!\n# Section 6 — Main Induction Theorems: Successor and Public Interfaces\n\nThis module contains the answer-valued induction theorem, successor reductions,\nand the public corrected large-`k` main-induction interface.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/MainTheorems/Successor.lean#L53-L104",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/MainTheorems/Successor.lean",
+  "lines": [
+   53,
+   104
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.MainInductionStep.answerMainInductionBaseCase",
+   "MIPStarRE.LDT.MainInductionStep.answerSuccessorAveragedFamilyFields_ofMainInductionHypothesis",
+   "MIPStarRE.LDT.MainInductionStep.answerLdPastingInInductionSectionOfSmallError",
+   "MIPStarRE.LDT.qBipartiteConsDefect_le_one_of_isNormalized"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.mainInductionSuccessorNext_ofAnswerCarrier",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.mainInductionSuccessorNext_ofAnswerCarrier",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.mainInductionSuccessorNext_ofAnswerCarrier.{uF}\n    (params : Parameters)\n    [FieldModel.{uF} params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma : Error)\n    (k : ℕ)\n    (hgood : strategy.IsGood eps delta gamma)\n    (hsmall : mainInductionError params.next k eps delta gamma < 1)\n    (hinduction : AnswerMainInductionHypothesis.{uF, uι} params)\n    (hk : 400 * params.m * params.d ≤ k) :\n    ∃ G : Measurement (Polynomial params.next) ι,\n      ConsRel strategy.state (uniformDistribution (Point params.next))\n        (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)\n        (polynomialEvaluationFamily params.next G.toSubMeas)\n        (mainInductionError params.next k eps delta gamma) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Internal successor assembly from the predecessor induction hypothesis,\nusing the answer-valued slice self-improvement construction.\n\nPaper origin: `references/ldt-paper/inductive_step.tex:441-551`.\n\nThe self-improvement data are obtained directly from the answer-valued\nrestricted slices via `AnswerSelfImprovementData.ofAnswerCarrier`.  This is an\ninternal reduction for the successor proof of `thm:main-induction`, not a paper\ntheorem.  Its only recursive input is the predecessor answer-valued induction\nhypothesis, which is supplied by the strong-induction theorem\n`answerMainInduction`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.MainTheorems.Successor",
+  "module_doc": "/-!\n# Section 6 — Main Induction Theorems: Successor and Public Interfaces\n\nThis module contains the answer-valued induction theorem, successor reductions,\nand the public corrected large-`k` main-induction interface.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/MainTheorems/Successor.lean#L106-L161",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/MainTheorems/Successor.lean",
+  "lines": [
+   106,
+   161
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MainInductionStep.answer_weighted_axisParallel_bound",
+   "MIPStarRE.LDT.MainInductionStep.answer_weighted_diagonal_bound",
+   "MIPStarRE.LDT.MainInductionStep.AnswerRestrictedProbabilitiesStatement.ofWeightedBounds",
+   "MIPStarRE.LDT.MainInductionStep.mainInductionFromStageData"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 30,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.answerSuccessorAveragedFamilyFields_ofMainInductionHypothesis",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.answerSuccessorAveragedFamilyFields_ofMainInductionHypothesis",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.answerSuccessorAveragedFamilyFields_ofMainInductionHypothesis.{uι', uF}\n    {ι' : Type uι'} [Fintype ι'] [DecidableEq ι']\n    (params : Parameters)\n    [FieldModel.{uF} params.q]\n    (strategy : AnswerSymStrat params.next ι')\n    (eps delta gamma : Error)\n    (k : ℕ)\n    (hgood : strategy.IsGood eps delta gamma)\n    (hinduction : AnswerMainInductionHypothesis.{uF, uι'} params)\n    (hk_next : 400 * params.next.m * params.next.d ≤ k)\n    (hsmall : mainInductionError params.next k eps delta gamma < 1) :\n    ∃ family : IdxPolyFamily params ι',\n      ∃ kappa : Error,\n        family.Complete strategy.state kappa ∧\n          ConsRel strategy.state (uniformDistribution (Point params.next))\n            (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)\n            (IdxPolyFamily.evaluatedAtNextPoint family)\n            (selfImprovementInInductionError params.next eps delta gamma) ∧\n          family.StronglySelfConsistent strategy.state\n            (selfImprovementInInductionError params.next eps delta gamma) ∧\n          IdxPolyFamily.SliceBoundednessInput\n            (answerSelfImprovementCarrier params.next strategy)\n            family\n            (selfImprovementInInductionError params.next eps delta gamma) ∧\n          kappa ≤\n            ((params.m : Error) ^ (2 : ℕ)) *\n                (mainInductionNu params.next k eps delta gamma +\n                  Real.exp (-((k : Error) / (80000 * ((params.m : Error) ^ (2 : ℕ))))))\n              + selfImprovementInInductionError params.next eps delta gamma ∧\n          selfImprovementInInductionError params.next eps delta gamma ≤\n            mainInductionNu params.next k eps delta gamma := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Assemble the averaged polynomial family fields in the answer-valued\nsuccessor route.\n\nPaper origin: `references/ldt-paper/inductive_step.tex:461-551`.\nThe statement records exactly the conclusions obtained from the recursive\nanswer-valued slice measurements and the axis-parallel/self-consistency\nself-improvement theorem: averaged completeness, point consistency with the\nambient answer-valued point measurement, strong self-consistency, the\nslice-boundedness input for the point-equivalent ordinary carrier, and the two\nscalar estimates for `κ` and `ζ`.\n\n**Lean-only:** The final boundedness field is expressed using\n`answerSelfImprovementCarrier` only because the present boundedness interface is\ntyped for ordinary strategies.  This theorem does not invoke\n`ldPastingInInductionSection`, and does not assert that the carrier's dummy\ndiagonal measurement satisfies the answer-valued diagonal-line test.  This\ninternal construction is tracked in issue #1507.  Discharge: proved here from\nthe recursive answer-valued slice measurements and the answer-valued\nself-improvement construction.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.PastingAssembly.AnswerFields",
+  "module_doc": "/-!\n# Section 6 — Pasting Assembly: Answer-Valued Fields\n\nThis module assembles the answer-valued averaged family fields and the\ncommutativity input used by the pasting theorem.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/PastingAssembly/AnswerFields.lean#L59-L179",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/PastingAssembly/AnswerFields.lean",
+  "lines": [
+   59,
+   179
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MainInductionStep.answer_selfImprovementInInductionError_le_mainInductionNu",
+   "MIPStarRE.LDT.MainInductionStep.answerSuccessorSelfImprovementOutputs_ofMainInductionHypothesis",
+   "MIPStarRE.LDT.MainInductionStep.answer_eps_le_one_of_mainInductionError_lt_one",
+   "MIPStarRE.LDT.MainInductionStep.answer_delta_le_one_of_mainInductionError_lt_one",
+   "MIPStarRE.LDT.MainInductionStep.answer_dq_le_q_of_mainInductionError_lt_one",
+   "MIPStarRE.LDT.MainInductionStep.idxPolyFamily_complete_of_slice_bounds",
+   "MIPStarRE.LDT.MainInductionStep.answer_family_consistency_of_slice_bounds",
+   "MIPStarRE.LDT.MainInductionStep.idxPolyFamily_stronglySelfConsistent_of_slice_bounds",
+   "MIPStarRE.LDT.MainInductionStep.idxPolyFamily_sliceBoundednessInput_of_slice_bounds"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 71,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.answerLdPastingInInductionSectionOfComMainAndErrorBound",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.answerLdPastingInInductionSectionOfComMainAndErrorBound",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.answerLdPastingInInductionSectionOfComMainAndErrorBound\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : AnswerSymStrat params.next ι)\n    (eps delta gamma : Error)\n    (k : ℕ)\n    (hgood : strategy.IsGood eps delta gamma)\n    (family : IdxPolyFamily params ι)\n    (kappa zeta : Error)\n    (hcomplete : family.Complete strategy.state kappa)\n    (hcons :\n      ConsRel strategy.state (uniformDistribution (Point params.next))\n        (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)\n        (IdxPolyFamily.evaluatedAtNextPoint family)\n        zeta)\n    (hself : family.StronglySelfConsistent strategy.state zeta)\n    (hbound :\n      IdxPolyFamily.SliceBoundednessInput\n        (answerSelfImprovementCarrier params.next strategy)\n        family zeta)\n    (hgamma_nonneg : 0 ≤ gamma)\n    (hgamma_le : gamma ≤ 1)\n    (hzeta_nonneg : 0 ≤ zeta)\n    (hzeta_le : zeta ≤ 1)\n    (hdq_le : params.d ≤ params.q)\n    (hd : 0 < params.d)\n    (hk_pos : 1 ≤ k)\n    (hk : 400 * params.m * params.d ≤ k)\n    (hcom :\n      Commutativity.ComMainConclusion params\n        (answerSelfImprovementCarrier params.next strategy) family gamma zeta)\n    (herror_le :\n      ldPastingInInductionError params k eps delta gamma kappa zeta ≤\n        mainInductionError params.next k eps delta gamma) :\n    AnswerMainInductionConclusion params.next strategy eps delta gamma k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Answer-valued induction-section pasting from an explicit commutativity input.\n\nThis theorem performs the checked final assembly once the answer-valued\nanalogue of the Section 11 commutativity theorem has been supplied for the\npoint-equivalent ordinary carrier.  The hypotheses `hcom` and `herror_le` are\nnot source assumptions; they are the internal commutativity construction and\nscalar absorption targets for the answer-valued pasting route.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.PastingAssembly.AnswerFields",
+  "module_doc": "/-!\n# Section 6 — Pasting Assembly: Answer-Valued Fields\n\nThis module assembles the answer-valued averaged family fields and the\ncommutativity input used by the pasting theorem.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/PastingAssembly/AnswerFields.lean#L181-L283",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/PastingAssembly/AnswerFields.lean",
+  "lines": [
+   181,
+   283
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.ldPastingNCompleteness_ofComMain_of_axis_self",
+   "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_core",
+   "MIPStarRE.LDT.Pasting.hAConsistency_completed_from_submeas",
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_core_of_axis_self",
+   "MIPStarRE.LDT.Pasting.gHatFacts_ofComMainAndSelfConsistency"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 61,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.answerComMainForCarrier_ofAnswerGood",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.answerComMainForCarrier_ofAnswerGood",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.answerComMainForCarrier_ofAnswerGood\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : AnswerSymStrat params.next ι)\n    (eps delta gamma zeta : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (hgamma_nonneg : 0 ≤ gamma)\n    (family : IdxPolyFamily params ι)\n    (hcons :\n      ConsRel strategy.state (uniformDistribution (Point params.next))\n        (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement)\n        (IdxPolyFamily.evaluatedAtNextPoint family)\n        zeta)\n    (hself : family.StronglySelfConsistent strategy.state zeta)\n    (hbound :\n      IdxPolyFamily.SliceBoundednessInput\n        (answerSelfImprovementCarrier params.next strategy)\n        family zeta) :\n    Commutativity.ComMainConclusion params\n      (answerSelfImprovementCarrier params.next strategy) family gamma zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Answer-valued Section 11 commutativity input needed by the positive-degree\npasting branch.\n\nThis is a Lean-only construction target, not a source theorem and not a\nhypothesis of `thm:main-induction`.  It is the precise replacement for the invalid route\nthrough the ordinary carrier's dummy diagonal measurement: the conclusion is\nthe ordinary `ComMainConclusion` for the point-equivalent carrier, but the\nintended proof must use the answer-valued diagonal verifier relation of\n`strategy`.\n\nThe proof first establishes the Section 10 point-commutativity estimate from\nthe answer-valued diagonal-line test, transfers that estimate to the\npoint-equivalent carrier, and then invokes the Section 11 scalar chain in its\nform that assumes point commutativity rather than an ordinary diagonal\n`IsGood` field.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.PastingAssembly.AnswerFields",
+  "module_doc": "/-!\n# Section 6 — Pasting Assembly: Answer-Valued Fields\n\nThis module assembles the answer-valued averaged family fields and the\ncommutativity input used by the pasting theorem.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/PastingAssembly/AnswerFields.lean#L285-L346",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/PastingAssembly/AnswerFields.lean",
+  "lines": [
+   285,
+   346
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Commutativity.comMain_of_commutativityPoints",
+   "MIPStarRE.LDT.CommutativityPoints.answerCommutativityPoints"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.ldPastingInInductionNu_le_fifth_mainInductionNu",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.ldPastingInInductionNu_le_fifth_mainInductionNu",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.ldPastingInInductionNu_le_fifth_mainInductionNu\n    (params : Parameters)\n    [FieldModel params.q]\n    (eps delta gamma : Error)\n    (k : ℕ)\n    (heps_nonneg : 0 ≤ eps)\n    (hdelta_nonneg : 0 ≤ delta)\n    (hgamma_nonneg : 0 ≤ gamma)\n    (heps_le_one : eps ≤ 1)\n    (hdelta_le_one : delta ≤ 1)\n    (hgamma_le : gamma ≤ 1)\n    (hdq_le_q : params.d ≤ params.q) :\n    ldPastingInInductionNu params k eps delta gamma\n        (selfImprovementInInductionError params.next eps delta gamma) ≤\n      (1 / (5 : Error)) * mainInductionNu params.next k eps delta gamma := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Paper `inductive_step.tex:552-566`: in the small-parameter regime, the\ninduction-side `ldPastingInInductionNu` constructed from `ζ =\nselfImprovementInInductionError` is bounded by `(1/5) · ν` where `ν =\nmainInductionNu`. This bound discharges the first factor of the telescoping\nderivation inside `assembleAveragedPastingData.error_le`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.PastingAssembly.Basic",
+  "module_doc": "/-!\n# Section 6 — Pasting Assembly: Averaged Family Fields\n\nThis module contains the scalar preliminary bound and the averaged family-field\nlemmas used by the answer-valued successor route.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/PastingAssembly/Basic.lean#L124-L404",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/PastingAssembly/Basic.lean",
+  "lines": [
+   124,
+   404
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 261,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MainInductionStep.selfImprovementInInductionError_le_one_of_mainInductionError_lt_one",
+  "source_name": "MIPStarRE.LDT.MainInductionStep.selfImprovementInInductionError_le_one_of_mainInductionError_lt_one",
+  "formal_statement": "theorem MIPStarRE.LDT.MainInductionStep.selfImprovementInInductionError_le_one_of_mainInductionError_lt_one\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    {eps delta gamma : Error}\n    {k : ℕ}\n    (hgood : strategy.IsGood eps delta gamma)\n    (hsmall : mainInductionError params.next k eps delta gamma < 1) :\n    selfImprovementInInductionError params.next eps delta gamma ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MainInductionStep",
+   "open scoped MatrixOrder",
+   "variable {ι : Type uι} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The nontrivial main-induction branch supplies the scalar side condition\n`ζ ≤ 1` needed by the averaged pasting assembly.\n\nPaper origin: `references/ldt-paper/inductive_step.tex:486-551`, where the\nsmall-error branch is the one in which the averaged self-improvement and\npasting estimates are used.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MainInductionStep.Theorems.PastingAssembly.Basic",
+  "module_doc": "/-!\n# Section 6 — Pasting Assembly: Averaged Family Fields\n\nThis module contains the scalar preliminary bound and the averaged family-field\nlemmas used by the answer-valued successor route.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/PastingAssembly/Basic.lean#L406-L436",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MainInductionStep/Theorems/PastingAssembly/Basic.lean",
+  "lines": [
+   406,
+   436
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MainInductionStep.selfImprovementInInductionError_le_mainInductionNu",
+   "MIPStarRE.LDT.MainInductionStep.delta_le_one_of_mainInductionError_lt_one",
+   "MIPStarRE.LDT.MainInductionStep.dq_le_q_of_mainInductionError_lt_one",
+   "MIPStarRE.LDT.MainInductionStep.eps_le_one_of_mainInductionError_lt_one"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ }
+]

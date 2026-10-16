@@ -1,0 +1,567 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.bitsVal_lt",
+  "source_name": "MIPRE.SAT.bitsVal_lt",
+  "formal_statement": "theorem MIPRE.SAT.bitsVal_lt (l : BitStr) : bitsVal l < 2 ^ l.length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.FmlLib",
+  "module_doc": "/-!\n# Formulas on bit vectors\n\nThe vocabulary in which the describer of the succinct Cook–Levin theorem is written\n(`planning/succinct-cook-levin.md`, S3): a *field* is a list of formulas read as a binary\nnumber, least significant bit first (`Fml.val`); the fields of an index are slices of the\ninput bits (`Fml.field`); and the tests on fields are conjunctions and disjunctions\n(`andList`, `orList`), equality with a constant or another field (`eqConst`, `eqFields`),\ncomparison (`ltConst`, `ltFields`), addition of a constant with its carry (`addBits`,\n`addConstRel`), subtraction of a constant by the two's complement (`subConstBits`), padding\n(`padTo`) and a multiplexer (`mux`). Every test is defined by a fold or a structural\nrecursion whose program is the same fold (`FmlProg.lean`), and every semantics lemma is an\nequation on `val`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/FmlLib.lean#L34-L37",
+  "source_path": "MIPRE/Foundations/SAT/FmlLib.lean",
+  "lines": [
+   34,
+   37
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.bitsVal_injective",
+  "source_name": "MIPRE.SAT.bitsVal_injective",
+  "formal_statement": "theorem MIPRE.SAT.bitsVal_injective : ∀ {l₁ l₂ : BitStr}, l₁.length = l₂.length → bitsVal l₁ = bitsVal l₂ →\n    l₁ = l₂ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "Equal-length bit strings with equal values are equal.",
+  "module": "MIPRE.Foundations.SAT.FmlLib",
+  "module_doc": "/-!\n# Formulas on bit vectors\n\nThe vocabulary in which the describer of the succinct Cook–Levin theorem is written\n(`planning/succinct-cook-levin.md`, S3): a *field* is a list of formulas read as a binary\nnumber, least significant bit first (`Fml.val`); the fields of an index are slices of the\ninput bits (`Fml.field`); and the tests on fields are conjunctions and disjunctions\n(`andList`, `orList`), equality with a constant or another field (`eqConst`, `eqFields`),\ncomparison (`ltConst`, `ltFields`), addition of a constant with its carry (`addBits`,\n`addConstRel`), subtraction of a constant by the two's complement (`subConstBits`), padding\n(`padTo`) and a multiplexer (`mux`). Every test is defined by a fold or a structural\nrecursion whose program is the same fold (`FmlProg.lean`), and every semantics lemma is an\nequation on `val`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/FmlLib.lean#L51-L61",
+  "source_path": "MIPRE/Foundations/SAT/FmlLib.lean",
+  "lines": [
+   51,
+   61
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.bitsVal_take",
+  "source_name": "MIPRE.SAT.bitsVal_take",
+  "formal_statement": "theorem MIPRE.SAT.bitsVal_take (l : BitStr) (n : ℕ) : bitsVal (l.take n) = bitsVal l % 2 ^ n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.FmlLib",
+  "module_doc": "/-!\n# Formulas on bit vectors\n\nThe vocabulary in which the describer of the succinct Cook–Levin theorem is written\n(`planning/succinct-cook-levin.md`, S3): a *field* is a list of formulas read as a binary\nnumber, least significant bit first (`Fml.val`); the fields of an index are slices of the\ninput bits (`Fml.field`); and the tests on fields are conjunctions and disjunctions\n(`andList`, `orList`), equality with a constant or another field (`eqConst`, `eqFields`),\ncomparison (`ltConst`, `ltFields`), addition of a constant with its carry (`addBits`,\n`addConstRel`), subtraction of a constant by the two's complement (`subConstBits`), padding\n(`padTo`) and a multiplexer (`mux`). Every test is defined by a fold or a structural\nrecursion whose program is the same fold (`FmlProg.lean`), and every semantics lemma is an\nequation on `val`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/FmlLib.lean#L63-L82",
+  "source_path": "MIPRE/Foundations/SAT/FmlLib.lean",
+  "lines": [
+   63,
+   82
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Fml.val_addBits",
+  "source_name": "MIPRE.SAT.Fml.val_addBits",
+  "formal_statement": "theorem MIPRE.SAT.Fml.val_addBits : ∀ (fs : List Fml) (c : BitStr), fs.length = c.length → ∀ (cin : Fml) (x : ℕ → Bool),\n    val (addBits fs c cin).1 x + 2 ^ fs.length * ((addBits fs c cin).2.eval x).toNat =\n      val fs x + bitsVal c + (cin.eval x).toNat := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Fml",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "**The adder identity**: `sum + 2^W · carry = fs + c + cin`.",
+  "module": "MIPRE.Foundations.SAT.FmlLib",
+  "module_doc": "/-!\n# Formulas on bit vectors\n\nThe vocabulary in which the describer of the succinct Cook–Levin theorem is written\n(`planning/succinct-cook-levin.md`, S3): a *field* is a list of formulas read as a binary\nnumber, least significant bit first (`Fml.val`); the fields of an index are slices of the\ninput bits (`Fml.field`); and the tests on fields are conjunctions and disjunctions\n(`andList`, `orList`), equality with a constant or another field (`eqConst`, `eqFields`),\ncomparison (`ltConst`, `ltFields`), addition of a constant with its carry (`addBits`,\n`addConstRel`), subtraction of a constant by the two's complement (`subConstBits`), padding\n(`padTo`) and a multiplexer (`mux`). Every test is defined by a fold or a structural\nrecursion whose program is the same fold (`FmlProg.lean`), and every semantics lemma is an\nequation on `val`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/FmlLib.lean#L368-L387",
+  "source_path": "MIPRE/Foundations/SAT/FmlLib.lean",
+  "lines": [
+   368,
+   387
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 4,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Fml.eval_addConstRel_iff",
+  "source_name": "MIPRE.SAT.Fml.eval_addConstRel_iff",
+  "formal_statement": "theorem MIPRE.SAT.Fml.eval_addConstRel_iff (fs gs : List Fml) (c : BitStr) (h : fs.length = c.length)\n    (hg : gs.length = fs.length) (x : ℕ → Bool) :\n    (addConstRel fs gs c).eval x = true ↔ val gs x = val fs x + bitsVal c := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Fml",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.FmlLib",
+  "module_doc": "/-!\n# Formulas on bit vectors\n\nThe vocabulary in which the describer of the succinct Cook–Levin theorem is written\n(`planning/succinct-cook-levin.md`, S3): a *field* is a list of formulas read as a binary\nnumber, least significant bit first (`Fml.val`); the fields of an index are slices of the\ninput bits (`Fml.field`); and the tests on fields are conjunctions and disjunctions\n(`andList`, `orList`), equality with a constant or another field (`eqConst`, `eqFields`),\ncomparison (`ltConst`, `ltFields`), addition of a constant with its carry (`addBits`,\n`addConstRel`), subtraction of a constant by the two's complement (`subConstBits`), padding\n(`padTo`) and a multiplexer (`mux`). Every test is defined by a fold or a structural\nrecursion whose program is the same fold (`FmlProg.lean`), and every semantics lemma is an\nequation on `val`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/FmlLib.lean#L421-L435",
+  "source_path": "MIPRE/Foundations/SAT/FmlLib.lean",
+  "lines": [
+   421,
+   435
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.bitsVal_lt",
+   "MIPRE.SAT.Fml.val_addBits",
+   "MIPRE.SAT.bitsVal_injective"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Fml.size_pos",
+  "source_name": "MIPRE.SAT.Fml.size_pos",
+  "formal_statement": "theorem MIPRE.SAT.Fml.size_pos (f : Fml) : 0 < f.size := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Fml",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.Formula",
+  "module_doc": "/-!\n# Boolean formulas and their circuits\n\nA formula (`Fml`) is a tree of `and`, `or`, `not` over input bits and constants. Its\npost-order flattening (`Fml.flattenAt`) is a circuit in which every gate is read at most once\n(input bits are read through fresh `input` gates, which `Circuit.WellFormed` does not count),\nso a formula's circuit is well-formed whatever the formula (`Fml.toCircuit_wellFormed`), and\ncomputes the formula (`Fml.eval_toCircuit`). The describer of the succinct Cook–Levin\ntheorem is built as a formula, which confines the circuit bookkeeping to this file\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Formula.lean#L52-L52",
+  "source_path": "MIPRE/Foundations/SAT/Formula.lean",
+  "lines": [
+   52,
+   52
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Fml.Node.encode_and",
+  "source_name": "MIPRE.SAT.Fml.Node.encode_and",
+  "formal_statement": "theorem MIPRE.SAT.Fml.Node.encode_and : (encode and : Data) = .cons (.ofNat 2) .nil := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Fml",
+   "open MIPRE.SAT.Fml.Node",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.Formula",
+  "module_doc": "/-!\n# Boolean formulas and their circuits\n\nA formula (`Fml`) is a tree of `and`, `or`, `not` over input bits and constants. Its\npost-order flattening (`Fml.flattenAt`) is a circuit in which every gate is read at most once\n(input bits are read through fresh `input` gates, which `Circuit.WellFormed` does not count),\nso a formula's circuit is well-formed whatever the formula (`Fml.toCircuit_wellFormed`), and\ncomputes the formula (`Fml.eval_toCircuit`). The describer of the succinct Cook–Levin\ntheorem is built as a formula, which confines the circuit bookkeeping to this file\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Formula.lean#L114-L114",
+  "source_path": "MIPRE/Foundations/SAT/Formula.lean",
+  "lines": [
+   114,
+   114
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Fml.Node.encode_or",
+  "source_name": "MIPRE.SAT.Fml.Node.encode_or",
+  "formal_statement": "theorem MIPRE.SAT.Fml.Node.encode_or : (encode or : Data) = .cons (.ofNat 3) .nil := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Fml",
+   "open MIPRE.SAT.Fml.Node",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.Formula",
+  "module_doc": "/-!\n# Boolean formulas and their circuits\n\nA formula (`Fml`) is a tree of `and`, `or`, `not` over input bits and constants. Its\npost-order flattening (`Fml.flattenAt`) is a circuit in which every gate is read at most once\n(input bits are read through fresh `input` gates, which `Circuit.WellFormed` does not count),\nso a formula's circuit is well-formed whatever the formula (`Fml.toCircuit_wellFormed`), and\ncomputes the formula (`Fml.eval_toCircuit`). The describer of the succinct Cook–Levin\ntheorem is built as a formula, which confines the circuit bookkeeping to this file\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Formula.lean#L115-L115",
+  "source_path": "MIPRE/Foundations/SAT/Formula.lean",
+  "lines": [
+   115,
+   115
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Fml.Node.encode_not",
+  "source_name": "MIPRE.SAT.Fml.Node.encode_not",
+  "formal_statement": "theorem MIPRE.SAT.Fml.Node.encode_not : (encode not : Data) = .cons (.ofNat 4) .nil := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Fml",
+   "open MIPRE.SAT.Fml.Node",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.Formula",
+  "module_doc": "/-!\n# Boolean formulas and their circuits\n\nA formula (`Fml`) is a tree of `and`, `or`, `not` over input bits and constants. Its\npost-order flattening (`Fml.flattenAt`) is a circuit in which every gate is read at most once\n(input bits are read through fresh `input` gates, which `Circuit.WellFormed` does not count),\nso a formula's circuit is well-formed whatever the formula (`Fml.toCircuit_wellFormed`), and\ncomputes the formula (`Fml.eval_toCircuit`). The describer of the succinct Cook–Levin\ntheorem is built as a formula, which confines the circuit bookkeeping to this file\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Formula.lean#L116-L116",
+  "source_path": "MIPRE/Foundations/SAT/Formula.lean",
+  "lines": [
+   116,
+   116
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Fml.encode_fml",
+  "source_name": "MIPRE.SAT.Fml.encode_fml",
+  "formal_statement": "theorem MIPRE.SAT.Fml.encode_fml (f : Fml) : (encode f : Data) = encode f.rpn := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Fml",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.Formula",
+  "module_doc": "/-!\n# Boolean formulas and their circuits\n\nA formula (`Fml`) is a tree of `and`, `or`, `not` over input bits and constants. Its\npost-order flattening (`Fml.flattenAt`) is a circuit in which every gate is read at most once\n(input bits are read through fresh `input` gates, which `Circuit.WellFormed` does not count),\nso a formula's circuit is well-formed whatever the formula (`Fml.toCircuit_wellFormed`), and\ncomputes the formula (`Fml.eval_toCircuit`). The describer of the succinct Cook–Levin\ntheorem is built as a formula, which confines the circuit bookkeeping to this file\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Formula.lean#L187-L187",
+  "source_path": "MIPRE/Foundations/SAT/Formula.lean",
+  "lines": [
+   187,
+   187
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Fml.refs_flattenAt",
+  "source_name": "MIPRE.SAT.Fml.refs_flattenAt",
+  "formal_statement": "theorem MIPRE.SAT.Fml.refs_flattenAt (base : ℕ) : ∀ (f : Fml) (k : ℕ) (hk : k < (f.flattenAt base).length),\n    ∀ u ∈ (f.flattenAt base)[k].refs, base ≤ u ∧ u < base + k := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Fml",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "Every reference of the gate at position `k` of `flattenAt base f` lies in `[base, base + k)`.",
+  "module": "MIPRE.Foundations.SAT.Formula",
+  "module_doc": "/-!\n# Boolean formulas and their circuits\n\nA formula (`Fml`) is a tree of `and`, `or`, `not` over input bits and constants. Its\npost-order flattening (`Fml.flattenAt`) is a circuit in which every gate is read at most once\n(input bits are read through fresh `input` gates, which `Circuit.WellFormed` does not count),\nso a formula's circuit is well-formed whatever the formula (`Fml.toCircuit_wellFormed`), and\ncomputes the formula (`Fml.eval_toCircuit`). The describer of the succinct Cook–Levin\ntheorem is built as a formula, which confines the circuit bookkeeping to this file\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Formula.lean#L258-L330",
+  "source_path": "MIPRE/Foundations/SAT/Formula.lean",
+  "lines": [
+   258,
+   330
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Fml.size_pos"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 69,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Fml.refCount_flattenAt_le",
+  "source_name": "MIPRE.SAT.Fml.refCount_flattenAt_le",
+  "formal_statement": "theorem MIPRE.SAT.Fml.refCount_flattenAt_le (base : ℕ) : ∀ (f : Fml) (u : ℕ), refCount (f.flattenAt base) u ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Fml",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "Every gate of the circuit of a formula is read at most once, and the output gate is read\nby no gate.",
+  "module": "MIPRE.Foundations.SAT.Formula",
+  "module_doc": "/-!\n# Boolean formulas and their circuits\n\nA formula (`Fml`) is a tree of `and`, `or`, `not` over input bits and constants. Its\npost-order flattening (`Fml.flattenAt`) is a circuit in which every gate is read at most once\n(input bits are read through fresh `input` gates, which `Circuit.WellFormed` does not count),\nso a formula's circuit is well-formed whatever the formula (`Fml.toCircuit_wellFormed`), and\ncomputes the formula (`Fml.eval_toCircuit`). The describer of the succinct Cook–Levin\ntheorem is built as a formula, which confines the circuit bookkeeping to this file\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Formula.lean#L366-L427",
+  "source_path": "MIPRE/Foundations/SAT/Formula.lean",
+  "lines": [
+   366,
+   427
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Fml.size_pos",
+   "MIPRE.SAT.Fml.refs_flattenAt"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 58,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Fml.toCircuit_wellFormed",
+  "source_name": "MIPRE.SAT.Fml.toCircuit_wellFormed",
+  "formal_statement": "theorem MIPRE.SAT.Fml.toCircuit_wellFormed {n : ℕ} (f : Fml) (hf : f.InputsLt n) : (f.toCircuit n).WellFormed := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Fml",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "**The circuit of a formula is well-formed.**",
+  "module": "MIPRE.Foundations.SAT.Formula",
+  "module_doc": "/-!\n# Boolean formulas and their circuits\n\nA formula (`Fml`) is a tree of `and`, `or`, `not` over input bits and constants. Its\npost-order flattening (`Fml.flattenAt`) is a circuit in which every gate is read at most once\n(input bits are read through fresh `input` gates, which `Circuit.WellFormed` does not count),\nso a formula's circuit is well-formed whatever the formula (`Fml.toCircuit_wellFormed`), and\ncomputes the formula (`Fml.eval_toCircuit`). The describer of the succinct Cook–Levin\ntheorem is built as a formula, which confines the circuit bookkeeping to this file\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Formula.lean#L450-L466",
+  "source_path": "MIPRE/Foundations/SAT/Formula.lean",
+  "lines": [
+   450,
+   466
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Fml.refCount_flattenAt_le",
+   "MIPRE.SAT.Fml.size_pos",
+   "MIPRE.SAT.Fml.refs_flattenAt"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Fml.valueAt_flattenAt",
+  "source_name": "MIPRE.SAT.Fml.valueAt_flattenAt",
+  "formal_statement": "theorem MIPRE.SAT.Fml.valueAt_flattenAt (n : ℕ) (x : ℕ → Bool) :\n    ∀ (f : Fml) (pre post : List Gate),\n      (Circuit.mk n (pre ++ f.flattenAt pre.length ++ post)).valueAt x (pre.length + f.size - 1) =\n        f.eval x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Fml",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "The output gate of `flattenAt` placed after `pre` computes the formula, whatever follows.",
+  "module": "MIPRE.Foundations.SAT.Formula",
+  "module_doc": "/-!\n# Boolean formulas and their circuits\n\nA formula (`Fml`) is a tree of `and`, `or`, `not` over input bits and constants. Its\npost-order flattening (`Fml.flattenAt`) is a circuit in which every gate is read at most once\n(input bits are read through fresh `input` gates, which `Circuit.WellFormed` does not count),\nso a formula's circuit is well-formed whatever the formula (`Fml.toCircuit_wellFormed`), and\ncomputes the formula (`Fml.eval_toCircuit`). The describer of the succinct Cook–Levin\ntheorem is built as a formula, which confines the circuit bookkeeping to this file\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Formula.lean#L490-L610",
+  "source_path": "MIPRE/Foundations/SAT/Formula.lean",
+  "lines": [
+   490,
+   610
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Circuit.valueAt_eq",
+   "MIPRE.SAT.Fml.size_pos"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 115,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Fml.eval_toCircuit",
+  "source_name": "MIPRE.SAT.Fml.eval_toCircuit",
+  "formal_statement": "theorem MIPRE.SAT.Fml.eval_toCircuit (n : ℕ) (f : Fml) (x : ℕ → Bool) : (f.toCircuit n).eval x = f.eval x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Fml",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "**The circuit of a formula computes it.**",
+  "module": "MIPRE.Foundations.SAT.Formula",
+  "module_doc": "/-!\n# Boolean formulas and their circuits\n\nA formula (`Fml`) is a tree of `and`, `or`, `not` over input bits and constants. Its\npost-order flattening (`Fml.flattenAt`) is a circuit in which every gate is read at most once\n(input bits are read through fresh `input` gates, which `Circuit.WellFormed` does not count),\nso a formula's circuit is well-formed whatever the formula (`Fml.toCircuit_wellFormed`), and\ncomputes the formula (`Fml.eval_toCircuit`). The describer of the succinct Cook–Levin\ntheorem is built as a formula, which confines the circuit bookkeeping to this file\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Formula.lean#L612-L627",
+  "source_path": "MIPRE/Foundations/SAT/Formula.lean",
+  "lines": [
+   612,
+   627
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Fml.size_pos",
+   "MIPRE.SAT.Fml.valueAt_flattenAt"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Circuit.length_gateBits",
+  "source_name": "MIPRE.SAT.Circuit.length_gateBits",
+  "formal_statement": "theorem MIPRE.SAT.Circuit.length_gateBits (p : BitStr) (x : ℕ → BitStr) (w : List BitStr) (g : Gate)\n    (hx : ∀ i, g = .input i → (x i).length = p.length)\n    (hw : ∀ j ∈ g.refs, (w.getD j []).length = p.length) :\n    (gateBits p x w g).length = p.length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Circuit",
+   "open MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial",
+   "variable {R : Type*} [CommRing R]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.GateFieldEval",
+  "module_doc": "/-!\n# Uniform field evaluation of a routed gate\n\nField elements are coefficient vectors modulo a supplied binary monic\npolynomial. Gate indices stay binary, including on malformed inputs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/GateFieldEval.lean#L59-L73",
+  "source_path": "MIPRE/Foundations/SAT/GateFieldEval.lean",
+  "lines": [
+   59,
+   73
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.length_mulReduce"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Circuit.evalBits_gateBits",
+  "source_name": "MIPRE.SAT.Circuit.evalBits_gateBits",
+  "formal_statement": "theorem MIPRE.SAT.Circuit.evalBits_gateBits [CharP R 2] (z : R) (p : BitStr) (hp : p ≠ [])\n    (hroot : z ^ p.length = BinaryPolynomial.evalBits z p) (x : ℕ → BitStr) (w : List BitStr) (g : Gate)\n    (hw : ∀ j ∈ g.refs, (w.getD j []).length = p.length) :\n    BinaryPolynomial.evalBits z (gateBits p x w g) =\n      gateValue (fun i => BinaryPolynomial.evalBits z (x i)) (fun j => BinaryPolynomial.evalBits z (w.getD j [])) g := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Circuit",
+   "open MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial",
+   "variable {R : Type*} [CommRing R]"
+  ],
+  "docstring": "Correctness of all five gate operations over every characteristic-two ring\ncontaining a root of the supplied modulus.",
+  "module": "MIPRE.Foundations.SAT.GateFieldEval",
+  "module_doc": "/-!\n# Uniform field evaluation of a routed gate\n\nField elements are coefficient vectors modulo a supplied binary monic\npolynomial. Gate indices stay binary, including on malformed inputs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/GateFieldEval.lean#L75-L101",
+  "source_path": "MIPRE/Foundations/SAT/GateFieldEval.lean",
+  "lines": [
+   75,
+   101
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-circuit-evaluator",
+    "env": "lemma",
+    "title": "Effective circuit polynomial evaluation",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_xor",
+   "MIPRE.LowDegree.BinaryPolynomial.length_mulReduce",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_mulReduce"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Circuit.eval_copyOutput",
+  "source_name": "MIPRE.SAT.Circuit.eval_copyOutput",
+  "formal_statement": "theorem MIPRE.SAT.Circuit.eval_copyOutput (C : Circuit) (hne : C.gates ≠ []) (x : ℕ → Bool) :\n    (copyOutput C).eval x = C.eval x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Circuit",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "A copying gate preserves the circuit's value.",
+  "module": "MIPRE.Foundations.SAT.GatePadding",
+  "module_doc": "/-!\n# Exact gate-count padding\n\nOur circuit representation designates its last gate as the output. To add any\nnumber of gates while retaining that convention, append copying OR gates, each\nreading the previous output twice. Every former output has fan-out two; the new\noutput is terminal. This realizes the exact-size padding required by\n`prop:explicit-padded-succinct-deciders`, without a separate output-wire index.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/GatePadding.lean#L40-L53",
+  "source_path": "MIPRE/Foundations/SAT/GatePadding.lean",
+  "lines": [
+   40,
+   53
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Circuit.valueAt_eq"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Circuit.wellFormed_copyOutput",
+  "source_name": "MIPRE.SAT.Circuit.wellFormed_copyOutput",
+  "formal_statement": "theorem MIPRE.SAT.Circuit.wellFormed_copyOutput {C : Circuit} (hC : C.WellFormed) : (copyOutput C).WellFormed := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Circuit",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "A copying gate preserves topological order, fan-out two, and a terminal output.",
+  "module": "MIPRE.Foundations.SAT.GatePadding",
+  "module_doc": "/-!\n# Exact gate-count padding\n\nOur circuit representation designates its last gate as the output. To add any\nnumber of gates while retaining that convention, append copying OR gates, each\nreading the previous output twice. Every former output has fan-out two; the new\noutput is terminal. This realizes the exact-size padding required by\n`prop:explicit-padded-succinct-deciders`, without a separate output-wire index.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/GatePadding.lean#L55-L88",
+  "source_path": "MIPRE/Foundations/SAT/GatePadding.lean",
+  "lines": [
+   55,
+   88
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Circuit.routedConsistent_iff",
+  "source_name": "MIPRE.SAT.Circuit.routedConsistent_iff",
+  "formal_statement": "theorem MIPRE.SAT.Circuit.routedConsistent_iff (C : Circuit) (x w : ℕ → Bool) :\n    C.RoutedConsistent x w ↔ ∀ k < C.size, w k = C.valueAt x k := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Circuit"
+  ],
+  "docstring": "Routing imposes exactly the original gate values on all the same variables.",
+  "module": "MIPRE.Foundations.SAT.InputRouting",
+  "module_doc": "/-!\n# Routing repeated input reads through their preceding copies\n\n`Circuit.WellFormed` bounds gate fan-out, but permits arbitrarily many gates to\nread the same external input. For bounded-degree consistency polynomials, the\nfirst such gate reads the external variable and each later one reads the\npreceding input gate's variable. This changes neither the variables nor the\nBoolean gate values. Each variable supplies at most one of these copy links.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/InputRouting.lean#L114-L140",
+  "source_path": "MIPRE/Foundations/SAT/InputRouting.lean",
+  "lines": [
+   114,
+   140
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-circuit-arithmetization",
+    "env": "lemma",
+    "title": "Circuit arithmetization with bounded input use",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.SAT.Circuit.valueAt_eq"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 24,
+  "is_target": false
+ }
+]

@@ -153,13 +153,15 @@ def theorem_record(it):
     if kind == "glue-leaf":
         expl = (f"The statement is uploaded without a proof: its witness `{it.get('witness')}` exists in the repository at commit "
                 f"`{args.commit}`, in `{it['source_path']}`, which the platform cannot host yet; the Lean development proves it, the platform does not.")
+    elif kind in ("leaf-closure", "glue-leaf-closure"):
+        # tested before the generic glue case: a glue item's kind is "glue-" + its kind, and the leaf
+        # closure of the repetition tree went out with the sketch text below (2026-10-16)
+        expl = (f"The proof is the witness `{it.get('witness')}` of the repository, built from the published definition bundles; it closes the "
+                "leaf, so every sketch resting on it is proved.")
     elif kind.startswith("glue-"):
         expl = ("The proof is the source's one-line application of the own-code theorem to the stage witnesses taken from the "
                 f"`Nonempty` leaves ({', '.join('`' + c + '`' for c in it.get('imported_nodes', []))}), so the theorem is an accepted "
                 "sketch whose open frontier is those leaves; the repository proves them in full.")
-    elif kind == "leaf-closure":
-        expl = (f"The proof is the witness `{it.get('witness')}` of the repository, built from the published definition bundles; it closes the "
-                "leaf, so every sketch resting on it is proved.")
     else:
         pl = it.get("prooflines"); ph = it.get("pasted_helpers", 0); imp = it.get("imported_nodes", [])
         expl = f"The uploaded proof is the source proof" + (f" ({pl} lines)" if pl else "") + "."

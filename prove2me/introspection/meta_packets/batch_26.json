@@ -1,0 +1,700 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryScan.program_sound",
+  "source_name": "MIPRE.Introspection.AuxiliaryScan.program_sound",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryScan.program_sound (f : PolyTimeFun AuxiliarySource.Context BitStr)\n    (m : PolyTimeFun AuxiliarySource.Context (List BitStr)) (ctx : AuxiliarySource.Context)\n    {P : CL.CLFun CL.𝔽₂ (Fin n) ℓ} {T : Finset (Fin n)} (hP : P.SupportedOn T)\n    (y : Fin n → CL.𝔽₂) (k : ℕ) (hq : ∀ j < k, QueriesCorrectAt f m ctx P j)\n    (hok : (program f m k (ctx, CL.toBits y)).1 = true) :\n    ∃ x, program f m k (ctx, CL.toBits y) =\n      (true, CL.toBits (P.outputPrefix k y), CL.toBits x) ∧\n      (P.truncate k).eval x = P.outputPrefix k y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryScan",
+   "open MIPRE.Cost MIPRE.LowDegree.BinaryLinear MIPRE.Introspection.CLChecks",
+   "variable {n ℓ : ℕ}"
+  ],
+  "docstring": "A successful scan gives both the claimed prefix and a seed witnessing it.",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryScanCorrect",
+  "module_doc": "/-! # Correctness of the actual attained-prefix scan\n\nThe only query hypotheses are the source interface's legal-prefix clauses.\nThe returned witness proves the next call is legal. Honest outputs pass all\nstages, while arbitrary malformed or unattainable claims may be rejected.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryScanCorrect.lean#L66-L106",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryScanCorrect.lean",
+  "lines": [
+   66,
+   106
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.CLFun.SupportedOn.eval_truncate_eq_sum",
+   "MIPRE.Introspection.CLChecks.truncate_fibre_of_agree",
+   "MIPRE.Introspection.CLChecks.stageFactor_subset_residual",
+   "MIPRE.Introspection.CLChecks.proj_prefixRegister",
+   "MIPRE.Introspection.AuxiliaryScan.stage_correct",
+   "MIPRE.Introspection.CLChecks.proj_outputPrefix_cons"
+  ],
+  "pasted_helpers": 26,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryScan.program_complete",
+  "source_name": "MIPRE.Introspection.AuxiliaryScan.program_complete",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryScan.program_complete (f : PolyTimeFun AuxiliarySource.Context BitStr)\n    (m : PolyTimeFun AuxiliarySource.Context (List BitStr)) (ctx : AuxiliarySource.Context)\n    {P : CL.CLFun CL.𝔽₂ (Fin n) ℓ} {T : Finset (Fin n)} (hP : P.SupportedOn T)\n    (y : Fin n → CL.𝔽₂) (k : ℕ) (hq : ∀ j < k, QueriesCorrectAt f m ctx P j)\n    (ha : ∃ x, (P.truncate k).eval x = P.outputPrefix k y) :\n    (program f m k (ctx, CL.toBits y)).1 = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryScan",
+   "open MIPRE.Cost MIPRE.LowDegree.BinaryLinear MIPRE.Introspection.CLChecks",
+   "variable {n ℓ : ℕ}"
+  ],
+  "docstring": "Hiding answers only need the prefix requested at their own level to be\nattainable; the unvisited components are unrestricted.",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryScanCorrect",
+  "module_doc": "/-! # Correctness of the actual attained-prefix scan\n\nThe only query hypotheses are the source interface's legal-prefix clauses.\nThe returned witness proves the next call is legal. Honest outputs pass all\nstages, while arbitrary malformed or unattainable claims may be rejected.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryScanCorrect.lean#L128-L150",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryScanCorrect.lean",
+  "lines": [
+   128,
+   150
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.CLFun.SupportedOn.eval_truncate_eq_sum",
+   "MIPRE.Introspection.CLChecks.stageFactor_subset_residual",
+   "MIPRE.Introspection.CLChecks.proj_prefixRegister",
+   "MIPRE.Introspection.AuxiliaryScan.program_sound",
+   "MIPRE.Introspection.AuxiliaryScan.stage_correct",
+   "MIPRE.Introspection.CLChecks.outputPrefix_outputPrefix",
+   "MIPRE.Introspection.CLChecks.proj_outputPrefix_cons",
+   "MIPRE.LowDegree.BinaryLinear.insertRow_pivotBits",
+   "MIPRE.LowDegree.BinaryLinear.typedBasis_span",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.append_reduced",
+   "MIPRE.LowDegree.BinaryLinear.binary_eq_zero_or_one",
+   "MIPRE.LowDegree.BinaryLinear.getD_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.coordinateRows_matrixBits",
+   "MIPRE.LowDegree.BinaryLinear.typedReduceStep_error",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.eq_zero_of_pivots_zero"
+  ],
+  "pasted_helpers": 52,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryScan.stage_correct",
+  "source_name": "MIPRE.Introspection.AuxiliaryScan.stage_correct",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryScan.stage_correct (f : PolyTimeFun AuxiliarySource.Context BitStr) (m : PolyTimeFun AuxiliarySource.Context (List BitStr)) (ctx : AuxiliarySource.Context) {n : ℕ}\n    (S : Finset (Fin n)) (L : (Fin n → CL.𝔽₂) →ₗ[CL.𝔽₂] (Fin n → CL.𝔽₂))\n    (u y x : Fin n → CL.𝔽₂)\n    (hu : AuxiliarySource.inputPrefix ctx = CL.toBits u)\n    (hS : f ctx = CL.indicatorBits S)\n    (hL : m ctx = matrixBits (LinearMap.toMatrix' L)) :\n    stage f m (ctx, CL.toBits y, CL.toBits x) =\n      let v := CL.proj S y\n      let z := AuxiliaryPrefix.solveStage L v\n      (decide (L z = v), CL.toBits (u + v), CL.toBits (CL.proj Sᶜ x + CL.proj S z)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryScan",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.LowDegree.BinaryLinear MIPRE.LowDegree.BinaryPolynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.AuxiliaryScanStage",
+  "module_doc": "/-! # One executable Gaussian stage of the hiding prefix scan\n\nThe stage queries the next register and its matrix, solves for the claimed\ncomponent, checks the solution by matrix multiplication, and replaces exactly\nthat register in the seed witness. The returned prefix is the old prefix plus\nthe claimed new component. Every operation has an ambient polynomial bound.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/AuxiliaryScanStage.lean#L42-L83",
+  "source_path": "MIPRE/Foundations/Introspection/AuxiliaryScanStage.lean",
+  "lines": [
+   42,
+   83
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.encode_injective",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.coordinateRows_matrixBits",
+   "MIPRE.LowDegree.BinaryLinear.basisSolveProg_encoding"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.retained_block_le_completion",
+  "source_name": "MIPRE.Introspection.retained_block_le_completion",
+  "formal_statement": "theorem MIPRE.Introspection.retained_block_le_completion (P : Y → Matrix V V ℂ) (hP : IsPVM P)\n    (Q : Y → POVM (Y × A) H) (p : Y × A) :\n    P p.1 ⊗ₖ ((Q p.1).mats p).val ≤\n      ((controlledPOVM P hP (fun y => (Q y).map Prod.snd)).mats p).val := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {V H Y A : Type*} [Fintype V] [DecidableEq V] [Fintype H] [DecidableEq H]"
+  ],
+  "docstring": "The matching block is positive and dominated by the controlled marginal POVM.",
+  "module": "MIPRE.Foundations.Introspection.BlockRetention",
+  "module_doc": "/-! # Completing the matching blocks of a twirled measurement -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/BlockRetention.lean#L63-L78",
+  "source_path": "MIPRE/Foundations/Introspection/BlockRetention.lean",
+  "lines": [
+   63,
+   78
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-mixing-coordinates",
+    "env": "lemma",
+    "title": "Retained-fibre mixing in coordinate presentations",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.IsPVM.posSemidef"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.block_retention_dist_avg",
+  "source_name": "MIPRE.Introspection.block_retention_dist_avg",
+  "formal_statement": "theorem MIPRE.Introspection.block_retention_dist_avg {X : Type*} [Fintype X]\n    (D : X → ℝ) (hD0 : ∀ x, 0 ≤ D x) (hD1 : ∑ x, D x = 1)\n    (ψ : (V × H) × B → ℂ) (hψ : ‖evec ψ‖ = 1)\n    (M : X → Y × A → Matrix (V × H) (V × H) ℂ) (hM : ∀ x, IsPVM (M x))\n    (P : X → Y → Matrix V V ℂ) (hP : ∀ x, IsPVM (P x))\n    (Q : X → Y → POVM (Y × A) H) (R : X → Y → Matrix B B ℂ) (hR : ∀ x, IsPVM (R x))\n    (hPR : ∀ x y, aOp (aOp (P x y) : Matrix (V × H) _ ℂ) *ᵥ ψ = bOp (R x y) *ᵥ ψ)\n    {δ : ℝ} (hclose : ∑ x, D x *\n      (2 * (∑ y, stateSqNorm ψ ((∑ a, M x (y, a)) - aOp (P x y))) +\n       2 * (∑ p : Y × A, stateSqNorm ψ (M x p - ∑ z, P x z ⊗ₖ ((Q x z).mats p).val))) ≤ δ) :\n    (∑ x, D x * ∑ p : Y × A, stateSqNorm ψ\n      (M x p - P x p.1 ⊗ₖ (((Q x p.1).map Prod.snd).mats p.2).val)) ≤\n      2 * δ + 4 * Real.sqrt δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {V H Y A : Type*} [Fintype V] [DecidableEq V] [Fintype H] [DecidableEq H]",
+   "variable {B : Type*} [Fintype B] [DecidableEq B]"
+  ],
+  "docstring": "Complete the retained blocks after averaging questions; the result is an actual family of POVMs.",
+  "module": "MIPRE.Foundations.Introspection.BlockRetention",
+  "module_doc": "/-! # Completing the matching blocks of a twirled measurement -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/BlockRetention.lean#L98-L130",
+  "source_path": "MIPRE/Foundations/Introspection/BlockRetention.lean",
+  "lines": [
+   98,
+   130
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-mixing-coordinates",
+    "env": "lemma",
+    "title": "Retained-fibre mixing in coordinate presentations",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.retained_block_le_completion",
+   "MIPRE.Introspection.retained_fibre_dist",
+   "MIPRE.Introspection.submeasurement_completion_dist_avg",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_sub",
+   "MIPRE.aOp_sum",
+   "MIPRE.POVM.sum_val",
+   "MIPRE.IsPVM.posSemidef",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.IsPVM.aOp"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.linear_twirl_blocks",
+  "source_name": "MIPRE.Introspection.linear_twirl_blocks",
+  "formal_statement": "theorem MIPRE.Introspection.linear_twirl_blocks (L : (Fin n → F) →ₗ[F] (Fin n → F))\n    (M : Matrix ((Fin n → F) × H) ((Fin n → F) × H) ℂ) :\n    averageX L.ker (dephaseZ M) =\n      ∑ a : Fin n → F, synOf wZ L a ⊗ₖ averagedBlock L.ker M (linearPreimage L a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset MIPRE.Weyl Classical Matrix Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : ℕ} {H : Type*} [Fintype H] [DecidableEq H]"
+  ],
+  "docstring": "The exact block decomposition used by the hiding argument, including an arbitrary ancilla.",
+  "module": "MIPRE.Foundations.Introspection.BlockTwirl",
+  "module_doc": "/-! # Entry formulas for Pauli twirls with an ancillary space -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/BlockTwirl.lean#L148-L163",
+  "source_path": "MIPRE/Foundations/Introspection/BlockTwirl.lean",
+  "lines": [
+   148,
+   163
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-linear-mixing",
+    "env": "lemma",
+    "title": "Linear-map blocks of the twirl",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sgn_add",
+   "MIPRE.Weyl.sum_sgn_trDot",
+   "MIPRE.Weyl.proj_wZ"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.ClockArithmetic.bothUnary_runs",
+  "source_name": "MIPRE.Introspection.ClockArithmetic.bothUnary_runs",
+  "formal_statement": "theorem MIPRE.Introspection.ClockArithmetic.bothUnary_runs (a b : ℕ) :\n    ∃ time ≤ unaryCost a + unaryCost b + esize a + esize b + 2 * a + 2 * b + 20,\n      bothUnary.Runs (encode (a, b)) (.cons (.ofNat a) (.ofNat b)) time := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.ClockArithmetic",
+   "open MIPRE.Cost MIPRE.Cost.Prog Polynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.ClockArithmetic",
+  "module_doc": "/-! # Executable arithmetic for the introspection clock\n\nOne fixed program, for each constant exponent, reads binary `λ` and `n` and\nwrites the unary budget `2^((λ*n+1)^k)`. The large output is constructed by\nproved unary arithmetic programs; it is never embedded in the program text.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ClockArithmetic.lean#L34-L48",
+  "source_path": "MIPRE/Foundations/Introspection/ClockArithmetic.lean",
+  "lines": [
+   34,
+   48
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.ClockArithmetic.uniformProg_closed",
+  "source_name": "MIPRE.Introspection.ClockArithmetic.uniformProg_closed",
+  "formal_statement": "theorem MIPRE.Introspection.ClockArithmetic.uniformProg_closed (k : ℕ) : (uniformProg k).WellScoped 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.ClockArithmetic",
+   "open MIPRE.Cost MIPRE.Cost.Prog Polynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.ClockArithmetic",
+  "module_doc": "/-! # Executable arithmetic for the introspection clock\n\nOne fixed program, for each constant exponent, reads binary `λ` and `n` and\nwrites the unary budget `2^((λ*n+1)^k)`. The large output is constructed by\nproved unary arithmetic programs; it is never embedded in the program text.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ClockArithmetic.lean#L74-L77",
+  "source_path": "MIPRE/Foundations/Introspection/ClockArithmetic.lean",
+  "lines": [
+   74,
+   77
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-growing-clock",
+    "env": "lemma",
+    "title": "Executable growing clock and original-index simulation",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.polyProg_wellScoped"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.ClockArithmetic.uniformProg_runs",
+  "source_name": "MIPRE.Introspection.ClockArithmetic.uniformProg_runs",
+  "formal_statement": "theorem MIPRE.Introspection.ClockArithmetic.uniformProg_runs (k lam n : ℕ) :\n    ∃ time ≤ uniformCost k lam n,\n      (uniformProg k).Runs (encode (lam, n)) (.ofNat (ansBound k lam n)) time := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.ClockArithmetic",
+   "open MIPRE.Cost MIPRE.Cost.Prog Polynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.ClockArithmetic",
+  "module_doc": "/-! # Executable arithmetic for the introspection clock\n\nOne fixed program, for each constant exponent, reads binary `λ` and `n` and\nwrites the unary budget `2^((λ*n+1)^k)`. The large output is constructed by\nproved unary arithmetic programs; it is never embedded in the program text.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ClockArithmetic.lean#L86-L117",
+  "source_path": "MIPRE/Foundations/Introspection/ClockArithmetic.lean",
+  "lines": [
+   86,
+   117
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-growing-clock",
+    "env": "lemma",
+    "title": "Executable growing clock and original-index simulation",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.mulLoop_runs",
+   "MIPRE.Cost.Prog.polyProg_wellScoped",
+   "MIPRE.Cost.Prog.polyProg_runs",
+   "MIPRE.Introspection.ClockArithmetic.bothUnary_runs"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.ClockArithmetic.growingClock_cost_le",
+  "source_name": "MIPRE.Introspection.ClockArithmetic.growingClock_cost_le",
+  "formal_statement": "theorem MIPRE.Introspection.ClockArithmetic.growingClock_cost_le {k lam n : ℕ} (hk : 1 ≤ k) (hl : 1 ≤ lam) (hn : 1 ≤ n) :\n    uniformCost k lam n + esize lam + esize n + 3 ≤ (clockCostPoly k).eval (ansBound k lam n) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.ClockArithmetic",
+   "open MIPRE.Cost Polynomial"
+  ],
+  "docstring": "One polynomial controls all parameter/index instances of the actual clock.",
+  "module": "MIPRE.Foundations.Introspection.ClockCost",
+  "module_doc": "/-! # Uniform runtime bounds for the growing introspection clock\n\nFor each fixed positive exponent, clock construction runs in polynomial time\nin its unary output budget, uniformly in the parameter and index. The existing\npolynomial-exponent absorption lemma then gives another introspection budget.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ClockCost.lean#L60-L76",
+  "source_path": "MIPRE/Foundations/Introspection/ClockCost.lean",
+  "lines": [
+   60,
+   76
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 4,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.ClockSimulation.reindexProg_runs_cost",
+  "source_name": "MIPRE.Introspection.ClockSimulation.reindexProg_runs_cost",
+  "formal_statement": "theorem MIPRE.Introspection.ClockSimulation.reindexProg_runs_cost (x : Data) :\n    ∃ time ≤ reindexCost x, reindexProg.Runs x (reindexed x) time := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.ClockSimulation",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping MIPRE.CL.Detyping.Program MIPRE.Introspection.ClockArithmetic Polynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.ClockSimulationCost",
+  "module_doc": "/-! # Runtime of the complete clocked exponential-index simulation -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ClockSimulationCost.lean#L20-L35",
+  "source_path": "MIPRE/Foundations/Introspection/ClockSimulationCost.lean",
+  "lines": [
+   20,
+   35
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.ClockSimulation.reindexCost_le",
+  "source_name": "MIPRE.Introspection.ClockSimulation.reindexCost_le",
+  "formal_statement": "theorem MIPRE.Introspection.ClockSimulation.reindexCost_le {x : Data} {B : ℕ} (hn : indexReader x ≤ B)\n    (hx : x.size ≤ 64 * B) (hout : (reindexed x).size ≤ 64 * B) :\n    reindexCost x ≤ reindexCostPoly.eval B := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.ClockSimulation",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping MIPRE.CL.Detyping.Program MIPRE.Introspection.ClockArithmetic Polynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.ClockSimulationCost",
+  "module_doc": "/-! # Runtime of the complete clocked exponential-index simulation -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ClockSimulationCost.lean#L120-L133",
+  "source_path": "MIPRE/Foundations/Introspection/ClockSimulationCost.lean",
+  "lines": [
+   120,
+   133
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.ClockedSourceChecks.sampling_eq_program",
+  "source_name": "MIPRE.Introspection.ClockedSourceChecks.sampling_eq_program",
+  "formal_statement": "theorem MIPRE.Introspection.ClockedSourceChecks.sampling_eq_program (U : ClockedUniversalMachine) (k lam n j Q R s : ℕ)\n    (S : Prog) (w : Bool) (a b : BitStr) :\n    sampling U (unary (ansBound k lam n), S, j, w, 2 ^ n, Q, R, s, a, b) = true ↔\n      ∃ t, (samplingProg k lam U S).Runs (encode (j,w,n,Q,R,s,a,b)) (encode true) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.ClockedSourceChecks",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Introspection.AuxiliaryProgram MIPRE.Introspection.SourceCompiler"
+  ],
+  "docstring": "The shared-clock sampling check is exactly the previously verified\nclock-computing program, after moving index preparation outside the kernel.",
+  "module": "MIPRE.Foundations.Introspection.ClockedSourceChecks",
+  "module_doc": "/-! # Source-game checks using the shared explicit clock\n\nThe final decision kernel receives the exponential index and unary clock\nonce. These polynomial-time checks reuse that resource for Sample and\ncross-Introspect, with precisely the guards of the earlier source compiler.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ClockedSourceChecks.lean#L52-L76",
+  "source_path": "MIPRE/Foundations/Introspection/ClockedSourceChecks.lean",
+  "lines": [
+   52,
+   76
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.Cost.encode_injective",
+   "MIPRE.Introspection.AuxiliaryProgram.equal_iff",
+   "MIPRE.Introspection.AuxiliaryProgram.samplingProg_accepts_iff"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.linear_measurements_commute",
+  "source_name": "MIPRE.Introspection.linear_measurements_commute",
+  "formal_statement": "theorem MIPRE.Introspection.linear_measurements_commute\n    (L R : (Fin n → F) →ₗ[F] (Fin n → F)) (hLR : CL.perp R.ker ≤ L.ker)\n    (a b : Fin n → F) : Commute (synOf wZ L a) (synOf wX R b) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset MIPRE.Weyl Classical",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : ℕ}"
+  ],
+  "docstring": "The perpendicular-kernel inclusion makes every sampling projector commute with every\nhiding projector, including zero projectors at outcomes outside the ranges.",
+  "module": "MIPRE.Foundations.Introspection.Commutation",
+  "module_doc": "/-! # Commutation of the sampling and hiding measurements -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/Commutation.lean#L32-L56",
+  "source_path": "MIPRE/Foundations/Introspection/Commutation.lean",
+  "lines": [
+   32,
+   56
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-commute-criterion",
+    "env": "lemma",
+    "title": "A commutation criterion for $X$ and $Z$ measurements",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.linear_measurement_fourier_inverse",
+   "MIPRE.Weyl.wX_mul_wZ"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.sum_norm_linearFourier_sq",
+  "source_name": "MIPRE.Introspection.sum_norm_linearFourier_sq",
+  "formal_statement": "theorem MIPRE.Introspection.sum_norm_linearFourier_sq\n    (L : (Fin n → F) →ₗ[F] (Fin n → F)) (T : (Fin n → F) → (N → ℂ))\n    (hT : ∀ y, y ∉ L.range → T y = 0) :\n    (Fintype.card (CL.perp L.ker) : ℝ)⁻¹ *\n        (∑ v : CL.perp L.ker, ‖evec (∑ y : Fin n → F,\n          sgn (trDot v.1 (linearPreimage L y)) • T y)‖ ^ 2) =\n      ∑ y : Fin n → F, ‖evec (T y)‖ ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset MIPRE.Weyl Matrix Classical",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : ℕ} {N : Type*} [Fintype N]"
+  ],
+  "docstring": "Parseval for vector families supported on the range of a linear map.",
+  "module": "MIPRE.Foundations.Introspection.CommutatorParseval",
+  "module_doc": "/-! # Parseval for commutators with linear-map readouts\n\nThe character transform on the kernel's perpendicular identifies the outcome-summed\ncommutator error of a linear-map measurement with the uniformly averaged error of its\nPauli observables. This proves the characteristic-two form of the paper's `lem:W`.\nThe identity holds on every state, with ancillary spaces and empty fibres allowed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/CommutatorParseval.lean#L44-L98",
+  "source_path": "MIPRE/Foundations/Introspection/CommutatorParseval.lean",
+  "lines": [
+   44,
+   98
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-commutator-transfer",
+    "env": "lemma",
+    "title": "Commutator Parseval identity",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.subspaceTrace_eq_zero_iff",
+   "MIPRE.dotProduct_star_self",
+   "MIPRE.sgn_add",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.sum_sgn_linear"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 47,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.unitaryTwirl_comp",
+  "source_name": "MIPRE.Introspection.unitaryTwirl_comp",
+  "formal_statement": "theorem MIPRE.Introspection.unitaryTwirl_comp (μ : I → ℝ) (ν : J → ℝ)\n    (U : I → Matrix dA dA ℂ) (V : J → Matrix dA dA ℂ) (M : Matrix dA dA ℂ) :\n    unitaryTwirl ν V (unitaryTwirl μ U M) =\n      unitaryTwirl (fun p : I × J => μ p.1 * ν p.2) (fun p => V p.2 * U p.1) M := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix",
+   "variable {dA dB I J A : Type*} [Fintype dA] [DecidableEq dA]"
+  ],
+  "docstring": "Successive twirls equal the twirl by the independently sampled product.",
+  "module": "MIPRE.Foundations.Introspection.ComposedTwirl",
+  "module_doc": "/-! # Composed twirling from two commutator estimates -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ComposedTwirl.lean#L19-L35",
+  "source_path": "MIPRE/Foundations/Introspection/ComposedTwirl.lean",
+  "lines": [
+   19,
+   35
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-two-sided-commutation",
+    "env": "lemma",
+    "title": "Combining two approximate commutations",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.composed_twirl_dist_le",
+  "source_name": "MIPRE.Introspection.composed_twirl_dist_le",
+  "formal_statement": "theorem MIPRE.Introspection.composed_twirl_dist_le (μ : I → ℝ) (ν : J → ℝ)\n    (hμ0 : ∀ i, 0 ≤ μ i) (hν0 : ∀ j, 0 ≤ ν j)\n    (hμ1 : ∑ i, μ i = 1) (hν1 : ∑ j, ν j = 1)\n    (ψ : dA × dB → ℂ) (M : POVM A dA)\n    (U : I → Matrix dA dA ℂ) (V : J → Matrix dA dA ℂ) (W : J → Matrix dB dB ℂ)\n    (hUsa : ∀ i, (U i)ᴴ = U i) (hUid : ∀ i, U i * U i = 1)\n    (hVsa : ∀ j, (V j)ᴴ = V j) (hVid : ∀ j, V j * V j = 1)\n    (hW : ∀ j, (W j)ᴴ * W j = 1) (hmirror : ∀ j, xSqNorm ψ (V j) (W j) = 0) :\n    (∑ a, stateSqNorm ψ\n      (unitaryTwirl ν V (unitaryTwirl μ U (M.mats a).val) - (M.mats a).val)) ≤\n      4 * (∑ i, μ i * ∑ a, stateSqNorm ψ ((M.mats a).val * U i - U i * (M.mats a).val)) +\n      4 * (∑ j, ν j * ∑ a, stateSqNorm ψ ((M.mats a).val * V j - V j * (M.mats a).val)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix",
+   "variable {dA dB I J A : Type*} [Fintype dA] [DecidableEq dA]"
+  ],
+  "docstring": "Two reflective twirls stay close if each commutator is small and the second has an exact mirror.",
+  "module": "MIPRE.Foundations.Introspection.ComposedTwirl",
+  "module_doc": "/-! # Composed twirling from two commutator estimates -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ComposedTwirl.lean#L37-L72",
+  "source_path": "MIPRE/Foundations/Introspection/ComposedTwirl.lean",
+  "lines": [
+   37,
+   72
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-two-sided-commutation",
+    "env": "lemma",
+    "title": "Combining two approximate commutations",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.unitaryTwirl_comp",
+   "MIPRE.Introspection.unitaryTwirl_outcome_dist_le",
+   "MIPRE.Introspection.two_sided_commutation_avg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.submeasurement_agreement_dist",
+  "source_name": "MIPRE.Introspection.submeasurement_agreement_dist",
+  "formal_statement": "theorem MIPRE.Introspection.submeasurement_agreement_dist (ψ : N → ℂ) (hψ : ‖evec ψ‖ = 1)\n    (P C : I → Matrix N N ℂ) (hP : IsPVM P)\n    (hC0 : ∀ i, 0 ≤ C i) (hCsum : ∑ i, C i ≤ 1) :\n    (∑ i, snorm ψ (P i - C i) ^ 2) ≤\n      2 * (1 - ∑ i, qform ψ (P i * C i)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {N I : Type*} [Fintype N] [DecidableEq N] [Fintype I]"
+  ],
+  "docstring": "Agreement with a positive submeasurement controls distance to a PVM.",
+  "module": "MIPRE.Foundations.Introspection.ConditionalConsistency",
+  "module_doc": "/-! # Conditional consistency\n\nThe paper's `lem:conditional-consistency`, with constant two in the summed\nsquared state norm. The conditioning index may determine Alice's entire POVM.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ConditionalConsistency.lean#L22-L50",
+  "source_path": "MIPRE/Foundations/Introspection/ConditionalConsistency.lean",
+  "lines": [
+   22,
+   50
+  ],
+  "blueprint": [
+   {
+    "label": "lem:conditional-measurement",
+    "env": "lemma",
+    "title": "Conditioning on part of a question",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 13,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.conditional_coarse_overlap",
+  "source_name": "MIPRE.Introspection.conditional_coarse_overlap",
+  "formal_statement": "theorem MIPRE.Introspection.conditional_coarse_overlap (ψ : H × K → ℂ)\n    (M : I → Matrix H H ℂ) (P : I → Matrix K K ℂ) (Q : Y → Matrix K K ℂ)\n    (f : Y → I → Z) (hM : IsPVM M) (hP : IsPVM P) (hQ : IsPVM Q)\n    (hc : ∀ y i, Commute (Q y) (P i)) :\n    (∑ i, bornProb ψ (M i) (P i)) ≤\n      ∑ p : Y × Z, bornProb ψ (fibSum M (f p.1) p.2) (conditionalIdeal P Q f p) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {H K I Y Z : Type*}"
+  ],
+  "docstring": "Keyed coarse agreement dominates fine agreement when the ideal normalizers\ncommute with the fine ideal PVM. All extra cross terms are positive.",
+  "module": "MIPRE.Foundations.Introspection.ConditionalNormalizer",
+  "module_doc": "/-! # Replacing a conditional hiding normalizer by its ideal prefix\n\nThe coarse outcome map may depend on the retained conditioning label. Positivity\nof the ideal commuting prefix/fine-projector products lets us retain the fine\nagreement without a factor depending on either outcome alphabet. The resulting\nreplacement costs three times each of the conditional, prefix, and fine errors.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ConditionalNormalizer.lean#L65-L103",
+  "source_path": "MIPRE/Foundations/Introspection/ConditionalNormalizer.lean",
+  "lines": [
+   65,
+   103
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-conditional-normalizer",
+    "env": "lemma",
+    "title": "Dimension-independent conditional normalizer replacement",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_sum",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.IsPVM.posSemidef"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.conditional_coarse_ideal_distance",
+  "source_name": "MIPRE.Introspection.conditional_coarse_ideal_distance",
+  "formal_statement": "theorem MIPRE.Introspection.conditional_coarse_ideal_distance (ψ : H × K → ℂ) (hψ : ‖evec ψ‖ = 1)\n    (M : I → Matrix H H ℂ) (P : I → Matrix K K ℂ) (Q : Y → Matrix K K ℂ)\n    (f : Y → I → Z) (hM : IsPVM M) (hP : IsPVM P) (hQ : IsPVM Q)\n    (hc : ∀ y i, Commute (Q y) (P i)) :\n    (∑ p : Y × Z, snorm ψ\n      (fibSum M (f p.1) p.2 ⊗ₖ Q p.1 - bOp (conditionalIdeal P Q f p)) ^ 2) ≤\n      ∑ i, xSqNorm ψ (M i) (P i) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {H K I Y Z : Type*}"
+  ],
+  "docstring": "With the ideal prefix attached, keyed coarse-graining costs no more than\nthe fine cross-party squared error.",
+  "module": "MIPRE.Foundations.Introspection.ConditionalNormalizer",
+  "module_doc": "/-! # Replacing a conditional hiding normalizer by its ideal prefix\n\nThe coarse outcome map may depend on the retained conditioning label. Positivity\nof the ideal commuting prefix/fine-projector products lets us retain the fine\nagreement without a factor depending on either outcome alphabet. The resulting\nreplacement costs three times each of the conditional, prefix, and fine errors.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ConditionalNormalizer.lean#L105-L143",
+  "source_path": "MIPRE/Foundations/Introspection/ConditionalNormalizer.lean",
+  "lines": [
+   105,
+   143
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-conditional-normalizer",
+    "env": "lemma",
+    "title": "Dimension-independent conditional normalizer replacement",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.submeasurement_agreement_dist",
+   "MIPRE.Introspection.conditional_coarse_overlap",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.posSemidef",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.one_sub_sum_bornProb_eq"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 30,
+  "is_target": false
+ }
+]

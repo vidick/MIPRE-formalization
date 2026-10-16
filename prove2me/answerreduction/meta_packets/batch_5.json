@@ -1,0 +1,634 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.StageProg.copyAnswer_factor",
+  "source_name": "MIPRE.AnswerReduction.StageProg.copyAnswer_factor",
+  "formal_statement": "theorem MIPRE.AnswerReduction.StageProg.copyAnswer_factor (τ : LIDT.CL.Ty) {j : ℕ} (hj : 1 ≤ j) (u : Coord P → ((shoupBinField k hk)).carrier)\n    (y : BitStr) :\n    copyAnswer (unary k) (((unary o, unary sz, unary jw, unary c) : Desc)) (tyNat τ) (unary P.m') 3 j (flatBits P hk u) y =\n      flatInd P k (((regsAt P o sz c h).pres S τ).factorOfPrefix (j - 1) u) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.AnswerReduction.StageProg",
+   "open MIPRE.Cost MIPRE.AnswerReduction.Pcp MIPRE.SAT MIPRE.Introspection.SeededLineProgram MIPRE.Introspection.LineProgram MIPRE.Introspection.SeedProgram MIPRE.LIDT MIPRE.LIDT.CL MIPRE.CL",
+   "variable {k : ℕ} (hk : 1 ≤ k)",
+   "variable (o sz jw : ℕ) (c : Fin 6)",
+   "variable [NeZero sz] {hsz : sz ∣ Fintype.card (shoupBinField k hk).carrier}",
+   "variable (P : PcpParams) (h : o + sz ≤ P.m')"
+  ],
+  "docstring": "**The factor spaces of a copy**, in indicator bits.",
+  "module": "MIPRE.Background.AnswerReduction.StageCorrect",
+  "module_doc": "/-!\n# The stage programs are correct\n\nPiece AR-3d of `planning/answer-reduction.md`: `copyAnswer` (`MIPRE/Background/AnswerReduction/\nStageProg`) computes the Shoup bits of a copy's marginals (`copyAnswer_marginal`), stage maps\n(`copyAnswer_linear`) and factor spaces (`copyAnswer_factor`), for a copy whose seed selector is\nthe high bits of the seed (`hχ`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/StageCorrect.lean#L331-L361",
+  "source_path": "MIPRE/Background/AnswerReduction/StageCorrect.lean",
+  "lines": [
+   331,
+   361
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-typed-sampler",
+    "env": "lemma",
+    "title": "The typed answer-reduced sampler",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.StageProg.blocksOf_flatBits",
+   "MIPRE.CL.CLFun.factorOfPrefix_of_le"
+  ],
+  "pasted_helpers": 22,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.Pcp.ofFn_placeV",
+  "source_name": "MIPRE.AnswerReduction.Pcp.ofFn_placeV",
+  "formal_statement": "theorem MIPRE.AnswerReduction.Pcp.ofFn_placeV (g : F → α) {N sz : ℕ} (o : ℕ) (h : o + sz ≤ N) (w : Fin sz → F)\n    (l : List α) (hl : l.length = N) :\n    List.ofFn (fun r : Fin N => g (placeV o w r)) =\n      placeL (g 0) o (List.ofFn fun j => g (w j)) l := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.AnswerReduction.Pcp",
+   "variable {α : Type*}",
+   "variable {F : Type*} [Zero F]"
+  ],
+  "docstring": "**Placing a vector** is placing its list of entries.",
+  "module": "MIPRE.Background.AnswerReduction.StageLists",
+  "module_doc": "/-!\n# Placing and slicing, on lists\n\nPiece AR-3d of `planning/answer-reduction.md`: the list operations a program uses for the\nvector operations of `MIPRE/Background/AnswerReduction/Stages` — `placeL` for `placeV` and\n`sliceL` for `sliceV` — and their agreement on the lists of a vector's entries\n(`ofFn_placeV`, `ofFn_sliceV`, `ofFn_single`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/StageLists.lean#L35-L56",
+  "source_path": "MIPRE/Background/AnswerReduction/StageLists.lean",
+  "lines": [
+   35,
+   56
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.StageProg.copyProg_apply",
+  "source_name": "MIPRE.AnswerReduction.StageProg.copyProg_apply",
+  "formal_statement": "theorem MIPRE.AnswerReduction.StageProg.copyProg_apply (k : Unary) (d : Desc) (τ : ℕ) (m' : Unary) (kind j : ℕ) (u y : BitStr) :\n    copyProg (k, d, τ, m', kind, j, u, y) = copyAnswer k d τ m' kind j u y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.AnswerReduction.StageProg",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.AnswerReduction.Pcp MIPRE.Introspection.SeededLineProgram MIPRE.Introspection.LineProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.AnswerReduction.StageProg",
+  "module_doc": "/-!\n# The stage programs of a copy of the PCP sampler\n\nPiece AR-3d of `planning/answer-reduction.md`: polynomial-time functions answering the queries\nof one copy of the seeded test, on the three runs of `k`-bit blocks (`MIPRE/Background/\nAnswerReduction/Layout`). A copy is described by its offset `o`, length `sz = 2^jw`, selector\nwidth `jw` and seed index `c`, all in unary (`Desc`), and a test type numbered `0, 1, 2`.\n\nThe answers are first written as plain functions of the blocks (`margL`, `linL`, `facL`),\nwith the field arithmetic done by the introspection stage programs (`selectedDirectionProg`,\n`axisRepresentativeProg`, `lineRepresentativeProg`); `copyProg` computes them.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/StageProg.lean#L321-L326",
+  "source_path": "MIPRE/Background/AnswerReduction/StageProg.lean",
+  "lines": [
+   321,
+   326
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-typed-sampler",
+    "env": "lemma",
+    "title": "The typed answer-reduced sampler",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.BinaryBlock.splitBlocksProg_apply"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.Pcp.comps_marginal",
+  "source_name": "MIPRE.AnswerReduction.Pcp.comps_marginal",
+  "formal_statement": "theorem MIPRE.AnswerReduction.Pcp.comps_marginal (t : Ty) {j : ℕ} (hj : 1 ≤ j) (x : Coord P → F) :\n    comps P ((((regsAt P o sz c h).pres S t).truncate j).eval x) =\n      (if 3 ≤ j then placeV o (Regs.ptMap S t (seedsOf P x c)\n          (dirPart sz S t (seedsOf P x c) (sliceV o sz h (dirOf6 P x))) (sliceV o sz h (ptOf6 P x)))\n        else 0,\n       if 2 ≤ j then placeV o (dirPart sz S t (seedsOf P x c) (sliceV o sz h (dirOf6 P x)))\n        else 0,\n       seedPart c t (seedsOf P x c)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.AnswerReduction.Pcp",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL MIPRE.SAT MIPRE.CL",
+   "variable (P : PcpParams) {F : Type*} [Field F]",
+   "variable (o sz : ℕ) (c : Fin 6) (h : o + sz ≤ P.m')",
+   "variable [Fintype F] [DecidableEq F] [NeZero sz] {hsz : sz ∣ Fintype.card F} (S : Sel F sz hsz)"
+  ],
+  "docstring": "**The marginals, run by run**, from the first level on.",
+  "module": "MIPRE.Background.AnswerReduction.Stages",
+  "module_doc": "/-!\n# The queries of a copy of the PCP sampler, run by run\n\nPiece AR-3d of `planning/answer-reduction.md`. A copy of the seeded test in the PCP sampler is a\nrun `[o, o + sz)` of the concatenated registers with a seed `c` (`regsAt`). This file writes\nwhat its presentation's queries return in the three runs of `MIPRE/Background/AnswerReduction/\nLayout` (`ptOf6`, `dirOf6`, `seedsOf`), which is the form a program computes:\n\n* the marginals (`comps_marginal`): the seed on the seed run, the cut-down direction placed at\n  `o` on the direction run for a diagonal line, the line's base point placed at `o` on the point\n  run;\n* the stage maps from a prefix (`comps_map_zero`, `comps_map_one`, `comps_map_two`);\n* the factor spaces, run by run (`mem_coordSet_*`, `mem_dirSet_*`, `mem_finalSet_*`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/Stages.lean#L253-L273",
+  "source_path": "MIPRE/Background/AnswerReduction/Stages.lean",
+  "lines": [
+   253,
+   273
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-typed-sampler",
+    "env": "lemma",
+    "title": "The typed answer-reduced sampler",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.CL.Regs.eval_pres",
+   "MIPRE.CL.CLFun.eval_truncate_of_le"
+  ],
+  "pasted_helpers": 35,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.consistent_of_oaccepts",
+  "source_name": "MIPRE.AnswerReduction.consistent_of_oaccepts",
+  "formal_statement": "theorem MIPRE.AnswerReduction.consistent_of_oaccepts\n    (hpf : ∀ x (a b : Verifier.Answers B), (V.seeded n B).D ((V.sampler.cl n .alice).eval x)\n      ((V.sampler.cl n .bob).eval x) a b = true → ProofGood hk check x a.1 b.1 (pfOf x a.1 b.1))\n    (r₁ r₂ : Role) (x₀ : Fin (V.sampler.dim n) → 𝔽₂) {u v : OAns (Verifier.Answers B)}\n    (h : (V.seeded n B).oaccepts ((V.seeded n B).oquestion r₁ x₀) ((V.seeded n B).oquestion r₂ x₀)\n      u v = true) :\n    Consistent r₁ r₂ (hdata V n P hk pfOf r₁ ((V.seeded n B).oquestion r₁ x₀).2 u)\n      (hdata V n P hk pfOf r₂ ((V.seeded n B).oquestion r₂ x₀).2 v) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.LowDegree MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost",
+   "variable {P : PcpParams} (hk : 1 ≤ P.k)",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k) {B : ℕ}",
+   "variable {check : (Fin (V.sampler.dim n) → 𝔽₂) → (Fin P.m' → Fq P hk) →"
+  ],
+  "docstring": "**The oracularized predicate's checks are the consistency of the data**, on a question pair\nread off one seed, when every accepted pair's proof is good.",
+  "module": "MIPRE.Background.AnswerReduction.TypedComplete",
+  "module_doc": "/-!\n# Completeness of the typed answer-reduced game\n\nPiece AR-4 of `planning/answer-reduction.md`: a value-`1` PCC strategy of the input verifier gives\none of the (doubled) typed answer-reduced game (`exists_typedGame_perfectPCC`), for any PCP proofs\nof the accepted answer pairs — the paper's completeness argument for `thm:ar`\n(`ld_compiler.tex`), with the PCP's completeness left as a hypothesis (`ProofGood`), discharged in\n`MIPRE/Background/AnswerReduction/Complete`.\n\nThe strategy is the oracularized game's honest strategy (`SeededGame.oracleStrategy`, the\noracularization's completeness), read through the question map that keeps a question's role and\nits oracle half (`SyncStrategy.pushQ`), and answered honestly (`honestAns`) from data computed from\nthe role, the oracle half and the outcome (`hdata`):\n\n* an oracle answering the pair `(a, b)` at seed `x` holds the PCP proof `pfOf x a b` (`ofProof`);\n* an isolated player answering `a` holds the low-degree encoding of `a` at its own copy\n  (`ofAnswer`), and zero elsewhere.\n\nTwo questions of positive weight are read off one seed; their oracle halves are then an\noracularized question pair of positive weight, and their PCP halves questions of one PCP vector.\nThere the oracularized predicate's checks are exactly the consistency `accepts_honestAns` needs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/TypedComplete.lean#L192-L234",
+  "source_path": "MIPRE/Background/AnswerReduction/TypedComplete.lean",
+  "lines": [
+   192,
+   234
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-completeness",
+    "env": "lemma",
+    "title": "Answer-reduction completeness",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 33,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.exists_typedGame_perfectPCC",
+  "source_name": "MIPRE.AnswerReduction.exists_typedGame_perfectPCC",
+  "formal_statement": "theorem MIPRE.AnswerReduction.exists_typedGame_perfectPCC\n    {check : (Fin (V.sampler.dim n) → 𝔽₂) → (Fin P.m' → Fq P hk) →\n      (Fin (P.m' + 6) → Fq P hk) → Bool} (Bout : ℕ)\n    (hBout : 32 * ((P.k + 1) * (P.m' + 7) * (P.m' + 7)) ≤ Bout) (hV : V.HasPerfectPCC n B)\n    (hpf : ∀ x (a b : Verifier.Answers B), (V.seeded n B).D ((V.sampler.cl n .alice).eval x)\n      ((V.sampler.cl n .bob).eval x) a b = true → ProofGood hk check x a.1 b.1 (pfOf x a.1 b.1)) :\n    ∃ R : SyncStrategy (typedGame V n P hk S S' check Bout).doubled, R.IsPCC ∧ R.value = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.LowDegree MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost",
+   "variable {P : PcpParams} (hk : 1 ≤ P.k)",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k) {B : ℕ}"
+  ],
+  "docstring": "**Completeness of the typed answer-reduced game**: a value-`1` PCC strategy of `𝒱_n`, and\ngood PCP proofs of the pairs it accepts, give a value-`1` PCC strategy of the doubled typed game\nat any answer cut above `32 (k + 1)(m' + 7)^2`.",
+  "module": "MIPRE.Background.AnswerReduction.TypedComplete",
+  "module_doc": "/-!\n# Completeness of the typed answer-reduced game\n\nPiece AR-4 of `planning/answer-reduction.md`: a value-`1` PCC strategy of the input verifier gives\none of the (doubled) typed answer-reduced game (`exists_typedGame_perfectPCC`), for any PCP proofs\nof the accepted answer pairs — the paper's completeness argument for `thm:ar`\n(`ld_compiler.tex`), with the PCP's completeness left as a hypothesis (`ProofGood`), discharged in\n`MIPRE/Background/AnswerReduction/Complete`.\n\nThe strategy is the oracularized game's honest strategy (`SeededGame.oracleStrategy`, the\noracularization's completeness), read through the question map that keeps a question's role and\nits oracle half (`SyncStrategy.pushQ`), and answered honestly (`honestAns`) from data computed from\nthe role, the oracle half and the outcome (`hdata`):\n\n* an oracle answering the pair `(a, b)` at seed `x` holds the PCP proof `pfOf x a b` (`ofProof`);\n* an isolated player answering `a` holds the low-degree encoding of `a` at its own copy\n  (`ofAnswer`), and zero elsewhere.\n\nTwo questions of positive weight are read off one seed; their oracle halves are then an\noracularized question pair of positive weight, and their PCP halves questions of one PCP vector.\nThere the oracularized predicate's checks are exactly the consistency `accepts_honestAns` needs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/TypedComplete.lean#L300-L364",
+  "source_path": "MIPRE/Background/AnswerReduction/TypedComplete.lean",
+  "lines": [
+   300,
+   364
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-completeness",
+    "env": "lemma",
+    "title": "Answer-reduction completeness",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.ofElems_elems",
+   "MIPRE.AnswerReduction.length_enc_le",
+   "MIPRE.AnswerReduction.pcpCl_exactlyOn",
+   "MIPRE.AnswerReduction.side_honest",
+   "MIPRE.AnswerReduction.consistent_of_oaccepts",
+   "MIPRE.CL.CLFun.truncate_reindex",
+   "MIPRE.CL.CLFun.eval_reindex",
+   "MIPRE.CL.pull_proj_compl",
+   "MIPRE.CL.CLFun.eval_truncate_of_le",
+   "MIPRE.LowDegree.degreeOf_ind_le",
+   "MIPRE.SeededGame.oracleOp_mul_eq_zero",
+   "MIPRE.SeededGame.oracleOp_commute",
+   "MIPRE.exactlyOn_roleFamily",
+   "MIPRE.SyncStrategy.value_pushQ_eq_one"
+  ],
+  "pasted_helpers": 50,
+  "prooflines": 55,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.pivots_line",
+  "source_name": "MIPRE.LIDT.Adapter.pivots_line",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.pivots_line (i : Fin n) :\n    pivots (span F {(Pi.single i 1 : Fin n → F)}) = {i} := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset Submodule Module MIPRE.CL",
+   "variable {F : Type*} [Field F] {n : ℕ}"
+  ],
+  "docstring": "**The pivot set of a coordinate line is the coordinate.** The dimension sequence of\n`span {eᵢ}` is `1` up to `i` and `0` after it, so it drops exactly once, at `i`; and a line\nhas one pivot in all, by `card_pivots`.",
+  "module": "MIPRE.Background.LIDT.Adapter.Geometry",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 1: the two games describe the same lines\n\nThe seeded CL test `MIPRE.LIDT.CL.clGame` and the canonical-line test\n`MIPRE.LIDT.lidtGame` present a line differently, and the adapter of\n`planning/lidt-cl-adapter.md` has to know that the two presentations agree where they should.\nThis file settles the axis-parallel case, which is the one that needs the canonical\nrepresentative of `def:cl-canonical` to be *computed* rather than used abstractly.\n\nThe seeded test's base point for direction `w` is `rep w u = canonLin (span {w}) u`, the\ncanonical linear map with kernel `span {w}` applied to `u`. The canonical-line test's is the\nfirst component of `Line.through u w`, which for a normalized direction moves `u` so that the\ncoordinate of the direction's first nonzero entry vanishes. For `w = eᵢ` both are\n`u - uᵢ • eᵢ` (`rep_single`, `through_single`, and `rep_single_eq_through` for the conjunction),\nso on axis-parallel lines the two games agree on the base point exactly, with no choice\ninvolved. The seed is the only thing the seeded question carries beyond the line.\n\nGetting `rep` to compute means computing the pivot set: `pivots (span {eᵢ}) = {i}`\n(`pivots_line`), from the dimension sequence `dim (span {eᵢ} ⊓ tail n k)`, which is `1` for\n`k ≤ i` (`inf_tail_of_le`) and `0` above (`inf_tail_of_gt`), so the sequence drops exactly at\n`i`. `card_pivots` then pins the set, since a line has rank one.\n\n`projection_eq_of` is the uniqueness of a complementary decomposition, stated as a rewriting\nrule because that is how `canonLin` is pinned down: `canonLin S u` is *the* element of the\ncanonical complement congruent to `u` modulo `S`.\n\nTwo further discrepancies are settled here, both of them differences of presentation rather\nthan of content.\n\n**The diagonal convention.** The seeded test's diagonal directions have their *first* `i`\ncoordinates zero (`CL.zeroBelow`), the canonical-line test's have their coordinates *past* `j`\nzero (`Sample.extend`). Coordinate reversal exchanges them (`revPoint_zeroBelow`), and is the\n`ρ` of the paper's own reduction, there for the same reason against the tensor code test.\n\n**The direction scale.** A `DLine` question of the seeded test carries the direction itself,\nscale included, while the canonical-line test normalizes it. So the seeded questions\n`(u₀, s, c • w)`, `c ≠ 0`, all describe one canonical line, and an answer in the parameter of\n`u₀ + t (c • w)` has to be reparametrized. The parameter scales inversely\n(`lineParam_smul`) and the polynomial follows by `rescale`, which is a bijection of the\ncoefficient vectors preserving the degree bound (`rescaleEquiv`) --- so no answer alphabet\nchanges and no degree is lost.\n\nWhat is *not* here is the reconciliation of `CL.lineParam` with `Line.param`, the last of the\ngeometric discrepancies, nor anything about strategies or values.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Geometry.lean#L95-L111",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Geometry.lean",
+  "lines": [
+   95,
+   111
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 4,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.param_through_eq_of_mem",
+  "source_name": "MIPRE.LIDT.Adapter.param_through_eq_of_mem",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.param_through_eq_of_mem {v : Fin n → F} (hv : ∃ j, v j ≠ 0) (u : Fin n → F) (t : F) :\n    Line.param (Line.through u v) ((Line.through u v).1 + t • (Line.through u v).2) = t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset Submodule Module MIPRE.CL",
+   "variable {F : Type*} [Field F] {n : ℕ}",
+   "variable [DecidableEq F]"
+  ],
+  "docstring": "And so does `Line.param`, on the canonical presentation the canonical-line test uses: the\ndirection's first nonzero coordinate is `1` and the base point vanishes there, which is what\nmakes reading off that one coordinate correct.",
+  "module": "MIPRE.Background.LIDT.Adapter.Geometry",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 1: the two games describe the same lines\n\nThe seeded CL test `MIPRE.LIDT.CL.clGame` and the canonical-line test\n`MIPRE.LIDT.lidtGame` present a line differently, and the adapter of\n`planning/lidt-cl-adapter.md` has to know that the two presentations agree where they should.\nThis file settles the axis-parallel case, which is the one that needs the canonical\nrepresentative of `def:cl-canonical` to be *computed* rather than used abstractly.\n\nThe seeded test's base point for direction `w` is `rep w u = canonLin (span {w}) u`, the\ncanonical linear map with kernel `span {w}` applied to `u`. The canonical-line test's is the\nfirst component of `Line.through u w`, which for a normalized direction moves `u` so that the\ncoordinate of the direction's first nonzero entry vanishes. For `w = eᵢ` both are\n`u - uᵢ • eᵢ` (`rep_single`, `through_single`, and `rep_single_eq_through` for the conjunction),\nso on axis-parallel lines the two games agree on the base point exactly, with no choice\ninvolved. The seed is the only thing the seeded question carries beyond the line.\n\nGetting `rep` to compute means computing the pivot set: `pivots (span {eᵢ}) = {i}`\n(`pivots_line`), from the dimension sequence `dim (span {eᵢ} ⊓ tail n k)`, which is `1` for\n`k ≤ i` (`inf_tail_of_le`) and `0` above (`inf_tail_of_gt`), so the sequence drops exactly at\n`i`. `card_pivots` then pins the set, since a line has rank one.\n\n`projection_eq_of` is the uniqueness of a complementary decomposition, stated as a rewriting\nrule because that is how `canonLin` is pinned down: `canonLin S u` is *the* element of the\ncanonical complement congruent to `u` modulo `S`.\n\nTwo further discrepancies are settled here, both of them differences of presentation rather\nthan of content.\n\n**The diagonal convention.** The seeded test's diagonal directions have their *first* `i`\ncoordinates zero (`CL.zeroBelow`), the canonical-line test's have their coordinates *past* `j`\nzero (`Sample.extend`). Coordinate reversal exchanges them (`revPoint_zeroBelow`), and is the\n`ρ` of the paper's own reduction, there for the same reason against the tensor code test.\n\n**The direction scale.** A `DLine` question of the seeded test carries the direction itself,\nscale included, while the canonical-line test normalizes it. So the seeded questions\n`(u₀, s, c • w)`, `c ≠ 0`, all describe one canonical line, and an answer in the parameter of\n`u₀ + t (c • w)` has to be reparametrized. The parameter scales inversely\n(`lineParam_smul`) and the polynomial follows by `rescale`, which is a bijection of the\ncoefficient vectors preserving the degree bound (`rescaleEquiv`) --- so no answer alphabet\nchanges and no degree is lost.\n\nWhat is *not* here is the reconciliation of `CL.lineParam` with `Line.param`, the last of the\ngeometric discrepancies, nor anything about strategies or values.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Geometry.lean#L337-L369",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Geometry.lean",
+  "lines": [
+   337,
+   369
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.pivots_span_singleton",
+  "source_name": "MIPRE.LIDT.Adapter.pivots_span_singleton",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.pivots_span_singleton {w : Fin n → F} (hw : ∃ j, w j ≠ 0) :\n    pivots (span F {w}) = {Fin.find (fun j => w j ≠ 0) hw} := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset Submodule Module MIPRE.CL",
+   "variable {F : Type*} [Field F] {n : ℕ}",
+   "variable [DecidableEq F]"
+  ],
+  "docstring": "The pivot set of any line is its direction's first nonzero coordinate.",
+  "module": "MIPRE.Background.LIDT.Adapter.Geometry",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 1: the two games describe the same lines\n\nThe seeded CL test `MIPRE.LIDT.CL.clGame` and the canonical-line test\n`MIPRE.LIDT.lidtGame` present a line differently, and the adapter of\n`planning/lidt-cl-adapter.md` has to know that the two presentations agree where they should.\nThis file settles the axis-parallel case, which is the one that needs the canonical\nrepresentative of `def:cl-canonical` to be *computed* rather than used abstractly.\n\nThe seeded test's base point for direction `w` is `rep w u = canonLin (span {w}) u`, the\ncanonical linear map with kernel `span {w}` applied to `u`. The canonical-line test's is the\nfirst component of `Line.through u w`, which for a normalized direction moves `u` so that the\ncoordinate of the direction's first nonzero entry vanishes. For `w = eᵢ` both are\n`u - uᵢ • eᵢ` (`rep_single`, `through_single`, and `rep_single_eq_through` for the conjunction),\nso on axis-parallel lines the two games agree on the base point exactly, with no choice\ninvolved. The seed is the only thing the seeded question carries beyond the line.\n\nGetting `rep` to compute means computing the pivot set: `pivots (span {eᵢ}) = {i}`\n(`pivots_line`), from the dimension sequence `dim (span {eᵢ} ⊓ tail n k)`, which is `1` for\n`k ≤ i` (`inf_tail_of_le`) and `0` above (`inf_tail_of_gt`), so the sequence drops exactly at\n`i`. `card_pivots` then pins the set, since a line has rank one.\n\n`projection_eq_of` is the uniqueness of a complementary decomposition, stated as a rewriting\nrule because that is how `canonLin` is pinned down: `canonLin S u` is *the* element of the\ncanonical complement congruent to `u` modulo `S`.\n\nTwo further discrepancies are settled here, both of them differences of presentation rather\nthan of content.\n\n**The diagonal convention.** The seeded test's diagonal directions have their *first* `i`\ncoordinates zero (`CL.zeroBelow`), the canonical-line test's have their coordinates *past* `j`\nzero (`Sample.extend`). Coordinate reversal exchanges them (`revPoint_zeroBelow`), and is the\n`ρ` of the paper's own reduction, there for the same reason against the tensor code test.\n\n**The direction scale.** A `DLine` question of the seeded test carries the direction itself,\nscale included, while the canonical-line test normalizes it. So the seeded questions\n`(u₀, s, c • w)`, `c ≠ 0`, all describe one canonical line, and an answer in the parameter of\n`u₀ + t (c • w)` has to be reparametrized. The parameter scales inversely\n(`lineParam_smul`) and the polynomial follows by `rescale`, which is a bijection of the\ncoefficient vectors preserving the degree bound (`rescaleEquiv`) --- so no answer alphabet\nchanges and no degree is lost.\n\nWhat is *not* here is the reconciliation of `CL.lineParam` with `Line.param`, the last of the\ngeometric discrepancies, nor anything about strategies or values.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Geometry.lean#L382-L417",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Geometry.lean",
+  "lines": [
+   382,
+   417
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 33,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.rep_eq",
+  "source_name": "MIPRE.LIDT.Adapter.rep_eq",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.rep_eq {w : Fin n → F} (hw : ∃ j, w j ≠ 0) (x : Fin n → F) :\n    canonLin (span F {w}) x\n      = x - (x (Fin.find (fun j => w j ≠ 0) hw)\n          / w (Fin.find (fun j => w j ≠ 0) hw)) • w := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset Submodule Module MIPRE.CL",
+   "variable {F : Type*} [Field F] {n : ℕ}",
+   "variable [DecidableEq F]"
+  ],
+  "docstring": "**The seeded test's base point, in closed form.**",
+  "module": "MIPRE.Background.LIDT.Adapter.Geometry",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 1: the two games describe the same lines\n\nThe seeded CL test `MIPRE.LIDT.CL.clGame` and the canonical-line test\n`MIPRE.LIDT.lidtGame` present a line differently, and the adapter of\n`planning/lidt-cl-adapter.md` has to know that the two presentations agree where they should.\nThis file settles the axis-parallel case, which is the one that needs the canonical\nrepresentative of `def:cl-canonical` to be *computed* rather than used abstractly.\n\nThe seeded test's base point for direction `w` is `rep w u = canonLin (span {w}) u`, the\ncanonical linear map with kernel `span {w}` applied to `u`. The canonical-line test's is the\nfirst component of `Line.through u w`, which for a normalized direction moves `u` so that the\ncoordinate of the direction's first nonzero entry vanishes. For `w = eᵢ` both are\n`u - uᵢ • eᵢ` (`rep_single`, `through_single`, and `rep_single_eq_through` for the conjunction),\nso on axis-parallel lines the two games agree on the base point exactly, with no choice\ninvolved. The seed is the only thing the seeded question carries beyond the line.\n\nGetting `rep` to compute means computing the pivot set: `pivots (span {eᵢ}) = {i}`\n(`pivots_line`), from the dimension sequence `dim (span {eᵢ} ⊓ tail n k)`, which is `1` for\n`k ≤ i` (`inf_tail_of_le`) and `0` above (`inf_tail_of_gt`), so the sequence drops exactly at\n`i`. `card_pivots` then pins the set, since a line has rank one.\n\n`projection_eq_of` is the uniqueness of a complementary decomposition, stated as a rewriting\nrule because that is how `canonLin` is pinned down: `canonLin S u` is *the* element of the\ncanonical complement congruent to `u` modulo `S`.\n\nTwo further discrepancies are settled here, both of them differences of presentation rather\nthan of content.\n\n**The diagonal convention.** The seeded test's diagonal directions have their *first* `i`\ncoordinates zero (`CL.zeroBelow`), the canonical-line test's have their coordinates *past* `j`\nzero (`Sample.extend`). Coordinate reversal exchanges them (`revPoint_zeroBelow`), and is the\n`ρ` of the paper's own reduction, there for the same reason against the tensor code test.\n\n**The direction scale.** A `DLine` question of the seeded test carries the direction itself,\nscale included, while the canonical-line test normalizes it. So the seeded questions\n`(u₀, s, c • w)`, `c ≠ 0`, all describe one canonical line, and an answer in the parameter of\n`u₀ + t (c • w)` has to be reparametrized. The parameter scales inversely\n(`lineParam_smul`) and the polynomial follows by `rescale`, which is a bijection of the\ncoefficient vectors preserving the degree bound (`rescaleEquiv`) --- so no answer alphabet\nchanges and no degree is lost.\n\nWhat is *not* here is the reconciliation of `CL.lineParam` with `Line.param`, the last of the\ngeometric discrepancies, nor anything about strategies or values.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Geometry.lean#L419-L435",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Geometry.lean",
+  "lines": [
+   419,
+   435
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.pivots_span_singleton"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.through_eq_through_iff",
+  "source_name": "MIPRE.LIDT.Adapter.through_eq_through_iff",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.through_eq_through_iff {u w z : Fin n → F} (hw : ∃ k, w k ≠ 0) (hz : ∃ k, z k ≠ 0) :\n    Line.through u z = Line.through u w ↔ ∃ c : F, c ≠ 0 ∧ z = c • w := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset Submodule Module MIPRE.CL",
+   "variable {F : Type*} [Field F] {n : ℕ}",
+   "variable [DecidableEq F]"
+  ],
+  "docstring": "**Two lines through the same point coincide exactly when their directions are\nproportional.**",
+  "module": "MIPRE.Background.LIDT.Adapter.Geometry",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 1: the two games describe the same lines\n\nThe seeded CL test `MIPRE.LIDT.CL.clGame` and the canonical-line test\n`MIPRE.LIDT.lidtGame` present a line differently, and the adapter of\n`planning/lidt-cl-adapter.md` has to know that the two presentations agree where they should.\nThis file settles the axis-parallel case, which is the one that needs the canonical\nrepresentative of `def:cl-canonical` to be *computed* rather than used abstractly.\n\nThe seeded test's base point for direction `w` is `rep w u = canonLin (span {w}) u`, the\ncanonical linear map with kernel `span {w}` applied to `u`. The canonical-line test's is the\nfirst component of `Line.through u w`, which for a normalized direction moves `u` so that the\ncoordinate of the direction's first nonzero entry vanishes. For `w = eᵢ` both are\n`u - uᵢ • eᵢ` (`rep_single`, `through_single`, and `rep_single_eq_through` for the conjunction),\nso on axis-parallel lines the two games agree on the base point exactly, with no choice\ninvolved. The seed is the only thing the seeded question carries beyond the line.\n\nGetting `rep` to compute means computing the pivot set: `pivots (span {eᵢ}) = {i}`\n(`pivots_line`), from the dimension sequence `dim (span {eᵢ} ⊓ tail n k)`, which is `1` for\n`k ≤ i` (`inf_tail_of_le`) and `0` above (`inf_tail_of_gt`), so the sequence drops exactly at\n`i`. `card_pivots` then pins the set, since a line has rank one.\n\n`projection_eq_of` is the uniqueness of a complementary decomposition, stated as a rewriting\nrule because that is how `canonLin` is pinned down: `canonLin S u` is *the* element of the\ncanonical complement congruent to `u` modulo `S`.\n\nTwo further discrepancies are settled here, both of them differences of presentation rather\nthan of content.\n\n**The diagonal convention.** The seeded test's diagonal directions have their *first* `i`\ncoordinates zero (`CL.zeroBelow`), the canonical-line test's have their coordinates *past* `j`\nzero (`Sample.extend`). Coordinate reversal exchanges them (`revPoint_zeroBelow`), and is the\n`ρ` of the paper's own reduction, there for the same reason against the tensor code test.\n\n**The direction scale.** A `DLine` question of the seeded test carries the direction itself,\nscale included, while the canonical-line test normalizes it. So the seeded questions\n`(u₀, s, c • w)`, `c ≠ 0`, all describe one canonical line, and an answer in the parameter of\n`u₀ + t (c • w)` has to be reparametrized. The parameter scales inversely\n(`lineParam_smul`) and the polynomial follows by `rescale`, which is a bijection of the\ncoefficient vectors preserving the degree bound (`rescaleEquiv`) --- so no answer alphabet\nchanges and no degree is lost.\n\nWhat is *not* here is the reconciliation of `CL.lineParam` with `Line.param`, the last of the\ngeometric discrepancies, nor anything about strategies or values.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Geometry.lean#L477-L508",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Geometry.lean",
+  "lines": [
+   477,
+   508
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.exp_le_two_rpow",
+  "source_name": "MIPRE.LIDT.exp_le_two_rpow",
+  "formal_statement": "theorem MIPRE.LIDT.exp_le_two_rpow (m d : ℕ) (hm : 1 ≤ m) :\n    Real.exp (-(clK m d : ℝ) / (2560000 * (m : ℝ) ^ 2))\n      ≤ (2 : ℝ) ^ (-(clB * m * d)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT"
+  ],
+  "docstring": "**The exponential term.** This is where `clK` is chosen.",
+  "module": "MIPRE.Background.LIDT.Adapter.Parameters",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 7: the parameter corollary\n\nThe reduction of `Adapter/Reduction.lean` concludes with the *canonical-line* error\n`lidtError m d q k (3m ε)`, with `k` free subject to `k ≥ 400 m d`. Blueprint\n`thm:lidt-cl-soundness` asks instead for\n\n`δ_CL(ε, q, m, d, 1) = a (dm)^a (ε^b + q^{-b} + 2^{-bmd})`,\n\nfor universal `a ≥ 1` and `0 < b < 1`. `rem:lidt-cl-adapter` lists turning one into the other as\na separate quantitative obligation, to be done \"honestly against the explicit constants\"; this\nfile does it, and is stated separately from the reduction so that a failure here could not\nsilently weaken the reduction.\n\nThe choice is `b = 1/40000`, `a = 2·10^11` and `k = 400 m³ d + 400 m`. Term by term, with\n`ε' = 3 m ε`:\n\n* `ε'^b = (3m)^b ε^b ≤ 3m · ε^b`, since `x^b ≤ x` for `x ≥ 1` and `b ≤ 1`;\n* `(d/q)^b = d^b · q^{-b} ≤ d · q^{-b}`, likewise;\n* `exp(-k / (2560000 m²)) ≤ 2^{-bmd}`, which is where `k` is chosen: it needs\n  `k ≥ 2560000 · b · m³ d · ln 2 = 64 (ln 2) m³ d ≈ 44.4 m³ d`, and `400 m³ d` clears it with\n  room. The `400 m` summand is there only so that `k > 0` and `k ≥ 400 m d` hold for every\n  `m, d ≥ 1`.\n\nThe prefactor is then `100000 k² m⁴ · 3md ≤ 1.92·10^11 (dm)^11`, using `k ≤ 800 m³ d`, and\n`(dm)^11 ≤ (dm)^a`.\n\n`d ≥ 1` is needed and not cosmetic: at `d = 0` the blueprint's `δ_CL` is identically zero, so no\npositive error can be bounded by it.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Parameters.lean#L94-L116",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Parameters.lean",
+  "lines": [
+   94,
+   116
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.prefactor_le",
+  "source_name": "MIPRE.LIDT.prefactor_le",
+  "formal_statement": "theorem MIPRE.LIDT.prefactor_le (m d : ℕ) (hm : 1 ≤ m) (hd : 1 ≤ d) :\n    100000 * (clK m d : ℝ) ^ 2 * (m : ℝ) ^ 4 * (3 * (m : ℝ) * d)\n      ≤ clA * ((d * m : ℕ) : ℝ) ^ clA := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT"
+  ],
+  "docstring": "**The prefactor.** `100000 k² m⁴ · 3md ≤ 1.92·10^11 (dm)^11 ≤ a (dm)^a`.",
+  "module": "MIPRE.Background.LIDT.Adapter.Parameters",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 7: the parameter corollary\n\nThe reduction of `Adapter/Reduction.lean` concludes with the *canonical-line* error\n`lidtError m d q k (3m ε)`, with `k` free subject to `k ≥ 400 m d`. Blueprint\n`thm:lidt-cl-soundness` asks instead for\n\n`δ_CL(ε, q, m, d, 1) = a (dm)^a (ε^b + q^{-b} + 2^{-bmd})`,\n\nfor universal `a ≥ 1` and `0 < b < 1`. `rem:lidt-cl-adapter` lists turning one into the other as\na separate quantitative obligation, to be done \"honestly against the explicit constants\"; this\nfile does it, and is stated separately from the reduction so that a failure here could not\nsilently weaken the reduction.\n\nThe choice is `b = 1/40000`, `a = 2·10^11` and `k = 400 m³ d + 400 m`. Term by term, with\n`ε' = 3 m ε`:\n\n* `ε'^b = (3m)^b ε^b ≤ 3m · ε^b`, since `x^b ≤ x` for `x ≥ 1` and `b ≤ 1`;\n* `(d/q)^b = d^b · q^{-b} ≤ d · q^{-b}`, likewise;\n* `exp(-k / (2560000 m²)) ≤ 2^{-bmd}`, which is where `k` is chosen: it needs\n  `k ≥ 2560000 · b · m³ d · ln 2 = 64 (ln 2) m³ d ≈ 44.4 m³ d`, and `400 m³ d` clears it with\n  room. The `400 m` summand is there only so that `k > 0` and `k ≥ 400 m d` hold for every\n  `m, d ≥ 1`.\n\nThe prefactor is then `100000 k² m⁴ · 3md ≤ 1.92·10^11 (dm)^11`, using `k ≤ 800 m³ d`, and\n`(dm)^11 ≤ (dm)^a`.\n\n`d ≥ 1` is needed and not cosmetic: at `d = 0` the blueprint's `δ_CL` is identically zero, so no\npositive error can be bounded by it.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Parameters.lean#L142-L172",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Parameters.lean",
+  "lines": [
+   142,
+   172
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.lidtError_le_deltaCL",
+  "source_name": "MIPRE.LIDT.lidtError_le_deltaCL",
+  "formal_statement": "theorem MIPRE.LIDT.lidtError_le_deltaCL (m d q : ℕ) (hm : 1 ≤ m) (hd : 1 ≤ d) (ε : ℝ) (hε : 0 ≤ ε) :\n    lidtError m d q (clK m d) (3 * m * ε) ≤ deltaCL q m d ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT"
+  ],
+  "docstring": "**The parameter corollary.** At `k = clK m d` the canonical-line error on the adapter's\ninflated failure `3 m ε` is below the blueprint's `δ_CL` at `ldc = 1`, with the explicit\nconstants `a = 2·10^11` and `b = 1/40000`.",
+  "module": "MIPRE.Background.LIDT.Adapter.Parameters",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 7: the parameter corollary\n\nThe reduction of `Adapter/Reduction.lean` concludes with the *canonical-line* error\n`lidtError m d q k (3m ε)`, with `k` free subject to `k ≥ 400 m d`. Blueprint\n`thm:lidt-cl-soundness` asks instead for\n\n`δ_CL(ε, q, m, d, 1) = a (dm)^a (ε^b + q^{-b} + 2^{-bmd})`,\n\nfor universal `a ≥ 1` and `0 < b < 1`. `rem:lidt-cl-adapter` lists turning one into the other as\na separate quantitative obligation, to be done \"honestly against the explicit constants\"; this\nfile does it, and is stated separately from the reduction so that a failure here could not\nsilently weaken the reduction.\n\nThe choice is `b = 1/40000`, `a = 2·10^11` and `k = 400 m³ d + 400 m`. Term by term, with\n`ε' = 3 m ε`:\n\n* `ε'^b = (3m)^b ε^b ≤ 3m · ε^b`, since `x^b ≤ x` for `x ≥ 1` and `b ≤ 1`;\n* `(d/q)^b = d^b · q^{-b} ≤ d · q^{-b}`, likewise;\n* `exp(-k / (2560000 m²)) ≤ 2^{-bmd}`, which is where `k` is chosen: it needs\n  `k ≥ 2560000 · b · m³ d · ln 2 = 64 (ln 2) m³ d ≈ 44.4 m³ d`, and `400 m³ d` clears it with\n  room. The `400 m` summand is there only so that `k > 0` and `k ≥ 400 m d` hold for every\n  `m, d ≥ 1`.\n\nThe prefactor is then `100000 k² m⁴ · 3md ≤ 1.92·10^11 (dm)^11`, using `k ≤ 800 m³ d`, and\n`(dm)^11 ≤ (dm)^a`.\n\n`d ≥ 1` is needed and not cosmetic: at `d = 0` the blueprint's `δ_CL` is identically zero, so no\npositive error can be bounded by it.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Parameters.lean#L176-L222",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Parameters.lean",
+  "lines": [
+   176,
+   222
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-cl-adapter-params",
+    "env": "lemma",
+    "title": "The parameter choice",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.exp_le_two_rpow",
+   "MIPRE.LIDT.prefactor_le"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 42,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.val_mats_pointPOVMA_adapted",
+  "source_name": "MIPRE.LIDT.Adapter.val_mats_pointPOVMA_adapted",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.val_mats_pointPOVMA_adapted (σc : Seed F m)\n    (S : TensorProductStrategy (clGame (d := d) (ldc := 1) hm)) (u : Point F m) (f : F) :\n    ((CL.pointPOVMA S u).mats f).val\n      = ((pointPOVMA (adapted σc S) (revPoint u)).mats f).val := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]",
+   "variable {hm : m ∣ Fintype.card F}"
+  ],
+  "docstring": "**A's point measurement of the adapted strategy is A's point measurement of the seeded\nstrategy at the reversed point.**",
+  "module": "MIPRE.Background.LIDT.Adapter.Reduction",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 6: the reduction\n\nThis is the payoff. `MIPRE.LIDT.lowIndividualDegree_soundness` is soundness of the\n*canonical-line* test `lidtGame`, proved through the vendored MIPStarRE development; the seeded\nCL test `clGame` of `def:lidt-cl` is a different test, and `rem:lidt-cl-adapter` says that\ntransferring soundness from one to the other needs an explicit strategy adapter. The previous\nfive parts built it; this one runs it.\n\nThe shape of the argument:\n\n* a strategy `S` for `clGame` with `ldc = 1` is turned into one for `lidtGame` by reindexing the\n  questions along `qmapS` (a canonical line becomes a seeded description of its reversal) and\n  coarse-graining the answers along `amap` (the diagonal answer is affinely reparametrized);\n* `hD_qmap` says the adapted strategy is accepted wherever `S` is, and `pushforward_le` says the\n  push-forward of the question distribution costs a factor `3m`, so\n  `exists_one_sub_value_adapt_le` produces one member of the averaging family whose adapted\n  strategy has `1 - value ≤ 3m ε`;\n* `lowIndividualDegree_soundness` applies to it and returns two low-degree measurements;\n* the three consistency conclusions are carried back through the coordinate reversal\n  (`inconsistency_congr`), which acts on the questions by `revPoint` --- measure-preserving,\n  `uniform` being uniform --- and on the outcomes by `revPoly`, the same reversal of a\n  polynomial's exponent vectors.\n\n`clSoundness_ldc_one` states the conclusion with the canonical-line error; combining it with\n`Adapter/Parameters.lean`'s choice of `k` gives `clSoundness_ldc_one_deltaCL`, the `ldc = 1` case\nof `thm:lidt-cl-soundness` with the blueprint's own `δ_CL`.\n\nWhat is *not* here: the `ldc > 1` case (`lem:lidt-ldc`, the paper's Steps 1--5).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Reduction.lean#L129-L156",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Reduction.lean",
+  "lines": [
+   129,
+   156
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.val_mats_pointPOVMB_adapted",
+  "source_name": "MIPRE.LIDT.Adapter.val_mats_pointPOVMB_adapted",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.val_mats_pointPOVMB_adapted (σc : Seed F m)\n    (S : TensorProductStrategy (clGame (d := d) (ldc := 1) hm)) (u : Point F m) (f : F) :\n    ((CL.pointPOVMB S u).mats f).val\n      = ((pointPOVMB (adapted σc S) (revPoint u)).mats f).val := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]",
+   "variable {hm : m ∣ Fintype.card F}"
+  ],
+  "docstring": "**B's point measurement, likewise.**",
+  "module": "MIPRE.Background.LIDT.Adapter.Reduction",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 6: the reduction\n\nThis is the payoff. `MIPRE.LIDT.lowIndividualDegree_soundness` is soundness of the\n*canonical-line* test `lidtGame`, proved through the vendored MIPStarRE development; the seeded\nCL test `clGame` of `def:lidt-cl` is a different test, and `rem:lidt-cl-adapter` says that\ntransferring soundness from one to the other needs an explicit strategy adapter. The previous\nfive parts built it; this one runs it.\n\nThe shape of the argument:\n\n* a strategy `S` for `clGame` with `ldc = 1` is turned into one for `lidtGame` by reindexing the\n  questions along `qmapS` (a canonical line becomes a seeded description of its reversal) and\n  coarse-graining the answers along `amap` (the diagonal answer is affinely reparametrized);\n* `hD_qmap` says the adapted strategy is accepted wherever `S` is, and `pushforward_le` says the\n  push-forward of the question distribution costs a factor `3m`, so\n  `exists_one_sub_value_adapt_le` produces one member of the averaging family whose adapted\n  strategy has `1 - value ≤ 3m ε`;\n* `lowIndividualDegree_soundness` applies to it and returns two low-degree measurements;\n* the three consistency conclusions are carried back through the coordinate reversal\n  (`inconsistency_congr`), which acts on the questions by `revPoint` --- measure-preserving,\n  `uniform` being uniform --- and on the outcomes by `revPoly`, the same reversal of a\n  polynomial's exponent vectors.\n\n`clSoundness_ldc_one` states the conclusion with the canonical-line error; combining it with\n`Adapter/Parameters.lean`'s choice of `k` gives `clSoundness_ldc_one_deltaCL`, the `ldc = 1` case\nof `thm:lidt-cl-soundness` with the blueprint's own `δ_CL`.\n\nWhat is *not* here: the `ldc > 1` case (`lem:lidt-ldc`, the paper's Steps 1--5).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Reduction.lean#L158-L184",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Reduction.lean",
+  "lines": [
+   158,
+   184
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.clSoundness_ldc_one",
+  "source_name": "MIPRE.LIDT.Adapter.clSoundness_ldc_one",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.clSoundness_ldc_one\n    (S : TensorProductStrategy (clGame (d := d) (ldc := 1) hm)) (ε : ℝ) (hS : 1 - ε ≤ S.value)\n    (k : ℕ) (hk : 400 * m * d ≤ k) (hk0 : 0 < k) :\n    ∃ GA : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := m) (d := d))\n        (Matrix (Fin S.dA) (Fin S.dA) ℂ),\n    ∃ GB : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := m) (d := d))\n        (Matrix (Fin S.dB) (Fin S.dB) ℂ),\n      inconsistency (uniform (Point F m)) S.ψ (CL.pointPOVMA S) (evalPOVM GB)\n          ≤ lidtError m d (Fintype.card F) k (3 * m * ε) ∧\n        inconsistency (uniform (Point F m)) S.ψ (evalPOVM GA) (CL.pointPOVMB S)\n          ≤ lidtError m d (Fintype.card F) k (3 * m * ε) ∧\n        inconsistency (uniform Unit) S.ψ (fun _ => GA.toPOVM ()) (fun _ => GB.toPOVM ())\n          ≤ lidtError m d (Fintype.card F) k (3 * m * ε) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]",
+   "variable {hm : m ∣ Fintype.card F}"
+  ],
+  "docstring": "**Soundness of the seeded CL test at `ldc = 1`, by reduction to the canonical-line test.**\n\nA strategy for `clGame` passing with probability at least `1 - ε` has point measurements\nconsistent, up to `lidtError m d q k (3m·ε)`, with the evaluations of a single measurement with\nlow-individual-degree outcomes --- one per player, the two consistent with each other. The\nfactor `3m` is the push-forward cost of the adapter (`pushforward_le`); the `k` is free subject to\n`k ≥ 400md`, exactly as in the canonical-line theorem.\n\nThis is the `ldc = 1` case of `thm:lidt-cl-soundness` *with the error in the canonical-line\nform*. Turning `lidtError m d q k (3m ε)` into the `δ_CL` the blueprint asks for is a separate\narithmetic obligation, and `ldc > 1` is `lem:lidt-ldc`, a separate piece of work on top.",
+  "module": "MIPRE.Background.LIDT.Adapter.Reduction",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 6: the reduction\n\nThis is the payoff. `MIPRE.LIDT.lowIndividualDegree_soundness` is soundness of the\n*canonical-line* test `lidtGame`, proved through the vendored MIPStarRE development; the seeded\nCL test `clGame` of `def:lidt-cl` is a different test, and `rem:lidt-cl-adapter` says that\ntransferring soundness from one to the other needs an explicit strategy adapter. The previous\nfive parts built it; this one runs it.\n\nThe shape of the argument:\n\n* a strategy `S` for `clGame` with `ldc = 1` is turned into one for `lidtGame` by reindexing the\n  questions along `qmapS` (a canonical line becomes a seeded description of its reversal) and\n  coarse-graining the answers along `amap` (the diagonal answer is affinely reparametrized);\n* `hD_qmap` says the adapted strategy is accepted wherever `S` is, and `pushforward_le` says the\n  push-forward of the question distribution costs a factor `3m`, so\n  `exists_one_sub_value_adapt_le` produces one member of the averaging family whose adapted\n  strategy has `1 - value ≤ 3m ε`;\n* `lowIndividualDegree_soundness` applies to it and returns two low-degree measurements;\n* the three consistency conclusions are carried back through the coordinate reversal\n  (`inconsistency_congr`), which acts on the questions by `revPoint` --- measure-preserving,\n  `uniform` being uniform --- and on the outcomes by `revPoly`, the same reversal of a\n  polynomial's exponent vectors.\n\n`clSoundness_ldc_one` states the conclusion with the canonical-line error; combining it with\n`Adapter/Parameters.lean`'s choice of `k` gives `clSoundness_ldc_one_deltaCL`, the `ldc = 1` case\nof `thm:lidt-cl-soundness` with the blueprint's own `δ_CL`.\n\nWhat is *not* here: the `ldc > 1` case (`lem:lidt-ldc`, the paper's Steps 1--5).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Reduction.lean#L209-L275",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Reduction.lean",
+  "lines": [
+   209,
+   275
+  ],
+  "blueprint": [
+   {
+    "label": "thm:lidt-cl-soundness-one",
+    "env": "theorem",
+    "title": "Quantum soundness of the seeded CL test, one codeword",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.val_mats_pointPOVMA_adapted",
+   "MIPRE.LIDT.Adapter.val_mats_pointPOVMB_adapted",
+   "MIPRE.LIDT.Adapter.hD_qmap",
+   "MIPRE.LIDT.Adapter.pushforward_le",
+   "MIPRE.LIDT.Bridge.soundness",
+   "MIPRE.LIDT.CL.card_div_pos",
+   "MIPRE.TensorProductStrategy.exists_one_sub_value_adapt_le"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 43,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.canonLin_bot",
+  "source_name": "MIPRE.LIDT.Adapter.canonLin_bot",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.canonLin_bot (x : Fin m → F) : canonLin (⊥ : Submodule F (Fin m → F)) x = x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset Submodule Module MIPRE.CL MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]"
+  ],
+  "docstring": "`canonLin` of the zero subspace is the identity: there are no pivots.",
+  "module": "MIPRE.Background.LIDT.Adapter.Strategy",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 4: the question and answer maps\n\nThe reduction plays a strategy for the seeded CL test as a strategy for the canonical-line\ntest, through `MIPRE.TensorProductStrategy.adapt`. That needs two maps, and this file defines\nthem and the bookkeeping that identifies them.\n\n`qmap hm σ` sends a question of the canonical-line test to the seeded question it is played\nthrough:\n\n* a point `u` to the point `ρ u`, reversal exchanging the two diagonal conventions;\n* an axis-parallel line to `(ρ ℓ.1, s)` — no `rep` is needed, the two tests' base points agree\n  exactly there (`rep_single_eq_through`) — with `s` the chosen seed of the fibre over\n  `rev (axisIdx ℓ)`;\n* a diagonal line to `(rep (ρ ℓ.2) (ρ ℓ.1), s, ρ ℓ.2)`, carrying the direction *unrescaled*.\n  That is legitimate because the seeded test's `DLine` questions carry the raw direction, and it\n  is what makes the answer conversion a pure shift rather than a shift and a scaling.\n\n`amap` sends a seeded answer to a canonical-line answer, and depends on the question — the\nshift does. Its unreachable branches are unreachable because `clGame` *rejects* an answer\nwhose format does not match its question's type; before that was repaired the branches would\nhave been live.\n\n`shiftOf ℓ` is the shift, read off `rep_eq`: the two base points differ by `shiftOf ℓ` times the\ndirection (`rep_rev_eq`), so the two parameters of a point of the line differ by `shiftOf ℓ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Strategy.lean#L102-L117",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Strategy.lean",
+  "lines": [
+   102,
+   117
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.hD_selfCons",
+  "source_name": "MIPRE.LIDT.Adapter.hD_selfCons",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.hD_selfCons (u : Point F m) (a b : CL.Answer F m d 1)\n    (hacc : (clGame (d := d) (ldc := 1) hm).D (qmap hm σ c (.point u)) (qmap hm σ c (.point u)) a b = true) :\n    (lidtGame F m d).D (.point u) (.point u) (amap c (.point u) a) (amap c (.point u) b) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset Submodule Module MIPRE.CL MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]",
+   "variable (hm : m ∣ Fintype.card F) (σ : Fin m → Fin (Fintype.card F / m)) {c : F}"
+  ],
+  "docstring": "The self-consistency case: both players are asked the same point, and both tests check that\nthe two answers agree.",
+  "module": "MIPRE.Background.LIDT.Adapter.Strategy",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 4: the question and answer maps\n\nThe reduction plays a strategy for the seeded CL test as a strategy for the canonical-line\ntest, through `MIPRE.TensorProductStrategy.adapt`. That needs two maps, and this file defines\nthem and the bookkeeping that identifies them.\n\n`qmap hm σ` sends a question of the canonical-line test to the seeded question it is played\nthrough:\n\n* a point `u` to the point `ρ u`, reversal exchanging the two diagonal conventions;\n* an axis-parallel line to `(ρ ℓ.1, s)` — no `rep` is needed, the two tests' base points agree\n  exactly there (`rep_single_eq_through`) — with `s` the chosen seed of the fibre over\n  `rev (axisIdx ℓ)`;\n* a diagonal line to `(rep (ρ ℓ.2) (ρ ℓ.1), s, ρ ℓ.2)`, carrying the direction *unrescaled*.\n  That is legitimate because the seeded test's `DLine` questions carry the raw direction, and it\n  is what makes the answer conversion a pure shift rather than a shift and a scaling.\n\n`amap` sends a seeded answer to a canonical-line answer, and depends on the question — the\nshift does. Its unreachable branches are unreachable because `clGame` *rejects* an answer\nwhose format does not match its question's type; before that was repaired the branches would\nhave been live.\n\n`shiftOf ℓ` is the shift, read off `rep_eq`: the two base points differ by `shiftOf ℓ` times the\ndirection (`rep_rev_eq`), so the two parameters of a point of the line differ by `shiftOf ℓ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Strategy.lean#L233-L251",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Strategy.lean",
+  "lines": [
+   233,
+   251
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.hD_axis",
+  "source_name": "MIPRE.LIDT.Adapter.hD_axis",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.hD_axis (u : Point F m) (i : Fin m) (a b : CL.Answer F m d 1)\n    (hacc : (clGame (d := d) (ldc := 1) hm).D (qmap hm σ c (.axisLine (Line.through u (Pi.single i 1))))\n      (qmap hm σ c (.point u)) a b = true) :\n    (lidtGame F m d).D (.axisLine (Line.through u (Pi.single i 1))) (.point u)\n      (amap c (.axisLine (Line.through u (Pi.single i 1))) a) (amap c (.point u) b) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset Submodule Module MIPRE.CL MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]",
+   "variable (hm : m ∣ Fintype.card F) (σ : Fin m → Fin (Fintype.card F / m)) {c : F}"
+  ],
+  "docstring": "The axis-parallel case: the source checks the point is on the seeded line and the answer\nevaluates correctly there, and after reversal that is the same equation the target checks.",
+  "module": "MIPRE.Background.LIDT.Adapter.Strategy",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 4: the question and answer maps\n\nThe reduction plays a strategy for the seeded CL test as a strategy for the canonical-line\ntest, through `MIPRE.TensorProductStrategy.adapt`. That needs two maps, and this file defines\nthem and the bookkeeping that identifies them.\n\n`qmap hm σ` sends a question of the canonical-line test to the seeded question it is played\nthrough:\n\n* a point `u` to the point `ρ u`, reversal exchanging the two diagonal conventions;\n* an axis-parallel line to `(ρ ℓ.1, s)` — no `rep` is needed, the two tests' base points agree\n  exactly there (`rep_single_eq_through`) — with `s` the chosen seed of the fibre over\n  `rev (axisIdx ℓ)`;\n* a diagonal line to `(rep (ρ ℓ.2) (ρ ℓ.1), s, ρ ℓ.2)`, carrying the direction *unrescaled*.\n  That is legitimate because the seeded test's `DLine` questions carry the raw direction, and it\n  is what makes the answer conversion a pure shift rather than a shift and a scaling.\n\n`amap` sends a seeded answer to a canonical-line answer, and depends on the question — the\nshift does. Its unreachable branches are unreachable because `clGame` *rejects* an answer\nwhose format does not match its question's type; before that was repaired the branches would\nhave been live.\n\n`shiftOf ℓ` is the shift, read off `rep_eq`: the two base points differ by `shiftOf ℓ` times the\ndirection (`rep_rev_eq`), so the two parameters of a point of the line differ by `shiftOf ℓ`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Strategy.lean#L253-L311",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Strategy.lean",
+  "lines": [
+   253,
+   311
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.param_through_eq_of_mem"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 52,
+  "is_target": false
+ }
+]

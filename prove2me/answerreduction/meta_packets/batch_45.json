@@ -1,0 +1,686 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualObjective_exists_isMinOn",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualObjective_exists_isMinOn",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualObjective_exists_isMinOn\n    (params : Parameters) [FieldModel params.q]\n    (model : MatrixSdpRealization params) :\n    ∃ Z : MatrixOperator model.space,\n      (∀ g : Polynomial params,\n        0 ≤ matrixSdpDualSlackOperator params model Z g) ∧\n      ∀ W : MatrixOperator model.space,\n        (∀ g : Polynomial params,\n          0 ≤ matrixSdpDualSlackOperator params model W g) →\n        matrixSdpDualObjective model Z ≤ matrixSdpDualObjective model W := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open Filter",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise Topology"
+  ],
+  "docstring": "The paper-form canonical dual objective attains its minimum on the feasible set.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical.StrongDuality.Basic",
+  "module_doc": "/-!\n# Section 9 -- Canonical SDP strong-duality preliminaries\n\nThis module contains the feasibility, compactness, closedness, and\nobjective-continuity lemmas used in the finite-dimensional strong-duality\nargument for the canonical matrix SDP.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Basic.lean#L525-L552",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Basic.lean",
+  "lines": [
+   525,
+   552
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.averageOperatorOverDistribution_nonneg",
+   "MIPStarRE.LDT.SelfImprovement.matrixAveragedPointOperator_le_one",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualFeasibleSublevel_isClosed",
+   "MIPStarRE.Quantum.norm_apply_le_trace_re_of_nonneg"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalImageCone_identity_mem_iff_exists_feasible_objective",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalImageCone_identity_mem_iff_exists_feasible_objective",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalImageCone_identity_mem_iff_exists_feasible_objective\n    (params : Parameters) [FieldModel params.q]\n    (model : MatrixSdpRealization params) (t : ℝ) :\n    ((1 : MatrixOperator model.space), t) ∈\n        matrixSdpCanonicalPrimalImageCone params model ↔\n      ∃ X : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model),\n        MatrixSdpCanonicalPrimalFeasible params model X ∧\n          Complex.re (Matrix.trace\n            (matrixSdpCanonicalObjectiveOperator params model * X)) = t := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open Filter",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise Topology"
+  ],
+  "docstring": "On the identity constraint fiber, the closed primal image cone contains\nexactly the objective values of feasible canonical primal matrices.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical.StrongDuality.Separation",
+  "module_doc": "/-!\n# Section 9 -- Canonical SDP separation argument\n\nThis module contains the closed-image-cone separation argument and the resulting\nzero-duality-gap theorem for the canonical finite-dimensional matrix SDP.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Separation.lean#L231-L353",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Separation.lean",
+  "lines": [
+   231,
+   353
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.Quantum.norm_apply_le_trace_re_of_nonneg"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 112,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalTracePairingDualMatrix_dualFeasible_of_conicFunctionalDualFeasible",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalTracePairingDualMatrix_dualFeasible_of_conicFunctionalDualFeasible",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalTracePairingDualMatrix_dualFeasible_of_conicFunctionalDualFeasible\n    (params : Parameters) [FieldModel params.q]\n    (model : MatrixSdpRealization params)\n    (ψ : StrongDual ℝ (MatrixOperator model.space))\n    (hψ : ∀ z ∈ matrixSdpCanonicalPrimalImageCone params model, z.2 ≤ ψ z.1) :\n    ∀ g : Polynomial params,\n      0 ≤ matrixSdpDualSlackOperator params model\n        (MIPStarRE.Quantum.hermitianTracePairingMatrixOfRealCLM ψ) g := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open Filter",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise Topology"
+  ],
+  "docstring": "A feasible functional dual bound on the canonical primal image cone gives a\npaper-form dual feasible matrix through the Hermitian trace-pairing\nrepresentation.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical.StrongDuality.Separation",
+  "module_doc": "/-!\n# Section 9 -- Canonical SDP separation argument\n\nThis module contains the closed-image-cone separation argument and the resulting\nzero-duality-gap theorem for the canonical finite-dimensional matrix SDP.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Separation.lean#L438-L474",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Separation.lean",
+  "lines": [
+   438,
+   474
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.averageOperatorOverDistribution_nonneg",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalBlockDiagonal_nonneg_iff",
+   "MIPStarRE.Quantum.kronecker_nonneg",
+   "MIPStarRE.Quantum.nonneg_of_trace_mul_nonneg_of_isHermitian",
+   "MIPStarRE.Quantum.realTracePairingCLM_tracePairingMatrixOfRealCLM",
+   "MIPStarRE.Quantum.realTracePairingCLM_selfAdjointPart_apply_of_isHermitian"
+  ],
+  "pasted_helpers": 24,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalFunctionalDualObjective_min_of_matrixDualMin",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalFunctionalDualObjective_min_of_matrixDualMin",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalFunctionalDualObjective_min_of_matrixDualMin\n    (params : Parameters) [FieldModel params.q]\n    (model : MatrixSdpRealization params)\n    (Z : MatrixOperator model.space)\n    (hZmin : ∀ W : MatrixOperator model.space,\n      (∀ g : Polynomial params,\n        0 ≤ matrixSdpDualSlackOperator params model W g) →\n      matrixSdpDualObjective model Z ≤ matrixSdpDualObjective model W) :\n    ∀ ψ : StrongDual ℝ (MatrixOperator model.space),\n      (∀ z ∈ matrixSdpCanonicalPrimalImageCone params model, z.2 ≤ ψ z.1) →\n      matrixSdpDualObjective model Z ≤ ψ (1 : MatrixOperator model.space) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open Filter",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise Topology"
+  ],
+  "docstring": "A paper-form dual minimizer is also minimal among feasible functional dual\nbounds on the canonical primal image cone.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical.StrongDuality.Separation",
+  "module_doc": "/-!\n# Section 9 -- Canonical SDP separation argument\n\nThis module contains the closed-image-cone separation argument and the resulting\nzero-duality-gap theorem for the canonical finite-dimensional matrix SDP.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Separation.lean#L476-L502",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Separation.lean",
+  "lines": [
+   476,
+   502
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalTracePairingDualMatrix_dualFeasible_of_conicFunctionalDualFeasible",
+   "MIPStarRE.Quantum.realTracePairingCLM_tracePairingMatrixOfRealCLM",
+   "MIPStarRE.Quantum.realTracePairingCLM_selfAdjointPart_apply_of_isHermitian"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalStrongDuality",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalStrongDuality",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalStrongDuality\n    (params : Parameters) [FieldModel params.q]\n    (model : MatrixSdpRealization params) :\n    ∃ X : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model),\n      ∃ Z : MatrixOperator model.space,\n        MatrixSdpCanonicalPrimalFeasible params model X ∧\n        (∀ g : Polynomial params,\n          0 ≤ matrixSdpDualSlackOperator params model Z g) ∧\n        Complex.re (Matrix.trace\n            (matrixSdpCanonicalObjectiveOperator params model * X)) =\n          matrixSdpDualObjective model Z := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open Filter",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise Topology"
+  ],
+  "docstring": "The canonical matrix SDP has a primal-dual optimal pair with zero duality\ngap.\n\nThis is the finite-dimensional strong-duality conclusion used in the paper's\nSection 9 SDP argument.  The proof combines compact attainment, separation of\nthe closed primal image cone, and the trace-pairing representation of the\nnormalized separator; it does not add an auxiliary dominance hypothesis on the\ndual matrix.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical.StrongDuality.Separation",
+  "module_doc": "/-!\n# Section 9 -- Canonical SDP separation argument\n\nThis module contains the closed-image-cone separation argument and the resulting\nzero-duality-gap theorem for the canonical finite-dimensional matrix SDP.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Separation.lean#L665-L707",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Separation.lean",
+  "lines": [
+   665,
+   707
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.averageOperatorOverDistribution_nonneg",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalFeasible_isClosed",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualObjective_exists_isMinOn",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalImageCone_identity_mem_iff_exists_feasible_objective",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalFunctionalDualObjective_min_of_matrixDualMin",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualOperator_trace_feasible",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalBlockDiagonal_nonneg_iff",
+   "MIPStarRE.Quantum.conic_primalValue_eq_dualValue_of_fiber_max_dual_min",
+   "MIPStarRE.Quantum.kronecker_nonneg",
+   "MIPStarRE.Quantum.norm_apply_le_trace_re_of_nonneg",
+   "MIPStarRE.Quantum.trace_mul_nonneg_of_nonneg"
+  ],
+  "pasted_helpers": 31,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalBlockDiagonal_nonneg_iff",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalBlockDiagonal_nonneg_iff",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalBlockDiagonal_nonneg_iff\n    (params : Parameters) [FieldModel params.q]\n    (model : MatrixSdpRealization params)\n    (B : MatrixSdpCanonicalBlockIndex params → MatrixOperator model.space) :\n    0 ≤ matrixSdpCanonicalBlockDiagonal params model B ↔\n      ∀ b, 0 ≤ B b := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "A canonical block-diagonal operator is positive semidefinite exactly when\nall of its diagonal matrix blocks are positive semidefinite.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.CanonicalPrimal",
+  "module_doc": "/-!\n# Section 9 — Canonical matrix SDP primal block form\n\nThis module contains the canonical block Hilbert space, diagonal-block\noperators, primal slack block, and extraction of paper primal submeasurements\nfrom feasible canonical primal matrices.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/CanonicalPrimal.lean#L477-L499",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/CanonicalPrimal.lean",
+  "lines": [
+   477,
+   499
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "Matrix.blockDiagonal_nonneg_iff",
+   "MIPStarRE.Quantum.kronecker_nonneg"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.addInUFullStatement_of_isGood",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.addInUFullStatement_of_isGood",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.addInUFullStatement_of_isGood\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (T : Measurement (Polynomial params) ι) :\n    AddInUFullStatement params strategy T eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Proves the selection-dependent transfer inequality of `lem:add-in-u`:\nfor any auxiliary sub-measurement family `M = {M^u_o}` and selection rule\n`S : Point → Set (Outcome × Polynomial)`, the two indexed expectations agree\nto within `4 √ζ_variance` (the bound `addInUError params eps delta`), given\nstrategy self-consistency in the `IsGood eps delta gamma` standing context.\n\nPaper origin: `references/ldt-paper/self_improvement.tex` lines 247–343\n(proof of `\\label{lem:add-in-u}`). The paper's proof is a Cauchy–Schwarz\nchain through the four intermediate quantities `Q_0, Q_1, Q_2, Q_3, Q_4`\n(formalized as `addInUCSChainQ0` … `addInUCSChainQ4` in\n`MIPStarRE/LDT/SelfImprovement/Theorems/Results/HelperCompleteness/`),\ncombining the self-consistency of `A` (giving `√(2δ)` bounds on the\n\"insertion\" steps) with the global-variance bound (giving\n`√globalVarianceDeviationSum` bounds on the \"averaging\" steps).\n\nThe reduced `addInU` lemma in `Bracketed.lean:584` records the specialization\nof this chain to the variance-bound consequence used later.  The theorem below\nformalizes the full universally quantified inequality.\n\nThe `gamma` parameter and `hgood : IsGood eps delta gamma` hypothesis carry\nthe paper's standing \"good strategy\" context; `gamma` does not appear in\n`AddInUFullStatement`'s bound (which is `addInUError params eps delta`),\nmatching the paper's framing where `lem:add-in-u` is invoked inside a\n`good`-strategy section.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.AddInUFullStatement",
+  "module_doc": "/-!\n# Section 7 — Selection-dependent transfer inequality for `lem:add-in-u`\n\nThis file proves the full selection-dependent transfer inequality of\n`lem:add-in-u` (`references/ldt-paper/self_improvement.tex` lines 238–246).\nThe existing `addInU` lemma in\n`MIPStarRE/LDT/SelfImprovement/Theorems/Results/HelperCompleteness/Bracketed.lean:584`\nformalizes only the variance-bound specialization used in subsequent arguments.\n\nThe theorem below combines the already formalized selected Cauchy--Schwarz\nchain with the six-step cardinality-free local-variance transport bound to\nestablish the paper's fully quantified transfer inequality.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/AddInUFullStatement.lean#L124-L215",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/AddInUFullStatement.lean",
+  "lines": [
+   124,
+   215
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.GlobalVariance.globalVarianceDeviation_sum_le_of_localVarianceDeviation_sum_le",
+   "MIPStarRE.LDT.GlobalVariance.localVarianceDeviation_sum_le_localVarianceOfPointsError",
+   "MIPStarRE.LDT.SelfImprovement.addInU_selected_cs_chain_step1_abs_le_sqrt_two_delta",
+   "MIPStarRE.LDT.SelfImprovement.addInU_selected_cs_chain_step2_abs_le_sqrt_two_delta",
+   "MIPStarRE.LDT.SelfImprovement.add_in_u_selected_transfer_of_cs_chain",
+   "MIPStarRE.LDT.SelfImprovement.two_mul_delta_le_selfImprovementVarianceError",
+   "MIPStarRE.LDT.eps_nonneg_of_isGood",
+   "MIPStarRE.LDT.delta_nonneg_of_isGood"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 61,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.helperFullOuterSandwichQuantity_eq_release_add_offDiagonalOuterSandwichQuantity",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.helperFullOuterSandwichQuantity_eq_release_add_offDiagonalOuterSandwichQuantity",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.helperFullOuterSandwichQuantity_eq_release_add_offDiagonalOuterSandwichQuantity\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (T : SubMeas (Polynomial params) ι) :\n    helperFullOuterSandwichQuantity params strategy T =\n      addInURightQuantity params strategy\n        (sandwichedPolynomialSubMeasAt params strategy T)\n        T\n        (selfConsistencyAddInUSelection params) +\n      helperOffDiagonalOuterSandwichQuantity params strategy T := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The full inserted expression splits into its released diagonal part and its\noff-diagonal remainder.\n\nThis is the finite-sum identity underlying the passage from\n`eq:release-the-kraken` to `eq:threw-in-h-prime`: for each fixed polynomial\n`h`, the sum over all `h'` is the diagonal term `h' = h` plus the sum over\n`h' ≠ h`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Residual",
+  "module_doc": "/-!\n# Off-diagonal residual estimates for the helper SSC argument\n\nThis module names the off-diagonal scalar quantities appearing after the\nprojector insertion in the helper strong-self-consistency proof, records their\nexact decompositions, and assembles the two variance-transport comparisons with\nthe Schwartz--Zippel endpoint.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 455--468\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/Residual.lean#L177-L211",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/Residual.lean",
+  "lines": [
+   177,
+   211
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_sum"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.helperFullOuterSandwichQuantity_eq_deleteAQuantity",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.helperFullOuterSandwichQuantity_eq_deleteAQuantity",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.helperFullOuterSandwichQuantity_eq_deleteAQuantity\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (T : SubMeas (Polynomial params) ι) :\n    helperFullOuterSandwichQuantity params strategy T =\n      helperDeleteAQuantity params strategy T := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Formal version of the paper's `eq:delete-an-A` identity.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Residual",
+  "module_doc": "/-!\n# Off-diagonal residual estimates for the helper SSC argument\n\nThis module names the off-diagonal scalar quantities appearing after the\nprojector insertion in the helper strong-self-consistency proof, records their\nexact decompositions, and assembles the two variance-transport comparisons with\nthe Schwartz--Zippel endpoint.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 455--468\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/Residual.lean#L230-L255",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/Residual.lean",
+  "lines": [
+   230,
+   255
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.SelfImprovement.pointConditioned_sandwichedPolynomialOutcome_outer_eq_ite",
+   "MIPStarRE.LDT.SelfImprovement.sandwichedPolynomialOutcome_mul_pointConditioned_eq_ite"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.helperMoveOverVQuantity_le_deleteA_of_abs_transports",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.helperMoveOverVQuantity_le_deleteA_of_abs_transports",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.helperMoveOverVQuantity_le_deleteA_of_abs_transports\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta : Error)\n    (T : SubMeas (Polynomial params) ι)\n    (hclone :\n      |helperDeleteAQuantity params strategy T -\n        helperDeleteAClonedQuantity params strategy T| ≤\n          Real.sqrt (selfImprovementVarianceError params eps delta))\n    (hmove :\n      |helperDeleteAClonedQuantity params strategy T -\n        helperMoveOverVQuantity params strategy T| ≤\n          Real.sqrt (2 * delta)) :\n    helperMoveOverVQuantity params strategy T ≤\n      helperDeleteAQuantity params strategy T +\n        Real.sqrt (selfImprovementVarianceError params eps delta) +\n        Real.sqrt (2 * delta) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The reverse scalar direction of the post-`delete-an-A` transport estimates.\n\nThis is the direction used when the final `move-over-v` expression is known to\nbe large and one transfers that lower bound back to the `delete-an-A` expression.\nIt is again only the triangle-inequality assembly of the two analytic transport\nestimates.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Residual",
+  "module_doc": "/-!\n# Off-diagonal residual estimates for the helper SSC argument\n\nThis module names the off-diagonal scalar quantities appearing after the\nprojector insertion in the helper strong-self-consistency proof, records their\nexact decompositions, and assembles the two variance-transport comparisons with\nthe Schwartz--Zippel endpoint.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 455--468\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/Residual.lean#L330-L363",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/Residual.lean",
+  "lines": [
+   330,
+   363
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.helperOffDiagonalIndicatorQuantity_le_swapped_of_abs_transports",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.helperOffDiagonalIndicatorQuantity_le_swapped_of_abs_transports",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.helperOffDiagonalIndicatorQuantity_le_swapped_of_abs_transports\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta : Error)\n    (T : SubMeas (Polynomial params) ι)\n    (hleft :\n      |helperOffDiagonalIndicatorQuantity params strategy T -\n        helperOffDiagonalOneSidedSwappedIndicatorQuantity params strategy T| ≤\n          Real.sqrt (selfImprovementVarianceError params eps delta))\n    (hright :\n      |helperOffDiagonalOneSidedSwappedIndicatorQuantity params strategy T -\n        helperOffDiagonalSwappedIndicatorQuantity params strategy T| ≤\n          Real.sqrt (selfImprovementVarianceError params eps delta)) :\n    helperOffDiagonalIndicatorQuantity params strategy T ≤\n      helperOffDiagonalSwappedIndicatorQuantity params strategy T +\n        2 * Real.sqrt (selfImprovementVarianceError params eps delta) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Assemble the two one-projector variance transports for the off-diagonal\nhelper residual.\n\nThe first hypothesis is the estimate for replacing the left copy of\n`A^u_{h(u)}` by `A^v_{h(v)}`.  The second hypothesis is the estimate for\nreplacing the remaining right copy by the same independent point `v`.  Together\nthey give the transport inequality used before the Schwartz--Zippel endpoint in\nthe proof of helper strong self-consistency.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Residual",
+  "module_doc": "/-!\n# Off-diagonal residual estimates for the helper SSC argument\n\nThis module names the off-diagonal scalar quantities appearing after the\nprojector insertion in the helper strong-self-consistency proof, records their\nexact decompositions, and assembles the two variance-transport comparisons with\nthe Schwartz--Zippel endpoint.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 455--468\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/Residual.lean#L386-L420",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/Residual.lean",
+  "lines": [
+   386,
+   420
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.addInU_pointMeasurement_snd_selfConsistency",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.addInU_pointMeasurement_snd_selfConsistency",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.addInU_pointMeasurement_snd_selfConsistency\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (delta : Error)\n    (hssc : BipartiteSSCRel strategy.state (uniformDistribution (Point params))\n      (IdxProjMeas.toIdxSubMeas strategy.pointMeasurement) delta) :\n    SDDRel strategy.state (uniformDistribution (Point params × Point params))\n      (IdxSubMeas.liftLeft\n        (fun uv : Point params × Point params =>\n          (strategy.pointMeasurement uv.2).toSubMeas))\n      (IdxSubMeas.liftRight\n        (fun uv : Point params × Point params =>\n          (strategy.pointMeasurement uv.2).toSubMeas))\n      (2 * delta) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Strong self-consistency for the point measurement, pulled back to the second\ncoordinate of the independent `(u, v)` average used by the add-in-`u` scalar\nchain.\n\nThis is the distributional self-consistency input for the `A^v_{h(v)}` moves in\n`self_improvement.tex`, lines 255--297: the point measurement sampled at `v`\nhas the same `2δ` left/right state-dependent distance after the product average\nover `(u, v)`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.ScalarChain",
+  "module_doc": "/-!\n# Scalar chain for the diagonal add-in-u transfer\n\nThis module contains the selected and diagonal Q₀--Q₄ scalar chains used for the\nprojection-simplified diagonal add-in-`u` transfer, together with the endpoint\nidentifications needed by the helper strong-self-consistency proof.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 247--252\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/ScalarChain.lean#L58-L115",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/ScalarChain.lean",
+  "lines": [
+   58,
+   115
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "PMF.uniformOfFintype_sum_equiv_fst_smul",
+   "MIPStarRE.LDT.Preliminaries.twoNotionsOfSelfConsistencyAfterEvaluation"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 36,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.addInU_filtered_sandwiched_tensor_sum_le_one",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.addInU_filtered_sandwiched_tensor_sum_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.addInU_filtered_sandwiched_tensor_sum_le_one\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (T : SubMeas (Polynomial params) ι)\n    (u v : Point params) (a : Fq params) :\n    ∑ h ∈ Finset.univ.filter (fun h : Polynomial params => h v = a),\n        opTensor ((sandwichedPolynomialSubMeasAt params strategy T u).outcome h)\n          (T.outcome h) ≤\n      (1 : MIPStarRE.Quantum.Op (ι × ι)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The grouped tensor mass over a fiber `h(v)=a` is a contraction.\n\nThis is the submeasurement bound used inside the first Cauchy--Schwarz square\nroot in `self_improvement.tex`, lines 267--272: after grouping by the value\n`a = h(v)`, the selected operators\n`H^u_h ⊗ T_h` are dominated by the total mass of the sandwiched polynomial\nsubmeasurement at `u`, hence by `I`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.ScalarChain",
+  "module_doc": "/-!\n# Scalar chain for the diagonal add-in-u transfer\n\nThis module contains the selected and diagonal Q₀--Q₄ scalar chains used for the\nprojection-simplified diagonal add-in-`u` transfer, together with the endpoint\nidentifications needed by the helper strong-self-consistency proof.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 247--252\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/ScalarChain.lean#L117-L137",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/ScalarChain.lean",
+  "lines": [
+   117,
+   137
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.opTensor_sum_filter_le_one"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.addInUSelectedCSChainQ0_eq_leftQuantity_averagedSandwiched",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.addInUSelectedCSChainQ0_eq_leftQuantity_averagedSandwiched",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.addInUSelectedCSChainQ0_eq_leftQuantity_averagedSandwiched\n    {Outcome : Type*} [Fintype Outcome]\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (M : IdxSubMeas (Point params) Outcome ι)\n    (T : SubMeas (Polynomial params) ι)\n    (S : AddInUSelection params Outcome) :\n    addInULeftQuantity params strategy M\n        (averagedSandwichedPolynomialSubMeas params strategy T)\n        S =\n      addInUSelectedCSChainQ0 params strategy M T S := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The selected-chain endpoint `Q₀` is the generic add-in-u left quantity when\nthe second measurement is the averaged sandwiched polynomial submeasurement.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.ScalarChain",
+  "module_doc": "/-!\n# Scalar chain for the diagonal add-in-u transfer\n\nThis module contains the selected and diagonal Q₀--Q₄ scalar chains used for the\nprojection-simplified diagonal add-in-`u` transfer, together with the endpoint\nidentifications needed by the helper strong-self-consistency proof.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 247--252\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/ScalarChain.lean#L226-L289",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/ScalarChain.lean",
+  "lines": [
+   226,
+   289
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_prod",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_real_smul",
+   "MIPStarRE.LDT.opTensor_sum_right_finset"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 51,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.addInUSelectedCSChainQ4_eq_rightQuantity",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.addInUSelectedCSChainQ4_eq_rightQuantity",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.addInUSelectedCSChainQ4_eq_rightQuantity\n    {Outcome : Type*} [Fintype Outcome]\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (M : IdxSubMeas (Point params) Outcome ι)\n    (T : SubMeas (Polynomial params) ι)\n    (S : AddInUSelection params Outcome) :\n    addInURightQuantity params strategy M T S =\n      addInUSelectedCSChainQ4 params strategy M T S := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The selected-chain endpoint `Q₄` is the generic add-in-u right quantity.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.ScalarChain",
+  "module_doc": "/-!\n# Scalar chain for the diagonal add-in-u transfer\n\nThis module contains the selected and diagonal Q₀--Q₄ scalar chains used for the\nprojection-simplified diagonal add-in-`u` transfer, together with the endpoint\nidentifications needed by the helper strong-self-consistency proof.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 247--252\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/ScalarChain.lean#L291-L320",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/ScalarChain.lean",
+  "lines": [
+   291,
+   320
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_const",
+   "MIPStarRE.LDT.avgOver_uniform_prod",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_finset_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.add_in_u_cs_chain_q0_eq_match_mass",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.add_in_u_cs_chain_q0_eq_match_mass",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.add_in_u_cs_chain_q0_eq_match_mass\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (T : SubMeas (Polynomial params) ι) :\n    qBipartiteMatchMass strategy.state\n        (averagedSandwichedPolynomialSubMeas params strategy T)\n        (averagedSandwichedPolynomialSubMeas params strategy T) =\n      addInUCSChainQ0 params strategy T := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The expanded chain endpoint `Q₀` is the existing diagonal match-mass left\nside used by `selfConsistencyDiagonalAddInU_of_simplifiedTransfer`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.ScalarChain",
+  "module_doc": "/-!\n# Scalar chain for the diagonal add-in-u transfer\n\nThis module contains the selected and diagonal Q₀--Q₄ scalar chains used for the\nprojection-simplified diagonal add-in-`u` transfer, together with the endpoint\nidentifications needed by the helper strong-self-consistency proof.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 247--252\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/ScalarChain.lean#L393-L462",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/ScalarChain.lean",
+  "lines": [
+   393,
+   462
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.averageOperatorOverDistribution_nonneg",
+   "MIPStarRE.LDT.avgOver_uniform_prod",
+   "MIPStarRE.LDT.avgOver_sum",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_real_smul",
+   "MIPStarRE.LDT.opTensor_sum_left_finset",
+   "MIPStarRE.LDT.opTensor_sum_right_finset"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 60,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.add_in_u_cs_chain_q4_eq_simplified_rhs",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.add_in_u_cs_chain_q4_eq_simplified_rhs",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.add_in_u_cs_chain_q4_eq_simplified_rhs\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (T : SubMeas (Polynomial params) ι) :\n    addInUCSChainQ4 params strategy T =\n      avgOver (uniformDistribution (Point params)) (fun u =>\n        ∑ h : Polynomial params,\n          ev strategy.state\n            (opTensor ((sandwichedPolynomialSubMeasAt params strategy T u).outcome h)\n              (T.outcome h))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The raw chain endpoint `Q₄` collapses to the projection-simplified scalar\nright side used by `selfConsistencyDiagonalAddInU_of_simplifiedTransfer`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.ScalarChain",
+  "module_doc": "/-!\n# Scalar chain for the diagonal add-in-u transfer\n\nThis module contains the selected and diagonal Q₀--Q₄ scalar chains used for the\nprojection-simplified diagonal add-in-`u` transfer, together with the endpoint\nidentifications needed by the helper strong-self-consistency proof.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 247--252\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/ScalarChain.lean#L464-L522",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/ScalarChain.lean",
+  "lines": [
+   464,
+   522
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_fst",
+   "MIPStarRE.LDT.avgOver_congr"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 47,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.pointConditioned_sandwichedPolynomialOutcome_outer_eq_ite",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.pointConditioned_sandwichedPolynomialOutcome_outer_eq_ite",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.pointConditioned_sandwichedPolynomialOutcome_outer_eq_ite\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (T : SubMeas (Polynomial params) ι)\n    (u : Point params) (h h' : Polynomial params) :\n    let Ah := pointConditionedOutcomeOperatorAtPolynomial params strategy h u\n    Ah * ((sandwichedPolynomialSubMeasAt params strategy T u).outcome h') * Ah =\n      if h u = h' u then\n        (sandwichedPolynomialSubMeasAt params strategy T u).outcome h'\n      else\n        0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Insert the point projector around a sandwiched helper outcome.\n\nFor fixed `u`, the operator\n`H^u_{h'} = A^u_{h'(u)} T_{h'} A^u_{h'(u)}` survives the outer sandwich by\n`A^u_{h(u)}` precisely when the two polynomials agree at `u`.  This is the\noperator form of the paper identity labelled `eq:h-blt`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Selection",
+  "module_doc": "/-!\n# Diagonal add-in-u selection and point-sandwich endpoints\n\nThis module contains the diagonal selection used in the strong-self-consistency\napplication of the add-in-`u` lemma, the endpoint identities for its left and\nright sides, the point-projector insertion identities, and the Schwartz--Zippel\ncollision endpoints used by the helper strong-self-consistency argument.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 247--252, 455--468\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/Selection.lean#L249-L295",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/Selection.lean",
+  "lines": [
+   249,
+   295
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.outcome_hermitian",
+   "MIPStarRE.LDT.ProjSubMeas.outcome_orthogonal"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 30,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.ev_opTensor_pointConditioned_sandwichedPolynomialOutcome_outer_eq_indicator",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.ev_opTensor_pointConditioned_sandwichedPolynomialOutcome_outer_eq_indicator",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.ev_opTensor_pointConditioned_sandwichedPolynomialOutcome_outer_eq_indicator\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (T : SubMeas (Polynomial params) ι)\n    (u : Point params) (h h' : Polynomial params) :\n    let Ah := pointConditionedOutcomeOperatorAtPolynomial params strategy h u\n    ev strategy.state\n        (opTensor\n          (Ah * ((sandwichedPolynomialSubMeasAt params strategy T u).outcome h') * Ah)\n          (T.outcome h)) =\n      (if h u = h' u then (1 : Error) else 0) *\n        ev strategy.state\n          (opTensor\n            ((sandwichedPolynomialSubMeasAt params strategy T u).outcome h')\n            (T.outcome h)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Expectation form of the point-projector insertion identity.\n\nThis is the scalar version of\n`pointConditioned_sandwichedPolynomialOutcome_outer_eq_ite`, with the agreement\ncondition written as the real-valued indicator that appears in the paper's\noff-diagonal residual estimate.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Selection",
+  "module_doc": "/-!\n# Diagonal add-in-u selection and point-sandwich endpoints\n\nThis module contains the diagonal selection used in the strong-self-consistency\napplication of the add-in-`u` lemma, the endpoint identities for its left and\nright sides, the point-projector insertion identities, and the Schwartz--Zippel\ncollision endpoints used by the helper strong-self-consistency argument.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 247--252, 455--468\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/Selection.lean#L297-L348",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/Selection.lean",
+  "lines": [
+   297,
+   348
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_zero",
+   "MIPStarRE.LDT.SelfImprovement.pointConditioned_sandwichedPolynomialOutcome_outer_eq_ite"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.sandwichedPolynomialOutcome_mul_pointConditioned_eq_ite",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.sandwichedPolynomialOutcome_mul_pointConditioned_eq_ite",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.sandwichedPolynomialOutcome_mul_pointConditioned_eq_ite\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (T : SubMeas (Polynomial params) ι)\n    (u : Point params) (h h' : Polynomial params) :\n    let Ah := pointConditionedOutcomeOperatorAtPolynomial params strategy h u\n    ((sandwichedPolynomialSubMeasAt params strategy T u).outcome h') * Ah =\n      if h u = h' u then\n        (sandwichedPolynomialSubMeasAt params strategy T u).outcome h'\n      else\n        0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Right multiplication form of the point-projector identity.\n\nFor a point `u`, multiplying the pointwise helper outcome `H^u_{h'}` on the\nright by `A^u_{h(u)}` retains exactly the summands with `h(u)=h'(u)`.  Together\nwith `pointConditioned_sandwichedPolynomialOutcome_outer_eq_ite`, this is the\noperator identity used to pass from the enlarged outer-sandwich expression to\nthe paper's `eq:delete-an-A` form.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.AddInUDiagonalAndDefs.Selection",
+  "module_doc": "/-!\n# Diagonal add-in-u selection and point-sandwich endpoints\n\nThis module contains the diagonal selection used in the strong-self-consistency\napplication of the add-in-`u` lemma, the endpoint identities for its left and\nright sides, the point-projector insertion identities, and the Schwartz--Zippel\ncollision endpoints used by the helper strong-self-consistency argument.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex` lines 247--252, 455--468\n- `blueprint/src/chapter/ch07_self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/Selection.lean#L389-L440",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/AddInUDiagonalAndDefs/Selection.lean",
+  "lines": [
+   389,
+   440
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.outcome_hermitian",
+   "MIPStarRE.LDT.ProjSubMeas.outcome_orthogonal"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 34,
+  "is_target": false
+ }
+]

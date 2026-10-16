@@ -1,0 +1,658 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.fullSliceCommutation_avg_swap_terms",
+  "source_name": "MIPStarRE.LDT.Commutativity.fullSliceCommutation_avg_swap_terms",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.fullSliceCommutation_avg_swap_terms\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι) :\n    avgOver (uniformDistribution (FullSliceQuestion params))\n        (fun q => ∑ gh : FullSliceOutcome params,\n          fullSliceBABTerm params strategy family q gh) =\n      avgOver (uniformDistribution (FullSliceQuestion params))\n        (fun q => ∑ gh : FullSliceOutcome params,\n          fullSliceABATerm params strategy family q gh) ∧\n    avgOver (uniformDistribution (FullSliceQuestion params))\n        (fun q => ∑ gh : FullSliceOutcome params,\n          fullSliceBABATerm params strategy family q gh) =\n      avgOver (uniformDistribution (FullSliceQuestion params))\n        (fun q => ∑ gh : FullSliceOutcome params,\n          fullSliceABABTerm params strategy family q gh) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Swapping the full-slice question and outcome identifies the averaged\n`BAB`/`ABA` terms and the averaged `BABA`/`ABAB` terms.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Averages",
+  "module_doc": "/-!\n# Full-slice averages and index equivalences\n\nZero-family definition, shared average-reindexing helpers, and averaged scalar\nand tensor quantities for the full-slice outcome space, together with\ndata-reindexing equivalences.\n\nThe tensor-form averages are internal to the scalar/tensor comparison recorded\nin `docs/decisions/713-scalar-tensor-decision.md`; downstream code should use\nthe scalar public API.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Averages.lean#L59-L151",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Averages.lean",
+  "lines": [
+   59,
+   151
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_equiv",
+   "MIPStarRE.LDT.avgOver_uniform_sum_eq_card_mul_prod",
+   "MIPStarRE.LDT.avgOver_congr"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 76,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.xEvaluatedSliceBABAtensorAvg_eq_xFullData",
+  "source_name": "MIPStarRE.LDT.Commutativity.xEvaluatedSliceBABAtensorAvg_eq_xFullData",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.xEvaluatedSliceBABAtensorAvg_eq_xFullData\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι) :\n    xEvaluatedSliceBABAtensorAvg params strategy family =\n      avgOver (uniformDistribution (Point params × FullSliceQuestion params))\n        (fun ux =>\n          let A : SubMeas (Fq params) ι :=\n            evaluateAt params ux.1 ((family.meas ux.2.1).toSubMeas)\n          let B : SubMeas (Polynomial params) ι := (family.meas ux.2.2).toSubMeas\n          ∑ a : Fq params, ∑ h : Polynomial params,\n            ev strategy.state\n              (leftTensor (ι₂ := ι) (B.outcome h * A.outcome a * B.outcome h) *\n                rightTensor (ι₁ := ι) (A.outcome a))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Reindex `xEvaluatedSliceBABAtensorAvg` into the mixed `(u,x,y)` data order.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Averages",
+  "module_doc": "/-!\n# Full-slice averages and index equivalences\n\nZero-family definition, shared average-reindexing helpers, and averaged scalar\nand tensor quantities for the full-slice outcome space, together with\ndata-reindexing equivalences.\n\nThe tensor-form averages are internal to the scalar/tensor comparison recorded\nin `docs/decisions/713-scalar-tensor-decision.md`; downstream code should use\nthe scalar public API.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Averages.lean#L378-L412",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Averages.lean",
+  "lines": [
+   378,
+   412
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_prod",
+   "MIPStarRE.LDT.avgOver_uniform_comm"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.xEvaluatedSliceBABAtensor_to_xEvaluatedFullSliceABABAvg",
+  "source_name": "MIPStarRE.LDT.Commutativity.xEvaluatedSliceBABAtensor_to_xEvaluatedFullSliceABABAvg",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.xEvaluatedSliceBABAtensor_to_xEvaluatedFullSliceABABAvg\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)\n    (zeta : Error)\n    (hnorm : strategy.state.IsNormalized)\n    (hself : family.StronglySelfConsistent strategy.state zeta) :\n    |xEvaluatedSliceBABAtensorAvg params strategy family -\n        xEvaluatedFullSliceABABAvg params strategy family| ≤ Real.sqrt zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.Closeness",
+  "module_doc": "/-!\n# Full-slice scalar-to-tensor closeness comparison\n\n`closenessOfIP` comparisons transform scalar quartic averages into manifestly\npositive tensor-form partners.  The same route includes tensor-marginalization\nidentities connecting full-slice and evaluated-slice `ABAB` averages.\n\nThe core `closenessOfIP` scalar↔tensor comparison lemmas are factored into\n`ClosenessCore.lean` (extracted per #1127).\n\nThe tensor-form lemmas are internal to the scalar/tensor comparison recorded in\n`docs/decisions/713-scalar-tensor-decision.md`; downstream code should use the\nscalar public API exposed by the full-slice transport theorems.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Bridges/Closeness.lean#L108-L222",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Bridges/Closeness.lean",
+  "lines": [
+   108,
+   222
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.SubMeas.outcome_hermitian",
+   "MIPStarRE.LDT.Commutativity.xEvaluatedSliceBABAtensorAvg_eq_xFullData",
+   "MIPStarRE.LDT.Commutativity.xEvaluated_selfConsistency_fst_bound",
+   "MIPStarRE.LDT.Preliminaries.closenessOfInnerProduct_right"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 107,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.fullSliceABAB_to_xEvaluatedSliceBABAtensorAvg",
+  "source_name": "MIPStarRE.LDT.Commutativity.fullSliceABAB_to_xEvaluatedSliceBABAtensorAvg",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.fullSliceABAB_to_xEvaluatedSliceBABAtensorAvg\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)\n    (zeta : Error)\n    (hnorm : strategy.state.IsNormalized)\n    (hself : family.StronglySelfConsistent strategy.state zeta) :\n    |fullSliceABABAvg params strategy family -\n        xEvaluatedSliceBABAtensorAvg params strategy family| ≤\n      (↑params.m : Error) * ↑params.d / ↑params.q + Real.sqrt zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Proved x-prefix from the full scalar quartic to the x-evaluated `BAB ⊗ A`\ntensor endpoint.\n\nThis combines the first two paper steps for the second term in\n`commutativity-G.tex` lines 332--354: the `eq:gcom4` scalar-to-`BAB ⊗ A`\ncomparison costs `√ζ`, and the `eq:gcom4-diff` Schwartz--Zippel\npostprocessing of the `x` polynomial outcome costs `md/q`. The remaining\npaper lines 356--360 are intentionally not included here; they are the two\n`closenessOfIP` legs from `xEvaluatedSliceBABAtensorAvg` to\n`xEvaluatedFullSliceABABtensorAvg`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.Closeness",
+  "module_doc": "/-!\n# Full-slice scalar-to-tensor closeness comparison\n\n`closenessOfIP` comparisons transform scalar quartic averages into manifestly\npositive tensor-form partners.  The same route includes tensor-marginalization\nidentities connecting full-slice and evaluated-slice `ABAB` averages.\n\nThe core `closenessOfIP` scalar↔tensor comparison lemmas are factored into\n`ClosenessCore.lean` (extracted per #1127).\n\nThe tensor-form lemmas are internal to the scalar/tensor comparison recorded in\n`docs/decisions/713-scalar-tensor-decision.md`; downstream code should use the\nscalar public API exposed by the full-slice transport theorems.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Bridges/Closeness.lean#L324-L355",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Bridges/Closeness.lean",
+  "lines": [
+   324,
+   355
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Commutativity.fullSliceABAB_scalar_to_BABAtensor",
+   "MIPStarRE.LDT.Commutativity.fullSliceBABA_tensor_marginalize_x"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.xEvaluatedFullSliceABABtensor_to_evaluatedSliceABABAvg",
+  "source_name": "MIPStarRE.LDT.Commutativity.xEvaluatedFullSliceABABtensor_to_evaluatedSliceABABAvg",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.xEvaluatedFullSliceABABtensor_to_evaluatedSliceABABAvg\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)\n    (zeta : Error)\n    (hnorm : strategy.state.IsNormalized)\n    (hself : family.StronglySelfConsistent strategy.state zeta) :\n    |xEvaluatedFullSliceABABtensorAvg params strategy family -\n        evaluatedSliceABABAvg params strategy family| ≤\n      (↑params.m : Error) * ↑params.d / ↑params.q + Real.sqrt zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Proved y-tail from the mixed `ABA ⊗ B` tensor endpoint to the evaluated\nscalar quartic.\n\nThis combines the paper steps after the x-stage has already reached\n`xEvaluatedFullSliceABABtensorAvg`: y-Schwartz-Zippel marginalization\n(`commutativity-G.tex` lines 369--385) followed by the `√ζ`\n`closenessOfIP` move that swaps a trailing `G^y_{[h(v)=b]}` between the\nscalar quartic and the `ABA ⊗ B` tensor -- the doubly-evaluated analogue\nof paper line 360, exposed via `evaluatedSliceABAB_scalar_to_ABABtensor`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.Closeness",
+  "module_doc": "/-!\n# Full-slice scalar-to-tensor closeness comparison\n\n`closenessOfIP` comparisons transform scalar quartic averages into manifestly\npositive tensor-form partners.  The same route includes tensor-marginalization\nidentities connecting full-slice and evaluated-slice `ABAB` averages.\n\nThe core `closenessOfIP` scalar↔tensor comparison lemmas are factored into\n`ClosenessCore.lean` (extracted per #1127).\n\nThe tensor-form lemmas are internal to the scalar/tensor comparison recorded in\n`docs/decisions/713-scalar-tensor-decision.md`; downstream code should use the\nscalar public API exposed by the full-slice transport theorems.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Bridges/Closeness.lean#L357-L388",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Bridges/Closeness.lean",
+  "lines": [
+   357,
+   388
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Commutativity.fullSliceABAB_tensor_marginalize_y"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.fullSliceABAB_scalar_to_BABAtensor",
+  "source_name": "MIPStarRE.LDT.Commutativity.fullSliceABAB_scalar_to_BABAtensor",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.fullSliceABAB_scalar_to_BABAtensor\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)\n    (zeta : Error)\n    (hnorm : strategy.state.IsNormalized)\n    (hself : family.StronglySelfConsistent strategy.state zeta) :\n    |fullSliceABABAvg params strategy family -\n        fullSliceBABAtensorAvg params strategy family| ≤ Real.sqrt zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Scalar-to-tensor comparison for paper `eq:gcom4`\n(`commutativity-G.tex` lines 332-337).\n\nOne `closenessOfIP` application moves the trailing `G^x_g` in the scalar quartic\n`G^y_h G^x_g G^y_h G^x_g ⊗ I` to the right register, producing the manifestly\nPSD tensor form `G^y_h G^x_g G^y_h ⊗ G^x_g`.  The scalar side is stated as\n`fullSliceABABAvg`; the proof first uses the `(x,g) ↔ (y,h)` swap symmetry above\nto identify the averaged `BABA` scalar with the averaged `ABAB` scalar.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.ClosenessCore",
+  "module_doc": "/-!\n# Core full-slice closeness-of-inner-product comparison\n\nStandalone `closenessOfIP` scalar↔tensor comparison lemma extracted from\n`Closeness.lean` per #1127.  This lemma is the core\ntensor-form machinery that moves a trailing measurement outcome between\nthe scalar quartic and a manifestly positive tensor register.\n\nThe tensor-form lemmas are internal to the scalar/tensor comparison recorded in\n`docs/decisions/713-scalar-tensor-decision.md`; downstream code should use\nthe scalar public API exposed by\n`Closeness.lean` and `ClosenessXEval.lean`.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Bridges/ClosenessCore.lean#L68-L168",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Bridges/ClosenessCore.lean",
+  "lines": [
+   68,
+   168
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.Commutativity.fullSliceCommutation_avg_swap_terms",
+   "MIPStarRE.LDT.Commutativity.leftTensor_normalizationCondition_sandwich_bound",
+   "MIPStarRE.LDT.Commutativity.fullSlice_selfConsistency_fst_bound",
+   "MIPStarRE.LDT.Preliminaries.closenessOfIP"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 85,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.xEvaluatedFullSliceABABAvg_to_xEvaluatedFullSliceABABtensorAvg",
+  "source_name": "MIPStarRE.LDT.Commutativity.xEvaluatedFullSliceABABAvg_to_xEvaluatedFullSliceABABtensorAvg",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.xEvaluatedFullSliceABABAvg_to_xEvaluatedFullSliceABABtensorAvg\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)\n    (zeta : Error)\n    (hnorm : strategy.state.IsNormalized)\n    (hself : family.StronglySelfConsistent strategy.state zeta) :\n    |xEvaluatedFullSliceABABAvg params strategy family -\n        xEvaluatedFullSliceABABtensorAvg params strategy family| ≤ Real.sqrt zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "X-evaluated/full-y scalar-to-tensor comparison for paper line 360.\n\nAfter the x-side Schwartz--Zippel step, the first family has already been\npostprocessed at `u`, while the y-family is still full-polynomial.  This lemma\nproves the second `closenessOfIP` move in `commutativity-G.tex` lines 356--360:\nmove the trailing `G^y_h` in\n`G^x_[g(u)=a] G^y_h G^x_[g(u)=a] G^y_h ⊗ I` to the right register, yielding\n`G^x_[g(u)=a] G^y_h G^x_[g(u)=a] ⊗ G^y_h`.\n\nThe preceding line-359 comparison from the `BAB ⊗ A` tensor endpoint to this\nscalar endpoint remains separate because it follows a different `closenessOfIP`\nleg.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.ClosenessXEval",
+  "module_doc": "/-!\n# X-evaluated full-slice closeness comparison\n\nSingle `closenessOfIP` comparison for the x-evaluated/full-y scalar-to-tensor\ntransition; extracted from `Closeness.lean` per #1127.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Bridges/ClosenessXEval.lean#L64-L219",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Bridges/ClosenessXEval.lean",
+  "lines": [
+   64,
+   219
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "PMF.uniformOfFintype_sum_equiv_fst_smul",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.Commutativity.fullSlice_selfConsistency_snd_bound",
+   "MIPStarRE.LDT.Commutativity.leftTensor_normalizationCondition_sandwich_bound",
+   "MIPStarRE.LDT.Preliminaries.closenessOfIP"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 136,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.fullSliceCommutation_qSDDOp_avg_eq",
+  "source_name": "MIPStarRE.LDT.Commutativity.fullSliceCommutation_qSDDOp_avg_eq",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.fullSliceCommutation_qSDDOp_avg_eq\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι) :\n    sddErrorOp strategy.state\n        (uniformDistribution (EvaluatedSliceQuestion params))\n        (fun q => fullSliceProductLeft params strategy family\n          (fullSliceQuestionOfEvaluatedSlice params q))\n        (fun q => fullSliceProductRight params strategy family\n          (fullSliceQuestionOfEvaluatedSlice params q)) =\n      2 * (fullSliceABAAvg params strategy family -\n        fullSliceABABAvg params strategy family) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Paper `eq:gcomterms` (`commutativity-G.tex` lines 286-290).\n\nFull-slice analog of `evaluatedSliceCommutation_qSDDOp_avg_eq` (line 878): the\npulled-back `sddErrorOp` on the full-slice product equals `2·(ABAAvg − ABABAvg)`\nafter using projectivity and the `(x,g) ↔ (y,h)` symmetry to collapse\n`BAB + ABA − BABA − ABAB` into the two surviving scalar quartic terms.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.QSDD",
+  "module_doc": "/-!\n# Full-slice `qSDDOp` averaging identity\n\nAveraging identities expanding the full-slice `qSDDOp` and proving the scalar\ncommutation identity `fullSliceCommutation_qSDDOp_avg_eq`.\n\nThis scalar expansion is used by the full-slice transport theorems that compare\nthe quartic scalar averages appearing in `commutativity-G.tex`.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Bridges/QSDD.lean#L164-L224",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Bridges/QSDD.lean",
+  "lines": [
+   164,
+   224
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.avgOver_congr",
+   "PMF.uniformOfFintype_sum_equiv_fst_smul",
+   "MIPStarRE.LDT.Commutativity.fullSliceCommutation_avg_swap_terms"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 44,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.fullSliceABAByCollisionFactored_nonneg",
+  "source_name": "MIPStarRE.LDT.Commutativity.fullSliceABAByCollisionFactored_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.fullSliceABAByCollisionFactored_nonneg\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)\n    (u : Point params) (xy : FullSliceQuestion params) :\n    0 ≤ fullSliceABAByCollisionFactored params strategy family u xy := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The y-collision residual is nonnegative term-by-term.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Core",
+  "module_doc": "/-!\n# Full-slice tensor marginalization core\n\nCollision residuals, postprocessing expansions, and tensor marginalization\ncore bounds for the `BABA` and `ABAB` full-slice tensor averages.\n\nEx-private definitions are tensor-form machinery per architecture decision\n#713; downstream code should use the scalar public API exposed by the\nfull-slice transport theorems.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Marginalization/Core.lean#L581-L618",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Marginalization/Core.lean",
+  "lines": [
+   581,
+   618
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_nonneg",
+   "MIPStarRE.LDT.sandwichTensorSummand_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.fullSliceBABA_tensor_marginalize_x",
+  "source_name": "MIPStarRE.LDT.Commutativity.fullSliceBABA_tensor_marginalize_x",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.fullSliceBABA_tensor_marginalize_x\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)\n    (hnorm : strategy.state.IsNormalized) :\n    |fullSliceBABAtensorAvg params strategy family -\n        xEvaluatedSliceBABAtensorAvg params strategy family| ≤\n      (params.m * params.d : Error) / params.q := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "X-side tensor marginalization bound for paper `eq:gcom4-diff`.\n\nThis staged statement compares the full `BAB ⊗ A` tensor average to the\nintermediate where only the `x` polynomial outcome has been evaluated at `u`.\nIt is the Lean-local tensor form of the Schwartz-Zippel step labelled\n`eq:gcom4-diff` in the proof of blueprint theorem `thm:com-main`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Core",
+  "module_doc": "/-!\n# Full-slice tensor marginalization core\n\nCollision residuals, postprocessing expansions, and tensor marginalization\ncore bounds for the `BABA` and `ABAB` full-slice tensor averages.\n\nEx-private definitions are tensor-form machinery per architecture decision\n#713; downstream code should use the scalar public API exposed by the\nfull-slice transport theorems.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Marginalization/Core.lean#L695-L726",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Marginalization/Core.lean",
+  "lines": [
+   695,
+   726
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_le_const",
+   "MIPStarRE.LDT.avgOver_nonneg"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.fullSliceABAB_tensor_marginalize_y",
+  "source_name": "MIPStarRE.LDT.Commutativity.fullSliceABAB_tensor_marginalize_y",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.fullSliceABAB_tensor_marginalize_y\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)\n    (hnorm : strategy.state.IsNormalized) :\n    |xEvaluatedFullSliceABABtensorAvg params strategy family -\n        evaluatedSliceABABtensorAvg params strategy family| ≤\n      (params.m * params.d : Error) / params.q := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Y-side tensor marginalization bound for the `ABABtensor` endpoint.\n\nThis is the Lean-local tensor form of the Schwartz-Zippel step labelled\n`eq:numbering-system-diff` after `eq:evaluate-gcom-at-points-part-dos` in the\nproof of blueprint theorem `thm:com-main`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Y",
+  "module_doc": "/-!\n# Full-slice y-marginalization endpoint\n\nThis module contains the y-side evaluated tensor marginalization block for the\n`ABAB` full-slice tensor average.  It imports the collision and postprocessing\nmachinery from `Machinery.Marginalization.Core` and preserves the original\npublic marginalization theorem.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Marginalization/Y.lean#L313-L343",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Marginalization/Y.lean",
+  "lines": [
+   313,
+   343
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_le_const",
+   "MIPStarRE.LDT.avgOver_nonneg",
+   "MIPStarRE.LDT.Commutativity.fullSliceABAByCollisionFactored_nonneg"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.leftTensor_normalizationCondition_sandwich_bound",
+  "source_name": "MIPStarRE.LDT.Commutativity.leftTensor_normalizationCondition_sandwich_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.leftTensor_normalizationCondition_sandwich_bound\n    {α β : Type*} [Fintype α] [Fintype β]\n    (P : SubMeas α ι) (Q : ProjSubMeas β ι) :\n    ∑ a : α,\n        (∑ b : β, leftTensor (ι₂ := ι) (Q.outcome b * P.outcome a * Q.outcome b)) *\n          (∑ b : β, leftTensor (ι₂ := ι) (Q.outcome b * P.outcome a * Q.outcome b))ᴴ ≤\n      1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Tensor-lifted form of `normalizationCondition_sandwich_bound`, used as the\n`C`-normalization hypothesis in `closenessOfIP`.\n\nFor `C_{a,b} = Q_b P_a Q_b ⊗ I`, the square-sum condition on the bipartite\noperator space follows by applying `leftTensor` to paper\n`lem:normalization-condition`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Normalization",
+  "module_doc": "/-!\n# Full-slice normalization and self-consistency machinery\n\nNormalization-condition bounds, evaluated projective submeasurements, and\nfull-slice and evaluated-slice self-consistency estimates used by the scalar-to-tensor\ncomparison.\n\nThe tensor-form estimates are internal to the scalar/tensor comparison recorded\nin `docs/decisions/713-scalar-tensor-decision.md`; downstream code should use\nthe scalar public API exposed by the full-slice transport theorems.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Normalization.lean#L96-L134",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Normalization.lean",
+  "lines": [
+   96,
+   134
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.ProjSubMeas.outcome_hermitian",
+   "MIPStarRE.LDT.leftTensor_le_one",
+   "MIPStarRE.LDT.leftTensor_finset_sum"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.leftTensor_normalizationCondition_sandwich_adjoint_bound",
+  "source_name": "MIPStarRE.LDT.Commutativity.leftTensor_normalizationCondition_sandwich_adjoint_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.leftTensor_normalizationCondition_sandwich_adjoint_bound\n    {α β : Type*} [Fintype α] [Fintype β]\n    (P : SubMeas α ι) (Q : ProjSubMeas β ι) :\n    ∑ a : α,\n        (∑ b : β, leftTensor (ι₂ := ι) (Q.outcome b * P.outcome a * Q.outcome b))ᴴ *\n          (∑ b : β, leftTensor (ι₂ := ι) (Q.outcome b * P.outcome a * Q.outcome b)) ≤\n      1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Adjoint-side tensor-lifted normalization condition used with\n`closenessOfIPAdjoint`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Normalization",
+  "module_doc": "/-!\n# Full-slice normalization and self-consistency machinery\n\nNormalization-condition bounds, evaluated projective submeasurements, and\nfull-slice and evaluated-slice self-consistency estimates used by the scalar-to-tensor\ncomparison.\n\nThe tensor-form estimates are internal to the scalar/tensor comparison recorded\nin `docs/decisions/713-scalar-tensor-decision.md`; downstream code should use\nthe scalar public API exposed by the full-slice transport theorems.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Normalization.lean#L136-L175",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Normalization.lean",
+  "lines": [
+   136,
+   175
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.outcome_hermitian",
+   "MIPStarRE.LDT.ProjSubMeas.outcome_hermitian",
+   "MIPStarRE.LDT.Commutativity.leftTensor_normalizationCondition_sandwich_bound"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.fullSlice_selfConsistency_fst_bound",
+  "source_name": "MIPStarRE.LDT.Commutativity.fullSlice_selfConsistency_fst_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.fullSlice_selfConsistency_fst_bound\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)\n    (zeta : Error)\n    (hself : family.StronglySelfConsistent strategy.state zeta) :\n    avgOver (uniformDistribution (FullSliceQuestion params))\n        (fun xy =>\n          qSDDCore strategy.state\n            (fun g : Polynomial params =>\n              leftTensor (ι₂ := ι) ((family.meas xy.1).toSubMeas.outcome g))\n            (fun g : Polynomial params =>\n              rightTensor (ι₁ := ι) ((family.meas xy.1).toSubMeas.outcome g))) ≤\n      zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Full-slice strong self-consistency pulled to the first coordinate of a\nfull-slice question.\n\nThis is the `A^x_g = G^x_g ⊗ I`, `B^x_g = I ⊗ G^x_g` input for the\n`closenessOfIP` applications in paper `commutativity-G.tex` line 334.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Normalization",
+  "module_doc": "/-!\n# Full-slice normalization and self-consistency machinery\n\nNormalization-condition bounds, evaluated projective submeasurements, and\nfull-slice and evaluated-slice self-consistency estimates used by the scalar-to-tensor\ncomparison.\n\nThe tensor-form estimates are internal to the scalar/tensor comparison recorded\nin `docs/decisions/713-scalar-tensor-decision.md`; downstream code should use\nthe scalar public API exposed by the full-slice transport theorems.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Normalization.lean#L177-L221",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Normalization.lean",
+  "lines": [
+   177,
+   221
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_fst"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.fullSlice_selfConsistency_snd_bound",
+  "source_name": "MIPStarRE.LDT.Commutativity.fullSlice_selfConsistency_snd_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.fullSlice_selfConsistency_snd_bound\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)\n    (zeta : Error)\n    (hself : family.StronglySelfConsistent strategy.state zeta) :\n    avgOver (uniformDistribution (FullSliceQuestion params))\n        (fun xy =>\n          qSDDCore strategy.state\n            (fun h : Polynomial params =>\n              leftTensor (ι₂ := ι) ((family.meas xy.2).toSubMeas.outcome h))\n            (fun h : Polynomial params =>\n              rightTensor (ι₁ := ι) ((family.meas xy.2).toSubMeas.outcome h))) ≤\n      zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Full-slice strong self-consistency pulled to the second coordinate of a\nfull-slice question.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Normalization",
+  "module_doc": "/-!\n# Full-slice normalization and self-consistency machinery\n\nNormalization-condition bounds, evaluated projective submeasurements, and\nfull-slice and evaluated-slice self-consistency estimates used by the scalar-to-tensor\ncomparison.\n\nThe tensor-form estimates are internal to the scalar/tensor comparison recorded\nin `docs/decisions/713-scalar-tensor-decision.md`; downstream code should use\nthe scalar public API exposed by the full-slice transport theorems.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Normalization.lean#L223-L264",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Normalization.lean",
+  "lines": [
+   223,
+   264
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "PMF.uniformOfFintype_sum_equiv_fst_smul"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_selfConsistency_snd_bound",
+  "source_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_selfConsistency_snd_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.evaluatedSlice_selfConsistency_snd_bound\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)\n    (zeta : Error)\n    (hself : family.StronglySelfConsistent strategy.state zeta) :\n    avgOver (uniformDistribution (EvaluatedSliceQuestion params))\n        (fun q =>\n          qSDDCore strategy.state\n            (fun b : Fq params =>\n              leftTensor (ι₂ := ι) ((evaluatedSliceSecondFactor params family q).outcome b))\n            (fun b : Fq params =>\n              rightTensor (ι₁ := ι)\n                ((evaluatedSliceSecondFactor params family q).outcome b))) ≤\n      zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Evaluated-slice point self-consistency pulled to the second coordinate of an\nevaluated-slice question.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Normalization",
+  "module_doc": "/-!\n# Full-slice normalization and self-consistency machinery\n\nNormalization-condition bounds, evaluated projective submeasurements, and\nfull-slice and evaluated-slice self-consistency estimates used by the scalar-to-tensor\ncomparison.\n\nThe tensor-form estimates are internal to the scalar/tensor comparison recorded\nin `docs/decisions/713-scalar-tensor-decision.md`; downstream code should use\nthe scalar public API exposed by the full-slice transport theorems.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Normalization.lean#L266-L312",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Normalization.lean",
+  "lines": [
+   266,
+   312
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "PMF.uniformOfFintype_sum_equiv_fst_smul",
+   "MIPStarRE.LDT.Commutativity.evaluatedPointFamily_selfConsistency_of_stronglySelfConsistent"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.xEvaluated_selfConsistency_fst_bound",
+  "source_name": "MIPStarRE.LDT.Commutativity.xEvaluated_selfConsistency_fst_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.xEvaluated_selfConsistency_fst_bound\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι)\n    (zeta : Error)\n    (hself : family.StronglySelfConsistent strategy.state zeta) :\n    avgOver (uniformDistribution (Point params × FullSliceQuestion params))\n        (fun ux =>\n          qSDDCore strategy.state\n            (fun a : Fq params => leftTensor (ι₂ := ι)\n              ((evaluateAt params ux.1 ((family.meas ux.2.1).toSubMeas)).outcome a))\n            (fun a : Fq params => rightTensor (ι₁ := ι)\n              ((evaluateAt params ux.1 ((family.meas ux.2.1).toSubMeas)).outcome a))) ≤\n      zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Point-level self-consistency pulled to mixed `(u, x, y)` data for the already\nx-evaluated first coordinate.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Normalization",
+  "module_doc": "/-!\n# Full-slice normalization and self-consistency machinery\n\nNormalization-condition bounds, evaluated projective submeasurements, and\nfull-slice and evaluated-slice self-consistency estimates used by the scalar-to-tensor\ncomparison.\n\nThe tensor-form estimates are internal to the scalar/tensor comparison recorded\nin `docs/decisions/713-scalar-tensor-decision.md`; downstream code should use\nthe scalar public API exposed by the full-slice transport theorems.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Normalization.lean#L314-L364",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Normalization.lean",
+  "lines": [
+   314,
+   364
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "PMF.uniformOfFintype_sum_equiv_fst_smul",
+   "MIPStarRE.LDT.Commutativity.evaluatedPointFamily_selfConsistency_of_stronglySelfConsistent"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 36,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.fullSliceProductLeft_to_zero_le_one",
+  "source_name": "MIPStarRE.LDT.Commutativity.fullSliceProductLeft_to_zero_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.fullSliceProductLeft_to_zero_le_one\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (hnorm : strategy.state.IsNormalized) :\n    SDDOpRel strategy.state\n      (uniformDistribution (EvaluatedSliceQuestion params))\n      (fun q => fullSliceProductLeft params strategy family\n        (fullSliceQuestionOfEvaluatedSlice params q))\n      (fun _ => zeroFullSliceOpFamily (ι := ι) params)\n      1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Averaging the ordered full-slice product against zero costs at most `1`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.ZeroBounds",
+  "module_doc": "/-!\n# Zero-family bounds on the full-slice product\n\nPointwise `qSDDOp` bounds and averaged `SDDOpRel` bounds for the\nordered `fullSliceProductLeft` and reversed `fullSliceProductRight`\nfactors against the zero family, each at most 1.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/ZeroBounds.lean#L242-L264",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/ZeroBounds.lean",
+  "lines": [
+   242,
+   264
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_le_const"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.zero_to_fullSliceProductRight_le_one",
+  "source_name": "MIPStarRE.LDT.Commutativity.zero_to_fullSliceProductRight_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.zero_to_fullSliceProductRight_le_one\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (hnorm : strategy.state.IsNormalized) :\n    SDDOpRel strategy.state\n      (uniformDistribution (EvaluatedSliceQuestion params))\n      (fun _ => zeroFullSliceOpFamily (ι := ι) params)\n      (fun q => fullSliceProductRight params strategy family\n        (fullSliceQuestionOfEvaluatedSlice params q))\n      1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Averaging zero against the reversed full-slice product costs at most `1`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.ZeroBounds",
+  "module_doc": "/-!\n# Zero-family bounds on the full-slice product\n\nPointwise `qSDDOp` bounds and averaged `SDDOpRel` bounds for the\nordered `fullSliceProductLeft` and reversed `fullSliceProductRight`\nfactors against the zero family, each at most 1.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/ZeroBounds.lean#L266-L288",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/ZeroBounds.lean",
+  "lines": [
+   266,
+   288
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_le_const"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.CommutativityPoints.answerCommutativityPoints",
+  "source_name": "MIPStarRE.LDT.CommutativityPoints.answerCommutativityPoints",
+  "formal_statement": "theorem MIPStarRE.LDT.CommutativityPoints.answerCommutativityPoints\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : AnswerSymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma) :\n    SDDOpRel strategy.state\n      (uniformDistribution (PointPairQuestion params))\n      (answerPointMeasurementProductLeft params strategy)\n      (answerPointMeasurementProductRight params strategy)\n      (commutativityPointsError params gamma) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open MIPStarRE.LDT.GlobalVariance (PointPairQuestion)",
+   "open scoped Matrix MatrixOrder ComplexOrder BigOperators",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Answer-valued form of `thm:commutativity-points`.\n\nThe proof is the paper's diagonal-line bridge argument, but the diagonal-line\nmeasurement is the answer-valued measurement of `strategy`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.AnswerTheorems",
+  "module_doc": "/-!\n# Section 10 commutativity points: answer-valued diagonal measurements\nThis file proves the commutativity-at-points theorem using the answer-valued\ndiagonal-line verifier relation.  The conclusion concerns only the point\nmeasurements, hence it can later be transferred to the ordinary carrier used by\nself-improvement, but the proof does not use the carrier's inert diagonal\nmeasurement.\n## References\n- `references/ldt-paper/commutativity-points.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/AnswerTheorems.lean#L900-L1003",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/AnswerTheorems.lean",
+  "lines": [
+   900,
+   1003
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Distribution.map_sum_smul",
+   "PMF.uniformOfFintype_sum_equiv_fst_smul",
+   "MIPStarRE.LDT.Preliminaries.stateDependentDistanceOpRel_triangle"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 89,
+  "is_target": false
+ }
+]

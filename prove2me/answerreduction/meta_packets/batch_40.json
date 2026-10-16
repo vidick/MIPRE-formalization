@@ -1,0 +1,661 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.pointWithCompletePart_as_switcheroo_input",
+  "source_name": "MIPStarRE.LDT.Pasting.pointWithCompletePart_as_switcheroo_input",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.pointWithCompletePart_as_switcheroo_input\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (gamma : Error)\n    (hcomm : SDDOpRel ψbi\n      (uniformDistribution (SlicePairQuestion params))\n      (completePartPointProductLeft params family)\n      (completePartPointProductRight params family)\n      gamma) :\n    SDDOpRel ψbi\n      (uniformDistribution (SlicePairQuestion params))\n      (switcherooPointProductLeft params family (completePartProjFamily params family))\n      (switcherooPointProductRight params family (completePartProjFamily params family))\n      gamma := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Reinterpret the point-with-complete-part commutation bound as a relation on the\n`Polynomial × Unit` outcome type expected by `commutativitySwitcheroo`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooCompletion.Utilities",
+  "module_doc": "/-!\n# Section 12 pasting: switcheroo completion utilities\n\nPost-theorem convenience lemmas: question-swapping, complete-part\nreinterpretations, and self-consistency inheritance.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooCompletion/Utilities.lean#L92-L154",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooCompletion/Utilities.lean",
+  "lines": [
+   92,
+   154
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 46,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_once_commuted_contraction_right",
+  "source_name": "MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_once_commuted_contraction_right",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_once_commuted_contraction_right\n    {Outcome : Type*} [Fintype Outcome]\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι)\n    (M : IdxProjSubMeas (Fq params) Outcome ι)\n    (q : SlicePairQuestion params) :\n    (∑ g : Polynomial params,\n        (∑ o : Outcome,\n            leftTensor (ι₂ := ι)\n              ((completePartSubMeas params family q.1).total *\n                (M q.2).outcome o *\n                (family.meas q.1).outcome g *\n                (M q.2).outcome o))ᴴ *\n          (∑ o : Outcome,\n            leftTensor (ι₂ := ι)\n              ((completePartSubMeas params family q.1).total *\n                (M q.2).outcome o *\n                (family.meas q.1).outcome g *\n                (M q.2).outcome o))) ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Right-action contraction witness for the second `sqrt zeta` transfer.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooContraction.Commuted",
+  "module_doc": "/-!\n# Section 12 pasting: switcheroo commuted contraction\n\nThe once-commuted contraction steps and the split-by-`g` rewrite.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooContraction/Commuted.lean#L59-L191",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooContraction/Commuted.lean",
+  "lines": [
+   59,
+   191
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.opTensor_mono_left",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.SubMeas.outcome_le_one",
+   "MIPStarRE.LDT.leftTensor_finset_sum",
+   "MIPStarRE.LDT.Pasting.switcherooAggregateFourthTermX_sum",
+   "MIPStarRE.LDT.Pasting.projSubMeas_sandwich_sum_le_one",
+   "MIPStarRE.Quantum.sq_le_self"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 113,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.switcherooAggregateFirstTerm_eq_split_by_g",
+  "source_name": "MIPStarRE.LDT.Pasting.switcherooAggregateFirstTerm_eq_split_by_g",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.switcherooAggregateFirstTerm_eq_split_by_g\n    {Outcome : Type*} [Fintype Outcome]\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (M : IdxProjSubMeas (Fq params) Outcome ι) :\n    avgOver (uniformDistribution (SlicePairQuestion params)) (fun q =>\n      ∑ go : Polynomial params × Outcome,\n        ev ψbi\n          (leftTensor (ι₂ := ι)\n            ((M q.2).outcome go.2 *\n              (family.meas q.1).outcome go.1 *\n              (M q.2).outcome go.2))) =\n      switcherooAggregateFirstTerm params ψbi family M := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Collapse the split-by-`g` raw expression back to the first positive\nswitcheroo term.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooContraction.Commuted",
+  "module_doc": "/-!\n# Section 12 pasting: switcheroo commuted contraction\n\nThe once-commuted contraction steps and the split-by-`g` rewrite.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooContraction/Commuted.lean#L193-L286",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooContraction/Commuted.lean",
+  "lines": [
+   193,
+   286
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.leftTensor_finset_sum",
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 78,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_mixed_close_left_front_scalar",
+  "source_name": "MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_mixed_close_left_front_scalar",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_mixed_close_left_front_scalar\n    {Outcome : Type*} [Fintype Outcome]\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (hnorm : ψbi.IsNormalized)\n    (family : IdxPolyFamily params ι)\n    (M : IdxProjSubMeas (Fq params) Outcome ι)\n    (zeta : Error)\n    (hselfG : GCompleteSelfConsistencyStatement params ψbi family zeta) :\n    |avgOver (uniformDistribution (SlicePairQuestion params)) (fun q =>\n        ∑ g : Polynomial params, ∑ o : Outcome,\n          ev ψbi\n            (leftTensor (ι₂ := ι) ((family.meas q.1).outcome g) *\n              leftTensor (ι₂ := ι)\n                ((completePartSubMeas params family q.1).total *\n                  (M q.2).outcome o *\n                  (family.meas q.1).outcome g *\n                  (M q.2).outcome o))) -\n      avgOver (uniformDistribution (SlicePairQuestion params)) (fun q =>\n        ∑ g : Polynomial params, ∑ o : Outcome,\n          ev ψbi\n            (rightTensor (ι₁ := ι) ((family.meas q.1).outcome g) *\n              leftTensor (ι₂ := ι)\n                ((completePartSubMeas params family q.1).total *\n                  (M q.2).outcome o *\n                  (family.meas q.1).outcome g *\n                  (M q.2).outcome o)))| ≤\n      Real.sqrt zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Restate the second `sqrt zeta` step using the named left-front scalar\nexpression.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooContraction.ScalarTerms",
+  "module_doc": "/-!\n# Section 12 pasting: switcheroo scalar expressions\n\nNamed scalar expressions for the switcheroo contraction chain.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooContraction/ScalarTerms.lean#L144-L223",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooContraction/ScalarTerms.lean",
+  "lines": [
+   144,
+   223
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.leftTensor_nonneg",
+   "MIPStarRE.LDT.rightTensor_nonneg",
+   "MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_once_commuted_contraction_right",
+   "MIPStarRE.LDT.Pasting.switcherooCompletePartSelfConsistency_pairBound",
+   "MIPStarRE.LDT.Preliminaries.closenessOfInnerProduct_right"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 50,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.switcherooAggregateFourthTermX_sum",
+  "source_name": "MIPStarRE.LDT.Pasting.switcherooAggregateFourthTermX_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.switcherooAggregateFourthTermX_sum\n    {Outcome : Type*} [Fintype Outcome]\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι)\n    (M : IdxProjSubMeas (Fq params) Outcome ι)\n    (q : SlicePairQuestion params) :\n    ∑ g : Polynomial params, switcherooAggregateFourthTermX params family M q g =\n      ∑ o : Outcome,\n        (M q.2).outcome o * (completePartSubMeas params family q.1).total * (M q.2).outcome o := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Summing the shared `X_g` family collapses to the middle sandwich term.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooContraction.Split",
+  "module_doc": "/-!\n# Section 12 pasting: switcheroo split contraction\n\nThe split-form contraction and first mixed-term transfer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooContraction/Split.lean#L194-L216",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooContraction/Split.lean",
+  "lines": [
+   194,
+   216
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_split_close_once_commuted",
+  "source_name": "MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_split_close_once_commuted",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_split_close_once_commuted\n    {Outcome : Type*} [Fintype Outcome]\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (hnorm : ψbi.IsNormalized)\n    (family : IdxPolyFamily params ι)\n    (M : IdxProjSubMeas (Fq params) Outcome ι)\n    (chi : Error)\n    (hcomm : SDDOpRel ψbi\n      (uniformDistribution (SlicePairQuestion params))\n      (switcherooPointProductLeft params family M)\n      (switcherooPointProductRight params family M)\n      chi) :\n    |switcherooAggregateFourthTerm params ψbi family M -\n        avgOver (uniformDistribution (SlicePairQuestion params)) (fun q =>\n          ∑ go : Polynomial params × Outcome,\n            ev ψbi\n              (leftTensor (ι₂ := ι)\n                ((completePartSubMeas params family q.1).total *\n                  (M q.2).outcome go.2 *\n                  (family.meas q.1).outcome go.1 *\n                  (M q.2).outcome go.2 *\n                  (family.meas q.1).outcome go.1)))| ≤\n      Real.sqrt chi := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The first `sqrt chi` step in the fourth-term switcheroo chain.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooContraction.Split",
+  "module_doc": "/-!\n# Section 12 pasting: switcheroo split contraction\n\nThe split-form contraction and first mixed-term transfer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooContraction/Split.lean#L354-L443",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooContraction/Split.lean",
+  "lines": [
+   354,
+   443
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_eq_split",
+   "MIPStarRE.LDT.Preliminaries.closenessOfInnerProduct_left"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 65,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_once_commuted_contraction_left",
+  "source_name": "MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_once_commuted_contraction_left",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_once_commuted_contraction_left\n    {Outcome : Type*} [Fintype Outcome]\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι)\n    (M : IdxProjSubMeas (Fq params) Outcome ι)\n    (q : SlicePairQuestion params) :\n    (∑ g : Polynomial params,\n        (∑ o : Outcome,\n            leftTensor (ι₂ := ι)\n              ((completePartSubMeas params family q.1).total *\n                (M q.2).outcome o *\n                (family.meas q.1).outcome g *\n                (M q.2).outcome o)) *\n          (∑ o : Outcome,\n            leftTensor (ι₂ := ι)\n              ((completePartSubMeas params family q.1).total *\n                (M q.2).outcome o *\n                (family.meas q.1).outcome g *\n                (M q.2).outcome o))ᴴ) ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Left-action contraction witness for the first `sqrt zeta` transfer.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooContraction.Split",
+  "module_doc": "/-!\n# Section 12 pasting: switcheroo split contraction\n\nThe split-form contraction and first mixed-term transfer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooContraction/Split.lean#L445-L570",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooContraction/Split.lean",
+  "lines": [
+   445,
+   570
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.opTensor_mono_left",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.SubMeas.outcome_le_one",
+   "MIPStarRE.LDT.leftTensor_le_one",
+   "MIPStarRE.LDT.leftTensor_finset_sum",
+   "MIPStarRE.LDT.Pasting.switcherooAggregateFourthTermX_sum",
+   "MIPStarRE.LDT.Pasting.projSubMeas_sandwich_sum_le_one",
+   "MIPStarRE.Quantum.sq_le_self"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 106,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_once_commuted_close_mixed",
+  "source_name": "MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_once_commuted_close_mixed",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_once_commuted_close_mixed\n    {Outcome : Type*} [Fintype Outcome]\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (hnorm : ψbi.IsNormalized)\n    (family : IdxPolyFamily params ι)\n    (M : IdxProjSubMeas (Fq params) Outcome ι)\n    (zeta : Error)\n    (hselfG : GCompleteSelfConsistencyStatement params ψbi family zeta) :\n    |avgOver (uniformDistribution (SlicePairQuestion params)) (fun q =>\n        ∑ g : Polynomial params, ∑ o : Outcome,\n          ev ψbi\n            (leftTensor (ι₂ := ι)\n              ((completePartSubMeas params family q.1).total *\n                (M q.2).outcome o *\n                (family.meas q.1).outcome g *\n                (M q.2).outcome o *\n                (family.meas q.1).outcome g))) -\n      avgOver (uniformDistribution (SlicePairQuestion params)) (fun q =>\n        ∑ g : Polynomial params, ∑ o : Outcome,\n          ev ψbi\n            ((leftTensor (ι₂ := ι)\n              ((completePartSubMeas params family q.1).total *\n                (M q.2).outcome o *\n                (family.meas q.1).outcome g *\n                (M q.2).outcome o)) *\n              rightTensor (ι₁ := ι) ((family.meas q.1).outcome g)))| ≤\n      Real.sqrt zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The first `sqrt zeta` step in the fourth-term switcheroo chain.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooContraction.Split",
+  "module_doc": "/-!\n# Section 12 pasting: switcheroo split contraction\n\nThe split-form contraction and first mixed-term transfer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooContraction/Split.lean#L572-L629",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooContraction/Split.lean",
+  "lines": [
+   572,
+   629
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_once_commuted_contraction_left",
+   "MIPStarRE.LDT.Pasting.switcherooCompletePartSelfConsistency_pairBound",
+   "MIPStarRE.LDT.Preliminaries.closenessOfInnerProduct_left"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.switcherooAggregateFirstTerm_eq_leftSandwich",
+  "source_name": "MIPStarRE.LDT.Pasting.switcherooAggregateFirstTerm_eq_leftSandwich",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.switcherooAggregateFirstTerm_eq_leftSandwich\n    {Outcome : Type*} [Fintype Outcome]\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (M : IdxProjSubMeas (Fq params) Outcome ι) :\n    switcherooAggregateFirstTerm params ψbi family M =\n      avgOver (uniformDistribution (SliceQuestion params))\n        (fun x =>\n          MIPStarRE.LDT.Preliminaries.leftSandwichExpectation ψbi\n            (uniformDistribution (SliceQuestion params))\n            M\n            ((completePartSubMeas params family x).total)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Rewrite the first positive switcheroo term as a left-sandwich average.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooSetup.Centers",
+  "module_doc": "/-!\n# Section 12 pasting: switcheroo centers\n\nSwitcheroo center terms and their sandwich rewrites.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Centers.lean#L82-L133",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Centers.lean",
+  "lines": [
+   82,
+   133
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_prod",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 38,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.switcherooAggregateTarget_eq_middleSandwich",
+  "source_name": "MIPStarRE.LDT.Pasting.switcherooAggregateTarget_eq_middleSandwich",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.switcherooAggregateTarget_eq_middleSandwich\n    {Outcome : Type*} [Fintype Outcome]\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (M : IdxProjSubMeas (Fq params) Outcome ι) :\n    switcherooAggregateTarget params ψbi family M =\n      avgOver (uniformDistribution (SliceQuestion params))\n        (fun x =>\n          MIPStarRE.LDT.Preliminaries.middleSandwichExpectation ψbi\n            (uniformDistribution (SliceQuestion params))\n            M\n            ((completePartSubMeas params family x).total)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Rewrite the `G ⊗ M` switcheroo center as a middle-sandwich average.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooSetup.Centers",
+  "module_doc": "/-!\n# Section 12 pasting: switcheroo centers\n\nSwitcheroo center terms and their sandwich rewrites.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Centers.lean#L135-L182",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Centers.lean",
+  "lines": [
+   135,
+   182
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_prod",
+   "MIPStarRE.LDT.avgOver_congr"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.switcheroo_first_term_close",
+  "source_name": "MIPStarRE.LDT.Pasting.switcheroo_first_term_close",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.switcheroo_first_term_close\n    {Outcome : Type*} [Fintype Outcome]\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (hnorm : ψbi.IsNormalized)\n    (family : IdxPolyFamily params ι)\n    (M : IdxProjSubMeas (Fq params) Outcome ι)\n    (omega : Error)\n    (hselfM : SDDRel ψbi\n      (uniformDistribution (SliceQuestion params))\n      (switcherooSelfConsistencyLeft params M)\n      (switcherooSelfConsistencyRight params M)\n      omega) :\n    let firstTerm :=\n      avgOver (uniformDistribution (SliceQuestion params))\n        (fun x => Preliminaries.leftSandwichExpectation ψbi\n          (uniformDistribution (SliceQuestion params))\n          M ((completePartSubMeas params family x).total))\n    let commonTerm :=\n      avgOver (uniformDistribution (SliceQuestion params))\n        (fun x => Preliminaries.middleSandwichExpectation ψbi\n          (uniformDistribution (SliceQuestion params))\n          M ((completePartSubMeas params family x).total))\n    |firstTerm - commonTerm| ≤ 2 * Real.sqrt omega := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The first positive switcheroo term is close to the `G ⊗ M` center via the\nself-consistency of `M`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooSetup.Centers",
+  "module_doc": "/-!\n# Section 12 pasting: switcheroo centers\n\nSwitcheroo center terms and their sandwich rewrites.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Centers.lean#L184-L247",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Centers.lean",
+  "lines": [
+   184,
+   247
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_le_const",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.Pasting.switcherooSelfConsistency_bip",
+   "MIPStarRE.LDT.Pasting.avgOver_abs_le_avgOver_abs",
+   "MIPStarRE.LDT.Preliminaries.switchSandwich_leftTransfer",
+   "MIPStarRE.LDT.Preliminaries.switchSandwich_rightTransfer"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 38,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.switcherooSelfConsistency_bip",
+  "source_name": "MIPStarRE.LDT.Pasting.switcherooSelfConsistency_bip",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.switcherooSelfConsistency_bip\n    {Outcome : Type*} [Fintype Outcome]\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (M : IdxProjSubMeas (Fq params) Outcome ι)\n    (omega : Error)\n    (hselfM : SDDRel ψbi\n      (uniformDistribution (SliceQuestion params))\n      (switcherooSelfConsistencyLeft params M)\n      (switcherooSelfConsistencyRight params M)\n      omega) :\n    Preliminaries.BipartiteSDDRel ψbi\n      (uniformDistribution (SliceQuestion params))\n      (IdxProjSubMeas.toIdxSubMeas M)\n      (IdxProjSubMeas.toIdxSubMeas M)\n      omega := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Convert the one-question switcheroo self-consistency input into the\nbipartite form used by `switchSandwich`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooSetup.Infrastructure",
+  "module_doc": "/-!\n# Section 12 pasting: switcheroo infrastructure\n\nInitial switcheroo infrastructure and aggregate expansion helpers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Infrastructure.lean#L80-L110",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Infrastructure.lean",
+  "lines": [
+   80,
+   110
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.switcherooCompletePartSelfConsistency_pairBound",
+  "source_name": "MIPStarRE.LDT.Pasting.switcherooCompletePartSelfConsistency_pairBound",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.switcherooCompletePartSelfConsistency_pairBound\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (zeta : Error)\n    (hselfG : GCompleteSelfConsistencyStatement params ψbi family zeta) :\n    avgOver (uniformDistribution (SlicePairQuestion params))\n        (fun q => qSDDCore ψbi\n          (fun g => leftTensor (ι₂ := ι) ((family.meas q.1).outcome g))\n          (fun g => rightTensor (ι₁ := ι) ((family.meas q.1).outcome g))) ≤\n      zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Lift slicewise complete-part self-consistency to the slice-pair distribution.\n\nThis states the `G^x` self-consistency input in the form used by the\nswitcheroo tensor-bound steps.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooSetup.Infrastructure",
+  "module_doc": "/-!\n# Section 12 pasting: switcheroo infrastructure\n\nInitial switcheroo infrastructure and aggregate expansion helpers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Infrastructure.lean#L112-L161",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Infrastructure.lean",
+  "lines": [
+   112,
+   161
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_prod",
+   "MIPStarRE.LDT.avgOver_congr"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.avgOver_abs_le_avgOver_abs",
+  "source_name": "MIPStarRE.LDT.Pasting.avgOver_abs_le_avgOver_abs",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.avgOver_abs_le_avgOver_abs\n    {α : Type*}\n    (𝒟 : Distribution α) (f : α → Error) :\n    |avgOver 𝒟 f| ≤ avgOver 𝒟 (fun a => |f a|) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooSetup.Infrastructure",
+  "module_doc": "/-!\n# Section 12 pasting: switcheroo infrastructure\n\nInitial switcheroo infrastructure and aggregate expansion helpers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Infrastructure.lean#L184-L199",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Infrastructure.lean",
+  "lines": [
+   184,
+   199
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.projSubMeas_sandwich_sum_le_one",
+  "source_name": "MIPStarRE.LDT.Pasting.projSubMeas_sandwich_sum_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.projSubMeas_sandwich_sum_le_one\n    {Outcome : Type*} [Fintype Outcome]\n    (A : ProjSubMeas Outcome ι)\n    (B : MIPStarRE.Quantum.Op ι)\n    (hB : B ≤ 1) :\n    ∑ a : Outcome, A.outcome a * B * A.outcome a ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "A projective sandwich family with middle operator bounded by `1` sums to at\nmost `1`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooSetup.Infrastructure",
+  "module_doc": "/-!\n# Section 12 pasting: switcheroo infrastructure\n\nInitial switcheroo infrastructure and aggregate expansion helpers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Infrastructure.lean#L201-L220",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Infrastructure.lean",
+  "lines": [
+   201,
+   220
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ProjSubMeas.outcome_hermitian"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.projSubMeas_total_sq",
+  "source_name": "MIPStarRE.LDT.Pasting.projSubMeas_total_sq",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.projSubMeas_total_sq\n    {Outcome : Type*} [Fintype Outcome]\n    (P : ProjSubMeas Outcome ι) :\n    P.toSubMeas.total * P.toSubMeas.total = P.toSubMeas.total := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The total operator of a projective submeasurement is idempotent.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooSetup.Infrastructure",
+  "module_doc": "/-!\n# Section 12 pasting: switcheroo infrastructure\n\nInitial switcheroo infrastructure and aggregate expansion helpers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Infrastructure.lean#L222-L227",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Infrastructure.lean",
+  "lines": [
+   222,
+   227
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.projSubMeas_total_proj"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.switcherooAggregate_qSDDOp_expand",
+  "source_name": "MIPStarRE.LDT.Pasting.switcherooAggregate_qSDDOp_expand",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.switcherooAggregate_qSDDOp_expand\n    {Outcome : Type*} [Fintype Outcome]\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (M : IdxProjSubMeas (Fq params) Outcome ι)\n    (q : SlicePairQuestion params) :\n    qSDDOp ψbi\n      (switcherooAggregateLeft params family M q)\n      (switcherooAggregateRight params family M q)\n      =\n        ∑ o : Outcome,\n          (ev ψbi\n              (leftTensor (ι₂ := ι)\n                ((M q.2).outcome o *\n                  (completePartSubMeas params family q.1).total *\n                  (M q.2).outcome o)) +\n            ev ψbi\n              (leftTensor (ι₂ := ι)\n                ((completePartSubMeas params family q.1).total *\n                  (M q.2).outcome o *\n                  (completePartSubMeas params family q.1).total)) -\n            ev ψbi\n              (leftTensor (ι₂ := ι)\n                ((M q.2).outcome o *\n                  (completePartSubMeas params family q.1).total *\n                  (M q.2).outcome o *\n                  (completePartSubMeas params family q.1).total)) -\n            ev ψbi\n              (leftTensor (ι₂ := ι)\n                ((completePartSubMeas params family q.1).total *\n                  (M q.2).outcome o *\n                  (completePartSubMeas params family q.1).total *\n                  (M q.2).outcome o))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Expand a single-question switcheroo `qSDDOp` term into its four scalar\ncomponents.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooSetup.Infrastructure",
+  "module_doc": "/-!\n# Section 12 pasting: switcheroo infrastructure\n\nInitial switcheroo infrastructure and aggregate expansion helpers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Infrastructure.lean#L229-L349",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Infrastructure.lean",
+  "lines": [
+   229,
+   349
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_add",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.leftTensor_nonneg",
+   "MIPStarRE.LDT.Pasting.projSubMeas_total_sq",
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 85,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.switcherooAggregateThirdTerm_eq_fourthTerm",
+  "source_name": "MIPStarRE.LDT.Pasting.switcherooAggregateThirdTerm_eq_fourthTerm",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.switcherooAggregateThirdTerm_eq_fourthTerm\n    {Outcome : Type*} [Fintype Outcome]\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (M : IdxProjSubMeas (Fq params) Outcome ι) :\n    switcherooAggregateThirdTerm params ψbi family M =\n      switcherooAggregateFourthTerm params ψbi family M := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooSetup.Terms",
+  "module_doc": "/-!\n# Section 12 pasting: switcheroo aggregate terms\n\nThe remaining switcheroo aggregate terms and split formulas.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Terms.lean#L115-L147",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Terms.lean",
+  "lines": [
+   115,
+   147
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.Quantum.normalizedTrace_mul_comm"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_eq_split",
+  "source_name": "MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_eq_split",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.switcherooAggregateFourthTerm_eq_split\n    {Outcome : Type*} [Fintype Outcome]\n    (params : Parameters) [FieldModel params.q]\n    (ψbi : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (M : IdxProjSubMeas (Fq params) Outcome ι) :\n    switcherooAggregateFourthTerm params ψbi family M =\n      avgOver (uniformDistribution (SlicePairQuestion params)) (fun q =>\n        ∑ go : Polynomial params × Outcome,\n          ev ψbi\n            (leftTensor (ι₂ := ι)\n              ((completePartSubMeas params family q.1).total *\n                (M q.2).outcome go.2 *\n                (family.meas q.1).outcome go.1 *\n                (family.meas q.1).outcome go.1 *\n                (M q.2).outcome go.2))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Split the fourth switcheroo term by inserting the complete-part projector\nresolution `G = ∑_g G_g`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.SwitcherooSetup.Terms",
+  "module_doc": "/-!\n# Section 12 pasting: switcheroo aggregate terms\n\nThe remaining switcheroo aggregate terms and split formulas.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Terms.lean#L149-L224",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/SwitcherooSetup/Terms.lean",
+  "lines": [
+   149,
+   224
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.leftTensor_finset_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 58,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.constFamily_sdd_unit",
+  "source_name": "MIPStarRE.LDT.Preliminaries.constFamily_sdd_unit",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.constFamily_sdd_unit\n    {Outcome : Type*} {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState ι) (A B : SubMeas Outcome ι) :\n    sddError ψ (uniformDistribution Unit)\n      (constSubMeasFamily A) (constSubMeasFamily B) =\n      qSDD ψ A B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "For a constant `Unit`-indexed family, `sddError` reduces to `qSDD`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.BipartiteSelfConsistency.Completion",
+  "module_doc": "/-!\n# Preliminary comparison theorems: bipartite self-consistency (completion)\n\nCompletion-transfer lemmas for bipartite self-consistency.  The constant\n`Unit`-family reductions identify `sddError` and `sscError` with their pointwise\nforms, and the later lemmas compare a submeasurement with its completion.\n\n## References\n\n- `references/ldt-paper/preliminaries.tex`\n- `blueprint/src/chapter/ch03_preliminaries.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/BipartiteSelfConsistency/Completion.lean#L92-L100",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/BipartiteSelfConsistency/Completion.lean",
+  "lines": [
+   92,
+   100
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ }
+]

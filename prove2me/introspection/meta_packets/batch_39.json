@@ -1,0 +1,733 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_snorm_sq_prod_le_one",
+  "source_name": "MIPRE.sum_snorm_sq_prod_le_one",
+  "formal_statement": "theorem MIPRE.sum_snorm_sq_prod_le_one {ι κ : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ]\n    [DecidableEq κ] {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖ = 1) (P : ι → κ → Matrix dA dA ℂ)\n    (Q : κ → Matrix dB dB ℂ) (hPsa : ∀ i k, (P i k)ᴴ = P i k)\n    (hPidem : ∀ i k, P i k * P i k = P i k)\n    (hPorth : ∀ (i j : ι) (k : κ), i ≠ j → P i k * P j k = 0) (hQ : IsPVM Q) :\n    ∑ i, ∑ k, snorm ψ ((aOp (P i k) : Matrix (dA × dB) _ ℂ) * bOp (Q k)) ^ 2 ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {R1 R2 K : Type*} [Fintype R1] [DecidableEq R1] [Fintype R2] [DecidableEq R2]",
+   "variable {R : R1 → Matrix dB dB ℂ} {G : K → Matrix dB dB ℂ}"
+  ],
+  "docstring": "**A mutually orthogonal family of products of commuting projections** has its squared state\nnorms summing to at most one. Alice's factor need not be a measurement in its own right: only\nself-adjointness, idempotence and orthogonality along the first index are used.",
+  "module": "MIPRE.Foundations.Pasting",
+  "module_doc": "/-!\n# Pasting two measurements into one\n\nThe blueprint's missing piece for `lem:qld-pairs-of-lines`: NW19's Fact 4.35, the paper's\n`lem:pasting-updated`. One party holds a *joint* projective measurement `A_{a,b}`; the other holds\ntwo projective measurements `G_1` and `G_2` whose coarse-grainings along evaluation maps agree with\n`A`'s two marginals. The conclusion is that `A` agrees with the **sandwich**\n`J_{g_1, g_2} = G_2^{g_2} G_1^{g_1} G_2^{g_2}`, coarse-grained by evaluating both outcomes.\n\nTwo facts beyond the sandwich chain of `MIPRE/Foundations/Sandwich.lean` are needed, and they are\nproved first.\n\n* **A sub-measurement close to a projective measurement carries almost all the mass**\n  (`qform_sum_ge_of_close`, NW19's Fact 4.31). Two Cauchy--Schwarz steps against the same\n  deviation, and the loss is `2 sqrt(delta)`.\n* **Multiplying by the projector of the same outcome costs nothing** (`sum_snorm_sq_cool`, the\n  paper's `lem:cool-closeness-fact` in its partition form). The cross terms vanish by mutual\n  orthogonality and each diagonal term loses only `A_a <= Id`. The partition form is what matters:\n  the consumers apply it to the `q` fibres of an outcome map at once, and the single-subset form\n  would cost a factor `q` there.\n\nThe sandwich is where a **collision probability** enters. `G_2^{g_2} G_1 G_2^{g_2}` summed over a\nfibre of `g_2 |-> g_2(y)` is a *pinching* of `G_1` by that fibre, not a conjugation by the fibre's\nprojector, and the difference is the cross terms `g_2 \\ne g_2'` with `g_2(y) = g_2'(y)`. Those are\nrare exactly when the outcome map separates the family, which for line polynomials is\nSchwartz--Zippel.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pasting.lean#L553-L583",
+  "source_path": "MIPRE/Foundations/Pasting.lean",
+  "lines": [
+   553,
+   583
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pasting-updated",
+    "env": "lemma",
+    "title": "Pasting, the two-measurement case",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.aOp_zero"
+  ],
+  "pasted_helpers": 19,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.abs_sand_sub_ord_le",
+  "source_name": "MIPRE.abs_sand_sub_ord_le",
+  "formal_statement": "theorem MIPRE.abs_sand_sub_ord_le {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖ = 1)\n    {A : R1 × R2 → Matrix dA dA ℂ} (hA : IsPVM A) (hG : IsPVM G) (e : K → R2) :\n    |(∑ a : R1, ∑ g : K, bornProb ψ (A (a, e g)) (G g * R a * G g))\n        - ∑ a : R1, ∑ g : K, bornProb ψ (A (a, e g)) (G g * R a)|\n      ≤ Real.sqrt (∑ a : R1, ∑ g : K,\n          snorm ψ (bOp (R a * G g - G g * R a) : Matrix (dA × dB) _ ℂ) ^ 2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {R1 R2 K : Type*} [Fintype R1] [DecidableEq R1] [Fintype R2] [DecidableEq R2]",
+   "variable {R : R1 → Matrix dB dB ℂ} {G : K → Matrix dB dB ℂ}"
+  ],
+  "docstring": "**From the sandwich to the ordered product.** The difference is Alice's operator against Bob's\ncommutator; Alice's projection times Bob's is a mutually orthogonal family, so the Cauchy--Schwarz\ncosts only the commutator.",
+  "module": "MIPRE.Foundations.Pasting",
+  "module_doc": "/-!\n# Pasting two measurements into one\n\nThe blueprint's missing piece for `lem:qld-pairs-of-lines`: NW19's Fact 4.35, the paper's\n`lem:pasting-updated`. One party holds a *joint* projective measurement `A_{a,b}`; the other holds\ntwo projective measurements `G_1` and `G_2` whose coarse-grainings along evaluation maps agree with\n`A`'s two marginals. The conclusion is that `A` agrees with the **sandwich**\n`J_{g_1, g_2} = G_2^{g_2} G_1^{g_1} G_2^{g_2}`, coarse-grained by evaluating both outcomes.\n\nTwo facts beyond the sandwich chain of `MIPRE/Foundations/Sandwich.lean` are needed, and they are\nproved first.\n\n* **A sub-measurement close to a projective measurement carries almost all the mass**\n  (`qform_sum_ge_of_close`, NW19's Fact 4.31). Two Cauchy--Schwarz steps against the same\n  deviation, and the loss is `2 sqrt(delta)`.\n* **Multiplying by the projector of the same outcome costs nothing** (`sum_snorm_sq_cool`, the\n  paper's `lem:cool-closeness-fact` in its partition form). The cross terms vanish by mutual\n  orthogonality and each diagonal term loses only `A_a <= Id`. The partition form is what matters:\n  the consumers apply it to the `q` fibres of an outcome map at once, and the single-subset form\n  would cost a factor `q` there.\n\nThe sandwich is where a **collision probability** enters. `G_2^{g_2} G_1 G_2^{g_2}` summed over a\nfibre of `g_2 |-> g_2(y)` is a *pinching* of `G_1` by that fibre, not a conjugation by the fibre's\nprojector, and the difference is the cross terms `g_2 \\ne g_2'` with `g_2(y) = g_2'(y)`. Those are\nrare exactly when the outcome map separates the family, which for line polynomials is\nSchwartz--Zippel.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pasting.lean#L585-L636",
+  "source_path": "MIPRE/Foundations/Pasting.lean",
+  "lines": [
+   585,
+   636
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pasting-updated",
+    "env": "lemma",
+    "title": "Pasting, the two-measurement case",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.sum_snorm_sq_prod_le_one",
+   "MIPRE.sum_weighted_mul_le_sqrt"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 43,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_bornProb_ord_ge",
+  "source_name": "MIPRE.sum_bornProb_ord_ge",
+  "formal_statement": "theorem MIPRE.sum_bornProb_ord_ge {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖ = 1)\n    {A : R1 × R2 → Matrix dA dA ℂ} (hA : IsPVM A) (hR : IsPVM R) (hG : IsPVM G) (e : K → R2) :\n    1 - (∑ b : R2, xSqNorm ψ (∑ a : R1, A (a, b)) (fibSum G e b)) / 2\n        - Real.sqrt ((∑ a : R1, xSqNorm ψ (∑ b : R2, A (a, b)) (R a)) / 2)\n      ≤ ∑ a : R1, ∑ g : K, bornProb ψ (A (a, e g)) (G g * R a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {R1 R2 K : Type*} [Fintype R1] [DecidableEq R1] [Fintype R2] [DecidableEq R2]",
+   "variable {R : R1 → Matrix dB dB ℂ} {G : K → Matrix dB dB ℂ}"
+  ],
+  "docstring": "**Step (i) of the pasting lemma.** Bob's two projections in the order `G_g R_a`, paired with\nAlice's joint outcome, already agree with the state at `1 - delta/2 - sqrt(delta/2)`: the outer\nfactor sums away against Alice's marginal, and what is left is the `R`-consistency, whose square\nroot is the only one in the whole argument that is not a commutator.",
+  "module": "MIPRE.Foundations.Pasting",
+  "module_doc": "/-!\n# Pasting two measurements into one\n\nThe blueprint's missing piece for `lem:qld-pairs-of-lines`: NW19's Fact 4.35, the paper's\n`lem:pasting-updated`. One party holds a *joint* projective measurement `A_{a,b}`; the other holds\ntwo projective measurements `G_1` and `G_2` whose coarse-grainings along evaluation maps agree with\n`A`'s two marginals. The conclusion is that `A` agrees with the **sandwich**\n`J_{g_1, g_2} = G_2^{g_2} G_1^{g_1} G_2^{g_2}`, coarse-grained by evaluating both outcomes.\n\nTwo facts beyond the sandwich chain of `MIPRE/Foundations/Sandwich.lean` are needed, and they are\nproved first.\n\n* **A sub-measurement close to a projective measurement carries almost all the mass**\n  (`qform_sum_ge_of_close`, NW19's Fact 4.31). Two Cauchy--Schwarz steps against the same\n  deviation, and the loss is `2 sqrt(delta)`.\n* **Multiplying by the projector of the same outcome costs nothing** (`sum_snorm_sq_cool`, the\n  paper's `lem:cool-closeness-fact` in its partition form). The cross terms vanish by mutual\n  orthogonality and each diagonal term loses only `A_a <= Id`. The partition form is what matters:\n  the consumers apply it to the `q` fibres of an outcome map at once, and the single-subset form\n  would cost a factor `q` there.\n\nThe sandwich is where a **collision probability** enters. `G_2^{g_2} G_1 G_2^{g_2}` summed over a\nfibre of `g_2 |-> g_2(y)` is a *pinching* of `G_1` by that fibre, not a conjugation by the fibre's\nprojector, and the difference is the cross terms `g_2 \\ne g_2'` with `g_2(y) = g_2'(y)`. Those are\nrare exactly when the outcome map separates the family, which for line polynomials is\nSchwartz--Zippel.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pasting.lean#L640-L755",
+  "source_path": "MIPRE/Foundations/Pasting.lean",
+  "lines": [
+   640,
+   755
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pasting-updated",
+    "env": "lemma",
+    "title": "Pasting, the two-measurement case",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.IsPVM.marg_left",
+   "MIPRE.IsPVM.marg_right",
+   "MIPRE.aOp_sum",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.sum_snorm_sq_prod_le_one",
+   "MIPRE.one_sub_sum_bornProb_eq",
+   "MIPRE.sum_weighted_mul_le_sqrt"
+  ],
+  "pasted_helpers": 28,
+  "prooflines": 107,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_snorm_sq_comm_coarse_le",
+  "source_name": "MIPRE.sum_snorm_sq_comm_coarse_le",
+  "formal_statement": "theorem MIPRE.sum_snorm_sq_comm_coarse_le {ψ : dA × dB → ℂ} {A : R1 × R2 → Matrix dA dA ℂ}\n    {Gf : R2 → Matrix dB dB ℂ} (hA : IsPVM A) (hR : IsPVM R) (hGf : IsPVM Gf) {δ₁ δ₂ : ℝ}\n    (h1 : ∑ a : R1, xSqNorm ψ (∑ b : R2, A (a, b)) (R a) ≤ δ₁)\n    (h2 : ∑ b : R2, xSqNorm ψ (∑ a : R1, A (a, b)) (Gf b) ≤ δ₂) :\n    ∑ a : R1, ∑ b : R2, snorm ψ (bOp (R a * Gf b - Gf b * R a) : Matrix (dA × dB) _ ℂ) ^ 2\n      ≤ 16 * (δ₁ + δ₂) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {R1 R2 K : Type*} [Fintype R1] [DecidableEq R1] [Fintype R2] [DecidableEq R2]",
+   "variable {R : R1 → Matrix dB dB ℂ} {G : K → Matrix dB dB ℂ}"
+  ],
+  "docstring": "**The coarse-grained commutator is small**: this is the commutation analysis, with both\nfamilies on Bob's factor and Alice's joint measurement supplying the operator both products\nreach.",
+  "module": "MIPRE.Foundations.Pasting",
+  "module_doc": "/-!\n# Pasting two measurements into one\n\nThe blueprint's missing piece for `lem:qld-pairs-of-lines`: NW19's Fact 4.35, the paper's\n`lem:pasting-updated`. One party holds a *joint* projective measurement `A_{a,b}`; the other holds\ntwo projective measurements `G_1` and `G_2` whose coarse-grainings along evaluation maps agree with\n`A`'s two marginals. The conclusion is that `A` agrees with the **sandwich**\n`J_{g_1, g_2} = G_2^{g_2} G_1^{g_1} G_2^{g_2}`, coarse-grained by evaluating both outcomes.\n\nTwo facts beyond the sandwich chain of `MIPRE/Foundations/Sandwich.lean` are needed, and they are\nproved first.\n\n* **A sub-measurement close to a projective measurement carries almost all the mass**\n  (`qform_sum_ge_of_close`, NW19's Fact 4.31). Two Cauchy--Schwarz steps against the same\n  deviation, and the loss is `2 sqrt(delta)`.\n* **Multiplying by the projector of the same outcome costs nothing** (`sum_snorm_sq_cool`, the\n  paper's `lem:cool-closeness-fact` in its partition form). The cross terms vanish by mutual\n  orthogonality and each diagonal term loses only `A_a <= Id`. The partition form is what matters:\n  the consumers apply it to the `q` fibres of an outcome map at once, and the single-subset form\n  would cost a factor `q` there.\n\nThe sandwich is where a **collision probability** enters. `G_2^{g_2} G_1 G_2^{g_2}` summed over a\nfibre of `g_2 |-> g_2(y)` is a *pinching* of `G_1` by that fibre, not a conjugation by the fibre's\nprojector, and the difference is the cross terms `g_2 \\ne g_2'` with `g_2(y) = g_2'(y)`. Those are\nrare exactly when the outcome map separates the family, which for line polynomials is\nSchwartz--Zippel.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pasting.lean#L820-L858",
+  "source_path": "MIPRE/Foundations/Pasting.lean",
+  "lines": [
+   820,
+   858
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pasting-updated",
+    "env": "lemma",
+    "title": "Pasting, the two-measurement case",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.IsPVM.marg_left",
+   "MIPRE.IsPVM.marg_right",
+   "MIPRE.commutation_analysis_abstract",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.aOp_sum",
+   "MIPRE.IsPVM.orthogonal"
+  ],
+  "pasted_helpers": 18,
+  "prooflines": 30,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.strife_sub_cloud_eq",
+  "source_name": "MIPRE.strife_sub_cloud_eq",
+  "formal_statement": "theorem MIPRE.strife_sub_cloud_eq {ψ : dA × dB → ℂ} {Ga : K → Matrix dA dA ℂ} (e : K → R2) :\n    (∑ a : R1, ∑ b : R2,\n        bornProb ψ (fibSum Ga e b) (R a * fibSum G e b * R a))\n        - ∑ a : R1, ∑ g : K, bornProb ψ (Ga g) (R a * G g * R a)\n      = collisionTerm ψ R G Ga e := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {R1 R2 K : Type*} [Fintype R1] [DecidableEq R1] [Fintype R2] [DecidableEq R2]",
+   "variable {R : R1 → Matrix dB dB ℂ} {G : K → Matrix dB dB ℂ}"
+  ],
+  "docstring": "**The strife minus the cloud is exactly the collision term.** Both are sums of the same Born\nprobabilities; coarse-graining pairs each `G`-outcome with every other one the map identifies\nwith it.",
+  "module": "MIPRE.Foundations.Pasting",
+  "module_doc": "/-!\n# Pasting two measurements into one\n\nThe blueprint's missing piece for `lem:qld-pairs-of-lines`: NW19's Fact 4.35, the paper's\n`lem:pasting-updated`. One party holds a *joint* projective measurement `A_{a,b}`; the other holds\ntwo projective measurements `G_1` and `G_2` whose coarse-grainings along evaluation maps agree with\n`A`'s two marginals. The conclusion is that `A` agrees with the **sandwich**\n`J_{g_1, g_2} = G_2^{g_2} G_1^{g_1} G_2^{g_2}`, coarse-grained by evaluating both outcomes.\n\nTwo facts beyond the sandwich chain of `MIPRE/Foundations/Sandwich.lean` are needed, and they are\nproved first.\n\n* **A sub-measurement close to a projective measurement carries almost all the mass**\n  (`qform_sum_ge_of_close`, NW19's Fact 4.31). Two Cauchy--Schwarz steps against the same\n  deviation, and the loss is `2 sqrt(delta)`.\n* **Multiplying by the projector of the same outcome costs nothing** (`sum_snorm_sq_cool`, the\n  paper's `lem:cool-closeness-fact` in its partition form). The cross terms vanish by mutual\n  orthogonality and each diagonal term loses only `A_a <= Id`. The partition form is what matters:\n  the consumers apply it to the `q` fibres of an outcome map at once, and the single-subset form\n  would cost a factor `q` there.\n\nThe sandwich is where a **collision probability** enters. `G_2^{g_2} G_1 G_2^{g_2}` summed over a\nfibre of `g_2 |-> g_2(y)` is a *pinching* of `G_1` by that fibre, not a conjugation by the fibre's\nprojector, and the difference is the cross terms `g_2 \\ne g_2'` with `g_2(y) = g_2'(y)`. Those are\nrare exactly when the outcome map separates the family, which for line polynomials is\nSchwartz--Zippel.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pasting.lean#L874-L912",
+  "source_path": "MIPRE/Foundations/Pasting.lean",
+  "lines": [
+   874,
+   912
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pasting-updated",
+    "env": "lemma",
+    "title": "Pasting, the two-measurement case",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_snorm_sq_comm_fine_le",
+  "source_name": "MIPRE.sum_snorm_sq_comm_fine_le",
+  "formal_statement": "theorem MIPRE.sum_snorm_sq_comm_fine_le {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖ = 1)\n    {A : R1 × R2 → Matrix dA dA ℂ} {Ga : K → Matrix dA dA ℂ} (hA : IsPVM A) (hR : IsPVM R)\n    (hG : IsPVM G) (hGa : IsPVM Ga) (e : K → R2) {δ₁ δ₂ : ℝ}\n    (h1 : ∑ a : R1, xSqNorm ψ (∑ b : R2, A (a, b)) (R a) ≤ δ₁)\n    (h2 : ∑ b : R2, xSqNorm ψ (∑ a : R1, A (a, b)) (fibSum G e b) ≤ δ₂) :\n    (∑ a : R1, ∑ g : K, snorm ψ (bOp (R a * G g - G g * R a) : Matrix (dA × dB) _ ℂ) ^ 2)\n      ≤ 16 * (δ₁ + δ₂) + 4 * Real.sqrt (∑ g : K, xSqNorm ψ (Ga g) (G g))\n        + 2 * collisionTerm ψ R G Ga e := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {R1 R2 K : Type*} [Fintype R1] [DecidableEq R1] [Fintype R2] [DecidableEq R2]",
+   "variable {R : R1 → Matrix dB dB ℂ} {G : K → Matrix dB dB ℂ}"
+  ],
+  "docstring": "**The fine-grained commutator against the coarse-grained one.** The coarse-grained one is\nsmall by the commutation analysis; the two differ by the cloud, the strife and the collision term,\nand the cloud--strife comparison is the only place Alice's copy of `G` is used.",
+  "module": "MIPRE.Foundations.Pasting",
+  "module_doc": "/-!\n# Pasting two measurements into one\n\nThe blueprint's missing piece for `lem:qld-pairs-of-lines`: NW19's Fact 4.35, the paper's\n`lem:pasting-updated`. One party holds a *joint* projective measurement `A_{a,b}`; the other holds\ntwo projective measurements `G_1` and `G_2` whose coarse-grainings along evaluation maps agree with\n`A`'s two marginals. The conclusion is that `A` agrees with the **sandwich**\n`J_{g_1, g_2} = G_2^{g_2} G_1^{g_1} G_2^{g_2}`, coarse-grained by evaluating both outcomes.\n\nTwo facts beyond the sandwich chain of `MIPRE/Foundations/Sandwich.lean` are needed, and they are\nproved first.\n\n* **A sub-measurement close to a projective measurement carries almost all the mass**\n  (`qform_sum_ge_of_close`, NW19's Fact 4.31). Two Cauchy--Schwarz steps against the same\n  deviation, and the loss is `2 sqrt(delta)`.\n* **Multiplying by the projector of the same outcome costs nothing** (`sum_snorm_sq_cool`, the\n  paper's `lem:cool-closeness-fact` in its partition form). The cross terms vanish by mutual\n  orthogonality and each diagonal term loses only `A_a <= Id`. The partition form is what matters:\n  the consumers apply it to the `q` fibres of an outcome map at once, and the single-subset form\n  would cost a factor `q` there.\n\nThe sandwich is where a **collision probability** enters. `G_2^{g_2} G_1 G_2^{g_2}` summed over a\nfibre of `g_2 |-> g_2(y)` is a *pinching* of `G_1` by that fibre, not a conjugation by the fibre's\nprojector, and the difference is the cross terms `g_2 \\ne g_2'` with `g_2(y) = g_2'(y)`. Those are\nrare exactly when the outcome map separates the family, which for line polynomials is\nSchwartz--Zippel.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pasting.lean#L916-L937",
+  "source_path": "MIPRE/Foundations/Pasting.lean",
+  "lines": [
+   916,
+   937
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pasting-updated",
+    "env": "lemma",
+    "title": "Pasting, the two-measurement case",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.sum_bornProb_le_fibSum",
+   "MIPRE.sum_snorm_sq_comm_eq",
+   "MIPRE.abs_sigma_sub_cloud_le",
+   "MIPRE.sum_snorm_sq_comm_coarse_le",
+   "MIPRE.strife_sub_cloud_eq",
+   "MIPRE.one_sub_sum_bornProb_eq"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.one_sub_sum_bornProb_pasteJ_le_prime",
+  "source_name": "MIPRE.one_sub_sum_bornProb_pasteJ_le'",
+  "formal_statement": "theorem MIPRE.one_sub_sum_bornProb_pasteJ_le_prime {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖ = 1)\n    {A : R1 × R2 → Matrix dA dA ℂ} (hA : IsPVM A) (hR : IsPVM R) (hG : IsPVM G) (e : K → R2) :\n    1 - (∑ p : R1 × R2, bornProb ψ (A p) (pasteJ R G e p))\n      ≤ (∑ b : R2, xSqNorm ψ (∑ a : R1, A (a, b)) (fibSum G e b)) / 2\n        + Real.sqrt ((∑ a : R1, xSqNorm ψ (∑ b : R2, A (a, b)) (R a)) / 2)\n        + Real.sqrt (∑ a : R1, ∑ g : K,\n            snorm ψ (bOp (R a * G g - G g * R a) : Matrix (dA × dB) _ ℂ) ^ 2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {R1 R2 K : Type*} [Fintype R1] [DecidableEq R1] [Fintype R2] [DecidableEq R2]",
+   "variable {R : R1 → Matrix dB dB ℂ} {G : K → Matrix dB dB ℂ}"
+  ],
+  "docstring": "**The pasted POVM agrees with Alice's joint measurement, at one question.** Step (i) reaches\nthe ordered product and step (ii) the sandwich.",
+  "module": "MIPRE.Foundations.Pasting",
+  "module_doc": "/-!\n# Pasting two measurements into one\n\nThe blueprint's missing piece for `lem:qld-pairs-of-lines`: NW19's Fact 4.35, the paper's\n`lem:pasting-updated`. One party holds a *joint* projective measurement `A_{a,b}`; the other holds\ntwo projective measurements `G_1` and `G_2` whose coarse-grainings along evaluation maps agree with\n`A`'s two marginals. The conclusion is that `A` agrees with the **sandwich**\n`J_{g_1, g_2} = G_2^{g_2} G_1^{g_1} G_2^{g_2}`, coarse-grained by evaluating both outcomes.\n\nTwo facts beyond the sandwich chain of `MIPRE/Foundations/Sandwich.lean` are needed, and they are\nproved first.\n\n* **A sub-measurement close to a projective measurement carries almost all the mass**\n  (`qform_sum_ge_of_close`, NW19's Fact 4.31). Two Cauchy--Schwarz steps against the same\n  deviation, and the loss is `2 sqrt(delta)`.\n* **Multiplying by the projector of the same outcome costs nothing** (`sum_snorm_sq_cool`, the\n  paper's `lem:cool-closeness-fact` in its partition form). The cross terms vanish by mutual\n  orthogonality and each diagonal term loses only `A_a <= Id`. The partition form is what matters:\n  the consumers apply it to the `q` fibres of an outcome map at once, and the single-subset form\n  would cost a factor `q` there.\n\nThe sandwich is where a **collision probability** enters. `G_2^{g_2} G_1 G_2^{g_2}` summed over a\nfibre of `g_2 |-> g_2(y)` is a *pinching* of `G_1` by that fibre, not a conjugation by the fibre's\nprojector, and the difference is the cross terms `g_2 \\ne g_2'` with `g_2(y) = g_2'(y)`. Those are\nrare exactly when the outcome map separates the family, which for line polynomials is\nSchwartz--Zippel.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pasting.lean#L939-L960",
+  "source_path": "MIPRE/Foundations/Pasting.lean",
+  "lines": [
+   939,
+   960
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pasting-updated",
+    "env": "lemma",
+    "title": "Pasting, the two-measurement case",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.abs_sand_sub_ord_le",
+   "MIPRE.sum_bornProb_ord_ge"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.IsPVM.aOp",
+  "source_name": "MIPRE.IsPVM.aOp",
+  "formal_statement": "theorem MIPRE.IsPVM.aOp {ι : Type*} [Fintype ι] {Q : ι → Matrix dA dA ℂ} (h : IsPVM Q) :\n    IsPVM fun i => (aOp (Q i) : Matrix (dA × dB) (dA × dB) ℂ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.IsPVM",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {R1 R2 : Type*} [Fintype R1] [DecidableEq R1] [Fintype R2] [DecidableEq R2]"
+  ],
+  "docstring": "A projective family stays projective on the product space.",
+  "module": "MIPRE.Foundations.Pasting",
+  "module_doc": "/-!\n# Pasting two measurements into one\n\nThe blueprint's missing piece for `lem:qld-pairs-of-lines`: NW19's Fact 4.35, the paper's\n`lem:pasting-updated`. One party holds a *joint* projective measurement `A_{a,b}`; the other holds\ntwo projective measurements `G_1` and `G_2` whose coarse-grainings along evaluation maps agree with\n`A`'s two marginals. The conclusion is that `A` agrees with the **sandwich**\n`J_{g_1, g_2} = G_2^{g_2} G_1^{g_1} G_2^{g_2}`, coarse-grained by evaluating both outcomes.\n\nTwo facts beyond the sandwich chain of `MIPRE/Foundations/Sandwich.lean` are needed, and they are\nproved first.\n\n* **A sub-measurement close to a projective measurement carries almost all the mass**\n  (`qform_sum_ge_of_close`, NW19's Fact 4.31). Two Cauchy--Schwarz steps against the same\n  deviation, and the loss is `2 sqrt(delta)`.\n* **Multiplying by the projector of the same outcome costs nothing** (`sum_snorm_sq_cool`, the\n  paper's `lem:cool-closeness-fact` in its partition form). The cross terms vanish by mutual\n  orthogonality and each diagonal term loses only `A_a <= Id`. The partition form is what matters:\n  the consumers apply it to the `q` fibres of an outcome map at once, and the single-subset form\n  would cost a factor `q` there.\n\nThe sandwich is where a **collision probability** enters. `G_2^{g_2} G_1 G_2^{g_2}` summed over a\nfibre of `g_2 |-> g_2(y)` is a *pinching* of `G_1` by that fibre, not a conjugation by the fibre's\nprojector, and the difference is the cross terms `g_2 \\ne g_2'` with `g_2(y) = g_2'(y)`. Those are\nrare exactly when the outcome map separates the family, which for line polynomials is\nSchwartz--Zippel.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pasting.lean#L978-L983",
+  "source_path": "MIPRE/Foundations/Pasting.lean",
+  "lines": [
+   978,
+   983
+  ],
+  "blueprint": [
+   {
+    "label": "lem:cool-closeness-fact",
+    "env": "lemma",
+    "title": "Cool closeness fact, and the marginal step",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.aOp_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_xSqNorm_marg_le",
+  "source_name": "MIPRE.sum_xSqNorm_marg_le",
+  "formal_statement": "theorem MIPRE.sum_xSqNorm_marg_le {ψ : dA × dB → ℂ} {Q : R1 × R2 → Matrix dA dA ℂ}\n    {Z : R2 → Matrix dB dB ℂ} (X : R1 → Matrix dB dB ℂ) (hQ : IsPVM Q) (hZ : IsPVM Z) :\n    ∑ a : R1, xSqNorm ψ (∑ b : R2, Q (a, b)) (X a)\n      ≤ 2 * (∑ p : R1 × R2, snorm ψ ((aOp (Q p) : Matrix (dA × dB) _ ℂ) * bOp (Z p.2)\n              - aOp (Q p)) ^ 2)\n        + 2 * ∑ p : R1 × R2, xSqNorm ψ (Q p) (Z p.2 * X p.1) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {R1 R2 : Type*} [Fintype R1] [DecidableEq R1] [Fintype R2] [DecidableEq R2]"
+  ],
+  "docstring": "**The marginal step.** Alice's joint projective measurement, consistent with Bob's ordered\nproduct `Z_b X_a`, has its `R2`-marginal consistent with `X_a` alone.",
+  "module": "MIPRE.Foundations.Pasting",
+  "module_doc": "/-!\n# Pasting two measurements into one\n\nThe blueprint's missing piece for `lem:qld-pairs-of-lines`: NW19's Fact 4.35, the paper's\n`lem:pasting-updated`. One party holds a *joint* projective measurement `A_{a,b}`; the other holds\ntwo projective measurements `G_1` and `G_2` whose coarse-grainings along evaluation maps agree with\n`A`'s two marginals. The conclusion is that `A` agrees with the **sandwich**\n`J_{g_1, g_2} = G_2^{g_2} G_1^{g_1} G_2^{g_2}`, coarse-grained by evaluating both outcomes.\n\nTwo facts beyond the sandwich chain of `MIPRE/Foundations/Sandwich.lean` are needed, and they are\nproved first.\n\n* **A sub-measurement close to a projective measurement carries almost all the mass**\n  (`qform_sum_ge_of_close`, NW19's Fact 4.31). Two Cauchy--Schwarz steps against the same\n  deviation, and the loss is `2 sqrt(delta)`.\n* **Multiplying by the projector of the same outcome costs nothing** (`sum_snorm_sq_cool`, the\n  paper's `lem:cool-closeness-fact` in its partition form). The cross terms vanish by mutual\n  orthogonality and each diagonal term loses only `A_a <= Id`. The partition form is what matters:\n  the consumers apply it to the `q` fibres of an outcome map at once, and the single-subset form\n  would cost a factor `q` there.\n\nThe sandwich is where a **collision probability** enters. `G_2^{g_2} G_1 G_2^{g_2}` summed over a\nfibre of `g_2 |-> g_2(y)` is a *pinching* of `G_1` by that fibre, not a conjugation by the fibre's\nprojector, and the difference is the cross terms `g_2 \\ne g_2'` with `g_2(y) = g_2'(y)`. Those are\nrare exactly when the outcome map separates the family, which for line polynomials is\nSchwartz--Zippel.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pasting.lean#L1011-L1068",
+  "source_path": "MIPRE/Foundations/Pasting.lean",
+  "lines": [
+   1011,
+   1068
+  ],
+  "blueprint": [
+   {
+    "label": "lem:cool-closeness-fact",
+    "env": "lemma",
+    "title": "Cool closeness fact, and the marginal step",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.snorm_sq_sum_proj_mul",
+   "MIPRE.sum_snorm_sq_cool",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_sum",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.IsPVM.aOp"
+  ],
+  "pasted_helpers": 25,
+  "prooflines": 50,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_snorm_sq_mul_proj_le",
+  "source_name": "MIPRE.sum_snorm_sq_mul_proj_le",
+  "formal_statement": "theorem MIPRE.sum_snorm_sq_mul_proj_le {ψ : dA × dB → ℂ} (Q : R1 × R2 → Matrix dA dA ℂ)\n    {Z : R2 → Matrix dB dB ℂ} (X : R1 → Matrix dB dB ℂ) (hZ : IsPVM Z) :\n    ∑ p : R1 × R2, snorm ψ ((aOp (Q p) : Matrix (dA × dB) _ ℂ) * bOp (Z p.2)\n        - aOp (Q p)) ^ 2\n      ≤ 4 * ∑ p : R1 × R2, xSqNorm ψ (Q p) (Z p.2 * X p.1) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {R1 R2 : Type*} [Fintype R1] [DecidableEq R1] [Fintype R2] [DecidableEq R2]"
+  ],
+  "docstring": "**Attaching the other party's projection to a consistent joint measurement costs nothing.**\nThe relation the marginal step's first term needs, from the consistency with the ordered product\nalone.",
+  "module": "MIPRE.Foundations.Pasting",
+  "module_doc": "/-!\n# Pasting two measurements into one\n\nThe blueprint's missing piece for `lem:qld-pairs-of-lines`: NW19's Fact 4.35, the paper's\n`lem:pasting-updated`. One party holds a *joint* projective measurement `A_{a,b}`; the other holds\ntwo projective measurements `G_1` and `G_2` whose coarse-grainings along evaluation maps agree with\n`A`'s two marginals. The conclusion is that `A` agrees with the **sandwich**\n`J_{g_1, g_2} = G_2^{g_2} G_1^{g_1} G_2^{g_2}`, coarse-grained by evaluating both outcomes.\n\nTwo facts beyond the sandwich chain of `MIPRE/Foundations/Sandwich.lean` are needed, and they are\nproved first.\n\n* **A sub-measurement close to a projective measurement carries almost all the mass**\n  (`qform_sum_ge_of_close`, NW19's Fact 4.31). Two Cauchy--Schwarz steps against the same\n  deviation, and the loss is `2 sqrt(delta)`.\n* **Multiplying by the projector of the same outcome costs nothing** (`sum_snorm_sq_cool`, the\n  paper's `lem:cool-closeness-fact` in its partition form). The cross terms vanish by mutual\n  orthogonality and each diagonal term loses only `A_a <= Id`. The partition form is what matters:\n  the consumers apply it to the `q` fibres of an outcome map at once, and the single-subset form\n  would cost a factor `q` there.\n\nThe sandwich is where a **collision probability** enters. `G_2^{g_2} G_1 G_2^{g_2}` summed over a\nfibre of `g_2 |-> g_2(y)` is a *pinching* of `G_1` by that fibre, not a conjugation by the fibre's\nprojector, and the difference is the cross terms `g_2 \\ne g_2'` with `g_2(y) = g_2'(y)`. Those are\nrare exactly when the outcome map separates the family, which for line polynomials is\nSchwartz--Zippel.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pasting.lean#L1093-L1129",
+  "source_path": "MIPRE/Foundations/Pasting.lean",
+  "lines": [
+   1093,
+   1129
+  ],
+  "blueprint": [
+   {
+    "label": "lem:cool-closeness-fact",
+    "env": "lemma",
+    "title": "Cool closeness fact, and the marginal step",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 22,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.one_sub_sum_bornProb_pasteJ_le",
+  "source_name": "MIPRE.one_sub_sum_bornProb_pasteJ_le",
+  "formal_statement": "theorem MIPRE.one_sub_sum_bornProb_pasteJ_le {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖ = 1)\n    {w : ι → ℝ} (hw0 : ∀ i, 0 ≤ w i) (hw1 : ∑ i, w i = 1)\n    {A : ι → R1 × R2 → Matrix dA dA ℂ} {R : ι → R1 → Matrix dB dB ℂ}\n    {G : ι → K → Matrix dB dB ℂ} {Ga : ι → K → Matrix dA dA ℂ} (e : ι → K → R2)\n    (hA : ∀ i, IsPVM (A i)) (hR : ∀ i, IsPVM (R i)) (hG : ∀ i, IsPVM (G i))\n    (hGa : ∀ i, IsPVM (Ga i)) {δ η ε : ℝ}\n    (hP1 : ∑ i, w i * ∑ a : R1, xSqNorm ψ (∑ b : R2, A i (a, b)) (R i a) ≤ δ)\n    (hP2 : ∑ i, w i * ∑ b : R2,\n      xSqNorm ψ (∑ a : R1, A i (a, b)) (fibSum (G i) (e i) b) ≤ δ)\n    (hP4 : ∑ i, w i * ∑ g : K, xSqNorm ψ (Ga i g) (G i g) ≤ η)\n    (hcoll : ∑ i, w i * collisionTerm ψ (R i) (G i) (Ga i) (e i) ≤ ε) :\n    1 - ∑ i, w i * ∑ p : R1 × R2, bornProb ψ (A i p) (pasteJ (R i) (G i) (e i) p)\n      ≤ δ / 2 + Real.sqrt (δ / 2) + Real.sqrt (32 * δ + 4 * Real.sqrt η + 2 * ε) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {ι R1 R2 K : Type*} [Fintype ι] [Fintype R1] [DecidableEq R1] [Fintype R2]"
+  ],
+  "docstring": "**The pasting lemma, `k = 2`** (NW19's Fact 4.35, the paper's `lem:pasting-updated`), in Born\nprobability form: Alice's joint measurement agrees with the pasted sandwich up to\n`delta/2 + sqrt(delta/2) + sqrt(32 delta + 4 sqrt(eta) + 2 eps)`.",
+  "module": "MIPRE.Foundations.Pasting",
+  "module_doc": "/-!\n# Pasting two measurements into one\n\nThe blueprint's missing piece for `lem:qld-pairs-of-lines`: NW19's Fact 4.35, the paper's\n`lem:pasting-updated`. One party holds a *joint* projective measurement `A_{a,b}`; the other holds\ntwo projective measurements `G_1` and `G_2` whose coarse-grainings along evaluation maps agree with\n`A`'s two marginals. The conclusion is that `A` agrees with the **sandwich**\n`J_{g_1, g_2} = G_2^{g_2} G_1^{g_1} G_2^{g_2}`, coarse-grained by evaluating both outcomes.\n\nTwo facts beyond the sandwich chain of `MIPRE/Foundations/Sandwich.lean` are needed, and they are\nproved first.\n\n* **A sub-measurement close to a projective measurement carries almost all the mass**\n  (`qform_sum_ge_of_close`, NW19's Fact 4.31). Two Cauchy--Schwarz steps against the same\n  deviation, and the loss is `2 sqrt(delta)`.\n* **Multiplying by the projector of the same outcome costs nothing** (`sum_snorm_sq_cool`, the\n  paper's `lem:cool-closeness-fact` in its partition form). The cross terms vanish by mutual\n  orthogonality and each diagonal term loses only `A_a <= Id`. The partition form is what matters:\n  the consumers apply it to the `q` fibres of an outcome map at once, and the single-subset form\n  would cost a factor `q` there.\n\nThe sandwich is where a **collision probability** enters. `G_2^{g_2} G_1 G_2^{g_2}` summed over a\nfibre of `g_2 |-> g_2(y)` is a *pinching* of `G_1` by that fibre, not a conjugation by the fibre's\nprojector, and the difference is the cross terms `g_2 \\ne g_2'` with `g_2(y) = g_2'(y)`. Those are\nrare exactly when the outcome map separates the family, which for line polynomials is\nSchwartz--Zippel.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pasting.lean#L1193-L1281",
+  "source_path": "MIPRE/Foundations/Pasting.lean",
+  "lines": [
+   1193,
+   1281
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pasting-updated",
+    "env": "lemma",
+    "title": "Pasting, the two-measurement case",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_snorm_sq_comm_fine_le",
+   "MIPRE.one_sub_sum_bornProb_pasteJ_le'",
+   "MIPRE.sum_weighted_mul_le_sqrt"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 73,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_collisionTerm_le",
+  "source_name": "MIPRE.sum_collisionTerm_le",
+  "formal_statement": "theorem MIPRE.sum_collisionTerm_le {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖ = 1) {ν : Z → ℝ}\n    (hν0 : ∀ z, 0 ≤ ν z)\n    {R : Z → R1 → Matrix dB dB ℂ} {G : Z → K → Matrix dB dB ℂ} {Ga : Z → K → Matrix dA dA ℂ}\n    (hR : ∀ z, IsPVM (R z)) (hG : ∀ z, IsPVM (G z)) (hGa : ∀ z, IsPVM (Ga z))\n    (e : Z → Y → K → R2) {εz : Z → ℝ} (hε : ∀ z, 0 ≤ εz z)\n    (hsep : ∀ (z : Z) (g g' : K), g' ≠ g →\n      ((univ.filter fun y : Y => e z y g' = e z y g).card : ℝ) ≤ εz z * (Fintype.card Y : ℝ)) :\n    ∑ i : Z × Y, (ν i.1 * (Fintype.card Y : ℝ)⁻¹)\n        * collisionTerm ψ (R i.1) (G i.1) (Ga i.1) (e i.1 i.2) ≤ ∑ z : Z, ν z * εz z := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {Z Y R1 R2 K : Type*} [Fintype Z] [DecidableEq Z] [Fintype Y] [DecidableEq Y]"
+  ],
+  "docstring": "**The collision term is at most the average collision probability.** The question is a pair: a\npart `z` that all the measurements see, and a probe `y`, uniform and independent of `z`, that only\nthe outcome map sees. The Born probabilities do not depend on `y`, so the probe average acts on the\nindicator alone; what is left is a POVM's total mass, which is one.\n\nThe collision probability is allowed to depend on `z`, and the conclusion is its average. The\nconsumer needs that: for a degenerate line the outcome map separates nothing, and what makes the\naverage small is that such lines are rare rather than that the bound holds everywhere.",
+  "module": "MIPRE.Foundations.Pasting",
+  "module_doc": "/-!\n# Pasting two measurements into one\n\nThe blueprint's missing piece for `lem:qld-pairs-of-lines`: NW19's Fact 4.35, the paper's\n`lem:pasting-updated`. One party holds a *joint* projective measurement `A_{a,b}`; the other holds\ntwo projective measurements `G_1` and `G_2` whose coarse-grainings along evaluation maps agree with\n`A`'s two marginals. The conclusion is that `A` agrees with the **sandwich**\n`J_{g_1, g_2} = G_2^{g_2} G_1^{g_1} G_2^{g_2}`, coarse-grained by evaluating both outcomes.\n\nTwo facts beyond the sandwich chain of `MIPRE/Foundations/Sandwich.lean` are needed, and they are\nproved first.\n\n* **A sub-measurement close to a projective measurement carries almost all the mass**\n  (`qform_sum_ge_of_close`, NW19's Fact 4.31). Two Cauchy--Schwarz steps against the same\n  deviation, and the loss is `2 sqrt(delta)`.\n* **Multiplying by the projector of the same outcome costs nothing** (`sum_snorm_sq_cool`, the\n  paper's `lem:cool-closeness-fact` in its partition form). The cross terms vanish by mutual\n  orthogonality and each diagonal term loses only `A_a <= Id`. The partition form is what matters:\n  the consumers apply it to the `q` fibres of an outcome map at once, and the single-subset form\n  would cost a factor `q` there.\n\nThe sandwich is where a **collision probability** enters. `G_2^{g_2} G_1 G_2^{g_2}` summed over a\nfibre of `g_2 |-> g_2(y)` is a *pinching* of `G_1` by that fibre, not a conjugation by the fibre's\nprojector, and the difference is the cross terms `g_2 \\ne g_2'` with `g_2(y) = g_2'(y)`. Those are\nrare exactly when the outcome map separates the family, which for line polynomials is\nSchwartz--Zippel.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pasting.lean#L1294-L1375",
+  "source_path": "MIPRE/Foundations/Pasting.lean",
+  "lines": [
+   1294,
+   1375
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pasting-updated",
+    "env": "lemma",
+    "title": "Pasting, the two-measurement case",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_sum",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.IsPVM.posSemidef"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 65,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.POVM.map_reindex",
+  "source_name": "MIPRE.POVM.map_reindex",
+  "formal_statement": "theorem MIPRE.POVM.map_reindex {B : Type*} [Fintype B] [DecidableEq B] (e : d ≃ d') (f : A → B)\n    (M : POVM A d) : (M.map f).reindex e = (M.reindex e).map f := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.POVM",
+   "open Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {A : Type*} [Fintype A]",
+   "variable {d d' : Type*} [Fintype d] [Fintype d'] [DecidableEq d] [DecidableEq d']"
+  ],
+  "docstring": "Reindexing the register commutes with relabelling the outcomes.",
+  "module": "MIPRE.Foundations.RegisterReindex",
+  "module_doc": "/-!\n# Reindexing the registers of a bipartite strategy\n\n`TensorProductStrategy` (blueprint `def:tensor-strategy`) fixes the two players' registers to be\n`Fin dA` and `Fin dB`, and every soundness theorem proved through the vendored developments ---\n`MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL` in particular --- takes and returns its\nstrategies in that form. The rigidity arguments of `MIPRE.QLD`, on the other hand, build their\nstates and measurements on *structured* registers: a strategy's own space tensored with ancillas\nsuch as `(dA × Anc F m) × (F × F)`, where the block structure is what the proofs compute with. A\nstrategy in that form has a value (`povmValue`), but it is not a `TensorProductStrategy`, and\nnothing in the repository turned one into the other. This file is that bridge.\n\nEverything transports along an equivalence `e : d ≃ d'` of a register:\n\n* `reindexStarAlgEquiv e` is `Matrix.reindex e e` as a star-algebra equivalence, so that\n  `ProjectiveMeasurement.map` moves projective measurement families across it;\n* `POVM.reindex e` moves POVMs, and commutes with the relabelling `POVM.map`\n  (`POVM.map_reindex`) and with `ProjectiveMeasurement.toPOVM`\n  (`ProjectiveMeasurement.toPOVM_map_reindex`);\n* `reindexVec eA eB` moves a bipartite state, and the Born rule is invariant\n  (`quadForm_reindex`, `bornProb_reindex`), hence so are `povmValue` (`povmValue_reindex`) and\n  `inconsistency` (`inconsistency_reindex`).\n\n`TensorProductStrategy.ofProjective` then packages a projective strategy on arbitrary finite\nregisters as a `TensorProductStrategy` on `Fin (card dA) × Fin (card dB)`, with\n`TensorProductStrategy.value_ofProjective` identifying its value with the `povmValue` of the\noriginal; `TensorProductStrategy.ofPVM` is the same for measurements given as POVM families with\n`IsPVM` proofs, the form the rigidity arguments produce. A consumer applies a soundness theorem to\nthe packaged strategy and reads the conclusion back through `inconsistency_reindex` and the\n`reindex` lemmas: `MIPRE.Background.LIDT.Adapter.Registers` does exactly that for the seeded\nlow individual degree test.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/RegisterReindex.lean#L105-L111",
+  "source_path": "MIPRE/Foundations/RegisterReindex.lean",
+  "lines": [
+   105,
+   111
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.bornProb_reindex",
+  "source_name": "MIPRE.bornProb_reindex",
+  "formal_statement": "theorem MIPRE.bornProb_reindex (eA : dA ≃ dA') (eB : dB ≃ dB') (ψ : dA × dB → ℂ)\n    (EA : Matrix dA dA ℂ) (EB : Matrix dB dB ℂ) :\n    bornProb (reindexVec eA eB ψ) (Matrix.reindex eA eA EA) (Matrix.reindex eB eB EB)\n      = bornProb ψ EA EB := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {dA dB dA' dB' : Type*}",
+   "variable [Fintype dA] [Fintype dB] [Fintype dA'] [Fintype dB']"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.RegisterReindex",
+  "module_doc": "/-!\n# Reindexing the registers of a bipartite strategy\n\n`TensorProductStrategy` (blueprint `def:tensor-strategy`) fixes the two players' registers to be\n`Fin dA` and `Fin dB`, and every soundness theorem proved through the vendored developments ---\n`MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL` in particular --- takes and returns its\nstrategies in that form. The rigidity arguments of `MIPRE.QLD`, on the other hand, build their\nstates and measurements on *structured* registers: a strategy's own space tensored with ancillas\nsuch as `(dA × Anc F m) × (F × F)`, where the block structure is what the proofs compute with. A\nstrategy in that form has a value (`povmValue`), but it is not a `TensorProductStrategy`, and\nnothing in the repository turned one into the other. This file is that bridge.\n\nEverything transports along an equivalence `e : d ≃ d'` of a register:\n\n* `reindexStarAlgEquiv e` is `Matrix.reindex e e` as a star-algebra equivalence, so that\n  `ProjectiveMeasurement.map` moves projective measurement families across it;\n* `POVM.reindex e` moves POVMs, and commutes with the relabelling `POVM.map`\n  (`POVM.map_reindex`) and with `ProjectiveMeasurement.toPOVM`\n  (`ProjectiveMeasurement.toPOVM_map_reindex`);\n* `reindexVec eA eB` moves a bipartite state, and the Born rule is invariant\n  (`quadForm_reindex`, `bornProb_reindex`), hence so are `povmValue` (`povmValue_reindex`) and\n  `inconsistency` (`inconsistency_reindex`).\n\n`TensorProductStrategy.ofProjective` then packages a projective strategy on arbitrary finite\nregisters as a `TensorProductStrategy` on `Fin (card dA) × Fin (card dB)`, with\n`TensorProductStrategy.value_ofProjective` identifying its value with the `povmValue` of the\noriginal; `TensorProductStrategy.ofPVM` is the same for measurements given as POVM families with\n`IsPVM` proofs, the form the rigidity arguments produce. A consumer applies a soundness theorem to\nthe packaged strategy and reads the conclusion back through `inconsistency_reindex` and the\n`reindex` lemmas: `MIPRE.Background.LIDT.Adapter.Registers` does exactly that for the seeded\nlow individual degree test.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/RegisterReindex.lean#L183-L187",
+  "source_path": "MIPRE/Foundations/RegisterReindex.lean",
+  "lines": [
+   183,
+   187
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.inconsistency_reindex",
+  "source_name": "MIPRE.inconsistency_reindex",
+  "formal_statement": "theorem MIPRE.inconsistency_reindex [DecidableEq A] (eA : dA ≃ dA') (eB : dB ≃ dB') (μ : X → ℝ)\n    (ψ : dA × dB → ℂ) (M : X → POVM A dA) (N : X → POVM A dB) :\n    inconsistency μ (reindexVec eA eB ψ) (fun x => (M x).reindex eA) (fun x => (N x).reindex eB)\n      = inconsistency μ ψ M N := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {dA dB dA' dB' : Type*}",
+   "variable [Fintype dA] [Fintype dB] [Fintype dA'] [Fintype dB']",
+   "variable [DecidableEq dA] [DecidableEq dB] [DecidableEq dA'] [DecidableEq dB']",
+   "variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]"
+  ],
+  "docstring": "**Inconsistency is invariant under reindexing the registers.**",
+  "module": "MIPRE.Foundations.RegisterReindex",
+  "module_doc": "/-!\n# Reindexing the registers of a bipartite strategy\n\n`TensorProductStrategy` (blueprint `def:tensor-strategy`) fixes the two players' registers to be\n`Fin dA` and `Fin dB`, and every soundness theorem proved through the vendored developments ---\n`MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL` in particular --- takes and returns its\nstrategies in that form. The rigidity arguments of `MIPRE.QLD`, on the other hand, build their\nstates and measurements on *structured* registers: a strategy's own space tensored with ancillas\nsuch as `(dA × Anc F m) × (F × F)`, where the block structure is what the proofs compute with. A\nstrategy in that form has a value (`povmValue`), but it is not a `TensorProductStrategy`, and\nnothing in the repository turned one into the other. This file is that bridge.\n\nEverything transports along an equivalence `e : d ≃ d'` of a register:\n\n* `reindexStarAlgEquiv e` is `Matrix.reindex e e` as a star-algebra equivalence, so that\n  `ProjectiveMeasurement.map` moves projective measurement families across it;\n* `POVM.reindex e` moves POVMs, and commutes with the relabelling `POVM.map`\n  (`POVM.map_reindex`) and with `ProjectiveMeasurement.toPOVM`\n  (`ProjectiveMeasurement.toPOVM_map_reindex`);\n* `reindexVec eA eB` moves a bipartite state, and the Born rule is invariant\n  (`quadForm_reindex`, `bornProb_reindex`), hence so are `povmValue` (`povmValue_reindex`) and\n  `inconsistency` (`inconsistency_reindex`).\n\n`TensorProductStrategy.ofProjective` then packages a projective strategy on arbitrary finite\nregisters as a `TensorProductStrategy` on `Fin (card dA) × Fin (card dB)`, with\n`TensorProductStrategy.value_ofProjective` identifying its value with the `povmValue` of the\noriginal; `TensorProductStrategy.ofPVM` is the same for measurements given as POVM families with\n`IsPVM` proofs, the form the rigidity arguments produce. A consumer applies a soundness theorem to\nthe packaged strategy and reads the conclusion back through `inconsistency_reindex` and the\n`reindex` lemmas: `MIPRE.Background.LIDT.Adapter.Registers` does exactly that for the seeded\nlow individual degree test.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/RegisterReindex.lean#L200-L206",
+  "source_path": "MIPRE/Foundations/RegisterReindex.lean",
+  "lines": [
+   200,
+   206
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TensorProductStrategy.value_eq_povmValue",
+  "source_name": "MIPRE.TensorProductStrategy.value_eq_povmValue",
+  "formal_statement": "theorem MIPRE.TensorProductStrategy.value_eq_povmValue {G : Game X Y A B}\n    (S : TensorProductStrategy G) :\n    S.value = povmValue G S.ψ (fun x => S.PA.toPOVM x) (fun y => S.PB.toPOVM y) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TensorProductStrategy",
+   "open Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**`TensorProductStrategy.value` is the `povmValue` of the strategy's own measurements**, read\nas POVMs.",
+  "module": "MIPRE.Foundations.RegisterReindex",
+  "module_doc": "/-!\n# Reindexing the registers of a bipartite strategy\n\n`TensorProductStrategy` (blueprint `def:tensor-strategy`) fixes the two players' registers to be\n`Fin dA` and `Fin dB`, and every soundness theorem proved through the vendored developments ---\n`MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL` in particular --- takes and returns its\nstrategies in that form. The rigidity arguments of `MIPRE.QLD`, on the other hand, build their\nstates and measurements on *structured* registers: a strategy's own space tensored with ancillas\nsuch as `(dA × Anc F m) × (F × F)`, where the block structure is what the proofs compute with. A\nstrategy in that form has a value (`povmValue`), but it is not a `TensorProductStrategy`, and\nnothing in the repository turned one into the other. This file is that bridge.\n\nEverything transports along an equivalence `e : d ≃ d'` of a register:\n\n* `reindexStarAlgEquiv e` is `Matrix.reindex e e` as a star-algebra equivalence, so that\n  `ProjectiveMeasurement.map` moves projective measurement families across it;\n* `POVM.reindex e` moves POVMs, and commutes with the relabelling `POVM.map`\n  (`POVM.map_reindex`) and with `ProjectiveMeasurement.toPOVM`\n  (`ProjectiveMeasurement.toPOVM_map_reindex`);\n* `reindexVec eA eB` moves a bipartite state, and the Born rule is invariant\n  (`quadForm_reindex`, `bornProb_reindex`), hence so are `povmValue` (`povmValue_reindex`) and\n  `inconsistency` (`inconsistency_reindex`).\n\n`TensorProductStrategy.ofProjective` then packages a projective strategy on arbitrary finite\nregisters as a `TensorProductStrategy` on `Fin (card dA) × Fin (card dB)`, with\n`TensorProductStrategy.value_ofProjective` identifying its value with the `povmValue` of the\noriginal; `TensorProductStrategy.ofPVM` is the same for measurements given as POVM families with\n`IsPVM` proofs, the form the rigidity arguments produce. A consumer applies a soundness theorem to\nthe packaged strategy and reads the conclusion back through `inconsistency_reindex` and the\n`reindex` lemmas: `MIPRE.Background.LIDT.Adapter.Registers` does exactly that for the seeded\nlow individual degree test.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/RegisterReindex.lean#L217-L224",
+  "source_path": "MIPRE/Foundations/RegisterReindex.lean",
+  "lines": [
+   217,
+   224
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.shoupInBasisProg_correct",
+  "source_name": "MIPRE.SAT.shoupInBasisProg_correct",
+  "formal_statement": "theorem MIPRE.SAT.shoupInBasisProg_correct (k : ℕ) (hk : 1 ≤ k)\n    (b : Module.Basis (Fin k) (ZMod 2) (shoupBinField k hk).carrier)\n    (a : (shoupBinField k hk).carrier) :\n    shoupInBasisProg (unary k, List.ofFn (fun i => (shoupBinField k hk).toBits (b i)),\n      (shoupBinField k hk).toBits a) = vectorBits (b.equivFun a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear"
+  ],
+  "docstring": "The computed coordinates are exactly the mathematical basis coordinates.",
+  "module": "MIPRE.Foundations.SAT.BasisTransport",
+  "module_doc": "/-! # Polynomial-time transport to any supplied binary field basis -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/BasisTransport.lean#L59-L75",
+  "source_path": "MIPRE/Foundations/SAT/BasisTransport.lean",
+  "lines": [
+   59,
+   75
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-field-matrices",
+    "env": "lemma",
+    "title": "Effective Frobenius, trace Gram matrices and table transport",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.insertRow_pivotBits",
+   "MIPRE.LowDegree.BinaryLinear.typedBasis_span",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.append_reduced",
+   "MIPRE.LowDegree.BinaryLinear.binary_eq_zero_or_one",
+   "MIPRE.LowDegree.BinaryLinear.getD_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.transposeBits_matrixBits",
+   "MIPRE.LowDegree.BinaryLinear.coordinateRows_matrixBits",
+   "MIPRE.LowDegree.BinaryLinear.typedReduceStep_error",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.eq_zero_of_pivots_zero"
+  ],
+  "pasted_helpers": 33,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.shoupBinField_finrank",
+  "source_name": "MIPRE.SAT.shoupBinField_finrank",
+  "formal_statement": "theorem MIPRE.SAT.shoupBinField_finrank (k : ℕ) (hk : 1 ≤ k) :\n    Module.finrank (ZMod 2) (shoupBinField k hk).carrier = k := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial"
+  ],
+  "docstring": "The effective quotient field has the stated extension degree over the binary field.",
+  "module": "MIPRE.Foundations.SAT.FieldTrace",
+  "module_doc": "/-! # Frobenius and trace in the effective Shoup field -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/FieldTrace.lean#L21-L26",
+  "source_path": "MIPRE/Foundations/SAT/FieldTrace.lean",
+  "lines": [
+   21,
+   26
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-field-inverse-trace",
+    "env": "lemma",
+    "title": "Effective inversion, Frobenius iteration and trace",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.shoupIrreducible_monic",
+   "MIPRE.LowDegree.shoupIrreducible_natDegree"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.shoupTraceProg_correct",
+  "source_name": "MIPRE.SAT.shoupTraceProg_correct",
+  "formal_statement": "theorem MIPRE.SAT.shoupTraceProg_correct (k : ℕ) (hk : 1 ≤ k)\n    (a : (shoupBinField k hk).carrier) :\n    shoupTraceProg (unary k, (shoupBinField k hk).toBits a) =\n      (shoupBinField k hk).toBits\n        (algebraMap (ZMod 2) (shoupBinField k hk).carrier\n          (Algebra.trace (ZMod 2) (shoupBinField k hk).carrier a)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.FieldTrace",
+  "module_doc": "/-! # Frobenius and trace in the effective Shoup field -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/FieldTrace.lean#L60-L77",
+  "source_path": "MIPRE/Foundations/SAT/FieldTrace.lean",
+  "lines": [
+   60,
+   77
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-field-inverse-trace",
+    "env": "lemma",
+    "title": "Effective inversion, Frobenius iteration and trace",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_xor",
+   "MIPRE.LowDegree.BinaryPolynomial.length_mulReduce",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_mulReduce",
+   "MIPRE.LowDegree.shoupIrreducible_monic",
+   "MIPRE.LowDegree.shoupIrreducible_natDegree",
+   "MIPRE.SAT.shoupBinField_finrank",
+   "MIPRE.SAT.shoupBinField_charP",
+   "MIPRE.SAT.shoupRoot_equation",
+   "MIPRE.SAT.shoupRoot_eval_toBits",
+   "MIPRE.SAT.shoupRoot_eval_eq_iff"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.shoupFrobeniusAction_apply",
+  "source_name": "MIPRE.SAT.shoupFrobeniusAction_apply",
+  "formal_statement": "theorem MIPRE.SAT.shoupFrobeniusAction_apply (k : ℕ) (hk : 1 ≤ k) [NeZero k]\n    (z : AddMonoidAlgebra (ZMod 2) (Fin k)) (a : (shoupBinField k hk).carrier) :\n    shoupFrobeniusAction k hk z a = ∑ i : Fin k, z.coeff i • a ^ (2 ^ i.val) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryLinear"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.FrobeniusAction",
+  "module_doc": "/-! # The faithful cyclic Frobenius representation -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/FrobeniusAction.lean#L34-L39",
+  "source_path": "MIPRE/Foundations/SAT/FrobeniusAction.lean",
+  "lines": [
+   34,
+   39
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 3,
+  "is_target": false
+ }
+]

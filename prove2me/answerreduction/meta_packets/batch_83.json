@@ -1,0 +1,481 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.case_evElim_cons",
+  "source_name": "MIPRE.TM.Interp.case_evElim_cons",
+  "formal_statement": "theorem MIPRE.TM.Interp.case_evElim_cons {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evElim 0) ds)\n    {i : ℕ} {n cc : Prog} {env : Env} {k : List Frame} {r : ℕ}\n    (hr : RepOf ds ⟨.ev (.elim i n cc), env, k⟩ r 8 (kontRepr k).length)\n    {a b : Data} (hv : Env.get env i = .cons a b) :\n    PreTo c (caseBound ⟨.ev (.elim i n cc), env, k⟩ (ds X).l.length) (at_ .evElimCons 15)\n      ⟨.ev cc, a :: b :: env, k⟩ r (ctrlRepr (.ev cc)).length (kontRepr k).length\n      ((ds X).l.length + sz ⟨.ev (.elim i n cc), env, k⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "`elim` when the value is a pair: push its components, evaluate `cc`.",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean#L761-L854",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "lines": [
+   761,
+   854
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.D_rewind",
+   "MIPRE.TM.Interp.D_getEnv",
+   "MIPRE.TM.Interp.D_copyTree",
+   "MIPRE.TM.Interp.D_skipTree",
+   "MIPRE.TM.Interp.D_write",
+   "MIPRE.TM.Interp.size_get_le"
+  ],
+  "pasted_helpers": 51,
+  "prooflines": 86,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.case_evLet",
+  "source_name": "MIPRE.TM.Interp.case_evLet",
+  "formal_statement": "theorem MIPRE.TM.Interp.case_evLet {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evLet 0) ds)\n    {e b : Prog} {env : Env} {k : List Frame} {r : ℕ}\n    (hr : RepOf ds ⟨.ev (.let_ e b), env, k⟩ r 10 (kontRepr k).length) :\n    PreTo c (caseBound ⟨.ev (.let_ e b), env, k⟩ (ds X).l.length) (at_ .evLet 15)\n      ⟨.ev e, env, .let1 b env :: k⟩ r (ctrlRepr (.ev e)).length\n      (kontRepr (.let1 b env :: k)).length ((ds X).l.length + sz ⟨.ev (.let_ e b), env, k⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean#L858-L921",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "lines": [
+   858,
+   921
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.D_rewind",
+   "MIPRE.TM.Interp.D_copyUntil",
+   "MIPRE.TM.Interp.D_copyTree",
+   "MIPRE.TM.Interp.D_write"
+  ],
+  "pasted_helpers": 43,
+  "prooflines": 58,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.case_evLoop",
+  "source_name": "MIPRE.TM.Interp.case_evLoop",
+  "formal_statement": "theorem MIPRE.TM.Interp.case_evLoop {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .evLoop 0) ds)\n    {b : Prog} {env : Env} {k : List Frame} {r : ℕ}\n    (hr : RepOf ds ⟨.ev (.loop b), env, k⟩ r 12 (kontRepr k).length) :\n    StepTo c (caseBound ⟨.ev (.loop b), env, k⟩ (ds X).l.length) ⟨.ev b, env, .loop1 b env :: k⟩ r\n      ((ds X).l.length + sz ⟨.ev (.loop b), env, k⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean#L923-L985",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "lines": [
+   923,
+   985
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.D_rewind",
+   "MIPRE.TM.Interp.D_copyUntil",
+   "MIPRE.TM.Interp.D_copyTree",
+   "MIPRE.TM.Interp.D_write"
+  ],
+  "pasted_helpers": 46,
+  "prooflines": 58,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.dispatch_ret",
+  "source_name": "MIPRE.TM.Interp.dispatch_ret",
+  "formal_statement": "theorem MIPRE.TM.Interp.dispatch_ret {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispatch 0) ds)\n    {v : Data} {env : Env} {f : Frame} {k : List Frame} {r : ℕ}\n    (hr : RepOf ds ⟨.ret v, env, f :: k⟩ r (ctrlRepr (.ret v)).length (kontRepr (f :: k)).length) :\n    PreTo1 c (v.size + (frameBody f).length + 20) (at_ (retTarget f) 0) ⟨.ret v, env, f :: k⟩ r 1\n      ((kontRepr k).length + 1) (ds X).l.length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "From the dispatcher, a return to a frame reaches its case program with the head of `C`\non the value and the head of `K` on the second tag bit.",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean#L1041-L1117",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "lines": [
+   1041,
+   1117
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.D_rewind",
+   "MIPRE.TM.Interp.D_leftToMarker",
+   "MIPRE.TM.Interp.mem_frameBody"
+  ],
+  "pasted_helpers": 63,
+  "prooflines": 70,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.case_retCons1",
+  "source_name": "MIPRE.TM.Interp.case_retCons1",
+  "formal_statement": "theorem MIPRE.TM.Interp.case_retCons1 {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .retCons1 0) ds)\n    {v : Data} {t : Prog} {env env' : Env} {k : List Frame} {r : ℕ}\n    (hr : RepOf ds ⟨.ret v, env, .cons1 t env' :: k⟩ r 1 ((kontRepr k).length + 1)) :\n    StepTo c (caseBound ⟨.ret v, env, .cons1 t env' :: k⟩ (ds X).l.length)\n      ⟨.ev t, env', .cons2 v :: k⟩ r ((ds X).l.length + sz ⟨.ret v, env, .cons1 t env' :: k⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean#L1145-L1235",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "lines": [
+   1145,
+   1235
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.D_rewind",
+   "MIPRE.TM.Interp.D_eraseRight",
+   "MIPRE.TM.Interp.D_copyUntil",
+   "MIPRE.TM.Interp.D_popBack",
+   "MIPRE.TM.Interp.D_copyTree",
+   "MIPRE.TM.Interp.D_write",
+   "MIPRE.TM.Interp.mem_frameBody"
+  ],
+  "pasted_helpers": 54,
+  "prooflines": 86,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.case_retCons2",
+  "source_name": "MIPRE.TM.Interp.case_retCons2",
+  "formal_statement": "theorem MIPRE.TM.Interp.case_retCons2 {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .retCons2 0) ds)\n    {v a : Data} {env : Env} {k : List Frame} {r : ℕ}\n    (hr : RepOf ds ⟨.ret v, env, .cons2 a :: k⟩ r 1 ((kontRepr k).length + 1)) :\n    StepTo c (caseBound ⟨.ret v, env, .cons2 a :: k⟩ (ds X).l.length)\n      ⟨.ret (.cons a v), env, k⟩ r ((ds X).l.length + sz ⟨.ret v, env, .cons2 a :: k⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean#L1237-L1306",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "lines": [
+   1237,
+   1306
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.D_rewind",
+   "MIPRE.TM.Interp.D_popBack",
+   "MIPRE.TM.Interp.D_copyTree",
+   "MIPRE.TM.Interp.D_write",
+   "MIPRE.TM.Interp.mem_frameBody"
+  ],
+  "pasted_helpers": 50,
+  "prooflines": 65,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.case_retLet1",
+  "source_name": "MIPRE.TM.Interp.case_retLet1",
+  "formal_statement": "theorem MIPRE.TM.Interp.case_retLet1 {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .retLet1 0) ds)\n    {v : Data} {b : Prog} {env env' : Env} {k : List Frame} {r : ℕ}\n    (hr : RepOf ds ⟨.ret v, env, .let1 b env' :: k⟩ r 1 ((kontRepr k).length + 1)) :\n    StepTo c (caseBound ⟨.ret v, env, .let1 b env' :: k⟩ (ds X).l.length)\n      ⟨.ev b, v :: env', k⟩ r ((ds X).l.length + sz ⟨.ret v, env, .let1 b env' :: k⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean#L1308-L1392",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "lines": [
+   1308,
+   1392
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.D_rewind",
+   "MIPRE.TM.Interp.D_eraseRight",
+   "MIPRE.TM.Interp.D_copyUntil",
+   "MIPRE.TM.Interp.D_popBack",
+   "MIPRE.TM.Interp.D_copyTree",
+   "MIPRE.TM.Interp.D_write",
+   "MIPRE.TM.Interp.mem_frameBody"
+  ],
+  "pasted_helpers": 54,
+  "prooflines": 80,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.case_retLoopNil",
+  "source_name": "MIPRE.TM.Interp.case_retLoopNil",
+  "formal_statement": "theorem MIPRE.TM.Interp.case_retLoopNil {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .retLoop1 0) ds)\n    {b : Prog} {env env' : Env} {k : List Frame} {r : ℕ}\n    (hr : RepOf ds ⟨.ret .nil, env, .loop1 b env' :: k⟩ r 1 ((kontRepr k).length + 1)) :\n    PreTo c (caseBound ⟨.ret .nil, env, .loop1 b env' :: k⟩ (ds X).l.length) (at_ .retLoopNil 11)\n      ⟨.ret .nil, env', k⟩ r (ctrlRepr (.ret .nil)).length (kontRepr k).length\n      ((ds X).l.length + sz ⟨.ret .nil, env, .loop1 b env' :: k⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean#L1397-L1465",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "lines": [
+   1397,
+   1465
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.D_rewind",
+   "MIPRE.TM.Interp.D_eraseRight",
+   "MIPRE.TM.Interp.D_copyUntil",
+   "MIPRE.TM.Interp.D_popBack",
+   "MIPRE.TM.Interp.D_skipTree",
+   "MIPRE.TM.Interp.D_write",
+   "MIPRE.TM.Interp.mem_frameBody"
+  ],
+  "pasted_helpers": 58,
+  "prooflines": 63,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.case_retLoopStop",
+  "source_name": "MIPRE.TM.Interp.case_retLoopStop",
+  "formal_statement": "theorem MIPRE.TM.Interp.case_retLoopStop {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .retLoop1 0) ds)\n    {r' : Data} {b : Prog} {env env' : Env} {k : List Frame} {r : ℕ}\n    (hr : RepOf ds ⟨.ret (.cons .nil r'), env, .loop1 b env' :: k⟩ r 1 ((kontRepr k).length + 1)) :\n    PreTo c (caseBound ⟨.ret (.cons .nil r'), env, .loop1 b env' :: k⟩ (ds X).l.length)\n      (at_ .retLoopStop 15) ⟨.ret r', env', k⟩ r (ctrlRepr (.ret r')).length (kontRepr k).length\n      ((ds X).l.length + sz ⟨.ret (.cons .nil r'), env, .loop1 b env' :: k⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean#L1467-L1558",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "lines": [
+   1467,
+   1558
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.D_rewind",
+   "MIPRE.TM.Interp.D_eraseRight",
+   "MIPRE.TM.Interp.D_copyUntil",
+   "MIPRE.TM.Interp.D_popBack",
+   "MIPRE.TM.Interp.D_copyTree",
+   "MIPRE.TM.Interp.D_skipTree",
+   "MIPRE.TM.Interp.D_write",
+   "MIPRE.TM.Interp.mem_frameBody"
+  ],
+  "pasted_helpers": 60,
+  "prooflines": 86,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.case_retLoopCont",
+  "source_name": "MIPRE.TM.Interp.case_retLoopCont",
+  "formal_statement": "theorem MIPRE.TM.Interp.case_retLoopCont {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .retLoop1 0) ds)\n    {y z v' : Data} {b : Prog} {env env' : Env} {k : List Frame} {r : ℕ}\n    (hr : RepOf ds ⟨.ret (.cons (.cons y z) v'), env, .loop1 b env' :: k⟩ r 1\n      ((kontRepr k).length + 1)) :\n    PreTo c (caseBound ⟨.ret (.cons (.cons y z) v'), env, .loop1 b env' :: k⟩ (ds X).l.length)\n      (at_ .retLoopCont 29) ⟨.ev b, v' :: env'.tail, .loop1 b (v' :: env'.tail) :: k⟩ r\n      (ctrlRepr (.ev b)).length (kontRepr (.loop1 b (v' :: env'.tail) :: k)).length\n      ((ds X).l.length + sz ⟨.ret (.cons (.cons y z) v'), env, .loop1 b env' :: k⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean#L1560-L1714",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "lines": [
+   1560,
+   1714
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.D_rewind",
+   "MIPRE.TM.Interp.D_toEnd",
+   "MIPRE.TM.Interp.D_eraseRight",
+   "MIPRE.TM.Interp.D_copyUntil",
+   "MIPRE.TM.Interp.D_leftToMarker",
+   "MIPRE.TM.Interp.D_popBack",
+   "MIPRE.TM.Interp.D_popBack_empty",
+   "MIPRE.TM.Interp.D_copyTree",
+   "MIPRE.TM.Interp.D_skipTree",
+   "MIPRE.TM.Interp.D_write",
+   "MIPRE.TM.Interp.mem_frameBody"
+  ],
+  "pasted_helpers": 65,
+  "prooflines": 147,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.final_run",
+  "source_name": "MIPRE.TM.Interp.final_run",
+  "formal_statement": "theorem MIPRE.TM.Interp.final_run {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispatch 0) ds)\n    {v : Data} {env : Env} {r : ℕ}\n    (hr : RepOf ds ⟨.ret v, env, []⟩ r (ctrlRepr (.ret v)).length (kontRepr []).length) :\n    (v = Data.ofBool true → ∃ n ≤ v.size + 16, AcceptsFrom c n) ∧\n    (v ≠ Data.ofBool true → HaltsIn c (v.size + 16)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "The final check on `ret v` with an empty stack: accept iff `v = encode true`.",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean#L1758-L1824",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "lines": [
+   1758,
+   1824
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.D_rewind"
+  ],
+  "pasted_helpers": 60,
+  "prooflines": 61,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.step_run",
+  "source_name": "MIPRE.TM.Interp.step_run",
+  "formal_statement": "theorem MIPRE.TM.Interp.step_run {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispatch 0) ds)\n    {m : Machine.Cfg} {r : ℕ}\n    (hr : RepOf ds m r (ctrlRepr m.ctrl).length (kontRepr m.kont).length)\n    (hnf : ∀ v, m.ctrl = .ret v → m.kont ≠ []) (hcost : stepCost m ≤ r) :\n    RunTo c (stepBound m (ds X).l.length) (Machine.step m) (r - stepCost m) ((ds X).l.length + sz m) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "**One step of the machine**, when the budget covers its cost: from the dispatcher\nrepresenting `m`, `U` reaches the dispatcher representing `step m` with the cost charged.",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean#L1838-L1946",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "lines": [
+   1838,
+   1946
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.D_rewind",
+   "MIPRE.TM.Interp.D_charge",
+   "MIPRE.TM.Interp.D_copyTree",
+   "MIPRE.TM.Interp.D_copyTree_charge",
+   "MIPRE.TM.Interp.D_write",
+   "MIPRE.TM.Interp.case_evElim_cons",
+   "MIPRE.TM.Interp.dispatch_ev",
+   "MIPRE.TM.Interp.case_evLet",
+   "MIPRE.TM.Interp.case_evLoop",
+   "MIPRE.TM.Interp.dispatch_ret",
+   "MIPRE.TM.Interp.case_retCons1",
+   "MIPRE.TM.Interp.case_retCons2",
+   "MIPRE.TM.Interp.case_retLet1",
+   "MIPRE.TM.Interp.case_retLoopNil",
+   "MIPRE.TM.Interp.case_retLoopStop",
+   "MIPRE.TM.Interp.case_retLoopCont",
+   "MIPRE.TM.Interp.case_evVar",
+   "MIPRE.TM.Interp.case_evCons",
+   "MIPRE.TM.Interp.case_evElim_nil"
+  ],
+  "pasted_helpers": 52,
+  "prooflines": 102,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.step_fail",
+  "source_name": "MIPRE.TM.Interp.step_fail",
+  "formal_statement": "theorem MIPRE.TM.Interp.step_fail {c : Cfg input} {ds : WT → TapeSt} (hd : Desc c (at_ .dispatch 0) ds)\n    {m : Machine.Cfg} {r : ℕ}\n    (hr : RepOf ds m r (ctrlRepr m.ctrl).length (kontRepr m.kont).length)\n    (hnf : ∀ v, m.ctrl = .ret v → m.kont ≠ []) (hcost : r < stepCost m) :\n    HaltsIn c (stepBound m (ds X).l.length) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost MIPRE.Cost.Machine",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "**One step of the machine**, when the budget is short: `U` halts silently.",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean#L1948-L2016",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "lines": [
+   1948,
+   2016
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.Interp.copyTree_scan_fail",
+   "MIPRE.TM.Interp.D_rewind",
+   "MIPRE.TM.Interp.D_getEnv",
+   "MIPRE.TM.Interp.D_copyTree_charge",
+   "MIPRE.TM.Interp.D_write",
+   "MIPRE.TM.Interp.exec_charge_one_fail",
+   "MIPRE.TM.Interp.case_evElim_cons",
+   "MIPRE.TM.Interp.dispatch_ev",
+   "MIPRE.TM.Interp.case_evLet",
+   "MIPRE.TM.Interp.dispatch_ret",
+   "MIPRE.TM.Interp.case_retLoopNil",
+   "MIPRE.TM.Interp.case_retLoopStop",
+   "MIPRE.TM.Interp.case_retLoopCont",
+   "MIPRE.TM.Interp.case_evCons",
+   "MIPRE.TM.Interp.case_evElim_nil",
+   "MIPRE.TM.Interp.size_get_le"
+  ],
+  "pasted_helpers": 64,
+  "prooflines": 63,
+  "is_target": false
+ },
+ {
+  "kind": "glue-leaf-closure",
+  "theorem_name": "MIPRE.AnswerReduction.nonempty_five",
+  "formal_statement": "theorem MIPRE.AnswerReduction.nonempty_five : Nonempty (MIPRE.AnswerReduction 5) := by sorry",
+  "preamble_opens": [],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/Instance.lean",
+  "source_path": "MIPRE/Background/AnswerReduction/Instance.lean",
+  "lines": null,
+  "witness": "⟨MIPRE.AnswerReduction.answerReduction⟩",
+  "blueprint": [],
+  "imported_nodes": [],
+  "stub_published": true,
+  "solution_file": "Solutions/Sol_MIPRE_AnswerReduction_nonempty_five.lean"
+ }
+]

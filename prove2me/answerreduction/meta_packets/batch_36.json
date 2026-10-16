@@ -1,0 +1,663 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_comm_error_le",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_comm_error_le",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_comm_error_le\n    (params : Parameters) [FieldModel params.q]\n    (eps delta gamma zeta : Error) {j k : ℕ}\n    (hj_pos : 1 ≤ j) (hjk : j ≤ k)\n    (heps_nonneg : 0 ≤ eps)\n    (hdelta_nonneg : 0 ≤ delta)\n    (hgamma_nonneg : 0 ≤ gamma)\n    (hzeta_nonneg : 0 ≤ zeta)\n    (hzeta_le : zeta ≤ 1) :\n    zeta + Real.sqrt (8 * (params.m : Error) * min eps 1 + 4 * min delta 1) +\n        2 * Real.sqrt (commuteGHalfSandwichError params gamma zeta j) ≤\n      ldSandwichLineOnePointError params eps delta gamma zeta k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Scalar absorption for the post-tail-deletion one-point estimate.\n\nThis is the arithmetic at `references/ldt-paper/ld-pasting.tex:1028--1033`,\nwith the endpoint error from `eq:ld-gbcon` and the two Cauchy--Schwarz losses\nfrom `ld-pasting.tex:954--1024` kept separate.  The proof uses the paper's\n`√426 ≤ 21` estimate and the square comparison\n`√(γ^(1/16)+ζ^(1/16)+(d/q)^(1/16)) ≤ γ^(1/32)+ζ^(1/32)+(d/q)^(1/32)`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.OutcomeLemmas",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — outcome lemmas\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/OutcomeLemmas.lean#L462-L649",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/OutcomeLemmas.lean",
+  "lines": [
+   462,
+   649
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_sqrt_bound"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 169,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointPrefixMoved_eq_endpoint",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointPrefixMoved_eq_endpoint",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePointPrefixMoved_eq_endpoint\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    {k i : ℕ} (hi : i < k) :\n    ldSandwichLineOnePointPrefixMovedFamily params family hi =\n      (fun q : SandwichedLineQuestion params k =>\n        postprocess\n          (evaluateAt params q.1 ((family.meas (q.2 ⟨i, hi⟩)).toSubMeas))\n          some) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Rotating the selected coordinate to the front reduces the prefix family to `ldGbcon`.\n\nThis is the prefix-completeness collapse and endpoint identification used after\n`references/ldt-paper/ld-pasting.tex:1011--1024`: once the selected coordinate is\nfirst, summing the remaining prefix sandwich leaves the one-point endpoint\nmeasurement.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.PrefixMoved",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — prefix moved lemmas\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/PrefixMoved.lean#L110-L141",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/PrefixMoved.lean",
+  "lines": [
+   110,
+   141
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_zero_eq_endpoint"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.gHatHalfProduct_prefix_mul_last",
+  "source_name": "MIPStarRE.LDT.Pasting.gHatHalfProduct_prefix_mul_last",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.gHatHalfProduct_prefix_mul_last\n    (params : Parameters)\n    [FieldModel params.q]\n    (family : IdxPolyFamily params ι) :\n    ∀ i (xs : PointTuple params (i + 2)) (gs : GHatTupleOutcome params (i + 2)),\n      gHatHalfProductOutcomeOperator params family (i + 2) xs gs =\n        gHatHalfProductOutcomeOperator params family (i + 1)\n            (fun j => xs ⟨j.1, by omega⟩)\n            (fun j => gs ⟨j.1, by omega⟩) *\n          (gHatIdxMeas params family (xs ⟨i + 1, by omega⟩)).outcome\n            (gs ⟨i + 1, by omega⟩) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Expand a half-product into the prefix product times the last slice operator.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.PrefixMoved",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — prefix moved lemmas\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/PrefixMoved.lean#L194-L217",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/PrefixMoved.lean",
+  "lines": [
+   194,
+   217
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.gHatSandwich_sum_last_eq_prefix",
+  "source_name": "MIPStarRE.LDT.Pasting.gHatSandwich_sum_last_eq_prefix",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.gHatSandwich_sum_last_eq_prefix\n    (params : Parameters)\n    [FieldModel params.q]\n    (family : IdxPolyFamily params ι)\n    (n : ℕ) (xs : PointTuple params (n + 1))\n    (gsPrefix : GHatTupleOutcome params n) :\n    (∑ g : GHatOutcome params,\n      let half := gHatHalfProductOutcomeOperator params family (n + 1) xs\n        ((gHatTupleOutcomePrefixLastEquiv params n).symm (gsPrefix, g))\n      half * halfᴴ) =\n      gHatHalfProductOutcomeOperator params family n\n        (fun j => xs ⟨j.1, by omega⟩) gsPrefix *\n        (gHatHalfProductOutcomeOperator params family n\n          (fun j => xs ⟨j.1, by omega⟩) gsPrefix)ᴴ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Summing the last completed-slice sandwich coordinate deletes that coordinate.\n\nThis formalizes the measurement-completeness step in `ld-pasting.tex`\nlines 934--941 for a single trailing coordinate.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.PrefixMoved",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — prefix moved lemmas\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/PrefixMoved.lean#L236-L303",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/PrefixMoved.lean",
+  "lines": [
+   236,
+   303
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Measurement.outcome_hermitian",
+   "MIPStarRE.LDT.Pasting.gHatHalfProduct_prefix_mul_last",
+   "MIPStarRE.LDT.Pasting.gHatIdxMeas_proj"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 50,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.gHatHalfProduct_lastReverse_eq_conjTranspose",
+  "source_name": "MIPStarRE.LDT.Pasting.gHatHalfProduct_lastReverse_eq_conjTranspose",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.gHatHalfProduct_lastReverse_eq_conjTranspose\n    (params : Parameters)\n    [FieldModel params.q]\n    (family : IdxPolyFamily params ι) :\n    ∀ i (xs : PointTuple params (i + 1)) (gs : GHatTupleOutcome params (i + 1)),\n      gHatHalfProductOutcomeOperator params family (i + 1)\n          ((pointTupleLastReverseEquiv params i) xs)\n          ((gHatTupleOutcomeLastReverseEquiv params i) gs) =\n        (gHatHalfProductOutcomeOperator params family (i + 1) xs gs)ᴴ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Reversing the prefix after moving the last coordinate to the front gives the adjoint product.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.PrefixMoved",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — prefix moved lemmas\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/PrefixMoved.lean#L305-L370",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/PrefixMoved.lean",
+  "lines": [
+   305,
+   370
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Measurement.outcome_hermitian",
+   "MIPStarRE.LDT.Pasting.gHatHalfProduct_prefix_mul_last"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 56,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.gHatRotatedHalfProduct_lastReverse_eq_conjTranspose_lastFront",
+  "source_name": "MIPStarRE.LDT.Pasting.gHatRotatedHalfProduct_lastReverse_eq_conjTranspose_lastFront",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.gHatRotatedHalfProduct_lastReverse_eq_conjTranspose_lastFront\n    (params : Parameters)\n    [FieldModel params.q]\n    (family : IdxPolyFamily params ι) :\n    ∀ i (xs : PointTuple params (i + 1)) (gs : GHatTupleOutcome params (i + 1)),\n      gHatRotatedHalfProductOutcomeOperator params family (i + 1)\n          ((pointTupleLastReverseEquiv params i) xs)\n          ((gHatTupleOutcomeLastReverseEquiv params i) gs) =\n        (gHatHalfProductOutcomeOperator params family (i + 1)\n          ((pointTupleLastFrontEquiv params i) xs)\n          ((gHatTupleOutcomeLastFrontEquiv params i) gs))ᴴ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The rotated product on the last-reversed tuple is the adjoint of the last-front product.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.PrefixMoved",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — prefix moved lemmas\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/PrefixMoved.lean#L372-L458",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/PrefixMoved.lean",
+  "lines": [
+   372,
+   458
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Measurement.outcome_hermitian",
+   "MIPStarRE.LDT.Pasting.gHatHalfProduct_lastReverse_eq_conjTranspose"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 75,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.avgOver_distinct_bounded_le_avgOver_uniform_add_tv_of_any_k",
+  "source_name": "MIPStarRE.LDT.Pasting.avgOver_distinct_bounded_le_avgOver_uniform_add_tv_of_any_k",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.avgOver_distinct_bounded_le_avgOver_uniform_add_tv_of_any_k\n    (params : Parameters) [FieldModel params.q]\n    (k : ℕ)\n    (F : PointTuple params k → Error)\n    (hF_nonneg : ∀ xs, 0 ≤ F xs)\n    (hF_le_one : ∀ xs, F xs ≤ 1) :\n    avgOver (distinctTupleDistribution params k) F\n      ≤ avgOver (uniformDistribution (PointTuple params k)) F\n        + totalVariationDistance\n            (uniformDistribution (PointTuple params k))\n            (distinctTupleDistribution params k) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.Averaging",
+  "module_doc": "/-!\n# Line interpolation: averaging and tensor helpers\n\nTensor/average helper lemmas and total-variation comparison used across the\nline interpolation error bounding chain.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/Averaging.lean#L98-L139",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/Averaging.lean",
+  "lines": [
+   98,
+   139
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_le_avgOver_add_totalVariationDistance"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.qBipartiteConsDefect_averageIdxSubMeas_left_le",
+  "source_name": "MIPStarRE.LDT.Pasting.qBipartiteConsDefect_averageIdxSubMeas_left_le",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.qBipartiteConsDefect_averageIdxSubMeas_left_le\n    {Question Outcome : Type*}\n    [Fintype Outcome]\n    (ψ : QuantumState (ι × ι))\n    (𝒟 : Distribution Question)\n    (A : IdxSubMeas Question Outcome ι)\n    (B : SubMeas Outcome ι)\n    (h𝒟 : ∑ q ∈ 𝒟.support, 𝒟.weight q ≤ 1) :\n    qBipartiteConsDefect ψ (averageIdxSubMeas 𝒟 A h𝒟) B ≤\n      avgOver 𝒟 (fun q => qBipartiteConsDefect ψ (A q) B) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.Averaging",
+  "module_doc": "/-!\n# Line interpolation: averaging and tensor helpers\n\nTensor/average helper lemmas and total-variation comparison used across the\nline interpolation error bounding chain.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/Averaging.lean#L231-L250",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/Averaging.lean",
+  "lines": [
+   231,
+   250
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.averageOperatorOverDistribution_congr",
+   "MIPStarRE.LDT.averageOperatorOverDistribution_sum",
+   "MIPStarRE.LDT.averageOperatorOverDistribution_nonneg",
+   "MIPStarRE.LDT.averageOperatorOverDistribution_le_one_of_weight_sum_le_one",
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_sum",
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_real_smul",
+   "MIPStarRE.LDT.opTensor_sum_left_finset"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 10,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.evaluateAt_averageIdxSubMeas",
+  "source_name": "MIPStarRE.LDT.Pasting.evaluateAt_averageIdxSubMeas",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.evaluateAt_averageIdxSubMeas\n    (params : Parameters) [FieldModel params.q]\n    {Question : Type*}\n    (u : Point params)\n    (𝒟 : Distribution Question)\n    (A : IdxSubMeas Question (Polynomial params) ι)\n    (h𝒟 : ∑ q ∈ 𝒟.support, 𝒟.weight q ≤ 1) :\n    evaluateAt params u (averageIdxSubMeas 𝒟 A h𝒟) =\n      averageIdxSubMeas 𝒟 (fun q => evaluateAt params u (A q)) h𝒟 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.BadLine",
+  "module_doc": "/-!\n# Line interpolation: bad-line event\n\nDefinitions and lemmas for `tupleInterpolatedVerticalLine` and mismatch\nextraction in the line-interpolation argument.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadLine.lean#L90-L104",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadLine.lean",
+  "lines": [
+   90,
+   104
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.averageOperatorOverDistribution_congr",
+   "MIPStarRE.LDT.averageOperatorOverDistribution_sum",
+   "MIPStarRE.LDT.averageOperatorOverDistribution_nonneg",
+   "MIPStarRE.LDT.averageOperatorOverDistribution_le_one_of_weight_sum_le_one",
+   "MIPStarRE.LDT.SubMeas.ext"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.tupleInterpolatedVerticalLine_ne_gives_exists_some_eval_mismatch",
+  "source_name": "MIPStarRE.LDT.Pasting.tupleInterpolatedVerticalLine_ne_gives_exists_some_eval_mismatch",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.tupleInterpolatedVerticalLine_ne_gives_exists_some_eval_mismatch\n    (params : Parameters) [FieldModel params.q]\n    {k : ℕ}\n    (u : Point params)\n    (xs : PointTuple params k)\n    (hxs : Function.Injective xs)\n    (gs : GHatTupleOutcome params k)\n    (hEligible : InterpolationEligible params gs)\n    (_hGlobal : IsGloballyConsistent params xs gs)\n    (f : AxisLinePolynomial params.next)\n    (hne : tupleInterpolatedVerticalLine params u xs gs ≠ f) :\n    ∃ i : Fin k, ∃ hiSome : (gs i).isSome = true, ((gs i).get hiSome) u ≠ f (xs i) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.BadLine",
+  "module_doc": "/-!\n# Line interpolation: bad-line event\n\nDefinitions and lemmas for `tupleInterpolatedVerticalLine` and mismatch\nextraction in the line-interpolation argument.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadLine.lean#L124-L169",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadLine.lean",
+  "lines": [
+   124,
+   169
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Polynomial.restrictToAxisParallelLine_apply",
+   "MIPStarRE.LDT.Pasting.interpolateCompletedSlices_restrictAtHeight_eq_get_of_mem_supportSubset",
+   "MIPStarRE.LDT.Pasting.axisLinePolynomial_ne_gives_support_eval_ne",
+   "MIPStarRE.LDT.Pasting.restrictToVerticalLine_eval_eq_restrictAtHeight_eval"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.interpolationEligibleSandwich_exists_mismatch_sum_le_sum",
+  "source_name": "MIPStarRE.LDT.Pasting.interpolationEligibleSandwich_exists_mismatch_sum_le_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.interpolationEligibleSandwich_exists_mismatch_sum_le_sum\n    (params : Parameters) [FieldModel params.q]\n    (family : IdxPolyFamily params ι)\n    {k : ℕ}\n    (u : Point params)\n    (xs : PointTuple params k)\n    (f : AxisLinePolynomial params.next) :\n    (∑ gs : GHatTupleOutcome params k,\n        if ∃ i : Fin k, ∃ hiSome : (gs i).isSome = true,\n            ((gs i).get hiSome) u ≠ f (xs i) then\n          (interpolationEligibleSandwichFamily params family k xs).outcome gs\n        else 0)\n      ≤\n      ∑ i : Fin k,\n        ∑ gs : GHatTupleOutcome params k,\n          if ∃ hiSome : (gs i).isSome = true,\n              ((gs i).get hiSome) u ≠ f (xs i) then\n            (interpolationEligibleSandwichFamily params family k xs).outcome gs\n          else 0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.BadMass",
+  "module_doc": "/-!\n# Line interpolation: bad-mass comparison\n\nMain bad-mass comparison lemmas: sandwich mismatch sums, `qBipartiteConsDefect`\nequality via single-outcome measurements, `hBConsistencyBadMass`, line-point\ndefect bounds, and `pastedInterpolation_verticalLine_defect_le_badMass`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadMass.lean#L121-L192",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadMass.lean",
+  "lines": [
+   121,
+   192
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 53,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.qBipartiteConsDefect_eq_false_mass_of_bool_right_true",
+  "source_name": "MIPStarRE.LDT.Pasting.qBipartiteConsDefect_eq_false_mass_of_bool_right_true",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.qBipartiteConsDefect_eq_false_mass_of_bool_right_true\n    (ψ : QuantumState (ι × ι))\n    (A B : SubMeas Bool ι)\n    (hfalse : B.outcome false = 0)\n    (htrue : B.outcome true = B.total) :\n    qBipartiteConsDefect ψ A B = ev ψ (opTensor (A.outcome false) B.total) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "If the right-hand Boolean submeasurement has only the `true` outcome, the\nconsistency defect is exactly the left `false` mass against its total operator.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.BadMass",
+  "module_doc": "/-!\n# Line interpolation: bad-mass comparison\n\nMain bad-mass comparison lemmas: sandwich mismatch sums, `qBipartiteConsDefect`\nequality via single-outcome measurements, `hBConsistencyBadMass`, line-point\ndefect bounds, and `pastedInterpolation_verticalLine_defect_le_badMass`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadMass.lean#L225-L276",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadMass.lean",
+  "lines": [
+   225,
+   276
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_add",
+   "MIPStarRE.LDT.SubMeas.total_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 44,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.qBipartiteConsDefect_eq_sum_singleOutcome",
+  "source_name": "MIPStarRE.LDT.Pasting.qBipartiteConsDefect_eq_sum_singleOutcome",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.qBipartiteConsDefect_eq_sum_singleOutcome\n    {Outcome : Type*} [Fintype Outcome] [DecidableEq Outcome]\n    (ψ : QuantumState (ι × ι))\n    (A : SubMeas Outcome ι)\n    (B : Measurement Outcome ι) :\n    qBipartiteConsDefect ψ A B.toSubMeas =\n      ∑ a0 : Outcome,\n        qBipartiteConsDefect ψ (postprocess A (fun a => decide (a = a0)))\n          (singleOutcomeRightSubMeas B.toSubMeas a0) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.BadMass",
+  "module_doc": "/-!\n# Line interpolation: bad-mass comparison\n\nMain bad-mass comparison lemmas: sandwich mismatch sums, `qBipartiteConsDefect`\nequality via single-outcome measurements, `hBConsistencyBadMass`, line-point\ndefect bounds, and `pastedInterpolation_verticalLine_defect_le_badMass`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadMass.lean#L314-L375",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadMass.lean",
+  "lines": [
+   314,
+   375
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_add",
+   "MIPStarRE.LDT.opTensor_add_left_local",
+   "MIPStarRE.LDT.opTensor_sum_right_finset",
+   "MIPStarRE.LDT.Pasting.qBipartiteConsDefect_eq_false_mass_of_bool_right_true",
+   "MIPStarRE.LDT.qBipartiteConsDefect_nonneg",
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 53,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.hBConsistencyCoordMass_le_linePointDefect",
+  "source_name": "MIPStarRE.LDT.Pasting.hBConsistencyCoordMass_le_linePointDefect",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.hBConsistencyCoordMass_le_linePointDefect\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    {k : ℕ} (u : Point params) (xs : PointTuple params k)\n    (i : Fin k) :\n    (∑ f : AxisLinePolynomial params.next,\n      ev strategy.state\n        (opTensor\n          (∑ gs : GHatTupleOutcome params k,\n            if ∃ hiSome : (gs i).isSome = true, ((gs i).get hiSome) u ≠ f (xs i) then\n              (interpolationEligibleSandwichFamily params family k xs).outcome gs\n            else 0)\n          ((verticalLineMeasurementFamily params strategy u).outcome f)))\n      ≤ qBipartiteConsDefect strategy.state\n          ((ldSandwichLineOnePointLeftFamily params strategy family k i.1) (u, xs))\n          ((ldSandwichLineOnePointRightFamily params strategy family k i.1) (u, xs)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.BadMass",
+  "module_doc": "/-!\n# Line interpolation: bad-mass comparison\n\nMain bad-mass comparison lemmas: sandwich mismatch sums, `qBipartiteConsDefect`\nequality via single-outcome measurements, `hBConsistencyBadMass`, line-point\ndefect bounds, and `pastedInterpolation_verticalLine_defect_le_badMass`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadMass.lean#L473-L638",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadMass.lean",
+  "lines": [
+   473,
+   638
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.opTensor_mono_left",
+   "MIPStarRE.LDT.opTensor_sum_right_finset",
+   "MIPStarRE.LDT.SubMeas.ext",
+   "MIPStarRE.LDT.SubMeas.postprocess_comp",
+   "MIPStarRE.LDT.Pasting.qBipartiteConsDefect_eq_sum_singleOutcome",
+   "MIPStarRE.LDT.Pasting.qBipartiteConsDefect_eq_false_mass_of_bool_right_true",
+   "MIPStarRE.LDT.qBipartiteConsDefect_nonneg",
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 149,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.hBConsistencyBadMass_le_linePointDefectSum",
+  "source_name": "MIPStarRE.LDT.Pasting.hBConsistencyBadMass_le_linePointDefectSum",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.hBConsistencyBadMass_le_linePointDefectSum\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    {k : ℕ} (u : Point params) (xs : PointTuple params k) :\n    hBConsistencyBadMass params strategy family u xs\n      ≤ ∑ i : Fin k,\n          qBipartiteConsDefect strategy.state\n            ((ldSandwichLineOnePointLeftFamily params strategy family k i.1) (u, xs))\n            ((ldSandwichLineOnePointRightFamily params strategy family k i.1) (u, xs)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.BadMass",
+  "module_doc": "/-!\n# Line interpolation: bad-mass comparison\n\nMain bad-mass comparison lemmas: sandwich mismatch sums, `qBipartiteConsDefect`\nequality via single-outcome measurements, `hBConsistencyBadMass`, line-point\ndefect bounds, and `pastedInterpolation_verticalLine_defect_le_badMass`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadMass.lean#L640-L687",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadMass.lean",
+  "lines": [
+   640,
+   687
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.opTensor_mono_left",
+   "MIPStarRE.LDT.opTensor_sum_left_finset",
+   "MIPStarRE.LDT.Pasting.hBConsistencyCoordMass_le_linePointDefect",
+   "MIPStarRE.LDT.Pasting.interpolationEligibleSandwich_exists_mismatch_sum_le_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 38,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.hBConsistencyBadMass_nonneg",
+  "source_name": "MIPStarRE.LDT.Pasting.hBConsistencyBadMass_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.hBConsistencyBadMass_nonneg\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    {k : ℕ} (u : Point params) (xs : PointTuple params k) :\n    0 ≤ hBConsistencyBadMass params strategy family u xs := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.BadMass",
+  "module_doc": "/-!\n# Line interpolation: bad-mass comparison\n\nMain bad-mass comparison lemmas: sandwich mismatch sums, `qBipartiteConsDefect`\nequality via single-outcome measurements, `hBConsistencyBadMass`, line-point\ndefect bounds, and `pastedInterpolation_verticalLine_defect_le_badMass`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadMass.lean#L689-L706",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadMass.lean",
+  "lines": [
+   689,
+   706
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.hBConsistencyBadMass_le_one",
+  "source_name": "MIPStarRE.LDT.Pasting.hBConsistencyBadMass_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.hBConsistencyBadMass_le_one\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    {k : ℕ} (u : Point params) (xs : PointTuple params k) :\n    hBConsistencyBadMass params strategy family u xs ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.BadMass",
+  "module_doc": "/-!\n# Line interpolation: bad-mass comparison\n\nMain bad-mass comparison lemmas: sandwich mismatch sums, `qBipartiteConsDefect`\nequality via single-outcome measurements, `hBConsistencyBadMass`, line-point\ndefect bounds, and `pastedInterpolation_verticalLine_defect_le_badMass`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadMass.lean#L708-L764",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadMass.lean",
+  "lines": [
+   708,
+   764
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.opTensor_mono_left",
+   "MIPStarRE.LDT.opTensor_sum_right_finset",
+   "MIPStarRE.LDT.leftTensor_le_one"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 51,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.pastedInterpolation_verticalLine_defect_le_badMass",
+  "source_name": "MIPStarRE.LDT.Pasting.pastedInterpolation_verticalLine_defect_le_badMass",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.pastedInterpolation_verticalLine_defect_le_badMass\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    {k : ℕ}\n    (u : Point params)\n    (xs : PointTuple params k)\n    (hxs : Function.Injective xs) :\n    qBipartiteConsDefect strategy.state\n      (hRestrictionToVerticalLine params (pastedInterpolationFamily params family k xs) u)\n      (verticalLineMeasurementFamily params strategy u)\n      ≤ hBConsistencyBadMass params strategy family u xs := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.BadMass",
+  "module_doc": "/-!\n# Line interpolation: bad-mass comparison\n\nMain bad-mass comparison lemmas: sandwich mismatch sums, `qBipartiteConsDefect`\nequality via single-outcome measurements, `hBConsistencyBadMass`, line-point\ndefect bounds, and `pastedInterpolation_verticalLine_defect_le_badMass`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadMass.lean#L780-L845",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/BadMass.lean",
+  "lines": [
+   780,
+   845
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.opTensor_mono_left",
+   "MIPStarRE.LDT.SubMeas.ext",
+   "MIPStarRE.LDT.SubMeas.postprocess_comp",
+   "MIPStarRE.LDT.Pasting.tupleInterpolatedVerticalLine_ne_gives_exists_some_eval_mismatch",
+   "MIPStarRE.LDT.Pasting.qBipartiteConsDefect_eq_sum_singleOutcome",
+   "MIPStarRE.LDT.Pasting.qBipartiteConsDefect_eq_false_mass_of_bool_right_true",
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 54,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.axisLinePolynomial_ne_gives_support_eval_ne",
+  "source_name": "MIPStarRE.LDT.Pasting.axisLinePolynomial_ne_gives_support_eval_ne",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.axisLinePolynomial_ne_gives_support_eval_ne\n    (params : Parameters) [FieldModel params.q]\n    {k : ℕ} (xs : PointTuple params k)\n    (hxs : Function.Injective xs)\n    (σ : Finset (Fin k))\n    (hσcard : σ.card = params.d + 1)\n    {f g : AxisLinePolynomial params.next}\n    (hne : f ≠ g) :\n    ∃ i : Fin k, i ∈ σ ∧ f (xs i) ≠ g (xs i) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.Core",
+  "module_doc": "/-!\n# Line interpolation: core API\n\nInterpolation-support, vertical-line restriction, and completed-slice\ninterpolation lemmas from `ld-pasting.tex` that form the foundation for the\nline-interpolation estimates.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/Core.lean#L88-L126",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/Core.lean",
+  "lines": [
+   88,
+   126
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 30,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.nonglobal_gives_slice_mismatch_against_interpolant",
+  "source_name": "MIPStarRE.LDT.Pasting.nonglobal_gives_slice_mismatch_against_interpolant",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.nonglobal_gives_slice_mismatch_against_interpolant\n    (params : Parameters) [FieldModel params.q]\n    {k : ℕ}\n    (xs : PointTuple params k)\n    (gs : GHatTupleOutcome params k)\n    (hNGlobal : ¬ IsGloballyConsistent params xs gs) :\n    ∃ i : Fin k, ∃ hiSome : (gs i).isSome = true,\n      Polynomial.restrictAtHeight params\n        (interpolateCompletedSlices params k xs gs) (xs i) ≠\n      (gs i).get hiSome := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LineInterpolation.Core",
+  "module_doc": "/-!\n# Line interpolation: core API\n\nInterpolation-support, vertical-line restriction, and completed-slice\ninterpolation lemmas from `ld-pasting.tex` that form the foundation for the\nline-interpolation estimates.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/Core.lean#L128-L145",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LineInterpolation/Core.lean",
+  "lines": [
+   128,
+   145
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 8,
+  "is_target": false
+ }
+]

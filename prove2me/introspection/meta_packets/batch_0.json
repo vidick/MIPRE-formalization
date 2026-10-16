@@ -1,0 +1,814 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionCompiler.detypingLoss_nonneg",
+  "source_name": "MIPRE.Introspection.DecisionCompiler.detypingLoss_nonneg",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionCompiler.detypingLoss_nonneg : 0 ≤ detypingLoss := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionCompiler",
+   "open MIPRE.Cost MIPRE.CL MIPRE.CL.Detyping MIPRE.CL.Detyping.Program"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.AmbientRawGame",
+  "module_doc": "/-! # Restricting the output verifier to its actual typed kernel\n\nThe outer answer alphabet is first reduced to the enforced binary cutoff.\nFinite graph detyping then gives the same-state typed strategy with its fixed\nloss factor, and carries perfect PCC completeness in the other direction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/AmbientRawGame.lean#L84-L84",
+  "source_path": "MIPRE/Background/Introspection/AmbientRawGame.lean",
+  "lines": [
+   84,
+   84
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionCompiler.exists_raw_failure_le",
+  "source_name": "MIPRE.Introspection.DecisionCompiler.exists_raw_failure_le",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionCompiler.exists_raw_failure_le (c : ℕ) (hc : 1 ≤ c) (he : Even c)\n    (U : ClockedUniversalMachine) (source : Prog × Prog) {lam n B : ℕ}\n    (hl : 1 ≤ lam) (hn : 1 ≤ n) (hB : outerBound c lam n ≤ B)\n    (ε : ℝ) (hv : 1-ε < (output c hc he U source lam).valStar n B) :\n    ∃ S : TensorProductStrategy (rawGame c hc he U source lam n),\n      1-S.value ≤ detypingLoss*ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionCompiler",
+   "open MIPRE.Cost MIPRE.CL MIPRE.CL.Detyping MIPRE.CL.Detyping.Program"
+  ],
+  "docstring": "An ambient value above `1-ε` supplies a typed raw strategy with the\ndetyping loss. The input answer bound can be any larger global budget.",
+  "module": "MIPRE.Background.Introspection.AmbientRawGame",
+  "module_doc": "/-! # Restricting the output verifier to its actual typed kernel\n\nThe outer answer alphabet is first reduced to the enforced binary cutoff.\nFinite graph detyping then gives the same-state typed strategy with its fixed\nloss factor, and carries perfect PCC completeness in the other direction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/AmbientRawGame.lean#L86-L113",
+  "source_path": "MIPRE/Background/Introspection/AmbientRawGame.lean",
+  "lines": [
+   86,
+   113
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-ambient-kernel",
+    "env": "lemma",
+    "title": "The ambient compiler's resources and raw-game bridge",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.DecisionCompiler.detypingLoss_nonneg",
+   "MIPRE.Introspection.DecisionCompiler.accepts_reference",
+   "MIPRE.Introspection.DecisionCompiler.typedDecider_total",
+   "MIPRE.Introspection.DecisionCompiler.accepts_positive_bounds",
+   "MIPRE.Introspection.PauliSampler.finalSampler_dim_pos",
+   "MIPRE.CL.Detyping.select_eq_some_iff",
+   "MIPRE.CL.Detyping.DeciderProgram.numbered_clDist",
+   "MIPRE.CL.Detyping.sum_valid_questions",
+   "MIPRE.CL.Detyping.graphOfBits_take_eq",
+   "MIPRE.CL.Detyping.valid_average_le",
+   "MIPRE.TensorProductStrategy.failAt_nonneg",
+   "MIPRE.quantumValue_eq_of_equiv",
+   "MIPRE.Introspection.TypeGraph.symmetric",
+   "MIPRE.Introspection.TypeGraph.edges_nonempty",
+   "MIPRE.SampledGame.one_sub_value"
+  ],
+  "pasted_helpers": 35,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionCompiler.accepts_reference",
+  "source_name": "MIPRE.Introspection.DecisionCompiler.accepts_reference",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionCompiler.accepts_reference (c : ℕ) (hc : 1 ≤ c) (he : Even c) (U : ClockedUniversalMachine)\n    (source : Prog × Prog) {lam n : ℕ} (hl : 1 ≤ lam) (hn : 1 ≤ n)\n    (x y a b : BitStr) :\n    (output c hc he U source lam).decider.Accepts n x y a b ↔\n      (reference c hc he U source lam n).decider.Accepts n x y a b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionCompiler",
+   "open MIPRE.Cost MIPRE.CL MIPRE.CL.Detyping MIPRE.CL.Detyping.Program"
+  ],
+  "docstring": "Sharing preparation changes no positive-index acceptance decision.",
+  "module": "MIPRE.Background.Introspection.AmbientVerifierTransport",
+  "module_doc": "/-! # The compiled verifier and its finite detyping game\n\nThe compiler shares its resource preparation between the graph router and the\ntyped decision kernel. Its acceptance agrees with the generic detyping compiler\nat each positive index. The sampler wrapper preserves the CL presentations there.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/AmbientVerifierTransport.lean#L50-L94",
+  "source_path": "MIPRE/Background/Introspection/AmbientVerifierTransport.lean",
+  "lines": [
+   50,
+   94
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.DecisionCompiler.typedDecider_total",
+   "MIPRE.Introspection.DecisionCompiler.untypedKernel_iff",
+   "MIPRE.Introspection.DecisionCompiler.zeroWrap_runs_pos",
+   "MIPRE.Cost.Prog.routeOneCall_closed",
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Cost.encode_injective",
+   "MIPRE.Cost.hardcode_time",
+   "MIPRE.Introspection.ClockArithmetic.uniformProg_closed",
+   "MIPRE.Introspection.DecisionPreparation.compiler_closed",
+   "MIPRE.Introspection.DecisionPreparation.prog_runs",
+   "MIPRE.Introspection.PauliSamplerParameters.prog_closed"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 38,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.BinaryComplete.anchor_X_commute",
+  "source_name": "MIPRE.Introspection.BinaryComplete.anchor_X_commute",
+  "formal_statement": "theorem MIPRE.Introspection.BinaryComplete.anchor_X_commute (hβ : LowDegree.IsSelfDualBasis β) (hm : m ∣ Fintype.card F)\n    (hL : ∀ w, (L w).SupportedOn univ) (w : Bool) (k : Fin ℓ) (hk : k.val = 0)\n    (a b : Answer F A m t d) :\n    Commute (pauliOp β L D R hm (.pauli .X) a) (auxOp L D R hL (.hide k,w) b) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.BinaryComplete",
+   "open Matrix Finset Classical",
+   "variable {F A : Type*} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.BinaryAnchors",
+  "module_doc": "/-! # The actual QLD Pauli answers pass the introspection anchor tests -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/BinaryAnchors.lean#L64-L78",
+  "source_path": "MIPRE/Background/Introspection/BinaryAnchors.lean",
+  "lines": [
+   64,
+   78
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.BinaryComplete.pauliOp_X",
+   "MIPRE.Introspection.Honest.hideOp_zero_eq_firstHideOp",
+   "MIPRE.aOp_mul",
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.proj_mul_proj"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.BinaryComplete.game_positive_content",
+  "source_name": "MIPRE.Introspection.BinaryComplete.game_positive_content",
+  "formal_statement": "theorem MIPRE.Introspection.BinaryComplete.game_positive_content (hm : m ∣ Fintype.card F)\n    (b : Module.Basis (Fin t) (ZMod 2) F) (q r : Question m t ℓ)\n    (h : 0 < (game (d := d) L D hm b).μ q r) :\n    ∃ (c : QLD.Content F m) (p s : QuestionType QLD.Ty ℓ),\n      TypeGraph.Adj QLD.adj (.pauli .X) (.pauli .Z) p s ∧\n      q = query hm b p c ∧ r = query hm b s c := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.BinaryComplete",
+   "open Matrix Finset Classical",
+   "variable {F A : Type*} [Field F] [Fintype F] [DecidableEq F]",
+   "variable (R : SyncStrategy (Honest.sourceGame L D).doubled)"
+  ],
+  "docstring": "A positive-probability question pair retains an actual common content\nwitness and an edge of the full introspection graph.",
+  "module": "MIPRE.Background.Introspection.BinaryGame",
+  "module_doc": "/-! # Perfect PCC completeness of the concrete full typed introspection game\n\nThe sampler is the twenty-six-type Pauli CL presentation, with all auxiliary\nvertices, and the predicate is the actual parsed introspection predicate with\nthe QLD decider. A perfect original PCC strategy gives a perfect PCC strategy\non the common seed register tensor the original auxiliary space tensor one\nqubit. Original CL seeds are arbitrary binary CL functions on the full qubit register; no executable\ncompiler or arbitrary seed-padding claim is made here.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/BinaryGame.lean#L85-L113",
+  "source_path": "MIPRE/Background/Introspection/BinaryGame.lean",
+  "lines": [
+   85,
+   113
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.BinaryComplete.strategy_value",
+  "source_name": "MIPRE.Introspection.BinaryComplete.strategy_value",
+  "formal_statement": "theorem MIPRE.Introspection.BinaryComplete.strategy_value (hm : m ∣ Fintype.card F) (b : Module.Basis (Fin t) (ZMod 2) F) (hb : LowDegree.IsSelfDualBasis b)\n    (hd : 1 ≤ d) (hL : ∀ w, (L w).SupportedOn univ) (hR : R.IsPCC) (hv : R.value = 1) :\n    (strategy (d := d) L D R hm b hL).value = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.BinaryComplete",
+   "open Matrix Finset Classical",
+   "variable {F A : Type*} [Field F] [Fintype F] [DecidableEq F]",
+   "variable (R : SyncStrategy (Honest.sourceGame L D).doubled)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.BinaryGame",
+  "module_doc": "/-! # Perfect PCC completeness of the concrete full typed introspection game\n\nThe sampler is the twenty-six-type Pauli CL presentation, with all auxiliary\nvertices, and the predicate is the actual parsed introspection predicate with\nthe QLD decider. A perfect original PCC strategy gives a perfect PCC strategy\non the common seed register tensor the original auxiliary space tensor one\nqubit. Original CL seeds are arbitrary binary CL functions on the full qubit register; no executable\ncompiler or arbitrary seed-padding claim is made here.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/BinaryGame.lean#L168-L185",
+  "source_path": "MIPRE/Background/Introspection/BinaryGame.lean",
+  "lines": [
+   168,
+   185
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-full-typed-completeness",
+    "env": "lemma",
+    "title": "Concrete completeness for the full typed introspection game",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.BinaryComplete.game_positive_content",
+   "MIPRE.Introspection.BinaryComplete.sampleOp_reject",
+   "MIPRE.CL.CLFun.eval_reindex",
+   "MIPRE.tracialValue_eq_one_of_re_eq_zero"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.BinaryComplete.pauliOp_isPVM",
+  "source_name": "MIPRE.Introspection.BinaryComplete.pauliOp_isPVM",
+  "formal_statement": "theorem MIPRE.Introspection.BinaryComplete.pauliOp_isPVM (hm : m ∣ Fintype.card F) (q : QLD.Question F m) :\n    IsPVM (pauliOp (d := d) b L D R hm q) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.BinaryComplete",
+   "open Matrix Finset Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F A : Type*} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.BinaryMeasurements",
+  "module_doc": "/-! # The honest Pauli measurements on the binary source register\n\nA self-dual field basis transports the actual quantum projectors to qubit\ncoordinates. The original CL functions remain binary; they are not assumed\nto arise by downsizing field-linear CL functions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/BinaryMeasurements.lean#L72-L74",
+  "source_path": "MIPRE/Background/Introspection/BinaryMeasurements.lean",
+  "lines": [
+   72,
+   74
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.Honest.probeLift_isPVM",
+   "MIPRE.QLD.Honest.probeLift_commute",
+   "MIPRE.Introspection.HonestMagicSquare.grid_isObservable",
+   "MIPRE.Introspection.HonestMagicSquare.constraintOp_isPVM",
+   "MIPRE.Introspection.Honest.parsedPauliOp_isPVM",
+   "MIPRE.Introspection.readout_isPVM",
+   "MIPRE.Introspection.registerOp_isPVM",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.IsPVM.aOp",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj",
+   "MIPRE.Weyl.eq_sum_proj",
+   "MIPRE.Weyl.wX_mul_wZ",
+   "MIPRE.LCS.zmod_two_eq_zero_or_one",
+   "MIPRE.LCS.isMeasurementSystem_observableToProjector"
+  ],
+  "pasted_helpers": 26,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.BinaryComplete.auxOp_isPVM",
+  "source_name": "MIPRE.Introspection.BinaryComplete.auxOp_isPVM",
+  "formal_statement": "theorem MIPRE.Introspection.BinaryComplete.auxOp_isPVM (hL : ∀ w, (L w).SupportedOn univ) (q : Honest.AuxQuestion ℓ) :\n    IsPVM (auxOp (F := F) (d := d) L D R hL q) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.BinaryComplete",
+   "open Matrix Finset Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F A : Type*} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.BinaryMeasurements",
+  "module_doc": "/-! # The honest Pauli measurements on the binary source register\n\nA self-dual field basis transports the actual quantum projectors to qubit\ncoordinates. The original CL functions remain binary; they are not assumed\nto arise by downsizing field-linear CL functions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/BinaryMeasurements.lean#L80-L81",
+  "source_path": "MIPRE/Background/Introspection/BinaryMeasurements.lean",
+  "lines": [
+   80,
+   81
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.Honest.parsedCoreOp_isPVM",
+   "MIPRE.Introspection.Honest.parsedReadOp_isPVM",
+   "MIPRE.Introspection.Honest.parsedHideOp_isPVM",
+   "MIPRE.IsPVM.aOp"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.BinaryComplete.pauliOp_X",
+  "source_name": "MIPRE.Introspection.BinaryComplete.pauliOp_X",
+  "formal_statement": "theorem MIPRE.Introspection.BinaryComplete.pauliOp_X (hb : LowDegree.IsSelfDualBasis b) (hm : m ∣ Fintype.card F)\n    (x : QLD.Honest.Register F m) :\n    pauliOp b L D R hm (.pauli .X) (.pauli (.pauliAns x) : Answer F A m t d) =\n      aOp (HB := Fin 2) (Honest.pauliXOp L D R (binEquiv b x)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.BinaryComplete",
+   "open Matrix Finset Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F A : Type*} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.BinaryMeasurements",
+  "module_doc": "/-! # The honest Pauli measurements on the binary source register\n\nA self-dual field basis transports the actual quantum projectors to qubit\ncoordinates. The original CL functions remain binary; they are not assumed\nto arise by downsizing field-linear CL functions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/BinaryMeasurements.lean#L89-L103",
+  "source_path": "MIPRE/Background/Introspection/BinaryMeasurements.lean",
+  "lines": [
+   89,
+   103
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-full-typed-completeness",
+    "env": "lemma",
+    "title": "Concrete completeness for the full typed introspection game",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Weyl.proj_wX_binEquiv"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.BinaryComplete.pauliOp_Z",
+  "source_name": "MIPRE.Introspection.BinaryComplete.pauliOp_Z",
+  "formal_statement": "theorem MIPRE.Introspection.BinaryComplete.pauliOp_Z (hb : LowDegree.IsSelfDualBasis b) (hm : m ∣ Fintype.card F)\n    (x : QLD.Honest.Register F m) :\n    pauliOp b L D R hm (.pauli .Z) (.pauli (.pauliAns x) : Answer F A m t d) =\n      aOp (HB := Fin 2) (Honest.pauliZOp L D R (binEquiv b x)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.BinaryComplete",
+   "open Matrix Finset Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F A : Type*} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.BinaryMeasurements",
+  "module_doc": "/-! # The honest Pauli measurements on the binary source register\n\nA self-dual field basis transports the actual quantum projectors to qubit\ncoordinates. The original CL functions remain binary; they are not assumed\nto arise by downsizing field-linear CL functions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/BinaryMeasurements.lean#L105-L122",
+  "source_path": "MIPRE/Background/Introspection/BinaryMeasurements.lean",
+  "lines": [
+   105,
+   122
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-full-typed-completeness",
+    "env": "lemma",
+    "title": "Concrete completeness for the full typed introspection game",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Weyl.proj_wZ",
+   "MIPRE.Weyl.proj_wZ_binEquiv"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.BinaryComplete.sampleOp_commute",
+  "source_name": "MIPRE.Introspection.BinaryComplete.sampleOp_commute",
+  "formal_statement": "theorem MIPRE.Introspection.BinaryComplete.sampleOp_commute (hβ : LowDegree.IsSelfDualBasis β) (hm : m ∣ Fintype.card F) (hL : ∀ w, (L w).SupportedOn univ)\n    (hR : R.IsPCC) (c : QLD.Content F m) (p q : QuestionType QLD.Ty ℓ)\n    (h : TypeGraph.Adj QLD.adj (.pauli .X) (.pauli .Z) p q) (a b : Answer F A m t d) :\n    Commute (sampleOp β L D R hm hL c p a) (sampleOp β L D R hm hL c q b) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.BinaryComplete",
+   "open Matrix Finset Classical",
+   "variable {F A : Type*} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.BinarySampled",
+  "module_doc": "/-! # Every edge of the full introspection graph has perfect honest play -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/BinarySampled.lean#L66-L93",
+  "source_path": "MIPRE/Background/Introspection/BinarySampled.lean",
+  "lines": [
+   66,
+   93
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.BinaryComplete.anchor_X_commute",
+   "MIPRE.Introspection.BinaryComplete.pauliOp_Z",
+   "MIPRE.QLD.Honest.fibre_comp",
+   "MIPRE.QLD.Honest.probeLift_isPVM",
+   "MIPRE.QLD.Honest.probeLift_commute",
+   "MIPRE.Introspection.linear_measurements_commute",
+   "MIPRE.Introspection.conditionalReadout_isPVM",
+   "MIPRE.Introspection.Honest.source_commute",
+   "MIPRE.Introspection.Honest.hideRegister_commute_next",
+   "MIPRE.Introspection.Honest.hideRegister_commute_read",
+   "MIPRE.Introspection.HonestMagicSquare.grid_isObservable",
+   "MIPRE.Introspection.HonestMagicSquare.cells_commute",
+   "MIPRE.Introspection.HonestMagicSquare.constraintOp_isPVM",
+   "MIPRE.Introspection.Honest.parsedCoreOp_isPVM",
+   "MIPRE.Introspection.Honest.parsedReadOp_isPVM",
+   "MIPRE.Introspection.Honest.parsedHideOp_isPVM",
+   "MIPRE.Introspection.Honest.introspect_read_mul",
+   "MIPRE.Introspection.linear_measurement_isPVM",
+   "MIPRE.Introspection.readout_isPVM",
+   "MIPRE.Introspection.registerOp_isPVM",
+   "MIPRE.Introspection.TypeGraph.symmetric",
+   "MIPRE.aOp_mul",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj",
+   "MIPRE.Weyl.eq_sum_proj",
+   "MIPRE.Weyl.wX_mul_wZ",
+   "MIPRE.LCS.zmod_two_eq_zero_or_one",
+   "MIPRE.LCS.binary_measurement_eq_projector",
+   "MIPRE.LCS.isMeasurementSystem_observableToProjector"
+  ],
+  "pasted_helpers": 92,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.BinaryComplete.sampleOp_reject",
+  "source_name": "MIPRE.Introspection.BinaryComplete.sampleOp_reject",
+  "formal_statement": "theorem MIPRE.Introspection.BinaryComplete.sampleOp_reject (hβ : LowDegree.IsSelfDualBasis β) (hm : m ∣ Fintype.card F) (hd : 1 ≤ d)\n    (hL : ∀ w, (L w).SupportedOn univ) (hR : R.IsPCC) (hval : R.value = 1)\n    (c : QLD.Content F m) (p q : QuestionType QLD.Ty ℓ)\n    (h : TypeGraph.Adj QLD.adj (.pauli .X) (.pauli .Z) p q) (a b : Answer F A m t d)\n    (hr : sampleCheck β L D hm c p q a b = false) :\n    sampleOp β L D R hm hL c p a * sampleOp β L D R hm hL c q b = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.BinaryComplete",
+   "open Matrix Finset Classical",
+   "variable {F A : Type*} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.BinarySampled",
+  "module_doc": "/-! # Every edge of the full introspection graph has perfect honest play -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/BinarySampled.lean#L95-L128",
+  "source_path": "MIPRE/Background/Introspection/BinarySampled.lean",
+  "lines": [
+   95,
+   128
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.BinaryComplete.pauliOp_X",
+   "MIPRE.Introspection.BinaryComplete.pauliOp_Z",
+   "MIPRE.Introspection.BinaryComplete.sampleOp_commute",
+   "MIPRE.QLD.Honest.fibre_comp",
+   "MIPRE.QLD.Honest.answerOp_adjRaw_reject",
+   "MIPRE.QLD.Honest.probeLift_isPVM",
+   "MIPRE.QLD.Honest.probeLift_commute",
+   "MIPRE.Introspection.linear_measurements_commute",
+   "MIPRE.Introspection.conditionalReadout_isPVM",
+   "MIPRE.Introspection.Honest.source_commute",
+   "MIPRE.Introspection.Honest.coreOp_reject_zero",
+   "MIPRE.Introspection.Honest.pauli_mul_firstHide",
+   "MIPRE.Introspection.Honest.hideRegister_accepts_next",
+   "MIPRE.Introspection.Honest.hideRegister_accepts_read",
+   "MIPRE.Introspection.Honest.hideRegister_commute_next",
+   "MIPRE.Introspection.Honest.hideRegister_commute_read",
+   "MIPRE.Introspection.HonestMagicSquare.grid_isObservable",
+   "MIPRE.Introspection.HonestMagicSquare.cells_commute",
+   "MIPRE.Introspection.HonestMagicSquare.constraintOp_isPVM",
+   "MIPRE.Introspection.Honest.parsedCoreOp_isPVM",
+   "MIPRE.Introspection.Honest.parsedReadOp_isPVM",
+   "MIPRE.Introspection.Honest.parsedHideOp_isPVM",
+   "MIPRE.Introspection.Honest.hideOp_zero_eq_firstHideOp",
+   "MIPRE.Introspection.Honest.introspect_read_mul",
+   "MIPRE.Introspection.linear_measurement_isPVM",
+   "MIPRE.Introspection.readout_isPVM",
+   "MIPRE.Introspection.registerOp_isPVM",
+   "MIPRE.Introspection.TypeGraph.symmetric",
+   "MIPRE.aOp_mul",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.aOp_zero",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj",
+   "MIPRE.Weyl.eq_sum_proj",
+   "MIPRE.Weyl.wX_mul_wZ",
+   "MIPRE.LCS.zmod_two_eq_zero_or_one",
+   "MIPRE.LCS.binary_measurement_eq_projector",
+   "MIPRE.LCS.isMeasurementSystem_observableToProjector"
+  ],
+  "pasted_helpers": 114,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.CanonicalComplete.exists_raw_perfectPCC",
+  "source_name": "MIPRE.Introspection.CanonicalComplete.exists_raw_perfectPCC",
+  "formal_statement": "theorem MIPRE.Introspection.CanonicalComplete.exists_raw_perfectPCC (c : ℕ) (hc : 2 ≤ c) (he : Even c) (U : ClockedUniversalMachine)\n    {lam n : ℕ} (V : Verifier 7) (hV : V.IsBounded lam) (hn : 1 ≤ n)\n    (hv : V.HasPerfectPCC (2^n) ((2^n)^lam)) :\n    ∃ R : SyncStrategy (rawGame c (by omega) he U (V.sampler.prog,V.decider.prog) lam n).doubled,\n      R.IsPCC ∧ R.value = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.CanonicalComplete",
+   "open MIPRE.Cost MIPRE.CL MIPRE.Introspection.CanonicalGame MIPRE.Introspection.SourceCompiler MIPRE.Introspection.PauliSamplerParameters MIPRE.Introspection.DecisionCompiler",
+   "open MIPRE.QLD.PauliCL.ExplicitSeed"
+  ],
+  "docstring": "The actual typed binary kernel has a perfect PCC strategy whenever the\nsource verifier does, using the finite honest strategy's support certificates.",
+  "module": "MIPRE.Background.Introspection.CanonicalComplete",
+  "module_doc": "/-! # Completeness of the actual compiled introspection verifier\n\nThe finite honest PCC strategy supplies prefix, source-output, and Pauli-format\nsupport. Encoding those outcomes preserves perfect play in the executable typed\ngame. Graph detyping and the zero-index wrapper finish the ambient contract.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/CanonicalComplete.lean#L101-L128",
+  "source_path": "MIPRE/Background/Introspection/CanonicalComplete.lean",
+  "lines": [
+   101,
+   128
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.DecisionKernel.program_complete_numbered",
+   "MIPRE.Introspection.NumberedComplete.exists_perfectPCC_with_format",
+   "MIPRE.CL.CLFun.ExactlyOn.directSum",
+   "MIPRE.CL.CLFun.SupportedOn.eval_directSum",
+   "MIPRE.CL.CLFun.zeroOn_exactlyOn",
+   "MIPRE.Cost.Prog.routeOneCall_closed",
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.CL.pull_proj_compl",
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Cost.encode_injective",
+   "MIPRE.Cost.hardcode_time",
+   "MIPRE.Introspection.AuxiliaryProgram.toBits_push_first",
+   "MIPRE.Introspection.ClockArithmetic.uniformProg_closed",
+   "MIPRE.Introspection.DecisionPreparation.prog_runs",
+   "MIPRE.Introspection.PauliSamplerParameters.selectorBits_le_fieldBits",
+   "MIPRE.Introspection.PauliSamplerParameters.four_le_registerBits",
+   "MIPRE.Introspection.PauliSamplerParameters.originalBound_three_le_registerBits",
+   "MIPRE.Introspection.PauliSamplerParameters.prog_closed",
+   "MIPRE.Introspection.SourceCompiler.originalBound_eq",
+   "MIPRE.Introspection.VerifierSource.padded_hasPerfectPCC",
+   "MIPRE.SAT.shoupBinField_finrank",
+   "MIPRE.SAT.shoupNormalBasis_normal",
+   "MIPRE.SyncStrategy.perfect_mergeAnswersByQuestion"
+  ],
+  "pasted_helpers": 43,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.CanonicalComplete.output_hasPerfectPCC",
+  "source_name": "MIPRE.Introspection.CanonicalComplete.output_hasPerfectPCC",
+  "formal_statement": "theorem MIPRE.Introspection.CanonicalComplete.output_hasPerfectPCC (c : ℕ) (hc : 2 ≤ c) (he : Even c) (U : ClockedUniversalMachine)\n    (C : ℕ) (hcut : ∀ lam n, cutoffAt c lam n ≤ ansBound C lam n)\n    (V : Verifier 7) (lam n : ℕ) (hV : V.IsBounded lam)\n    (hv : V.HasPerfectPCC (2^n) ((2^n)^lam)) :\n    (DecisionCompiler.output c (by omega) he U (V.sampler.prog,V.decider.prog) lam).HasPerfectPCC n\n      (ansBound C lam n) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.CanonicalComplete",
+   "open MIPRE.Cost MIPRE.CL MIPRE.Introspection.CanonicalGame MIPRE.Introspection.SourceCompiler MIPRE.Introspection.PauliSamplerParameters MIPRE.Introspection.DecisionCompiler",
+   "open MIPRE.QLD.PauliCL.ExplicitSeed"
+  ],
+  "docstring": "Completeness for every source index, including the zero-index wrapper.",
+  "module": "MIPRE.Background.Introspection.CanonicalComplete",
+  "module_doc": "/-! # Completeness of the actual compiled introspection verifier\n\nThe finite honest PCC strategy supplies prefix, source-output, and Pauli-format\nsupport. Encoding those outcomes preserves perfect play in the executable typed\ngame. Graph detyping and the zero-index wrapper finish the ambient contract.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/CanonicalComplete.lean#L130-L143",
+  "source_path": "MIPRE/Background/Introspection/CanonicalComplete.lean",
+  "lines": [
+   130,
+   143
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-completeness",
+    "env": "lemma",
+    "title": "Completeness of introspection",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.DecisionCompiler.accepts_reference",
+   "MIPRE.Introspection.CanonicalComplete.exists_raw_perfectPCC",
+   "MIPRE.Introspection.DecisionCompiler.typedDecider_total",
+   "MIPRE.Introspection.DecisionCompiler.accepts_zero",
+   "MIPRE.Introspection.PauliSampler.finalSampler_dim_zero",
+   "MIPRE.Introspection.PauliSampler.finalSampler_dim_pos",
+   "MIPRE.CL.Detyping.complete_value",
+   "MIPRE.CL.Detyping.complete_commutes_sample",
+   "MIPRE.CL.Detyping.DeciderProgram.numbered_clDist",
+   "MIPRE.CL.Detyping.graphOfBits_take_eq",
+   "MIPRE.SyncStrategy.value_relabel",
+   "MIPRE.SyncStrategy.isPCC_relabel",
+   "MIPRE.Verifier.hasPerfectPCC_of_accepts_diagonal",
+   "MIPRE.Introspection.TypeGraph.symmetric",
+   "MIPRE.Introspection.TypeGraph.edges_nonempty",
+   "MIPRE.Verifier.hasPerfectPCC_of_congr_at"
+  ],
+  "pasted_helpers": 26,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.CompiledSoundness.coefficient_one_le",
+  "source_name": "MIPRE.Introspection.CompiledSoundness.coefficient_one_le",
+  "formal_statement": "theorem MIPRE.Introspection.CompiledSoundness.coefficient_one_le (c : ℕ) : 1 ≤ coefficient c := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.CompiledSoundness",
+   "open MIPRE.CL MIPRE.Cost MIPRE.Introspection.SourceCompiler MIPRE.Introspection.PauliSamplerParameters MIPRE.Introspection.RestrictedSoundness MIPRE.Introspection.DecisionCompiler"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.CompiledSoundness",
+  "module_doc": "/-! # Soundness of the actual compiled introspection verifier\n\nThe compiled strategy is restricted through finite detyping, decoded to the\ncanonical quotient game, and passed to the proved QLD theorem. Coordinate\npadding is removed and the fixed detyping factor is absorbed into the uniform\nerror profile. The answer budget may be any budget above the enforced cutoff.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/CompiledSoundness.lean#L32-L32",
+  "source_path": "MIPRE/Background/Introspection/CompiledSoundness.lean",
+  "lines": [
+   32,
+   32
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.CompiledSoundness.exponent_pos",
+  "source_name": "MIPRE.Introspection.CompiledSoundness.exponent_pos",
+  "formal_statement": "theorem MIPRE.Introspection.CompiledSoundness.exponent_pos : 0 < exponent := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.CompiledSoundness",
+   "open MIPRE.CL MIPRE.Cost MIPRE.Introspection.SourceCompiler MIPRE.Introspection.PauliSamplerParameters MIPRE.Introspection.RestrictedSoundness MIPRE.Introspection.DecisionCompiler"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.CompiledSoundness",
+  "module_doc": "/-! # Soundness of the actual compiled introspection verifier\n\nThe compiled strategy is restricted through finite detyping, decoded to the\ncanonical quotient game, and passed to the proved QLD theorem. Coordinate\npadding is removed and the fixed detyping factor is absorbed into the uniform\nerror profile. The answer budget may be any budget above the enforced cutoff.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/CompiledSoundness.lean#L34-L34",
+  "source_path": "MIPRE/Background/Introspection/CompiledSoundness.lean",
+  "lines": [
+   34,
+   34
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.RestrictedSoundness.qldExponent_pos"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.CompiledSoundness.exponent_le_one",
+  "source_name": "MIPRE.Introspection.CompiledSoundness.exponent_le_one",
+  "formal_statement": "theorem MIPRE.Introspection.CompiledSoundness.exponent_le_one : exponent ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.CompiledSoundness",
+   "open MIPRE.CL MIPRE.Cost MIPRE.Introspection.SourceCompiler MIPRE.Introspection.PauliSamplerParameters MIPRE.Introspection.RestrictedSoundness MIPRE.Introspection.DecisionCompiler"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.CompiledSoundness",
+  "module_doc": "/-! # Soundness of the actual compiled introspection verifier\n\nThe compiled strategy is restricted through finite detyping, decoded to the\ncanonical quotient game, and passed to the proved QLD theorem. Coordinate\npadding is removed and the fixed detyping factor is absorbed into the uniform\nerror profile. The answer budget may be any budget above the enforced cutoff.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/CompiledSoundness.lean#L36-L38",
+  "source_path": "MIPRE/Background/Introspection/CompiledSoundness.lean",
+  "lines": [
+   36,
+   38
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.RestrictedSoundness.qldExponent_pos"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.CompiledSoundness.source_value_ge_of_raw",
+  "source_name": "MIPRE.Introspection.CompiledSoundness.source_value_ge_of_raw",
+  "formal_statement": "theorem MIPRE.Introspection.CompiledSoundness.source_value_ge_of_raw (c : ℕ) (hc : 2 ≤ c) (he : Even c)\n    (hcb : 2 * qldCoefficient + 2 ≤ (c : ℝ) * qldExponent)\n    (U : ClockedUniversalMachine) {lam n : ℕ}\n    (V : Verifier 7) (hV : V.IsBounded lam) (hn : 1 ≤ n)\n    (S : TensorProductStrategy\n      (rawGame c (by omega) he U (V.sampler.prog,V.decider.prog) lam n))\n    {ε : ℝ} (hε : 0 ≤ ε) (hS : 1 - S.value ≤ ε) :\n    1 - errorProfile (sourceCoefficient c) exponent (lam * n) ε ≤\n      V.valStar (2^n) ((2^n)^lam) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.CompiledSoundness",
+   "open MIPRE.CL MIPRE.Cost MIPRE.Introspection.SourceCompiler MIPRE.Introspection.PauliSamplerParameters MIPRE.Introspection.RestrictedSoundness MIPRE.Introspection.DecisionCompiler"
+  ],
+  "docstring": "A raw typed strategy already gives the original verifier's source value.",
+  "module": "MIPRE.Background.Introspection.CompiledSoundness",
+  "module_doc": "/-! # Soundness of the actual compiled introspection verifier\n\nThe compiled strategy is restricted through finite detyping, decoded to the\ncanonical quotient game, and passed to the proved QLD theorem. Coordinate\npadding is removed and the fixed detyping factor is absorbed into the uniform\nerror profile. The answer budget may be any budget above the enforced cutoff.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/CompiledSoundness.lean#L57-L86",
+  "source_path": "MIPRE/Background/Introspection/CompiledSoundness.lean",
+  "lines": [
+   57,
+   86
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.DecisionKernel.program_sound_numbered",
+   "MIPRE.Introspection.NumberedSoundness.canonical_quantumValue_ge",
+   "MIPRE.CL.CLFun.ExactlyOn.directSum",
+   "MIPRE.CL.CLFun.SupportedOn.eval_directSum",
+   "MIPRE.CL.CLFun.zeroOn_exactlyOn",
+   "MIPRE.Cost.Prog.routeOneCall_closed",
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.CL.pull_proj_compl",
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Cost.encode_injective",
+   "MIPRE.Cost.hardcode_time",
+   "MIPRE.TensorProductStrategy.value_le_mergeAnswersByQuestion",
+   "MIPRE.Introspection.ClockArithmetic.uniformProg_closed",
+   "MIPRE.Introspection.DecisionPreparation.prog_runs",
+   "MIPRE.Introspection.PauliSamplerParameters.selectorBits_le_fieldBits",
+   "MIPRE.Introspection.PauliSamplerParameters.four_le_registerBits",
+   "MIPRE.Introspection.PauliSamplerParameters.originalBound_three_le_registerBits",
+   "MIPRE.Introspection.PauliSamplerParameters.prog_closed",
+   "MIPRE.Introspection.SourceCompiler.originalBound_eq",
+   "MIPRE.SAT.shoupBinField_finrank",
+   "MIPRE.SAT.shoupNormalBasis_normal",
+   "MIPRE.SampledGame.dist_eq_card"
+  ],
+  "pasted_helpers": 47,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.CompiledSoundness.output_soundness",
+  "source_name": "MIPRE.Introspection.CompiledSoundness.output_soundness",
+  "formal_statement": "theorem MIPRE.Introspection.CompiledSoundness.output_soundness (c : ℕ) (hc : 2 ≤ c) (he : Even c)\n    (hcb : 2 * qldCoefficient + 2 ≤ (c : ℝ) * qldExponent)\n    (U : ClockedUniversalMachine) (V : Verifier 7) (lam n B : ℕ) (ε : ℝ)\n    (hV : V.IsBounded lam) (hn : 1 ≤ n) (hε : 0 < ε)\n    (hB : outerBound c lam n ≤ B)\n    (hv : 1 - ε < (DecisionCompiler.output c (by omega) he U\n      (V.sampler.prog,V.decider.prog) lam).valStar n B) :\n    1 - delta (coefficient c) exponent lam n ε ≤ V.valStar (2^n) ((2^n)^lam) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.CompiledSoundness",
+   "open MIPRE.CL MIPRE.Cost MIPRE.Introspection.SourceCompiler MIPRE.Introspection.PauliSamplerParameters MIPRE.Introspection.RestrictedSoundness MIPRE.Introspection.DecisionCompiler"
+  ],
+  "docstring": "Soundness in exactly the ambient verifier-value form used by the pipeline.",
+  "module": "MIPRE.Background.Introspection.CompiledSoundness",
+  "module_doc": "/-! # Soundness of the actual compiled introspection verifier\n\nThe compiled strategy is restricted through finite detyping, decoded to the\ncanonical quotient game, and passed to the proved QLD theorem. Coordinate\npadding is removed and the fixed detyping factor is absorbed into the uniform\nerror profile. The answer budget may be any budget above the enforced cutoff.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/CompiledSoundness.lean#L88-L109",
+  "source_path": "MIPRE/Background/Introspection/CompiledSoundness.lean",
+  "lines": [
+   88,
+   109
+  ],
+  "blueprint": [
+   {
+    "label": "lem:introspection-supply",
+    "env": "lemma",
+    "title": "Supplying ambient introspection",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.DecisionCompiler.detypingLoss_nonneg",
+   "MIPRE.Introspection.DecisionCompiler.exists_raw_failure_le",
+   "MIPRE.Introspection.CompiledSoundness.source_value_ge_of_raw"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionCompiler.typedDecider_total",
+  "source_name": "MIPRE.Introspection.DecisionCompiler.typedDecider_total",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionCompiler.typedDecider_total (c : ℕ) (U : ClockedUniversalMachine) (M : Metadata) :\n    (typedDecider c U M).Total := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionCompiler",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program",
+   "open MIPRE.Introspection.DecisionPreparation (Metadata)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.DecisionCompiler",
+  "module_doc": "/-! # The actual compiled introspection decider\n\nCompilation clamps each source description, specializes the fixed prepared\nkernel using binary metadata, and adds zero-parameter and zero-index branches.\nThe positive branch computes its clock and canonical resources exactly once.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/DecisionCompiler.lean#L32-L37",
+  "source_path": "MIPRE/Background/Introspection/DecisionCompiler.lean",
+  "lines": [
+   32,
+   37
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.routeOneCall_closed",
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.Cost.hardcode_time",
+   "MIPRE.Introspection.ClockArithmetic.uniformProg_closed",
+   "MIPRE.Introspection.DecisionPreparation.prog_runs",
+   "MIPRE.Introspection.PauliSamplerParameters.prog_closed"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 4,
+  "is_target": false
+ }
+]

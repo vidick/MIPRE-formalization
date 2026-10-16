@@ -1,0 +1,673 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_adjointRawCommutation_originalOutcome",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_adjointRawCommutation_originalOutcome",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_adjointRawCommutation_originalOutcome\n    (params : Parameters)\n    [FieldModel params.q]\n    (ψ : QuantumState (ι × ι))\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error)\n    (hcomm : ∀ j : ℕ, 2 ≤ j →\n      CommuteGHalfSandwichStatement params ψ family gamma zeta j)\n    {k i : ℕ} (hi : i < k) (hi0 : i ≠ 0) :\n    SDDOpRel ψ\n      (uniformDistribution (SandwichedLineQuestion params k))\n      (ldSandwichLineOnePointAdjointRawLeftFamily params family hi)\n      (ldSandwichLineOnePointAdjointRawRightFamily params family hi)\n      (commuteGHalfSandwichError params gamma zeta (i + 1)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Raw commutation after last-reverse reindexing, lifted to sandwiched-line questions.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.CSSetup",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — Cauchy-Schwarz setup\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CSSetup.lean#L453-L539",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CSSetup.lean",
+  "lines": [
+   453,
+   539
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_fst",
+   "MIPStarRE.LDT.CommutativityPoints.sddOpRel_reindex",
+   "MIPStarRE.LDT.CommutativityPoints.sddOpRel_congr_outcome",
+   "MIPStarRE.LDT.Pasting.sddOpRel_uniform_equiv"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 72,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_adjointRawCommutation_qSDDCore_bound",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_adjointRawCommutation_qSDDCore_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_adjointRawCommutation_qSDDCore_bound\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error)\n    (hcomm : ∀ j : ℕ, 2 ≤ j →\n      CommuteGHalfSandwichStatement params strategy.state family gamma zeta j)\n    {k i : ℕ} (hi : i < k) (hi0 : i ≠ 0) :\n    avgOver (uniformDistribution (SandwichedLineQuestion params k))\n      (fun q => qSDDCore strategy.state\n        (fun gs : GHatTupleOutcome params (i + 1) =>\n          (ldSandwichLineOnePointCS_Aord params family hi q gs)ᴴ)\n        (fun gs : GHatTupleOutcome params (i + 1) =>\n          (ldSandwichLineOnePointCS_Arot params family hi q gs)ᴴ)) ≤\n      commuteGHalfSandwichError params gamma zeta (i + 1) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The adjoint-oriented raw-core bound needed by the line-one-point CS step.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.CSSetup",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — Cauchy-Schwarz setup\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CSSetup.lean#L569-L607",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CSSetup.lean",
+  "lines": [
+   569,
+   607
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.CommutativityPoints.sddOpRel_congr_outcome",
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_adjointRawCommutation_originalOutcome",
+   "MIPStarRE.LDT.Pasting.gHatHalfProduct_lastReverse_eq_conjTranspose",
+   "MIPStarRE.LDT.Pasting.gHatRotatedHalfProduct_lastReverse_eq_conjTranspose_lastFront"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_facts",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_facts",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_facts\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error)\n    {k i : ℕ} (hi : i < k) (hi0 : i ≠ 0)\n    (facts : LdSandwichLineOnePointAdjointRawCoreBound params strategy family gamma zeta hi) :\n    LdSandwichLineOnePointCSFacts params strategy family gamma zeta hi := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Assemble the line-one-point CS facts from the single adjoint raw-core estimate.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.CauchySchwarz",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — Cauchy-Schwarz chain\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CauchySchwarz.lean#L95-L487",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CauchySchwarz.lean",
+  "lines": [
+   95,
+   487
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.ev_zero",
+   "MIPStarRE.LDT.opTensor_le_leftTensor",
+   "MIPStarRE.LDT.leftTensor_mul_opTensor",
+   "MIPStarRE.LDT.opTensor_mul_leftTensor",
+   "MIPStarRE.LDT.opTensor_mul",
+   "MIPStarRE.LDT.opTensor_sum_left_univ",
+   "MIPStarRE.LDT.SubMeas.outcome_hermitian",
+   "MIPStarRE.LDT.Measurement.outcome_hermitian",
+   "MIPStarRE.LDT.SubMeas.outcome_le_one",
+   "MIPStarRE.LDT.leftTensor_finset_sum",
+   "MIPStarRE.LDT.Pasting.gHatSandwichFamily_restrict_eval_outcome_some",
+   "MIPStarRE.LDT.Pasting.gHatIdxMeas_proj",
+   "MIPStarRE.LDT.Pasting.gHatHalfProductTotalOperator_eq_one",
+   "MIPStarRE.Quantum.sq_le_self"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 383,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_abs_bounds",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_abs_bounds",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_abs_bounds\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error)\n    {k i : ℕ} (hi : i < k) (hi0 : i ≠ 0)\n    (facts : LdSandwichLineOnePointAdjointRawCoreBound params strategy family gamma zeta hi) :\n    LdSandwichLineOnePointOutcomeSumCSAbsBounds params strategy family gamma zeta hi := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Narrow analytic endpoint for the two off-diagonal Cauchy--Schwarz moves in their\nabsolute-value `closenessOfIP` output shape.\n\nThe generic applications of `Preliminaries.closenessOfIPAdjoint` and\n`Preliminaries.closenessOfIP` are now proved here.  The CS facts record proves\nthe measurement-completeness/unit bounds and scalar regrouping equalities; the\nremaining nontrivial estimate is the adjoint raw-core orientation lemma\n`ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_adjointRawCore`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.CauchySchwarz",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — Cauchy-Schwarz chain\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CauchySchwarz.lean#L489-L541",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CauchySchwarz.lean",
+  "lines": [
+   489,
+   541
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_facts",
+   "MIPStarRE.LDT.Preliminaries.closenessOfIP",
+   "MIPStarRE.LDT.Preliminaries.closenessOfInnerProduct_right"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 36,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_route",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_route",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_route\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error)\n    {k i : ℕ} (hi : i < k) (hi0 : i ≠ 0)\n    (facts : LdSandwichLineOnePointAdjointRawCoreBound params strategy family gamma zeta hi) :\n    LdSandwichLineOnePointOutcomeSumCSRoute params strategy family gamma zeta hi := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "One-sided route for the two off-diagonal Cauchy--Schwarz moves in\n`ld-pasting.tex:964--1010`.\n\nThe substantive analytic residual is the pair of absolute-value estimates\n`ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_abs_bounds`; this lemma\nonly converts those two `closenessOfIP`-style bounds into the one-sided\ninequalities consumed by the downstream scalar transport.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.CauchySchwarz",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — Cauchy-Schwarz chain\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CauchySchwarz.lean#L543-L574",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CauchySchwarz.lean",
+  "lines": [
+   543,
+   574
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_abs_bounds"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_bound",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_bound\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error)\n    {k i : ℕ} (hi : i < k) (hi0 : i ≠ 0)\n    (facts : LdSandwichLineOnePointAdjointRawCoreBound params strategy family gamma zeta hi) :\n    avgOver (uniformDistribution (SandwichedLineQuestion params k)) (fun q =>\n      ∑ a : Fq params,\n        ev strategy.state\n          (opTensor\n            (((ldSandwichLineOnePointPrefixOriginalFamily params family hi) q).outcome\n              (some a))\n            (1 - ((ldSandwichLineOnePointRightFamily params strategy family k i) q).outcome\n              (some a))))\n      ≤\n    avgOver (uniformDistribution (SandwichedLineQuestion params k)) (fun q =>\n      ∑ a : Fq params,\n        ev strategy.state\n          (opTensor\n            (((ldSandwichLineOnePointPrefixMovedFamily params family hi) q).outcome\n              (some a))\n            (1 - ((ldSandwichLineOnePointRightFamily params strategy family k i) q).outcome\n              (some a)))) +\n      2 * Real.sqrt (commuteGHalfSandwichError params gamma zeta (i + 1)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The remaining expanded off-diagonal scalar transport in\n`lem:ld-sandwich-line-one-point`.\n\nThis is the exact scalar form of `ld-pasting.tex:954--1024` after the linear\nconsistency defect has been expanded as\n`Σ_a ⟨ψ|A_a ⊗ (I - B_a)|ψ⟩`.  The only remaining analytic content is the\npaper's two averaged Cauchy--Schwarz moves plus the prefix-completeness collapse;\nthe surrounding `qBipartiteLinearConsDefect` bookkeeping is proved in\n`ldSandwichLineOnePoint_prefix_linearDefect_average_cauchySchwarz_bound`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.CauchySchwarz",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — Cauchy-Schwarz chain\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CauchySchwarz.lean#L576-L633",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CauchySchwarz.lean",
+  "lines": [
+   576,
+   633
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_route"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_linearDefect_average_cauchySchwarz_bound",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_linearDefect_average_cauchySchwarz_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_linearDefect_average_cauchySchwarz_bound\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error)\n    {k i : ℕ} (hi : i < k) (hi0 : i ≠ 0)\n    (facts : LdSandwichLineOnePointAdjointRawCoreBound params strategy family gamma zeta hi) :\n    avgOver (uniformDistribution (SandwichedLineQuestion params k)) (fun q =>\n      qBipartiteLinearConsDefect strategy.state\n        ((ldSandwichLineOnePointPrefixOriginalFamily params family hi) q)\n        ((ldSandwichLineOnePointRightFamily params strategy family k i) q))\n      ≤\n    avgOver (uniformDistribution (SandwichedLineQuestion params k)) (fun q =>\n      qBipartiteLinearConsDefect strategy.state\n        ((ldSandwichLineOnePointPrefixMovedFamily params family hi) q)\n        ((ldSandwichLineOnePointRightFamily params strategy family k i) q)) +\n      2 * Real.sqrt (commuteGHalfSandwichError params gamma zeta (i + 1)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Linear-defect reduction for the expanded off-diagonal post-deletion transport in\n`lem:ld-sandwich-line-one-point`.\n\nThe paper's two Cauchy--Schwarz moves and prefix collapse from\n`references/ldt-paper/ld-pasting.tex:954--1024` act on the expanded scalar\nexpression `Σ_a ⟨ψ|A_a ⊗ (I - B_a)|ψ⟩`.  This lemma proves the exact\nbookkeeping reduction from the averaged linear consistency defects to that\nexpanded residual, using the measurement-valued right family and the fact that\nboth option-valued families have zero `none` mass.  The remaining analytic gap is\ntherefore the split Cauchy--Schwarz route\n`ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_route`; the arithmetic\nabsorption into `ν₅` is proved separately in\n`ldSandwichLineOnePoint_endpoint_comm_error_le`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.CauchySchwarz",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — Cauchy-Schwarz chain\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CauchySchwarz.lean#L635-L718",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/CauchySchwarz.lean",
+  "lines": [
+   635,
+   718
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.Pasting.qBipartiteLinearConsDefect_option_eq_sum_some_complement",
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_bound",
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 53,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_cauchySchwarz_transport",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_cauchySchwarz_transport",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_cauchySchwarz_transport\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    (gamma zeta : Error)\n    {k i : ℕ} (hi : i < k) (hi0 : i ≠ 0)\n    (facts : LdSandwichLineOnePointAdjointRawCoreBound params strategy family gamma zeta hi) :\n    bipartiteConsError strategy.state\n      (uniformDistribution (SandwichedLineQuestion params k))\n      (ldSandwichLineOnePointPrefixOriginalFamily params family hi)\n      (ldSandwichLineOnePointRightFamily params strategy family k i)\n      ≤\n    bipartiteConsError strategy.state\n      (uniformDistribution (SandwichedLineQuestion params k))\n      (ldSandwichLineOnePointPrefixMovedFamily params family hi)\n      (ldSandwichLineOnePointRightFamily params strategy family k i) +\n      2 * Real.sqrt (commuteGHalfSandwichError params gamma zeta (i + 1)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The post-deletion analytic transport in `lem:ld-sandwich-line-one-point`.\n\nThe substantive paper gap is now the averaged linear defect bound\n`ldSandwichLineOnePoint_prefix_linearDefect_average_cauchySchwarz_bound`; this\nlemma is only the proved reduction that reinstates the `max 0` bipartite\nconsistency error using the measurement-valued right family.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.Core",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — core theorems\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Core.lean#L55-L96",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Core.lean",
+  "lines": [
+   55,
+   96
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.bipartiteConsError_le_of_linearDefect_average_bound",
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_linearDefect_average_cauchySchwarz_bound",
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_matchMass_lower_bound",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_matchMass_lower_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_matchMass_lower_bound\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma zeta : Error)\n    (heps_nonneg : 0 ≤ eps)\n    (hdelta_nonneg : 0 ≤ delta)\n    (hgamma_nonneg : 0 ≤ gamma)\n    (hzeta_nonneg : 0 ≤ zeta)\n    (hzeta_le : zeta ≤ 1)\n    (family : IdxPolyFamily params ι)\n    {k i : ℕ} (hi : i < k) (hi0 : i ≠ 0)\n    (facts : LdSandwichLineOnePointAdjointRawCoreBound params strategy family gamma zeta hi)\n    (hmovedEndpoint :\n      ConsRel strategy.state\n        (uniformDistribution (SandwichedLineQuestion params k))\n        (ldSandwichLineOnePointPrefixMovedFamily params family hi)\n        (ldSandwichLineOnePointRightFamily params strategy family k i)\n        (zeta + Real.sqrt (8 * (params.m : Error) * min eps 1 + 4 * min delta 1))) :\n    bipartiteConsError strategy.state\n      (uniformDistribution (SandwichedLineQuestion params k))\n      (ldSandwichLineOnePointPrefixOriginalFamily params family hi)\n      (ldSandwichLineOnePointRightFamily params strategy family k i)\n      ≤ ldSandwichLineOnePointError params eps delta gamma zeta k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Scalar residual for the nonzero-coordinate branch of\n`lem:ld-sandwich-line-one-point`.\n\nThis is the match-mass lower-bound step after unfolding `ConsRel`: it bounds the\naveraged off-diagonal defect for the prefix-marginalized one-point family.  The\nhelper consumes only the adjoint raw-core bound; endpoint identifications,\nraw-family reindexing, exact tail deletion, and match-mass expansion are now\nproved directly in the local lemmas that use them.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.Core",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — core theorems\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Core.lean#L98-L163",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Core.lean",
+  "lines": [
+   98,
+   163
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_cauchySchwarz_transport",
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_comm_error_le"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_nonzero_prefix_transport",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_nonzero_prefix_transport",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_nonzero_prefix_transport\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma zeta : Error)\n    (heps_nonneg : 0 ≤ eps)\n    (hdelta_nonneg : 0 ≤ delta)\n    (hgamma_nonneg : 0 ≤ gamma)\n    (hzeta_nonneg : 0 ≤ zeta)\n    (hzeta_le : zeta ≤ 1)\n    (family : IdxPolyFamily params ι)\n    {k i : ℕ} (hi : i < k) (hi0 : i ≠ 0)\n    (hcomm : ∀ j : ℕ, 2 ≤ j →\n      CommuteGHalfSandwichStatement params strategy.state family\n        gamma zeta j)\n    (hmovedEndpoint :\n      ConsRel strategy.state\n        (uniformDistribution (SandwichedLineQuestion params k))\n        (ldSandwichLineOnePointPrefixMovedFamily params family hi)\n        (ldSandwichLineOnePointRightFamily params strategy family k i)\n        (zeta + Real.sqrt (8 * (params.m : Error) * min eps 1 + 4 * min delta 1))) :\n    ConsRel strategy.state\n      (uniformDistribution (SandwichedLineQuestion params k))\n      (ldSandwichLineOnePointLeftFamily params strategy family k i)\n      (ldSandwichLineOnePointRightFamily params strategy family k i)\n      (ldSandwichLineOnePointError params eps delta gamma zeta k) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Turn the scalar match-mass lower bound into the `ConsRel` needed by the\npublic line-one-point statement.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.Core",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — core theorems\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Core.lean#L165-L204",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Core.lean",
+  "lines": [
+   165,
+   204
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_adjointRawCommutation_qSDDCore_bound",
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_matchMass_lower_bound",
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_eq_prefixOriginal"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_core_of_axis_self",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_core_of_axis_self",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_core_of_axis_self\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta gamma zeta : Error)\n    (haxis : strategy.axisParallelFailureProbability ≤ eps)\n    (hself : strategy.selfConsistencyFailureProbability ≤ delta)\n    (hgamma_nonneg : 0 ≤ gamma)\n    (hzeta_le : zeta ≤ 1)\n    (family : IdxPolyFamily params ι)\n    (hcons : family.ConsistentWithPoints strategy zeta)\n    (hcomm : ∀ j : ℕ, 2 ≤ j →\n      CommuteGHalfSandwichStatement params strategy.state family\n        gamma zeta j)\n    (k i : ℕ) (hi : i < k) :\n    ConsRel strategy.state\n      (uniformDistribution (SandwichedLineQuestion params k))\n      (ldSandwichLineOnePointLeftFamily params strategy family k i)\n      (ldSandwichLineOnePointRightFamily params strategy family k i)\n      (ldSandwichLineOnePointError params eps delta gamma zeta k) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Cauchy-Schwarz sandwich elimination for one-point consistency.\n\nGiven the half-sandwich commutation bound from `commuteGHalfSandwich`, performs\nthe Cauchy-Schwarz + measurement-completeness argument that converts the\nsandwiched operator distance into a one-point consistency bound.\n\nPaper reference: `lem:ld-sandwich-line-one-point` proof in\n`ld-pasting.tex` lines 931-1036.\n\nSteps:\n1. Simplify by summing out indices `> i` using measurement completeness\n2. Apply Cauchy-Schwarz with `commuteGHalfSandwich` to move `Ghat_1` left\n3. Apply Cauchy-Schwarz again to move `Ghat_1` right\n4. Eliminate `Ghat_<i` product using measurement completeness\n5. Reduce to the single-slice bound `eq:ld-gbcon`",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.Core",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — core theorems\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Core.lean#L206-L325",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Core.lean",
+  "lines": [
+   206,
+   325
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.bipartiteConsError_uniform_le_one",
+   "MIPStarRE.LDT.Pasting.bipartiteSSCError_uniform_le_one",
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_nonzero_prefix_transport",
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_zero_eq_endpoint",
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_error_le",
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_ldGbcon_lift_of_axis_self",
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointPrefixMoved_eq_endpoint",
+   "MIPStarRE.LDT.ConsRel.mono",
+   "MIPStarRE.LDT.bipartiteConsError_nonneg",
+   "MIPStarRE.LDT.bipartiteSSCError_nonneg"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 85,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_ldGbcon_of_axis_self",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_ldGbcon_of_axis_self",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_ldGbcon_of_axis_self\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta zeta : Error)\n    (haxis : strategy.axisParallelFailureProbability ≤ eps)\n    (hself : strategy.selfConsistencyFailureProbability ≤ delta)\n    (family : IdxPolyFamily params ι)\n    (hcons : family.ConsistentWithPoints strategy zeta) :\n    ConsRel strategy.state\n      (uniformDistribution (Point params × Fq params))\n      (fun ux => postprocess (evaluateAt params ux.1 ((family.meas ux.2).toSubMeas)) some)\n      (fun ux =>\n        postprocess\n          (ldSandwichLineOnePointRightEndpointMeasurement params strategy ux).toSubMeas\n          some)\n        (zeta + Real.sqrt (8 * (params.m : Error) * eps + 4 * delta)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.Endpoint",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — endpoint lemmas\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Endpoint.lean#L142-L212",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Endpoint.lean",
+  "lines": [
+   142,
+   212
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.ext",
+   "MIPStarRE.LDT.SubMeas.postprocess_comp",
+   "MIPStarRE.LDT.Pasting.ldGbcon_of_axis_self",
+   "MIPStarRE.LDT.Preliminaries.consRelDataProcessing_questionDependent",
+   "MIPStarRE.LDT.Preliminaries.consRel_uniform_equiv",
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 54,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_ldGbcon_lift_of_axis_self",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_ldGbcon_lift_of_axis_self",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_ldGbcon_lift_of_axis_self\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (eps delta zeta : Error)\n    (haxis : strategy.axisParallelFailureProbability ≤ eps)\n    (hself : strategy.selfConsistencyFailureProbability ≤ delta)\n    (family : IdxPolyFamily params ι)\n    (hcons : family.ConsistentWithPoints strategy zeta)\n    (k i : ℕ) (hi : i < k) :\n    ConsRel strategy.state\n      (uniformDistribution (SandwichedLineQuestion params k))\n      (fun q =>\n        postprocess\n          (evaluateAt params q.1 ((family.meas (q.2 ⟨i, hi⟩)).toSubMeas))\n          some)\n      (ldSandwichLineOnePointRightFamily params strategy family k i)\n      (zeta + Real.sqrt (8 * (params.m : Error) * eps + 4 * delta)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.Endpoint",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — endpoint lemmas\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Endpoint.lean#L217-L278",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Endpoint.lean",
+  "lines": [
+   217,
+   278
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.ext",
+   "MIPStarRE.LDT.SubMeas.postprocess_comp",
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_ldGbcon_of_axis_self",
+   "MIPStarRE.LDT.Preliminaries.consRel_uniform_prod_fst",
+   "MIPStarRE.LDT.Preliminaries.consRel_uniform_equiv",
+   "MIPStarRE.LDT.postprocess_total"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 44,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_zero_outcome_some_eq_endpoint",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_zero_outcome_some_eq_endpoint",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_zero_outcome_some_eq_endpoint\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    {k : ℕ} (hk : 0 < k)\n    (q : SandwichedLineQuestion params k) (a : Fq params) :\n    ((ldSandwichLineOnePointLeftFamily params strategy family k 0) q).outcome (some a) =\n      (evaluateAt params q.1 ((family.meas (q.2 ⟨0, hk⟩)).toSubMeas)).outcome a := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.Endpoint",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — endpoint lemmas\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Endpoint.lean#L352-L469",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Endpoint.lean",
+  "lines": [
+   352,
+   469
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Measurement.outcome_hermitian",
+   "MIPStarRE.LDT.Pasting.gHatIdxMeas_proj",
+   "MIPStarRE.LDT.Pasting.gHatHalfProductTotalOperator_eq_one"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 109,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_zero_eq_endpoint",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_zero_eq_endpoint",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_zero_eq_endpoint\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    {k : ℕ} (hk : 0 < k) :\n    ldSandwichLineOnePointLeftFamily params strategy family k 0 =\n      (fun q : SandwichedLineQuestion params k =>\n        postprocess\n          (evaluateAt params q.1 ((family.meas (q.2 ⟨0, hk⟩)).toSubMeas))\n          some) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.Endpoint",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — endpoint lemmas\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Endpoint.lean#L471-L533",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Endpoint.lean",
+  "lines": [
+   471,
+   533
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.ext",
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_zero_outcome_some_eq_endpoint"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 52,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_sqrt_bound",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_sqrt_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_sqrt_bound\n    (params : Parameters)\n    (eps delta : Error)\n    (k : ℕ)\n    (hk_pos : 1 ≤ k)\n    (heps_nonneg : 0 ≤ eps)\n    (hdelta_nonneg : 0 ≤ delta) :\n    Real.sqrt (8 * (params.m : Error) * min eps 1 + 4 * min delta 1)\n      ≤ 3 * (k : Error) * (params.m : Error) *\n          (Real.rpow eps (1 / (32 : Error)) + Real.rpow delta (1 / (32 : Error))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.Endpoint",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — endpoint lemmas\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Endpoint.lean#L535-L655",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Endpoint.lean",
+  "lines": [
+   535,
+   655
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 111,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_error_le",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_error_le",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_error_le\n    (params : Parameters) [FieldModel params.q]\n    (eps delta gamma zeta : Error) (k : ℕ)\n    (hk_pos : 1 ≤ k)\n    (heps_nonneg : 0 ≤ eps)\n    (hdelta_nonneg : 0 ≤ delta)\n    (hgamma_nonneg : 0 ≤ gamma)\n    (hzeta_nonneg : 0 ≤ zeta)\n    (hzeta_le : zeta ≤ 1) :\n    zeta + Real.sqrt (8 * (params.m : Error) * min eps 1 + 4 * min delta 1) ≤\n      ldSandwichLineOnePointError params eps delta gamma zeta k := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.Endpoint",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — endpoint lemmas\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Endpoint.lean#L657-L765",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/Endpoint.lean",
+  "lines": [
+   657,
+   765
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_sqrt_bound"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 98,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.gHatSandwichFamily_restrict_eval_outcome_some",
+  "source_name": "MIPStarRE.LDT.Pasting.gHatSandwichFamily_restrict_eval_outcome_some",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.gHatSandwichFamily_restrict_eval_outcome_some\n    (params : Parameters)\n    [FieldModel params.q]\n    (family : IdxPolyFamily params ι)\n    {n : ℕ} (xs : PointTuple params n)\n    (idx : Fin n) (u : Point params) (a : Fq params) :\n    (postprocess\n      (restrictSubMeas (gHatSandwichFamily params family n xs)\n        (fun gs => (gs idx).isSome = true))\n      (fun gs => Option.map (fun g : Polynomial params => g u) (gs idx))).outcome (some a) =\n      ∑ gs : GHatTupleOutcome params n,\n        if Option.map (fun g : Polynomial params => g u) (gs idx) = some a then\n          let half := gHatHalfProductOutcomeOperator params family n xs gs\n          half * halfᴴ\n        else\n          0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Generic outcome expansion for evaluating a restricted completed-slice sandwich\nfamily at a concrete field value.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.OutcomeLemmas",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — outcome lemmas\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/OutcomeLemmas.lean#L154-L182",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/OutcomeLemmas.lean",
+  "lines": [
+   154,
+   182
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_drop_last_outcome_some",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_drop_last_outcome_some",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_drop_last_outcome_some\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι)\n    {n i : ℕ} (hi : i < n)\n    (q : SandwichedLineQuestion params (n + 1))\n    (a : Fq params) :\n    ((ldSandwichLineOnePointLeftFamily params strategy family (n + 1) i) q).outcome\n        (some a) =\n      ((ldSandwichLineOnePointLeftFamily params strategy family n i)\n        (q.1, fun j => q.2 ⟨j.1, by omega⟩)).outcome (some a) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Delete one trailing sandwiched-line coordinate from the full one-point left\nfamily, for a genuine field outcome.\n\nThis is the one-coordinate version of paper `ld-pasting.tex` lines 934--941:\nsumming over an extraneous completed-slice outcome collapses that measurement to\n`I`, leaving the shorter sandwich.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.OutcomeLemmas",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — outcome lemmas\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/OutcomeLemmas.lean#L287-L399",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/OutcomeLemmas.lean",
+  "lines": [
+   287,
+   399
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Pasting.gHatSandwichFamily_restrict_eval_outcome_some",
+   "MIPStarRE.LDT.Pasting.gHatSandwich_sum_last_eq_prefix"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 95,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_eq_prefixOriginal",
+  "source_name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_eq_prefixOriginal",
+  "formal_statement": "theorem MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_eq_prefixOriginal\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (family : IdxPolyFamily params ι) :\n    ∀ {k i : ℕ} (hi : i < k),\n      ldSandwichLineOnePointLeftFamily params strategy family k i =\n        ldSandwichLineOnePointPrefixOriginalFamily params family hi := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Pasting",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Deleting all coordinates after `i` from the full one-point left family leaves\nexactly the prefix family used in the Cauchy--Schwarz transport.\n\nThis closes the paper's exact marginalization step `ld-pasting.tex` lines\n932--953; the remaining analytic residual starts after this deletion.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.ComparisonLemmas.LdSandwichLineOnePoint.OutcomeLemmas",
+  "module_doc": "/-!\n# Section 12 pasting: line one-point transport — outcome lemmas\n\nInternal helper module; part of the file-split for `#1127`.\n\n## References\n\n- `references/ldt-paper/ld-pasting.tex`\n- `blueprint/src/chapter/ch09_pasting.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/OutcomeLemmas.lean#L401-L459",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/ComparisonLemmas/LdSandwichLineOnePoint/OutcomeLemmas.lean",
+  "lines": [
+   401,
+   459
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.ext",
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_drop_last_outcome_some"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 45,
+  "is_target": false
+ }
+]

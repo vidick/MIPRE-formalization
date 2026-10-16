@@ -1,0 +1,536 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.avgOver_uniform_prod_swap",
+  "source_name": "MIPStarRE.LDT.avgOver_uniform_prod_swap",
+  "formal_statement": "theorem MIPStarRE.LDT.avgOver_uniform_prod_swap\n    {α β : Type*}\n    [Fintype α] [DecidableEq α] [Nonempty α]\n    [Fintype β] [DecidableEq β] [Nonempty β]\n    (f : α → β → Error) :\n    avgOver (uniformDistribution (α × β)) (fun ab => f ab.1 ab.2) =\n      avgOver (uniformDistribution β)\n        (fun b => avgOver (uniformDistribution α) (fun a => f a b)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Split a uniform average over a product into iterated uniform averages, with\nthe second coordinate averaged first.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L745-L756",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   745,
+   756
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "PMF.bind_sum_smul",
+   "PMF.uniformOfFintype_prod_eq_bind",
+   "PMF.map_sum_smul",
+   "PMF.realWeightedSum_uniformOfFintype_comm"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.avgOver_uniform_sum_eq_card_mul_prod",
+  "source_name": "MIPStarRE.LDT.avgOver_uniform_sum_eq_card_mul_prod",
+  "formal_statement": "theorem MIPStarRE.LDT.avgOver_uniform_sum_eq_card_mul_prod\n    {α β : Type*}\n    [Fintype α] [DecidableEq α] [Nonempty α]\n    [Fintype β] [DecidableEq β] [Nonempty β]\n    (f : α → β → Error) :\n    avgOver (uniformDistribution α) (fun a => ∑ b : β, f a b) =\n      (Fintype.card β : Error) *\n        avgOver (uniformDistribution (α × β)) (fun ab => f ab.1 ab.2) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Pull a finite sum through a uniform average and express it as a uniform\naverage over the product, with the cardinality of the summed type as the\nnormalizing factor.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L758-L789",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   758,
+   789
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_prod_swap",
+   "MIPStarRE.LDT.avgOver_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.avgOver_uniform_fst",
+  "source_name": "MIPStarRE.LDT.avgOver_uniform_fst",
+  "formal_statement": "theorem MIPStarRE.LDT.avgOver_uniform_fst {α β : Type*}\n    [Fintype α] [DecidableEq α] [Nonempty α]\n    [Fintype β] [DecidableEq β] [Nonempty β]\n    (f : α → Error) :\n    avgOver (uniformDistribution (α × β)) (fun ab => f ab.1) =\n      avgOver (uniformDistribution α) f := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Averaging a function depending only on the first coordinate marginalizes a uniform product.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionAvg",
+  "module_doc": "/-!\n# Average lemmas for finite-support distributions\n\nThis module contains the finite-sum and uniform-average lemmas for the project\n`Distribution` type.  The primitive distribution definitions, uniform\ndistributions, and total variation distance live in\n`MIPStarRE.LDT.Basic.Distribution`.\n\n## Main declarations\n\nThe main results are the algebraic rules for `avgOver`, scalar and\noperator-valued forms of the module-valued finite-sum rules for uniform\ndistributions, and the comparison between finite uniform averages and Mathlib\nuniform probability mass functions.\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean#L845-L852",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionAvg.lean",
+  "lines": [
+   845,
+   852
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "PMF.uniformOfFintype_sum_equiv_fst_smul"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.uniformOnFinset_sum_smul_eq_subtype",
+  "source_name": "MIPStarRE.LDT.uniformOnFinset_sum_smul_eq_subtype",
+  "formal_statement": "theorem MIPStarRE.LDT.uniformOnFinset_sum_smul_eq_subtype {α M : Type*} [DecidableEq α]\n    [AddCommMonoid M] [Module Error M]\n    (s : Finset α) [Nonempty {a : α // a ∈ s}] (f : α → M) :\n    ∑ a ∈ (Distribution.uniformOnFinset s).support,\n        (Distribution.uniformOnFinset s).weight a • f a =\n      ∑ a ∈ (uniformDistribution {a : α // a ∈ s}).support,\n        (uniformDistribution {a : α // a ∈ s}).weight a • f a.1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators"
+  ],
+  "docstring": "A finite-support uniform module-valued average is the corresponding uniform\naverage over the support subtype.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionUniformSums",
+  "module_doc": "/-!\n# Module-valued uniform finite sums for project distributions\n\nThis module contains the module-valued finite-sum algebra for the project\n`Distribution` type.  The statements keep the paper-facing\n`uniformDistribution` notation, but their proofs reduce the probability\ncalculation to the finite-expectation API for Mathlib probability mass\nfunctions.\n\n## Main declarations\n\n* `Distribution.sum_smul_eq_toPMF_support_sum`\n* `Distribution.sum_smul_eq_toPMF_sum`\n* `uniformDistribution_sum_smul_eq_pmf_sum`\n* `uniformDistribution_sum_smul_equiv`\n* `uniformDistribution_sum_smul_prod`\n* `uniformDistribution_sum_smul_comm`\n* `uniformDistribution_sum_smul_prod_swap`\n* `uniformDistribution_sum_smul_equiv_prod`\n* `uniformDistribution_sum_smul_equiv_fst`\n* `uniformDistribution_sum_smul_equiv_snd`\n* `uniformDistribution_map_sum_smul_eq_uniform_of_factor_equiv`\n* `uniformOnFinset_sum_smul_eq_subtype`\n* `uniformOnFinset_filter_sum_smul_equiv`\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionUniformSums.lean#L391-L419",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionUniformSums.lean",
+  "lines": [
+   391,
+   419
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 8,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.uniformOnFinset_filter_sum_smul_eq_subtype",
+  "source_name": "MIPStarRE.LDT.uniformOnFinset_filter_sum_smul_eq_subtype",
+  "formal_statement": "theorem MIPStarRE.LDT.uniformOnFinset_filter_sum_smul_eq_subtype {α M : Type*}\n    [Fintype α] [DecidableEq α]\n    (p : α → Prop) [DecidablePred p] [Nonempty {a : α // p a}]\n    [AddCommMonoid M] [Module Error M] (f : α → M) :\n    ∑ a ∈ (Distribution.uniformOnFinset (Finset.univ.filter p)).support,\n        (Distribution.uniformOnFinset (Finset.univ.filter p)).weight a • f a =\n      ∑ a ∈ (uniformDistribution {a : α // p a}).support,\n        (uniformDistribution {a : α // p a}).weight a • f a.1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators"
+  ],
+  "docstring": "A uniform module-valued average over a filtered finite support is the uniform\naverage over the finite subtype satisfying the predicate.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionUniformSums",
+  "module_doc": "/-!\n# Module-valued uniform finite sums for project distributions\n\nThis module contains the module-valued finite-sum algebra for the project\n`Distribution` type.  The statements keep the paper-facing\n`uniformDistribution` notation, but their proofs reduce the probability\ncalculation to the finite-expectation API for Mathlib probability mass\nfunctions.\n\n## Main declarations\n\n* `Distribution.sum_smul_eq_toPMF_support_sum`\n* `Distribution.sum_smul_eq_toPMF_sum`\n* `uniformDistribution_sum_smul_eq_pmf_sum`\n* `uniformDistribution_sum_smul_equiv`\n* `uniformDistribution_sum_smul_prod`\n* `uniformDistribution_sum_smul_comm`\n* `uniformDistribution_sum_smul_prod_swap`\n* `uniformDistribution_sum_smul_equiv_prod`\n* `uniformDistribution_sum_smul_equiv_fst`\n* `uniformDistribution_sum_smul_equiv_snd`\n* `uniformDistribution_map_sum_smul_eq_uniform_of_factor_equiv`\n* `uniformOnFinset_sum_smul_eq_subtype`\n* `uniformOnFinset_filter_sum_smul_equiv`\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionUniformSums.lean#L446-L480",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionUniformSums.lean",
+  "lines": [
+   446,
+   480
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.uniformOnFinset_sum_smul_eq_subtype",
+   "PMF.uniformOfFintype_map_equiv",
+   "PMF.map_sum_smul"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.uniformOnFinset_filter_sum_smul_equiv",
+  "source_name": "MIPStarRE.LDT.uniformOnFinset_filter_sum_smul_equiv",
+  "formal_statement": "theorem MIPStarRE.LDT.uniformOnFinset_filter_sum_smul_equiv {α β M : Type*}\n    [Fintype α] (p : α → Prop) [DecidablePred p]\n    [Fintype β] [DecidableEq β] [Nonempty β]\n    [AddCommMonoid M] [Module Error M]\n    (e : β ≃ {a : α // p a}) (f : α → M) :\n    ∑ a ∈ (Distribution.uniformOnFinset (Finset.univ.filter p)).support,\n        (Distribution.uniformOnFinset (Finset.univ.filter p)).weight a • f a =\n      ∑ b ∈ (uniformDistribution β).support,\n        (uniformDistribution β).weight b • f (e b).1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators"
+  ],
+  "docstring": "A uniform module-valued average over a filtered finite type may be reindexed\nby any finite seed type equivalent to the predicate subtype.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.DistributionUniformSums",
+  "module_doc": "/-!\n# Module-valued uniform finite sums for project distributions\n\nThis module contains the module-valued finite-sum algebra for the project\n`Distribution` type.  The statements keep the paper-facing\n`uniformDistribution` notation, but their proofs reduce the probability\ncalculation to the finite-expectation API for Mathlib probability mass\nfunctions.\n\n## Main declarations\n\n* `Distribution.sum_smul_eq_toPMF_support_sum`\n* `Distribution.sum_smul_eq_toPMF_sum`\n* `uniformDistribution_sum_smul_eq_pmf_sum`\n* `uniformDistribution_sum_smul_equiv`\n* `uniformDistribution_sum_smul_prod`\n* `uniformDistribution_sum_smul_comm`\n* `uniformDistribution_sum_smul_prod_swap`\n* `uniformDistribution_sum_smul_equiv_prod`\n* `uniformDistribution_sum_smul_equiv_fst`\n* `uniformDistribution_sum_smul_equiv_snd`\n* `uniformDistribution_map_sum_smul_eq_uniform_of_factor_equiv`\n* `uniformOnFinset_sum_smul_eq_subtype`\n* `uniformOnFinset_filter_sum_smul_equiv`\n\n## References\n\nThese are formalization-internal finite probability lemmas for the low\nindividual degree test development.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionUniformSums.lean#L482-L506",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/DistributionUniformSums.lean",
+  "lines": [
+   482,
+   506
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.uniformOnFinset_filter_sum_smul_eq_subtype",
+   "PMF.uniformOfFintype_map_equiv",
+   "PMF.map_sum_smul"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.axisLinePolynomialToPolynomial_apply",
+  "source_name": "MIPStarRE.LDT.axisLinePolynomialToPolynomial_apply",
+  "formal_statement": "theorem MIPStarRE.LDT.axisLinePolynomialToPolynomial_apply\n    (params : Parameters) [FieldModel params.q]\n    (i : Fin params.m) (f : AxisLinePolynomial params) (u : Point params) :\n    axisLinePolynomialToPolynomial params i f u = f (u i) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT"
+  ],
+  "docstring": "Evaluating the lifted polynomial at a point `u` recovers the original line\npolynomial at the `i`th coordinate `u i`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LinePolynomialEmbedding",
+  "module_doc": "/-!\n# Axis-line to global polynomial lifts\n\nUtility lemmas for substituting a univariate axis-line polynomial into a chosen\nambient coordinate.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/LinePolynomialEmbedding.lean#L61-L85",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/LinePolynomialEmbedding.lean",
+  "lines": [
+   61,
+   85
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Polynomial.appendAtHeight_apply_appendPoint",
+  "source_name": "MIPStarRE.LDT.Polynomial.appendAtHeight_apply_appendPoint",
+  "formal_statement": "theorem MIPStarRE.LDT.Polynomial.appendAtHeight_apply_appendPoint\n    (params : Parameters) [FieldModel params.q]\n    (g : Polynomial params) (x : Fq params) (u : Point params) (y : Fq params) :\n    appendAtHeight params g x (appendPoint params u y) = g u := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Polynomial"
+  ],
+  "docstring": "Evaluating an old polynomial after appending a new coordinate ignores the\nappended coordinate.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LowDegreePolynomial",
+  "module_doc": "/-!\n# Low-individual-degree polynomials for the low individual degree test\n\nMultivariate low-degree polynomial objects and their restrictions.\n\nNote: this module contributes declarations to the comparator statement closure\nof `mainFormal`, which must elaborate in the same environment as the\nMathlib-only `Challenge.lean`.  Keep the full `import Mathlib`; do not narrow\nit.  See `docs/comparator.md`, \"Environment alignment\".\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/LowDegreePolynomial.lean#L209-L226",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/LowDegreePolynomial.lean",
+  "lines": [
+   209,
+   226
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Polynomial.restrictToAxisParallelLine_apply",
+  "source_name": "MIPStarRE.LDT.Polynomial.restrictToAxisParallelLine_apply",
+  "formal_statement": "theorem MIPStarRE.LDT.Polynomial.restrictToAxisParallelLine_apply\n    (params : Parameters) [FieldModel params.q]\n    (g : Polynomial params) (ℓ : AxisParallelLine params) (t : Fq params) :\n    restrictToAxisParallelLine params g ℓ t = g (ℓ.pointAt t) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Polynomial"
+  ],
+  "docstring": "Evaluating an axis-parallel restriction agrees with evaluating the original\npolynomial at the corresponding point on the line.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.LowDegreePolynomial",
+  "module_doc": "/-!\n# Low-individual-degree polynomials for the low individual degree test\n\nMultivariate low-degree polynomial objects and their restrictions.\n\nNote: this module contributes declarations to the comparator statement closure\nof `mainFormal`, which must elaborate in the same environment as the\nMathlib-only `Challenge.lean`.  Keep the full `import Mathlib`; do not narrow\nit.  See `docs/comparator.md`, \"Environment alignment\".\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/LowDegreePolynomial.lean#L438-L472",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/LowDegreePolynomial.lean",
+  "lines": [
+   438,
+   472
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ev_add",
+  "source_name": "MIPStarRE.LDT.ev_add",
+  "formal_statement": "theorem MIPStarRE.LDT.ev_add {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι) (X Y : MIPStarRE.Quantum.Op ι) :\n    ev ψ (X + Y) = ev ψ X + ev ψ Y := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`ev` distributes over addition.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations",
+  "module_doc": "/-!\n# Operator expectation infrastructure for the low individual degree test\n\nExpectation-value and normalized-trace lemmas for quantum operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean#L124-L129",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean",
+  "lines": [
+   124,
+   129
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.Quantum.normalizedTrace_add"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ev_sub",
+  "source_name": "MIPStarRE.LDT.ev_sub",
+  "formal_statement": "theorem MIPStarRE.LDT.ev_sub {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι) (X Y : MIPStarRE.Quantum.Op ι) :\n    ev ψ (X - Y) = ev ψ X - ev ψ Y := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`ev` distributes over subtraction.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations",
+  "module_doc": "/-!\n# Operator expectation infrastructure for the low individual degree test\n\nExpectation-value and normalized-trace lemmas for quantum operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean#L131-L136",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean",
+  "lines": [
+   131,
+   136
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ev_scale",
+  "source_name": "MIPStarRE.LDT.ev_scale",
+  "formal_statement": "theorem MIPStarRE.LDT.ev_scale {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι) (c : Error) (X : MIPStarRE.Quantum.Op ι) :\n    ev ψ ((c : ℂ) • X) = c * ev ψ X := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`ev` commutes with complex scalar multiplication by a real number.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations",
+  "module_doc": "/-!\n# Operator expectation infrastructure for the low individual degree test\n\nExpectation-value and normalized-trace lemmas for quantum operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean#L140-L148",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean",
+  "lines": [
+   140,
+   148
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.Quantum.normalizedTrace_smul"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ev_real_smul",
+  "source_name": "MIPStarRE.LDT.ev_real_smul",
+  "formal_statement": "theorem MIPStarRE.LDT.ev_real_smul {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι) (c : Error) (X : MIPStarRE.Quantum.Op ι) :\n    ev ψ (c • X) = c * ev ψ X := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`ev` commutes with the real scalar action on operators.\n\nThis is the real-scalar form of `ev_scale`; it is convenient when expanding\noperator averages, whose weights act by the real scalar action before being\ncoerced to complex matrix scalars.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations",
+  "module_doc": "/-!\n# Operator expectation infrastructure for the low individual degree test\n\nExpectation-value and normalized-trace lemmas for quantum operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean#L150-L159",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean",
+  "lines": [
+   150,
+   159
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_scale"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ev_zero",
+  "source_name": "MIPStarRE.LDT.ev_zero",
+  "formal_statement": "theorem MIPStarRE.LDT.ev_zero {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι) : ev ψ (0 : MIPStarRE.Quantum.Op ι) = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`ev` of the zero operator is zero.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations",
+  "module_doc": "/-!\n# Operator expectation infrastructure for the low individual degree test\n\nExpectation-value and normalized-trace lemmas for quantum operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean#L163-L166",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean",
+  "lines": [
+   163,
+   166
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ev_adjoint_self_nonneg",
+  "source_name": "MIPStarRE.LDT.ev_adjoint_self_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.ev_adjoint_self_nonneg {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι) (M : MIPStarRE.Quantum.Op ι) :\n    0 ≤ ev ψ (Mᴴ * M) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "For a PSD state `ψ` and any operator `M`, `E[Mᴴ M] ≥ 0`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations",
+  "module_doc": "/-!\n# Operator expectation infrastructure for the low individual degree test\n\nExpectation-value and normalized-trace lemmas for quantum operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean#L186-L202",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean",
+  "lines": [
+   186,
+   202
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.normalizedTrace_diff_sq_nonneg",
+  "source_name": "MIPStarRE.LDT.normalizedTrace_diff_sq_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.normalizedTrace_diff_sq_nonneg {n : Type*} [Fintype n]\n    (ρ D₁ D₂ : Matrix n n ℂ) (hρ : ρ.PosSemidef) :\n    0 ≤ Complex.re\n      (MIPStarRE.Quantum.normalizedTrace (ρ * ((D₁ - D₂)ᴴ * (D₁ - D₂)))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "PSD trace nonnegativity for difference quadratic:\n`0 ≤ Re τ(ρ (D₁ - D₂)ᴴ(D₁ - D₂))` for PSD ρ.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations",
+  "module_doc": "/-!\n# Operator expectation infrastructure for the low individual degree test\n\nExpectation-value and normalized-trace lemmas for quantum operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean#L206-L222",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean",
+  "lines": [
+   206,
+   222
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.normalizedTrace_triangle",
+  "source_name": "MIPStarRE.LDT.normalizedTrace_triangle",
+  "formal_statement": "theorem MIPStarRE.LDT.normalizedTrace_triangle {n : Type*} [Fintype n]\n    (ρ D₁ D₂ : Matrix n n ℂ) (hρ : ρ.PosSemidef) :\n    Complex.re (MIPStarRE.Quantum.normalizedTrace (ρ * ((D₁ + D₂)ᴴ * (D₁ + D₂)))) ≤\n      2 * (Complex.re (MIPStarRE.Quantum.normalizedTrace (ρ * (D₁ᴴ * D₁))) +\n           Complex.re (MIPStarRE.Quantum.normalizedTrace (ρ * (D₂ᴴ * D₂)))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Triangle inequality for normalized trace of PSD-weighted quadratic forms.\n\nFor PSD `ρ`, the real part of `τ(ρ (D₁ + D₂)ᴴ(D₁ + D₂))` is bounded by twice\nthe sum of the corresponding quadratic forms for `D₁` and `D₂`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations",
+  "module_doc": "/-!\n# Operator expectation infrastructure for the low individual degree test\n\nExpectation-value and normalized-trace lemmas for quantum operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean#L224-L258",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean",
+  "lines": [
+   224,
+   258
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.normalizedTrace_diff_sq_nonneg",
+   "MIPStarRE.Quantum.normalizedTrace_add"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ev_diff_triangle",
+  "source_name": "MIPStarRE.LDT.ev_diff_triangle",
+  "formal_statement": "theorem MIPStarRE.LDT.ev_diff_triangle {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState ι) (X Y Z : MIPStarRE.Quantum.Op ι) :\n    ev ψ ((X - Z)ᴴ * (X - Z)) ≤\n    2 * (ev ψ ((X - Y)ᴴ * (X - Y)) +\n         ev ψ ((Y - Z)ᴴ * (Y - Z))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Operator-level triangle inequality for expectation of squared differences:\n`E[(X-Z)ᴴ(X-Z)] ≤ 2*(E[(X-Y)ᴴ(X-Y)] + E[(Y-Z)ᴴ(Y-Z)])`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations",
+  "module_doc": "/-!\n# Operator expectation infrastructure for the low individual degree test\n\nExpectation-value and normalized-trace lemmas for quantum operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean#L262-L273",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean",
+  "lines": [
+   262,
+   273
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.normalizedTrace_triangle"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.normalizedTrace_triangle_three",
+  "source_name": "MIPStarRE.LDT.normalizedTrace_triangle_three",
+  "formal_statement": "theorem MIPStarRE.LDT.normalizedTrace_triangle_three {n : Type*} [Fintype n]\n    (ρ D₁ D₂ D₃ : Matrix n n ℂ) (hρ : ρ.PosSemidef) :\n    Complex.re (MIPStarRE.Quantum.normalizedTrace\n        (ρ * (((D₁ + D₂ + D₃)ᴴ) * (D₁ + D₂ + D₃)))) ≤\n      3 * (Complex.re (MIPStarRE.Quantum.normalizedTrace (ρ * (D₁ᴴ * D₁))) +\n        Complex.re (MIPStarRE.Quantum.normalizedTrace (ρ * (D₂ᴴ * D₂))) +\n        Complex.re (MIPStarRE.Quantum.normalizedTrace (ρ * (D₃ᴴ * D₃)))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Three-vector version of the normalized-trace triangle inequality.\n\nIf a difference is decomposed as three successive differences, its squared norm\nis bounded by `3` times the sum of the three squared norms. This is the `k = 3`\ncase of the paper's `prop:triangle-inequality-for-vectors-squared`, and it is\nused by the Step 6 projectivization chain in `inductive_step.tex:154--158`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations",
+  "module_doc": "/-!\n# Operator expectation infrastructure for the low individual degree test\n\nExpectation-value and normalized-trace lemmas for quantum operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean#L275-L332",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean",
+  "lines": [
+   275,
+   332
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.normalizedTrace_diff_sq_nonneg",
+   "MIPStarRE.Quantum.normalizedTrace_add"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 45,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ev_finset_sum",
+  "source_name": "MIPStarRE.LDT.ev_finset_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.ev_finset_sum {ι : Type*} [Fintype ι] [DecidableEq ι]\n    {α : Type*} (ψ : QuantumState ι) (s : Finset α)\n    (f : α → MIPStarRE.Quantum.Op ι) :\n    ev ψ (∑ a ∈ s, f a) = ∑ a ∈ s, ev ψ (f a) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "`ev` distributes over finite sums.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.OperatorExpectations",
+  "module_doc": "/-!\n# Operator expectation infrastructure for the low individual degree test\n\nExpectation-value and normalized-trace lemmas for quantum operators.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean#L349-L358",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/OperatorExpectations.lean",
+  "lines": [
+   349,
+   358
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_add",
+   "MIPStarRE.LDT.ev_zero"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ }
+]

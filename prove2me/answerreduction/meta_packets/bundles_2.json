@@ -1,0 +1,5127 @@
+[
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_CL_Downsize",
+  "module": "MIPRE.Foundations.CL.Downsize",
+  "module_doc": "/-!\n# Downsizing conditionally linear functions, and reindexing\n\nPaper `linear.tex`, `def:cl-downsize`, `lem:cl-downsize` and `lem:downsize-cl-dist`; blueprint\n`lem:cl-downsize`. The CL functions of the pipeline are native to `𝔽_{2^t}` (the low-degree\ntests, the introspection sampler), while samplers of normal form verifiers are over `𝔽₂`\n(`def:sampler`). *Downsizing* bridges the two: a basis `b` of a field `F` over a subfield `K`\ngives the `K`-linear bijection `↓ : F^ι ≃ K^{ι × κ}` reading off coordinates entry by entry\n(`downsizeEquiv`), and `L ↦ ↓ ∘ L ∘ ↓⁻¹` carries `ℓ`-level CL functions on `F^ι` to `ℓ`-level CL\nfunctions on `K^{ι × κ}` — on presentations, `CLFun.downsize`, whose decomposition data are\nthe downsized data of the original: register subspaces `S` become `S × κ`, stage maps are\nconjugated by `↓`, and the marginals, factor spaces and stage maps of `lem:cl-kth` correspond\n(`eval_truncate_downsize`, `factorOfPrefix_downsize`, `mapOfPrefix_downsize`). Exactness is\npreserved, and the CL distribution is pushed forward along `↓` (`clDist_downsize`).\n\nThe paper states this for admissible field sizes `q = 2^t`, `t` odd, with the self-dual\nnormal basis of blueprint `lem:self-dual-basis`. Nothing here depends on the choice of basis:\nthe self-duality matters for the *arithmetic* of `𝔽_{2^t}` to be computable from `𝔽₂`-data\nby the programs that use it, which is a matter for the efficient-computability toolkit. The\npaper's downsized *sampler* (`def:downsize_sampler`), a machine wrapping a sampler over\n`𝔽_{2^t}`, has no counterpart: samplers are over `𝔽₂` by definition, and a construction native\nto `𝔽_{2^t}` is to present the downsized CL functions directly.\n\nThe second half of the file is the transport of presentations along a bijection of\ncoordinates `e : ι ≃ ι'` (`reindexEquiv`, `CLFun.reindex`), with the same list of lemmas; it is\nthe identification `K^{ι × κ} = K^{|ι| · |κ|}` the paper leaves implicit, and it is what puts a\ndownsized presentation on the coordinates `Fin (s · t)` of a sampler.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Downsize.lean",
+  "source_path": "MIPRE/Foundations/CL/Downsize.lean",
+  "defmat": [
+   "MIPRE.CL.CLFun.downsize",
+   "MIPRE.CL.CLFun.reindex",
+   "MIPRE.CL.RegLinear.downsize",
+   "MIPRE.CL.RegLinear.reindex",
+   "MIPRE.CL.downsizeEquiv",
+   "MIPRE.CL.reindexEquiv"
+  ],
+  "embedded": [
+   "MIPRE.CL.CLFun.downsize_cons",
+   "MIPRE.CL.CLFun.downsize_zero",
+   "MIPRE.CL.CLFun.reindex_cons",
+   "MIPRE.CL.CLFun.reindex_zero",
+   "MIPRE.CL.RegLinear.downsize_apply",
+   "MIPRE.CL.RegLinear.downsize_zero",
+   "MIPRE.CL.RegLinear.reindex_apply",
+   "MIPRE.CL.RegLinear.reindex_zero",
+   "MIPRE.CL.downsizeEquiv_apply",
+   "MIPRE.CL.downsizeEquiv_proj",
+   "MIPRE.CL.downsizeEquiv_symm_proj",
+   "MIPRE.CL.reindexEquiv_apply",
+   "MIPRE.CL.reindexEquiv_proj",
+   "MIPRE.CL.reindexEquiv_symm_apply",
+   "MIPRE.CL.reindexEquiv_symm_proj"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.CL.CLFun.downsize",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     124,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.downsize_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     136,
+     140
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.downsize_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     133,
+     134
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.reindex",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     231,
+     235
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.reindex_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     239,
+     243
+    ]
+   },
+   {
+    "name": "MIPRE.CL.CLFun.reindex_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     237,
+     237
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.downsize",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     102,
+     109
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.downsize_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     111,
+     112
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.downsize_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     114,
+     116
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.reindex",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     212,
+     218
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.reindex_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     220,
+     221
+    ]
+   },
+   {
+    "name": "MIPRE.CL.RegLinear.reindex_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     223,
+     225
+    ]
+   },
+   {
+    "name": "MIPRE.CL.downsizeEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     45,
+     60
+    ]
+   },
+   {
+    "name": "MIPRE.CL.downsizeEquiv_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     62,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.CL.downsizeEquiv_proj",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     83,
+     87
+    ]
+   },
+   {
+    "name": "MIPRE.CL.downsizeEquiv_symm_proj",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     89,
+     92
+    ]
+   },
+   {
+    "name": "MIPRE.CL.reindexEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     65,
+     73
+    ]
+   },
+   {
+    "name": "MIPRE.CL.reindexEquiv_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     75,
+     76
+    ]
+   },
+   {
+    "name": "MIPRE.CL.reindexEquiv_proj",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     198,
+     201
+    ]
+   },
+   {
+    "name": "MIPRE.CL.reindexEquiv_symm_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     78,
+     79
+    ]
+   },
+   {
+    "name": "MIPRE.CL.reindexEquiv_symm_proj",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     203,
+     206
+    ]
+   }
+  ],
+  "lines": 232,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B"
+  ],
+  "blueprint": [
+   "lem:cl-downsize"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.CL.CLFun.downsize": [
+    "/-- The downsized presentation `L^↓` (paper `def:cl-downsize`): register subspaces `S` become",
+    "`S × κ`, the linear maps are conjugated by the downsize map, and the continuations are selected",
+    "through it. -/"
+   ],
+   "MIPRE.CL.CLFun.reindex": [
+    "/-- A presentation, transported along a bijection of coordinates. -/"
+   ],
+   "MIPRE.CL.RegLinear.downsize": [
+    "/-- The downsized linear map `↓ ∘ L ∘ ↓⁻¹` of a map on `V_S`: a map on `V_{S × κ}` over `K`. -/"
+   ],
+   "MIPRE.CL.RegLinear.reindex": [
+    "/-- A map on `V_S`, transported along `e`. -/"
+   ],
+   "MIPRE.CL.downsizeEquiv": [
+    "/-- The downsize map of a basis `b` of `F` over `K`, on vectors: `F^ι ≃ K^{ι × κ}`, sending",
+    "`v` to the coordinates of its entries, `↓v (i, j) = (b.repr (v i)) j`. -/"
+   ],
+   "MIPRE.CL.reindexEquiv": [
+    "/-- Transport of vectors along a bijection of coordinates, `x ↦ x ∘ e.symm`: the identification",
+    "`K^{ι} = K^{ι'}` (for instance `K^{ι × κ} = K^{|ι| · |κ|}`, the paper's `𝔽_2^{nt}`). -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_CL_TypedSampler",
+  "module": "MIPRE.Foundations.CL.TypedSampler",
+  "module_doc": "/-! # Typed samplers with an ambient program\n\nThe typed version of the sampler interface in `types.tex`. There is a single\nprogram and a common ambient dimension. A dimension query carries no type;\nevery other query carries the selected type together with the usual query.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/TypedSampler.lean",
+  "source_path": "MIPRE/Foundations/CL/TypedSampler.lean",
+  "defmat": [
+   "MIPRE.CL.TypedSampler",
+   "MIPRE.CL.TypedSampler.Query",
+   "MIPRE.CL.TypedSampler.Query.instSizedEncoding",
+   "MIPRE.CL.TypedSampler.Query.ofData",
+   "MIPRE.CL.TypedSampler.Query.toData",
+   "MIPRE.CL.TypedSampler.TimeBoundAt"
+  ],
+  "embedded": [
+   "MIPRE.CL.TypedSampler.Query.ofData_toData"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.CL.TypedSampler",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     45,
+     68
+    ]
+   },
+   {
+    "name": "MIPRE.CL.TypedSampler.Query",
+    "kind": "inductive",
+    "has_doc": false,
+    "lines": [
+     18,
+     20
+    ]
+   },
+   {
+    "name": "MIPRE.CL.TypedSampler.Query.instSizedEncoding",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     38,
+     41
+    ]
+   },
+   {
+    "name": "MIPRE.CL.TypedSampler.Query.ofData",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     30,
+     33
+    ]
+   },
+   {
+    "name": "MIPRE.CL.TypedSampler.Query.ofData_toData",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     35,
+     36
+    ]
+   },
+   {
+    "name": "MIPRE.CL.TypedSampler.Query.toData",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     26,
+     28
+    ]
+   },
+   {
+    "name": "MIPRE.CL.TypedSampler.TimeBoundAt",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     74,
+     75
+    ]
+   }
+  ],
+  "lines": 100,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler"
+  ],
+  "blueprint": [
+   "def:typed-sampler-interface"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.CL.TypedSampler": [
+    "/-- A typed sampler has one executable query interface for all types, rather",
+    "than a nonuniform collection of independently chosen programs. -/"
+   ],
+   "MIPRE.CL.TypedSampler.Query": null,
+   "MIPRE.CL.TypedSampler.Query.instSizedEncoding": null,
+   "MIPRE.CL.TypedSampler.Query.ofData": null,
+   "MIPRE.CL.TypedSampler.Query.toData": null,
+   "MIPRE.CL.TypedSampler.TimeBoundAt": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_CL_ProductSampler",
+  "module": "MIPRE.Foundations.CL.ProductSampler",
+  "module_doc": "/-!\n# The product of a typed sampler and a directly answered one: the presentations\n\nThe answer-reduced sampler (`sec:ar-verifier`, `ld_compiler.tex`) is the direct sum of the\noracularized sampler, whose queries are answered by a program, and the downsized PCP sampler,\nwhose queries a polynomial-time function answers outright. This file is the CL half of that\nconstruction, for any two families of presentations on `𝔽₂^a` and `𝔽₂^b`:\n\n* `prodCL L P Q` pads both to `L` levels and puts them side by side on `𝔽₂^{a + b}`, the first\n  `a` coordinates for `P`;\n* its three queries, in bits, are the two halves' queries concatenated (`toBits_eval_truncate_prodCL`,\n  `toBits_mapOfPrefix_prodCL`, `indicatorBits_factorOfPrefix_prodCL`);\n* beyond a presentation's own level its marginal is its full evaluation, its stage map zero and its\n  factor space empty (`eval_truncate_of_le`, `mapOfPrefix_of_le`, `factorOfPrefix_of_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/ProductSampler.lean",
+  "source_path": "MIPRE/Foundations/CL/ProductSampler.lean",
+  "defmat": [
+   "MIPRE.CL.CLFun.prodCL",
+   "MIPRE.CL.leftPart",
+   "MIPRE.CL.rightPart"
+  ],
+  "embedded": [
+   "MIPRE.CL.leftPart_append",
+   "MIPRE.CL.rightPart_append",
+   "_private.MIPRE.Foundations.CL.ProductSampler.0.MIPRE.CL.CLFun.split_symm",
+   "_private.MIPRE.Foundations.CL.ProductSampler.0.MIPRE.CL.CLFun.sumElim_reindex"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.CL.CLFun.prodCL",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     125,
+     129
+    ]
+   },
+   {
+    "name": "MIPRE.CL.leftPart",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     70,
+     71
+    ]
+   },
+   {
+    "name": "MIPRE.CL.leftPart_append",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     76,
+     78
+    ]
+   },
+   {
+    "name": "MIPRE.CL.rightPart",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     73,
+     74
+    ]
+   },
+   {
+    "name": "MIPRE.CL.rightPart_append",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     80,
+     82
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.CL.ProductSampler.0.MIPRE.CL.CLFun.split_symm",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     144,
+     147
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.CL.ProductSampler.0.MIPRE.CL.CLFun.sumElim_reindex",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     139,
+     142
+    ]
+   }
+  ],
+  "lines": 113,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Product",
+   "import Definitions.Def_MIPRE_Foundations_CL_Downsize",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler"
+  ],
+  "blueprint": [
+   "def:ar-typed-game"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.CL.CLFun.prodCL": [
+    "/-- `P` and `Q` padded to `L` levels, side by side on `𝔽₂^{a + b}`: `P` on the first `a`",
+    "coordinates. -/"
+   ],
+   "MIPRE.CL.leftPart": [
+    "/-- The first `a` coordinates. -/"
+   ],
+   "MIPRE.CL.rightPart": [
+    "/-- The last `b` coordinates. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_PresentationQueries",
+  "module": "MIPRE.Background.LIDT.PresentationQueries",
+  "module_doc": "/-!\n# The queries of the three-level presentation of the seeded test\n\nWhat a sampler program must compute for `Regs.pres` (`MIPRE/Background/LIDT/Presentation`), level\nby level: its marginals (`eval_truncate_one`, `eval_truncate_two`, `eval_pres`), its stage maps\nread off a prefix (`mapOfPrefix_zero`, `mapOfPrefix_one`, `mapOfPrefix_two`) and its factor\nspaces (`factorOfPrefix_zero`, `factorOfPrefix_one`, `factorOfPrefix_two`); from the fourth level\non there is nothing (`mapOfPrefix_three_le`, `factorOfPrefix_three_le`).\n\nThe seed a stage map reads is the prefix's seed coordinate, and the diagonal line's direction is\nthe prefix's direction register, already cut down by the selector.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/PresentationQueries.lean",
+  "source_path": "MIPRE/Background/LIDT/PresentationQueries.lean",
+  "defmat": [
+   "MIPRE.LIDT.CL.Regs.ptMap"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.LIDT.CL.Regs.ptMap",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     32,
+     36
+    ]
+   }
+  ],
+  "lines": 87,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_Distances",
+   "import Definitions.Def_MIPRE_Background_LIDT_Game",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Canonical",
+   "import Definitions.Def_MIPRE_Background_LIDT_CLGame",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_Presentation",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_Embedding",
+   "import Definitions.Def_MIPRE_Foundations_CL_Product",
+   "import Definitions.Def_MIPRE_Foundations_CL_Downsize",
+   "import Definitions.Def_MIPRE_Foundations_CL_TypedSampler",
+   "import Definitions.Def_MIPRE_Foundations_CL_ProductSampler"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LIDT.CL.Regs.ptMap": [
+    "/-- The linear map of the point register applied at the third stage. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryRepresentation",
+  "module": "MIPRE.Foundations.LowDegree.BinaryRepresentation",
+  "module_doc": "/-!\n# Binary coefficient representations\n\nThe coefficient interpretation used by the public Shoup contract and by the\nindependent polynomial algorithms. This module does not assume that an\nirreducible polynomial has already been constructed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryRepresentation.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryRepresentation.lean",
+  "defmat": [
+   "MIPRE.LowDegree.polyOfBits"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.polyOfBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     22,
+     25
+    ]
+   }
+  ],
+  "lines": 41,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.polyOfBits": [
+    "/-- The polynomial over `𝔽₂` whose coefficient of `Tⁱ` is bit `i` of `l`, least significant",
+    "first --- the repository's little-endian bit convention (`Cost.bitsVal`, `bitsOfNat`). -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryPolynomial",
+  "module": "MIPRE.Foundations.LowDegree.BinaryPolynomial",
+  "module_doc": "/-!\n# Binary polynomial arithmetic on coefficient lists\n\nCoefficient lists are little-endian. XOR implements addition, and multiplication\nby the indeterminate is reduced using the lower coefficients of a monic modulus.\nThe semantic lemmas work in every characteristic-two commutative ring containing\na root of that modulus; the programs are uniform in the coefficient lists.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryPolynomial.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryPolynomial.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits",
+   "MIPRE.LowDegree.BinaryPolynomial.mulReduce",
+   "MIPRE.LowDegree.BinaryPolynomial.mulReduceProg",
+   "MIPRE.LowDegree.BinaryPolynomial.shiftLow",
+   "MIPRE.LowDegree.BinaryPolynomial.shiftReduce",
+   "MIPRE.LowDegree.BinaryPolynomial.shiftReduceProg",
+   "MIPRE.LowDegree.BinaryPolynomial.takeBitsProg",
+   "MIPRE.LowDegree.BinaryPolynomial.xorBitProg",
+   "MIPRE.LowDegree.BinaryPolynomial.xorBits",
+   "MIPRE.LowDegree.BinaryPolynomial.xorBitsProg",
+   "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.MulState",
+   "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.headProg",
+   "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.mulStep",
+   "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.mulStepProg",
+   "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.shiftLowProg",
+   "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.tailProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_cons",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_nil",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_zero",
+   "MIPRE.LowDegree.BinaryPolynomial.length_shiftLow",
+   "MIPRE.LowDegree.BinaryPolynomial.length_shiftReduce_le",
+   "MIPRE.LowDegree.BinaryPolynomial.length_xorBits",
+   "MIPRE.LowDegree.BinaryPolynomial.mulReduceProg_apply",
+   "MIPRE.LowDegree.BinaryPolynomial.shiftReduceProg_apply",
+   "MIPRE.LowDegree.BinaryPolynomial.takeBitsProg_apply",
+   "MIPRE.LowDegree.BinaryPolynomial.xorBitsProg_apply",
+   "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.foldl_mulStep",
+   "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.foldr_mulStep",
+   "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.mulStepProg_apply",
+   "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.mulStepProg_bounded",
+   "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.mulStep_length"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.evalBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     24,
+     27
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.evalBits_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     31,
+     32
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.evalBits_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     29,
+     29
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.evalBits_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     49,
+     53
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.length_shiftLow",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     85,
+     86
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.length_shiftReduce_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     88,
+     90
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.length_xorBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     58,
+     59
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.mulReduce",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     120,
+     124
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.mulReduceProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     289,
+     308
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.mulReduceProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     310,
+     311
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.shiftLow",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     77,
+     78
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.shiftReduce",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     80,
+     83
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.shiftReduceProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     216,
+     226
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.shiftReduceProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     228,
+     229
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.takeBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     171,
+     178
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.takeBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     180,
+     181
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.xorBitProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     183,
+     186
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.xorBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     55,
+     56
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.xorBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     188,
+     193
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.xorBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     195,
+     196
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.MulState",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     231,
+     231
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.foldl_mulStep",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     256,
+     264
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.foldr_mulStep",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     281,
+     287
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.headProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     198,
+     201
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.mulStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     233,
+     235
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.mulStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     237,
+     242
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.mulStepProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     244,
+     245
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.mulStepProg_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     266,
+     279
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.mulStep_length",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     247,
+     254
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.shiftLowProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     208,
+     214
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.tailProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     203,
+     206
+    ]
+   }
+  ],
+  "lines": 233,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation"
+  ],
+  "blueprint": [
+   "lem:effective-binary-field-arithmetic"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits": [
+    "/-- Evaluate a little-endian binary coefficient list by Horner's rule. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.mulReduce": [
+    "/-- Horner multiplication, reducing after every shift. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.mulReduceProg": [
+    "/-- Uniform polynomial-time multiplication modulo a binary monic polynomial.",
+    "The input carries its lower coefficients and the two operands. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.shiftLow": [
+    "/-- Shift by one coefficient and discard the new highest coefficient. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.shiftReduce": [
+    "/-- Multiply by the indeterminate modulo `X^k + p`, with `p` represented by",
+    "exactly `k` lower coefficients. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.shiftReduceProg": [
+    "/-- Uniform polynomial-time multiplication by the indeterminate modulo a binary",
+    "monic polynomial. The input is the lower-coefficient vector and the operand. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.takeBitsProg": [
+    "/-- Take a unary-specified number of coefficients in polynomial time. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.xorBitProg": [
+    "/-- XOR of two bits, as an ambient program. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.xorBits": [
+    "/-- Fixed-width XOR, used only with equal-width operands in correctness lemmas. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.xorBitsProg": [
+    "/-- Uniform polynomial-time addition of fixed-width coefficient vectors. -/"
+   ],
+   "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.MulState": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.headProg": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.mulStep": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.mulStepProg": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.shiftLowProg": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryPolynomial.0.MIPRE.LowDegree.BinaryPolynomial.tailProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryConstants",
+  "module": "MIPRE.Foundations.LowDegree.BinaryConstants",
+  "module_doc": "/-! # Fixed-width zero and one for binary polynomial quotients -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryConstants.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryConstants.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryPolynomial.oneBits",
+   "MIPRE.LowDegree.BinaryPolynomial.oneBitsProg",
+   "MIPRE.LowDegree.BinaryPolynomial.zeroBits",
+   "MIPRE.LowDegree.BinaryPolynomial.zeroBitsProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_zeroBits",
+   "MIPRE.LowDegree.BinaryPolynomial.length_oneBits",
+   "MIPRE.LowDegree.BinaryPolynomial.length_zeroBits",
+   "MIPRE.LowDegree.BinaryPolynomial.oneBitsProg_apply",
+   "MIPRE.LowDegree.BinaryPolynomial.zeroBitsProg_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.evalBits_zeroBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     28,
+     29
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.length_oneBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     23,
+     24
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.length_zeroBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     20,
+     21
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.oneBits",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     16,
+     18
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.oneBitsProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     39,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.oneBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     45,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.zeroBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     13,
+     14
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.zeroBitsProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     36,
+     37
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.zeroBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     44,
+     44
+    ]
+   }
+  ],
+  "lines": 65,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryPolynomial.oneBits": null,
+   "MIPRE.LowDegree.BinaryPolynomial.oneBitsProg": null,
+   "MIPRE.LowDegree.BinaryPolynomial.zeroBits": [
+    "/-- Zero and one use the width of the supplied lower-coefficient vector. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.zeroBitsProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryPower",
+  "module": "MIPRE.Foundations.LowDegree.BinaryPower",
+  "module_doc": "/-!\n# Binary exponentiation in a polynomial-basis field\n\nThe exponent remains a little-endian bit string. The loop performs one squaring\nand at most one multiplication per bit and keeps fixed-width coefficient vectors.\nIts polynomial bound also holds for malformed inputs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryPower.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryPower.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryPolynomial.PowerState",
+   "MIPRE.LowDegree.BinaryPolynomial.powerBits",
+   "MIPRE.LowDegree.BinaryPolynomial.powerBitsProg",
+   "MIPRE.LowDegree.BinaryPolynomial.powerStep",
+   "_private.MIPRE.Foundations.LowDegree.BinaryPower.0.MIPRE.LowDegree.BinaryPolynomial.powerStepProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryPolynomial.fold_powerStep_width",
+   "MIPRE.LowDegree.BinaryPolynomial.powerBitsProg_apply",
+   "MIPRE.LowDegree.BinaryPolynomial.powerStep_width",
+   "_private.MIPRE.Foundations.LowDegree.BinaryPower.0.MIPRE.LowDegree.BinaryPolynomial.powerStep_bounded"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.PowerState",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     20,
+     20
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.fold_powerStep_width",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     35,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.powerBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     59,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.powerBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     122,
+     128
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.powerBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     130,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.powerStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     22,
+     24
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.powerStep_width",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     26,
+     33
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryPower.0.MIPRE.LowDegree.BinaryPolynomial.powerStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     97,
+     102
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryPower.0.MIPRE.LowDegree.BinaryPolynomial.powerStep_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     107,
+     120
+    ]
+   }
+  ],
+  "lines": 110,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants"
+  ],
+  "blueprint": [
+   "lem:effective-field-inverse-trace"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryPolynomial.PowerState": null,
+   "MIPRE.LowDegree.BinaryPolynomial.powerBits": [
+    "/-- Repeated squaring with a binary exponent. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.powerBitsProg": [
+    "/-- One uniform ambient program for exponentiation with binary exponent input. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.powerStep": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryPower.0.MIPRE.LowDegree.BinaryPolynomial.powerStepProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryQuotient",
+  "module": "MIPRE.Foundations.LowDegree.BinaryQuotient",
+  "module_doc": "/-!\n# Coordinates for arbitrary monic binary polynomial quotients\n\nThe basis and coefficient representation require only monicity. In particular,\nthe modulus need not be irreducible or squarefree. The abstract coordinate maps\nare used in proofs; the executable addition and multiplication are the existing\nuniform coefficient-list programs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryQuotient.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryQuotient.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryQuotient.coordinateEquiv",
+   "MIPRE.LowDegree.BinaryQuotient.ofBits",
+   "MIPRE.LowDegree.BinaryQuotient.toBits",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotient.0.MIPRE.LowDegree.BinaryQuotient.coeffBit"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryQuotient.evalBits_toBits",
+   "MIPRE.LowDegree.BinaryQuotient.length_toBits",
+   "MIPRE.LowDegree.BinaryQuotient.ofBits_eq_evalBits",
+   "MIPRE.LowDegree.BinaryQuotient.ofBits_toBits",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotient.0.MIPRE.LowDegree.BinaryQuotient.coeffBit_ofBool",
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotient.0.MIPRE.LowDegree.BinaryQuotient.ofBool_coeffBit"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.coordinateEquiv",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     36,
+     38
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.evalBits_toBits",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     92,
+     95
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.length_toBits",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     49,
+     51
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.ofBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     44,
+     47
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.ofBits_eq_evalBits",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     78,
+     90
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.ofBits_toBits",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     53,
+     60
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryQuotient.toBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     40,
+     42
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotient.0.MIPRE.LowDegree.BinaryQuotient.coeffBit",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     25,
+     25
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotient.0.MIPRE.LowDegree.BinaryQuotient.coeffBit_ofBool",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     31,
+     32
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryQuotient.0.MIPRE.LowDegree.BinaryQuotient.ofBool_coeffBit",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     27,
+     29
+    ]
+   }
+  ],
+  "lines": 105,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial"
+  ],
+  "blueprint": [
+   "lem:binary-monic-quotient"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryQuotient.coordinateEquiv": [
+    "/-- The monic quotient's specified power-basis coordinate equivalence. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.ofBits": [
+    "/-- Decode the first `natDegree f` coefficients; omitted coefficients are zero. -/"
+   ],
+   "MIPRE.LowDegree.BinaryQuotient.toBits": [
+    "/-- Canonical bits of a quotient element in the monic power basis. -/"
+   ],
+   "_private.MIPRE.Foundations.LowDegree.BinaryQuotient.0.MIPRE.LowDegree.BinaryQuotient.coeffBit": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryNormalize",
+  "module": "MIPRE.Foundations.LowDegree.BinaryNormalize",
+  "module_doc": "/-!\n# Normalizing binary coefficient lists\n\nRemove trailing false coefficients by a right fold. The empty list represents\nzero; every nonzero result ends in true. Both semantics and the ambient bound\nhold on arbitrary coefficient lists, including redundant trailing zeros.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryNormalize.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryNormalize.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryPolynomial.normalizeBits",
+   "MIPRE.LowDegree.BinaryPolynomial.normalizeBitsProg",
+   "MIPRE.LowDegree.BinaryPolynomial.normalizeStep",
+   "_private.MIPRE.Foundations.LowDegree.BinaryNormalize.0.MIPRE.LowDegree.BinaryPolynomial.normalizeStepProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryPolynomial.normalizeBitsProg_apply",
+   "MIPRE.LowDegree.BinaryPolynomial.normalizeBits_cons",
+   "MIPRE.LowDegree.BinaryPolynomial.normalizeBits_nil",
+   "_private.MIPRE.Foundations.LowDegree.BinaryNormalize.0.MIPRE.LowDegree.BinaryPolynomial.fold_normalizeStep_esize",
+   "_private.MIPRE.Foundations.LowDegree.BinaryNormalize.0.MIPRE.LowDegree.BinaryPolynomial.normalizeStep_bounded",
+   "_private.MIPRE.Foundations.LowDegree.BinaryNormalize.0.MIPRE.LowDegree.BinaryPolynomial.normalizeStep_esize"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.normalizeBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     23,
+     24
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.normalizeBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     119,
+     125
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.normalizeBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     127,
+     128
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.normalizeBits_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     28,
+     29
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.normalizeBits_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     26,
+     26
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.normalizeStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     19,
+     21
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryNormalize.0.MIPRE.LowDegree.BinaryPolynomial.fold_normalizeStep_esize",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     100,
+     108
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryNormalize.0.MIPRE.LowDegree.BinaryPolynomial.normalizeStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     87,
+     90
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryNormalize.0.MIPRE.LowDegree.BinaryPolynomial.normalizeStep_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     110,
+     117
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryNormalize.0.MIPRE.LowDegree.BinaryPolynomial.normalizeStep_esize",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     96,
+     98
+    ]
+   }
+  ],
+  "lines": 91,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial"
+  ],
+  "blueprint": [
+   "lem:binary-polynomial-normalization"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryPolynomial.normalizeBits": [
+    "/-- Canonical coefficient list, with no trailing false coefficients. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.normalizeBitsProg": [
+    "/-- One fixed ambient program for canonical polynomial coefficient lists. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.normalizeStep": [
+    "/-- Prepend a coefficient, suppressing zero coefficients above the leading term. -/"
+   ],
+   "_private.MIPRE.Foundations.LowDegree.BinaryNormalize.0.MIPRE.LowDegree.BinaryPolynomial.normalizeStepProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryDivision",
+  "module": "MIPRE.Foundations.LowDegree.BinaryDivision",
+  "module_doc": "/-!\n# Division by binary monic polynomials\n\nThe divisor is represented by its lower coefficients `p`; the leading one is\nimplicit. Horner long division keeps a fixed-width remainder and records each\ndiscarded leading coefficient in the quotient. Division by the constant one\nhas a separate branch. No irreducibility or field structure is assumed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryDivision.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryDivision.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryPolynomial.DivisionState",
+   "MIPRE.LowDegree.BinaryPolynomial.divModBits",
+   "MIPRE.LowDegree.BinaryPolynomial.divModBitsProg",
+   "MIPRE.LowDegree.BinaryPolynomial.divisionFold",
+   "MIPRE.LowDegree.BinaryPolynomial.divisionFoldProg",
+   "MIPRE.LowDegree.BinaryPolynomial.divisionStep",
+   "_private.MIPRE.Foundations.LowDegree.BinaryDivision.0.MIPRE.LowDegree.BinaryPolynomial.divisionStepProg",
+   "_private.MIPRE.Foundations.LowDegree.BinaryDivision.0.MIPRE.LowDegree.BinaryPolynomial.headBitProg",
+   "_private.MIPRE.Foundations.LowDegree.BinaryDivision.0.MIPRE.LowDegree.BinaryPolynomial.isEmptyBitsProg",
+   "_private.MIPRE.Foundations.LowDegree.BinaryDivision.0.MIPRE.LowDegree.BinaryPolynomial.lastBitProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryPolynomial.divModBitsProg_apply",
+   "MIPRE.LowDegree.BinaryPolynomial.divisionFoldProg_apply",
+   "MIPRE.LowDegree.BinaryPolynomial.divisionStep_width",
+   "MIPRE.LowDegree.BinaryPolynomial.fold_divisionStep_width",
+   "_private.MIPRE.Foundations.LowDegree.BinaryDivision.0.MIPRE.LowDegree.BinaryPolynomial.divisionStep_bounded"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.DivisionState",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     44,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.divModBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     148,
+     152
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.divModBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     249,
+     254
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.divModBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     256,
+     257
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.divisionFold",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     84,
+     86
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.divisionFoldProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     232,
+     240
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.divisionFoldProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     242,
+     243
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.divisionStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     47,
+     51
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.divisionStep_width",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     53,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryPolynomial.fold_divisionStep_width",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     65,
+     77
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryDivision.0.MIPRE.LowDegree.BinaryPolynomial.divisionStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     203,
+     209
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryDivision.0.MIPRE.LowDegree.BinaryPolynomial.divisionStep_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     214,
+     230
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryDivision.0.MIPRE.LowDegree.BinaryPolynomial.headBitProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     191,
+     194
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryDivision.0.MIPRE.LowDegree.BinaryPolynomial.isEmptyBitsProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     245,
+     247
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryDivision.0.MIPRE.LowDegree.BinaryPolynomial.lastBitProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     196,
+     201
+    ]
+   }
+  ],
+  "lines": 155,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryConstants",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryNormalize"
+  ],
+  "blueprint": [
+   "lem:binary-monic-division"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryPolynomial.DivisionState": [
+    "/-- Modulus, quotient, and remainder for a Horner division step. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.divModBits": [
+    "/-- Quotient and remainder by the monic polynomial `polyOfBits (p ++ [true])`.",
+    "The degree-zero case divides by one; all outputs are normalized. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.divModBitsProg": [
+    "/-- Uniform deterministic polynomial-time division by any binary monic polynomial. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.divisionFold": [
+    "/-- Unnormalized Horner division result. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.divisionFoldProg": [
+    "/-- Ambient Horner long division, with one iteration per dividend coefficient. -/"
+   ],
+   "MIPRE.LowDegree.BinaryPolynomial.divisionStep": [
+    "/-- One input coefficient is appended to the Horner computation. -/"
+   ],
+   "_private.MIPRE.Foundations.LowDegree.BinaryDivision.0.MIPRE.LowDegree.BinaryPolynomial.divisionStepProg": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryDivision.0.MIPRE.LowDegree.BinaryPolynomial.headBitProg": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryDivision.0.MIPRE.LowDegree.BinaryPolynomial.isEmptyBitsProg": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryDivision.0.MIPRE.LowDegree.BinaryPolynomial.lastBitProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_SAT_Formula",
+  "module": "MIPRE.Foundations.SAT.Formula",
+  "module_doc": "/-!\n# Boolean formulas and their circuits\n\nA formula (`Fml`) is a tree of `and`, `or`, `not` over input bits and constants. Its\npost-order flattening (`Fml.flattenAt`) is a circuit in which every gate is read at most once\n(input bits are read through fresh `input` gates, which `Circuit.WellFormed` does not count),\nso a formula's circuit is well-formed whatever the formula (`Fml.toCircuit_wellFormed`), and\ncomputes the formula (`Fml.eval_toCircuit`). The describer of the succinct Cook–Levin\ntheorem is built as a formula, which confines the circuit bookkeeping to this file\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Formula.lean",
+  "source_path": "MIPRE/Foundations/SAT/Formula.lean",
+  "defmat": [
+   "MIPRE.SAT.Fml",
+   "MIPRE.SAT.Fml.InputsLt",
+   "MIPRE.SAT.Fml.Node",
+   "MIPRE.SAT.Fml.Node.instSizedEncoding",
+   "MIPRE.SAT.Fml.Node.ofData?",
+   "MIPRE.SAT.Fml.Node.toData",
+   "MIPRE.SAT.Fml.andF",
+   "MIPRE.SAT.Fml.constF",
+   "MIPRE.SAT.Fml.eval",
+   "MIPRE.SAT.Fml.flattenAt",
+   "MIPRE.SAT.Fml.inpF",
+   "MIPRE.SAT.Fml.instSizedEncoding",
+   "MIPRE.SAT.Fml.notF",
+   "MIPRE.SAT.Fml.orF",
+   "MIPRE.SAT.Fml.parse",
+   "MIPRE.SAT.Fml.parseStep",
+   "MIPRE.SAT.Fml.refCount",
+   "MIPRE.SAT.Fml.rpn",
+   "MIPRE.SAT.Fml.rpnF",
+   "MIPRE.SAT.Fml.size",
+   "MIPRE.SAT.Fml.toCircuit"
+  ],
+  "embedded": [
+   "MIPRE.SAT.Fml.Node.encode_const",
+   "MIPRE.SAT.Fml.Node.encode_inp",
+   "MIPRE.SAT.Fml.Node.ofData?_toData",
+   "MIPRE.SAT.Fml.andF_apply",
+   "MIPRE.SAT.Fml.constF_apply",
+   "MIPRE.SAT.Fml.foldl_parseStep_rpn",
+   "MIPRE.SAT.Fml.inpF_apply",
+   "MIPRE.SAT.Fml.length_flattenAt",
+   "MIPRE.SAT.Fml.length_rpn",
+   "MIPRE.SAT.Fml.notF_apply",
+   "MIPRE.SAT.Fml.orF_apply",
+   "MIPRE.SAT.Fml.parse_rpn",
+   "MIPRE.SAT.Fml.refCount_append",
+   "MIPRE.SAT.Fml.refCount_nil",
+   "MIPRE.SAT.Fml.refCount_singleton",
+   "MIPRE.SAT.Fml.rpnF_apply",
+   "MIPRE.SAT.Fml.toCircuit_inputs",
+   "MIPRE.SAT.Fml.toCircuit_size"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.SAT.Fml",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     25,
+     32
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.InputsLt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     54,
+     60
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.Node",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     72,
+     79
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.Node.encode_const",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     113,
+     113
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.Node.encode_inp",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     112,
+     112
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.Node.instSizedEncoding",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     107,
+     110
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.Node.ofData?",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     91,
+     98
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.Node.ofData?_toData",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     100,
+     105
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.Node.toData",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     83,
+     89
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.andF",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     203,
+     207
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.andF_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     221,
+     221
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.constF",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     199,
+     201
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.constF_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     220,
+     220
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.eval",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     36,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.flattenAt",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     227,
+     236
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.foldl_parseStep_rpn",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     150,
+     165
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.inpF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     194,
+     197
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.inpF_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     219,
+     219
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.instSizedEncoding",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     180,
+     185
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.length_flattenAt",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     238,
+     248
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.length_rpn",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     128,
+     133
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.notF",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     215,
+     217
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.notF_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     223,
+     223
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.orF",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     209,
+     213
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.orF_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     222,
+     222
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.parse",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     167,
+     171
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.parseStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     135,
+     148
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.parse_rpn",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     173,
+     178
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.refCount",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     332,
+     333
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.refCount_append",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     337,
+     339
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.refCount_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     335,
+     335
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.refCount_singleton",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     341,
+     342
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.rpn",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     120,
+     126
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.rpnF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     189,
+     190
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.rpnF_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     192,
+     192
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.size",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     44,
+     50
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.toCircuit",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     250,
+     251
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.toCircuit_inputs",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     253,
+     253
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.toCircuit_size",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     255,
+     256
+    ]
+   }
+  ],
+  "lines": 275,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.SAT.Fml": [
+    "/-- Boolean formulas over input bits. -/"
+   ],
+   "MIPRE.SAT.Fml.InputsLt": [
+    "/-- Every input bit read is below `n`. -/"
+   ],
+   "MIPRE.SAT.Fml.Node": [
+    "/-- The nodes of the post-order (reverse Polish) serialization of a formula. -/"
+   ],
+   "MIPRE.SAT.Fml.Node.instSizedEncoding": null,
+   "MIPRE.SAT.Fml.Node.ofData?": [
+    "/-- Decoding nodes. -/"
+   ],
+   "MIPRE.SAT.Fml.Node.toData": [
+    "/-- Nodes as data: a unary tag and the payload. -/"
+   ],
+   "MIPRE.SAT.Fml.andF": null,
+   "MIPRE.SAT.Fml.constF": null,
+   "MIPRE.SAT.Fml.eval": [
+    "/-- The value of a formula on the input bits `x`. -/"
+   ],
+   "MIPRE.SAT.Fml.flattenAt": [
+    "/-- The post-order gate list of a formula whose first gate is at position `base`: the output",
+    "gate is the last one, at `base + size - 1`. -/"
+   ],
+   "MIPRE.SAT.Fml.inpF": [
+    "/-- The constructors as polynomial-time functions. -/"
+   ],
+   "MIPRE.SAT.Fml.instSizedEncoding": [
+    "/-- Formulas encode as their post-order serializations, so that a program builds a formula",
+    "by appending lists. -/"
+   ],
+   "MIPRE.SAT.Fml.notF": null,
+   "MIPRE.SAT.Fml.orF": null,
+   "MIPRE.SAT.Fml.parse": [
+    "/-- Parsing a post-order serialization. -/"
+   ],
+   "MIPRE.SAT.Fml.parseStep": [
+    "/-- One step of parsing a post-order serialization with a stack of formulas (a malformed",
+    "input leaves the stack unchanged). -/"
+   ],
+   "MIPRE.SAT.Fml.refCount": [
+    "/-- The number of references to `u` in a gate list. -/"
+   ],
+   "MIPRE.SAT.Fml.rpn": [
+    "/-- The post-order serialization of a formula. -/"
+   ],
+   "MIPRE.SAT.Fml.rpnF": [
+    "/-- The serialization, as a polynomial-time function (the encoding is the same). -/"
+   ],
+   "MIPRE.SAT.Fml.size": [
+    "/-- The number of nodes: the number of gates of the circuit. -/"
+   ],
+   "MIPRE.SAT.Fml.toCircuit": [
+    "/-- The circuit of a formula on `n` inputs. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_SAT_FmlLib",
+  "module": "MIPRE.Foundations.SAT.FmlLib",
+  "module_doc": "/-!\n# Formulas on bit vectors\n\nThe vocabulary in which the describer of the succinct Cook–Levin theorem is written\n(`planning/succinct-cook-levin.md`, S3): a *field* is a list of formulas read as a binary\nnumber, least significant bit first (`Fml.val`); the fields of an index are slices of the\ninput bits (`Fml.field`); and the tests on fields are conjunctions and disjunctions\n(`andList`, `orList`), equality with a constant or another field (`eqConst`, `eqFields`),\ncomparison (`ltConst`, `ltFields`), addition of a constant with its carry (`addBits`,\n`addConstRel`), subtraction of a constant by the two's complement (`subConstBits`), padding\n(`padTo`) and a multiplexer (`mux`). Every test is defined by a fold or a structural\nrecursion whose program is the same fold (`FmlProg.lean`), and every semantics lemma is an\nequation on `val`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/FmlLib.lean",
+  "source_path": "MIPRE/Foundations/SAT/FmlLib.lean",
+  "defmat": [
+   "MIPRE.SAT.Fml.addBits",
+   "MIPRE.SAT.Fml.addConstBits",
+   "MIPRE.SAT.Fml.addConstCarry",
+   "MIPRE.SAT.Fml.addConstRel",
+   "MIPRE.SAT.Fml.andList",
+   "MIPRE.SAT.Fml.bitsOf",
+   "MIPRE.SAT.Fml.constBits",
+   "MIPRE.SAT.Fml.eqConst",
+   "MIPRE.SAT.Fml.eqFStep",
+   "MIPRE.SAT.Fml.eqFields",
+   "MIPRE.SAT.Fml.eqStep",
+   "MIPRE.SAT.Fml.field",
+   "MIPRE.SAT.Fml.ltConst",
+   "MIPRE.SAT.Fml.ltFStep",
+   "MIPRE.SAT.Fml.ltFields",
+   "MIPRE.SAT.Fml.ltStep",
+   "MIPRE.SAT.Fml.maj3",
+   "MIPRE.SAT.Fml.mux",
+   "MIPRE.SAT.Fml.orList",
+   "MIPRE.SAT.Fml.padTo",
+   "MIPRE.SAT.Fml.subConstBits",
+   "MIPRE.SAT.Fml.sum3",
+   "MIPRE.SAT.Fml.val",
+   "MIPRE.SAT.Fml.xnor",
+   "MIPRE.SAT.Fml.xor",
+   "MIPRE.SAT.padBits",
+   "MIPRE.SAT.twosComp"
+  ],
+  "embedded": [
+   "MIPRE.SAT.Fml.bitsOf_cons",
+   "MIPRE.SAT.Fml.bitsOf_nil",
+   "MIPRE.SAT.Fml.length_bitsOf",
+   "MIPRE.SAT.Fml.length_constBits",
+   "MIPRE.SAT.Fml.length_field"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.SAT.Fml.addBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     353,
+     359
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.addConstBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     389,
+     390
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.addConstCarry",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     392,
+     393
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.addConstRel",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     417,
+     419
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.andList",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     151,
+     152
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.bitsOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     185,
+     186
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.bitsOf_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     193,
+     194
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.bitsOf_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     191,
+     191
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.constBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     214,
+     215
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.eqConst",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     240,
+     241
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.eqFStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     264,
+     265
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.eqFields",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     267,
+     268
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.eqStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     237,
+     238
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.field",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     206,
+     207
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.length_bitsOf",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     196,
+     197
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.length_constBits",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     217,
+     217
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.length_field",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     209,
+     209
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.ltConst",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     298,
+     299
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.ltFStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     317,
+     318
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.ltFields",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     320,
+     321
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.ltStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     293,
+     296
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.maj3",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     344,
+     345
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.mux",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     144,
+     145
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.orList",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     167,
+     168
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.padTo",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     222,
+     223
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.subConstBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     439,
+     440
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.sum3",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     341,
+     342
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.val",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     188,
+     189
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.xnor",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     132,
+     133
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.xor",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     138,
+     139
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.padBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     101,
+     102
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.twosComp",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     110,
+     111
+    ]
+   }
+  ],
+  "lines": 167,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.SAT.Fml.addBits": [
+    "/-- The sum of a field and a constant (of the same length) with a carry in: the sum bits and",
+    "the carry out. -/"
+   ],
+   "MIPRE.SAT.Fml.addConstBits": [
+    "/-- The sum bits of a field and a constant. -/"
+   ],
+   "MIPRE.SAT.Fml.addConstCarry": [
+    "/-- The carry out of the sum of a field and a constant. -/"
+   ],
+   "MIPRE.SAT.Fml.addConstRel": [
+    "/-- `gs = fs + c`, exactly: the sum bits agree and there is no carry out. -/"
+   ],
+   "MIPRE.SAT.Fml.andList": [
+    "/-- Conjunction of a list, as a fold. -/"
+   ],
+   "MIPRE.SAT.Fml.bitsOf": [
+    "/-- The bits of a field: the values of its formulas, least significant first. -/"
+   ],
+   "MIPRE.SAT.Fml.constBits": [
+    "/-- Constant bits as formulas. -/"
+   ],
+   "MIPRE.SAT.Fml.eqConst": [
+    "/-- The field `fs` equals the constant `c` (of the same length). -/"
+   ],
+   "MIPRE.SAT.Fml.eqFStep": [
+    "/-- The step of the equality test of two fields. -/"
+   ],
+   "MIPRE.SAT.Fml.eqFields": [
+    "/-- The fields `fs` and `gs` (of the same length) are equal. -/"
+   ],
+   "MIPRE.SAT.Fml.eqStep": [
+    "/-- The step of the equality test with a constant. -/"
+   ],
+   "MIPRE.SAT.Fml.field": [
+    "/-- The field of `W` input bits starting at bit `a`. -/"
+   ],
+   "MIPRE.SAT.Fml.ltConst": [
+    "/-- The field `fs` is below the constant `c` (of the same length). -/"
+   ],
+   "MIPRE.SAT.Fml.ltFStep": [
+    "/-- The step of the comparison of two fields. -/"
+   ],
+   "MIPRE.SAT.Fml.ltFields": [
+    "/-- The field `fs` is below the field `gs` (of the same length). -/"
+   ],
+   "MIPRE.SAT.Fml.ltStep": [
+    "/-- The step of the comparison with a constant, least significant bit first: the prefix is",
+    "below the constant's prefix iff this bit is below, or equal with the lower bits below. -/"
+   ],
+   "MIPRE.SAT.Fml.maj3": [
+    "/-- The carry bit of a full adder. -/"
+   ],
+   "MIPRE.SAT.Fml.mux": [
+    "/-- The multiplexer `if s then a else b`. -/"
+   ],
+   "MIPRE.SAT.Fml.orList": [
+    "/-- Disjunction of a list, as a fold. -/"
+   ],
+   "MIPRE.SAT.Fml.padTo": [
+    "/-- Padding a field to `W` bits with zeros. -/"
+   ],
+   "MIPRE.SAT.Fml.subConstBits": [
+    "/-- The difference `fs - c` by the two's complement, correct when `c ≤ fs`. -/"
+   ],
+   "MIPRE.SAT.Fml.sum3": [
+    "/-- The sum bit of a full adder. -/"
+   ],
+   "MIPRE.SAT.Fml.val": [
+    "/-- The value of a field. -/"
+   ],
+   "MIPRE.SAT.Fml.xnor": [
+    "/-- Equivalence. -/"
+   ],
+   "MIPRE.SAT.Fml.xor": [
+    "/-- Exclusive or. -/"
+   ],
+   "MIPRE.SAT.padBits": [
+    "/-- The bits of a number, padded to `W` bits with zeros (least significant bit first). -/"
+   ],
+   "MIPRE.SAT.twosComp": [
+    "/-- The two's complement of a `W`-bit string: `2^W - v` modulo `2^W`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_SAT_Flatten",
+  "module": "MIPRE.Foundations.SAT.Flatten",
+  "module_doc": "/-!\n# Flattening a formula to a circuit, in polynomial time\n\nA formula is encoded as its post-order serialization (`Fml.rpn`), and the circuit of a\nformula (`Fml.flattenAt 0`) is computed from that serialization by a single left-to-right\nscan with a stack of gate indices (`flStep`, `flatten`): an input or constant node emits its\ngate and pushes the gate's index; a connective pops the indices of its arguments, emits the\ngate and pushes the new index. The scan is a fold, so the program is a `PolyTimeFun.foldl`\nof the step (`PolyTimeFun.casesNode` dispatches on the node), and `Fml.toCircuitF` is the\ncircuit of a formula on a given number of inputs as a polynomial-time function\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Flatten.lean",
+  "source_path": "MIPRE/Foundations/SAT/Flatten.lean",
+  "defmat": [
+   "MIPRE.SAT.FlProg.casesNodeProg",
+   "MIPRE.SAT.FlProg.cnConst",
+   "MIPRE.SAT.FlProg.cnInp",
+   "MIPRE.SAT.FlProg.cnRest1",
+   "MIPRE.SAT.FlProg.cnRest2",
+   "MIPRE.SAT.FlProg.cnRest3",
+   "MIPRE.SAT.FlProg.cnTag",
+   "MIPRE.SAT.FlState",
+   "MIPRE.SAT.Fml.toCircuitF",
+   "MIPRE.SAT.Gate.andF",
+   "MIPRE.SAT.Gate.constF",
+   "MIPRE.SAT.Gate.inputF",
+   "MIPRE.SAT.Gate.notF",
+   "MIPRE.SAT.Gate.orF",
+   "MIPRE.SAT.Gate.payload",
+   "MIPRE.SAT.PolyTimeFun.casesNode",
+   "MIPRE.SAT.PolyTimeFun.casesNodeFun",
+   "MIPRE.SAT.flBinF",
+   "MIPRE.SAT.flLeafF",
+   "MIPRE.SAT.flNotF",
+   "MIPRE.SAT.flStep",
+   "MIPRE.SAT.flStepF",
+   "MIPRE.SAT.flatten",
+   "MIPRE.SAT.flattenF"
+  ],
+  "embedded": [
+   "MIPRE.SAT.FlProg.casesNodeProg_and",
+   "MIPRE.SAT.FlProg.casesNodeProg_const",
+   "MIPRE.SAT.FlProg.casesNodeProg_inp",
+   "MIPRE.SAT.FlProg.casesNodeProg_not",
+   "MIPRE.SAT.FlProg.casesNodeProg_or",
+   "MIPRE.SAT.FlProg.casesNodeProg_wellScoped",
+   "MIPRE.SAT.Fml.toCircuitF_apply",
+   "MIPRE.SAT.PolyTimeFun.casesNode_and",
+   "MIPRE.SAT.PolyTimeFun.casesNode_const",
+   "MIPRE.SAT.PolyTimeFun.casesNode_inp",
+   "MIPRE.SAT.PolyTimeFun.casesNode_not",
+   "MIPRE.SAT.PolyTimeFun.casesNode_or",
+   "MIPRE.SAT.esize_flState",
+   "MIPRE.SAT.esize_gate_le",
+   "MIPRE.SAT.esize_inp_node",
+   "MIPRE.SAT.esize_node_const",
+   "MIPRE.SAT.esize_node_inp",
+   "MIPRE.SAT.flBinF_apply_and",
+   "MIPRE.SAT.flBinF_apply_or",
+   "MIPRE.SAT.flNotF_apply",
+   "MIPRE.SAT.flStepF_apply",
+   "MIPRE.SAT.flStepF_bounded",
+   "MIPRE.SAT.flStep_bounded",
+   "MIPRE.SAT.flattenF_apply",
+   "MIPRE.SAT.flatten_rpn",
+   "MIPRE.SAT.foldl_flStep_rpn"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.SAT.FlProg.casesNodeProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     269,
+     272
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.FlProg.casesNodeProg_and",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     313,
+     323
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.FlProg.casesNodeProg_const",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     297,
+     311
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.FlProg.casesNodeProg_inp",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     283,
+     295
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.FlProg.casesNodeProg_not",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     339,
+     352
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.FlProg.casesNodeProg_or",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     325,
+     337
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.FlProg.casesNodeProg_wellScoped",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     274,
+     279
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.FlProg.cnConst",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     263,
+     263
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.FlProg.cnInp",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     261,
+     262
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.FlProg.cnRest1",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     266,
+     266
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.FlProg.cnRest2",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     265,
+     265
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.FlProg.cnRest3",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     264,
+     264
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.FlProg.cnTag",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     267,
+     267
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.FlState",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     27,
+     29
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.toCircuitF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     554,
+     560
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Fml.toCircuitF_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     562,
+     562
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Gate.andF",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     443,
+     444
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Gate.constF",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     442,
+     442
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Gate.inputF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     440,
+     441
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Gate.notF",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     447,
+     447
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Gate.orF",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     445,
+     446
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.Gate.payload",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     96,
+     99
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.PolyTimeFun.casesNode",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     374,
+     421
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.PolyTimeFun.casesNodeFun",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     366,
+     372
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.PolyTimeFun.casesNode_and",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     429,
+     430
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.PolyTimeFun.casesNode_const",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     426,
+     428
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.PolyTimeFun.casesNode_inp",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     423,
+     425
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.PolyTimeFun.casesNode_not",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     433,
+     434
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.PolyTimeFun.casesNode_or",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     431,
+     432
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.esize_flState",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     502,
+     503
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.esize_gate_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     101,
+     117
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.esize_inp_node",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     119,
+     121
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.esize_node_const",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     358,
+     360
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.esize_node_inp",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     356,
+     356
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.flBinF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     456,
+     465
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.flBinF_apply_and",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     475,
+     477
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.flBinF_apply_or",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     479,
+     481
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.flLeafF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     449,
+     454
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.flNotF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     467,
+     473
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.flNotF_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     483,
+     485
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.flStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     31,
+     43
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.flStepF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     487,
+     498
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.flStepF_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     500,
+     500
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.flStepF_bounded",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     505,
+     543
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.flStep_bounded",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     128,
+     254
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.flatten",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     84,
+     85
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.flattenF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     545,
+     550
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.flattenF_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     552,
+     552
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.flatten_rpn",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     87,
+     92
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.foldl_flStep_rpn",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     45,
+     82
+    ]
+   }
+  ],
+  "lines": 580,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.SAT.FlProg.casesNodeProg": [
+    "/-- Dispatch on the node of an input `(a, nd)`: the environment after the two `elim`s is",
+    "`[tag, payload, a, nd, input]`, and the unary tag is inspected one `nil` at a time. -/"
+   ],
+   "MIPRE.SAT.FlProg.cnConst": null,
+   "MIPRE.SAT.FlProg.cnInp": [
+    "/-- The branches of `casesNodeProg`, in the environments described there. -/"
+   ],
+   "MIPRE.SAT.FlProg.cnRest1": null,
+   "MIPRE.SAT.FlProg.cnRest2": null,
+   "MIPRE.SAT.FlProg.cnRest3": null,
+   "MIPRE.SAT.FlProg.cnTag": null,
+   "MIPRE.SAT.FlState": [
+    "/-- The state of the scan: the stack of gate indices, the gates so far (reversed), and the",
+    "number of gates so far. -/"
+   ],
+   "MIPRE.SAT.Fml.toCircuitF": [
+    "/-- **The circuit of a formula on `n` inputs, in polynomial time.** -/"
+   ],
+   "MIPRE.SAT.Gate.andF": null,
+   "MIPRE.SAT.Gate.constF": null,
+   "MIPRE.SAT.Gate.inputF": [
+    "/-- The gate constructors as polynomial-time functions. -/"
+   ],
+   "MIPRE.SAT.Gate.notF": null,
+   "MIPRE.SAT.Gate.orF": null,
+   "MIPRE.SAT.Gate.payload": [
+    "/-- The payload of a gate: the input index of an input gate. -/"
+   ],
+   "MIPRE.SAT.PolyTimeFun.casesNode": [
+    "/-- Case analysis on a node component. -/"
+   ],
+   "MIPRE.SAT.PolyTimeFun.casesNodeFun": [
+    "/-- The function of `casesNode`. -/"
+   ],
+   "MIPRE.SAT.flBinF": [
+    "/-- The step of the scan on a binary connective: pop two indices, emit the gate, push. The",
+    "state is presented as `((out, cnt), vs)` to `casesList`. -/"
+   ],
+   "MIPRE.SAT.flLeafF": [
+    "/-- The step of the scan on a leaf: push the counter, emit the gate, increment. -/"
+   ],
+   "MIPRE.SAT.flNotF": [
+    "/-- The step of the scan on a negation. -/"
+   ],
+   "MIPRE.SAT.flStep": [
+    "/-- One step of the scan. -/"
+   ],
+   "MIPRE.SAT.flStepF": [
+    "/-- The step of the scan, as a polynomial-time function. -/"
+   ],
+   "MIPRE.SAT.flatten": [
+    "/-- The gates of a serialization. -/"
+   ],
+   "MIPRE.SAT.flattenF": [
+    "/-- The gates of a serialization, in polynomial time. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_SAT_FmlProg",
+  "module": "MIPRE.Foundations.SAT.FmlProg",
+  "module_doc": "/-!\n# The formula builders as programs\n\nEvery builder of `FmlLib.lean` as a polynomial-time function of the ambient model, with its\n`toFun` the builder itself. Nothing here reasons about post-order lists: the encoding of a\nformula *is* the encoding of its post-order list (`SizedEncoding Fml`), so the constructors\nare appends (`andF`, `orF`, `notF` of `Formula.lean`) and each builder is a `foldl` over a\nlist, whose Cobham condition is the additivity of `esize` under the constructors\n(`esize_and_fml` and friends) (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/FmlProg.lean",
+  "source_path": "MIPRE/Foundations/SAT/FmlProg.lean",
+  "defmat": [
+   "MIPRE.SAT.addBitsP",
+   "MIPRE.SAT.addConstBitsP",
+   "MIPRE.SAT.addConstCarryP",
+   "MIPRE.SAT.addConstRelP",
+   "MIPRE.SAT.addStep",
+   "MIPRE.SAT.addStepF",
+   "MIPRE.SAT.andListP",
+   "MIPRE.SAT.constBitsP",
+   "MIPRE.SAT.eqConstP",
+   "MIPRE.SAT.eqFStepP",
+   "MIPRE.SAT.eqFieldsP",
+   "MIPRE.SAT.eqStepP",
+   "MIPRE.SAT.fieldP",
+   "MIPRE.SAT.incBitsP",
+   "MIPRE.SAT.ltConstP",
+   "MIPRE.SAT.ltFStepP",
+   "MIPRE.SAT.ltFieldsP",
+   "MIPRE.SAT.ltStepP",
+   "MIPRE.SAT.maj3P",
+   "MIPRE.SAT.muxP",
+   "MIPRE.SAT.notBoolP",
+   "MIPRE.SAT.orListP",
+   "MIPRE.SAT.padP",
+   "MIPRE.SAT.range'P",
+   "MIPRE.SAT.rangeStep",
+   "MIPRE.SAT.rangeStepF",
+   "MIPRE.SAT.subConstBitsP",
+   "MIPRE.SAT.sum3P",
+   "MIPRE.SAT.twosCompP",
+   "MIPRE.SAT.xnorP",
+   "MIPRE.SAT.xorP"
+  ],
+  "embedded": [
+   "MIPRE.SAT.addBitsP_apply",
+   "MIPRE.SAT.addBits_carry_le",
+   "MIPRE.SAT.addBits_mem_le",
+   "MIPRE.SAT.addConstBitsP_apply",
+   "MIPRE.SAT.addConstCarryP_apply",
+   "MIPRE.SAT.addConstRelP_apply",
+   "MIPRE.SAT.addStepF_apply",
+   "MIPRE.SAT.addStepF_bounded",
+   "MIPRE.SAT.andListP_apply",
+   "MIPRE.SAT.constBitsP_apply",
+   "MIPRE.SAT.eqConstP_apply",
+   "MIPRE.SAT.eqFStepP_apply",
+   "MIPRE.SAT.eqFStepP_bound",
+   "MIPRE.SAT.eqFieldsP_apply",
+   "MIPRE.SAT.eqStepP_apply",
+   "MIPRE.SAT.eqStepP_bound",
+   "MIPRE.SAT.esize_and_fml",
+   "MIPRE.SAT.esize_constFml_le",
+   "MIPRE.SAT.esize_list_le_of_forall",
+   "MIPRE.SAT.esize_maj3_fml",
+   "MIPRE.SAT.esize_mem_range'_le",
+   "MIPRE.SAT.esize_not_fml",
+   "MIPRE.SAT.esize_or_fml",
+   "MIPRE.SAT.esize_sum3_fml",
+   "MIPRE.SAT.esize_xnor_fml",
+   "MIPRE.SAT.esize_xor_fml",
+   "MIPRE.SAT.fieldP_apply",
+   "MIPRE.SAT.foldl_addStep",
+   "MIPRE.SAT.foldl_rangeStep",
+   "MIPRE.SAT.incBitsP_apply",
+   "MIPRE.SAT.length_addBits_le",
+   "MIPRE.SAT.ltConstP_apply",
+   "MIPRE.SAT.ltFStepP_apply",
+   "MIPRE.SAT.ltFStepP_bound",
+   "MIPRE.SAT.ltFieldsP_apply",
+   "MIPRE.SAT.ltStepP_apply",
+   "MIPRE.SAT.ltStepP_bound",
+   "MIPRE.SAT.maj3P_apply",
+   "MIPRE.SAT.muxP_apply",
+   "MIPRE.SAT.notBoolP_apply",
+   "MIPRE.SAT.orListP_apply",
+   "MIPRE.SAT.padP_apply",
+   "MIPRE.SAT.range'P_apply",
+   "MIPRE.SAT.rangeStepF_apply",
+   "MIPRE.SAT.rangeStepF_bounded",
+   "MIPRE.SAT.subConstBitsP_apply",
+   "MIPRE.SAT.sum3P_apply",
+   "MIPRE.SAT.twosCompP_apply",
+   "MIPRE.SAT.xnorP_apply",
+   "MIPRE.SAT.xorP_apply",
+   "MIPRE.SAT.zip_map_fst_snd"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.SAT.addBitsP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     507,
+     519
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.addBitsP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     521,
+     522
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.addBits_carry_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     344,
+     363
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.addBits_mem_le",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     365,
+     391
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.addConstBitsP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     524,
+     526
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.addConstBitsP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     528,
+     529
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.addConstCarryP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     531,
+     533
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.addConstCarryP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     535,
+     536
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.addConstRelP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     538,
+     542
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.addConstRelP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     544,
+     545
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.addStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     393,
+     395
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.addStepF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     412,
+     416
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.addStepF_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     418,
+     419
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.addStepF_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     437,
+     505
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.andListP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     53,
+     60
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.andListP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     62,
+     62
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.constBitsP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     223,
+     225
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.constBitsP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     227,
+     227
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.eqConstP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     96,
+     100
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.eqConstP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     102,
+     102
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.eqFStepP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     176,
+     178
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.eqFStepP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     180,
+     180
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.eqFStepP_bound",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     182,
+     187
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.eqFieldsP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     189,
+     193
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.eqFieldsP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     195,
+     195
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.eqStepP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     77,
+     80
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.eqStepP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     82,
+     82
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.eqStepP_bound",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     84,
+     94
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.esize_and_fml",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     28,
+     34
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.esize_constFml_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     106,
+     106
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.esize_list_le_of_forall",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     231,
+     239
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.esize_maj3_fml",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     334,
+     337
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.esize_mem_range'_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     241,
+     247
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.esize_not_fml",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     44,
+     49
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.esize_or_fml",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     36,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.esize_sum3_fml",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     339,
+     342
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.esize_xnor_fml",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     108,
+     110
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.esize_xor_fml",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     330,
+     332
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.fieldP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     319,
+     324
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.fieldP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     326,
+     326
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.foldl_addStep",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     397,
+     410
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.foldl_rangeStep",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     252,
+     261
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.incBitsP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     561,
+     573
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.incBitsP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     575,
+     575
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.length_addBits_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     426,
+     435
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.ltConstP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     166,
+     170
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.ltConstP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     172,
+     172
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.ltFStepP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     197,
+     200
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.ltFStepP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     202,
+     202
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.ltFStepP_bound",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     204,
+     210
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.ltFieldsP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     212,
+     216
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.ltFieldsP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     218,
+     219
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.ltStepP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     149,
+     153
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.ltStepP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     155,
+     155
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.ltStepP_bound",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     157,
+     164
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.maj3P",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     140,
+     143
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.maj3P_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     145,
+     145
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.muxP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     127,
+     130
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.muxP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     132,
+     132
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.notBoolP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     577,
+     581
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.notBoolP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     583,
+     583
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.orListP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     64,
+     71
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.orListP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     73,
+     73
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.padP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     549,
+     555
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.padP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     557,
+     557
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.range'P",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     305,
+     315
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.range'P_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     317,
+     317
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.rangeStep",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     249,
+     250
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.rangeStepF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     263,
+     265
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.rangeStepF_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     267,
+     267
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.rangeStepF_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     269,
+     303
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.subConstBitsP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     595,
+     598
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.subConstBitsP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     600,
+     601
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.sum3P",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     134,
+     136
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.sum3P_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     138,
+     138
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.twosCompP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     585,
+     591
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.twosCompP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     593,
+     593
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.xnorP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     114,
+     116
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.xnorP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     118,
+     118
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.xorP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     120,
+     123
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.xorP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     125,
+     125
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.zip_map_fst_snd",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     421,
+     424
+    ]
+   }
+  ],
+  "lines": 624,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.SAT.addBitsP": [
+    "/-- `Fml.addBits`. -/"
+   ],
+   "MIPRE.SAT.addConstBitsP": [
+    "/-- `Fml.addConstBits`. -/"
+   ],
+   "MIPRE.SAT.addConstCarryP": [
+    "/-- `Fml.addConstCarry`. -/"
+   ],
+   "MIPRE.SAT.addConstRelP": [
+    "/-- `Fml.addConstRel`. -/"
+   ],
+   "MIPRE.SAT.addStep": [
+    "/-- The step of the adder: the carry and the reversed sum bits. -/"
+   ],
+   "MIPRE.SAT.addStepF": [
+    "/-- The step of the adder, as a program. -/"
+   ],
+   "MIPRE.SAT.andListP": [
+    "/-- `Fml.andList`. -/"
+   ],
+   "MIPRE.SAT.constBitsP": [
+    "/-- `Fml.constBits`. -/"
+   ],
+   "MIPRE.SAT.eqConstP": [
+    "/-- `Fml.eqConst`. -/"
+   ],
+   "MIPRE.SAT.eqFStepP": [
+    "/-- `Fml.eqFStep`. -/"
+   ],
+   "MIPRE.SAT.eqFieldsP": [
+    "/-- `Fml.eqFields`. -/"
+   ],
+   "MIPRE.SAT.eqStepP": [
+    "/-- `Fml.eqStep`. -/"
+   ],
+   "MIPRE.SAT.fieldP": [
+    "/-- `Fml.field`, the width in unary. -/"
+   ],
+   "MIPRE.SAT.incBitsP": [
+    "/-- The successor on bit strings. -/"
+   ],
+   "MIPRE.SAT.ltConstP": [
+    "/-- `Fml.ltConst`. -/"
+   ],
+   "MIPRE.SAT.ltFStepP": [
+    "/-- `Fml.ltFStep`. -/"
+   ],
+   "MIPRE.SAT.ltFieldsP": [
+    "/-- `Fml.ltFields`. -/"
+   ],
+   "MIPRE.SAT.ltStepP": [
+    "/-- `Fml.ltStep`. -/"
+   ],
+   "MIPRE.SAT.maj3P": [
+    "/-- `Fml.maj3`. -/"
+   ],
+   "MIPRE.SAT.muxP": [
+    "/-- `Fml.mux`. -/"
+   ],
+   "MIPRE.SAT.notBoolP": [
+    "/-- Negation on booleans. -/"
+   ],
+   "MIPRE.SAT.orListP": [
+    "/-- `Fml.orList`. -/"
+   ],
+   "MIPRE.SAT.padP": [
+    "/-- `padBits`, the width in unary. -/"
+   ],
+   "MIPRE.SAT.range'P": [
+    "/-- `List.range'`, the length in unary. -/"
+   ],
+   "MIPRE.SAT.rangeStep": [
+    "/-- The step building a range of indices, from the top down. -/"
+   ],
+   "MIPRE.SAT.rangeStepF": [
+    "/-- The step of the range, as a program. -/"
+   ],
+   "MIPRE.SAT.subConstBitsP": [
+    "/-- `Fml.subConstBits`. -/"
+   ],
+   "MIPRE.SAT.sum3P": [
+    "/-- `Fml.sum3`. -/"
+   ],
+   "MIPRE.SAT.twosCompP": [
+    "/-- `twosComp`. -/"
+   ],
+   "MIPRE.SAT.xnorP": [
+    "/-- `Fml.xnor`. -/"
+   ],
+   "MIPRE.SAT.xorP": [
+    "/-- `Fml.xor`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_SAT_ArrayProg",
+  "module": "MIPRE.Foundations.SAT.ArrayProg",
+  "module_doc": "/-!\n# Equality and binary-indexed array access as ambient programs\n\nFormula variables and circuit wires are binary indices. Looking them up must not\nfirst expand the index to unary: a malformed index can be exponentially larger\nthan its encoding. The programs here scan the supplied array and compare binary\nindices, so their bounds apply to malformed inputs as well.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/ArrayProg.lean",
+  "source_path": "MIPRE/Foundations/SAT/ArrayProg.lean",
+  "defmat": [
+   "MIPRE.SAT.ArrayProg.eqBits",
+   "MIPRE.SAT.ArrayProg.eqNat",
+   "MIPRE.SAT.ArrayProg.getD",
+   "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.eqStep",
+   "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.eqStepP",
+   "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.finishEq",
+   "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.lookupStep",
+   "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.lookupStepP"
+  ],
+  "embedded": [
+   "MIPRE.SAT.ArrayProg.eqBits_apply",
+   "MIPRE.SAT.ArrayProg.eqNat_apply",
+   "MIPRE.SAT.ArrayProg.getD_apply",
+   "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.esize_bool_le",
+   "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.fold_eqStep",
+   "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.fold_eqStep_size",
+   "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.fold_lookupStep",
+   "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.indexed_lookup"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.SAT.ArrayProg.eqBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     69,
+     88
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.ArrayProg.eqBits_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     90,
+     90
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.ArrayProg.eqNat",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     92,
+     102
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.ArrayProg.eqNat_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     104,
+     104
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.ArrayProg.getD",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     147,
+     165
+    ]
+   },
+   {
+    "name": "MIPRE.SAT.ArrayProg.getD_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     167,
+     167
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.eqStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     20,
+     23
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.eqStepP",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     41,
+     52
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.esize_bool_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     27,
+     27
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.finishEq",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     25,
+     25
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.fold_eqStep",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     29,
+     39
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.fold_eqStep_size",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     54,
+     67
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.fold_lookupStep",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     120,
+     130
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.indexed_lookup",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     132,
+     145
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.lookupStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     110,
+     111
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.lookupStepP",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     113,
+     118
+    ]
+   }
+  ],
+  "lines": 195,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg"
+  ],
+  "blueprint": [
+   "lem:pcp-padding-programs"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.SAT.ArrayProg.eqBits": [
+    "/-- Exact equality of bit strings, including their lengths. -/"
+   ],
+   "MIPRE.SAT.ArrayProg.eqNat": [
+    "/-- Equality of binary natural numbers, without unary expansion. -/"
+   ],
+   "MIPRE.SAT.ArrayProg.getD": [
+    "/-- Read a binary-indexed array, returning the fixed default outside its bounds.",
+    "The scan is bounded by the array length, independently of the magnitude of the index. -/"
+   ],
+   "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.eqStep": null,
+   "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.eqStepP": null,
+   "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.finishEq": null,
+   "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.lookupStep": null,
+   "_private.MIPRE.Foundations.SAT.ArrayProg.0.MIPRE.SAT.ArrayProg.lookupStepP": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryLinear",
+  "module": "MIPRE.Foundations.LowDegree.BinaryLinear",
+  "module_doc": "/-! # Executable binary vector and matrix arithmetic -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryLinear.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryLinear.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryLinear.applyBits",
+   "MIPRE.LowDegree.BinaryLinear.applyBitsProg",
+   "MIPRE.LowDegree.BinaryLinear.bit",
+   "MIPRE.LowDegree.BinaryLinear.dotBits",
+   "MIPRE.LowDegree.BinaryLinear.dotBitsProg",
+   "MIPRE.LowDegree.BinaryLinear.dotStep",
+   "MIPRE.LowDegree.BinaryLinear.matrixBits",
+   "MIPRE.LowDegree.BinaryLinear.mulBits",
+   "MIPRE.LowDegree.BinaryLinear.mulBitsProg",
+   "MIPRE.LowDegree.BinaryLinear.transposeBits",
+   "MIPRE.LowDegree.BinaryLinear.transposeBitsProg",
+   "MIPRE.LowDegree.BinaryLinear.vectorBits",
+   "_private.MIPRE.Foundations.LowDegree.BinaryLinear.0.MIPRE.LowDegree.BinaryLinear.columnProg",
+   "_private.MIPRE.Foundations.LowDegree.BinaryLinear.0.MIPRE.LowDegree.BinaryLinear.dotStepProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryLinear.applyBitsProg_apply",
+   "MIPRE.LowDegree.BinaryLinear.bit_ofBool",
+   "MIPRE.LowDegree.BinaryLinear.dotBitsProg_apply",
+   "MIPRE.LowDegree.BinaryLinear.mulBitsProg_apply",
+   "MIPRE.LowDegree.BinaryLinear.ofBool_bit",
+   "MIPRE.LowDegree.BinaryLinear.transposeBitsProg_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.applyBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     76,
+     77
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.applyBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     109,
+     111
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.applyBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     113,
+     114
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.bit",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     15,
+     16
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.bit_ofBool",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     22,
+     22
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.dotBits",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     44,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.dotBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     95,
+     105
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.dotBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     107,
+     107
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.dotStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     42,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.matrixBits",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     39,
+     40
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.mulBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     146,
+     148
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.mulBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     185,
+     190
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.mulBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     192,
+     193
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.ofBool_bit",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     18,
+     20
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.transposeBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     127,
+     129
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.transposeBitsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     170,
+     180
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.transposeBitsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     182,
+     183
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.vectorBits",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     37,
+     37
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryLinear.0.MIPRE.LowDegree.BinaryLinear.columnProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     167,
+     168
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryLinear.0.MIPRE.LowDegree.BinaryLinear.dotStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     88,
+     93
+    ]
+   }
+  ],
+  "lines": 132,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg"
+  ],
+  "blueprint": [
+   "lem:effective-binary-linear-algebra"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryLinear.applyBits": [
+    "/-- A matrix is represented by its rows. -/"
+   ],
+   "MIPRE.LowDegree.BinaryLinear.applyBitsProg": [
+    "/-- Binary matrix application is polynomial-time on arbitrary raw row lists. -/"
+   ],
+   "MIPRE.LowDegree.BinaryLinear.bit": [
+    "/-- Canonical binary scalar coordinates. -/"
+   ],
+   "MIPRE.LowDegree.BinaryLinear.dotBits": null,
+   "MIPRE.LowDegree.BinaryLinear.dotBitsProg": [
+    "/-- The parity dot product is one uniform ambient program. -/"
+   ],
+   "MIPRE.LowDegree.BinaryLinear.dotStep": null,
+   "MIPRE.LowDegree.BinaryLinear.matrixBits": null,
+   "MIPRE.LowDegree.BinaryLinear.mulBits": [
+    "/-- A rectangular matrix product with an explicit output width. -/"
+   ],
+   "MIPRE.LowDegree.BinaryLinear.mulBitsProg": [
+    "/-- Matrix multiplication is globally polynomial-time in its raw inputs. -/"
+   ],
+   "MIPRE.LowDegree.BinaryLinear.transposeBits": [
+    "/-- The number of columns is explicit; short raw rows are padded with zero. -/"
+   ],
+   "MIPRE.LowDegree.BinaryLinear.transposeBitsProg": [
+    "/-- Transposition is polynomial-time in the rows and the unary column count. -/"
+   ],
+   "MIPRE.LowDegree.BinaryLinear.vectorBits": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryLinear.0.MIPRE.LowDegree.BinaryLinear.columnProg": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryLinear.0.MIPRE.LowDegree.BinaryLinear.dotStepProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryElimination",
+  "module": "MIPRE.Foundations.LowDegree.BinaryElimination",
+  "module_doc": "/-!\n# Binary elimination with coefficient certificates\n\nEach row carries both its vector and a coefficient vector describing that vector\nin the original generating family. Reduction XORs both components together.\nThe program is uniformly polynomial-time even for malformed pivots and rows.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryElimination.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryElimination.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryLinear.Pivot",
+   "MIPRE.LowDegree.BinaryLinear.RawPivot",
+   "MIPRE.LowDegree.BinaryLinear.RawRow",
+   "MIPRE.LowDegree.BinaryLinear.Represents",
+   "MIPRE.LowDegree.BinaryLinear.Row",
+   "MIPRE.LowDegree.BinaryLinear.pivotBits",
+   "MIPRE.LowDegree.BinaryLinear.reduceRows",
+   "MIPRE.LowDegree.BinaryLinear.reduceRowsProg",
+   "MIPRE.LowDegree.BinaryLinear.reduceStep",
+   "MIPRE.LowDegree.BinaryLinear.rowBits",
+   "MIPRE.LowDegree.BinaryLinear.typedReduce",
+   "MIPRE.LowDegree.BinaryLinear.typedReduceStep",
+   "_private.MIPRE.Foundations.LowDegree.BinaryElimination.0.MIPRE.LowDegree.BinaryLinear.reduceStepProg"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryLinear.reduceRowsProg_apply",
+   "MIPRE.LowDegree.BinaryLinear.reduceRows_width",
+   "MIPRE.LowDegree.BinaryLinear.reduceStep_width",
+   "_private.MIPRE.Foundations.LowDegree.BinaryElimination.0.MIPRE.LowDegree.BinaryLinear.reduceStep_bounded"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.Pivot",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     49,
+     49
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.RawPivot",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     20,
+     20
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.RawRow",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     19,
+     19
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.Represents",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     85,
+     87
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.Row",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     48,
+     48
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.pivotBits",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     53,
+     53
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.reduceRows",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     27,
+     27
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.reduceRowsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     144,
+     147
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.reduceRowsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     149,
+     150
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.reduceRows_width",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     38,
+     46
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.reduceStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     22,
+     25
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.reduceStep_width",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     29,
+     36
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.rowBits",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     51,
+     51
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.typedReduce",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     58,
+     59
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.typedReduceStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     55,
+     56
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryElimination.0.MIPRE.LowDegree.BinaryLinear.reduceStepProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     118,
+     127
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryElimination.0.MIPRE.LowDegree.BinaryLinear.reduceStep_bounded",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     129,
+     142
+    ]
+   }
+  ],
+  "lines": 134,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear"
+  ],
+  "blueprint": [
+   "lem:effective-binary-linear-algebra"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryLinear.Pivot": null,
+   "MIPRE.LowDegree.BinaryLinear.RawPivot": null,
+   "MIPRE.LowDegree.BinaryLinear.RawRow": null,
+   "MIPRE.LowDegree.BinaryLinear.Represents": [
+    "/-- A row carries a valid expression in a fixed original generating family. -/"
+   ],
+   "MIPRE.LowDegree.BinaryLinear.Row": null,
+   "MIPRE.LowDegree.BinaryLinear.pivotBits": null,
+   "MIPRE.LowDegree.BinaryLinear.reduceRows": null,
+   "MIPRE.LowDegree.BinaryLinear.reduceRowsProg": [
+    "/-- Uniform, certificate-preserving binary elimination along a supplied pivot list. -/"
+   ],
+   "MIPRE.LowDegree.BinaryLinear.reduceStep": null,
+   "MIPRE.LowDegree.BinaryLinear.rowBits": null,
+   "MIPRE.LowDegree.BinaryLinear.typedReduce": null,
+   "MIPRE.LowDegree.BinaryLinear.typedReduceStep": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryElimination.0.MIPRE.LowDegree.BinaryLinear.reduceStepProg": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryBasisProg",
+  "module": "MIPRE.Foundations.LowDegree.BinaryBasisProg",
+  "module_doc": "/-! # Uniform construction of a binary pivot basis -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryBasisProg.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryBasisProg.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryLinear.basisRows",
+   "MIPRE.LowDegree.BinaryLinear.basisRowsProg",
+   "MIPRE.LowDegree.BinaryLinear.firstOne",
+   "MIPRE.LowDegree.BinaryLinear.firstOneProg",
+   "MIPRE.LowDegree.BinaryLinear.insertRow",
+   "MIPRE.LowDegree.BinaryLinear.insertRowProg",
+   "_private.MIPRE.Foundations.LowDegree.BinaryBasisProg.0.MIPRE.LowDegree.BinaryLinear.firstOneStep"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryLinear.basisRowsProg_apply",
+   "MIPRE.LowDegree.BinaryLinear.firstOneProg_apply",
+   "MIPRE.LowDegree.BinaryLinear.firstOne_le",
+   "MIPRE.LowDegree.BinaryLinear.insertRowProg_apply",
+   "MIPRE.LowDegree.BinaryLinear.insertRow_size",
+   "_private.MIPRE.Foundations.LowDegree.BinaryBasisProg.0.MIPRE.LowDegree.BinaryLinear.firstOne_fold"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.basisRows",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     102,
+     103
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.basisRowsProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     105,
+     111
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.basisRowsProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     113,
+     113
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.firstOne",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     13,
+     14
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.firstOneProg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     45,
+     55
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.firstOneProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     57,
+     57
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.firstOne_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     16,
+     16
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.insertRow",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     59,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.insertRowProg",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     65,
+     73
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.insertRowProg_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     75,
+     76
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.insertRow_size",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     78,
+     100
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryBasisProg.0.MIPRE.LowDegree.BinaryLinear.firstOneStep",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     32,
+     33
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Foundations.LowDegree.BinaryBasisProg.0.MIPRE.LowDegree.BinaryLinear.firstOne_fold",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     35,
+     43
+    ]
+   }
+  ],
+  "lines": 137,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination"
+  ],
+  "blueprint": [
+   "lem:effective-binary-linear-algebra"
+  ],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryLinear.basisRows": [
+    "/-- The complete forward elimination scan. -/"
+   ],
+   "MIPRE.LowDegree.BinaryLinear.basisRowsProg": [
+    "/-- Uniform polynomial-time construction of a pivot basis with coefficient certificates. -/"
+   ],
+   "MIPRE.LowDegree.BinaryLinear.firstOne": [
+    "/-- First set bit, or the list length if the vector is zero. -/"
+   ],
+   "MIPRE.LowDegree.BinaryLinear.firstOneProg": [
+    "/-- Finding a pivot scans the vector, without enumerating its binary magnitude. -/"
+   ],
+   "MIPRE.LowDegree.BinaryLinear.insertRow": [
+    "/-- Reduce the candidate, then append it only when its remainder has a pivot. -/"
+   ],
+   "MIPRE.LowDegree.BinaryLinear.insertRowProg": null,
+   "_private.MIPRE.Foundations.LowDegree.BinaryBasisProg.0.MIPRE.LowDegree.BinaryLinear.firstOneStep": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_LowDegree_BinaryEchelon",
+  "module": "MIPRE.Foundations.LowDegree.BinaryEchelon",
+  "module_doc": "/-! # Triangular pivot bases and certified binary reduction -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryEchelon.lean",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryEchelon.lean",
+  "defmat": [
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis"
+  ],
+  "embedded": [
+   "MIPRE.LowDegree.BinaryLinear.instFactPrimeOfNatNat_mIPRE"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.IsPivotBasis",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     18,
+     22
+    ]
+   },
+   {
+    "name": "MIPRE.LowDegree.BinaryLinear.instFactPrimeOfNatNat_mIPRE",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     16,
+     16
+    ]
+   }
+  ],
+  "lines": 60,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_Encoding",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryRepresentation",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryPolynomial",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_SAT_ArrayProg",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryLinear",
+   "import Definitions.Def_MIPRE_Foundations_LowDegree_BinaryElimination"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis": [
+    "/-- In insertion order, each row has pivot one and every later row vanishes",
+    "at that pivot. Pivots need not be numerically ordered. -/"
+   ]
+  }
+ }
+]

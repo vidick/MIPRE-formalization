@@ -1,0 +1,625 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Pipeline.powProg_time",
+  "source_name": "MIPRE.Pipeline.powProg_time",
+  "formal_statement": "theorem MIPRE.Pipeline.powProg_time (b : Unary) (e : ℕ) (hb : 1 ≤ b.length) :\n    ∃ t ≤ powInit.timeBound.eval (2 * b.length + 4 * e + 3) +\n        (e + 1) * (powStep.timeBound.eval (4 * e + 2 * b.length ^ e + 2 * b.length + 5) + 1) + 1,\n      powProg.Runs (encode (b, e)) (encode (unary (b.length ^ e))) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Pipeline",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.LowDegree.DegreeArithmetic"
+  ],
+  "docstring": "**The running time of `powProg`**, polynomial in `e`, `|b|` and `|b|^e`.",
+  "module": "MIPRE.Foundations.Pipeline.PowDomRun",
+  "module_doc": "/-!\n# Runs within a powered monomial\n\n`PRuns W X K c m e p x r`: the program `p` runs from `x` to `r` at a cost below\n`(c (W + 1)^m X^e)^{K + 1}` (`MIPRE.Pipeline.PDom`). The combinators follow the program\nconstructors the pipeline's routines are built from — a polynomial-time function's code\n(`ptf`), sequencing (`seq`), a stage keeping a context (`stage`), hardcoding (`hardcode`), the\nuniversal machine (`univ`), and the two unary loops (`toUnary`, `pow`) — and each returns its\nconstants from those of its arguments, so that a chain of them has constants uniform in `W`, `X`,\n`K` and the data.\n\nThe explicit running times of the unary loops are `toUnaryProg_time` and `powProg_time`: they are\npolynomial in the *values* involved.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pipeline/PowDomRun.lean#L76-L109",
+  "source_path": "MIPRE/Foundations/Pipeline/PowDomRun.lean",
+  "lines": [
+   76,
+   109
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.Cost.whileProg_runs",
+   "MIPRE.Cost.seqProg_runs"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Pipeline.PRuns.stage",
+  "source_name": "MIPRE.Pipeline.PRuns.stage",
+  "formal_statement": "theorem MIPRE.Pipeline.PRuns.stage (pre : PolyTimeFun Data Data) (post : PolyTimeFun (Data × Data) Data)\n    (c m e c' m' e' : ℕ) : ∃ C M E, ∀ {W X K : ℕ} {p : Prog}, p.WellScoped 1 →\n      ∀ (x a ctx r : Data), 1 ≤ X → pre x = .cons a ctx → PDom W X K c m e x.size →\n      PRuns W X K c' m' e' p a r → PRuns W X K C M E (stageProg pre p post) x (post (ctx, r)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Pipeline",
+   "open MIPRE.Pipeline.PRuns",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.LowDegree.DegreeArithmetic",
+   "variable {W X K : ℕ}"
+  ],
+  "docstring": "**A stage** keeping a context: `stageProg pre p post` on `x`, with `pre x = (a, ctx)`.",
+  "module": "MIPRE.Foundations.Pipeline.PowDomRun",
+  "module_doc": "/-!\n# Runs within a powered monomial\n\n`PRuns W X K c m e p x r`: the program `p` runs from `x` to `r` at a cost below\n`(c (W + 1)^m X^e)^{K + 1}` (`MIPRE.Pipeline.PDom`). The combinators follow the program\nconstructors the pipeline's routines are built from — a polynomial-time function's code\n(`ptf`), sequencing (`seq`), a stage keeping a context (`stage`), hardcoding (`hardcode`), the\nuniversal machine (`univ`), and the two unary loops (`toUnary`, `pow`) — and each returns its\nconstants from those of its arguments, so that a chain of them has constants uniform in `W`, `X`,\n`K` and the data.\n\nThe explicit running times of the unary loops are `toUnaryProg_time` and `powProg_time`: they are\npolynomial in the *values* involved.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pipeline/PowDomRun.lean#L179-L204",
+  "source_path": "MIPRE/Foundations/Pipeline/PowDomRun.lean",
+  "lines": [
+   179,
+   204
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.seqProg_runs",
+   "MIPRE.Pipeline.PDom.poly"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Pipeline.PRuns.routeCall",
+  "source_name": "MIPRE.Pipeline.PRuns.routeCall",
+  "formal_statement": "theorem MIPRE.Pipeline.PRuns.routeCall (route : PolyTimeFun Data (Bool × Data)) (post : PolyTimeFun (Data × Data) Data)\n    (c m e c' m' e' : ℕ) : ∃ C M E, ∀ {W X K : ℕ} {p : Prog}, p.WellScoped 1 →\n      ∀ (x a ctx r : Data), 1 ≤ X → route x = (true, .cons a ctx) → PDom W X K c m e x.size →\n      PRuns W X K c' m' e' p a r → PRuns W X K C M E (Prog.routeOneCall route p post) x\n        (post (ctx, r)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Pipeline",
+   "open MIPRE.Pipeline.PRuns",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.LowDegree.DegreeArithmetic",
+   "variable {W X K : ℕ}"
+  ],
+  "docstring": "**A routed call**: `routeOneCall route p post` on `x`, when the router calls `p` on `a` with the\ncontext `ctx`.",
+  "module": "MIPRE.Foundations.Pipeline.PowDomRun",
+  "module_doc": "/-!\n# Runs within a powered monomial\n\n`PRuns W X K c m e p x r`: the program `p` runs from `x` to `r` at a cost below\n`(c (W + 1)^m X^e)^{K + 1}` (`MIPRE.Pipeline.PDom`). The combinators follow the program\nconstructors the pipeline's routines are built from — a polynomial-time function's code\n(`ptf`), sequencing (`seq`), a stage keeping a context (`stage`), hardcoding (`hardcode`), the\nuniversal machine (`univ`), and the two unary loops (`toUnary`, `pow`) — and each returns its\nconstants from those of its arguments, so that a chain of them has constants uniform in `W`, `X`,\n`K` and the data.\n\nThe explicit running times of the unary loops are `toUnaryProg_time` and `powProg_time`: they are\npolynomial in the *values* involved.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pipeline/PowDomRun.lean#L249-L269",
+  "source_path": "MIPRE/Foundations/Pipeline/PowDomRun.lean",
+  "lines": [
+   249,
+   269
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Pipeline.PDom.poly"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Pipeline.toUnaryProg_runs",
+  "source_name": "MIPRE.Pipeline.toUnaryProg_runs",
+  "formal_statement": "theorem MIPRE.Pipeline.toUnaryProg_runs (x : ℕ) : ∃ t, toUnaryProg.Runs (encode x) (encode (unary x)) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Pipeline",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.LowDegree.DegreeArithmetic"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Pipeline.UnaryArith",
+  "module_doc": "/-!\n# Unary arithmetic by loops\n\nThe routines the pipeline's parameter computations need, whose running time is polynomial in the\n*value* of their input rather than its size: writing a binary number in unary (`toUnaryProg`)\nand raising a unary number to a binary power (`powProg`). Both are `whileProg` loops\n(`MIPRE/Foundations/Cost/While`) of polynomial-time steps.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pipeline/UnaryArith.lean#L65-L76",
+  "source_path": "MIPRE/Foundations/Pipeline/UnaryArith.lean",
+  "lines": [
+   65,
+   76
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.Cost.whileProg_runs",
+   "MIPRE.Cost.seqProg_runs"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Pipeline.powProg_runs",
+  "source_name": "MIPRE.Pipeline.powProg_runs",
+  "formal_statement": "theorem MIPRE.Pipeline.powProg_runs (b : Unary) (e : ℕ) :\n    ∃ t, powProg.Runs (encode (b, e)) (encode (unary (b.length ^ e))) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Pipeline",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.LowDegree.DegreeArithmetic"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Pipeline.UnaryArith",
+  "module_doc": "/-!\n# Unary arithmetic by loops\n\nThe routines the pipeline's parameter computations need, whose running time is polynomial in the\n*value* of their input rather than its size: writing a binary number in unary (`toUnaryProg`)\nand raising a unary number to a binary power (`powProg`). Both are `whileProg` loops\n(`MIPRE/Foundations/Cost/While`) of polynomial-time steps.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pipeline/UnaryArith.lean#L105-L119",
+  "source_path": "MIPRE/Foundations/Pipeline/UnaryArith.lean",
+  "lines": [
+   105,
+   119
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.Cost.whileProg_runs",
+   "MIPRE.Cost.seqProg_runs"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Pipeline.stageProg_closed",
+  "source_name": "MIPRE.Pipeline.stageProg_closed",
+  "formal_statement": "theorem MIPRE.Pipeline.stageProg_closed (pre : PolyTimeFun Data Data) {p : Prog} (hp : p.WellScoped 1)\n    (post : PolyTimeFun (Data × Data) Data) : (stageProg pre p post).WellScoped 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Pipeline",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.LowDegree.DegreeArithmetic"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Pipeline.UnaryArith",
+  "module_doc": "/-!\n# Unary arithmetic by loops\n\nThe routines the pipeline's parameter computations need, whose running time is polynomial in the\n*value* of their input rather than its size: writing a binary number in unary (`toUnaryProg`)\nand raising a unary number to a binary power (`powProg`). Both are `whileProg` loops\n(`MIPRE/Foundations/Cost/While`) of polynomial-time steps.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pipeline/UnaryArith.lean#L129-L131",
+  "source_path": "MIPRE/Foundations/Pipeline/UnaryArith.lean",
+  "lines": [
+   129,
+   131
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.seqProg_closed"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.exists_bitsVal_ofFn",
+  "source_name": "MIPRE.SAT.exists_bitsVal_ofFn",
+  "formal_statement": "theorem MIPRE.SAT.exists_bitsVal_ofFn (m p : ℕ) (hp : p < 2 ^ m) :\n    ∃ w : Fin m → Bool, bitsVal (List.ofFn w) = p := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost MIPRE.LowDegree"
+  ],
+  "docstring": "**Every position is numbered by an `m`-bit string.**",
+  "module": "MIPRE.Foundations.SAT.AnswerVec",
+  "module_doc": "/-!\n# The answer vector of a short answer determines it\n\n`answerVec F m a` reads the tape holding `a` followed by blanks at the `2^m` positions the `m`-bit\nstrings number. When the tape's `a` fits in the first half of those positions, `2 |a| ≤ 2^m`, the\nvector determines `a` (`answerVec_injective`): each cell `c < 2^{m-1}` is read off its two\npositions, and the cells beyond hold blanks for both strings. The soundness of answer reduction\ndecodes the answer polynomials of a PCP proof this way.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/AnswerVec.lean#L23-L36",
+  "source_path": "MIPRE/Foundations/SAT/AnswerVec.lean",
+  "lines": [
+   23,
+   36
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.bitsVal_lt",
+   "MIPRE.SAT.bitsVal_injective"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.answerVec_injective",
+  "source_name": "MIPRE.SAT.answerVec_injective",
+  "formal_statement": "theorem MIPRE.SAT.answerVec_injective {F : Type*} [CommRing F] [Nontrivial F] (m : ℕ) {a b : BitStr}\n    (ha : 2 * a.length ≤ 2 ^ m) (hb : 2 * b.length ≤ 2 ^ m)\n    (h : answerVec F m a = answerVec F m b) : a = b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost MIPRE.LowDegree"
+  ],
+  "docstring": "**The answer vector of a short answer determines it.**",
+  "module": "MIPRE.Foundations.SAT.AnswerVec",
+  "module_doc": "/-!\n# The answer vector of a short answer determines it\n\n`answerVec F m a` reads the tape holding `a` followed by blanks at the `2^m` positions the `m`-bit\nstrings number. When the tape's `a` fits in the first half of those positions, `2 |a| ≤ 2^m`, the\nvector determines `a` (`answerVec_injective`): each cell `c < 2^{m-1}` is read off its two\npositions, and the cells beyond hold blanks for both strings. The soundness of answer reduction\ndecodes the answer polynomials of a PCP proof this way.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/AnswerVec.lean#L42-L65",
+  "source_path": "MIPRE/Foundations/SAT/AnswerVec.lean",
+  "lines": [
+   42,
+   65
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.exists_bitsVal_ofFn"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Circuit.valueAt_eq",
+  "source_name": "MIPRE.SAT.Circuit.valueAt_eq",
+  "formal_statement": "theorem MIPRE.SAT.Circuit.valueAt_eq (C : Circuit) (x : ℕ → Bool) (g : ℕ) :\n    C.valueAt x g = (C.gates.getD g (.const false)).eval x (List.ofFn fun k : Fin g => C.valueAt x k) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Circuit",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.Circuit",
+  "module_doc": "/-!\n# Boolean circuits as data\n\nThe circuits of the succinct Cook–Levin theorem (`planning/succinct-cook-levin.md`, S0;\n`answer_reduction.tex` `sec:ar-tms`): a circuit is a list of gates in topological order,\neach gate reading input bits or the values of earlier gates, the last gate being the output.\nFan-in is at most two by the shape of the gates; fan-out at most two and a terminal output\ngate are the well-formedness conditions (`Circuit.WellFormed`) that the arithmetization of\nthe Tseitin formula needs for its individual-degree bound (`prop:tseitin-arith-degree`).\nThe gate count is the paper's size parameter `s`. Circuits are first-order data with a\n`SizedEncoding`, so that a program of the ambient model can output one\n(`MIPRE.SAT.SuccinctCookLevin.describe`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Circuit.lean#L115-L117",
+  "source_path": "MIPRE/Foundations/SAT/Circuit.lean",
+  "lines": [
+   115,
+   117
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Circuit.sum_inputWeight_le",
+  "source_name": "MIPRE.SAT.Circuit.sum_inputWeight_le",
+  "formal_statement": "theorem MIPRE.SAT.Circuit.sum_inputWeight_le (C : Circuit) (v : ℕ ⊕ ℕ) :\n    ∑ k ∈ range C.size, C.inputWeight k v ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Circuit",
+   "open MvPolynomial MIPRE.LowDegree Finset",
+   "variable {F : Type*} [Field F]"
+  ],
+  "docstring": "Copy routing contributes at most one occurrence of any variable.",
+  "module": "MIPRE.Foundations.SAT.CircuitArithmetization",
+  "module_doc": "/-!\n# Bounded-degree circuit consistency polynomials\n\nIn characteristic two, `1 + w + rhs` is the indicator of Boolean gate\nconsistency. Input-copy routing bounds the uses of external variables as well\nas gate variables. The output literal is included explicitly.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/CircuitArithmetization.lean#L97-L112",
+  "source_path": "MIPRE/Foundations/SAT/CircuitArithmetization.lean",
+  "lines": [
+   97,
+   112
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Circuit.degreeOf_routedArith_le",
+  "source_name": "MIPRE.SAT.Circuit.degreeOf_routedArith_le",
+  "formal_statement": "theorem MIPRE.SAT.Circuit.degreeOf_routedArith_le (C : Circuit) (hC : C.WellFormed) (v : ℕ ⊕ ℕ) :\n    (C.routedArith (F := F)).degreeOf v ≤ 5 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Circuit",
+   "open MvPolynomial MIPRE.LowDegree Finset",
+   "variable {F : Type*} [Field F]"
+  ],
+  "docstring": "A degree-five bound for the characteristic-two construction, stronger than\nthe degree-six bound required by the PCP interface.",
+  "module": "MIPRE.Foundations.SAT.CircuitArithmetization",
+  "module_doc": "/-!\n# Bounded-degree circuit consistency polynomials\n\nIn characteristic two, `1 + w + rhs` is the indicator of Boolean gate\nconsistency. Input-copy routing bounds the uses of external variables as well\nas gate variables. The output literal is included explicitly.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/CircuitArithmetization.lean#L131-L155",
+  "source_path": "MIPRE/Foundations/SAT/CircuitArithmetization.lean",
+  "lines": [
+   131,
+   155
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-circuit-arithmetization",
+    "env": "lemma",
+    "title": "Circuit arithmetization with bounded input use",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.SAT.Circuit.sum_inputWeight_le"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Circuit.eval_gateArith",
+  "source_name": "MIPRE.SAT.Circuit.eval_gateArith",
+  "formal_statement": "theorem MIPRE.SAT.Circuit.eval_gateArith (C : Circuit) (k : ℕ) (g : Gate) (x w : ℕ → Bool)\n    (href : ∀ u ∈ g.refs, u < k) :\n    MvPolynomial.eval (Sum.elim (fun i => (ofBool (x i) : F)) (fun j => ofBool (w j)))\n      (C.gateArith k g) = ofBool (g.eval\n        (fun i => Sum.elim x w (C.inputRef k i)) (List.ofFn fun j : Fin k => w j)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Circuit",
+   "open MvPolynomial MIPRE.LowDegree Finset",
+   "variable {F : Type*} [Field F]"
+  ],
+  "docstring": "Boolean evaluation of a gate's polynomial.",
+  "module": "MIPRE.Foundations.SAT.CircuitArithmetization",
+  "module_doc": "/-!\n# Bounded-degree circuit consistency polynomials\n\nIn characteristic two, `1 + w + rhs` is the indicator of Boolean gate\nconsistency. Input-copy routing bounds the uses of external variables as well\nas gate variables. The output literal is included explicitly.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/CircuitArithmetization.lean#L157-L183",
+  "source_path": "MIPRE/Foundations/SAT/CircuitArithmetization.lean",
+  "lines": [
+   157,
+   183
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Circuit.eval_routedArith_iff",
+  "source_name": "MIPRE.SAT.Circuit.eval_routedArith_iff",
+  "formal_statement": "theorem MIPRE.SAT.Circuit.eval_routedArith_iff (C : Circuit) (hC : C.WellFormed) (x w : ℕ → Bool) :\n    MvPolynomial.eval (Sum.elim (fun i => (ofBool (x i) : F)) (fun j => ofBool (w j)))\n      C.routedArith = 1 ↔ C.RoutedConsistent x w ∧ w (C.size - 1) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Circuit",
+   "open MvPolynomial MIPRE.LowDegree Finset",
+   "variable {F : Type*} [Field F]",
+   "variable [CharP F 2]"
+  ],
+  "docstring": "The polynomial is one precisely on consistent accepting Boolean assignments.",
+  "module": "MIPRE.Foundations.SAT.CircuitArithmetization",
+  "module_doc": "/-!\n# Bounded-degree circuit consistency polynomials\n\nIn characteristic two, `1 + w + rhs` is the indicator of Boolean gate\nconsistency. Input-copy routing bounds the uses of external variables as well\nas gate variables. The output literal is included explicitly.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/CircuitArithmetization.lean#L204-L228",
+  "source_path": "MIPRE/Foundations/SAT/CircuitArithmetization.lean",
+  "lines": [
+   204,
+   228
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-circuit-arithmetization",
+    "env": "lemma",
+    "title": "Circuit arithmetization with bounded input use",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.SAT.Circuit.eval_gateArith"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Circuit.eval_routedArith_bool",
+  "source_name": "MIPRE.SAT.Circuit.eval_routedArith_bool",
+  "formal_statement": "theorem MIPRE.SAT.Circuit.eval_routedArith_bool (C : Circuit) (hC : C.WellFormed) (x w : ℕ → Bool) :\n    MvPolynomial.eval (Sum.elim (fun i => (ofBool (x i) : F)) (fun j => ofBool (w j)))\n      C.routedArith = 0 ∨\n    MvPolynomial.eval (Sum.elim (fun i => (ofBool (x i) : F)) (fun j => ofBool (w j)))\n      C.routedArith = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Circuit",
+   "open MvPolynomial MIPRE.LowDegree Finset",
+   "variable {F : Type*} [Field F]",
+   "variable [CharP F 2]"
+  ],
+  "docstring": "Every Boolean assignment gives a Boolean field value, including rejected ones.",
+  "module": "MIPRE.Foundations.SAT.CircuitArithmetization",
+  "module_doc": "/-!\n# Bounded-degree circuit consistency polynomials\n\nIn characteristic two, `1 + w + rhs` is the indicator of Boolean gate\nconsistency. Input-copy routing bounds the uses of external variables as well\nas gate variables. The output literal is included explicitly.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/CircuitArithmetization.lean#L243-L259",
+  "source_path": "MIPRE/Foundations/SAT/CircuitArithmetization.lean",
+  "lines": [
+   243,
+   259
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-circuit-arithmetization",
+    "env": "lemma",
+    "title": "Circuit arithmetization with bounded input use",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.SAT.Circuit.eval_gateArith"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Circuit.evalBits_factorBits",
+  "source_name": "MIPRE.SAT.Circuit.evalBits_factorBits",
+  "formal_statement": "theorem MIPRE.SAT.Circuit.evalBits_factorBits (C : Circuit) (hC : C.WellFormed) (z : F) (p : BitStr)\n    (hp : p ≠ []) (hroot : z ^ p.length = BinaryPolynomial.evalBits z p)\n    (x w : List BitStr) (hxlen : C.inputs ≤ x.length) (hwlen : C.size ≤ w.length)\n    (hx : ∀ b ∈ x, b.length = p.length) (hw : ∀ b ∈ w, b.length = p.length)\n    (k : ℕ) (hk : k < C.size) :\n    BinaryPolynomial.evalBits z (factorBits (p, x, w, C.fieldHistory w k)\n      (C.gates.getD k (.const false), w.getD k [])) =\n      MvPolynomial.eval (Sum.elim (fun i => BinaryPolynomial.evalBits z (x.getD i []))\n        (fun j => BinaryPolynomial.evalBits z (w.getD j []))) (C.consistencyFactor k) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Circuit",
+   "open MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial MvPolynomial Finset",
+   "variable {F : Type*} [Field F] [CharP F 2]"
+  ],
+  "docstring": "Each computed factor evaluates to the corresponding polynomial factor.",
+  "module": "MIPRE.Foundations.SAT.CircuitFieldCorrect",
+  "module_doc": "/-!\n# Correctness of the executable circuit polynomial evaluator\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/CircuitFieldCorrect.lean#L84-L115",
+  "source_path": "MIPRE/Foundations/SAT/CircuitFieldCorrect.lean",
+  "lines": [
+   84,
+   115
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_xor",
+   "MIPRE.SAT.Circuit.length_gateBits",
+   "MIPRE.SAT.Circuit.evalBits_gateBits"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Circuit.evalBits_circuitBits_finite",
+  "source_name": "MIPRE.SAT.Circuit.evalBits_circuitBits_finite",
+  "formal_statement": "theorem MIPRE.SAT.Circuit.evalBits_circuitBits_finite (C : Circuit) (hC : C.WellFormed) (z : F) (p : BitStr)\n    (hp : p ≠ []) (hroot : z ^ p.length = BinaryPolynomial.evalBits z p)\n    (x w : List BitStr) (hxlen : x.length = C.inputs) (hwlen : w.length = C.size)\n    (hx : ∀ b ∈ x, b.length = p.length) (hw : ∀ b ∈ w, b.length = p.length) :\n    BinaryPolynomial.evalBits z (circuitBits p x w C.gates) =\n      MvPolynomial.eval\n        (Fin.addCases (fun i => BinaryPolynomial.evalBits z (x.getD i []))\n          (fun j => BinaryPolynomial.evalBits z (w.getD j []))) C.finiteArith := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Circuit",
+   "open MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial MvPolynomial Finset",
+   "variable {F : Type*} [Field F] [CharP F 2]"
+  ],
+  "docstring": "The same evaluator computes the polynomial on the exact finite coordinate\nset used by the PCP, with the inputs followed by the gate variables.",
+  "module": "MIPRE.Foundations.SAT.CircuitFieldCorrect",
+  "module_doc": "/-!\n# Correctness of the executable circuit polynomial evaluator\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/CircuitFieldCorrect.lean#L158-L186",
+  "source_path": "MIPRE/Foundations/SAT/CircuitFieldCorrect.lean",
+  "lines": [
+   158,
+   186
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-circuit-evaluator",
+    "env": "lemma",
+    "title": "Effective circuit polynomial evaluation",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits",
+   "MIPRE.LowDegree.BinaryPolynomial.length_mulReduce",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_mulReduce",
+   "MIPRE.SAT.Circuit.evalBits_factorBits"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.shoupMulProg_encoding",
+  "source_name": "MIPRE.SAT.shoupMulProg_encoding",
+  "formal_statement": "theorem MIPRE.SAT.shoupMulProg_encoding (k : ℕ) (hk : 1 ≤ k)\n    (a b : (shoupBinField k hk).carrier) :\n    shoupMulProg (unary k, (shoupBinField k hk).toBits a, (shoupBinField k hk).toBits b) =\n      (shoupBinField k hk).toBits (a * b) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial MIPRE.LowDegree.BinaryLinear"
+  ],
+  "docstring": "Multiplication prints the canonical linear coordinates of the product.",
+  "module": "MIPRE.Foundations.SAT.FieldCoordinates",
+  "module_doc": "/-! # Canonical binary linear coordinates for the effective field -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/FieldCoordinates.lean#L92-L107",
+  "source_path": "MIPRE/Foundations/SAT/FieldCoordinates.lean",
+  "lines": [
+   92,
+   107
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-field-matrices",
+    "env": "lemma",
+    "title": "Effective Frobenius, trace Gram matrices and table transport",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.length_mulReduce",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_mulReduce",
+   "MIPRE.LowDegree.shoupIrreducible_monic",
+   "MIPRE.LowDegree.shoupIrreducible_natDegree",
+   "MIPRE.SAT.shoupBinField_charP",
+   "MIPRE.SAT.shoupRoot_equation",
+   "MIPRE.SAT.shoupRoot_eval_toBits",
+   "MIPRE.SAT.shoupRoot_eval_eq_iff"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.BinField.eval_circuitBits_vecBits",
+  "source_name": "MIPRE.SAT.BinField.eval_circuitBits_vecBits",
+  "formal_statement": "theorem MIPRE.SAT.BinField.eval_circuitBits_vecBits (C : Circuit) (hC : C.WellFormed)\n    (p : BitStr) (hp : p ≠ []) (hpk : p.length = k)\n    [CharP E.carrier 2] (root : E.carrier)\n    (hroot : root ^ p.length = BinaryPolynomial.evalBits root p)\n    (hencode : ∀ a : E.carrier, BinaryPolynomial.evalBits root (E.toBits a) = a)\n    (v : Fin (C.inputs + C.size) → E.carrier) :\n    BinaryPolynomial.evalBits root (Circuit.circuitBits p\n      ((E.vecBits v).take C.inputs) ((E.vecBits v).drop C.inputs) C.gates) =\n      MvPolynomial.eval v C.finiteArith := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.BinField",
+   "open MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial",
+   "variable {k : ℕ} (E : BinField k)"
+  ],
+  "docstring": "The circuit evaluator on a raw vector computes the finite polynomial at\nthe original typed point, for any correct coefficient representation.",
+  "module": "MIPRE.Foundations.SAT.FieldVectors",
+  "module_doc": "/-! # Encoded field vectors and their circuit-coordinate slices -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/FieldVectors.lean#L51-L86",
+  "source_path": "MIPRE/Foundations/SAT/FieldVectors.lean",
+  "lines": [
+   51,
+   86
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Circuit.evalBits_circuitBits_finite"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Circuit.eval_iff_exists_finiteArith",
+  "source_name": "MIPRE.SAT.Circuit.eval_iff_exists_finiteArith",
+  "formal_statement": "theorem MIPRE.SAT.Circuit.eval_iff_exists_finiteArith (C : Circuit) (hC : C.WellFormed) (x : ℕ → Bool) :\n    C.eval x = true ↔ ∃ z : Fin (C.inputs + C.size) → Bool,\n      (∀ i : Fin C.inputs, z (Fin.castAdd C.size i) = x i) ∧\n      MvPolynomial.eval (fun i => (ofBool (z i) : F)) C.finiteArith = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Circuit",
+   "open MvPolynomial MIPRE.LowDegree",
+   "variable {F : Type*} [Field F]",
+   "variable [CharP F 2]"
+  ],
+  "docstring": "Exact-variable arithmetization of the accepting circuit relation.",
+  "module": "MIPRE.Foundations.SAT.FiniteCircuitArithmetization",
+  "module_doc": "/-!\n# Circuit arithmetization on exactly the input and gate variables\n\nThe first `C.inputs` coordinates are the inputs, followed by the `C.size` gate\nvariables. No new variables are needed for routing repeated input reads.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/FiniteCircuitArithmetization.lean#L104-L131",
+  "source_path": "MIPRE/Foundations/SAT/FiniteCircuitArithmetization.lean",
+  "lines": [
+   104,
+   131
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-circuit-arithmetization",
+    "env": "lemma",
+    "title": "Circuit arithmetization with bounded input use",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.SAT.Circuit.eval_routedArith_iff",
+   "MIPRE.SAT.Circuit.routedConsistent_iff",
+   "MIPRE.SAT.Circuit.valueAt_congr"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.esize_nat_add_le",
+  "source_name": "MIPRE.SAT.esize_nat_add_le",
+  "formal_statement": "theorem MIPRE.SAT.esize_nat_add_le (n k : ℕ) : esize (n + k) ≤ esize n + 4 * k := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost Polynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.Flatten",
+  "module_doc": "/-!\n# Flattening a formula to a circuit, in polynomial time\n\nA formula is encoded as its post-order serialization (`Fml.rpn`), and the circuit of a\nformula (`Fml.flattenAt 0`) is computed from that serialization by a single left-to-right\nscan with a stack of gate indices (`flStep`, `flatten`): an input or constant node emits its\ngate and pushes the gate's index; a connective pops the indices of its arguments, emits the\ngate and pushes the new index. The scan is a fold, so the program is a `PolyTimeFun.foldl`\nof the step (`PolyTimeFun.casesNode` dispatches on the node), and `Fml.toCircuitF` is the\ncircuit of a formula on a given number of inputs as a polynomial-time function\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Flatten.lean#L123-L126",
+  "source_path": "MIPRE/Foundations/SAT/Flatten.lean",
+  "lines": [
+   123,
+   126
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ }
+]

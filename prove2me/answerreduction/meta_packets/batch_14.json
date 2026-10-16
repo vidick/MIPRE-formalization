@@ -1,0 +1,577 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjMeas.outcome_hermitian",
+  "source_name": "MIPStarRE.LDT.ProjMeas.outcome_hermitian",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjMeas.outcome_hermitian {α : Type*} {ι : Type*}\n    [Fintype α] [Fintype ι] [DecidableEq ι]\n    (P : ProjMeas α ι) (a : α) :\n    (P.outcome a)ᴴ = P.outcome a := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjMeas",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Projective measurement outcomes are Hermitian (inherited from Measurement.outcome_pos).",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementCore",
+  "module_doc": "/-!\n# Core submeasurement structures for the low individual degree test\n\nFoundational measurement, submeasurement, and projective-measurement structures.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean#L499-L504",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementCore.lean",
+  "lines": [
+   499,
+   504
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Measurement.outcome_hermitian"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SubMeas.postprocess_transport",
+  "source_name": "MIPStarRE.LDT.SubMeas.postprocess_transport",
+  "formal_statement": "theorem MIPStarRE.LDT.SubMeas.postprocess_transport {α β γ : Type*} {ι : Type*}\n    [Fintype α] [Fintype β] [Fintype γ] [Fintype ι] [DecidableEq ι]\n    (e : α ≃ β) (A : SubMeas α ι) (f : β → γ) :\n    postprocess (transport e A) f = postprocess A (fun a => f (e a)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SubMeas",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Postprocessing after transporting outcomes along an equivalence agrees with\npostprocessing the original submeasurement after precomposing the readout map\nwith the same equivalence.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies",
+  "module_doc": "/-!\n# Indexed and bipartite submeasurement infrastructure\n\nIndexed measurement families, tensor placements, and lift/placement constructors.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementFamilies.lean#L189-L213",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementFamilies.lean",
+  "lines": [
+   189,
+   213
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.ext"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SubMeas.postprocess_transport_equiv",
+  "source_name": "MIPStarRE.LDT.SubMeas.postprocess_transport_equiv",
+  "formal_statement": "theorem MIPStarRE.LDT.SubMeas.postprocess_transport_equiv {α β γ δ : Type*} {ι : Type*}\n    [Fintype α] [Fintype β] [Fintype γ] [Fintype δ]\n    [Fintype ι] [DecidableEq ι]\n    (eα : α ≃ β) (eγ : γ ≃ δ) (A : SubMeas α ι)\n    (f : α → γ) (g : β → δ)\n    (h : ∀ a, g (eα a) = eγ (f a)) :\n    postprocess (transport eα A) g = transport eγ (postprocess A f) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SubMeas",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Naturality of postprocessing with respect to transport along equivalences on\nboth the source and target outcome alphabets.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies",
+  "module_doc": "/-!\n# Indexed and bipartite submeasurement infrastructure\n\nIndexed measurement families, tensor placements, and lift/placement constructors.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementFamilies.lean#L215-L252",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementFamilies.lean",
+  "lines": [
+   215,
+   252
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.ext"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SubMeas.postprocess_comp",
+  "source_name": "MIPStarRE.LDT.SubMeas.postprocess_comp",
+  "formal_statement": "theorem MIPStarRE.LDT.SubMeas.postprocess_comp {α β γ : Type*} {ι : Type*}\n    [Fintype α] [Fintype β] [Fintype γ] [Fintype ι] [DecidableEq ι]\n    (A : SubMeas α ι) (f : α → β) (g : β → γ) :\n    postprocess (postprocess A f) g = postprocess A (fun a => g (f a)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SubMeas",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Postprocessing is functorial: postprocessing by `f` and then by `g`\nagrees with a single postprocessing by the composite `g ∘ f`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies",
+  "module_doc": "/-!\n# Indexed and bipartite submeasurement infrastructure\n\nIndexed measurement families, tensor placements, and lift/placement constructors.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementFamilies.lean#L254-L309",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementFamilies.lean",
+  "lines": [
+   254,
+   309
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.ext"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 50,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjMeas.transport_trivialDistinguishedOutcome",
+  "source_name": "MIPStarRE.LDT.ProjMeas.transport_trivialDistinguishedOutcome",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjMeas.transport_trivialDistinguishedOutcome {α ι : Type*}\n    [Fintype α] [Fintype ι] [DecidableEq ι]\n    (e : α ≃ α) (a₀ : α) :\n    transport e (trivialDistinguishedOutcome (ι := ι) a₀) =\n      trivialDistinguishedOutcome (e a₀) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjMeas",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies",
+  "module_doc": "/-!\n# Indexed and bipartite submeasurement infrastructure\n\nIndexed measurement families, tensor placements, and lift/placement constructors.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementFamilies.lean#L379-L396",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementFamilies.lean",
+  "lines": [
+   379,
+   396
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ProjMeas.ext"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ProjMeas.postprocess_outcome_commute",
+  "source_name": "MIPStarRE.LDT.ProjMeas.postprocess_outcome_commute",
+  "formal_statement": "theorem MIPStarRE.LDT.ProjMeas.postprocess_outcome_commute\n    {α β γ : Type*} {ι : Type*}\n    [Fintype α] [Fintype β] [Fintype γ]\n    [Fintype ι] [DecidableEq ι]\n    (P : ProjMeas α ι) (f : α → β) (g : α → γ)\n    (b : β) (c : γ) :\n    (MIPStarRE.LDT.postprocess P.toSubMeas f).outcome b *\n      (MIPStarRE.LDT.postprocess P.toSubMeas g).outcome c =\n    (MIPStarRE.LDT.postprocess P.toSubMeas g).outcome c *\n      (MIPStarRE.LDT.postprocess P.toSubMeas f).outcome b := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.ProjMeas",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Postprocessed outcomes from the same ProjMeas commute.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.SubMeasurementFamilies",
+  "module_doc": "/-!\n# Indexed and bipartite submeasurement infrastructure\n\nIndexed measurement families, tensor placements, and lift/placement constructors.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementFamilies.lean#L426-L443",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/SubMeasurementFamilies.lean",
+  "lines": [
+   426,
+   443
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ProjSubMeas.outcome_orthogonal"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.leftTensor_finset_sum",
+  "source_name": "MIPStarRE.LDT.leftTensor_finset_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.leftTensor_finset_sum {α : Type*}\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (s : Finset α) (f : α → MIPStarRE.Quantum.Op ι₁) :\n    Finset.sum s (fun a => leftTensor (ι₂ := ι₂) (f a)) =\n      leftTensor (ι₂ := ι₂) (Finset.sum s f) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Left tensor placement commutes with finite sums.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.TensorPlacement",
+  "module_doc": "/-!\n# Tensor-placement helper lemmas and sandwich tensor estimates\n\nTensor-sum commutation, positivity/boundedness preservation,\nfactoring lemmas, and sandwich-residual estimates used in\nthe main induction step and polynomial-agreement arguments.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean#L72-L81",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean",
+  "lines": [
+   72,
+   81
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.opTensor_sum_left_finset"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ev_leftTensor_total_eq_sum_outcome",
+  "source_name": "MIPStarRE.LDT.ev_leftTensor_total_eq_sum_outcome",
+  "formal_statement": "theorem MIPStarRE.LDT.ev_leftTensor_total_eq_sum_outcome {α : Type*} [Fintype α]\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (ψ : QuantumState (ι × ι)) (A : SubMeas α ι) :\n    ev ψ (leftTensor (ι₂ := ι) A.total) =\n      ∑ a : α, ev ψ (leftTensor (ι₂ := ι) (A.outcome a)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Expanding the left-tensor mass of a submeasurement on a bipartite state as\nthe sum of per-outcome left-tensor expectations.\n\nThis is a generic identity at the level of `ev ψ (leftTensor _)`: applying\n`SubMeas.sum_eq_total`, pulling `leftTensor` through the finite sum via\n`leftTensor_finset_sum`, and distributing `ev` through the sum via\n`ev_finset_sum`. Using the definitional equalities\n`subMeasMass ψ A.liftLeft = ev ψ A.liftLeft.total = ev ψ (leftTensor A.total)`,\nthis immediately yields the helper-stage opening\n`subMeasMass ψ A.liftLeft = ∑ a, ev ψ (leftTensor (A.outcome a))` used in the\nSection 9 / Section 12 calculations.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.TensorPlacement",
+  "module_doc": "/-!\n# Tensor-placement helper lemmas and sandwich tensor estimates\n\nTensor-sum commutation, positivity/boundedness preservation,\nfactoring lemmas, and sandwich-residual estimates used in\nthe main induction step and polynomial-agreement arguments.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean#L98-L116",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean",
+  "lines": [
+   98,
+   116
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.leftTensor_finset_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.ev_leftTensor_averageOperatorOverDistribution",
+  "source_name": "MIPStarRE.LDT.ev_leftTensor_averageOperatorOverDistribution",
+  "formal_statement": "theorem MIPStarRE.LDT.ev_leftTensor_averageOperatorOverDistribution {α : Type*}\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (ψ : QuantumState (ι₁ × ι₂)) (𝒟 : Distribution α)\n    (A : α → MIPStarRE.Quantum.Op ι₁) :\n    ev ψ (leftTensor (ι₂ := ι₂) (averageOperatorOverDistribution 𝒟 A)) =\n      avgOver 𝒟 (fun a => ev ψ (leftTensor (ι₂ := ι₂) (A a))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Evaluation of a left-placed operator average is the average of the\nleft-placed evaluations.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.TensorPlacement",
+  "module_doc": "/-!\n# Tensor-placement helper lemmas and sandwich tensor estimates\n\nTensor-sum commutation, positivity/boundedness preservation,\nfactoring lemmas, and sandwich-residual estimates used in\nthe main induction step and polynomial-agreement arguments.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean#L118-L128",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean",
+  "lines": [
+   118,
+   128
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_real_smul",
+   "MIPStarRE.LDT.leftTensor_finset_sum"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.rightTensor_finset_sum",
+  "source_name": "MIPStarRE.LDT.rightTensor_finset_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.rightTensor_finset_sum {α : Type*}\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (s : Finset α) (f : α → MIPStarRE.Quantum.Op ι₂) :\n    Finset.sum s (fun a => rightTensor (ι₁ := ι₁) (f a)) =\n      rightTensor (ι₁ := ι₁) (Finset.sum s f) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Right tensor placement commutes with finite sums.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.TensorPlacement",
+  "module_doc": "/-!\n# Tensor-placement helper lemmas and sandwich tensor estimates\n\nTensor-sum commutation, positivity/boundedness preservation,\nfactoring lemmas, and sandwich-residual estimates used in\nthe main induction step and polynomial-agreement arguments.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean#L130-L139",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean",
+  "lines": [
+   130,
+   139
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.opTensor_sum_right_finset"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.leftTensor_mul_rightTensor_real_smul_right",
+  "source_name": "MIPStarRE.LDT.leftTensor_mul_rightTensor_real_smul_right",
+  "formal_statement": "theorem MIPStarRE.LDT.leftTensor_mul_rightTensor_real_smul_right\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    (c : Error) (A : MIPStarRE.Quantum.Op ι₁) (B : MIPStarRE.Quantum.Op ι₂) :\n    leftTensor (ι₂ := ι₂) A * rightTensor (ι₁ := ι₁) (c • B) =\n      (c : ℂ) • (leftTensor (ι₂ := ι₂) A * rightTensor (ι₁ := ι₁) B) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "A real scalar on the right register factors out of a bipartite tensor product.\n\nThis restates `leftTensor_mul_rightTensor_smul_right` for the real scalar action\nused by `averageOperatorOverDistribution`, coercing the real scalar to `ℂ` on\nthe tensor product.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.TensorPlacement",
+  "module_doc": "/-!\n# Tensor-placement helper lemmas and sandwich tensor estimates\n\nTensor-sum commutation, positivity/boundedness preservation,\nfactoring lemmas, and sandwich-residual estimates used in\nthe main induction step and polynomial-agreement arguments.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean#L255-L266",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean",
+  "lines": [
+   255,
+   266
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.leftTensor_nonneg",
+  "source_name": "MIPStarRE.LDT.leftTensor_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.leftTensor_nonneg\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    {A : MIPStarRE.Quantum.Op ι₁} (hA : 0 ≤ A) :\n    0 ≤ leftTensor (ι₂ := ι₂) A := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Left tensor placement preserves positivity.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.TensorPlacement",
+  "module_doc": "/-!\n# Tensor-placement helper lemmas and sandwich tensor estimates\n\nTensor-sum commutation, positivity/boundedness preservation,\nfactoring lemmas, and sandwich-residual estimates used in\nthe main induction step and polynomial-agreement arguments.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean#L268-L276",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean",
+  "lines": [
+   268,
+   276
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.rightTensor_nonneg",
+  "source_name": "MIPStarRE.LDT.rightTensor_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.rightTensor_nonneg\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    {A : MIPStarRE.Quantum.Op ι₂} (hA : 0 ≤ A) :\n    0 ≤ rightTensor (ι₁ := ι₁) A := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Right tensor placement preserves positivity.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.TensorPlacement",
+  "module_doc": "/-!\n# Tensor-placement helper lemmas and sandwich tensor estimates\n\nTensor-sum commutation, positivity/boundedness preservation,\nfactoring lemmas, and sandwich-residual estimates used in\nthe main induction step and polynomial-agreement arguments.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean#L278-L286",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean",
+  "lines": [
+   278,
+   286
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.leftTensor_le_one",
+  "source_name": "MIPStarRE.LDT.leftTensor_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.leftTensor_le_one\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    {A : MIPStarRE.Quantum.Op ι₁} (hA : A ≤ 1) :\n    leftTensor (ι₂ := ι₂) A ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Left tensor placement preserves the operator bound `≤ 1`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.TensorPlacement",
+  "module_doc": "/-!\n# Tensor-placement helper lemmas and sandwich tensor estimates\n\nTensor-sum commutation, positivity/boundedness preservation,\nfactoring lemmas, and sandwich-residual estimates used in\nthe main induction step and polynomial-agreement arguments.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean#L288-L297",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean",
+  "lines": [
+   288,
+   297
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.opTensor_mono_left"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.rightTensor_le_one",
+  "source_name": "MIPStarRE.LDT.rightTensor_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.rightTensor_le_one\n    {ι₁ ι₂ : Type*} [Fintype ι₁] [DecidableEq ι₁] [Fintype ι₂] [DecidableEq ι₂]\n    {A : MIPStarRE.Quantum.Op ι₂} (hA : A ≤ 1) :\n    rightTensor (ι₁ := ι₁) A ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Right tensor placement preserves the operator bound `≤ 1`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.TensorPlacement",
+  "module_doc": "/-!\n# Tensor-placement helper lemmas and sandwich tensor estimates\n\nTensor-sum commutation, positivity/boundedness preservation,\nfactoring lemmas, and sandwich-residual estimates used in\nthe main induction step and polynomial-agreement arguments.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean#L313-L321",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean",
+  "lines": [
+   313,
+   321
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.opTensor_le_leftTensor"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SubMeas.opTensor_sum_filter_le_one",
+  "source_name": "MIPStarRE.LDT.SubMeas.opTensor_sum_filter_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.SubMeas.opTensor_sum_filter_le_one {α ι : Type*}\n    [Fintype α] [Fintype ι] [DecidableEq ι]\n    (S T : SubMeas α ι) (P : α → Prop) [DecidablePred P] :\n    ∑ x ∈ Finset.univ.filter P, opTensor (S.outcome x) (T.outcome x) ≤\n      (1 : MIPStarRE.Quantum.Op (ι × ι)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SubMeas",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "A filtered diagonal tensor sum of two submeasurements is a contraction.\n\nThe estimate uses only positivity and the submeasurement total bound on the\nleft factor, together with the pointwise `≤ 1` bound on the right factor.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.TensorPlacement",
+  "module_doc": "/-!\n# Tensor-placement helper lemmas and sandwich tensor estimates\n\nTensor-sum commutation, positivity/boundedness preservation,\nfactoring lemmas, and sandwich-residual estimates used in\nthe main induction step and polynomial-agreement arguments.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean#L325-L348",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean",
+  "lines": [
+   325,
+   348
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.opTensor_le_leftTensor",
+   "MIPStarRE.LDT.SubMeas.outcome_le_one",
+   "MIPStarRE.LDT.leftTensor_nonneg",
+   "MIPStarRE.LDT.leftTensor_le_one",
+   "MIPStarRE.LDT.leftTensor_finset_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.sandwichTensorSummand_nonneg",
+  "source_name": "MIPStarRE.LDT.sandwichTensorSummand_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.sandwichTensorSummand_nonneg\n    {α β γ ιA ιB : Type*} [Fintype α] [Fintype β] [Fintype γ]\n    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    (ψ : QuantumState (ιA × ιB))\n    (Outer : SubMeas β ιA) (Inner : SubMeas α ιA) (Right : SubMeas γ ιB)\n    (o : β) (i : α) (r : γ) :\n    0 ≤ ev ψ\n      (leftTensor (ι₂ := ιB)\n          (Outer.outcome o * Inner.outcome i * Outer.outcome o) *\n        rightTensor (ι₁ := ιA) (Right.outcome r)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "A single tensor summand with a sandwiched left register is nonnegative in\nexpectation.\n\nThe left register `Outer_o * Inner_i * Outer_o` is PSD by sandwich positivity,\nand the right-register outcome is PSD, so their tensor product is PSD.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.TensorPlacement",
+  "module_doc": "/-!\n# Tensor-placement helper lemmas and sandwich tensor estimates\n\nTensor-sum commutation, positivity/boundedness preservation,\nfactoring lemmas, and sandwich-residual estimates used in\nthe main induction step and polynomial-agreement arguments.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean#L354-L374",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean",
+  "lines": [
+   354,
+   374
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.SubMeas.outcome_hermitian"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.sandwichTensor_residual_sum_le_one",
+  "source_name": "MIPStarRE.LDT.sandwichTensor_residual_sum_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.sandwichTensor_residual_sum_le_one\n    {α β γ ιA ιB : Type*} [Fintype α] [Fintype β] [Fintype γ]\n    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    (ψ : QuantumState (ιA × ιB)) (hnorm : ψ.IsNormalized)\n    (Outer : SubMeas β ιA) (Inner : SubMeas α ιA) (Right : SubMeas γ ιB) :\n    (∑ ir : α × γ, ∑ o : β,\n        ev ψ\n          (leftTensor (ι₂ := ιB)\n              (Outer.outcome o * Inner.outcome ir.1 * Outer.outcome o) *\n            rightTensor (ι₁ := ιA) (Right.outcome ir.2))) ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The residual tensor sum from a sandwiched left-register submeasurement and an\nindependent right-register submeasurement is at most one in a normalized state.\n\nThe operator under the sum factors as\n`(∑ o, Outer_o * Inner.total * Outer_o) ⊗ Right.total`; the first factor is\nbounded by `1` by the submeasurement axioms and sandwich monotonicity.  The\nsecond factor is also bounded by `1`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Basic.TensorPlacement",
+  "module_doc": "/-!\n# Tensor-placement helper lemmas and sandwich tensor estimates\n\nTensor-sum commutation, positivity/boundedness preservation,\nfactoring lemmas, and sandwich-residual estimates used in\nthe main induction step and polynomial-agreement arguments.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean#L376-L521",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Basic/TensorPlacement.lean",
+  "lines": [
+   376,
+   521
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.opTensor_le_leftTensor",
+   "MIPStarRE.LDT.SubMeas.outcome_hermitian",
+   "MIPStarRE.LDT.SubMeas.outcome_le_one",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.leftTensor_le_one",
+   "MIPStarRE.LDT.leftTensor_finset_sum",
+   "MIPStarRE.LDT.rightTensor_finset_sum",
+   "MIPStarRE.Quantum.sq_le_self"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 129,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseOne_insert_bound",
+  "source_name": "MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseOne_insert_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseOne_insert_bound\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι)\n    (zeta : Error)\n    (hnorm : strategy.state.IsNormalized)\n    (family : IdxPolyFamily params ι)\n    (hcombined_snd : SDDRel strategy.state\n      (uniformDistribution (EvaluatedSliceQuestion params))\n      (fun q => evaluatedPointFamilyLeft params family q.2)\n      (fun q =>\n        (MIPStarRE.LDT.Preliminaries.totalSandwichFamily\n          (evaluatedPointFamily params family)\n          (evaluatedSlicePointMeas params strategy) q.2))\n      (4 * zeta)) :\n    let 𝒟 := uniformDistribution (EvaluatedSliceQuestion params)\n    let inserted : EvaluatedSliceQuestion params → Error := fun q =>\n      ∑ b : Fq params, ∑ a : Fq params,\n        ev strategy.state\n          (leftTensor (ι₂ := ι)\n              (((evaluatedSliceFirstFactor params family q).outcome a) *\n                ((evaluatedSliceSecondFactor params family q).outcome b) *\n                ((evaluatedSliceFirstFactor params family q).outcome a)) *\n            ((MIPStarRE.LDT.Preliminaries.totalSandwichFamily\n              (evaluatedPointFamily params family)\n              (evaluatedSlicePointMeas params strategy) q.2).outcome b))\n    |avgOver 𝒟\n        (fun q => ∑ ab : EvaluatedSliceOutcome params,\n          evaluatedSliceABABTerm params strategy family q ab) -\n      avgOver 𝒟 inserted| ≤ 2 * Real.sqrt zeta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Phase-1 insertion step for `evaluatedSlice_scalar_chain_bound`.\n\nThis is the `eq:gcom8 -> eq:apply-add-an-a-once` comparison: transport the\npointwise `consSubMeas` control to the second coordinate of an evaluated-slice\nquestion, then apply `closenessOfIP` with the left-sandwich family\n`G_a^{u,x} G_b^{v,y} G_a^{u,x}`.  The inserted term is kept in the explicit\n`G^y \\otimes A_b^{v,y}` form coming from `totalSandwichFamily`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.EvaluatedSliceBounds.PhaseOneThree",
+  "module_doc": "/-!\n# Section 11 commutativity: the phase-1 evaluated-slice insertion bound\n\nCloseness-of-inner-product side conditions for inserting Bob's measurement\ninto the first evaluated-slice step of the paper proof.  The normalization\nlemmas remain formulated at the level needed by the evaluated-slice transport\narguments, but the public bound in this file is now the phase-1 insertion\nestimate.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/EvaluatedSliceBounds/PhaseOneThree.lean#L139-L284",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/EvaluatedSliceBounds/PhaseOneThree.lean",
+  "lines": [
+   139,
+   284
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.leftTensor_mul_leftTensor",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.Preliminaries.closenessOfIP",
+   "MIPStarRE.LDT.sddError_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 110,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Commutativity.evaluatedSliceCommutation_avg_swap_terms",
+  "source_name": "MIPStarRE.LDT.Commutativity.evaluatedSliceCommutation_avg_swap_terms",
+  "formal_statement": "theorem MIPStarRE.LDT.Commutativity.evaluatedSliceCommutation_avg_swap_terms\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params.next ι) (family : IdxPolyFamily params ι) :\n    avgOver (uniformDistribution (EvaluatedSliceQuestion params))\n        (fun q => ∑ ab : EvaluatedSliceOutcome params,\n          evaluatedSliceBABTerm params strategy family q ab) =\n      avgOver (uniformDistribution (EvaluatedSliceQuestion params))\n        (fun q => ∑ ab : EvaluatedSliceOutcome params,\n          evaluatedSliceABATerm params strategy family q ab) ∧\n    avgOver (uniformDistribution (EvaluatedSliceQuestion params))\n        (fun q => ∑ ab : EvaluatedSliceOutcome params,\n          evaluatedSliceBABATerm params strategy family q ab) =\n      avgOver (uniformDistribution (EvaluatedSliceQuestion params))\n        (fun q => ∑ ab : EvaluatedSliceOutcome params,\n          evaluatedSliceABABTerm params strategy family q ab) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Commutativity",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.CommutativityPoints",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Swapping the evaluated question and outcome identifies the averaged\n`BAB`/`ABA` terms and the averaged `BABA`/`ABAB` terms.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.EvaluatedSliceCommutation.Averages",
+  "module_doc": "/-!\n# Section 11 commutativity: evaluated-slice averaged expansion\n\nAveraged evaluated-slice expansion of `qSDDOp` into the four projector terms\n`BAB + ABA - BABA - ABAB`, used to reduce the commutation to per-projector\nestimates.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/EvaluatedSliceCommutation/Averages.lean#L168-L252",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/EvaluatedSliceCommutation/Averages.lean",
+  "lines": [
+   168,
+   252
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_equiv",
+   "MIPStarRE.LDT.avgOver_congr"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 68,
+  "is_target": false
+ }
+]

@@ -1,0 +1,716 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.ofElems_elems",
+  "source_name": "MIPRE.AnswerReduction.ofElems_elems",
+  "formal_statement": "theorem MIPRE.AnswerReduction.ofElems_elems {t : PcpTy} {a : Ans P E.carrier} (h : ansFmt t a = true) :\n    ofElems E t (elems E a) = a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost",
+   "variable {P : PcpParams} {k : ℕ} (E : BinField k)"
+  ],
+  "docstring": "**Reading the elements back** gives the answer, for an answer of the right format.",
+  "module": "MIPRE.Background.AnswerReduction.AnswerFormat",
+  "module_doc": "/-!\n# The answers of the answer-reduced verifier, as bit strings\n\nPart of piece AR-3c of `planning/answer-reduction.md`: Table `tpcp` of `ld_compiler.tex`, the\nanswer formats of the eighteen PCP types, as bit strings.\n\nAn answer is a tuple of field elements of a length the type prescribes (`cnt`): one value, or the\n`d + 1` or `md + 1` coefficients of one polynomial, for the first five copies; `m' + 6` values, or\n`m' + 6` polynomials' coefficients, for the sixth. It is written as the list of the elements'\n`k`-bit representations, serialized as the postorder bits of its encoding (`enc`), the format the\noracularized verifier already uses for its answer pairs (`pairEnc`). Reading an answer back\n(`parse`) requires the list to decode, every block to have `k` bits and the count to be the\ntype's; a failed parse is rejected by the typed predicate, which is the format preamble of\n`fig:decider-pcp` with its length bounds.\n\n`parse_enc` is the round trip for an answer of the right format, and `length_enc_le` the bound\non the length of an honest answer: what completeness needs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/AnswerFormat.lean#L84-L102",
+  "source_path": "MIPRE/Background/AnswerReduction/AnswerFormat.lean",
+  "lines": [
+   84,
+   102
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.length_enc_le",
+  "source_name": "MIPRE.AnswerReduction.length_enc_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.length_enc_le (a : Ans P E.carrier) :\n    (enc E a).length ≤ 4 * (k * (elems E a).length) + 4 * (elems E a).length + 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost",
+   "variable {P : PcpParams} {k : ℕ} (E : BinField k)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.AnswerReduction.AnswerFormat",
+  "module_doc": "/-!\n# The answers of the answer-reduced verifier, as bit strings\n\nPart of piece AR-3c of `planning/answer-reduction.md`: Table `tpcp` of `ld_compiler.tex`, the\nanswer formats of the eighteen PCP types, as bit strings.\n\nAn answer is a tuple of field elements of a length the type prescribes (`cnt`): one value, or the\n`d + 1` or `md + 1` coefficients of one polynomial, for the first five copies; `m' + 6` values, or\n`m' + 6` polynomials' coefficients, for the sixth. It is written as the list of the elements'\n`k`-bit representations, serialized as the postorder bits of its encoding (`enc`), the format the\noracularized verifier already uses for its answer pairs (`pairEnc`). Reading an answer back\n(`parse`) requires the list to decode, every block to have `k` bits and the count to be the\ntype's; a failed parse is rejected by the typed predicate, which is the format preamble of\n`fig:decider-pcp` with its length bounds.\n\n`parse_enc` is the round trip for an answer of the right format, and `length_enc_le` the bound\non the length of an honest answer: what completeness needs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/AnswerFormat.lean#L140-L153",
+  "source_path": "MIPRE/Background/AnswerReduction/AnswerFormat.lean",
+  "lines": [
+   140,
+   153
+  ],
+  "blueprint": [
+   {
+    "label": "def:ar-typed-game",
+    "env": "definition",
+    "title": "The typed answer-reduced game",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.pd_heads",
+  "source_name": "MIPRE.AnswerReduction.pd_heads",
+  "formal_statement": "theorem MIPRE.AnswerReduction.pd_heads : readU (treeHead ((family PD lam mu sigma).pd n)) =\n      unary (arPar PD lam mu sigma n).k ∧\n    readU (treeHead (treeTail ((family PD lam mu sigma).pd n))) =\n      unary (arPar PD lam mu sigma n).m' ∧\n    (rawListP (treeTail (treeTail ((family PD lam mu sigma).pd n)))).map readDesc =\n      List.ofFn ((family PD lam mu sigma).desc n) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program MIPRE.Pipeline MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.AnswerReduction.StageProg MIPRE.AnswerReduction.ParRoutine",
+   "variable (PD : PcpDecider) (ℓ : ℕ) (sp dp : Prog) (lam mu sigma n : ℕ) (u v : ArTy)",
+   "variable (rxA rxB ryA ryB : Data)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.AnswerReduction.ArDecider",
+  "module_doc": "/-!\n# The typed answer-reduced decider\n\nPiece AR-3e of `planning/answer-reduction.md`, concluded: the decider of the typed answer-reduced\nverifier as a total `CL.TypedDecider` over the types `Role × PcpTy`, whose acceptance law is the\ntyped predicate `typedPred` of `MIPRE/Background/AnswerReduction/TypedGame` with the game check\n`gameCheck` (`accepts_iff`).\n\nThe decider is `hardcode core (S̄, D̄, λ, μ, σ)`, one fixed program with the input programs and the\nparameters as data. On a typed input `(n, u, x, v, y, a, b)` it runs eight stages, each keeping\nits input as context:\n\n1. the PCP parameters `pd n`, by the parameter routine of the sampler (`ParRoutine.core`);\n2. `Q = (λn + 1)^μ` and `T = 2^{(Q + 5)(μ + 1)}` (`ParRoutine.budCore`);\n3. to 6. the input sampler's full marginals `L^𝖠 x_O`, `L^𝖡 x_O`, `L^𝖠 y_O`, `L^𝖡 y_O` of the\n   oracle halves of the two questions, through the universal machine;\n7. and 8. the PCP verifier of `PD` on each question's game-check view;\n\nand decides by the program `verdictP` of `MIPRE/Background/AnswerReduction/DecideProg` on what\nit read. Unlike the oracularized decider it never runs the input decider, whose program only\nenters the PCP verifier's input as data, and every stage halts on every input: the parsing\nstages are total, the input sampler halts on every input (`Sampler.halts`), and the PCP\nverifier runs on the encoding of a genuine input. So no clock is needed (`total`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/ArDecider.lean#L250-L264",
+  "source_path": "MIPRE/Background/AnswerReduction/ArDecider.lean",
+  "lines": [
+   250,
+   264
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 9,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.core_runs",
+  "source_name": "MIPRE.AnswerReduction.core_runs",
+  "formal_statement": "theorem MIPRE.AnswerReduction.core_runs\n    (hxA : ∃ t, selfUniversal.univ.Runs (margQ PD ℓ sp lam mu sigma n .alice x) rxA t)\n    (hxB : ∃ t, selfUniversal.univ.Runs (margQ PD ℓ sp lam mu sigma n .bob x) rxB t)\n    (hyA : ∃ t, selfUniversal.univ.Runs (margQ PD ℓ sp lam mu sigma n .alice y) ryA t)\n    (hyB : ∃ t, selfUniversal.univ.Runs (margQ PD ℓ sp lam mu sigma n .bob y) ryB t) :\n    ∃ t, (core PD ℓ).Runs (ctx0 sp dp lam mu sigma n u v x y a b)\n      (encode (verdictP (readV (ctx8 PD sp dp lam mu sigma n u v x y a b rxA rxB ryA ryB)))) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program MIPRE.Pipeline MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.AnswerReduction.StageProg MIPRE.AnswerReduction.ParRoutine",
+   "variable (PD : PcpDecider) (ℓ : ℕ) (sp dp : Prog) (lam mu sigma n : ℕ) (u v : ArTy)",
+   "variable (rxA rxB ryA ryB : Data)"
+  ],
+  "docstring": "**The core's run**, given the input sampler's four runs.",
+  "module": "MIPRE.Background.AnswerReduction.ArDecider",
+  "module_doc": "/-!\n# The typed answer-reduced decider\n\nPiece AR-3e of `planning/answer-reduction.md`, concluded: the decider of the typed answer-reduced\nverifier as a total `CL.TypedDecider` over the types `Role × PcpTy`, whose acceptance law is the\ntyped predicate `typedPred` of `MIPRE/Background/AnswerReduction/TypedGame` with the game check\n`gameCheck` (`accepts_iff`).\n\nThe decider is `hardcode core (S̄, D̄, λ, μ, σ)`, one fixed program with the input programs and the\nparameters as data. On a typed input `(n, u, x, v, y, a, b)` it runs eight stages, each keeping\nits input as context:\n\n1. the PCP parameters `pd n`, by the parameter routine of the sampler (`ParRoutine.core`);\n2. `Q = (λn + 1)^μ` and `T = 2^{(Q + 5)(μ + 1)}` (`ParRoutine.budCore`);\n3. to 6. the input sampler's full marginals `L^𝖠 x_O`, `L^𝖡 x_O`, `L^𝖠 y_O`, `L^𝖡 y_O` of the\n   oracle halves of the two questions, through the universal machine;\n7. and 8. the PCP verifier of `PD` on each question's game-check view;\n\nand decides by the program `verdictP` of `MIPRE/Background/AnswerReduction/DecideProg` on what\nit read. Unlike the oracularized decider it never runs the input decider, whose program only\nenters the PCP verifier's input as data, and every stage halts on every input: the parsing\nstages are total, the input sampler halts on every input (`Sampler.halts`), and the PCP\nverifier runs on the encoding of a genuine input. So no clock is needed (`total`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/ArDecider.lean#L382-L459",
+  "source_path": "MIPRE/Background/AnswerReduction/ArDecider.lean",
+  "lines": [
+   382,
+   459
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-typed-decider",
+    "env": "lemma",
+    "title": "The typed answer-reduced decider",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.pd_heads",
+   "MIPRE.AnswerReduction.budCore_runs",
+   "MIPRE.AnswerReduction.parCore_runs",
+   "MIPRE.AnswerReduction.ParRoutine.budCore_closed",
+   "MIPRE.AnswerReduction.ParRoutine.core_closed",
+   "MIPRE.CL.Detyping.Program.readBits_encode",
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.Cost.seqProg_closed",
+   "MIPRE.Cost.seqProg_runs"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 70,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.chkV_eq",
+  "source_name": "MIPRE.AnswerReduction.chkV_eq",
+  "formal_statement": "theorem MIPRE.AnswerReduction.chkV_eq (t : ArTy) (z : Fin (dim V n (((family PD lam mu sigma)).par n)) → 𝔽₂) (s : BitStr)\n    (u' : Ans (((family PD lam mu sigma)).par n) (Fq (((family PD lam mu sigma)).par n) (((family PD lam mu sigma)).hk n)))\n    (hs : parse (fld (((family PD lam mu sigma)).par n) (((family PD lam mu sigma)).hk n)) t.2 s = some u') (ht : chkPlan t = true) :\n    chkV PD V.decider.prog lam mu sigma n\n        (encode (toBits ((V.sampler.cl n .alice).eval (oraclePart V n (((family PD lam mu sigma)).par n) z))))\n        (encode (toBits ((V.sampler.cl n .bob).eval (oraclePart V n (((family PD lam mu sigma)).par n) z)))) (toBits z) t s =\n      chk PD V lam mu sigma n (oraclePart V n (((family PD lam mu sigma)).par n) z)\n        ((regs6 (((family PD lam mu sigma)).par n)).ptOf (pcpPart V n (((family PD lam mu sigma)).par n) (((family PD lam mu sigma)).hk n) z)) (vals6 u') := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program MIPRE.Pipeline MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.AnswerReduction.StageProg MIPRE.AnswerReduction.ParRoutine",
+   "variable (PD : PcpDecider) {ℓ : ℕ} (V : Verifier (ℓ + 1)) (lam mu sigma : ℕ)",
+   "variable (n : ℕ)"
+  ],
+  "docstring": "**The game check's verdict is the game check**, on a parsed `Point_6` answer.",
+  "module": "MIPRE.Background.AnswerReduction.ArDecider",
+  "module_doc": "/-!\n# The typed answer-reduced decider\n\nPiece AR-3e of `planning/answer-reduction.md`, concluded: the decider of the typed answer-reduced\nverifier as a total `CL.TypedDecider` over the types `Role × PcpTy`, whose acceptance law is the\ntyped predicate `typedPred` of `MIPRE/Background/AnswerReduction/TypedGame` with the game check\n`gameCheck` (`accepts_iff`).\n\nThe decider is `hardcode core (S̄, D̄, λ, μ, σ)`, one fixed program with the input programs and the\nparameters as data. On a typed input `(n, u, x, v, y, a, b)` it runs eight stages, each keeping\nits input as context:\n\n1. the PCP parameters `pd n`, by the parameter routine of the sampler (`ParRoutine.core`);\n2. `Q = (λn + 1)^μ` and `T = 2^{(Q + 5)(μ + 1)}` (`ParRoutine.budCore`);\n3. to 6. the input sampler's full marginals `L^𝖠 x_O`, `L^𝖡 x_O`, `L^𝖠 y_O`, `L^𝖡 y_O` of the\n   oracle halves of the two questions, through the universal machine;\n7. and 8. the PCP verifier of `PD` on each question's game-check view;\n\nand decides by the program `verdictP` of `MIPRE/Background/AnswerReduction/DecideProg` on what\nit read. Unlike the oracularized decider it never runs the input decider, whose program only\nenters the PCP verifier's input as data, and every stage halts on every input: the parsing\nstages are total, the input sampler halts on every input (`Sampler.halts`), and the PCP\nverifier runs on the encoding of a genuine input. So no clock is needed (`total`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/ArDecider.lean#L517-L544",
+  "source_path": "MIPRE/Background/AnswerReduction/ArDecider.lean",
+  "lines": [
+   517,
+   544
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.parseBP_apply",
+   "MIPRE.AnswerReduction.Pcp.toBits_pcp",
+   "MIPRE.AnswerReduction.StageProg.blocksOf_flatBits",
+   "MIPRE.CL.Detyping.Program.readBits_encode",
+   "MIPRE.SAT.shoupBinField_toBits_ofBits"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.accepts_iff",
+  "source_name": "MIPRE.AnswerReduction.accepts_iff",
+  "formal_statement": "theorem MIPRE.AnswerReduction.accepts_iff (u v : ArTy) (x y : Fin (dim V n (((family PD lam mu sigma)).par n)) → 𝔽₂) {B : ℕ}\n    (a b : Verifier.Answers B) :\n    (typedDecider PD V lam mu sigma).Accepts n u (toBits x) v (toBits y) a.1 b.1 ↔\n      typedPred V n (((family PD lam mu sigma)).par n) (((family PD lam mu sigma)).hk n) (((family PD lam mu sigma)).sel n) (((family PD lam mu sigma)).sel' n)\n        (chk PD V lam mu sigma n) B (u, x) (v, y) a b = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program MIPRE.Pipeline MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.AnswerReduction.StageProg MIPRE.AnswerReduction.ParRoutine",
+   "variable (PD : PcpDecider) {ℓ : ℕ} (V : Verifier (ℓ + 1)) (lam mu sigma : ℕ)",
+   "variable (n : ℕ)"
+  ],
+  "docstring": "**The acceptance law**: on questions of the typed game and any answers, the typed\nanswer-reduced decider accepts exactly when the typed predicate does.",
+  "module": "MIPRE.Background.AnswerReduction.ArDecider",
+  "module_doc": "/-!\n# The typed answer-reduced decider\n\nPiece AR-3e of `planning/answer-reduction.md`, concluded: the decider of the typed answer-reduced\nverifier as a total `CL.TypedDecider` over the types `Role × PcpTy`, whose acceptance law is the\ntyped predicate `typedPred` of `MIPRE/Background/AnswerReduction/TypedGame` with the game check\n`gameCheck` (`accepts_iff`).\n\nThe decider is `hardcode core (S̄, D̄, λ, μ, σ)`, one fixed program with the input programs and the\nparameters as data. On a typed input `(n, u, x, v, y, a, b)` it runs eight stages, each keeping\nits input as context:\n\n1. the PCP parameters `pd n`, by the parameter routine of the sampler (`ParRoutine.core`);\n2. `Q = (λn + 1)^μ` and `T = 2^{(Q + 5)(μ + 1)}` (`ParRoutine.budCore`);\n3. to 6. the input sampler's full marginals `L^𝖠 x_O`, `L^𝖡 x_O`, `L^𝖠 y_O`, `L^𝖡 y_O` of the\n   oracle halves of the two questions, through the universal machine;\n7. and 8. the PCP verifier of `PD` on each question's game-check view;\n\nand decides by the program `verdictP` of `MIPRE/Background/AnswerReduction/DecideProg` on what\nit read. Unlike the oracularized decider it never runs the input decider, whose program only\nenters the PCP verifier's input as data, and every stage halts on every input: the parsing\nstages are total, the input sampler halts on every input (`Sampler.halts`), and the PCP\nverifier runs on the encoding of a genuine input. So no clock is needed (`total`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/ArDecider.lean#L546-L582",
+  "source_path": "MIPRE/Background/AnswerReduction/ArDecider.lean",
+  "lines": [
+   546,
+   582
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-typed-decider",
+    "env": "lemma",
+    "title": "The typed answer-reduced decider",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.pd_heads",
+   "MIPRE.AnswerReduction.core_runs",
+   "MIPRE.AnswerReduction.chkV_eq",
+   "MIPRE.AnswerReduction.verdictP_apply",
+   "MIPRE.AnswerReduction.verdictB_eq",
+   "MIPRE.AnswerReduction.Pcp.toBits_pcp",
+   "MIPRE.AnswerReduction.StageProg.blocksOf_flatBits",
+   "MIPRE.CL.Detyping.Program.readBits_encode",
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Cost.encode_injective",
+   "MIPRE.Cost.hardcode_time",
+   "MIPRE.Cost.hardcode_time_rev"
+  ],
+  "pasted_helpers": 16,
+  "prooflines": 30,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.total",
+  "source_name": "MIPRE.AnswerReduction.total",
+  "formal_statement": "theorem MIPRE.AnswerReduction.total : (typedDecider PD V lam mu sigma).Total := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program MIPRE.Pipeline MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.AnswerReduction.StageProg MIPRE.AnswerReduction.ParRoutine",
+   "variable (PD : PcpDecider) {ℓ : ℕ} (V : Verifier (ℓ + 1)) (lam mu sigma : ℕ)",
+   "variable (n : ℕ)"
+  ],
+  "docstring": "**The typed answer-reduced decider halts on every input** `(n, …)`.",
+  "module": "MIPRE.Background.AnswerReduction.ArDecider",
+  "module_doc": "/-!\n# The typed answer-reduced decider\n\nPiece AR-3e of `planning/answer-reduction.md`, concluded: the decider of the typed answer-reduced\nverifier as a total `CL.TypedDecider` over the types `Role × PcpTy`, whose acceptance law is the\ntyped predicate `typedPred` of `MIPRE/Background/AnswerReduction/TypedGame` with the game check\n`gameCheck` (`accepts_iff`).\n\nThe decider is `hardcode core (S̄, D̄, λ, μ, σ)`, one fixed program with the input programs and the\nparameters as data. On a typed input `(n, u, x, v, y, a, b)` it runs eight stages, each keeping\nits input as context:\n\n1. the PCP parameters `pd n`, by the parameter routine of the sampler (`ParRoutine.core`);\n2. `Q = (λn + 1)^μ` and `T = 2^{(Q + 5)(μ + 1)}` (`ParRoutine.budCore`);\n3. to 6. the input sampler's full marginals `L^𝖠 x_O`, `L^𝖡 x_O`, `L^𝖠 y_O`, `L^𝖡 y_O` of the\n   oracle halves of the two questions, through the universal machine;\n7. and 8. the PCP verifier of `PD` on each question's game-check view;\n\nand decides by the program `verdictP` of `MIPRE/Background/AnswerReduction/DecideProg` on what\nit read. Unlike the oracularized decider it never runs the input decider, whose program only\nenters the PCP verifier's input as data, and every stage halts on every input: the parsing\nstages are total, the input sampler halts on every input (`Sampler.halts`), and the PCP\nverifier runs on the encoding of a genuine input. So no clock is needed (`total`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/ArDecider.lean#L609-L681",
+  "source_path": "MIPRE/Background/AnswerReduction/ArDecider.lean",
+  "lines": [
+   609,
+   681
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-typed-decider",
+    "env": "lemma",
+    "title": "The typed answer-reduced decider",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.budCore_runs",
+   "MIPRE.AnswerReduction.parCore_runs",
+   "MIPRE.AnswerReduction.ParRoutine.budCore_closed",
+   "MIPRE.AnswerReduction.ParRoutine.core_closed",
+   "MIPRE.Cost.hardcode_time",
+   "MIPRE.Cost.seqProg_closed",
+   "MIPRE.Cost.seqProg_runs"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 71,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.vecBits_ofProof",
+  "source_name": "MIPRE.AnswerReduction.vecBits_ofProof",
+  "formal_statement": "theorem MIPRE.AnswerReduction.vecBits_ofProof {P : PcpParams} (hk : 1 ≤ P.k) (pf : PcpProof P (Fq P hk))\n    (z : Fin P.m' → Fq P hk) :\n    (fld P hk).vecBits (fun j => MvPolynomial.eval z ((ofProof hk pf).c j)) =\n      (fld P hk).vecBits (pf.ev z).1 ++ (fld P hk).vecBits (pf.ev z).2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.LowDegree MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.AnswerReduction.Complete",
+  "module_doc": "/-!\n# Completeness of answer reduction\n\nPiece AR-4 of `planning/answer-reduction.md`, concluded (`lem:ar-completeness`, with\n`lem:oracle-timeout-pcc` in the ambient form the contract uses): for `λ, μ ≥ 1`, an input within\nits budget whose decider has size at most `σ` and which has a value-`1` PCC strategy at the answer\nbound `2^{(λn + 1)^μ}` gives an answer-reduced verifier with a value-`1` PCC strategy at the answer\ncut (`arVerifier_hasPerfectPCC`), hence at the output bound (`arVerifier_completeness`).\n\nThe typed game's completeness (`exists_typedGame_perfectPCC`) asks for good PCP proofs of the\npairs the input decider accepts. They are the PCP decider's (`SAT.PcpDecider.completeness`), under\nthree facts:\n\n* **the decider accepts within the PCP's time bound** `T = 2^{(Q + 5)(μ + 1)}`\n  (`acceptsWithin_of_accepts`): an input within its budget runs within `2^Q (|d| + 1)^μ` on every\n  input, and on answers of length at most `2^Q` that is at most `T` — the timeout the paper's\n  `lem:oracle-timeout-pcc` handles by truncation is here a consequence of determinism, since the\n  answer alphabet is already cut at `2^Q`;\n* **the PCP's input is valid** (`valid_of`): `Q ≤ T`, `2 log n ≤ T`, `|𝒟| ≤ σ` and questions of\n  length at most `Q`. The second is where `λ, μ ≥ 1` is needed (`Q ≥ n + 1`);\n* **the PCP's field is the Shoup field** the answer-reduced sampler downsizes along\n  (`ShoupField`, a hypothesis on the PCP decider like `ParamsBound`): the game check hands the PCP\n  verifier the view in the Shoup representation, and the PCP's completeness is stated in its own.\n\nThen the detyping compiler's completeness (`CL.Detyping.DeciderProgram.verifier_hasPerfectPCC`)\ncarries the typed strategy to the output verifier, its typed predicate being the typed game's at\nthe answer cut (`typedDecider`'s `accepts_iff`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/Complete.lean#L51-L70",
+  "source_path": "MIPRE/Background/AnswerReduction/Complete.lean",
+  "lines": [
+   51,
+   70
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.acceptsWithin_of_accepts",
+  "source_name": "MIPRE.AnswerReduction.acceptsWithin_of_accepts",
+  "formal_statement": "theorem MIPRE.AnswerReduction.acceptsWithin_of_accepts (hV : V.Within n (inBudget lam mu n)) {x y a b : BitStr}\n    (hx : x.length ≤ arQ lam mu n) (hy : y.length ≤ arQ lam mu n)\n    (ha : a.length ≤ inAns lam mu n) (hb : b.length ≤ inAns lam mu n)\n    (h : V.decider.Accepts n x y a b) : V.decider.AcceptsWithin n x y a b (tPcp lam mu n) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.LowDegree MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (lam mu sigma n : ℕ)"
+  ],
+  "docstring": "**The input decider accepts within the PCP's time bound**: an accepted input of questions at\nmost `Q` long and answers at most `2^Q` long is accepted within `T = 2^{(Q + 5)(μ + 1)}`, by\ndeterminism, when the decider is within its budget.",
+  "module": "MIPRE.Background.AnswerReduction.Complete",
+  "module_doc": "/-!\n# Completeness of answer reduction\n\nPiece AR-4 of `planning/answer-reduction.md`, concluded (`lem:ar-completeness`, with\n`lem:oracle-timeout-pcc` in the ambient form the contract uses): for `λ, μ ≥ 1`, an input within\nits budget whose decider has size at most `σ` and which has a value-`1` PCC strategy at the answer\nbound `2^{(λn + 1)^μ}` gives an answer-reduced verifier with a value-`1` PCC strategy at the answer\ncut (`arVerifier_hasPerfectPCC`), hence at the output bound (`arVerifier_completeness`).\n\nThe typed game's completeness (`exists_typedGame_perfectPCC`) asks for good PCP proofs of the\npairs the input decider accepts. They are the PCP decider's (`SAT.PcpDecider.completeness`), under\nthree facts:\n\n* **the decider accepts within the PCP's time bound** `T = 2^{(Q + 5)(μ + 1)}`\n  (`acceptsWithin_of_accepts`): an input within its budget runs within `2^Q (|d| + 1)^μ` on every\n  input, and on answers of length at most `2^Q` that is at most `T` — the timeout the paper's\n  `lem:oracle-timeout-pcc` handles by truncation is here a consequence of determinism, since the\n  answer alphabet is already cut at `2^Q`;\n* **the PCP's input is valid** (`valid_of`): `Q ≤ T`, `2 log n ≤ T`, `|𝒟| ≤ σ` and questions of\n  length at most `Q`. The second is where `λ, μ ≥ 1` is needed (`Q ≥ n + 1`);\n* **the PCP's field is the Shoup field** the answer-reduced sampler downsizes along\n  (`ShoupField`, a hypothesis on the PCP decider like `ParamsBound`): the game check hands the PCP\n  verifier the view in the Shoup representation, and the PCP's completeness is stated in its own.\n\nThen the detyping compiler's completeness (`CL.Detyping.DeciderProgram.verifier_hasPerfectPCC`)\ncarries the typed strategy to the output verifier, its typed predicate being the typed game's at\nthe answer cut (`typedDecider`'s `accepts_iff`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/Complete.lean#L82-L104",
+  "source_path": "MIPRE/Background/AnswerReduction/Complete.lean",
+  "lines": [
+   82,
+   104
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-completeness",
+    "env": "lemma",
+    "title": "Answer-reduction completeness",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.Eval.deterministic"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.valid_of",
+  "source_name": "MIPRE.AnswerReduction.valid_of",
+  "formal_statement": "theorem MIPRE.AnswerReduction.valid_of (hlam : 1 ≤ lam) (hmu : 1 ≤ mu) (hV : V.Within n (inBudget lam mu n))\n    (hsz : V.decider.size ≤ sigma) (x : Fin (V.sampler.dim n) → 𝔽₂) :\n    Valid V.decider.prog n (tPcp lam mu n) (arQ lam mu n) sigma\n      (toBits ((V.sampler.cl n .alice).eval x)) (toBits ((V.sampler.cl n .bob).eval x)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.LowDegree MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (lam mu sigma n : ℕ)"
+  ],
+  "docstring": "**The PCP's input is valid**, for `λ, μ ≥ 1`.",
+  "module": "MIPRE.Background.AnswerReduction.Complete",
+  "module_doc": "/-!\n# Completeness of answer reduction\n\nPiece AR-4 of `planning/answer-reduction.md`, concluded (`lem:ar-completeness`, with\n`lem:oracle-timeout-pcc` in the ambient form the contract uses): for `λ, μ ≥ 1`, an input within\nits budget whose decider has size at most `σ` and which has a value-`1` PCC strategy at the answer\nbound `2^{(λn + 1)^μ}` gives an answer-reduced verifier with a value-`1` PCC strategy at the answer\ncut (`arVerifier_hasPerfectPCC`), hence at the output bound (`arVerifier_completeness`).\n\nThe typed game's completeness (`exists_typedGame_perfectPCC`) asks for good PCP proofs of the\npairs the input decider accepts. They are the PCP decider's (`SAT.PcpDecider.completeness`), under\nthree facts:\n\n* **the decider accepts within the PCP's time bound** `T = 2^{(Q + 5)(μ + 1)}`\n  (`acceptsWithin_of_accepts`): an input within its budget runs within `2^Q (|d| + 1)^μ` on every\n  input, and on answers of length at most `2^Q` that is at most `T` — the timeout the paper's\n  `lem:oracle-timeout-pcc` handles by truncation is here a consequence of determinism, since the\n  answer alphabet is already cut at `2^Q`;\n* **the PCP's input is valid** (`valid_of`): `Q ≤ T`, `2 log n ≤ T`, `|𝒟| ≤ σ` and questions of\n  length at most `Q`. The second is where `λ, μ ≥ 1` is needed (`Q ≥ n + 1`);\n* **the PCP's field is the Shoup field** the answer-reduced sampler downsizes along\n  (`ShoupField`, a hypothesis on the PCP decider like `ParamsBound`): the game check hands the PCP\n  verifier the view in the Shoup representation, and the PCP's completeness is stated in its own.\n\nThen the detyping compiler's completeness (`CL.Detyping.DeciderProgram.verifier_hasPerfectPCC`)\ncarries the typed strategy to the output verifier, its typed predicate being the typed game's at\nthe answer cut (`typedDecider`'s `accepts_iff`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/Complete.lean#L106-L124",
+  "source_path": "MIPRE/Background/AnswerReduction/Complete.lean",
+  "lines": [
+   106,
+   124
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-completeness",
+    "env": "lemma",
+    "title": "Answer-reduction completeness",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.exists_proofGood",
+  "source_name": "MIPRE.AnswerReduction.exists_proofGood",
+  "formal_statement": "theorem MIPRE.AnswerReduction.exists_proofGood (hF : ShoupField PD) (hlam : 1 ≤ lam) (hmu : 1 ≤ mu)\n    (hV : V.Within n (inBudget lam mu n)) (hsz : V.decider.size ≤ sigma)\n    (x : Fin (V.sampler.dim n) → 𝔽₂) (a b : Verifier.Answers (inAns lam mu n))\n    (h : (V.seeded n (inAns lam mu n)).D ((V.sampler.cl n .alice).eval x)\n      ((V.sampler.cl n .bob).eval x) a b = true) :\n    ∃ pf, ProofGood (((family PD lam mu sigma)).hk n) (chk PD V lam mu sigma n) x a.1 b.1 pf := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.LowDegree MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost",
+   "variable (PD : PcpDecider) (lam mu sigma : ℕ) {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ)"
+  ],
+  "docstring": "**Good PCP proofs exist** for the pairs the input decider accepts, by the PCP's completeness.",
+  "module": "MIPRE.Background.AnswerReduction.Complete",
+  "module_doc": "/-!\n# Completeness of answer reduction\n\nPiece AR-4 of `planning/answer-reduction.md`, concluded (`lem:ar-completeness`, with\n`lem:oracle-timeout-pcc` in the ambient form the contract uses): for `λ, μ ≥ 1`, an input within\nits budget whose decider has size at most `σ` and which has a value-`1` PCC strategy at the answer\nbound `2^{(λn + 1)^μ}` gives an answer-reduced verifier with a value-`1` PCC strategy at the answer\ncut (`arVerifier_hasPerfectPCC`), hence at the output bound (`arVerifier_completeness`).\n\nThe typed game's completeness (`exists_typedGame_perfectPCC`) asks for good PCP proofs of the\npairs the input decider accepts. They are the PCP decider's (`SAT.PcpDecider.completeness`), under\nthree facts:\n\n* **the decider accepts within the PCP's time bound** `T = 2^{(Q + 5)(μ + 1)}`\n  (`acceptsWithin_of_accepts`): an input within its budget runs within `2^Q (|d| + 1)^μ` on every\n  input, and on answers of length at most `2^Q` that is at most `T` — the timeout the paper's\n  `lem:oracle-timeout-pcc` handles by truncation is here a consequence of determinism, since the\n  answer alphabet is already cut at `2^Q`;\n* **the PCP's input is valid** (`valid_of`): `Q ≤ T`, `2 log n ≤ T`, `|𝒟| ≤ σ` and questions of\n  length at most `Q`. The second is where `λ, μ ≥ 1` is needed (`Q ≥ n + 1`);\n* **the PCP's field is the Shoup field** the answer-reduced sampler downsizes along\n  (`ShoupField`, a hypothesis on the PCP decider like `ParamsBound`): the game check hands the PCP\n  verifier the view in the Shoup representation, and the PCP's completeness is stated in its own.\n\nThen the detyping compiler's completeness (`CL.Detyping.DeciderProgram.verifier_hasPerfectPCC`)\ncarries the typed strategy to the output verifier, its typed predicate being the typed game's at\nthe answer cut (`typedDecider`'s `accepts_iff`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/Complete.lean#L135-L166",
+  "source_path": "MIPRE/Background/AnswerReduction/Complete.lean",
+  "lines": [
+   135,
+   166
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-completeness",
+    "env": "lemma",
+    "title": "Answer-reduction completeness",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.vecBits_ofProof",
+   "MIPRE.AnswerReduction.acceptsWithin_of_accepts",
+   "MIPRE.AnswerReduction.valid_of"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.arVerifier_hasPerfectPCC",
+  "source_name": "MIPRE.AnswerReduction.arVerifier_hasPerfectPCC",
+  "formal_statement": "theorem MIPRE.AnswerReduction.arVerifier_hasPerfectPCC (hF : ShoupField PD) (hlam : 1 ≤ lam) (hmu : 1 ≤ mu)\n    (hV : V.Within n (inBudget lam mu n)) (hsz : V.decider.size ≤ sigma)\n    (h : V.HasPerfectPCC n (inAns lam mu n)) :\n    (arVerifier PD lam mu sigma V).HasPerfectPCC n (cutVal (arPar PD lam mu sigma n)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.LowDegree MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost",
+   "variable (PD : PcpDecider) (lam mu sigma : ℕ) {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ)"
+  ],
+  "docstring": "**Completeness of answer reduction, at the answer cut.**",
+  "module": "MIPRE.Background.AnswerReduction.Complete",
+  "module_doc": "/-!\n# Completeness of answer reduction\n\nPiece AR-4 of `planning/answer-reduction.md`, concluded (`lem:ar-completeness`, with\n`lem:oracle-timeout-pcc` in the ambient form the contract uses): for `λ, μ ≥ 1`, an input within\nits budget whose decider has size at most `σ` and which has a value-`1` PCC strategy at the answer\nbound `2^{(λn + 1)^μ}` gives an answer-reduced verifier with a value-`1` PCC strategy at the answer\ncut (`arVerifier_hasPerfectPCC`), hence at the output bound (`arVerifier_completeness`).\n\nThe typed game's completeness (`exists_typedGame_perfectPCC`) asks for good PCP proofs of the\npairs the input decider accepts. They are the PCP decider's (`SAT.PcpDecider.completeness`), under\nthree facts:\n\n* **the decider accepts within the PCP's time bound** `T = 2^{(Q + 5)(μ + 1)}`\n  (`acceptsWithin_of_accepts`): an input within its budget runs within `2^Q (|d| + 1)^μ` on every\n  input, and on answers of length at most `2^Q` that is at most `T` — the timeout the paper's\n  `lem:oracle-timeout-pcc` handles by truncation is here a consequence of determinism, since the\n  answer alphabet is already cut at `2^Q`;\n* **the PCP's input is valid** (`valid_of`): `Q ≤ T`, `2 log n ≤ T`, `|𝒟| ≤ σ` and questions of\n  length at most `Q`. The second is where `λ, μ ≥ 1` is needed (`Q ≥ n + 1`);\n* **the PCP's field is the Shoup field** the answer-reduced sampler downsizes along\n  (`ShoupField`, a hypothesis on the PCP decider like `ParamsBound`): the game check hands the PCP\n  verifier the view in the Shoup representation, and the PCP's completeness is stated in its own.\n\nThen the detyping compiler's completeness (`CL.Detyping.DeciderProgram.verifier_hasPerfectPCC`)\ncarries the typed strategy to the output verifier, its typed predicate being the typed game's at\nthe answer cut (`typedDecider`'s `accepts_iff`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/Complete.lean#L192-L229",
+  "source_path": "MIPRE/Background/AnswerReduction/Complete.lean",
+  "lines": [
+   192,
+   229
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-completeness",
+    "env": "lemma",
+    "title": "Answer-reduction completeness",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.accepts_iff",
+   "MIPRE.AnswerReduction.total",
+   "MIPRE.AnswerReduction.exists_proofGood",
+   "MIPRE.AnswerReduction.exists_typedGame_perfectPCC",
+   "MIPRE.CL.Detyping.complete_value",
+   "MIPRE.CL.Detyping.complete_commutes_sample",
+   "MIPRE.CL.Detyping.DeciderProgram.numbered_clDist",
+   "MIPRE.CL.Detyping.graphOfBits_take_eq",
+   "MIPRE.SyncStrategy.value_relabel",
+   "MIPRE.SyncStrategy.isPCC_relabel"
+  ],
+  "pasted_helpers": 19,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.cutVal_pdom",
+  "source_name": "MIPRE.AnswerReduction.cutVal_pdom",
+  "formal_statement": "theorem MIPRE.AnswerReduction.cutVal_pdom : ∃ c m e, ∀ {W X : ℕ}, ParamsBound PD R → ∀ (lam mu sigma n : ℕ), 1 ≤ X →\n    arQ lam mu n ≤ W → sigma ≤ W → n ≤ W → PDom W X mu c m e (cutVal (arPar PD lam mu sigma n)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program MIPRE.Pipeline MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.AnswerReduction.StageProg",
+   "variable (PD : PcpDecider) (lam mu sigma : ℕ)",
+   "variable (R : Polynomial ℕ)"
+  ],
+  "docstring": "The answer cut is dominated.",
+  "module": "MIPRE.Background.AnswerReduction.Construction",
+  "module_doc": "/-!\n# The answer-reduced verifier\n\nPiece AR-3f of `planning/answer-reduction.md`, concluded: the output of answer reduction as a\nnormal form verifier (`arVerifier`), the typed answer-reduced verifier through the detyping\ncompiler at the answer cut `cutVal` (`arCut`); its programs as polynomial-time functions of the\ninput programs and `(λ, μ, σ)` (`arSamplerProg`, `arCompute`), the sampler's of the input sampler's\nalone; and its complexity clause (`arVerifier_within`), the `within` field of the\n`AnswerReduction` contract.\n\nThe answer cut `32 (k + 1)(m' + 7)^2` is above the length `4 (k + 1) cnt + 1` of the encoding of\nevery well-formed answer, `cnt ≤ (m' + 6)(7 m' + 1)` field elements of `k` bits\n(`MIPRE/Background/AnswerReduction/AnswerFormat`), which completeness (AR-4) needs; and it is\npolynomial in the PCP's parameters, which the complexity clause needs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/Construction.lean#L168-L183",
+  "source_path": "MIPRE/Background/AnswerReduction/Construction.lean",
+  "lines": [
+   168,
+   183
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.params_pdom"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.typedArg_pdom",
+  "source_name": "MIPRE.AnswerReduction.typedArg_pdom",
+  "formal_statement": "theorem MIPRE.AnswerReduction.typedArg_pdom : ∃ c m e, ∀ {W X : ℕ}, ParamsBound PD R → ∀ (lam mu sigma n s : ℕ),\n    1 ≤ X → arQ lam mu n ≤ W → sigma ≤ W → n ≤ W →\n    s ≤ W + pcpDim (arPar PD lam mu sigma n) * (arPar PD lam mu sigma n).k →\n    ∀ (u v : ArTy) (x y a b : BitStr), x.length = s → y.length = s →\n    a.length ≤ cutVal (arPar PD lam mu sigma n) → b.length ≤ cutVal (arPar PD lam mu sigma n) →\n    PDom W X mu c m e (encode (u, x, v, y, a, b) : Data).size := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program MIPRE.Pipeline MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.AnswerReduction.StageProg",
+   "variable (PD : PcpDecider) (lam mu sigma : ℕ)",
+   "variable (R : Polynomial ℕ)"
+  ],
+  "docstring": "The typed inputs the router hands the typed decider are dominated.",
+  "module": "MIPRE.Background.AnswerReduction.Construction",
+  "module_doc": "/-!\n# The answer-reduced verifier\n\nPiece AR-3f of `planning/answer-reduction.md`, concluded: the output of answer reduction as a\nnormal form verifier (`arVerifier`), the typed answer-reduced verifier through the detyping\ncompiler at the answer cut `cutVal` (`arCut`); its programs as polynomial-time functions of the\ninput programs and `(λ, μ, σ)` (`arSamplerProg`, `arCompute`), the sampler's of the input sampler's\nalone; and its complexity clause (`arVerifier_within`), the `within` field of the\n`AnswerReduction` contract.\n\nThe answer cut `32 (k + 1)(m' + 7)^2` is above the length `4 (k + 1) cnt + 1` of the encoding of\nevery well-formed answer, `cnt ≤ (m' + 6)(7 m' + 1)` field elements of `k` bits\n(`MIPRE/Background/AnswerReduction/AnswerFormat`), which completeness (AR-4) needs; and it is\npolynomial in the PCP's parameters, which the complexity clause needs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/Construction.lean#L204-L228",
+  "source_path": "MIPRE/Background/AnswerReduction/Construction.lean",
+  "lines": [
+   204,
+   228
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.cutVal_pdom",
+   "MIPRE.AnswerReduction.params_pdom"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.arVerifier_bounds",
+  "source_name": "MIPRE.AnswerReduction.arVerifier_bounds",
+  "formal_statement": "theorem MIPRE.AnswerReduction.arVerifier_bounds (ℓ : ℕ) (hR : ParamsBound PD R) : ∃ (bound : Polynomial ℕ) (deg : ℕ),\n    (∀ (V : Verifier (ℓ + 1)) (lam mu sigma n : ℕ), V.Within n (inBudget lam mu n) →\n      V.size ≤ sigma → (arVerifier PD lam mu sigma V).Within n\n        (Budget.uniform (outBound bound lam mu sigma n) (outDegree deg mu))) ∧\n    ∀ lam mu sigma n, cutVal (arPar PD lam mu sigma n) ≤ outBound bound lam mu sigma n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program MIPRE.Pipeline MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.AnswerReduction.StageProg",
+   "variable (PD : PcpDecider) (lam mu sigma : ℕ)",
+   "variable (R : Polynomial ℕ)"
+  ],
+  "docstring": "**The output bounds of answer reduction**: the complexity clause (`arVerifier_within`), and\nthe answer cut below the same output bound, which completeness needs.",
+  "module": "MIPRE.Background.AnswerReduction.Construction",
+  "module_doc": "/-!\n# The answer-reduced verifier\n\nPiece AR-3f of `planning/answer-reduction.md`, concluded: the output of answer reduction as a\nnormal form verifier (`arVerifier`), the typed answer-reduced verifier through the detyping\ncompiler at the answer cut `cutVal` (`arCut`); its programs as polynomial-time functions of the\ninput programs and `(λ, μ, σ)` (`arSamplerProg`, `arCompute`), the sampler's of the input sampler's\nalone; and its complexity clause (`arVerifier_within`), the `within` field of the\n`AnswerReduction` contract.\n\nThe answer cut `32 (k + 1)(m' + 7)^2` is above the length `4 (k + 1) cnt + 1` of the encoding of\nevery well-formed answer, `cnt ≤ (m' + 6)(7 m' + 1)` field elements of `k` bits\n(`MIPRE/Background/AnswerReduction/AnswerFormat`), which completeness (AR-4) needs; and it is\npolynomial in the PCP's parameters, which the complexity clause needs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/Construction.lean#L245-L332",
+  "source_path": "MIPRE/Background/AnswerReduction/Construction.lean",
+  "lines": [
+   245,
+   332
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.total",
+   "MIPRE.AnswerReduction.typedArg_pdom",
+   "MIPRE.AnswerReduction.cutVal_pdom",
+   "MIPRE.AnswerReduction.typedDecider_time",
+   "MIPRE.AnswerReduction.parProg_time",
+   "MIPRE.AnswerReduction.params_pdom",
+   "MIPRE.AnswerReduction.typedSampler_time",
+   "MIPRE.CL.Detyping.DeciderProgram.prog_time",
+   "MIPRE.CL.Detyping.sampler_time",
+   "MIPRE.CL.Detyping.Program.readBits_encode",
+   "MIPRE.Cost.seqProg_runs",
+   "MIPRE.Pipeline.PDom.poly"
+  ],
+  "pasted_helpers": 19,
+  "prooflines": 81,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.parseBP_apply",
+  "source_name": "MIPRE.AnswerReduction.parseBP_apply",
+  "formal_statement": "theorem MIPRE.AnswerReduction.parseBP_apply (kU cU : Unary) (s : BitStr) :\n    parseBP (kU, cU, s) = ((parseB kU.length cU.length s).isSome, rawBlocks s) ∧\n      ∀ bs, parseB kU.length cU.length s = some bs → rawBlocks s = bs := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.AnswerReduction.StageProg MIPRE.AnswerReduction.Pcp MIPRE.Introspection.FieldLineCheck MIPRE.Introspection.FieldQuestionProgram MIPRE.Introspection.SeededLineProgram MIPRE.Introspection.LineProgram MIPRE.CL.Detyping.Program"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.AnswerReduction.DecideProg",
+  "module_doc": "/-!\n# The answer-reduced decision, as a program\n\nPiece AR-3e of `planning/answer-reduction.md`: polynomial-time functions computing the decision on\nblocks of `MIPRE/Background/AnswerReduction/DecideSpec`, each with the law that it computes its\nspecification (`verdictP_apply` for the whole). The type-dependent control is a finite table of\nthe type pair (`PolyTimeFun.finiteFunction`); the field arithmetic is the introspection stage\nprograms'.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/DecideProg.lean#L215-L251",
+  "source_path": "MIPRE/Background/AnswerReduction/DecideProg.lean",
+  "lines": [
+   215,
+   251
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-typed-decider",
+    "env": "lemma",
+    "title": "The typed answer-reduced decider",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.Program.readBits_encode",
+   "MIPRE.Cost.encode_injective",
+   "MIPRE.OracleDecider.decode_bitStr_eq_some"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.verdictP_apply",
+  "source_name": "MIPRE.AnswerReduction.verdictP_apply",
+  "formal_statement": "theorem MIPRE.AnswerReduction.verdictP_apply (kU m'U : Unary) (descs : List Desc) (chkP chkQ : Bool) (p q : ArTy)\n    (X Y : Blocks) (a b : BitStr) :\n    verdictP ((kU, m'U, descs), (chkP, chkQ), (p, q), (X, Y), (a, b)) =\n      verdictB kU m'U descs chkP chkQ p q X Y a b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.AnswerReduction.StageProg MIPRE.AnswerReduction.Pcp MIPRE.Introspection.FieldLineCheck MIPRE.Introspection.FieldQuestionProgram MIPRE.Introspection.SeededLineProgram MIPRE.Introspection.LineProgram MIPRE.CL.Detyping.Program"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.AnswerReduction.DecideProg",
+  "module_doc": "/-!\n# The answer-reduced decision, as a program\n\nPiece AR-3e of `planning/answer-reduction.md`: polynomial-time functions computing the decision on\nblocks of `MIPRE/Background/AnswerReduction/DecideSpec`, each with the law that it computes its\nspecification (`verdictP_apply` for the whole). The type-dependent control is a finite table of\nthe type pair (`PolyTimeFun.finiteFunction`); the field arithmetic is the introspection stage\nprograms'.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/DecideProg.lean#L386-L405",
+  "source_path": "MIPRE/Background/AnswerReduction/DecideProg.lean",
+  "lines": [
+   386,
+   405
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-typed-decider",
+    "env": "lemma",
+    "title": "The typed answer-reduced decider",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.parseBP_apply",
+   "MIPRE.Cost.encode_injective"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.ldB_aline",
+  "source_name": "MIPRE.AnswerReduction.ldB_aline",
+  "formal_statement": "theorem MIPRE.AnswerReduction.ldB_aline {ldc d : ℕ} [NeZero ldc] (xp xq : Coord P → ((shoupBinField k hk)).carrier)\n    (av : Fin ldc → ((shoupBinField k hk)).carrier) (f : Fin ldc → LinePoly ((shoupBinField k hk)).carrier d) :\n    ldB (unary k) (((unary o, unary sz, unary jw, unary c) : Desc)) 1 (blocksV hk P xp) (blocksV hk P xq) (List.ofFn fun j => ((shoupBinField k hk)).vecBits (f j))\n      (((shoupBinField k hk)).vecBits av) =\n    LIDT.CL.accepts hsz ((((regsAt P o sz c h)).sampleOf S .point xp).question hsz .point)\n      ((((regsAt P o sz c h)).sampleOf S .aline xq).question hsz .aline) (.values av) (.apolys f) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost MIPRE.AnswerReduction.StageProg MIPRE.Introspection.FieldLineCheck MIPRE.Introspection.FieldQuestionProgram MIPRE.Introspection.SeedProgram MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {k : ℕ} (hk : 1 ≤ k)",
+   "variable (P : PcpParams)",
+   "variable (o sz jw : ℕ) (c : Fin 6) (h : o + sz ≤ P.m') (hjw : jw ≤ k) (hsz2 : sz = 2 ^ jw)"
+  ],
+  "docstring": "**The axis-parallel subtest**.",
+  "module": "MIPRE.Background.AnswerReduction.DecideSpec",
+  "module_doc": "/-!\n# The answer-reduced decision, on blocks of bits\n\nPiece AR-3e of `planning/answer-reduction.md`: the decision predicate `accepts` of\n`MIPRE/Background/AnswerReduction/Predicate`, rewritten as a function of the `k`-bit blocks a\nprogram reads (`verdictB`), with the field arithmetic done by the introspection stage programs:\nthe line-versus-point check (`FieldLineCheck.lineCheckProg`), the seed selector, and the line\nrepresentatives the sampler's third stage already uses.\n\n* **The low-degree subtests** (`ldB`): of the seeded test's decision, only a point question\n  against a line question of the same copy is ever checked, and there it is the line-versus-point\n  check on the line the question describes (`ldB_aline`, `ldB_dline`).\n* **The five steps** (`sideB`) are organised by what each type pair asks for: at most one\n  comparison of two answer blocks (`eqPlan`), one low-degree subtest (`ldPlan`) and one game check\n  (`chkPlan`), which are functions of the types alone. `sideB_eq` is `side`.\n* **The predicate** (`verdictB_eq`) is the typed predicate `typedPred`, the answers parsed into\n  blocks (`parseB`) and the questions' PCP halves split into their three runs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/DecideSpec.lean#L167-L187",
+  "source_path": "MIPRE/Background/AnswerReduction/DecideSpec.lean",
+  "lines": [
+   167,
+   187
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-typed-decider",
+    "env": "lemma",
+    "title": "The typed answer-reduced decider",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.StageProg.ptMapL_vecBits",
+   "MIPRE.Cost.encode_injective",
+   "MIPRE.Introspection.FieldLineCheck.parameter_eq",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits",
+   "MIPRE.SAT.shoupInvProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.SAT.shoupMulProg_encoding",
+   "MIPRE.SAT.shoupBinField_charP",
+   "MIPRE.SAT.shoupRoot_eval_toBits",
+   "MIPRE.SAT.shoupRoot_eval_eq_iff"
+  ],
+  "pasted_helpers": 35,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.atom_ld1",
+  "source_name": "MIPRE.AnswerReduction.atom_ld1",
+  "formal_statement": "theorem MIPRE.AnswerReduction.atom_ld1 (c : Fin 5) {τ' : LIDT.CL.Ty} (hτ' : τ' ≠ .point) {u v : Ans (F.par n) (fld (F.par n) (F.hk n)).carrier}\n    (hu : ansFmt (c.castSucc, .point) u = true) (hv : ansFmt (c.castSucc, τ') v = true)\n    (x y : Coord (F.par n) → (fld (F.par n) (F.hk n)).carrier) :\n    LIDT.CL.accepts (pow_dvd_card _ _ _ _ (F.m_eq n) (F.jm_le n))\n      (q1 (F.sel n) c .point x) (q1 (F.sel n) c τ' y) (ans1 u) (ans1 v) =\n      ldB (unary (F.par n).k) (F.desc n c.castSucc) (tyNat τ') (blocksV (F.hk n) (F.par n) x) (blocksV (F.hk n) (F.par n) y)\n        [ansB (F.hk n) v] (ansB (F.hk n) u) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost MIPRE.AnswerReduction.StageProg MIPRE.Introspection.FieldLineCheck MIPRE.Introspection.FieldQuestionProgram MIPRE.Introspection.SeedProgram MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable (F : PcpFamily) (n : ℕ)"
+  ],
+  "docstring": "**The low-degree subtest of a copy `c ≤ 5`**, on blocks.",
+  "module": "MIPRE.Background.AnswerReduction.DecideSpec",
+  "module_doc": "/-!\n# The answer-reduced decision, on blocks of bits\n\nPiece AR-3e of `planning/answer-reduction.md`: the decision predicate `accepts` of\n`MIPRE/Background/AnswerReduction/Predicate`, rewritten as a function of the `k`-bit blocks a\nprogram reads (`verdictB`), with the field arithmetic done by the introspection stage programs:\nthe line-versus-point check (`FieldLineCheck.lineCheckProg`), the seed selector, and the line\nrepresentatives the sampler's third stage already uses.\n\n* **The low-degree subtests** (`ldB`): of the seeded test's decision, only a point question\n  against a line question of the same copy is ever checked, and there it is the line-versus-point\n  check on the line the question describes (`ldB_aline`, `ldB_dline`).\n* **The five steps** (`sideB`) are organised by what each type pair asks for: at most one\n  comparison of two answer blocks (`eqPlan`), one low-degree subtest (`ldPlan`) and one game check\n  (`chkPlan`), which are functions of the types alone. `sideB_eq` is `side`.\n* **The predicate** (`verdictB_eq`) is the typed predicate `typedPred`, the answers parsed into\n  blocks (`parseB`) and the questions' PCP halves split into their three runs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/DecideSpec.lean#L330-L359",
+  "source_path": "MIPRE/Background/AnswerReduction/DecideSpec.lean",
+  "lines": [
+   330,
+   359
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.ldB_aline",
+   "MIPRE.AnswerReduction.Pcp.regs_eq",
+   "MIPRE.AnswerReduction.StageProg.ptMapL_vecBits",
+   "MIPRE.Cost.encode_injective",
+   "MIPRE.Introspection.FieldLineCheck.parameter_eq",
+   "MIPRE.SAT.shoupInvProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.SAT.shoupMulProg_encoding",
+   "MIPRE.SAT.shoupBinField_charP"
+  ],
+  "pasted_helpers": 38,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.atom_ld6",
+  "source_name": "MIPRE.AnswerReduction.atom_ld6",
+  "formal_statement": "theorem MIPRE.AnswerReduction.atom_ld6 {i : Fin 6} (hi : (i : ℕ) = 5) {τ' : LIDT.CL.Ty} (hτ' : τ' ≠ .point)\n    {u v : Ans (F.par n) (fld (F.par n) (F.hk n)).carrier} (hu : ansFmt (i, .point) u = true)\n    (hv : ansFmt (i, τ') v = true) (x y : Coord (F.par n) → (fld (F.par n) (F.hk n)).carrier) :\n    LIDT.CL.accepts (pow_dvd_card _ _ _ _ (F.m'_eq n) (F.jm'_le n))\n      (q6 (F.sel' n) .point x) (q6 (F.sel' n) τ' y) (ans6 u) (ans6 v) =\n      ldB (unary (F.par n).k) (F.desc n 5) (tyNat τ') (blocksV (F.hk n) (F.par n) x) (blocksV (F.hk n) (F.par n) y)\n        (chunks (width (F.par n).m' τ') ((F.par n).m' + 6) (ansB (F.hk n) v)) (ansB (F.hk n) u) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost MIPRE.AnswerReduction.StageProg MIPRE.Introspection.FieldLineCheck MIPRE.Introspection.FieldQuestionProgram MIPRE.Introspection.SeedProgram MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable (F : PcpFamily) (n : ℕ)"
+  ],
+  "docstring": "**The low-degree subtest of the sixth copy**, on blocks.",
+  "module": "MIPRE.Background.AnswerReduction.DecideSpec",
+  "module_doc": "/-!\n# The answer-reduced decision, on blocks of bits\n\nPiece AR-3e of `planning/answer-reduction.md`: the decision predicate `accepts` of\n`MIPRE/Background/AnswerReduction/Predicate`, rewritten as a function of the `k`-bit blocks a\nprogram reads (`verdictB`), with the field arithmetic done by the introspection stage programs:\nthe line-versus-point check (`FieldLineCheck.lineCheckProg`), the seed selector, and the line\nrepresentatives the sampler's third stage already uses.\n\n* **The low-degree subtests** (`ldB`): of the seeded test's decision, only a point question\n  against a line question of the same copy is ever checked, and there it is the line-versus-point\n  check on the line the question describes (`ldB_aline`, `ldB_dline`).\n* **The five steps** (`sideB`) are organised by what each type pair asks for: at most one\n  comparison of two answer blocks (`eqPlan`), one low-degree subtest (`ldPlan`) and one game check\n  (`chkPlan`), which are functions of the types alone. `sideB_eq` is `side`.\n* **The predicate** (`verdictB_eq`) is the typed predicate `typedPred`, the answers parsed into\n  blocks (`parseB`) and the questions' PCP halves split into their three runs.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/DecideSpec.lean#L361-L393",
+  "source_path": "MIPRE/Background/AnswerReduction/DecideSpec.lean",
+  "lines": [
+   361,
+   393
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.ldB_aline",
+   "MIPRE.AnswerReduction.Pcp.regs6_eq",
+   "MIPRE.AnswerReduction.StageProg.ptMapL_vecBits",
+   "MIPRE.Cost.encode_injective",
+   "MIPRE.Introspection.FieldLineCheck.parameter_eq",
+   "MIPRE.SAT.shoupInvProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.SAT.shoupMulProg_encoding",
+   "MIPRE.SAT.shoupBinField_charP"
+  ],
+  "pasted_helpers": 39,
+  "prooflines": 25,
+  "is_target": false
+ }
+]

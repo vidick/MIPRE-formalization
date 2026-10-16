@@ -1,0 +1,697 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.ProjectorRangeONB.subprojector_isProj",
+  "source_name": "MIPStarRE.Quantum.ProjectorRangeONB.subprojector_isProj",
+  "formal_statement": "theorem MIPStarRE.Quantum.ProjectorRangeONB.subprojector_isProj (S : Finset (Fin P.rank)) :\n    IsProj (b.subprojector S) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum",
+   "open MIPStarRE.Quantum.ProjectorRangeONB",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.L2Operator",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]",
+   "variable {P : Op ι} {hP : IsProj P} (b : ProjectorRangeONB P hP)"
+  ],
+  "docstring": "A selected sum of orthonormal rank-one projectors is a projector.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB",
+  "module_doc": "/-!\n# Projector Range Orthonormal Bases\n\nThis file packages the finite-dimensional spectral decomposition of an\northogonal projector as an orthonormal basis of its range. It supplies the\nrank-one decomposition needed by the rank-reduction truncation branch in the\nlow-degree-test formalization.\n\n## References\n\n- `references/ldt-paper/orthonormalization.tex`, lines 570--573.\n- `MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/LowRank.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/ProjectorONB.lean#L268-L273",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/ProjectorONB.lean",
+  "lines": [
+   268,
+   273
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.Quantum.ProjectorRangeONB.subprojector_idempotent"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.ProjectorRangeONB.subprojector_trace",
+  "source_name": "MIPStarRE.Quantum.ProjectorRangeONB.subprojector_trace",
+  "formal_statement": "theorem MIPStarRE.Quantum.ProjectorRangeONB.subprojector_trace (S : Finset (Fin P.rank)) :\n    (b.subprojector S).trace = (S.card : ℂ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum",
+   "open MIPStarRE.Quantum.ProjectorRangeONB",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.L2Operator",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]",
+   "variable {P : Op ι} {hP : IsProj P} (b : ProjectorRangeONB P hP)"
+  ],
+  "docstring": "The partial projector's trace is the number of selected vectors.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB",
+  "module_doc": "/-!\n# Projector Range Orthonormal Bases\n\nThis file packages the finite-dimensional spectral decomposition of an\northogonal projector as an orthonormal basis of its range. It supplies the\nrank-one decomposition needed by the rank-reduction truncation branch in the\nlow-degree-test formalization.\n\n## References\n\n- `references/ldt-paper/orthonormalization.tex`, lines 570--573.\n- `MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/LowRank.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/ProjectorONB.lean#L275-L290",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/ProjectorONB.lean",
+  "lines": [
+   275,
+   290
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.Quantum.ProjectorRangeONB.subprojector_diff_eq_compl",
+  "source_name": "MIPStarRE.Quantum.ProjectorRangeONB.subprojector_diff_eq_compl",
+  "formal_statement": "theorem MIPStarRE.Quantum.ProjectorRangeONB.subprojector_diff_eq_compl (S : Finset (Fin P.rank)) :\n    P - b.subprojector S = b.subprojector (Sᶜ : Finset (Fin P.rank)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.Quantum",
+   "open MIPStarRE.Quantum.ProjectorRangeONB",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.L2Operator",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]",
+   "variable {P : Op ι} {hP : IsProj P} (b : ProjectorRangeONB P hP)"
+  ],
+  "docstring": "The difference between a projector and a partial projector is the\ncomplementary partial projector.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.Quantum.ProjectorONB",
+  "module_doc": "/-!\n# Projector Range Orthonormal Bases\n\nThis file packages the finite-dimensional spectral decomposition of an\northogonal projector as an orthonormal basis of its range. It supplies the\nrank-one decomposition needed by the rank-reduction truncation branch in the\nlow-degree-test formalization.\n\n## References\n\n- `references/ldt-paper/orthonormalization.tex`, lines 570--573.\n- `MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/LowRank.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/Quantum/ProjectorONB.lean#L313-L323",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/Quantum/ProjectorONB.lean",
+  "lines": [
+   313,
+   323
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.eq_rep_add_lineParam",
+  "source_name": "MIPRE.LIDT.Simul.eq_rep_add_lineParam",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.eq_rep_add_lineParam (w u : Point F n) :\n    u = rep w u + lineParam (rep w u) w u • w := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LIDT.CL MIPRE.LIDT.Adapter",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {n : ℕ}"
+  ],
+  "docstring": "**A point, its canonical base point and its parameter**: `u = rep w u + (lineParam …) • w`,\nwhether or not `w` vanishes.",
+  "module": "MIPRE.Background.LIDT.Padding",
+  "module_doc": "/-!\n# The padded game adapter\n\nBlueprint `lem:lidt-ldc-adapter`, the paper's Steps 1--2 and Claims 1--3 of the general-`ldc`\nproof of `lem:ld-soundness` (`ldt.tex`). A strategy for the seeded test with `r` codewords in\n`m` variables is played as a strategy for the seeded test with one codeword in `K + m` variables:\na combined point `(x, y)` is answered by `∑_{j<r} x_j b_j` from the original point answer `b` at\n`y`, and a combined line by the matching polynomial built from the original line answer.\n\n## The seed choice, and how it differs from the paper's\n\nEach combined question is sent to an original question. The only freedom is the original seed,\nand the paper draws it independently for each player, diagonal seeds from a law proportional to\n`q^{j-1}`; the independence then has to be paid for on the two same-type line subtests, by a\nchain of three consistency links and a `d / q` term.\n\nHere both players share one seed *offset* `σ`, and the original seed's block is determined by the\ncombined seed's block `i` as `j = max(i - K, 0)`. Then **every simulated question pair is the\nimage of a single original sample**: `sampleMap` sends the combined sample `(u, s, v)` to the\noriginal sample `(y-part of u, seedOf j σ, y-part of v)`, with types collapsed to `point` where\nthe combined line does not move the original coordinates (`qmap_question`). Acceptance transfers\nsubtest by subtest --- the same-type line subtests to the original equality subtest --- and the\npush-forward bound is a count of the fibres of `sampleMap`.\n\n## The decider on a sample\n\n`accepts_sample_imp` and `accepts_sample_of` characterize the seeded test's decider on the two\nquestions of one sample: formats, then equality for equal types, nothing for the two cross\npairs, and otherwise equality of the two answers' *values at the sample's point* (`valAt`). Both\ngames are instances, and the transfer is checked on values.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Padding.lean#L131-L147",
+  "source_path": "MIPRE/Background/LIDT/Padding.lean",
+  "lines": [
+   131,
+   147
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-adapter",
+    "env": "lemma",
+    "title": "The padded multi-codeword game adapter",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.qmap_question",
+  "source_name": "MIPRE.LIDT.Simul.qmap_question",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.qmap_question (σ : Fin (Fintype.card F / m)) (sm : CL.Sample F (K + m)) (t : CL.Ty) :\n    qmap hm hM σ (sm.question hM t)\n      = (sampleMap hm hM σ sm).question hm (tyMap (chi hM sm.s) (wyOf hM sm) t) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LIDT.CL MIPRE.LIDT.Adapter",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {K m : ℕ} [NeZero m] [NeZero (K + m)]"
+  ],
+  "docstring": "**Every simulated question is the mapped sample's question.**",
+  "module": "MIPRE.Background.LIDT.Padding",
+  "module_doc": "/-!\n# The padded game adapter\n\nBlueprint `lem:lidt-ldc-adapter`, the paper's Steps 1--2 and Claims 1--3 of the general-`ldc`\nproof of `lem:ld-soundness` (`ldt.tex`). A strategy for the seeded test with `r` codewords in\n`m` variables is played as a strategy for the seeded test with one codeword in `K + m` variables:\na combined point `(x, y)` is answered by `∑_{j<r} x_j b_j` from the original point answer `b` at\n`y`, and a combined line by the matching polynomial built from the original line answer.\n\n## The seed choice, and how it differs from the paper's\n\nEach combined question is sent to an original question. The only freedom is the original seed,\nand the paper draws it independently for each player, diagonal seeds from a law proportional to\n`q^{j-1}`; the independence then has to be paid for on the two same-type line subtests, by a\nchain of three consistency links and a `d / q` term.\n\nHere both players share one seed *offset* `σ`, and the original seed's block is determined by the\ncombined seed's block `i` as `j = max(i - K, 0)`. Then **every simulated question pair is the\nimage of a single original sample**: `sampleMap` sends the combined sample `(u, s, v)` to the\noriginal sample `(y-part of u, seedOf j σ, y-part of v)`, with types collapsed to `point` where\nthe combined line does not move the original coordinates (`qmap_question`). Acceptance transfers\nsubtest by subtest --- the same-type line subtests to the original equality subtest --- and the\npush-forward bound is a count of the fibres of `sampleMap`.\n\n## The decider on a sample\n\n`accepts_sample_imp` and `accepts_sample_of` characterize the seeded test's decider on the two\nquestions of one sample: formats, then equality for equal types, nothing for the two cross\npairs, and otherwise equality of the two answers' *values at the sample's point* (`valAt`). Both\ngames are instances, and the transfer is checked on values.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Padding.lean#L304-L326",
+  "source_path": "MIPRE/Background/LIDT/Padding.lean",
+  "lines": [
+   304,
+   326
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-adapter",
+    "env": "lemma",
+    "title": "The padded multi-codeword game adapter",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.pivots_line",
+   "MIPRE.LIDT.Simul.eq_rep_add_lineParam"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.eval_linPoly_padB",
+  "source_name": "MIPRE.LIDT.Simul.eval_linPoly_padB",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.eval_linPoly_padB {d : ℕ} (hd : 1 ≤ d) (hr : r ≤ K) (b : Fin r → F) (x : Point F K) :\n    (linPoly (d := d) hd (padB b)).eval x = linEval hr b x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LIDT.CL MIPRE.LIDT.Adapter",
+   "open Polynomial",
+   "variable {F : Type*} [Field F] {K r : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.Padding",
+  "module_doc": "/-!\n# The padded game adapter\n\nBlueprint `lem:lidt-ldc-adapter`, the paper's Steps 1--2 and Claims 1--3 of the general-`ldc`\nproof of `lem:ld-soundness` (`ldt.tex`). A strategy for the seeded test with `r` codewords in\n`m` variables is played as a strategy for the seeded test with one codeword in `K + m` variables:\na combined point `(x, y)` is answered by `∑_{j<r} x_j b_j` from the original point answer `b` at\n`y`, and a combined line by the matching polynomial built from the original line answer.\n\n## The seed choice, and how it differs from the paper's\n\nEach combined question is sent to an original question. The only freedom is the original seed,\nand the paper draws it independently for each player, diagonal seeds from a law proportional to\n`q^{j-1}`; the independence then has to be paid for on the two same-type line subtests, by a\nchain of three consistency links and a `d / q` term.\n\nHere both players share one seed *offset* `σ`, and the original seed's block is determined by the\ncombined seed's block `i` as `j = max(i - K, 0)`. Then **every simulated question pair is the\nimage of a single original sample**: `sampleMap` sends the combined sample `(u, s, v)` to the\noriginal sample `(y-part of u, seedOf j σ, y-part of v)`, with types collapsed to `point` where\nthe combined line does not move the original coordinates (`qmap_question`). Acceptance transfers\nsubtest by subtest --- the same-type line subtests to the original equality subtest --- and the\npush-forward bound is a count of the fibres of `sampleMap`.\n\n## The decider on a sample\n\n`accepts_sample_imp` and `accepts_sample_of` characterize the seeded test's decider on the two\nquestions of one sample: formats, then equality for equal types, nothing for the two cross\npairs, and otherwise equality of the two answers' *values at the sample's point* (`valAt`). Both\ngames are instances, and the transfer is checked on values.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Padding.lean#L351-L364",
+  "source_path": "MIPRE/Background/LIDT/Padding.lean",
+  "lines": [
+   351,
+   364
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-adapter",
+    "env": "lemma",
+    "title": "The padded multi-codeword game adapter",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.valAt_rmap",
+  "source_name": "MIPRE.LIDT.Simul.valAt_rmap",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.valAt_rmap (hd : 1 ≤ d) (hK : 1 ≤ K) (σ : Fin (Fintype.card F / m))\n    (x : CL.Question F (K + m)) {u : Point F (K + m)}\n    (hu : ∃ t : F, u = x.base + t • x.dir hM) {a : CL.Answer F m d r}\n    (hf : (qmap hm hM σ x).fmtOk a = true) (k : Fin 1) :\n    valAt hM x u (rmap hM hr x a) k\n      = linEval hr (valAt hm (qmap hm hM σ x) (yOf u) a) (xOf u) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LIDT.CL MIPRE.LIDT.Adapter",
+   "open Polynomial",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {K m d r : ℕ} [NeZero m]"
+  ],
+  "docstring": "**The value transfer.** On a point `u` of a combined question's line, the combined answer's\nvalue is the combined point answer `∑_{k<r} x_k b_k`, with `b` the original answer's value at the\noriginal part of `u`.",
+  "module": "MIPRE.Background.LIDT.Padding",
+  "module_doc": "/-!\n# The padded game adapter\n\nBlueprint `lem:lidt-ldc-adapter`, the paper's Steps 1--2 and Claims 1--3 of the general-`ldc`\nproof of `lem:ld-soundness` (`ldt.tex`). A strategy for the seeded test with `r` codewords in\n`m` variables is played as a strategy for the seeded test with one codeword in `K + m` variables:\na combined point `(x, y)` is answered by `∑_{j<r} x_j b_j` from the original point answer `b` at\n`y`, and a combined line by the matching polynomial built from the original line answer.\n\n## The seed choice, and how it differs from the paper's\n\nEach combined question is sent to an original question. The only freedom is the original seed,\nand the paper draws it independently for each player, diagonal seeds from a law proportional to\n`q^{j-1}`; the independence then has to be paid for on the two same-type line subtests, by a\nchain of three consistency links and a `d / q` term.\n\nHere both players share one seed *offset* `σ`, and the original seed's block is determined by the\ncombined seed's block `i` as `j = max(i - K, 0)`. Then **every simulated question pair is the\nimage of a single original sample**: `sampleMap` sends the combined sample `(u, s, v)` to the\noriginal sample `(y-part of u, seedOf j σ, y-part of v)`, with types collapsed to `point` where\nthe combined line does not move the original coordinates (`qmap_question`). Acceptance transfers\nsubtest by subtest --- the same-type line subtests to the original equality subtest --- and the\npush-forward bound is a count of the fibres of `sampleMap`.\n\n## The decider on a sample\n\n`accepts_sample_imp` and `accepts_sample_of` characterize the seeded test's decider on the two\nquestions of one sample: formats, then equality for equal types, nothing for the two cross\npairs, and otherwise equality of the two answers' *values at the sample's point* (`valAt`). Both\ngames are instances, and the transfer is checked on values.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Padding.lean#L469-L555",
+  "source_path": "MIPRE/Background/LIDT/Padding.lean",
+  "lines": [
+   469,
+   555
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-adapter",
+    "env": "lemma",
+    "title": "The padded multi-codeword game adapter",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.rep_eq"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 78,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.accepts_rmap",
+  "source_name": "MIPRE.LIDT.Simul.accepts_rmap",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.accepts_rmap (hd : 1 ≤ d) (hK : 1 ≤ K) (σ : Fin (Fintype.card F / m))\n    (sm : CL.Sample F (K + m)) {a b : CL.Answer F m d r}\n    (h : CL.accepts hm (qmap hm hM σ (sm.question hM sm.tyA))\n      (qmap hm hM σ (sm.question hM sm.tyB)) a b = true) :\n    CL.accepts hM (sm.question hM sm.tyA) (sm.question hM sm.tyB)\n      (rmap hM hr (sm.question hM sm.tyA) a) (rmap hM hr (sm.question hM sm.tyB) b) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LIDT.CL MIPRE.LIDT.Adapter",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {K m d r : ℕ} [NeZero m]"
+  ],
+  "docstring": "**Acceptance transfers** from the mapped original sample to the combined sample.",
+  "module": "MIPRE.Background.LIDT.Padding",
+  "module_doc": "/-!\n# The padded game adapter\n\nBlueprint `lem:lidt-ldc-adapter`, the paper's Steps 1--2 and Claims 1--3 of the general-`ldc`\nproof of `lem:ld-soundness` (`ldt.tex`). A strategy for the seeded test with `r` codewords in\n`m` variables is played as a strategy for the seeded test with one codeword in `K + m` variables:\na combined point `(x, y)` is answered by `∑_{j<r} x_j b_j` from the original point answer `b` at\n`y`, and a combined line by the matching polynomial built from the original line answer.\n\n## The seed choice, and how it differs from the paper's\n\nEach combined question is sent to an original question. The only freedom is the original seed,\nand the paper draws it independently for each player, diagonal seeds from a law proportional to\n`q^{j-1}`; the independence then has to be paid for on the two same-type line subtests, by a\nchain of three consistency links and a `d / q` term.\n\nHere both players share one seed *offset* `σ`, and the original seed's block is determined by the\ncombined seed's block `i` as `j = max(i - K, 0)`. Then **every simulated question pair is the\nimage of a single original sample**: `sampleMap` sends the combined sample `(u, s, v)` to the\noriginal sample `(y-part of u, seedOf j σ, y-part of v)`, with types collapsed to `point` where\nthe combined line does not move the original coordinates (`qmap_question`). Acceptance transfers\nsubtest by subtest --- the same-type line subtests to the original equality subtest --- and the\npush-forward bound is a count of the fibres of `sampleMap`.\n\n## The decider on a sample\n\n`accepts_sample_imp` and `accepts_sample_of` characterize the seeded test's decider on the two\nquestions of one sample: formats, then equality for equal types, nothing for the two cross\npairs, and otherwise equality of the two answers' *values at the sample's point* (`valAt`). Both\ngames are instances, and the transfer is checked on values.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Padding.lean#L593-L621",
+  "source_path": "MIPRE/Background/LIDT/Padding.lean",
+  "lines": [
+   593,
+   621
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-adapter",
+    "env": "lemma",
+    "title": "The padded multi-codeword game adapter",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.Simul.qmap_question",
+   "MIPRE.LIDT.Simul.valAt_rmap"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.card_jOf_fiber_le",
+  "source_name": "MIPRE.LIDT.Simul.card_jOf_fiber_le",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.card_jOf_fiber_le (j : Fin m) :\n    #{s : F | jOf hM s = j} ≤ (K + 1) * (Fintype.card F / (K + m)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LIDT.CL MIPRE.LIDT.Adapter",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {K m d r : ℕ} [NeZero m]"
+  ],
+  "docstring": "A seed block of the original test collects at most `K + 1` blocks of the combined test.",
+  "module": "MIPRE.Background.LIDT.Padding",
+  "module_doc": "/-!\n# The padded game adapter\n\nBlueprint `lem:lidt-ldc-adapter`, the paper's Steps 1--2 and Claims 1--3 of the general-`ldc`\nproof of `lem:ld-soundness` (`ldt.tex`). A strategy for the seeded test with `r` codewords in\n`m` variables is played as a strategy for the seeded test with one codeword in `K + m` variables:\na combined point `(x, y)` is answered by `∑_{j<r} x_j b_j` from the original point answer `b` at\n`y`, and a combined line by the matching polynomial built from the original line answer.\n\n## The seed choice, and how it differs from the paper's\n\nEach combined question is sent to an original question. The only freedom is the original seed,\nand the paper draws it independently for each player, diagonal seeds from a law proportional to\n`q^{j-1}`; the independence then has to be paid for on the two same-type line subtests, by a\nchain of three consistency links and a `d / q` term.\n\nHere both players share one seed *offset* `σ`, and the original seed's block is determined by the\ncombined seed's block `i` as `j = max(i - K, 0)`. Then **every simulated question pair is the\nimage of a single original sample**: `sampleMap` sends the combined sample `(u, s, v)` to the\noriginal sample `(y-part of u, seedOf j σ, y-part of v)`, with types collapsed to `point` where\nthe combined line does not move the original coordinates (`qmap_question`). Acceptance transfers\nsubtest by subtest --- the same-type line subtests to the original equality subtest --- and the\npush-forward bound is a count of the fibres of `sampleMap`.\n\n## The decider on a sample\n\n`accepts_sample_imp` and `accepts_sample_of` characterize the seeded test's decider on the two\nquestions of one sample: formats, then equality for equal types, nothing for the two cross\npairs, and otherwise equality of the two answers' *values at the sample's point* (`valAt`). Both\ngames are instances, and the transfer is checked on values.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Padding.lean#L670-L704",
+  "source_path": "MIPRE/Background/LIDT/Padding.lean",
+  "lines": [
+   670,
+   704
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-adapter",
+    "env": "lemma",
+    "title": "The padded multi-codeword game adapter",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.CL.card_chi_fiber"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.card_sampleMap_fiber_le",
+  "source_name": "MIPRE.LIDT.Simul.card_sampleMap_fiber_le",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.card_sampleMap_fiber_le (sm : CL.Sample F m) :\n    #{p : Fin (Fintype.card F / m) × CL.Sample F (K + m) | sampleMap hm hM p.1 p.2 = sm}\n      ≤ 9 * ((K + 1) * (Fintype.card F / (K + m))) * Fintype.card F ^ K\n          * Fintype.card F ^ K := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LIDT.CL MIPRE.LIDT.Adapter",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {K m d r : ℕ} [NeZero m]"
+  ],
+  "docstring": "**The fibres of the sample map**, over the seed offset and the combined sample, have at most\n`9 (K + 1) (q / (K + m)) q^{2K}` elements: the types have three preimages each, the combining\ncoordinates of the point and the direction are free, the combined seed ranges over `K + 1`\nblocks, and the offset is then determined.",
+  "module": "MIPRE.Background.LIDT.Padding",
+  "module_doc": "/-!\n# The padded game adapter\n\nBlueprint `lem:lidt-ldc-adapter`, the paper's Steps 1--2 and Claims 1--3 of the general-`ldc`\nproof of `lem:ld-soundness` (`ldt.tex`). A strategy for the seeded test with `r` codewords in\n`m` variables is played as a strategy for the seeded test with one codeword in `K + m` variables:\na combined point `(x, y)` is answered by `∑_{j<r} x_j b_j` from the original point answer `b` at\n`y`, and a combined line by the matching polynomial built from the original line answer.\n\n## The seed choice, and how it differs from the paper's\n\nEach combined question is sent to an original question. The only freedom is the original seed,\nand the paper draws it independently for each player, diagonal seeds from a law proportional to\n`q^{j-1}`; the independence then has to be paid for on the two same-type line subtests, by a\nchain of three consistency links and a `d / q` term.\n\nHere both players share one seed *offset* `σ`, and the original seed's block is determined by the\ncombined seed's block `i` as `j = max(i - K, 0)`. Then **every simulated question pair is the\nimage of a single original sample**: `sampleMap` sends the combined sample `(u, s, v)` to the\noriginal sample `(y-part of u, seedOf j σ, y-part of v)`, with types collapsed to `point` where\nthe combined line does not move the original coordinates (`qmap_question`). Acceptance transfers\nsubtest by subtest --- the same-type line subtests to the original equality subtest --- and the\npush-forward bound is a count of the fibres of `sampleMap`.\n\n## The decider on a sample\n\n`accepts_sample_imp` and `accepts_sample_of` characterize the seeded test's decider on the two\nquestions of one sample: formats, then equality for equal types, nothing for the two cross\npairs, and otherwise equality of the two answers' *values at the sample's point* (`valAt`). Both\ngames are instances, and the transfer is checked on values.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Padding.lean#L706-L745",
+  "source_path": "MIPRE/Background/LIDT/Padding.lean",
+  "lines": [
+   706,
+   745
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-adapter",
+    "env": "lemma",
+    "title": "The padded multi-codeword game adapter",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.Simul.card_jOf_fiber_le"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.sum_mu_qmap_le",
+  "source_name": "MIPRE.LIDT.Simul.sum_mu_qmap_le",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.sum_mu_qmap_le (x y : CL.Question F m) :\n    (∑ σ : Fin (Fintype.card F / m),\n        ∑ x' ∈ Finset.univ.filter (fun x' => qmap hm hM σ x' = x),\n        ∑ y' ∈ Finset.univ.filter (fun y' => qmap hm hM σ y' = y),\n          (clGame (d := d) (ldc := 1) hM).μ x' y')\n      ≤ (Fintype.card (Fin (Fintype.card F / m)) : ℝ)\n          * ((9 * (K + 1) : ℝ) * (clGame (d := d) (ldc := r) hm).μ x y) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LIDT.CL MIPRE.LIDT.Adapter",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {K m d r : ℕ} [NeZero m]"
+  ],
+  "docstring": "**The push-forward bound** of the padded adapter, averaged over the seed offset, with\n`C = 9 (K + 1)`.",
+  "module": "MIPRE.Background.LIDT.Padding",
+  "module_doc": "/-!\n# The padded game adapter\n\nBlueprint `lem:lidt-ldc-adapter`, the paper's Steps 1--2 and Claims 1--3 of the general-`ldc`\nproof of `lem:ld-soundness` (`ldt.tex`). A strategy for the seeded test with `r` codewords in\n`m` variables is played as a strategy for the seeded test with one codeword in `K + m` variables:\na combined point `(x, y)` is answered by `∑_{j<r} x_j b_j` from the original point answer `b` at\n`y`, and a combined line by the matching polynomial built from the original line answer.\n\n## The seed choice, and how it differs from the paper's\n\nEach combined question is sent to an original question. The only freedom is the original seed,\nand the paper draws it independently for each player, diagonal seeds from a law proportional to\n`q^{j-1}`; the independence then has to be paid for on the two same-type line subtests, by a\nchain of three consistency links and a `d / q` term.\n\nHere both players share one seed *offset* `σ`, and the original seed's block is determined by the\ncombined seed's block `i` as `j = max(i - K, 0)`. Then **every simulated question pair is the\nimage of a single original sample**: `sampleMap` sends the combined sample `(u, s, v)` to the\noriginal sample `(y-part of u, seedOf j σ, y-part of v)`, with types collapsed to `point` where\nthe combined line does not move the original coordinates (`qmap_question`). Acceptance transfers\nsubtest by subtest --- the same-type line subtests to the original equality subtest --- and the\npush-forward bound is a count of the fibres of `sampleMap`.\n\n## The decider on a sample\n\n`accepts_sample_imp` and `accepts_sample_of` characterize the seeded test's decider on the two\nquestions of one sample: formats, then equality for equal types, nothing for the two cross\npairs, and otherwise equality of the two answers' *values at the sample's point* (`valAt`). Both\ngames are instances, and the transfer is checked on values.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Padding.lean#L762-L834",
+  "source_path": "MIPRE/Background/LIDT/Padding.lean",
+  "lines": [
+   762,
+   834
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-adapter",
+    "env": "lemma",
+    "title": "The padded multi-codeword game adapter",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.Simul.qmap_question",
+   "MIPRE.LIDT.Simul.card_sampleMap_fiber_le"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 64,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.sum_comp_injective",
+  "source_name": "MIPRE.CL.sum_comp_injective",
+  "formal_statement": "theorem MIPRE.CL.sum_comp_injective {κ ι F M : Type*} [Fintype κ] [DecidableEq κ]\n    [Fintype ι] [DecidableEq ι] [Fintype F] [DecidableEq F] [AddCommMonoid M] (e : κ → ι)\n    (he : Function.Injective e) (g : (κ → F) → M) :\n    ∑ x : ι → F, g (x ∘ e)\n      = (Fintype.card F ^ (Fintype.card ι - Fintype.card κ)) • ∑ y : κ → F, g y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open Finset"
+  ],
+  "docstring": "**Summing over vectors through an injection of coordinates**: `x ↦ x ∘ e` has fibres of\nsize `q^{|ι| - |κ|}`.",
+  "module": "MIPRE.Background.LIDT.Presentation",
+  "module_doc": "/-!\n# The seeded low-degree questions as CL functions, on any registers\n\nThe paper's typed CL functions `L_Point`, `L_ALine`, `L_DLine` (`ldt.tex`, `eq:cl-ptf` to\n`eq:cl-dlnf`) act on three registers of an ambient space: a point register `V_pt ≅ F^n`, a\ncoordinate (seed) register `V_coord ≅ F` and a direction register `V_dir ≅ F^n`. The answer-reduced\nsampler (`sec:ar-verifier`) uses six copies of them on *overlapping* registers of one ambient\nspace, so the registers are data here: `Regs ι n` places them in the coordinates `ι` of the\nambient space by two injections and a coordinate.\n\nEvery type gets a three-level presentation (`pres`), the levels being the seed, then the\ndirection, then everything else; the paper's one- and two-level functions are the same with\ntrivial levels, as in `QLD.PauliCL.presentation`. The presentations are exact on the whole space\n(`pres_exactlyOn`), and their full evaluation, read back through the registers (`questionOf`), is\nthe seeded test's question `LIDT.CL.Sample.question` for the sample the registers carry\n(`questionOf_eval`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Presentation.lean#L33-L70",
+  "source_path": "MIPRE/Background/LIDT/Presentation.lean",
+  "lines": [
+   33,
+   70
+  ],
+  "blueprint": [
+   {
+    "label": "def:ar-pcp-sampler",
+    "env": "definition",
+    "title": "The PCP sampler of answer reduction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.CL.Regs.questionOf_eval",
+  "source_name": "MIPRE.LIDT.CL.Regs.questionOf_eval",
+  "formal_statement": "theorem MIPRE.LIDT.CL.Regs.questionOf_eval (t : Ty) (x : ι → F) :\n    R.questionOf S t ((R.pres S t).eval x) = (R.sampleOf S t x).question hn t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.CL",
+   "open MIPRE.LIDT.CL.Regs",
+   "open Finset MIPRE.CL",
+   "variable {ι : Type*} [DecidableEq ι] [Fintype ι] {n : ℕ} (R : Regs ι n)",
+   "variable {F : Type*} [Field F]",
+   "variable [Fintype F] [DecidableEq F] [NeZero n] {hn : n ∣ Fintype.card F} (S : Sel F n hn)"
+  ],
+  "docstring": "**The presentation computes the seeded question** of the sample the registers carry.",
+  "module": "MIPRE.Background.LIDT.Presentation",
+  "module_doc": "/-!\n# The seeded low-degree questions as CL functions, on any registers\n\nThe paper's typed CL functions `L_Point`, `L_ALine`, `L_DLine` (`ldt.tex`, `eq:cl-ptf` to\n`eq:cl-dlnf`) act on three registers of an ambient space: a point register `V_pt ≅ F^n`, a\ncoordinate (seed) register `V_coord ≅ F` and a direction register `V_dir ≅ F^n`. The answer-reduced\nsampler (`sec:ar-verifier`) uses six copies of them on *overlapping* registers of one ambient\nspace, so the registers are data here: `Regs ι n` places them in the coordinates `ι` of the\nambient space by two injections and a coordinate.\n\nEvery type gets a three-level presentation (`pres`), the levels being the seed, then the\ndirection, then everything else; the paper's one- and two-level functions are the same with\ntrivial levels, as in `QLD.PauliCL.presentation`. The presentations are exact on the whole space\n(`pres_exactlyOn`), and their full evaluation, read back through the registers (`questionOf`), is\nthe seeded test's question `LIDT.CL.Sample.question` for the sample the registers carry\n(`questionOf_eval`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Presentation.lean#L320-L362",
+  "source_path": "MIPRE/Background/LIDT/Presentation.lean",
+  "lines": [
+   320,
+   362
+  ],
+  "blueprint": [
+   {
+    "label": "def:ar-pcp-sampler",
+    "env": "definition",
+    "title": "The PCP sampler of answer reduction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 15,
+  "prooflines": 40,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.CL.Regs.sum_sampleOf",
+  "source_name": "MIPRE.LIDT.CL.Regs.sum_sampleOf",
+  "formal_statement": "theorem MIPRE.LIDT.CL.Regs.sum_sampleOf {M : Type*} [AddCommMonoid M] (t : Ty) (g : Sample F n → M) :\n    ∑ x : ι → F, g (R.sampleOf S t x)\n      = (Fintype.card F ^ (Fintype.card ι - (2 * n + 1))) •\n          ∑ u : Point F n, ∑ s : F, ∑ v : Point F n, g ⟨t, t, u, s, v⟩ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.CL",
+   "open MIPRE.LIDT.CL.Regs",
+   "open Finset MIPRE.CL",
+   "variable {ι : Type*} [DecidableEq ι] [Fintype ι] {n : ℕ} (R : Regs ι n)",
+   "variable {F : Type*} [Field F]",
+   "variable [Fintype F] [DecidableEq F] [NeZero n] {hn : n ∣ Fintype.card F} (S : Sel F n hn)"
+  ],
+  "docstring": "**Uniform content gives a uniform sample**: summing a function of the sample the registers\ncarry over all vectors is summing it over all samples, `q^{|ι| - (2n+1)}` times.",
+  "module": "MIPRE.Background.LIDT.Presentation",
+  "module_doc": "/-!\n# The seeded low-degree questions as CL functions, on any registers\n\nThe paper's typed CL functions `L_Point`, `L_ALine`, `L_DLine` (`ldt.tex`, `eq:cl-ptf` to\n`eq:cl-dlnf`) act on three registers of an ambient space: a point register `V_pt ≅ F^n`, a\ncoordinate (seed) register `V_coord ≅ F` and a direction register `V_dir ≅ F^n`. The answer-reduced\nsampler (`sec:ar-verifier`) uses six copies of them on *overlapping* registers of one ambient\nspace, so the registers are data here: `Regs ι n` places them in the coordinates `ι` of the\nambient space by two injections and a coordinate.\n\nEvery type gets a three-level presentation (`pres`), the levels being the seed, then the\ndirection, then everything else; the paper's one- and two-level functions are the same with\ntrivial levels, as in `QLD.PauliCL.presentation`. The presentations are exact on the whole space\n(`pres_exactlyOn`), and their full evaluation, read back through the registers (`questionOf`), is\nthe seeded test's question `LIDT.CL.Sample.question` for the sample the registers carry\n(`questionOf_eval`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Presentation.lean#L381-L401",
+  "source_path": "MIPRE/Background/LIDT/Presentation.lean",
+  "lines": [
+   381,
+   401
+  ],
+  "blueprint": [
+   {
+    "label": "def:ar-pcp-sampler",
+    "env": "definition",
+    "title": "The PCP sampler of answer reduction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.sum_comp_injective"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.CL.Regs.pres_eval",
+  "source_name": "MIPRE.LIDT.CL.Regs.pres_eval",
+  "formal_statement": "theorem MIPRE.LIDT.CL.Regs.pres_eval (t : Ty) (x : ι → F) :\n    (R.pres S t).eval x = R.embedQ S ((R.sampleOf S t x).question hn t) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.CL",
+   "open MIPRE.LIDT.CL.Regs",
+   "open Finset MIPRE.CL",
+   "variable {ι : Type*} [DecidableEq ι] [Fintype ι] {n : ℕ} (R : Regs ι n)",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [NeZero n] {hn : n ∣ Fintype.card F}"
+  ],
+  "docstring": "**The presentation's output is the embedding of the question it computes.**",
+  "module": "MIPRE.Background.LIDT.PresentationEmbed",
+  "module_doc": "/-!\n# The presentation's output is a function of its question\n\nPiece AR-5b of `planning/answer-reduction.md` needs the converse of `Regs.questionOf_eval`: the\nvector a type's presentation outputs is supported on the copy's own registers, and is a fixed\nfunction (`Regs.embedQ`) of the seeded question it computes (`Regs.pres_eval`). So a strategy\nthat answers a question vector of the answer-reduced verifier answers, through `embedQ`, the\nseeded low-degree test's question, and the two games' questions correspond one to one.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/PresentationEmbed.lean#L57-L84",
+  "source_path": "MIPRE/Background/LIDT/PresentationEmbed.lean",
+  "lines": [
+   57,
+   84
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 16,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.CL.Regs.eval_pres",
+  "source_name": "MIPRE.LIDT.CL.Regs.eval_pres",
+  "formal_statement": "theorem MIPRE.LIDT.CL.Regs.eval_pres (t : Ty) (x : ι → F) :\n    (R.pres S t).eval x = R.seedLin t x + R.secondLin S t (x R.coord) x +\n      R.putPt (ptMap S t (x R.coord)\n        (if t = .dline then zeroBelow (S.χ (x R.coord)) (R.dirOf x) else 0) (R.ptOf x)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.CL",
+   "open MIPRE.LIDT.CL.Regs",
+   "open Finset MIPRE.CL MIPRE.CL.CLFun",
+   "variable {ι : Type*} [DecidableEq ι] [Fintype ι] {n : ℕ} (R : Regs ι n)",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [NeZero n] {hn : n ∣ Fintype.card F}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.PresentationQueries",
+  "module_doc": "/-!\n# The queries of the three-level presentation of the seeded test\n\nWhat a sampler program must compute for `Regs.pres` (`MIPRE/Background/LIDT/Presentation`), level\nby level: its marginals (`eval_truncate_one`, `eval_truncate_two`, `eval_pres`), its stage maps\nread off a prefix (`mapOfPrefix_zero`, `mapOfPrefix_one`, `mapOfPrefix_two`) and its factor\nspaces (`factorOfPrefix_zero`, `factorOfPrefix_one`, `factorOfPrefix_two`); from the fourth level\non there is nothing (`mapOfPrefix_three_le`, `factorOfPrefix_three_le`).\n\nThe seed a stage map reads is the prefix's seed coordinate, and the diagonal line's direction is\nthe prefix's direction register, already cut down by the selector.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/PresentationQueries.lean#L96-L116",
+  "source_path": "MIPRE/Background/LIDT/PresentationQueries.lean",
+  "lines": [
+   96,
+   116
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-typed-sampler",
+    "env": "lemma",
+    "title": "The typed answer-reduced sampler",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 19,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.clSoundness_padded",
+  "source_name": "MIPRE.LIDT.Simul.clSoundness_padded",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.clSoundness_padded [NeZero (K + m)] (hm : m ∣ Fintype.card F)\n    (hM : (K + m) ∣ Fintype.card F) (hr : r ≤ K) (hK : 1 ≤ K) (hd : 1 ≤ d)\n    (S : TensorProductStrategy (clGame (d := d) (ldc := r) hm)) (ε : ℝ) (hε : 0 ≤ ε)\n    (hS : 1 - ε ≤ S.value) :\n    ∃ GA : ProjectiveMeasurement Unit (Fin r → LowIndDegPoly (F := F) (m := m) (d := d))\n        (Matrix (Fin S.dA) (Fin S.dA) ℂ),\n    ∃ GB : ProjectiveMeasurement Unit (Fin r → LowIndDegPoly (F := F) (m := m) (d := d))\n        (Matrix (Fin S.dB) (Fin S.dB) ℂ),\n      inconsistency (uniform (Point F m)) S.ψ (tuplePOVMA hm S) (evalTuplePOVM GB)\n          ≤ deltaCL (Fintype.card F) (K + m) d (9 * (K + 1) * ε)\n            + (K + m) * d / Fintype.card F ∧\n        inconsistency (uniform (Point F m)) S.ψ (evalTuplePOVM GA) (tuplePOVMB hm S)\n          ≤ deltaCL (Fintype.card F) (K + m) d (9 * (K + 1) * ε)\n            + (K + m) * d / Fintype.card F ∧\n        inconsistency (uniform Unit) S.ψ (fun _ => GA.toPOVM ()) (fun _ => GB.toPOVM ())\n          ≤ deltaCL (Fintype.card F) (K + m) d (9 * (K + 1) * ε) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LIDT.CL MIPRE.LIDT.Adapter Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {K m d r : ℕ} [NeZero m]"
+  ],
+  "docstring": "**The simultaneous contract, at a padding `K ≥ r`.**",
+  "module": "MIPRE.Background.LIDT.Simultaneous",
+  "module_doc": "/-!\n# Quantum soundness of the seeded CL test with several codewords\n\nBlueprint `thm:lidt-cl-soundness`, through `lem:lidt-ldc` and `lem:lidt-ldc-error`: the\nsimultaneous contract for `r` codewords, from the single-codeword theorem\n`MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL`.\n\nThe chain is three steps. A strategy for the test with `r` codewords in `m` variables is played\nas one for the test with one codeword in `M = K + m` variables (`MIPRE/Background/LIDT/Padding`),\nfailing at most `9 (K + 1)` times as often; the single-codeword theorem applies to it; and the\nextraction of `MIPRE/Background/LIDT/Extraction` reads `r`-tuples of polynomials in the original\n`m` variables off its measurements, at an additive cost `M d / q` on the two point conclusions.\n`clSoundness_padded` is the three steps at any `K ≥ r`.\n\n## Choosing `M`, and the error\n\n`M` is the least power of two at least `m + r`, so that `M ∣ q` when `q` is a power of two and\n`m + r ≤ q`, and `M ≤ 2 (m + r) ≤ 4 m r`. The error is then absorbed into\n`δ_sim = a (d m r)^a (ε^b + q^{-b} + 2^{-b m d})` with `b` the single-codeword exponent and `a`\na (large, explicit) constant: `M ≤ 4 m r` controls the polynomial factor, `x^b ≤ x` for `x ≥ 1`\nthe failure blow-up, and `M ≥ m` the exponential term. When `m + r > q` there is no room to pad,\nand the bound is at least one, so any measurements do (`clSoundness`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Simultaneous.lean#L43-L74",
+  "source_path": "MIPRE/Background/LIDT/Simultaneous.lean",
+  "lines": [
+   43,
+   74
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc",
+    "env": "lemma",
+    "title": "Several codewords: the simultaneity reduction",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.lidtError_le_deltaCL",
+   "MIPRE.LIDT.Adapter.clSoundness_ldc_one",
+   "MIPRE.LIDT.CL.card_div_pos",
+   "MIPRE.LIDT.Simul.extracted_conclusions",
+   "MIPRE.LIDT.Simul.eval_linPoly_padB",
+   "MIPRE.LIDT.Simul.accepts_rmap",
+   "MIPRE.LIDT.Simul.sum_mu_qmap_le",
+   "MIPRE.POVM.ext'",
+   "MIPRE.POVM.map_map",
+   "MIPRE.TensorProductStrategy.exists_one_sub_value_adapt_le"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.padM_le",
+  "source_name": "MIPRE.LIDT.Simul.padM_le",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.padM_le (hm1 : 1 ≤ m) (hr : 1 ≤ r) : padM m r ≤ 2 * (m + r) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LIDT.CL MIPRE.LIDT.Adapter Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {K m d r : ℕ} [NeZero m]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.Simultaneous",
+  "module_doc": "/-!\n# Quantum soundness of the seeded CL test with several codewords\n\nBlueprint `thm:lidt-cl-soundness`, through `lem:lidt-ldc` and `lem:lidt-ldc-error`: the\nsimultaneous contract for `r` codewords, from the single-codeword theorem\n`MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL`.\n\nThe chain is three steps. A strategy for the test with `r` codewords in `m` variables is played\nas one for the test with one codeword in `M = K + m` variables (`MIPRE/Background/LIDT/Padding`),\nfailing at most `9 (K + 1)` times as often; the single-codeword theorem applies to it; and the\nextraction of `MIPRE/Background/LIDT/Extraction` reads `r`-tuples of polynomials in the original\n`m` variables off its measurements, at an additive cost `M d / q` on the two point conclusions.\n`clSoundness_padded` is the three steps at any `K ≥ r`.\n\n## Choosing `M`, and the error\n\n`M` is the least power of two at least `m + r`, so that `M ∣ q` when `q` is a power of two and\n`m + r ≤ q`, and `M ≤ 2 (m + r) ≤ 4 m r`. The error is then absorbed into\n`δ_sim = a (d m r)^a (ε^b + q^{-b} + 2^{-b m d})` with `b` the single-codeword exponent and `a`\na (large, explicit) constant: `M ≤ 4 m r` controls the polynomial factor, `x^b ≤ x` for `x ≥ 1`\nthe failure blow-up, and `M ≥ m` the exponential term. When `m + r > q` there is no room to pad,\nand the bound is at least one, so any measurements do (`clSoundness`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Simultaneous.lean#L83-L98",
+  "source_path": "MIPRE/Background/LIDT/Simultaneous.lean",
+  "lines": [
+   83,
+   98
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-error",
+    "env": "lemma",
+    "title": "Absorbing the simultaneous reduction's error",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.deltaCL_padded_le",
+  "source_name": "MIPRE.LIDT.Simul.deltaCL_padded_le",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.deltaCL_padded_le (hm1 : 1 ≤ m) (hd : 1 ≤ d) (hr : 1 ≤ r) {q M : ℕ} (hq : 1 ≤ q)\n    (hmM : m ≤ M) (hMr : M ≤ 4 * (m * r)) {K : ℕ} (hKM : K + 1 ≤ M) {ε : ℝ} (hε : 0 ≤ ε) :\n    deltaCL q M d (9 * (K + 1) * ε) + M * d / q ≤ deltaSim q m d r ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LIDT.CL MIPRE.LIDT.Adapter Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {K m d r : ℕ} [NeZero m]"
+  ],
+  "docstring": "**Absorbing the padded chain's error** (blueprint `lem:lidt-ldc-error`).",
+  "module": "MIPRE.Background.LIDT.Simultaneous",
+  "module_doc": "/-!\n# Quantum soundness of the seeded CL test with several codewords\n\nBlueprint `thm:lidt-cl-soundness`, through `lem:lidt-ldc` and `lem:lidt-ldc-error`: the\nsimultaneous contract for `r` codewords, from the single-codeword theorem\n`MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL`.\n\nThe chain is three steps. A strategy for the test with `r` codewords in `m` variables is played\nas one for the test with one codeword in `M = K + m` variables (`MIPRE/Background/LIDT/Padding`),\nfailing at most `9 (K + 1)` times as often; the single-codeword theorem applies to it; and the\nextraction of `MIPRE/Background/LIDT/Extraction` reads `r`-tuples of polynomials in the original\n`m` variables off its measurements, at an additive cost `M d / q` on the two point conclusions.\n`clSoundness_padded` is the three steps at any `K ≥ r`.\n\n## Choosing `M`, and the error\n\n`M` is the least power of two at least `m + r`, so that `M ∣ q` when `q` is a power of two and\n`m + r ≤ q`, and `M ≤ 2 (m + r) ≤ 4 m r`. The error is then absorbed into\n`δ_sim = a (d m r)^a (ε^b + q^{-b} + 2^{-b m d})` with `b` the single-codeword exponent and `a`\na (large, explicit) constant: `M ≤ 4 m r` controls the polynomial factor, `x^b ≤ x` for `x ≥ 1`\nthe failure blow-up, and `M ≥ m` the exponential term. When `m + r > q` there is no room to pad,\nand the bound is at least one, so any measurements do (`clSoundness`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Simultaneous.lean#L135-L235",
+  "source_path": "MIPRE/Background/LIDT/Simultaneous.lean",
+  "lines": [
+   135,
+   235
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-error",
+    "env": "lemma",
+    "title": "Absorbing the simultaneous reduction's error",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 6,
+  "prooflines": 96,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.one_le_deltaSim",
+  "source_name": "MIPRE.LIDT.Simul.one_le_deltaSim",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.one_le_deltaSim (hm1 : 1 ≤ m) (hd : 1 ≤ d) (hr : 1 ≤ r) {q : ℕ} (hq : 1 ≤ q)\n    (hqmr : q < m + r) {ε : ℝ} (hε : 0 ≤ ε) : 1 ≤ deltaSim q m d r ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LIDT.CL MIPRE.LIDT.Adapter Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {K m d r : ℕ} [NeZero m]"
+  ],
+  "docstring": "In the trivial regime the error is at least one.",
+  "module": "MIPRE.Background.LIDT.Simultaneous",
+  "module_doc": "/-!\n# Quantum soundness of the seeded CL test with several codewords\n\nBlueprint `thm:lidt-cl-soundness`, through `lem:lidt-ldc` and `lem:lidt-ldc-error`: the\nsimultaneous contract for `r` codewords, from the single-codeword theorem\n`MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL`.\n\nThe chain is three steps. A strategy for the test with `r` codewords in `m` variables is played\nas one for the test with one codeword in `M = K + m` variables (`MIPRE/Background/LIDT/Padding`),\nfailing at most `9 (K + 1)` times as often; the single-codeword theorem applies to it; and the\nextraction of `MIPRE/Background/LIDT/Extraction` reads `r`-tuples of polynomials in the original\n`m` variables off its measurements, at an additive cost `M d / q` on the two point conclusions.\n`clSoundness_padded` is the three steps at any `K ≥ r`.\n\n## Choosing `M`, and the error\n\n`M` is the least power of two at least `m + r`, so that `M ∣ q` when `q` is a power of two and\n`m + r ≤ q`, and `M ≤ 2 (m + r) ≤ 4 m r`. The error is then absorbed into\n`δ_sim = a (d m r)^a (ε^b + q^{-b} + 2^{-b m d})` with `b` the single-codeword exponent and `a`\na (large, explicit) constant: `M ≤ 4 m r` controls the polynomial factor, `x^b ≤ x` for `x ≥ 1`\nthe failure blow-up, and `M ≥ m` the exponential term. When `m + r > q` there is no room to pad,\nand the bound is at least one, so any measurements do (`clSoundness`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Simultaneous.lean#L237-L275",
+  "source_path": "MIPRE/Background/LIDT/Simultaneous.lean",
+  "lines": [
+   237,
+   275
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-error",
+    "env": "lemma",
+    "title": "Absorbing the simultaneous reduction's error",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 4,
+  "prooflines": 35,
+  "is_target": false
+ }
+]

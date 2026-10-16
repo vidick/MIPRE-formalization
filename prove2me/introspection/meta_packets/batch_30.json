@@ -1,0 +1,680 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.HonestMagicSquare.constraint_disagreement",
+  "source_name": "MIPRE.Introspection.HonestMagicSquare.constraint_disagreement",
+  "formal_statement": "theorem MIPRE.Introspection.HonestMagicSquare.constraint_disagreement {A B : Matrix I I ℂ}\n    (hA : IsObservable A) (hB : IsObservable B) (hAB : A * B = -(B * A))\n    (c : Fin layout.r) (a : Fin 3 → ZMod 2) (j : Fin 3) (b : ZMod 2)\n    (hab : a j ≠ b) : constraintOp A B c a * variableOp A B (cellIndex c j) b = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.HonestMagicSquare",
+   "open Matrix Finset MIPRE.LCS MIPRE.LCS.MagicSquare",
+   "open scoped Kronecker",
+   "variable {I : Type*} [Fintype I] [DecidableEq I]"
+  ],
+  "docstring": "A disagreement on an incident cell has zero joint effect.",
+  "module": "MIPRE.Foundations.Introspection.HonestMagicSquare",
+  "module_doc": "/-! # The Magic Square extension of an arbitrary anticommuting pair\n\nThis is the concrete operator construction needed by the honest Pauli test.\nIt adds one qubit and retains the original observables at cells zero and four.\nThe row and column identities use the actual Magic Square layout and parity.\nNo game completeness statement is assumed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestMagicSquare.lean#L284-L321",
+  "source_path": "MIPRE/Foundations/Introspection/HonestMagicSquare.lean",
+  "lines": [
+   284,
+   321
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.HonestMagicSquare.grid_isObservable",
+   "MIPRE.Introspection.HonestMagicSquare.cells_commute",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.LCS.isMeasurementSystem_observableToProjector"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.parsedCoreOp_isPVM",
+  "source_name": "MIPRE.Introspection.Honest.parsedCoreOp_isPVM",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.parsedCoreOp_isPVM (t : CoreType) : IsPVM (parsedCoreOp (PA := PA) L D R t) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {F ι A PA : Type*} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.HonestParsed",
+  "module_doc": "/-! # Honest measurements on the complete parsed-answer alphabet\n\nThe actual core, Read and Hide operators act on one common register/source\nspace. Wrong constructors have zero effect. This retains every answer label,\ngives genuine PVMs, and makes the Introspect/Read operator tests apply without\na promise that the reported constructors are well formed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestParsed.lean#L66-L83",
+  "source_path": "MIPRE/Foundations/Introspection/HonestParsed.lean",
+  "lines": [
+   66,
+   83
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-honest-parsed",
+    "env": "lemma",
+    "title": "Honest operators on the complete parsed alphabet",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.conditionalReadout_isPVM"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.parsedReadOp_isPVM",
+  "source_name": "MIPRE.Introspection.Honest.parsedReadOp_isPVM",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.parsedReadOp_isPVM (w : Bool) (h : (L w).SupportedOn Finset.univ) :\n    IsPVM (parsedReadOp (PA := PA) L D R w h) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {F ι A PA : Type*} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.HonestParsed",
+  "module_doc": "/-! # Honest measurements on the complete parsed-answer alphabet\n\nThe actual core, Read and Hide operators act on one common register/source\nspace. Wrong constructors have zero effect. This retains every answer label,\ngives genuine PVMs, and makes the Introspect/Read operator tests apply without\na promise that the reported constructors are well formed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestParsed.lean#L85-L104",
+  "source_path": "MIPRE/Foundations/Introspection/HonestParsed.lean",
+  "lines": [
+   85,
+   104
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-honest-parsed",
+    "env": "lemma",
+    "title": "Honest operators on the complete parsed alphabet",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.linear_measurements_commute",
+   "MIPRE.Introspection.linear_measurement_isPVM",
+   "MIPRE.Introspection.registerOp_isPVM",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.parsedHideOp_isPVM",
+  "source_name": "MIPRE.Introspection.Honest.parsedHideOp_isPVM",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.parsedHideOp_isPVM (w : Bool) (k : ℕ) (h : (L w).SupportedOn Finset.univ) :\n    IsPVM (parsedHideOp (PA := PA) L D R w k h) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {F ι A PA : Type*} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.HonestParsed",
+  "module_doc": "/-! # Honest measurements on the complete parsed-answer alphabet\n\nThe actual core, Read and Hide operators act on one common register/source\nspace. Wrong constructors have zero effect. This retains every answer label,\ngives genuine PVMs, and makes the Introspect/Read operator tests apply without\na promise that the reported constructors are well formed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestParsed.lean#L106-L127",
+  "source_path": "MIPRE/Foundations/Introspection/HonestParsed.lean",
+  "lines": [
+   106,
+   127
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-honest-parsed",
+    "env": "lemma",
+    "title": "Honest operators on the complete parsed alphabet",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.linear_measurements_commute",
+   "MIPRE.Introspection.linear_measurement_isPVM",
+   "MIPRE.Introspection.registerOp_isPVM",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.parsedPauliOp_isPVM",
+  "source_name": "MIPRE.Introspection.Honest.parsedPauliOp_isPVM",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.parsedPauliOp_isPVM (M : PA → Matrix I I ℂ) (hM : IsPVM M) :\n    IsPVM (parsedPauliOp (V := V) (A := A) M) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {I V A PA : Type*} [Fintype I] [DecidableEq I]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.HonestPauliEdges",
+  "module_doc": "/-! # Honest Pauli anchor edges on every parsed answer\n\nThe X and Z effects below are the genuine full-register basis measurements.\nThey leave the original strategy's auxiliary register unchanged. This file\nconnects them to the same parsed Sample and Hide effects used in the complete\nauxiliary construction, including all malformed answer constructors.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestPauliEdges.lean#L33-L54",
+  "source_path": "MIPRE/Foundations/Introspection/HonestPauliEdges.lean",
+  "lines": [
+   33,
+   54
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.hideOp_zero_eq_firstHideOp",
+  "source_name": "MIPRE.Introspection.Honest.hideOp_zero_eq_firstHideOp",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.hideOp_zero_eq_firstHideOp (P : CL.CLFun F ι ℓ)\n    (h : P.SupportedOn Finset.univ) (a : HideLabel F ι) :\n    hideOp P 0 h a = firstHideOp P a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "The zero-stage recursive Hide PVM is exactly the ordinary full-register X coarsening.",
+  "module": "MIPRE.Foundations.Introspection.HonestPauliRegister",
+  "module_doc": "/-! # The first honest Hide measurement in the full Pauli register\n\nThe recursive construction uses the subtype of the active register as its\nbasis. At the full register this is precisely the ordinary Pauli-X coarse\nmeasurement, after the explicit computational-basis relabelling.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestPauliRegister.lean#L45-L59",
+  "source_path": "MIPRE/Foundations/Introspection/HonestPauliRegister.lean",
+  "lines": [
+   45,
+   59
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-honest-full-auxiliary",
+    "env": "lemma",
+    "title": "Perfect PCC strategy for the full auxiliary game",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.Honest.pauliX_entry"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.readRegister_entry_nonzero",
+  "source_name": "MIPRE.Introspection.Honest.readRegister_entry_nonzero",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.readRegister_entry_nonzero {ℓ : ℕ} (P : CL.CLFun F ι ℓ)\n    (V : Finset ι) (h : P.SupportedOn V) (a : ReadLabel F ι) (x x' : V → F)\n    (ha : readRegister P V h a x x' ≠ 0) : P.eval (insertRegister V x) = a.1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "A nonzero Read entry has the claimed CL question on its computational row.",
+  "module": "MIPRE.Foundations.Introspection.HonestRead",
+  "module_doc": "/-! # Correctness of the adaptive honest Read measurement\n\nThe adaptive register measurement refines the actual CL question readout.\nConsequently attaching the original question-dependent answer measurement gives\nthe honest Read PVM and perfect commutation and acceptance on Introspect/Read.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestRead.lean#L55-L80",
+  "source_path": "MIPRE/Foundations/Introspection/HonestRead.lean",
+  "lines": [
+   55,
+   80
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.readout_eq_synOf"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.introspect_read_mul",
+  "source_name": "MIPRE.Introspection.Honest.introspect_read_mul",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.introspect_read_mul (w : Bool) (h : (L w).SupportedOn Finset.univ)\n    (ya : (ι → F) × A) (v : ReadLabel F ι × A) :\n    coreOp L D R (false, w) ya * fullReadOp L D R w h v =\n      if ya = (v.1.1, v.2) then fullReadOp L D R w h v else 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F ι A : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "The Introspect/Read product selects exactly equal questions and original answers.",
+  "module": "MIPRE.Foundations.Introspection.HonestReading",
+  "module_doc": "/-! # The full honest Read measurement and the reading edge\n\nThe auxiliary answer is measured using the original strategy at the question\nreported by the adaptive register measurement. Its marginal is exactly the\nhonest Introspect measurement, on the full answer alphabet.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestReading.lean#L43-L59",
+  "source_path": "MIPRE/Foundations/Introspection/HonestReading.lean",
+  "lines": [
+   43,
+   59
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.Honest.readRegister_entry_nonzero",
+   "MIPRE.IsPVM.orthogonal"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.pauliX_entry",
+  "source_name": "MIPRE.Introspection.Honest.pauliX_entry",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.pauliX_entry (e x y : I → F) :\n    proj wX e x y = (Fintype.card (I → F) : ℂ)⁻¹ * sgn (trDot (x + y) e) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F I J K : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.HonestXCoordinates",
+  "module_doc": "/-! # Pauli-X projectors under the honest register split\n\nThe stopping measurement in Hide uses the X basis of the active register.\nThese identities expose its tensor factors in the coordinate split used by\nthe adaptive CL recursion.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HonestXCoordinates.lean#L25-L40",
+  "source_path": "MIPRE/Foundations/Introspection/HonestXCoordinates.lean",
+  "lines": [
+   25,
+   40
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.isometricPOVM_map_mats_eq",
+  "source_name": "MIPRE.Introspection.isometricPOVM_map_mats_eq",
+  "formal_statement": "theorem MIPRE.Introspection.isometricPOVM_map_mats_eq (V : Matrix R H ℂ) (hV : Vᴴ * V = 1)\n    (a₀ : A) (M : POVM A H) (hM : IsPVM (fun a => (M.mats a).val)) (f : A → B) (b : B) :\n    (((isometricPOVM V hV a₀ M hM).map f).mats b).val =\n      isometricEffect V (f a₀) (fun b => ((M.map f).mats b).val) b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Matrix Finset Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {H R A B : Type*} [Fintype H] [DecidableEq H]"
+  ],
+  "docstring": "Coarse-graining a completed image measurement is the image of the\ncoarse-graining, with the same complement placed at the mapped default.",
+  "module": "MIPRE.Foundations.Introspection.IsometricCompletionError",
+  "module_doc": "/-! # The cost of completing isometric image measurements\n\nThe extracted ideal state need not lie exactly in the isometries' images.\nIts image-complement mass is bounded by its squared distance to the actual\nembedded state. Completing an image PVM at one outcome therefore adds only\na dimension-independent error, even when primitive estimates are stated on\nthe ideal state.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/IsometricCompletionError.lean#L45-L63",
+  "source_path": "MIPRE/Foundations/Introspection/IsometricCompletionError.lean",
+  "lines": [
+   45,
+   63
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_isometric_images",
+  "source_name": "MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_isometric_images",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_isometric_images\n    (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)\n    (hL : ∀ w, (L w).ExactlyOn univ)\n    (projectPauli : PauliAnswer → ι → F)\n    (D : (ι → F) → (ι → F) → A → A → Bool)\n    (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →\n      PauliAnswer → PauliAnswer → Bool)\n    (G : Game (ι → F) (ι → F) A A)\n    (hμ : ∀ x y, G.μ x y = CL.clDist (L false).eval (L true).eval x y)\n    (hD : G.D = D) (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)\n    (ψ : H₀ × K₀ → ℂ) (hψ : ‖evec ψ‖ = 1)\n    (VA : Matrix ((ι → F) × H) H₀ ℂ) (VB : Matrix ((ι → F) × K) K₀ ℂ)\n    (hVA : VAᴴ * VA = 1) (hVB : VBᴴ * VB = 1)\n    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) H₀)\n    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) K₀)\n    (hMA : ∀ q, IsPVM (fun a => ((MA q).mats a).val))\n    (hMB : ∀ q, IsPVM (fun a => ((MB q).mats a).val))\n    (qX qZ : κ → ZMod 2)\n    (hqX : ∀ z, (P X).eval z = qX) (hqZ : ∀ z, (P Z).eval z = qZ)\n    {t : ℝ} (ht : 0 ≤ t)\n    (hstate : ‖evec (isometricState VA VB ψ - registerState (ι → F) ξ)‖ ^ 2 ≤ t)\n    (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP) ψ MA MB ≤ t)\n    (hX : ∑ x, stateSqNorm (registerState (ι → F) ξ)\n      (isometricImage VA\n        ((((MA (QuestionType.pauli X, qX)).map (pauliProjection projectPauli)).mats x).val) -\n        (aOp (Honest.pauliXReadout x) : Matrix ((ι → F) × H) _ ℂ)) ≤ t)\n    (hZ : ∑ z, snorm (registerState (ι → F) ξ) (bOp\n      (isometricImage VB\n        ((((MB (QuestionType.pauli Z, qZ)).map (pauliProjection projectPauli)).mats z).val) -\n        (aOp (readout (some : (ι → F) → Option (ι → F)) z) :\n          Matrix ((ι → F) × K) _ ℂ))) ^ 2 ≤ t) :\n    1 - extractedSoundnessCoefficient ℓ (TypeGraph.edges E X Z ℓ).card *\n      iteratedRoot (6 * ℓ + 1) t ≤ quantumValue G := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {F ι A H K : Type u} {H₀ K₀ PauliType PauliAnswer κ : Type*}"
+  ],
+  "docstring": "The complete finite-game soundness argument with the original strategy\nand actual local isometries. Primitive image estimates and the state bound\nare the only extraction inputs; all subsequent strategies are constructed.",
+  "module": "MIPRE.Foundations.Introspection.IsometricSoundness",
+  "module_doc": "/-! # Introspection soundness from local-isometry image estimates\n\nThis assembles the actual transported strategy and its image-complement\ncompletion. Primitive estimates can be stated on the ideal register state,\nas in Pauli extraction, for the image effects of the original measurements.\nNo future normalized measurement or transported game-success assumption is\nrequired. The full projected answer alphabet includes malformed outcomes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/IsometricSoundness.lean#L30-L145",
+  "source_path": "MIPRE/Foundations/Introspection/IsometricSoundness.lean",
+  "lines": [
+   30,
+   145
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-valid-isometric-soundness",
+    "env": "lemma",
+    "title": "Finite soundness from the valid-answer extraction interface",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.norm_evec_expVec",
+   "MIPRE.Introspection.isometricPOVM_map_mats_eq",
+   "MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_primitive_pauli",
+   "MIPRE.Introspection.povmValue_state_stability",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_sub",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.bnd_one_of_conjTranspose_mul_self_le",
+   "MIPRE.aOp_zero"
+  ],
+  "pasted_helpers": 51,
+  "prooflines": 76,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.subspaceTrace_eq_zero_iff",
+  "source_name": "MIPRE.Introspection.subspaceTrace_eq_zero_iff",
+  "formal_statement": "theorem MIPRE.Introspection.subspaceTrace_eq_zero_iff (S : Submodule F (Fin n → F)) (c : Fin n → F) :\n    subspaceTrace S c = 0 ↔ c ∈ CL.perp S := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset MIPRE.Weyl Classical",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : ℕ}"
+  ],
+  "docstring": "The trace annihilator of an `F`-subspace is its ordinary dot-product perpendicular.",
+  "module": "MIPRE.Foundations.Introspection.LinearMeasurement",
+  "module_doc": "/-!\n# Fourier formulas for a linear-map measurement\n\nThe two identities of `lem:pauli-linear-fourier`, in characteristic two. The\nformulas hold for either Weyl family, and more generally for any operator family\nwith its Fourier-defined spectral operators. Orthogonality is the actual dot\nproduct perpendicular subspace, not a canonical direct-sum complement.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/LinearMeasurement.lean#L36-L51",
+  "source_path": "MIPRE/Foundations/Introspection/LinearMeasurement.lean",
+  "lines": [
+   36,
+   51
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-linear-fourier",
+    "env": "lemma",
+    "title": "Pauli operators against a linear-map measurement",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.linear_measurement_fourier",
+  "source_name": "MIPRE.Introspection.linear_measurement_fourier",
+  "formal_statement": "theorem MIPRE.Introspection.linear_measurement_fourier\n    (w : (Fin n → F) → Matrix (Fin n → F) (Fin n → F) ℂ)\n    (L : (Fin n → F) →ₗ[F] (Fin n → F)) (v : Fin n → F) (hv : v ∈ CL.perp L.ker) :\n    w v = ∑ a : Fin n → F, sgn (trDot v (linearPreimage L a)) • synOf w L a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset MIPRE.Weyl Classical",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : ℕ}"
+  ],
+  "docstring": "Expand an allowed Pauli operator in the projectors of the linear-map measurement.",
+  "module": "MIPRE.Foundations.Introspection.LinearMeasurement",
+  "module_doc": "/-!\n# Fourier formulas for a linear-map measurement\n\nThe two identities of `lem:pauli-linear-fourier`, in characteristic two. The\nformulas hold for either Weyl family, and more generally for any operator family\nwith its Fourier-defined spectral operators. Orthogonality is the actual dot\nproduct perpendicular subspace, not a canonical direct-sum complement.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/LinearMeasurement.lean#L90-L106",
+  "source_path": "MIPRE/Foundations/Introspection/LinearMeasurement.lean",
+  "lines": [
+   90,
+   106
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-linear-fourier",
+    "env": "lemma",
+    "title": "Pauli operators against a linear-map measurement",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Weyl.eq_sum_proj"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.linear_measurement_fourier_inverse",
+  "source_name": "MIPRE.Introspection.linear_measurement_fourier_inverse",
+  "formal_statement": "theorem MIPRE.Introspection.linear_measurement_fourier_inverse\n    (w : (Fin n → F) → Matrix (Fin n → F) (Fin n → F) ℂ)\n    (L : (Fin n → F) →ₗ[F] (Fin n → F)) (x : Fin n → F) :\n    (Fintype.card (CL.perp L.ker) : ℂ)⁻¹ •\n      ∑ v : CL.perp L.ker, sgn (trDot v.1 x) • w v.1 = synOf w L (L x) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset MIPRE.Weyl Classical",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : ℕ}"
+  ],
+  "docstring": "Recover the projector on a fiber by averaging only over the kernel's perpendicular.",
+  "module": "MIPRE.Foundations.Introspection.LinearMeasurement",
+  "module_doc": "/-!\n# Fourier formulas for a linear-map measurement\n\nThe two identities of `lem:pauli-linear-fourier`, in characteristic two. The\nformulas hold for either Weyl family, and more generally for any operator family\nwith its Fourier-defined spectral operators. Orthogonality is the actual dot\nproduct perpendicular subspace, not a canonical direct-sum complement.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/LinearMeasurement.lean#L108-L134",
+  "source_path": "MIPRE/Foundations/Introspection/LinearMeasurement.lean",
+  "lines": [
+   108,
+   134
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-linear-fourier",
+    "env": "lemma",
+    "title": "Pauli operators against a linear-map measurement",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.subspaceTrace_eq_zero_iff",
+   "MIPRE.sgn_add",
+   "MIPRE.Weyl.eq_sum_proj",
+   "MIPRE.Weyl.sum_sgn_linear"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.linear_measurement_isPVM",
+  "source_name": "MIPRE.Introspection.linear_measurement_isPVM",
+  "formal_statement": "theorem MIPRE.Introspection.linear_measurement_isPVM\n    (w : (Fin n → F) → Matrix (Fin n → F) (Fin n → F) ℂ) (hw : IsWeylFamily w)\n    (L : (Fin n → F) →ₗ[F] (Fin n → F)) : IsPVM (synOf w L) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset MIPRE.Weyl Classical",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : ℕ}"
+  ],
+  "docstring": "Reading any linear map of a Weyl eigenbasis outcome is a projective measurement.",
+  "module": "MIPRE.Foundations.Introspection.Measurements",
+  "module_doc": "/-! # Projective sampling and joint hiding measurements -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/Measurements.lean#L26-L30",
+  "source_path": "MIPRE/Foundations/Introspection/Measurements.lean",
+  "lines": [
+   26,
+   30
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-linear-readout-projectivity",
+    "env": "lemma",
+    "title": "Projectivity of sampling and hiding readouts",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryQuotient.directed_mapPauli",
+  "source_name": "MIPRE.Introspection.AuxiliaryQuotient.directed_mapPauli",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryQuotient.directed_mapPauli (t u : QuestionType P ℓ)\n    (a b : ParsedAnswer (ι → F) A PA)\n    (hp : ∀ p c, (p = X ∨ p = Z) → t = .inl p → a = .pauli c →\n      π' (f (.inl p) c) = π c)\n    (h : directed L X Z π D t u a b = true) :\n    directed L X Z π' D t u (ParsedAnswer.mapPauli f t a)\n      (ParsedAnswer.mapPauli f u b) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryQuotient",
+   "open Classical",
+   "variable {F ι A PA PB P : Type*} [Field F] [Fintype ι] [DecidableEq ι] {ℓ : ℕ}"
+  ],
+  "docstring": "Only the distinguished Pauli endpoints require projection compatibility.",
+  "module": "MIPRE.Foundations.Introspection.ParsedPauliTransport",
+  "module_doc": "/-! # Changing only the Pauli payload in a parsed answer\n\nThe map may depend on the question label. Auxiliary registers and source\nanswers are unchanged. Endpoint-local projection agreements suffice for all\nmixed checks, and equality consistency survives every deterministic map.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ParsedPauliTransport.lean#L46-L67",
+  "source_path": "MIPRE/Foundations/Introspection/ParsedPauliTransport.lean",
+  "lines": [
+   46,
+   67
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryQuotient.check_mapPauli",
+  "source_name": "MIPRE.Introspection.AuxiliaryQuotient.check_mapPauli",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryQuotient.check_mapPauli\n    (DP : P → P → PA → PA → Bool) (DP' : P → P → PB → PB → Bool)\n    (t u : QuestionType P ℓ) (a b : ParsedAnswer (ι → F) A PA)\n    (hpa : ∀ p c, (p = X ∨ p = Z) → t = .inl p → a = .pauli c →\n      π' (f (.inl p) c) = π c)\n    (hpb : ∀ p c, (p = X ∨ p = Z) → u = .inl p → b = .pauli c →\n      π' (f (.inl p) c) = π c)\n    (hDP : ∀ p q x y, t = .inl p → u = .inl q → a = .pauli x → b = .pauli y →\n      DP p q x y = true → DP' p q (f (.inl p) x) (f (.inl q) y) = true)\n    (h : check L X Z π D DP t u a b = true) :\n    check L X Z π' D DP' t u (ParsedAnswer.mapPauli f t a)\n      (ParsedAnswer.mapPauli f u b) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryQuotient",
+   "open Classical",
+   "variable {F ι A PA PB P : Type*} [Field F] [Fintype ι] [DecidableEq ι] {ℓ : ℕ}"
+  ],
+  "docstring": "A type-dependent Pauli encoding or decoding preserves accepted tuples.",
+  "module": "MIPRE.Foundations.Introspection.ParsedPauliTransport",
+  "module_doc": "/-! # Changing only the Pauli payload in a parsed answer\n\nThe map may depend on the question label. Auxiliary registers and source\nanswers are unchanged. Endpoint-local projection agreements suffice for all\nmixed checks, and equality consistency survives every deterministic map.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ParsedPauliTransport.lean#L69-L94",
+  "source_path": "MIPRE/Foundations/Introspection/ParsedPauliTransport.lean",
+  "lines": [
+   69,
+   94
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.AuxiliaryQuotient.directed_mapPauli"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryQuotient.directed_mapAnswer",
+  "source_name": "MIPRE.Introspection.AuxiliaryQuotient.directed_mapAnswer",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryQuotient.directed_mapAnswer (t u : QuestionType P ℓ)\n    (a b : ParsedAnswer (ι → F) A PA)\n    (hD : ∀ x y c d, a = .pair x c → b = .pair y d →\n      D x y c d = true → D' x y (g c) (g d) = true)\n    (h : directed L X Z π D t u a b = true) :\n    directed L X Z π D' t u (ParsedAnswer.mapAnswer g a)\n      (ParsedAnswer.mapAnswer g b) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryQuotient",
+   "open Classical",
+   "variable {F ι A B PA P : Type*} [Field F] [Fintype ι] [DecidableEq ι] {ℓ : ℕ}"
+  ],
+  "docstring": "Source-predicate compatibility is required only for the actual endpoint payloads.",
+  "module": "MIPRE.Foundations.Introspection.ParsedPauliTransport",
+  "module_doc": "/-! # Changing only the Pauli payload in a parsed answer\n\nThe map may depend on the question label. Auxiliary registers and source\nanswers are unchanged. Endpoint-local projection agreements suffice for all\nmixed checks, and equality consistency survives every deterministic map.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ParsedPauliTransport.lean#L123-L149",
+  "source_path": "MIPRE/Foundations/Introspection/ParsedPauliTransport.lean",
+  "lines": [
+   123,
+   149
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryQuotient.check_mapAnswer",
+  "source_name": "MIPRE.Introspection.AuxiliaryQuotient.check_mapAnswer",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryQuotient.check_mapAnswer (DP : P → P → PA → PA → Bool)\n    (t u : QuestionType P ℓ) (a b : ParsedAnswer (ι → F) A PA)\n    (hD : ∀ x y c d, a = .pair x c → b = .pair y d →\n      D x y c d = true → D' x y (g c) (g d) = true)\n    (hDr : ∀ x y c d, b = .pair x c → a = .pair y d →\n      D x y c d = true → D' x y (g c) (g d) = true)\n    (h : check L X Z π D DP t u a b = true) :\n    check L X Z π D' DP t u (ParsedAnswer.mapAnswer g a)\n      (ParsedAnswer.mapAnswer g b) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryQuotient",
+   "open Classical",
+   "variable {F ι A B PA P : Type*} [Field F] [Fintype ι] [DecidableEq ι] {ℓ : ℕ}"
+  ],
+  "docstring": "In particular, bounded decoding of source answers preserves all accepted checks.",
+  "module": "MIPRE.Foundations.Introspection.ParsedPauliTransport",
+  "module_doc": "/-! # Changing only the Pauli payload in a parsed answer\n\nThe map may depend on the question label. Auxiliary registers and source\nanswers are unchanged. Endpoint-local projection agreements suffice for all\nmixed checks, and equality consistency survives every deterministic map.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ParsedPauliTransport.lean#L151-L172",
+  "source_path": "MIPRE/Foundations/Introspection/ParsedPauliTransport.lean",
+  "lines": [
+   151,
+   172
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.AuxiliaryQuotient.directed_mapAnswer"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AnswerParser.field_append_injective",
+  "source_name": "MIPRE.Introspection.AnswerParser.field_append_injective",
+  "formal_statement": "theorem MIPRE.Introspection.AnswerParser.field_append_injective (a b c d : BitStr)\n    (h : field a ++ c = field b ++ d) : a = b ∧ c = d := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AnswerParser",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial"
+  ],
+  "docstring": "A field terminator distinguishes its endpoint from every encoded payload bit.",
+  "module": "MIPRE.Foundations.Introspection.ParserBits",
+  "module_doc": "/-! # The paper's binary tuple encoding\n\nThese are binary strings inside answers, distinct from ambient `Data` encodings.\nEach payload bit `b` is written `false,b`; each field ends in `true,false`.\nThe polynomial-time candidate reader is deliberately permissive. The answer\nparser checks exact re-encoding before using any candidate.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ParserBits.lean#L36-L50",
+  "source_path": "MIPRE/Foundations/Introspection/ParserBits.lean",
+  "lines": [
+   36,
+   50
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-answer-parser",
+    "env": "lemma",
+    "title": "Executable answer parsing and guarded source calls",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ }
+]

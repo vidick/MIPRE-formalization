@@ -1,0 +1,723 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.QuestionType.card",
+  "source_name": "MIPRE.Introspection.QuestionType.card",
+  "formal_statement": "theorem MIPRE.Introspection.QuestionType.card [Fintype PauliType] (ℓ : ℕ) :\n    Fintype.card (QuestionType PauliType ℓ) = Fintype.card PauliType + 2 * ℓ + 6 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.QuestionType",
+   "variable {PauliType : Type*} {ℓ : ℕ}"
+  ],
+  "docstring": "Introspection contributes exactly `2ℓ + 6` vertices.",
+  "module": "MIPRE.Foundations.Introspection.Types",
+  "module_doc": "/-! # The introspection question types\n\nThe source's type set consists of the Pauli types and two copies of\n`Introspect`, `Sample`, `Read`, and `Hide₁, ..., Hideℓ`. The Pauli type is a\nparameter so the foundational construction can be instantiated with the\nconcrete Pauli test without importing a Background module.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/Types.lean#L100-L104",
+  "source_path": "MIPRE/Foundations/Introspection/Types.lean",
+  "lines": [
+   100,
+   104
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-type-presentation",
+    "env": "lemma",
+    "title": "Introspection type graph and typed CL family",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.submeasurement_extension_mass",
+  "source_name": "MIPRE.Introspection.submeasurement_extension_mass",
+  "formal_statement": "theorem MIPRE.Introspection.submeasurement_extension_mass (ψ : N → ℂ) (hψ : ‖evec ψ‖ = 1)\n    (M C : A → Matrix N N ℂ) (hM : ∀ a, 0 ≤ M a) (hC : ∀ a, 0 ≤ C a)\n    (hCsum : ∑ a, C a ≤ 1) (hMC : ∀ a, M a ≤ C a) :\n    (∑ a, snorm ψ (M a - C a) ^ 2) ≤ 1 - ∑ a, qform ψ (M a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {N A B : Type*} [Fintype N] [DecidableEq N]"
+  ],
+  "docstring": "Extending a positive submeasurement inside another submeasurement\ncosts at most the missing mass. Normalization of the extension is not needed.",
+  "module": "MIPRE.Foundations.Introspection.ValidOutcomeError",
+  "module_doc": "/-! # Recovering all outcomes from valid-outcome extraction estimates\n\nPauli extraction sums only the valid full-register answers. The actual\nintrospection induction also retains every malformed answer. Positivity\nand the submeasurement mass estimate extend the former guarantee to the\nwhole mapped alphabet, without an answer-cardinality factor or a premise\nthat malformed effects vanish.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ValidOutcomeError.lean#L26-L46",
+  "source_path": "MIPRE/Foundations/Introspection/ValidOutcomeError.lean",
+  "lines": [
+   26,
+   46
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-valid-isometric-soundness",
+    "env": "lemma",
+    "title": "Finite soundness from the valid-answer extraction interface",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 13,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.valid_outcome_error_le",
+  "source_name": "MIPRE.Introspection.valid_outcome_error_le",
+  "formal_statement": "theorem MIPRE.Introspection.valid_outcome_error_le (ψ : N → ℂ) (hψ : ‖evec ψ‖ = 1)\n    (M : B → Matrix N N ℂ) (hM : ∀ b, 0 ≤ M b) (hMsum : ∑ b, M b ≤ 1)\n    (f : B → Option A) (v : A → B) (hv : ∀ a, f (v a) = some a)\n    (P : Option A → Matrix N N ℂ) (hP : IsPVM P) (hPnone : P none = 0)\n    {δ : ℝ} (hclose : ∑ a, snorm ψ (M (v a) - P (some a)) ^ 2 ≤ δ) :\n    (∑ a, snorm ψ (fibSum M f a - P a) ^ 2) ≤ 2 * δ + 4 * Real.sqrt δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {N A B : Type*} [Fintype N] [DecidableEq N]"
+  ],
+  "docstring": "Closeness on one correctly labelled raw answer for each valid outcome\ncontrols the complete coarse measurement, including all malformed answers.\nThe ideal measurement has zero effect at the explicit malformed outcome.",
+  "module": "MIPRE.Foundations.Introspection.ValidOutcomeError",
+  "module_doc": "/-! # Recovering all outcomes from valid-outcome extraction estimates\n\nPauli extraction sums only the valid full-register answers. The actual\nintrospection induction also retains every malformed answer. Positivity\nand the submeasurement mass estimate extend the former guarantee to the\nwhole mapped alphabet, without an answer-cardinality factor or a premise\nthat malformed effects vanish.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ValidOutcomeError.lean#L63-L93",
+  "source_path": "MIPRE/Foundations/Introspection/ValidOutcomeError.lean",
+  "lines": [
+   63,
+   93
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-valid-isometric-soundness",
+    "env": "lemma",
+    "title": "Finite soundness from the valid-answer extraction interface",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.submeasurement_extension_mass",
+   "MIPRE.qform_sum_ge_of_close"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.isometric_valid_outcome_alice_error_le",
+  "source_name": "MIPRE.Introspection.isometric_valid_outcome_alice_error_le",
+  "formal_statement": "theorem MIPRE.Introspection.isometric_valid_outcome_alice_error_le (V : Matrix R H ℂ) (hV : Vᴴ * V = 1)\n    (ψ : R × S → ℂ) (hψ : ‖evec ψ‖ = 1) (M : POVM B H)\n    (f : B → Option A) (v : A → B) (hv : ∀ a, f (v a) = some a)\n    (P : Option A → Matrix R R ℂ) (hP : IsPVM P) (hPnone : P none = 0)\n    {δ : ℝ} (hclose : ∑ a, snorm ψ\n      (aOp (isometricImage V (M.mats (v a)).val - P (some a))) ^ 2 ≤ δ) :\n    (∑ a, snorm ψ (aOp (isometricImage V ((M.map f).mats a).val - P a)) ^ 2) ≤\n      2 * δ + 4 * Real.sqrt δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {N A B : Type*} [Fintype N] [DecidableEq N]",
+   "variable {H R S : Type*} [Fintype H] [DecidableEq H]"
+  ],
+  "docstring": "Valid raw-answer estimates for an isometric image imply the complete\nmapped estimate on Alice, including the explicit malformed outcome.",
+  "module": "MIPRE.Foundations.Introspection.ValidOutcomeError",
+  "module_doc": "/-! # Recovering all outcomes from valid-outcome extraction estimates\n\nPauli extraction sums only the valid full-register answers. The actual\nintrospection induction also retains every malformed answer. Positivity\nand the submeasurement mass estimate extend the former guarantee to the\nwhole mapped alphabet, without an answer-cardinality factor or a premise\nthat malformed effects vanish.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ValidOutcomeError.lean#L109-L130",
+  "source_path": "MIPRE/Foundations/Introspection/ValidOutcomeError.lean",
+  "lines": [
+   109,
+   130
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-valid-isometric-soundness",
+    "env": "lemma",
+    "title": "Finite soundness from the valid-answer extraction interface",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.valid_outcome_error_le",
+   "MIPRE.aOp_sub",
+   "MIPRE.aOp_sum",
+   "MIPRE.POVM.sum_val",
+   "MIPRE.aOp_zero",
+   "MIPRE.IsPVM.aOp"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.isometric_valid_outcome_bob_error_le",
+  "source_name": "MIPRE.Introspection.isometric_valid_outcome_bob_error_le",
+  "formal_statement": "theorem MIPRE.Introspection.isometric_valid_outcome_bob_error_le (V : Matrix S H ℂ) (hV : Vᴴ * V = 1)\n    (ψ : R × S → ℂ) (hψ : ‖evec ψ‖ = 1) (M : POVM B H)\n    (f : B → Option A) (v : A → B) (hv : ∀ a, f (v a) = some a)\n    (P : Option A → Matrix S S ℂ) (hP : IsPVM P) (hPnone : P none = 0)\n    {δ : ℝ} (hclose : ∑ a, snorm ψ\n      (bOp (isometricImage V (M.mats (v a)).val - P (some a))) ^ 2 ≤ δ) :\n    (∑ a, snorm ψ (bOp (isometricImage V ((M.map f).mats a).val - P a)) ^ 2) ≤\n      2 * δ + 4 * Real.sqrt δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {N A B : Type*} [Fintype N] [DecidableEq N]",
+   "variable {H R S : Type*} [Fintype H] [DecidableEq H]"
+  ],
+  "docstring": "The corresponding full-outcome estimate on Bob.",
+  "module": "MIPRE.Foundations.Introspection.ValidOutcomeError",
+  "module_doc": "/-! # Recovering all outcomes from valid-outcome extraction estimates\n\nPauli extraction sums only the valid full-register answers. The actual\nintrospection induction also retains every malformed answer. Positivity\nand the submeasurement mass estimate extend the former guarantee to the\nwhole mapped alphabet, without an answer-cardinality factor or a premise\nthat malformed effects vanish.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ValidOutcomeError.lean#L132-L152",
+  "source_path": "MIPRE/Foundations/Introspection/ValidOutcomeError.lean",
+  "lines": [
+   132,
+   152
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-valid-isometric-soundness",
+    "env": "lemma",
+    "title": "Finite soundness from the valid-answer extraction interface",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.valid_outcome_error_le",
+   "MIPRE.POVM.sum_val"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_valid_isometric_images",
+  "source_name": "MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_valid_isometric_images",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_valid_isometric_images\n    (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)\n    (hL : ∀ w, (L w).ExactlyOn univ)\n    (projectPauli : PauliAnswer → ι → F)\n    (validPauli : (ι → F) → PauliAnswer)\n    (hvalid : ∀ x, projectPauli (validPauli x) = x)\n    (D : (ι → F) → (ι → F) → A → A → Bool)\n    (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →\n      PauliAnswer → PauliAnswer → Bool)\n    (G : Game (ι → F) (ι → F) A A)\n    (hμ : ∀ x y, G.μ x y = CL.clDist (L false).eval (L true).eval x y)\n    (hD : G.D = D) (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)\n    (ψ : H₀ × K₀ → ℂ) (hψ : ‖evec ψ‖ = 1)\n    (VA : Matrix ((ι → F) × H) H₀ ℂ) (VB : Matrix ((ι → F) × K) K₀ ℂ)\n    (hVA : VAᴴ * VA = 1) (hVB : VBᴴ * VB = 1)\n    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) H₀)\n    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) K₀)\n    (hMA : ∀ q, IsPVM (fun a => ((MA q).mats a).val))\n    (hMB : ∀ q, IsPVM (fun a => ((MB q).mats a).val))\n    (qX qZ : κ → ZMod 2)\n    (hqX : ∀ z, (P X).eval z = qX) (hqZ : ∀ z, (P Z).eval z = qZ)\n    {t : ℝ} (ht : 0 ≤ t)\n    (hstate : ‖evec (isometricState VA VB ψ - registerState (ι → F) ξ)‖ ≤ t)\n    (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP) ψ MA MB ≤ t)\n    (hX : ∑ x, snorm (registerState (ι → F) ξ) (aOp\n      (isometricImage VA ((MA (QuestionType.pauli X, qX)).mats (.pauli (validPauli x))).val -\n        (aOp (Honest.pauliXReadout (some x)) : Matrix ((ι → F) × H) _ ℂ))) ^ 2 ≤ t)\n    (hZ : ∑ z, snorm (registerState (ι → F) ξ) (bOp\n      (isometricImage VB ((MB (QuestionType.pauli Z, qZ)).mats (.pauli (validPauli z))).val -\n        (aOp (readout (some : (ι → F) → Option (ι → F)) (some z)) :\n          Matrix ((ι → F) × K) _ ℂ))) ^ 2 ≤ t) :\n    1 - validSoundnessCoefficient ℓ (TypeGraph.edges E X Z ℓ).card *\n      iteratedRoot (6 * ℓ + 2) t ≤ quantumValue G := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {F ι A H K : Type u} {H₀ K₀ PauliType PauliAnswer κ : Type*}"
+  ],
+  "docstring": "Complete finite-game soundness from the valid-answer, unsquared-distance\nform of Pauli extraction. No zero-malformed-mass assumption is required.",
+  "module": "MIPRE.Foundations.Introspection.ValidPauliSoundness",
+  "module_doc": "/-! # Finite introspection soundness from valid-answer Pauli extraction\n\nThis is the extraction interface used in the paper: an unsquared state\ndistance and measurement errors summed only over valid full-register\nanswers. Every other raw answer, and the isometric image complement, is\naccounted for by the proof. The local isometries and their estimates are\ninputs; existence of those data is the separate Pauli soundness theorem.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ValidPauliSoundness.lean#L57-L139",
+  "source_path": "MIPRE/Foundations/Introspection/ValidPauliSoundness.lean",
+  "lines": [
+   57,
+   139
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-valid-isometric-soundness",
+    "env": "lemma",
+    "title": "Finite soundness from the valid-answer extraction interface",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.norm_evec_expVec",
+   "MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_isometric_images",
+   "MIPRE.Introspection.readout_isPVM",
+   "MIPRE.Introspection.isometric_valid_outcome_alice_error_le",
+   "MIPRE.Introspection.isometric_valid_outcome_bob_error_le",
+   "MIPRE.aOp_zero",
+   "MIPRE.IsPVM.aOp",
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.isPVM_synOf"
+  ],
+  "pasted_helpers": 20,
+  "prooflines": 44,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.abs_sum_qform_mul_le",
+  "source_name": "MIPRE.Introspection.abs_sum_qform_mul_le",
+  "formal_statement": "theorem MIPRE.Introspection.abs_sum_qform_mul_le (v : N → ℂ) (s : Finset C)\n    (M R : C → Matrix N N ℂ) (hM : ∀ c, (M c)ᴴ = M c) :\n    |∑ c ∈ s, qform v (M c * R c)| ≤\n      Real.sqrt (∑ c ∈ s, snorm v (M c) ^ 2) *\n        Real.sqrt (∑ c ∈ s, snorm v (R c) ^ 2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {N C : Type*} [Fintype N] [DecidableEq N] [Fintype C] [DecidableEq C]"
+  ],
+  "docstring": "Cauchy--Schwarz for a selected set of outcome-indexed operator products.",
+  "module": "MIPRE.Foundations.Introspection.ValueStability",
+  "module_doc": "/-! # Value stability for the introspection induction\n\nThe induction replaces projective measurements using summed squared state\ndistance. The resulting change in test acceptance is dimension independent:\n`2 sqrt(delta)` per party. Summing outcomes before Cauchy--Schwarz avoids any\nloss depending on the size of the introspection answer alphabet.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ValueStability.lean#L37-L56",
+  "source_path": "MIPRE/Foundations/Introspection/ValueStability.lean",
+  "lines": [
+   37,
+   56
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.pvm_event_stability",
+  "source_name": "MIPRE.Introspection.pvm_event_stability",
+  "formal_statement": "theorem MIPRE.Introspection.pvm_event_stability (v : N → ℂ) (hv : ‖evec v‖ = 1)\n    {M R : C → Matrix N N ℂ} (hM : IsPVM M) (hR : IsPVM R)\n    (s : Finset C) {δ : ℝ} (hd : ∑ c, snorm v (M c - R c) ^ 2 ≤ δ) :\n    |(∑ c ∈ s, qform v (M c)) - ∑ c ∈ s, qform v (R c)| ≤ 2 * Real.sqrt δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {N C : Type*} [Fintype N] [DecidableEq N] [Fintype C] [DecidableEq C]"
+  ],
+  "docstring": "Changing a projective measurement by squared distance `delta` changes the\nprobability of any event by at most `2 sqrt(delta)`, with no outcome-count factor.",
+  "module": "MIPRE.Foundations.Introspection.ValueStability",
+  "module_doc": "/-! # Value stability for the introspection induction\n\nThe induction replaces projective measurements using summed squared state\ndistance. The resulting change in test acceptance is dimension independent:\n`2 sqrt(delta)` per party. Summing outcomes before Cauchy--Schwarz avoids any\nloss depending on the size of the introspection answer alphabet.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ValueStability.lean#L58-L93",
+  "source_path": "MIPRE/Foundations/Introspection/ValueStability.lean",
+  "lines": [
+   58,
+   93
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-value-stability",
+    "env": "lemma",
+    "title": "Quantitative measurement and state replacement",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.abs_sum_qform_mul_le"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 30,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.exists_pauli_mixing_varying",
+  "source_name": "MIPRE.Introspection.exists_pauli_mixing_varying",
+  "formal_statement": "theorem MIPRE.Introspection.exists_pauli_mixing_varying\n    (D : X → ℝ) (hD0 : ∀ x, 0 ≤ D x) (hD1 : ∑ x, D x = 1)\n    (L : (x : X) → (Fin (n x) → F) →ₗ[F] (Fin (n x) → F))\n    (ξ : (x : X) → H x × K x → ℂ) (hξ : ∀ x, ‖evec (ξ x)‖ = 1)\n    (M : (x : X) → POVM ((Fin (n x) → F) × A) ((Fin (n x) → F) × H x))\n    (hM : ∀ x, IsPVM (fun p => ((M x).mats p).val))\n    {δ : ℝ} (hδ : ∑ x, D x * mixingError (L x) (ξ x) (M x) ≤ δ) :\n    ∃ Q : (x : X) → (Fin (n x) → F) → POVM A (H x),\n      (∑ x, D x * ∑ p : (Fin (n x) → F) × A, stateSqNorm (eprWithAux (ξ x))\n        (((M x).mats p).val - synOf wZ (L x) p.1 ⊗ₖ ((Q x p.1).mats p.2).val)) ≤\n      2 * δ + 4 * Real.sqrt δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix MIPRE.Weyl Classical",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "Averaged mixing when the retained register and its complement vary with the question.",
+  "module": "MIPRE.Foundations.Introspection.VaryingPauliMixing",
+  "module_doc": "/-! # Pauli mixing in question-dependent coordinate presentations\n\nThe number of sampled coordinates and both ancillary spaces can depend on the\nquestion. This is the form used after splitting a retained register from its\ncomplement. The register's ambient embeddings are not part of this statement.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/VaryingPauliMixing.lean#L27-L52",
+  "source_path": "MIPRE/Foundations/Introspection/VaryingPauliMixing.lean",
+  "lines": [
+   27,
+   52
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-mixing-coordinates",
+    "env": "lemma",
+    "title": "Retained-fibre mixing in coordinate presentations",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.exists_pauli_mixing",
+   "MIPRE.sum_weighted_mul_le_sqrt"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.VerifierSource.padded_hasPerfectPCC",
+  "source_name": "MIPRE.Introspection.VerifierSource.padded_hasPerfectPCC",
+  "formal_statement": "theorem MIPRE.Introspection.VerifierSource.padded_hasPerfectPCC {n Q B : ℕ} (V : Verifier 7)\n    (hs : V.sampler.dim (2^n) ≤ Q) (h : V.HasPerfectPCC (2^n) B) :\n    ∃ R : SyncStrategy (Honest.sourceGame (AuxiliaryDecision.padded V hs)\n        (paddedPredicate V hs B)).doubled,\n      R.IsPCC ∧ R.value = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.VerifierSource",
+   "open MIPRE.CL Classical MIPRE.Introspection.AuxiliaryProgram MIPRE.Introspection.SourcePadding MIPRE.Introspection.SourcePadding.Program"
+  ],
+  "docstring": "The padded source retains a perfect PCC strategy.",
+  "module": "MIPRE.Foundations.Introspection.VerifierSourceGame",
+  "module_doc": "/-! # The bounded verifier as the source of introspection\n\nThe semantic source game has exactly the verifier's distribution and decision\npredicate. Padding preserves perfect PCC strategies and can be removed from\nthe soundness conclusion without any additional error.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/VerifierSourceGame.lean#L48-L67",
+  "source_path": "MIPRE/Foundations/Introspection/VerifierSourceGame.lean",
+  "lines": [
+   48,
+   67
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.CLFun.SupportedOn.eval_directSum",
+   "MIPRE.CL.CLFun.zeroOn_exactlyOn",
+   "MIPRE.CL.pull_proj_compl",
+   "MIPRE.Introspection.Honest.source_commute",
+   "MIPRE.Introspection.SourcePadding.strategy_value",
+   "MIPRE.SampledGame.dist_eq_card"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.fourierOf_pair_mul",
+  "source_name": "MIPRE.fourierOf_pair_mul",
+  "formal_statement": "theorem MIPRE.fourierOf_pair_mul (A B : F → Matrix d d ℂ) (a b : F) :\n    fourierOf (fun v : Fin 2 → F => A (v 0) * B (v 1)) (pairVec a b)\n      = trFourier A a * trFourier B b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {d : Type*} [Fintype d] [DecidableEq d]"
+  ],
+  "docstring": "**The two-field transform of a product family factorizes.** The combined measurement of a\npair of parameters is the product of the two one-parameter measurements --- with no hypothesis, the\ndouble average simply splitting.",
+  "module": "MIPRE.Foundations.Linearity",
+  "module_doc": "/-!\n# Approximate linearity gives exact linearity\n\nBlueprint `thm:linearity`, the quantum linearity test. A family of observables\n`{O^u}_{u in F_q^n}` that is *approximately* linear --- `O^u O^{u'}` close to `O^{u + u'}` on\naverage, in the state-dependent distance --- is close on average to a family that is *exactly*\nlinear, after adjoining an ancilla register to one player.\n\nThe paper imports this from Natarajan--Vidick; it is proved here. The route is the one the\nblueprint's proof text names, and every step of it is already in this repository:\n\n* **Parseval.** The Fourier transform `A_e = |V|^{-1} sum_a (-1)^{<a,e>} O^a` of the family\n  against the characters of the trace form has `sum_e A_e^2 = |V|^{-1} sum_a (O^a)^2 = Id`\n  whenever each `O^a` is an involution. So `{A_e^2}` is a POVM --- **exactly**, with no\n  appeal to the approximate linearity, which is the one surprise of the argument.\n* **Naimark.** `exists_projective_dilation` dilates that POVM to a projective measurement\n  `{P_e}` on `d x V`, compressed back by the isometry that pads with the ancilla state `|0>`.\n* **Inversion.** `L^u = sum_e (-1)^{<u,e>} P_e` is then exactly linear --- `L^u L^{u'} =\n  L^{u+u'}` and `L^0 = Id` --- because the `P_e` are mutually orthogonal projections, and its\n  compression is `sum_e (-1)^{<u,e>} A_e^2`, which the same character sum identifies with\n  `|V|^{-1} sum_a O^a O^{a+u}`.\n* **The estimate.** That average is where the hypothesis enters, and it enters once:\n  `|V|^{-2} sum_{a,b} <psi| O^a O^b O^{a+b} |psi>` is the hypothesis written out, so the\n  closeness of `L^u` to `O^u` on the extended state carries the *same* `delta`, with no square\n  root and no loss in the exponent.\n\nThe one thing to watch is which distance the hypothesis is in. It is the state-dependent one of\n`def:state-distance` --- not the Hilbert--Schmidt distance of `thm:gowers-hatami` --- so this is\nnot Gowers--Hatami with a different normalization; the exact-POVM step above replaces the\napproximate-representation machinery entirely.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Linearity.lean#L153-L171",
+  "source_path": "MIPRE/Foundations/Linearity.lean",
+  "lines": [
+   153,
+   171
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sgn_add"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.fourierOf_pair_mul_prime",
+  "source_name": "MIPRE.fourierOf_pair_mul'",
+  "formal_statement": "theorem MIPRE.fourierOf_pair_mul_prime (A B : F → Matrix d d ℂ) (a b : F) :\n    fourierOf (fun v : Fin 2 → F => B (v 1) * A (v 0)) (pairVec a b)\n      = trFourier B b * trFourier A a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {d : Type*} [Fintype d] [DecidableEq d]"
+  ],
+  "docstring": "The same with the two factors in the other order.",
+  "module": "MIPRE.Foundations.Linearity",
+  "module_doc": "/-!\n# Approximate linearity gives exact linearity\n\nBlueprint `thm:linearity`, the quantum linearity test. A family of observables\n`{O^u}_{u in F_q^n}` that is *approximately* linear --- `O^u O^{u'}` close to `O^{u + u'}` on\naverage, in the state-dependent distance --- is close on average to a family that is *exactly*\nlinear, after adjoining an ancilla register to one player.\n\nThe paper imports this from Natarajan--Vidick; it is proved here. The route is the one the\nblueprint's proof text names, and every step of it is already in this repository:\n\n* **Parseval.** The Fourier transform `A_e = |V|^{-1} sum_a (-1)^{<a,e>} O^a` of the family\n  against the characters of the trace form has `sum_e A_e^2 = |V|^{-1} sum_a (O^a)^2 = Id`\n  whenever each `O^a` is an involution. So `{A_e^2}` is a POVM --- **exactly**, with no\n  appeal to the approximate linearity, which is the one surprise of the argument.\n* **Naimark.** `exists_projective_dilation` dilates that POVM to a projective measurement\n  `{P_e}` on `d x V`, compressed back by the isometry that pads with the ancilla state `|0>`.\n* **Inversion.** `L^u = sum_e (-1)^{<u,e>} P_e` is then exactly linear --- `L^u L^{u'} =\n  L^{u+u'}` and `L^0 = Id` --- because the `P_e` are mutually orthogonal projections, and its\n  compression is `sum_e (-1)^{<u,e>} A_e^2`, which the same character sum identifies with\n  `|V|^{-1} sum_a O^a O^{a+u}`.\n* **The estimate.** That average is where the hypothesis enters, and it enters once:\n  `|V|^{-2} sum_{a,b} <psi| O^a O^b O^{a+b} |psi>` is the hypothesis written out, so the\n  closeness of `L^u` to `O^u` on the extended state carries the *same* `delta`, with no square\n  root and no loss in the exponent.\n\nThe one thing to watch is which distance the hypothesis is in. It is the state-dependent one of\n`def:state-distance` --- not the Hilbert--Schmidt distance of `thm:gowers-hatami` --- so this is\nnot Gowers--Hatami with a different normalization; the exact-POVM step above replaces the\napproximate-representation machinery entirely.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Linearity.lean#L173-L190",
+  "source_path": "MIPRE/Foundations/Linearity.lean",
+  "lines": [
+   173,
+   190
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sgn_add"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_stateSqNorm_fourierOf",
+  "source_name": "MIPRE.sum_stateSqNorm_fourierOf",
+  "formal_statement": "theorem MIPRE.sum_stateSqNorm_fourierOf {dB : Type*} [Fintype dB] [DecidableEq dB]\n    (ψ : d × dB → ℂ) (M : (n → F) → Matrix d d ℂ) :\n    ∑ e : n → F, stateSqNorm ψ (fourierOf M e)\n      = (Fintype.card (n → F) : ℝ)⁻¹ * ∑ a : n → F, stateSqNorm ψ (M a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {d : Type*} [Fintype d] [DecidableEq d]"
+  ],
+  "docstring": "**Parseval for a family of operators against a state.** The transform is an isometry up to\nthe normalization, so an average bound on the family is a summed bound on the transform and\nconversely. This is the dictionary between an `F_q`-valued measurement and its binary\nobservables.",
+  "module": "MIPRE.Foundations.Linearity",
+  "module_doc": "/-!\n# Approximate linearity gives exact linearity\n\nBlueprint `thm:linearity`, the quantum linearity test. A family of observables\n`{O^u}_{u in F_q^n}` that is *approximately* linear --- `O^u O^{u'}` close to `O^{u + u'}` on\naverage, in the state-dependent distance --- is close on average to a family that is *exactly*\nlinear, after adjoining an ancilla register to one player.\n\nThe paper imports this from Natarajan--Vidick; it is proved here. The route is the one the\nblueprint's proof text names, and every step of it is already in this repository:\n\n* **Parseval.** The Fourier transform `A_e = |V|^{-1} sum_a (-1)^{<a,e>} O^a` of the family\n  against the characters of the trace form has `sum_e A_e^2 = |V|^{-1} sum_a (O^a)^2 = Id`\n  whenever each `O^a` is an involution. So `{A_e^2}` is a POVM --- **exactly**, with no\n  appeal to the approximate linearity, which is the one surprise of the argument.\n* **Naimark.** `exists_projective_dilation` dilates that POVM to a projective measurement\n  `{P_e}` on `d x V`, compressed back by the isometry that pads with the ancilla state `|0>`.\n* **Inversion.** `L^u = sum_e (-1)^{<u,e>} P_e` is then exactly linear --- `L^u L^{u'} =\n  L^{u+u'}` and `L^0 = Id` --- because the `P_e` are mutually orthogonal projections, and its\n  compression is `sum_e (-1)^{<u,e>} A_e^2`, which the same character sum identifies with\n  `|V|^{-1} sum_a O^a O^{a+u}`.\n* **The estimate.** That average is where the hypothesis enters, and it enters once:\n  `|V|^{-2} sum_{a,b} <psi| O^a O^b O^{a+b} |psi>` is the hypothesis written out, so the\n  closeness of `L^u` to `O^u` on the extended state carries the *same* `delta`, with no square\n  root and no loss in the exponent.\n\nThe one thing to watch is which distance the hypothesis is in. It is the state-dependent one of\n`def:state-distance` --- not the Hilbert--Schmidt distance of `thm:gowers-hatami` --- so this is\nnot Gowers--Hatami with a different normalization; the exact-POVM step above replaces the\napproximate-representation machinery entirely.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Linearity.lean#L192-L212",
+  "source_path": "MIPRE/Foundations/Linearity.lean",
+  "lines": [
+   192,
+   212
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_smul",
+   "MIPRE.aOp_sum",
+   "MIPRE.sum_norm_fourierVec_sq"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.kron_one_mul_ancillaEmbed",
+  "source_name": "MIPRE.kron_one_mul_ancillaEmbed",
+  "formal_statement": "theorem MIPRE.kron_one_mul_ancillaEmbed (a₀ : A) (M : Matrix dA dA ℂ) :\n    (M ⊗ₖ (1 : Matrix A A ℂ)) * ancillaEmbed dA a₀ = ancillaEmbed dA a₀ * M := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {d : Type*} [Fintype d] [DecidableEq d]",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {A : Type*} [Fintype A] [DecidableEq A]"
+  ],
+  "docstring": "**An operator with an inert ancilla commutes with the padding isometry.**",
+  "module": "MIPRE.Foundations.Linearity",
+  "module_doc": "/-!\n# Approximate linearity gives exact linearity\n\nBlueprint `thm:linearity`, the quantum linearity test. A family of observables\n`{O^u}_{u in F_q^n}` that is *approximately* linear --- `O^u O^{u'}` close to `O^{u + u'}` on\naverage, in the state-dependent distance --- is close on average to a family that is *exactly*\nlinear, after adjoining an ancilla register to one player.\n\nThe paper imports this from Natarajan--Vidick; it is proved here. The route is the one the\nblueprint's proof text names, and every step of it is already in this repository:\n\n* **Parseval.** The Fourier transform `A_e = |V|^{-1} sum_a (-1)^{<a,e>} O^a` of the family\n  against the characters of the trace form has `sum_e A_e^2 = |V|^{-1} sum_a (O^a)^2 = Id`\n  whenever each `O^a` is an involution. So `{A_e^2}` is a POVM --- **exactly**, with no\n  appeal to the approximate linearity, which is the one surprise of the argument.\n* **Naimark.** `exists_projective_dilation` dilates that POVM to a projective measurement\n  `{P_e}` on `d x V`, compressed back by the isometry that pads with the ancilla state `|0>`.\n* **Inversion.** `L^u = sum_e (-1)^{<u,e>} P_e` is then exactly linear --- `L^u L^{u'} =\n  L^{u+u'}` and `L^0 = Id` --- because the `P_e` are mutually orthogonal projections, and its\n  compression is `sum_e (-1)^{<u,e>} A_e^2`, which the same character sum identifies with\n  `|V|^{-1} sum_a O^a O^{a+u}`.\n* **The estimate.** That average is where the hypothesis enters, and it enters once:\n  `|V|^{-2} sum_{a,b} <psi| O^a O^b O^{a+b} |psi>` is the hypothesis written out, so the\n  closeness of `L^u` to `O^u` on the extended state carries the *same* `delta`, with no square\n  root and no loss in the exponent.\n\nThe one thing to watch is which distance the hypothesis is in. It is the state-dependent one of\n`def:state-distance` --- not the Hilbert--Schmidt distance of `thm:gowers-hatami` --- so this is\nnot Gowers--Hatami with a different normalization; the exact-POVM step above replaces the\napproximate-representation machinery entirely.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Linearity.lean#L299-L313",
+  "source_path": "MIPRE/Foundations/Linearity.lean",
+  "lines": [
+   299,
+   313
+  ],
+  "blueprint": [
+   {
+    "label": "thm:linearity",
+    "env": "theorem",
+    "title": "Exact linearity from approximate linearity",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.card_filter_ker_mul_prime",
+  "source_name": "MIPRE.LowDegree.card_filter_ker_mul'",
+  "formal_statement": "theorem MIPRE.LowDegree.card_filter_ker_mul_prime (τ : V →ₗ[F] F) (hτ : τ ≠ 0) :\n    #{r ∈ (univ : Finset V) | τ r = 0} * Fintype.card F = Fintype.card V := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open Finset MvPolynomial",
+   "variable {F V : Type*} [Field F] [Fintype F] [DecidableEq F] [AddCommGroup V] [Module F V]"
+  ],
+  "docstring": "**A nonzero `𝔽`-linear functional on a finite `𝔽`-vector space has kernel of index `|𝔽|`.**\nEvery fibre is a translate of the kernel, and there are `|𝔽|` of them.",
+  "module": "MIPRE.Foundations.LowDegree.Anticomm",
+  "module_doc": "/-!\n# When is a Pauli-test question tuple anticommuting?\n\nThe Pauli basis test samples `ω = (u_X, u_Z, r_X, r_Z)` and the two Pauli operators it asks\nabout commute or anticommute according to whether\n\n`γ(ω) = tr_{q → 2} \\bigl( (r_X · ind_m(u_X)) · (r_Z · ind_m(u_Z)) \\bigr)`\n\nvanishes. The paper's `fact:omega-anticomm-prob` says each case has probability at least\n`(1 - 3md/q)/2`; this file is that fact.\n\n`ind_m(x) ∈ 𝔽_q^{2^m}` is the vector of the subcube indicator polynomials of\n`MIPRE/Foundations/LowDegree/Encoding.lean` evaluated at an *arbitrary* point `x`, and the\ndot product of two of them is one low-degree encoding evaluated at the other point\n(`indPair_eq_eval`). So the fact is Schwartz--Zippel --- the encoding is a nonzero polynomial,\nbecause `ind_m(x)` is never the zero vector (`sum_indVec`, whose value is `1`) --- together with\nthe count of `r` in the kernel of a nonzero `𝔽`-linear functional (`card_filter_ker_mul`).\n\nTwo departures from the paper, both recorded in the blueprint's comments on the fact:\n\n* **the wasteful factor is dropped.** The paper states\n  `(1 - q^{-m})(1 - q^{-1})(1 - md/q)/2`, whose first factor came from a case distinction on\n  `u_X = 0` that its own `\\cnote` then removes as vacuous. The bound proved here is\n  `(1 - (m+1)/q)/2`, which is sharper than the paper's final `(1 - 3md/q)/2` and needs no such\n  factor.\n* **individual degree, not total degree.** The low-degree encoding is multilinear, so the\n  Schwartz--Zippel step costs `m/q` rather than the `md/q` the paper spends. The paper's form is\n  recovered in `prob_anticommuting_ge` for `1 ≤ d`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/Anticomm.lean#L116-L139",
+  "source_path": "MIPRE/Foundations/LowDegree/Anticomm.lean",
+  "lines": [
+   116,
+   139
+  ],
+  "blueprint": [
+   {
+    "label": "def:generalized-pauli",
+    "env": "definition",
+    "title": "Generalized Pauli observables in characteristic two",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.inverseMatrix_groupMatrix",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.inverseMatrix_groupMatrix",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.inverseMatrix_groupMatrix {k : ℕ} [NeZero k]\n    (z : AddMonoidAlgebra (ZMod 2) (Fin k))\n    (hz : Function.Surjective (groupMatrix z).mulVec) :\n    ∃ u : AddMonoidAlgebra (ZMod 2) (Fin k), z * u = 1 ∧\n      inverseMatrix (groupMatrix z) = groupMatrix u := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "open MIPRE.Cost",
+   "variable {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]"
+  ],
+  "docstring": "The computed inverse of a nonsingular circulant is again circulant.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryCirculant",
+  "module_doc": "/-! # Binary cyclic group algebras as circulant matrices -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryCirculant.lean#L67-L91",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryCirculant.lean",
+  "lines": [
+   67,
+   91
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-normal-selfdualization",
+    "env": "lemma",
+    "title": "Effective self-dualization of a supplied normal basis",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.insertRow_pivotBits",
+   "MIPRE.LowDegree.BinaryLinear.typedBasis_span",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.append_reduced",
+   "MIPRE.LowDegree.BinaryLinear.binary_eq_zero_or_one",
+   "MIPRE.LowDegree.BinaryLinear.getD_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.coordinateRows_matrixBits",
+   "MIPRE.LowDegree.BinaryLinear.typedReduceStep_error",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.eq_zero_of_pivots_zero"
+  ],
+  "pasted_helpers": 32,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.circulantBitsProg_correct",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.circulantBitsProg_correct",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.circulantBitsProg_correct {k : ℕ} [NeZero k] (v : Fin k → ZMod 2) :\n    circulantBitsProg (vectorBits v) = matrixBits (Matrix.circulant v) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.LowDegree.BinaryCirculantProg",
+  "module_doc": "/-! # Executable circulant matrices and their inverse square roots -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryCirculantProg.lean#L89-L101",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryCirculantProg.lean",
+  "lines": [
+   89,
+   101
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-normal-selfdualization",
+    "env": "lemma",
+    "title": "Effective self-dualization of a supplied normal basis",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.transposeBits_matrixBits"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.rootBitsProg_vectorBits",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.rootBitsProg_vectorBits",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.rootBitsProg_vectorBits {k : ℕ} [NeZero k] (hk : Odd k) (v : Fin k → ZMod 2) :\n    rootBitsProg (vectorBits v) = vectorBits (fun i => v (i + i)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "The coefficient square-root program uses doubled indices also for `Fin k` coordinates.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryCirculantProg",
+  "module_doc": "/-! # Executable circulant matrices and their inverse square roots -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryCirculantProg.lean#L103-L121",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryCirculantProg.lean",
+  "lines": [
+   103,
+   121
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-normal-selfdualization",
+    "env": "lemma",
+    "title": "Effective self-dualization of a supplied normal basis",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.getD_rootBits"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.inverseRootMatrixProg_correct",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.inverseRootMatrixProg_correct",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.inverseRootMatrixProg_correct {k : ℕ} [NeZero k] (hk : Odd k)\n    (A : Matrix (Fin k) (Fin k) (ZMod 2)) :\n    inverseRootMatrixProg (unary k, matrixBits A) = matrixBits (inverseRootMatrix A) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.LowDegree.BinaryCirculantProg",
+  "module_doc": "/-! # Executable circulant matrices and their inverse square roots -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryCirculantProg.lean#L130-L143",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryCirculantProg.lean",
+  "lines": [
+   130,
+   143
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-normal-selfdualization",
+    "env": "lemma",
+    "title": "Effective self-dualization of a supplied normal basis",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.circulantBitsProg_correct",
+   "MIPRE.LowDegree.BinaryLinear.rootBitsProg_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.transposeBits_matrixBits"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.groupComponents_family",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.groupComponents_family",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.groupComponents_family (k : ℕ) [NeZero k] : ComponentFamily (groupComponents k) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "open MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.LowDegree.BinaryComponents",
+  "module_doc": "/-! # Primitive components computed by fixed-space separation -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryComponents.lean#L45-L46",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryComponents.lean",
+  "lines": [
+   45,
+   46
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.typedBasis_span",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.append_reduced",
+   "MIPRE.LowDegree.BinaryLinear.binary_eq_zero_or_one",
+   "MIPRE.LowDegree.BinaryLinear.getD_vectorBits",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.eq_zero_of_pivots_zero",
+   "MIPRE.LowDegree.ComponentFamily.split"
+  ],
+  "pasted_helpers": 26,
+  "prooflines": 1,
+  "is_target": false
+ }
+]

@@ -1,0 +1,644 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.inputCellVal_blank_mono",
+  "source_name": "MIPRE.TM.CookLevin.inputCellVal_blank_mono",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.inputCellVal_blank_mono (x : List Symbol) (p p' : Pos S) (h2 : 2 < (p : ℕ))\n    (hnb' : ¬ p'.IsBdry) (hpp' : p < p') (h : inputCellVal x p = .blank) :\n    inputCellVal x p' = .blank := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]",
+   "variable (chk : Circuit)",
+   "variable {G : ℕ}"
+  ],
+  "docstring": "Blanks propagate to the right on an input tape.",
+  "module": "MIPRE.TM.CookLevin.Correct",
+  "module_doc": "/-!\n# Correctness of the Cook–Levin tableau\n\nThe tableau formula of `S` steps of a machine `M` (`tableau`) is satisfiable, with the fixed\ninput tapes holding their strings, iff `M` accepts some completion of the free input tapes\nwithin `S` steps (`planning/succinct-cook-levin.md`, S1; `answer_reduction.tex`\n`lem:correct-tableau`). Acceptance is `AcceptsIn`: halted at time `S` with output string\nexactly `[acc]`.\n\n* **Completeness** (`tableau_sat_of_acceptsIn`): the assignment of an accepting run\n  (`runAssign`) satisfies every clause; the window clauses because the windows of a run are\n  locally consistent (`locallyConsistent_localCfgOf`) and the check circuit computes local\n  consistency, its specification being the hypothesis `hchk`.\n* **Soundness** (`acceptsIn_of_tableau_sat`): a satisfying assignment determines the free\n  input strings from its time-`0` rows, and its rows encode the configurations of the run on\n  those inputs, by induction on time: at each step the window clauses force, through the\n  check circuit, local consistency of every window, and a locally consistent window whose\n  time-`t` part is that of a configuration has the time-`t + 1` part of its successor\n  (`post_of_pre`). The acceptance row and the emission bookkeeping then give acceptance.\n\nBoth directions use the head bounds `headsIn_cfgAt`: along a run, a head moves at most one\ncell per step, so at every time `t ≤ S` every head is on an interior cell of the tableau.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Correct.lean#L271-L287",
+  "source_path": "MIPRE/TM/CookLevin/Correct.lean",
+  "lines": [
+   271,
+   287
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.not_isBdry_iff"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.chk_eval_run",
+  "source_name": "MIPRE.TM.CookLevin.chk_eval_run",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.chk_eval_run (hchk : IsCheckCircuit M acc chk) (t : Fin S) (js : Tape i w → Center S) :\n    chk.eval (fun n => baseAssign M acc (input := input) chk.gates.length\n      (inpOf (G := chk.gates.length) t js n)) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]",
+   "variable (chk : Circuit)",
+   "variable {G : ℕ}"
+  ],
+  "docstring": "The check circuit accepts every window of the run.",
+  "module": "MIPRE.TM.CookLevin.Correct",
+  "module_doc": "/-!\n# Correctness of the Cook–Levin tableau\n\nThe tableau formula of `S` steps of a machine `M` (`tableau`) is satisfiable, with the fixed\ninput tapes holding their strings, iff `M` accepts some completion of the free input tapes\nwithin `S` steps (`planning/succinct-cook-levin.md`, S1; `answer_reduction.tex`\n`lem:correct-tableau`). Acceptance is `AcceptsIn`: halted at time `S` with output string\nexactly `[acc]`.\n\n* **Completeness** (`tableau_sat_of_acceptsIn`): the assignment of an accepting run\n  (`runAssign`) satisfies every clause; the window clauses because the windows of a run are\n  locally consistent (`locallyConsistent_localCfgOf`) and the check circuit computes local\n  consistency, its specification being the hypothesis `hchk`.\n* **Soundness** (`acceptsIn_of_tableau_sat`): a satisfying assignment determines the free\n  input strings from its time-`0` rows, and its rows encode the configurations of the run on\n  those inputs, by induction on time: at each step the window clauses force, through the\n  check circuit, local consistency of every window, and a locally consistent window whose\n  time-`t` part is that of a configuration has the time-`t + 1` part of its successor\n  (`post_of_pre`). The acceptance row and the emission bookkeeping then give acceptance.\n\nBoth directions use the head bounds `headsIn_cfgAt`: along a run, a head moves at most one\ncell per step, so at every time `t ≤ S` every head is on an interior cell of the tableau.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Correct.lean#L307-L323",
+  "source_path": "MIPRE/TM/CookLevin/Correct.lean",
+  "lines": [
+   307,
+   323
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.inputPos_cfgAt_le",
+   "MIPRE.TM.CookLevin.workTapePos_cfgAt_bounds",
+   "MIPRE.TM.CookLevin.fullStep_localCfgOf",
+   "MIPRE.TM.CookLevin.far_localCfgOf"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.freeClauses_sat",
+  "source_name": "MIPRE.TM.CookLevin.freeClauses_sat",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.freeClauses_sat (hfree : ∀ j, fixed j = none → ∀ s ∈ input j, s = s₀ ∨ s = s₁) :\n    (freeClauses (S := S) (G := chk.gates.length) s₀ s₁ fixed).Sat\n      (runAssign M acc (input := input) chk) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "open MultiTapeTM (moveInputPos)",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]",
+   "variable (chk : Circuit)",
+   "variable {G : ℕ}",
+   "variable (s₀ s₁ : Symbol) (fixed : Fin i → Option (List Symbol))"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Correct",
+  "module_doc": "/-!\n# Correctness of the Cook–Levin tableau\n\nThe tableau formula of `S` steps of a machine `M` (`tableau`) is satisfiable, with the fixed\ninput tapes holding their strings, iff `M` accepts some completion of the free input tapes\nwithin `S` steps (`planning/succinct-cook-levin.md`, S1; `answer_reduction.tex`\n`lem:correct-tableau`). Acceptance is `AcceptsIn`: halted at time `S` with output string\nexactly `[acc]`.\n\n* **Completeness** (`tableau_sat_of_acceptsIn`): the assignment of an accepting run\n  (`runAssign`) satisfies every clause; the window clauses because the windows of a run are\n  locally consistent (`locallyConsistent_localCfgOf`) and the check circuit computes local\n  consistency, its specification being the hypothesis `hchk`.\n* **Soundness** (`acceptsIn_of_tableau_sat`): a satisfying assignment determines the free\n  input strings from its time-`0` rows, and its rows encode the configurations of the run on\n  those inputs, by induction on time: at each step the window clauses force, through the\n  check circuit, local consistency of every window, and a locally consistent window whose\n  time-`t` part is that of a configuration has the time-`t + 1` part of its successor\n  (`post_of_pre`). The acceptance row and the emission bookkeeping then give acceptance.\n\nBoth directions use the head bounds `headsIn_cfgAt`: along a run, a head moves at most one\ncell per step, so at every time `t ≤ S` every head is on an interior cell of the tableau.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Correct.lean#L374-L418",
+  "source_path": "MIPRE/TM/CookLevin/Correct.lean",
+  "lines": [
+   374,
+   418
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.inputCellVal_blank_mono",
+   "MIPRE.TM.CookLevin.not_isBdry_iff"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 42,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.getD_rho",
+  "source_name": "MIPRE.TM.CookLevin.Desc.getD_rho",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.getD_rho {ℓ r : ℕ}\n    (c : Clause5 (Fin (2 ^ ℓ)) (Fin (2 ^ ℓ)) (Fin (2 ^ r)) (Fin (2 ^ r)) (Fin (2 ^ r)))\n    {k : ℕ} (hk : k < 3 * r + 3) :\n    (clauseInput5 ℓ r c).getD (rho ℓ r k) false =\n      (clauseInput r (lastThree c)).getD k false := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost Fml"
+  ],
+  "docstring": "**The renaming reads the 3SAT describer's clause off the five-block input.**",
+  "module": "MIPRE.TM.CookLevin.Decoupled",
+  "module_doc": "/-!\n# The decoupled describer, and the clauses it describes\n\nThe describer of `lem:decoupled-5sat`: the 3SAT describer of `thm:succinct-sat`, its inputs\nrenamed into the five-block layout, in disjunction with the link formula of `Link.lean`, all\nflattened once to a circuit. `mem_formula5_iff` is the bridge — a clause is accepted exactly\nwhen the 3-clause of its last three literals is accepted by the 3SAT describer, or the clause\nsatisfies one of the eight link conditions (`planning/decoupled-5sat.md`, A1c).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Decoupled.lean#L59-L84",
+  "source_path": "MIPRE/TM/CookLevin/Decoupled.lean",
+  "lines": [
+   59,
+   84
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 10,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.evalCand_candOf5",
+  "source_name": "MIPRE.TM.CookLevin.Desc.evalCand_candOf5",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.evalCand_candOf5 (ℓ e T : ℕ)\n    (c : Clause5 (Fin (2 ^ ℓ)) (Fin (2 ^ ℓ)) (Fin (2 ^ mOf e Gc)) (Fin (2 ^ mOf e Gc))\n      (Fin (2 ^ mOf e Gc))) (hT : T ≤ Sof e) :\n    evalCand (candOf5 ℓ e T) (fun i => (clauseInput5 ℓ (mOf e Gc) c).getD i false) =\n      candOfClause e T (lastThree c) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost Fml"
+  ],
+  "docstring": "**The shifted candidate reads the 3SAT describer's clause.**",
+  "module": "MIPRE.TM.CookLevin.Decoupled",
+  "module_doc": "/-!\n# The decoupled describer, and the clauses it describes\n\nThe describer of `lem:decoupled-5sat`: the 3SAT describer of `thm:succinct-sat`, its inputs\nrenamed into the five-block layout, in disjunction with the link formula of `Link.lean`, all\nflattened once to a circuit. `mem_formula5_iff` is the bridge — a clause is accepted exactly\nwhen the 3-clause of its last three literals is accepted by the 3SAT describer, or the clause\nsatisfies one of the eight link conditions (`planning/decoupled-5sat.md`, A1c).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Decoupled.lean#L130-L169",
+  "source_path": "MIPRE/TM/CookLevin/Decoupled.lean",
+  "lines": [
+   130,
+   169
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.getD_rho",
+   "MIPRE.TM.CookLevin.Desc.ibOf_getD",
+   "MIPRE.TM.CookLevin.Desc.evalFields_litFields"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.descCirc5_inputs",
+  "source_name": "MIPRE.TM.CookLevin.Desc.descCirc5_inputs",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.descCirc5_inputs (ℓ T e : ℕ) (D : Prog) (n : ℕ) (x y : BitStr) :\n    (descCirc5 ℓ T e D n x y).inputs = 2 * ℓ + 3 * mOf e Gc + 5 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost Fml"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Decoupled",
+  "module_doc": "/-!\n# The decoupled describer, and the clauses it describes\n\nThe describer of `lem:decoupled-5sat`: the 3SAT describer of `thm:succinct-sat`, its inputs\nrenamed into the five-block layout, in disjunction with the link formula of `Link.lean`, all\nflattened once to a circuit. `mem_formula5_iff` is the bridge — a clause is accepted exactly\nwhen the 3-clause of its last three literals is accepted by the 3SAT describer, or the clause\nsatisfies one of the eight link conditions (`planning/decoupled-5sat.md`, A1c).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Decoupled.lean#L187-L188",
+  "source_path": "MIPRE/TM/CookLevin/Decoupled.lean",
+  "lines": [
+   187,
+   188
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.descCirc5_wellFormed",
+  "source_name": "MIPRE.TM.CookLevin.Desc.descCirc5_wellFormed",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.descCirc5_wellFormed (ℓ T e : ℕ) (D : Prog) (n : ℕ) (x y : BitStr)\n    (hℓr : ℓ ≤ mOf e Gc) : (descCirc5 ℓ T e D n x y).WellFormed := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost Fml"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Decoupled",
+  "module_doc": "/-!\n# The decoupled describer, and the clauses it describes\n\nThe describer of `lem:decoupled-5sat`: the 3SAT describer of `thm:succinct-sat`, its inputs\nrenamed into the five-block layout, in disjunction with the link formula of `Link.lean`, all\nflattened once to a circuit. `mem_formula5_iff` is the bridge — a clause is accepted exactly\nwhen the 3-clause of its last three literals is accepted by the 3SAT describer, or the clause\nsatisfies one of the eight link conditions (`planning/decoupled-5sat.md`, A1c).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Decoupled.lean#L198-L200",
+  "source_path": "MIPRE/TM/CookLevin/Decoupled.lean",
+  "lines": [
+   198,
+   200
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Fml.toCircuit_wellFormed",
+   "MIPRE.TM.CookLevin.Desc.litFields_inputsLt",
+   "MIPRE.TM.CookLevin.Desc.InputsLt.linkFml"
+  ],
+  "pasted_helpers": 93,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.sat_formula5_iff",
+  "source_name": "MIPRE.TM.CookLevin.Desc.sat_formula5_iff",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.sat_formula5_iff (ℓ T e : ℕ) (D : Prog) (n : ℕ) (x y : BitStr)\n    (hℓr : ℓ ≤ mOf e Gc) (hr : 1 ≤ mOf e Gc) (hT2 : 2 * T < 2 ^ mOf e Gc)\n    (hT : T ≤ Sof e) (hlen : FixedLen e D n T x y) (hTm : T + 3 < 2 ^ W e)\n    (a b : Fin (2 ^ ℓ) → Bool) (w₁ w₂ w₃ : Fin (2 ^ mOf e Gc) → Bool) :\n    ((descCirc5 ℓ T e D n x y).formula5 ℓ (mOf e Gc)).Sat a b w₁ w₂ w₃ ↔\n      Tri ((descCirc e T D n x y).formula3 (mOf e Gc)) w₁ w₂ w₃ ∧\n        LinkSat ℓ (mOf e Gc) T a b w₁ w₂ w₃ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost Fml"
+  ],
+  "docstring": "**The two halves of satisfaction.**",
+  "module": "MIPRE.TM.CookLevin.Decoupled",
+  "module_doc": "/-!\n# The decoupled describer, and the clauses it describes\n\nThe describer of `lem:decoupled-5sat`: the 3SAT describer of `thm:succinct-sat`, its inputs\nrenamed into the five-block layout, in disjunction with the link formula of `Link.lean`, all\nflattened once to a circuit. `mem_formula5_iff` is the bridge — a clause is accepted exactly\nwhen the 3-clause of its last three literals is accepted by the 3SAT describer, or the clause\nsatisfies one of the eight link conditions (`planning/decoupled-5sat.md`, A1c).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Decoupled.lean#L279-L371",
+  "source_path": "MIPRE/TM/CookLevin/Decoupled.lean",
+  "lines": [
+   279,
+   371
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Fml.eval_addConstRel_iff",
+   "MIPRE.SAT.bitsVal_injective",
+   "MIPRE.SAT.Fml.eval_toCircuit",
+   "MIPRE.SAT.Fml.exists_circuit",
+   "MIPRE.TM.CookLevin.Desc.evalCand_candOf5",
+   "MIPRE.TM.CookLevin.Desc.ibOf_getD",
+   "MIPRE.TM.CookLevin.Desc.tapeSpec",
+   "MIPRE.TM.CookLevin.Desc.exists_cell",
+   "MIPRE.TM.CookLevin.Desc.eval_winMatchN",
+   "MIPRE.TM.CookLevin.Desc.evalFields_litFields",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_emitOne_iff",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_emitBad_iff",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_emitted_iff",
+   "MIPRE.TM.CookLevin.Desc.eval_isAuxF",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_cell_iff",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_head_iff",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_state_iff",
+   "MIPRE.TM.CookLevin.Desc.bitsVal_bitsOfNat",
+   "MIPRE.TM.CookLevin.Desc.eval_linkFml",
+   "MIPRE.TM.CookLevin.Desc.windowPred_iff"
+  ],
+  "pasted_helpers": 230,
+  "prooflines": 85,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.describes5",
+  "source_name": "MIPRE.TM.CookLevin.Desc.describes5",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.describes5 (𝒟 : Decider) (ℓ T e : ℕ) (n : ℕ) (x y : BitStr)\n    (hℓ : 2 * T ≤ 2 ^ ℓ) (hℓr : ℓ ≤ mOf e Gc) (hr : 1 ≤ mOf e Gc)\n    (h4T : 4 * T ≤ 2 ^ mOf e Gc) (hTle : T ≤ Sof e)\n    (hlen : FixedLen e 𝒟.prog n T x y) (hTm : T + 3 < 2 ^ W e)\n    (hrb : ∀ ap bp : BitStr, ap.length ≤ T → bp.length ≤ T →\n      runBound 𝒟.prog n x y ap bp T ≤ Sof e) :\n    (descCirc5 ℓ T e 𝒟.prog n x y).DescribesDecider ℓ (mOf e Gc) 𝒟 n x y T := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost Fml"
+  ],
+  "docstring": "**The decoupled describer describes the decider** (`lem:decoupled-5sat`, the description\nclause).",
+  "module": "MIPRE.TM.CookLevin.Decoupled",
+  "module_doc": "/-!\n# The decoupled describer, and the clauses it describes\n\nThe describer of `lem:decoupled-5sat`: the 3SAT describer of `thm:succinct-sat`, its inputs\nrenamed into the five-block layout, in disjunction with the link formula of `Link.lean`, all\nflattened once to a circuit. `mem_formula5_iff` is the bridge — a clause is accepted exactly\nwhen the 3-clause of its last three literals is accepted by the 3SAT describer, or the clause\nsatisfies one of the eight link conditions (`planning/decoupled-5sat.md`, A1c).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Decoupled.lean#L390-L454",
+  "source_path": "MIPRE/TM/CookLevin/Decoupled.lean",
+  "lines": [
+   390,
+   454
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.sat_formula5_iff",
+   "MIPRE.TM.CookLevin.Desc.encodesAccepted_of_extendsAnswers",
+   "MIPRE.TM.CookLevin.Desc.extendsAnswers_of_encodesAccepted"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 56,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.tabsR_apply",
+  "source_name": "MIPRE.TM.CookLevin.Desc.tabsR_apply",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.tabsR_apply (eu : PolyTimeFun ι Unary) (TR : PolyTimeFun ι ℕ)\n    (b : PolyTimeFun ι Unary) (DR : PolyTimeFun ι Prog) (nR : PolyTimeFun ι ℕ)\n    (xR yR : PolyTimeFun ι BitStr) (i : ι) :\n    tabsR eu TR b DR nR xR yR i =\n      tabsOf (eu i).length (TR i) (DR i) (nR i) (xR i) (yR i)\n        (litFields (eu i).length Gc (TR i) (b i).length) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun",
+   "variable {ι : Type*} [SizedEncoding ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.DescProg",
+  "module_doc": "/-!\n# The describer as a program\n\n`descCircP` is the describer circuit as a polynomial-time function of\n`((e in unary, T), (𝒟, n), (x, y))`, and `descCircP_apply` says it is `descCirc`. This is\nitem 4 of `thm:succinct-sat`; item 3, the gate bound, follows from it, because\n`PolyTimeFun.esize_apply_le` bounds the size of the output of a program by its time bound\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/DescProg.lean#L93-L103",
+  "source_path": "MIPRE/TM/CookLevin/DescProg.lean",
+  "lines": [
+   93,
+   103
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.litFieldsR_ev"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.size_le_esize",
+  "source_name": "MIPRE.TM.CookLevin.Desc.size_le_esize",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.size_le_esize (C : Circuit) : C.size ≤ esize C := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun",
+   "variable {ι : Type*} [SizedEncoding ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.DescProg",
+  "module_doc": "/-!\n# The describer as a program\n\n`descCircP` is the describer circuit as a polynomial-time function of\n`((e in unary, T), (𝒟, n), (x, y))`, and `descCircP_apply` says it is `descCirc`. This is\nitem 4 of `thm:succinct-sat`; item 3, the gate bound, follows from it, because\n`PolyTimeFun.esize_apply_le` bounds the size of the output of a program by its time bound\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/DescProg.lean#L153-L157",
+  "source_path": "MIPRE/TM/CookLevin/DescProg.lean",
+  "lines": [
+   153,
+   157
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.ibOf_getD",
+  "source_name": "MIPRE.TM.CookLevin.Desc.ibOf_getD",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.ibOf_getD (l : BitStr) (b n : ℕ) (h : b + n ≤ l.length) :\n    ibOf b n (fun i => l.getD i false) = (l.drop b).take n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost Fml"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Describer",
+  "module_doc": "/-!\n# The describer circuit and the clauses it describes\n\n`descCirc e T D n x y` is the circuit of the describer: the flattening of the formula\n`tableauPlusF` on the candidate that reads the three `m`-bit indices and the three signs off\nits `3m + 3` inputs (`candOf`). `mem_formula3_iff` is what it describes: a clause of\n`Fin (2 ^ m)` is accepted iff its three indices decode to the literals of a clause of\n`tableauPlus` — the tableau of `U` on the input tapes `fixedOf` together with the two\nanswer-end clauses (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Describer.lean#L28-L39",
+  "source_path": "MIPRE/TM/CookLevin/Describer.lean",
+  "lines": [
+   28,
+   39
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 10,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.tapeSpec",
+  "source_name": "MIPRE.TM.CookLevin.Desc.tapeSpec",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.tapeSpec (e T : ℕ) (D : Prog) (n : ℕ) (x y : BitStr) (G : ℕ) {A : FieldsF}\n    (hA : A.Lengths e G) (hT : T ≤ Sof e) (hlen : FixedLen e D n T x y) :\n    TapeSpec e A (fixedOf D n T x y) (tabsOf e T D n x y A) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost Fml"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Describer",
+  "module_doc": "/-!\n# The describer circuit and the clauses it describes\n\n`descCirc e T D n x y` is the circuit of the describer: the flattening of the formula\n`tableauPlusF` on the candidate that reads the three `m`-bit indices and the three signs off\nits `3m + 3` inputs (`candOf`). `mem_formula3_iff` is what it describes: a clause of\n`Fin (2 ^ m)` is accepted iff its three indices decode to the literals of a clause of\n`tableauPlus` — the tableau of `U` on the input tapes `fixedOf` together with the two\nanswer-end clauses (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Describer.lean#L64-L90",
+  "source_path": "MIPRE/TM/CookLevin/Describer.lean",
+  "lines": [
+   64,
+   90
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.eval_cellValF",
+   "MIPRE.TM.CookLevin.Desc.eval_unaryValF"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.outerDim_isPow",
+  "source_name": "MIPRE.TM.CookLevin.Pad.outerDim_isPow",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.outerDim_isPow (n T Q σ : ℕ) : ∃ j, outerDim n T Q σ = 2 ^ j := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.TM.CookLevin.Desc"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.ExactPadding",
+  "module_doc": "/-!\n# Exact-size padded succinct descriptions\n\nThe common input width is a power of two, and the number of input and gate\nvariables is a second power of two. Circuit construction consumes a unary gate\nbudget: the target size can be polynomial in the *value* of `Q` and `σ`, so\nprinting it is not polynomial in their binary encodings alone. The PCP view\nwill supply this budget. Parameter computation is a separate obligation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/ExactPadding.lean#L30-L30",
+  "source_path": "MIPRE/TM/CookLevin/ExactPadding.lean",
+  "lines": [
+   30,
+   30
+  ],
+  "blueprint": [
+   {
+    "label": "prop:pcp-padded-describer",
+    "env": "proposition",
+    "title": "Effective padded descriptions with an explicit output budget",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.outerDim_polynomial",
+  "source_name": "MIPRE.TM.CookLevin.Pad.outerDim_polynomial",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.outerDim_polynomial : ∃ P : Polynomial ℕ, ∀ n T Q σ,\n    outerDim n T Q σ ≤ P.eval (LOf n T Q σ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.TM.CookLevin.Desc"
+  ],
+  "docstring": "Both dimensions have a polynomial bound in the source runtime parameter.",
+  "module": "MIPRE.TM.CookLevin.ExactPadding",
+  "module_doc": "/-!\n# Exact-size padded succinct descriptions\n\nThe common input width is a power of two, and the number of input and gate\nvariables is a second power of two. Circuit construction consumes a unary gate\nbudget: the target size can be polynomial in the *value* of `Q` and `σ`, so\nprinting it is not polynomial in their binary encodings alone. The PCP view\nwill supply this budget. Parameter computation is a separate obligation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/ExactPadding.lean#L53-L71",
+  "source_path": "MIPRE/TM/CookLevin/ExactPadding.lean",
+  "lines": [
+   53,
+   71
+  ],
+  "blueprint": [
+   {
+    "label": "prop:pcp-padded-describer",
+    "env": "proposition",
+    "title": "Effective padded descriptions with an explicit output budget",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.roundUp_le",
+   "MIPRE.TM.CookLevin.Desc.size_le_self"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.describeExact_variables",
+  "source_name": "MIPRE.TM.CookLevin.Pad.describeExact_variables",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.describeExact_variables (D : Prog) (n T Q σ : ℕ) (x y : BitStr)\n    (hV : Valid D n T Q σ x y) (u : Unary) (hu : u.length = gateCount n T Q σ) :\n    (describeExact (((D, n, T, Q, σ), x, y), u)).inputs +\n      (describeExact (((D, n, T, Q, σ), x, y), u)).size = outerDim n T Q σ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.TM.CookLevin.Desc"
+  ],
+  "docstring": "Input and gate variables together have the exact outer power-of-two count.",
+  "module": "MIPRE.TM.CookLevin.ExactPadding",
+  "module_doc": "/-!\n# Exact-size padded succinct descriptions\n\nThe common input width is a power of two, and the number of input and gate\nvariables is a second power of two. Circuit construction consumes a unary gate\nbudget: the target size can be polynomial in the *value* of `Q` and `σ`, so\nprinting it is not polynomial in their binary encodings alone. The PCP view\nwill supply this budget. Parameter computation is a separate obligation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/ExactPadding.lean#L123-L129",
+  "source_path": "MIPRE/TM/CookLevin/ExactPadding.lean",
+  "lines": [
+   123,
+   129
+  ],
+  "blueprint": [
+   {
+    "label": "prop:pcp-padded-describer",
+    "env": "proposition",
+    "title": "Effective padded descriptions with an explicit output budget",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.le_roundUp",
+   "MIPRE.TM.CookLevin.Desc.size_le_esize",
+   "MIPRE.TM.CookLevin.Desc.nbitsR_apply"
+  ],
+  "pasted_helpers": 15,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.exists_cell",
+  "source_name": "MIPRE.TM.CookLevin.Desc.exists_cell",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.exists_cell {F : Fields} (h : IsCell e F) :\n    ∃ (t : Fin (Sof e + 1)) (d : Tape 7 6) (p : Pos (Sof e)) (v : CellVal Sym),\n      decodeVar e G F = some (.cell t d p v) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost",
+   "variable (e G : ℕ)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Families",
+  "module_doc": "/-!\n# The clause families of the tableau, on decoded fields\n\nA *candidate* clause is three field records and three signs (`Cand`): what the describer\nreads off its `3m + 3` input bits. `Cand.Dec c cl` says the candidate decodes to the tableau\nclause `cl` (each record to the variable of the corresponding literal, each sign to its\npolarity). For each sub-family of the tableau of the interpreter machine\n(`startClauses`, `freeClauses`, `bdryClauses`, `emitClauses`, `finalClauses` of\n`Tableau.lean`) this file gives a predicate on candidates, stated on the numeric fields\nalone, and proves it exact: it holds iff the candidate decodes to a clause of the\nsub-family. The window family is `Window.lean`; the formulas computing these predicates are\n`FamilyFml.lean` (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Families.lean#L127-L140",
+  "source_path": "MIPRE/TM/CookLevin/Families.lean",
+  "lines": [
+   127,
+   140
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.decodeVar_cell_iff"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.litFields_inputsLt",
+  "source_name": "MIPRE.TM.CookLevin.Desc.litFields_inputsLt",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.litFields_inputsLt : (litFields e G T b).InputsLt n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost Fml",
+   "variable (e G T b n : ℕ) (hn : b + mOf e G ≤ n)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.FamilyFml",
+  "module_doc": "/-!\n# The clause families as formulas\n\nFor each family predicate of `Families.lean` and `Window.lean`, the formula computing it on a\ncandidate of field formulas (`CandF`: three `FieldsF` and three sign formulas), with its\nexact semantics (`eval_startF`, …, `eval_windowF`) and its input bound. The fixed input\ntapes enter through value formulas (`cellValF` for a listed string, `unaryValF` for the\nunary time bound), tied to `fixed` by `TapeSpec`; the free tapes through the list of their\nindices (`FreeSpec`) (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/FamilyFml.lean#L221-L239",
+  "source_path": "MIPRE/TM/CookLevin/FamilyFml.lean",
+  "lines": [
+   221,
+   239
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 27,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.eval_cellValF",
+  "source_name": "MIPRE.TM.CookLevin.Desc.eval_cellValF",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.eval_cellValF (s : List Sym) (hs : s.length ≤ Sof e) :\n    (cellValF e A (codesOf s)).eval x = true ↔\n      (evalFields A x).v = cellCode s (Sof e) (evalFields A x).p := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost Fml",
+   "variable (e G : ℕ)",
+   "variable {A : FieldsF} (hA : A.Lengths e G) (x : ℕ → Bool)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.FamilyFml",
+  "module_doc": "/-!\n# The clause families as formulas\n\nFor each family predicate of `Families.lean` and `Window.lean`, the formula computing it on a\ncandidate of field formulas (`CandF`: three `FieldsF` and three sign formulas), with its\nexact semantics (`eval_startF`, …, `eval_windowF`) and its input bound. The fixed input\ntapes enter through value formulas (`cellValF` for a listed string, `unaryValF` for the\nunary time bound), tied to `fixed` by `TapeSpec`; the free tapes through the list of their\nindices (`FreeSpec`) (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/FamilyFml.lean#L636-L668",
+  "source_path": "MIPRE/TM/CookLevin/FamilyFml.lean",
+  "lines": [
+   636,
+   668
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.bitsVal_injective",
+   "MIPRE.TM.CookLevin.Desc.bitsVal_bitsOfNat"
+  ],
+  "pasted_helpers": 25,
+  "prooflines": 30,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.eval_unaryValF",
+  "source_name": "MIPRE.TM.CookLevin.Desc.eval_unaryValF",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.eval_unaryValF (T : ℕ) (hT : T ≤ Sof e) :\n    (unaryValF e T A).eval x = true ↔\n      (evalFields A x).v = cellCode (List.replicate T .one) (Sof e) (evalFields A x).p := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost Fml",
+   "variable (e G : ℕ)",
+   "variable {A : FieldsF} (hA : A.Lengths e G) (x : ℕ → Bool)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.FamilyFml",
+  "module_doc": "/-!\n# The clause families as formulas\n\nFor each family predicate of `Families.lean` and `Window.lean`, the formula computing it on a\ncandidate of field formulas (`CandF`: three `FieldsF` and three sign formulas), with its\nexact semantics (`eval_startF`, …, `eval_windowF`) and its input bound. The fixed input\ntapes enter through value formulas (`cellValF` for a listed string, `unaryValF` for the\nunary time bound), tied to `fixed` by `TapeSpec`; the free tapes through the list of their\nindices (`FreeSpec`) (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/FamilyFml.lean#L670-L690",
+  "source_path": "MIPRE/TM/CookLevin/FamilyFml.lean",
+  "lines": [
+   670,
+   690
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.bitsVal_injective",
+   "MIPRE.TM.CookLevin.Desc.bitsVal_bitsOfNat"
+  ],
+  "pasted_helpers": 20,
+  "prooflines": 18,
+  "is_target": false
+ }
+]

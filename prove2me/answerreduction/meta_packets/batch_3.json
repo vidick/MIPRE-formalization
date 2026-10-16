@@ -1,0 +1,705 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.gcA_le",
+  "source_name": "MIPRE.AnswerReduction.gcA_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.gcA_le (hgc : PcpSound V n P hk check B' dec) (x : Fin (V.sampler.dim n) → 𝔽₂) :\n    gcA V n P hk S S' check B T B' dec ((roleFamily (V.sampler.cl n) .oracle).eval x)\n      ≤ ∑ i : Fin 5, disPolyA V n P hk S S' check B T i x\n        + 2 * gcEvA V n P hk S S' check B T x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "open scoped ComplexOrder",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**The oracle's game check under Alice's `J`**: the outcomes not placed on their blocks, which\ndisagree with Bob's placed `G`, plus twice the weight of the rejected evaluations.",
+  "module": "MIPRE.Background.AnswerReduction.SoundDecoded",
+  "module_doc": "/-!\n# Soundness of answer reduction: the decoded strategy\n\nPiece AR-5e of `planning/answer-reduction.md` (`lem:ar-ora`): a POVM strategy for the typed\noracularized game of the input verifier, on the typed strategy's state. An oracle measures the\nextracted simultaneous measurement `J` and answers the pair decoded from the first two answer\npolynomials its outcome carries on their blocks (`decO`); an isolated player measures the\nextracted `G` of its own copy and answers the decoded polynomial (`decV`). The decoder `dec` is a\nparameter here.\n\nEach of the nine ordered pairs of roles fails at most (`condFail_OO_le`, `condFail_Ov_le`, ...):\n\n* the game check of an oracle's decoded pair, which fails only if `J`'s outcome is not placed on\n  its blocks or the PCP check rejects it at at least half the points (the hypothesis `hgc`, the\n  contrapositive of the PCP's soundness): `gcA_le`;\n* the disagreement of the decoded answers, which is at most that of the polynomials.\n\nThe failure of the decoded strategy is then at most a constant times the errors of\n`SoundRelations`, `SoundPoly` and `SoundGameCheck` (`one_sub_povmValue_decoded_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundDecoded.lean#L530-L608",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundDecoded.lean",
+  "lines": [
+   530,
+   608
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.one_le_two_mul_rejFrac",
+   "MIPRE.dis_map_eq_sum",
+   "MIPRE.POVM.sum_val",
+   "MIPRE.POVM.posSemidef"
+  ],
+  "pasted_helpers": 15,
+  "prooflines": 73,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.gcB_le",
+  "source_name": "MIPRE.AnswerReduction.gcB_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.gcB_le (hgc : PcpSound V n P hk check B' dec) (x : Fin (V.sampler.dim n) → 𝔽₂) :\n    gcB V n P hk S S' check B T B' dec ((roleFamily (V.sampler.cl n) .oracle).eval x)\n      ≤ ∑ i : Fin 5, disPolyB V n P hk S S' check B T i x\n        + 2 * gcEvB V n P hk S S' check B T x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "open scoped ComplexOrder",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**The oracle's game check under Bob's `J`**, the mirror image.",
+  "module": "MIPRE.Background.AnswerReduction.SoundDecoded",
+  "module_doc": "/-!\n# Soundness of answer reduction: the decoded strategy\n\nPiece AR-5e of `planning/answer-reduction.md` (`lem:ar-ora`): a POVM strategy for the typed\noracularized game of the input verifier, on the typed strategy's state. An oracle measures the\nextracted simultaneous measurement `J` and answers the pair decoded from the first two answer\npolynomials its outcome carries on their blocks (`decO`); an isolated player measures the\nextracted `G` of its own copy and answers the decoded polynomial (`decV`). The decoder `dec` is a\nparameter here.\n\nEach of the nine ordered pairs of roles fails at most (`condFail_OO_le`, `condFail_Ov_le`, ...):\n\n* the game check of an oracle's decoded pair, which fails only if `J`'s outcome is not placed on\n  its blocks or the PCP check rejects it at at least half the points (the hypothesis `hgc`, the\n  contrapositive of the PCP's soundness): `gcA_le`;\n* the disagreement of the decoded answers, which is at most that of the polynomials.\n\nThe failure of the decoded strategy is then at most a constant times the errors of\n`SoundRelations`, `SoundPoly` and `SoundGameCheck` (`one_sub_povmValue_decoded_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundDecoded.lean#L610-L683",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundDecoded.lean",
+  "lines": [
+   610,
+   683
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.one_le_two_mul_rejFrac",
+   "MIPRE.dis_map_eq_sum",
+   "MIPRE.aOp_sum",
+   "MIPRE.POVM.sum_val",
+   "MIPRE.POVM.posSemidef"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 69,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.sum_gcA_le",
+  "source_name": "MIPRE.AnswerReduction.sum_gcA_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.sum_gcA_le (hgc : PcpSound V n P hk check B' dec) :\n    ∑ x, gcA V n P hk S S' check B T B' dec ((roleFamily (V.sampler.cl n) .oracle).eval x)\n      ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * (7 * errD V n P hk S S' check B T) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "open scoped ComplexOrder",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**Alice's oracles' game checks**, summed over the oracle halves.",
+  "module": "MIPRE.Background.AnswerReduction.SoundDecoded",
+  "module_doc": "/-!\n# Soundness of answer reduction: the decoded strategy\n\nPiece AR-5e of `planning/answer-reduction.md` (`lem:ar-ora`): a POVM strategy for the typed\noracularized game of the input verifier, on the typed strategy's state. An oracle measures the\nextracted simultaneous measurement `J` and answers the pair decoded from the first two answer\npolynomials its outcome carries on their blocks (`decO`); an isolated player measures the\nextracted `G` of its own copy and answers the decoded polynomial (`decV`). The decoder `dec` is a\nparameter here.\n\nEach of the nine ordered pairs of roles fails at most (`condFail_OO_le`, `condFail_Ov_le`, ...):\n\n* the game check of an oracle's decoded pair, which fails only if `J`'s outcome is not placed on\n  its blocks or the PCP check rejects it at at least half the points (the hypothesis `hgc`, the\n  contrapositive of the PCP's soundness): `gcA_le`;\n* the disagreement of the decoded answers, which is at most that of the polynomials.\n\nThe failure of the decoded strategy is then at most a constant times the errors of\n`SoundRelations`, `SoundPoly` and `SoundGameCheck` (`one_sub_povmValue_decoded_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundDecoded.lean#L714-L735",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundDecoded.lean",
+  "lines": [
+   714,
+   735
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.gcA_le",
+   "MIPRE.AnswerReduction.sum_gcEvA_le",
+   "MIPRE.AnswerReduction.sum_disPolyA_le"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.sum_gcB_le",
+  "source_name": "MIPRE.AnswerReduction.sum_gcB_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.sum_gcB_le (hgc : PcpSound V n P hk check B' dec) :\n    ∑ x, gcB V n P hk S S' check B T B' dec ((roleFamily (V.sampler.cl n) .oracle).eval x)\n      ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) * (7 * errD V n P hk S S' check B T) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "open scoped ComplexOrder",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**Bob's oracles' game checks**, summed over the oracle halves.",
+  "module": "MIPRE.Background.AnswerReduction.SoundDecoded",
+  "module_doc": "/-!\n# Soundness of answer reduction: the decoded strategy\n\nPiece AR-5e of `planning/answer-reduction.md` (`lem:ar-ora`): a POVM strategy for the typed\noracularized game of the input verifier, on the typed strategy's state. An oracle measures the\nextracted simultaneous measurement `J` and answers the pair decoded from the first two answer\npolynomials its outcome carries on their blocks (`decO`); an isolated player measures the\nextracted `G` of its own copy and answers the decoded polynomial (`decV`). The decoder `dec` is a\nparameter here.\n\nEach of the nine ordered pairs of roles fails at most (`condFail_OO_le`, `condFail_Ov_le`, ...):\n\n* the game check of an oracle's decoded pair, which fails only if `J`'s outcome is not placed on\n  its blocks or the PCP check rejects it at at least half the points (the hypothesis `hgc`, the\n  contrapositive of the PCP's soundness): `gcA_le`;\n* the disagreement of the decoded answers, which is at most that of the polynomials.\n\nThe failure of the decoded strategy is then at most a constant times the errors of\n`SoundRelations`, `SoundPoly` and `SoundGameCheck` (`one_sub_povmValue_decoded_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundDecoded.lean#L737-L758",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundDecoded.lean",
+  "lines": [
+   737,
+   758
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.gcB_le",
+   "MIPRE.AnswerReduction.sum_gcEvB_le",
+   "MIPRE.AnswerReduction.sum_disPolyB_le"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.one_sub_povmValue_typed",
+  "source_name": "MIPRE.AnswerReduction.one_sub_povmValue_typed",
+  "formal_statement": "theorem MIPRE.AnswerReduction.one_sub_povmValue_typed {ι : Type*} [Fintype ι] [DecidableEq ι] {ℓ' : ℕ}\n    (L : Player → CL.CLFun CL.𝔽₂ ι (ℓ' + 1)) {A' : Type*} [Fintype A']\n    (D' : CL.Detyping.Question Role ι → CL.Detyping.Question Role ι → A' → A' → Bool)\n    {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]\n    (ψ : dA × dB → ℂ) (MA : CL.Detyping.Question Role ι → POVM A' dA)\n    (MB : CL.Detyping.Question Role ι → POVM A' dB) :\n    1 - povmValue (CL.Detyping.typedGame roleGraph roleGraph_nonempty (fun _ => roleFamily L) D')\n        ψ MA MB\n      = (9 * Fintype.card (ι → CL.𝔽₂) : ℝ)⁻¹ * ∑ z : ι → CL.𝔽₂, ∑ u : Role, ∑ v : Role,\n          condFail (CL.Detyping.typedGame roleGraph roleGraph_nonempty (fun _ => roleFamily L) D')\n            ψ MA MB (u, (roleFamily L u).eval z) (v, (roleFamily L v).eval z) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "open scoped ComplexOrder",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**The failure of a strategy for a typed oracularized game** is the average, over the ordered\npairs of roles and the seed, of its failure at the questions they determine.",
+  "module": "MIPRE.Background.AnswerReduction.SoundDecoded",
+  "module_doc": "/-!\n# Soundness of answer reduction: the decoded strategy\n\nPiece AR-5e of `planning/answer-reduction.md` (`lem:ar-ora`): a POVM strategy for the typed\noracularized game of the input verifier, on the typed strategy's state. An oracle measures the\nextracted simultaneous measurement `J` and answers the pair decoded from the first two answer\npolynomials its outcome carries on their blocks (`decO`); an isolated player measures the\nextracted `G` of its own copy and answers the decoded polynomial (`decV`). The decoder `dec` is a\nparameter here.\n\nEach of the nine ordered pairs of roles fails at most (`condFail_OO_le`, `condFail_Ov_le`, ...):\n\n* the game check of an oracle's decoded pair, which fails only if `J`'s outcome is not placed on\n  its blocks or the PCP check rejects it at at least half the points (the hypothesis `hgc`, the\n  contrapositive of the PCP's soundness): `gcA_le`;\n* the disagreement of the decoded answers, which is at most that of the polynomials.\n\nThe failure of the decoded strategy is then at most a constant times the errors of\n`SoundRelations`, `SoundPoly` and `SoundGameCheck` (`one_sub_povmValue_decoded_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundDecoded.lean#L785-L810",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundDecoded.lean",
+  "lines": [
+   785,
+   810
+  ],
+  "blueprint": [
+   {
+    "label": "def:ar-seed-index",
+    "env": "definition",
+    "title": "Full-seed indexing for answer reduction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.sum_roles_condFail_le",
+  "source_name": "MIPRE.AnswerReduction.sum_roles_condFail_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.sum_roles_condFail_le (hgc : PcpSound V n P hk check B' dec)\n    (z : Fin (V.sampler.dim n) → 𝔽₂) :\n    ∑ u : Role, ∑ v : Role, condFail (oGame V n B') T.ψ (MAo V n P hk S S' check B T B' dec)\n        (MBo V n P hk S S' check B T B' dec) (u, (roleFamily (V.sampler.cl n) u).eval z)\n        (v, (roleFamily (V.sampler.cl n) v).eval z)\n      ≤ 3 * gcA V n P hk S S' check B T B' dec ((roleFamily (V.sampler.cl n) .oracle).eval z)\n        + 3 * gcB V n P hk S S' check B T B' dec ((roleFamily (V.sampler.cl n) .oracle).eval z)\n        + dis T.ψ\n            ((JA V n P hk S S' check B T ((roleFamily (V.sampler.cl n) .oracle).eval z)).toPOVM ())\n            ((JB V n P hk S S' check B T ((roleFamily (V.sampler.cl n) .oracle).eval z)).toPOVM ())\n        + (disPolyA V n P hk S S' check B T 0 z + disPolyA V n P hk S S' check B T 1 z\n          + disPolyB V n P hk S S' check B T 0 z + disPolyB V n P hk S S' check B T 1 z)\n        + dis T.ψ ((GA1 V n P hk S S' check B T (roleOf 0) 0\n            ((roleFamily (V.sampler.cl n) (roleOf 0)).eval z)).toPOVM ())\n            ((GB1 V n P hk S S' check B T (roleOf 0) 0\n              ((roleFamily (V.sampler.cl n) (roleOf 0)).eval z)).toPOVM ())\n        + dis T.ψ ((GA1 V n P hk S S' check B T (roleOf 1) 1\n            ((roleFamily (V.sampler.cl n) (roleOf 1)).eval z)).toPOVM ())\n            ((GB1 V n P hk S S' check B T (roleOf 1) 1\n              ((roleFamily (V.sampler.cl n) (roleOf 1)).eval z)).toPOVM ()) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "open scoped ComplexOrder",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**The decoded strategy's failure** at a seed, over the nine ordered pairs of roles.",
+  "module": "MIPRE.Background.AnswerReduction.SoundDecoded",
+  "module_doc": "/-!\n# Soundness of answer reduction: the decoded strategy\n\nPiece AR-5e of `planning/answer-reduction.md` (`lem:ar-ora`): a POVM strategy for the typed\noracularized game of the input verifier, on the typed strategy's state. An oracle measures the\nextracted simultaneous measurement `J` and answers the pair decoded from the first two answer\npolynomials its outcome carries on their blocks (`decO`); an isolated player measures the\nextracted `G` of its own copy and answers the decoded polynomial (`decV`). The decoder `dec` is a\nparameter here.\n\nEach of the nine ordered pairs of roles fails at most (`condFail_OO_le`, `condFail_Ov_le`, ...):\n\n* the game check of an oracle's decoded pair, which fails only if `J`'s outcome is not placed on\n  its blocks or the PCP check rejects it at at least half the points (the hypothesis `hgc`, the\n  contrapositive of the PCP's soundness): `gcA_le`;\n* the disagreement of the decoded answers, which is at most that of the polynomials.\n\nThe failure of the decoded strategy is then at most a constant times the errors of\n`SoundRelations`, `SoundPoly` and `SoundGameCheck` (`one_sub_povmValue_decoded_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundDecoded.lean#L812-L872",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundDecoded.lean",
+  "lines": [
+   812,
+   872
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.condFail_Ob_le",
+   "MIPRE.AnswerReduction.condFail_aO_le",
+   "MIPRE.AnswerReduction.condFail_bO_le",
+   "MIPRE.AnswerReduction.condFail_aa_le",
+   "MIPRE.AnswerReduction.condFail_ab_le",
+   "MIPRE.AnswerReduction.condFail_bb_le",
+   "MIPRE.AnswerReduction.condFail_ba_le",
+   "MIPRE.AnswerReduction.gcA_le",
+   "MIPRE.AnswerReduction.gcB_le",
+   "MIPRE.AnswerReduction.condFail_OO_le",
+   "MIPRE.AnswerReduction.condFail_Oa_le",
+   "MIPRE.POVM.posSemidef"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 40,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.one_sub_povmValue_decoded_le",
+  "source_name": "MIPRE.AnswerReduction.one_sub_povmValue_decoded_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.one_sub_povmValue_decoded_le (hgc : PcpSound V n P hk check B' dec) :\n    1 - povmValue (oGame V n B') T.ψ (MAo V n P hk S S' check B T B' dec)\n        (MBo V n P hk S S' check B T B' dec)\n      ≤ 6 * errD V n P hk S S' check B T := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "open scoped ComplexOrder",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**The decoded strategy fails the typed oracularized game** with probability at most `6` times\nthe combined error, given the PCP's soundness in the form `hgc`.",
+  "module": "MIPRE.Background.AnswerReduction.SoundDecoded",
+  "module_doc": "/-!\n# Soundness of answer reduction: the decoded strategy\n\nPiece AR-5e of `planning/answer-reduction.md` (`lem:ar-ora`): a POVM strategy for the typed\noracularized game of the input verifier, on the typed strategy's state. An oracle measures the\nextracted simultaneous measurement `J` and answers the pair decoded from the first two answer\npolynomials its outcome carries on their blocks (`decO`); an isolated player measures the\nextracted `G` of its own copy and answers the decoded polynomial (`decV`). The decoder `dec` is a\nparameter here.\n\nEach of the nine ordered pairs of roles fails at most (`condFail_OO_le`, `condFail_Ov_le`, ...):\n\n* the game check of an oracle's decoded pair, which fails only if `J`'s outcome is not placed on\n  its blocks or the PCP check rejects it at at least half the points (the hypothesis `hgc`, the\n  contrapositive of the PCP's soundness): `gcA_le`;\n* the disagreement of the decoded answers, which is at most that of the polynomials.\n\nThe failure of the decoded strategy is then at most a constant times the errors of\n`SoundRelations`, `SoundPoly` and `SoundGameCheck` (`one_sub_povmValue_decoded_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundDecoded.lean#L874-L908",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundDecoded.lean",
+  "lines": [
+   874,
+   908
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-decoding",
+    "env": "lemma",
+    "title": "Decoding with the original answer cutoff",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.sum_gcA_le",
+   "MIPRE.AnswerReduction.sum_gcB_le",
+   "MIPRE.AnswerReduction.one_sub_povmValue_typed",
+   "MIPRE.AnswerReduction.sum_roles_condFail_le",
+   "MIPRE.LIDT.Simul.sum_deltaSim_le",
+   "MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy_le",
+   "MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy6_le",
+   "MIPRE.AnswerReduction.sum_disPolyB_le",
+   "MIPRE.AnswerReduction.sum_disPolyA_le",
+   "MIPRE.LIDT.Simul.inconsistency_eq_one_sub"
+  ],
+  "pasted_helpers": 19,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.simA_mul_rpow_le",
+  "source_name": "MIPRE.AnswerReduction.simA_mul_rpow_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.simA_mul_rpow_le {M Z : ℕ} (hM : 1 ≤ M) (hZ : 2 ≤ Z) (h : M ≤ Z ^ 2) :\n    Simul.simA * (M : ℝ) ^ Simul.simA ≤ (Z : ℝ) ^ (3 * simAN) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Real MIPRE.LIDT"
+  ],
+  "docstring": "**The prefactor of `δ_sim`** is at most `Z^{3A}` when its argument is at most `Z²`.",
+  "module": "MIPRE.Background.AnswerReduction.SoundError",
+  "module_doc": "/-!\n# Soundness of answer reduction: the error assembly\n\nPiece AR-5f of `planning/answer-reduction.md` (`lem:ar-error-assembly`), its arithmetic half: the\ncombined error of the decoded strategy's analysis, at a typed failure `θ ≤ Kε`, is at most\n\n  `39204 K Z^{3A} ε^{clB} + (Q + 1)^{-2} + 22 Z^{3A} 2^{-clB Q}`,     `Z = 8 (Q + 1) m'`\n\n(`errE_le`), where `A = ⌈simA⌉` and `Q ≤ m` is the question length, when the field is large:\n`Z^{fieldExp} ≤ q` with `fieldExp = 40000 (3A + 4)`. The two prefactors `simA (d m r)^simA` of the\ntwo extractions are at most `Z^{3A}` (`simA_mul_rpow_le`), and the field hypothesis puts\n`q^{clB}` above `Z^{3A + 4}` (`rpow_clB_ge`), which kills both field terms.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundError.lean#L47-L68",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundError.lean",
+  "lines": [
+   47,
+   68
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.deltaSim_le_of",
+  "source_name": "MIPRE.AnswerReduction.deltaSim_le_of",
+  "formal_statement": "theorem MIPRE.AnswerReduction.deltaSim_le_of {q m d r : ℕ} {x x' Pw β E : ℝ} (hx0 : 0 ≤ x)\n    (hP : Simul.simA * ((d * m * r : ℕ) : ℝ) ^ Simul.simA ≤ Pw) (hx : x ^ clB ≤ x')\n    (hb : Pw * (q : ℝ) ^ (-clB) ≤ β) (hc : (2 : ℝ) ^ (-(clB * m * d)) ≤ E) :\n    Simul.deltaSim q m d r x ≤ Pw * x' + β + Pw * E := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Real MIPRE.LIDT"
+  ],
+  "docstring": "One extraction's error, term by term.",
+  "module": "MIPRE.Background.AnswerReduction.SoundError",
+  "module_doc": "/-!\n# Soundness of answer reduction: the error assembly\n\nPiece AR-5f of `planning/answer-reduction.md` (`lem:ar-error-assembly`), its arithmetic half: the\ncombined error of the decoded strategy's analysis, at a typed failure `θ ≤ Kε`, is at most\n\n  `39204 K Z^{3A} ε^{clB} + (Q + 1)^{-2} + 22 Z^{3A} 2^{-clB Q}`,     `Z = 8 (Q + 1) m'`\n\n(`errE_le`), where `A = ⌈simA⌉` and `Q ≤ m` is the question length, when the field is large:\n`Z^{fieldExp} ≤ q` with `fieldExp = 40000 (3A + 4)`. The two prefactors `simA (d m r)^simA` of the\ntwo extractions are at most `Z^{3A}` (`simA_mul_rpow_le`), and the field hypothesis puts\n`q^{clB}` above `Z^{3A + 4}` (`rpow_clB_ge`), which kills both field terms.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundError.lean#L91-L110",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundError.lean",
+  "lines": [
+   91,
+   110
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.errE_le",
+  "source_name": "MIPRE.AnswerReduction.errE_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.errE_le {q m m' Q : ℕ} (hm : 1 ≤ m) (hmm : m ≤ m') (hQm : Q ≤ m)\n    (hq : (8 * ((Q + 1) * m')) ^ fieldExp ≤ q) {θ ε K : ℝ} (hθ0 : 0 ≤ θ) (hθ : θ ≤ K * ε)\n    (hK : 1 ≤ K) (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1) :\n    errE q m m' θ ≤ 39204 * K * ((8 * ((Q + 1) * m') : ℕ) : ℝ) ^ (3 * simAN) * ε ^ clB\n      + 1 / ((Q : ℝ) + 1) ^ 2\n      + 22 * ((8 * ((Q + 1) * m') : ℕ) : ℝ) ^ (3 * simAN) * (2 : ℝ) ^ (-(clB * Q)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Real MIPRE.LIDT"
+  ],
+  "docstring": "**The combined error at a typed failure `θ ≤ Kε`**, over a large field.",
+  "module": "MIPRE.Background.AnswerReduction.SoundError",
+  "module_doc": "/-!\n# Soundness of answer reduction: the error assembly\n\nPiece AR-5f of `planning/answer-reduction.md` (`lem:ar-error-assembly`), its arithmetic half: the\ncombined error of the decoded strategy's analysis, at a typed failure `θ ≤ Kε`, is at most\n\n  `39204 K Z^{3A} ε^{clB} + (Q + 1)^{-2} + 22 Z^{3A} 2^{-clB Q}`,     `Z = 8 (Q + 1) m'`\n\n(`errE_le`), where `A = ⌈simA⌉` and `Q ≤ m` is the question length, when the field is large:\n`Z^{fieldExp} ≤ q` with `fieldExp = 40000 (3A + 4)`. The two prefactors `simA (d m r)^simA` of the\ntwo extractions are at most `Z^{3A}` (`simA_mul_rpow_le`), and the field hypothesis puts\n`q^{clB}` above `Z^{3A + 4}` (`rpow_clB_ge`), which kills both field terms.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundError.lean#L112-L209",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundError.lean",
+  "lines": [
+   112,
+   209
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-error-assembly",
+    "env": "lemma",
+    "title": "Answer-reduction quantitative assembly",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.simA_mul_rpow_le",
+   "MIPRE.AnswerReduction.deltaSim_le_of"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 91,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.exists_threshold_clB",
+  "source_name": "MIPRE.AnswerReduction.exists_threshold_clB",
+  "formal_statement": "theorem MIPRE.AnswerReduction.exists_threshold_clB (c p : ℕ) : ∃ Q0 : ℕ, ∀ Q : ℕ, Q0 ≤ Q →\n    8064 ≤ Q ∧ 177408 * c * (Q : ℝ) ^ (p + 1) ≤ (2 : ℝ) ^ (clB * Q) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Real MIPRE.LIDT"
+  ],
+  "docstring": "**Past a threshold, `2^{clB Q}` beats every polynomial in `Q`**, and `Q ≥ 8064`.",
+  "module": "MIPRE.Background.AnswerReduction.SoundError",
+  "module_doc": "/-!\n# Soundness of answer reduction: the error assembly\n\nPiece AR-5f of `planning/answer-reduction.md` (`lem:ar-error-assembly`), its arithmetic half: the\ncombined error of the decoded strategy's analysis, at a typed failure `θ ≤ Kε`, is at most\n\n  `39204 K Z^{3A} ε^{clB} + (Q + 1)^{-2} + 22 Z^{3A} 2^{-clB Q}`,     `Z = 8 (Q + 1) m'`\n\n(`errE_le`), where `A = ⌈simA⌉` and `Q ≤ m` is the question length, when the field is large:\n`Z^{fieldExp} ≤ q` with `fieldExp = 40000 (3A + 4)`. The two prefactors `simA (d m r)^simA` of the\ntwo extractions are at most `Z^{3A}` (`simA_mul_rpow_le`), and the field hypothesis puts\n`q^{clB}` above `Z^{3A + 4}` (`rpow_clB_ge`), which kills both field terms.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundError.lean#L213-L242",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundError.lean",
+  "lines": [
+   213,
+   242
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-error-assembly",
+    "env": "lemma",
+    "title": "Answer-reduction quantitative assembly",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.mul_pow_le_two_pow"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.sqrt_le_delta",
+  "source_name": "MIPRE.AnswerReduction.sqrt_le_delta",
+  "formal_statement": "theorem MIPRE.AnswerReduction.sqrt_le_delta {N μ σ Q c p K : ℕ} (hN : 2 ≤ N) (hμ : 1 ≤ μ) (hσ : 1 ≤ σ)\n    (hQN : Q ≤ N ^ (2 * μ)) (hNQ : N ^ μ ≤ Q) (hQ8 : 8064 ≤ Q)\n    (hc : 177408 * c * (Q : ℝ) ^ (p + 1) ≤ (2 : ℝ) ^ (clB * Q)) {G e ε : ℝ}\n    (hG : G ≤ c * (Q : ℝ) ^ p * (σ : ℝ) ^ p) (hε0 : 0 ≤ ε)\n    (he : e ≤ 39204 * K * G * ε ^ clB + 1 / ((Q : ℝ) + 1) ^ 2\n      + 22 * G * (2 : ℝ) ^ (-(clB * Q))) :\n    24 * √(7 * e) ≤ (σ : ℝ) ^ (aOf c p K : ℝ) *\n      ((N : ℝ) ^ ((μ : ℝ) * aOf c p K) * ε ^ (clB / 2) + (N : ℝ) ^ (-((μ : ℝ) * (clB / 2)))) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Real MIPRE.LIDT"
+  ],
+  "docstring": "**The error is below the soundness loss**: with `N = λn`, `Q` between `N^μ` and `N^{2μ}` and\npast the threshold, the bound of `errE_le` gives `24 √(7 e) ≤ σ^a (N^{μa} ε^{clB/2} +\nN^{-μ clB/2})`.",
+  "module": "MIPRE.Background.AnswerReduction.SoundError",
+  "module_doc": "/-!\n# Soundness of answer reduction: the error assembly\n\nPiece AR-5f of `planning/answer-reduction.md` (`lem:ar-error-assembly`), its arithmetic half: the\ncombined error of the decoded strategy's analysis, at a typed failure `θ ≤ Kε`, is at most\n\n  `39204 K Z^{3A} ε^{clB} + (Q + 1)^{-2} + 22 Z^{3A} 2^{-clB Q}`,     `Z = 8 (Q + 1) m'`\n\n(`errE_le`), where `A = ⌈simA⌉` and `Q ≤ m` is the question length, when the field is large:\n`Z^{fieldExp} ≤ q` with `fieldExp = 40000 (3A + 4)`. The two prefactors `simA (d m r)^simA` of the\ntwo extractions are at most `Z^{3A}` (`simA_mul_rpow_le`), and the field hypothesis puts\n`q^{clB}` above `Z^{3A + 4}` (`rpow_clB_ge`), which kills both field terms.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundError.lean#L252-L373",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundError.lean",
+  "lines": [
+   252,
+   373
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-error-assembly",
+    "env": "lemma",
+    "title": "Answer-reduction quantitative assembly",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 111,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.sum_rpow_le",
+  "source_name": "MIPRE.LIDT.Simul.sum_rpow_le",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.sum_rpow_le {ι : Type*} [Fintype ι] {b : ℝ} (hb0 : 0 ≤ b) (hb1 : b ≤ 1) (ε : ι → ℝ)\n    (hε : ∀ i, 0 ≤ ε i) {E : ℝ} (hE : ∑ i, ε i ≤ Fintype.card ι * E) :\n    ∑ i, ε i ^ b ≤ Fintype.card ι * E ^ b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset"
+  ],
+  "docstring": "**Jensen's inequality for `ε ↦ ε^b`**, `0 ≤ b ≤ 1`, on a finite family with average at most\n`E`.",
+  "module": "MIPRE.Background.AnswerReduction.SoundExtract",
+  "module_doc": "/-!\n# Soundness of answer reduction: the extracted low-degree measurements\n\nPiece AR-5c of `planning/answer-reduction.md` (`claim:ar-3`, `claim:ar-4`): the quantum soundness\nof the seeded CL test (`LIDT.Simul.clSoundness`) applied to each per-seed strategy of\n`MIPRE/Background/AnswerReduction/SoundIsolate`, giving for each copy and each oracle half a pair of\nprojective measurements of polynomials, one on each player's space (`GA1`, `GB1` for copies\n`1`–`5`, `JA`, `JB` for the sixth copy), each consistent with the other player's point\nmeasurements and with each other, at the error `δ_sim` of that seed's failure.\n\nThe errors are averaged over the seeds by Jensen's inequality (`sum_deltaSim_le`): `δ_sim` is\nconcave in the failure, so the average error is at most the error of the average failure, which\nis at most `324` times the typed failure.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundExtract.lean#L30-L53",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundExtract.lean",
+  "lines": [
+   30,
+   53
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.sum_deltaSim_le",
+  "source_name": "MIPRE.LIDT.Simul.sum_deltaSim_le",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.sum_deltaSim_le {ι : Type*} [Fintype ι] (q m d r : ℕ) (ε : ι → ℝ) (hε : ∀ i, 0 ≤ ε i)\n    {E : ℝ} (hE : ∑ i, ε i ≤ Fintype.card ι * E) :\n    ∑ i, deltaSim q m d r (ε i) ≤ Fintype.card ι * deltaSim q m d r E := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset"
+  ],
+  "docstring": "**`δ_sim` averages**: the average of `δ_sim` over a family of failures is at most `δ_sim` of\nany bound on their average.",
+  "module": "MIPRE.Background.AnswerReduction.SoundExtract",
+  "module_doc": "/-!\n# Soundness of answer reduction: the extracted low-degree measurements\n\nPiece AR-5c of `planning/answer-reduction.md` (`claim:ar-3`, `claim:ar-4`): the quantum soundness\nof the seeded CL test (`LIDT.Simul.clSoundness`) applied to each per-seed strategy of\n`MIPRE/Background/AnswerReduction/SoundIsolate`, giving for each copy and each oracle half a pair of\nprojective measurements of polynomials, one on each player's space (`GA1`, `GB1` for copies\n`1`–`5`, `JA`, `JB` for the sixth copy), each consistent with the other player's point\nmeasurements and with each other, at the error `δ_sim` of that seed's failure.\n\nThe errors are averaged over the seeds by Jensen's inequality (`sum_deltaSim_le`): `δ_sim` is\nconcave in the failure, so the average error is at most the error of the average failure, which\nis at most `324` times the typed failure.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundExtract.lean#L55-L70",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundExtract.lean",
+  "lines": [
+   55,
+   70
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-common-polynomials",
+    "env": "lemma",
+    "title": "Common individual polynomial measurements",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.Simul.sum_rpow_le"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.z_le",
+  "source_name": "MIPRE.AnswerReduction.z_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.z_le (hR : ParamsBound PD R) {lam mu sigma n : ℕ} (hlam : 1 ≤ lam) (hmu : 1 ≤ mu)\n    (hs : 1 ≤ sigma) (hn : 1 ≤ n) :\n    8 * ((arQ lam mu n + 1) * (arPar PD lam mu sigma n).m')\n      ≤ zC R * (arQ lam mu n * sigma) ^ zE R := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost",
+   "variable (PD : PcpDecider) (R : Polynomial ℕ)"
+  ],
+  "docstring": "**The parameters are polynomial**: `Z = 8 (Q + 1) m' ≤ zC (Q σ)^{zE}`.",
+  "module": "MIPRE.Background.AnswerReduction.SoundFinal",
+  "module_doc": "/-!\n# Soundness of answer reduction\n\nPiece AR-5f of `planning/answer-reduction.md`, concluded (`lem:ar-soundness`,\n`lem:ar-error-assembly`): the `soundness` clause of the `AnswerReduction` contract for\n`arVerifier` (`arVerifier_soundness`), under a new hypothesis on the PCP decider, `FieldLarge`:\nfor every exponent `e`, its field eventually has at least `(8 (Q + 1) m')^e` elements.\n\nThe chain: a strategy of value above `1 - ε` for the answer-reduced verifier at the answer cut\n(the output verifier rejects longer answers, so its value at any larger bound is the same) gives a\ntyped strategy of failure `θ ≤ 16^{54} ε` (`typedStrategy_value_ge`), which gives\n`val*(𝒱_n) ≥ 1 - 24 √(7 errE(θ))` (`valStar_ge_of_typedGame`). The combined error is bounded over\nthe large field by `errE_le`, the size of the parameters by `ParamsBound` (`z_le`), and the result\ncompared with `δ(ε, n)` by `sqrt_le_delta`, past a threshold on `n` (`exists_threshold_clB`). At\n`μ = 0` or `ε ≥ 1` the loss is at least `1` and there is nothing to prove.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundFinal.lean#L60-L117",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundFinal.lean",
+  "lines": [
+   60,
+   117
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-error-assembly",
+    "env": "lemma",
+    "title": "Answer-reduction quantitative assembly",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 53,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.arVerifier_soundness",
+  "source_name": "MIPRE.AnswerReduction.arVerifier_soundness",
+  "formal_statement": "theorem MIPRE.AnswerReduction.arVerifier_soundness (R : Polynomial ℕ) (hF : ShoupField PD) (hR : ParamsBound PD R)\n    (hL : FieldLarge PD) :\n    ∃ (a b : ℝ) (C : ℕ), 1 ≤ a ∧ 0 < b ∧ b ≤ 1 ∧\n      ∀ (V : Verifier (ℓ + 1)) (lam mu sigma n : ℕ) (ε : ℝ) (B : ℕ), C ≤ n → 2 ≤ n → 1 ≤ lam →\n        V.Within n (inBudget lam mu n) → V.decider.size ≤ sigma → 0 < ε →\n        cutVal (arPar PD lam mu sigma n) ≤ B →\n        1 - ε < (arVerifier PD lam mu sigma V).valStar n B →\n        1 - delta a b lam mu sigma n ε ≤ V.valStar n (inAns lam mu n) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost",
+   "variable (PD : PcpDecider) {ℓ : ℕ}"
+  ],
+  "docstring": "**Soundness of answer reduction** (`lem:ar-soundness`, the `soundness` clause of the\n`AnswerReduction` contract, at any answer bound above the answer cut): `val*` of the\nanswer-reduced verifier above `1 - ε` gives `val*(𝒱_n) ≥ 1 - δ(ε, n)`, for `n` past a threshold,\nwith `a` depending only on `R` and `b = clB / 2`.",
+  "module": "MIPRE.Background.AnswerReduction.SoundFinal",
+  "module_doc": "/-!\n# Soundness of answer reduction\n\nPiece AR-5f of `planning/answer-reduction.md`, concluded (`lem:ar-soundness`,\n`lem:ar-error-assembly`): the `soundness` clause of the `AnswerReduction` contract for\n`arVerifier` (`arVerifier_soundness`), under a new hypothesis on the PCP decider, `FieldLarge`:\nfor every exponent `e`, its field eventually has at least `(8 (Q + 1) m')^e` elements.\n\nThe chain: a strategy of value above `1 - ε` for the answer-reduced verifier at the answer cut\n(the output verifier rejects longer answers, so its value at any larger bound is the same) gives a\ntyped strategy of failure `θ ≤ 16^{54} ε` (`typedStrategy_value_ge`), which gives\n`val*(𝒱_n) ≥ 1 - 24 √(7 errE(θ))` (`valStar_ge_of_typedGame`). The combined error is bounded over\nthe large field by `errE_le`, the size of the parameters by `ParamsBound` (`z_le`), and the result\ncompared with `δ(ε, n)` by `sqrt_le_delta`, past a threshold on `n` (`exists_threshold_clB`). At\n`μ = 0` or `ε ≥ 1` the loss is at least `1` and there is nothing to prove.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundFinal.lean#L143-L256",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundFinal.lean",
+  "lines": [
+   143,
+   256
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-error-assembly",
+    "env": "lemma",
+    "title": "Answer-reduction quantitative assembly",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.total",
+   "MIPRE.AnswerReduction.one_sub_povmValue_decoded_le",
+   "MIPRE.AnswerReduction.exists_threshold_clB",
+   "MIPRE.AnswerReduction.sqrt_le_delta",
+   "MIPRE.AnswerReduction.errE_le",
+   "MIPRE.AnswerReduction.z_le",
+   "MIPRE.AnswerReduction.pcpSound",
+   "MIPRE.AnswerReduction.typedStrategy_value_ge",
+   "MIPRE.ancillaEmbed_isometry",
+   "MIPRE.exists_projective_dilation",
+   "MIPRE.POVM.ext'",
+   "MIPRE.TensorProductStrategy.succAt_adapt_eq",
+   "MIPRE.SeededGame.quantumValue_ge_of_oracular",
+   "MIPRE.POVM.sum_val",
+   "MIPRE.POVM.posSemidef"
+  ],
+  "pasted_helpers": 40,
+  "prooflines": 101,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.check_of_typedPred",
+  "source_name": "MIPRE.AnswerReduction.check_of_typedPred",
+  "formal_statement": "theorem MIPRE.AnswerReduction.check_of_typedPred (x : Fin (V.sampler.dim n) → 𝔽₂) (w : Coord P → Fq P hk)\n    {a b : Verifier.Answers B}\n    (h : typedPred V n P hk S S' check B (tq V n P hk S S' (.oracle, ((5 : Fin 6), .point)) x w)\n      (tq V n P hk S S' (.oracle, ((5 : Fin 6), .point)) x w) a b = true) :\n    check ((roleFamily (V.sampler.cl n) .oracle).eval x) ((regs6 P).ptOf w) (rd6all P hk B a)\n        = true ∧\n      check ((roleFamily (V.sampler.cl n) .oracle).eval x) ((regs6 P).ptOf w) (rd6all P hk B b)\n        = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**Step 5 at two `Point_6` questions**: acceptance forces the PCP check to pass on both\nanswers.",
+  "module": "MIPRE.Background.AnswerReduction.SoundGameCheck",
+  "module_doc": "/-!\n# Soundness of answer reduction: the game check under the extracted measurement\n\nPiece AR-5e of `planning/answer-reduction.md` (the game check of `lem:ar-ar`): the probability\nthat the PCP check rejects the evaluations of Alice's simultaneous polynomial measurement `J`, at a\nuniform point, is at most its probability of rejecting Bob's `Point_6` answer plus their\ndisagreement (`sum_ite_bornProb_one_le`): the first is bounded by the typed game's failure at the\ntype pair of two `Point_6` questions, whose step 5 checks Bob's answer, and the second by the\nextraction (`sum_gcEvA_le`). The mirror image bounds Bob's `J` (`sum_gcEvB_le`).\n\nThe paper argues through its decoded strategy's closeness to the original (`lem:ar-ar`, the game\ncheck, with `lem:close-strategies-have-close-values`); the event transfer used here is linear in\nthe disagreement and needs no projectivity.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundGameCheck.lean#L74-L101",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundGameCheck.lean",
+  "lines": [
+   74,
+   101
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.pcpCl_exactlyOn",
+   "MIPRE.LIDT.CL.Regs.questionOf_eval",
+   "MIPRE.CL.CLFun.truncate_reindex",
+   "MIPRE.CL.CLFun.eval_reindex",
+   "MIPRE.CL.pull_proj_compl",
+   "MIPRE.CL.CLFun.eval_truncate_of_le",
+   "MIPRE.exactlyOn_roleFamily"
+  ],
+  "pasted_helpers": 30,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.sum_gcEvA_le",
+  "source_name": "MIPRE.AnswerReduction.sum_gcEvA_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.sum_gcEvA_le :\n    ∑ x, gcEvA V n P hk S S' check B T x\n      ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) *\n        (err6 V n P hk S S' check B T + 2916 * (1 - T.value)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**Alice's `J` against the check**: summed over the oracle halves, at most the sixth copy's\nextraction error plus `54²` times the typed failure, per oracle half.",
+  "module": "MIPRE.Background.AnswerReduction.SoundGameCheck",
+  "module_doc": "/-!\n# Soundness of answer reduction: the game check under the extracted measurement\n\nPiece AR-5e of `planning/answer-reduction.md` (the game check of `lem:ar-ar`): the probability\nthat the PCP check rejects the evaluations of Alice's simultaneous polynomial measurement `J`, at a\nuniform point, is at most its probability of rejecting Bob's `Point_6` answer plus their\ndisagreement (`sum_ite_bornProb_one_le`): the first is bounded by the typed game's failure at the\ntype pair of two `Point_6` questions, whose step 5 checks Bob's answer, and the second by the\nextraction (`sum_gcEvA_le`). The mirror image bounds Bob's `J` (`sum_gcEvB_le`).\n\nThe paper argues through its decoded strategy's closeness to the original (`lem:ar-ar`, the game\ncheck, with `lem:close-strategies-have-close-values`); the event transfer used here is linear in\nthe disagreement and needs no projectivity.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundGameCheck.lean#L142-L236",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundGameCheck.lean",
+  "lines": [
+   142,
+   236
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.pcpCl_exactlyOn",
+   "MIPRE.LIDT.Simul.sum_deltaSim_le",
+   "MIPRE.AnswerReduction.check_of_typedPred",
+   "MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy6_le",
+   "MIPRE.AnswerReduction.sum_edges_le",
+   "MIPRE.LIDT.Simul.inconsistency_eq_one_sub",
+   "MIPRE.CL.sum_comp_injective",
+   "MIPRE.LIDT.CL.Regs.pres_eval",
+   "MIPRE.CL.CLFun.truncate_reindex",
+   "MIPRE.CL.CLFun.eval_reindex",
+   "MIPRE.CL.pull_proj_compl",
+   "MIPRE.CL.CLFun.eval_truncate_of_le",
+   "MIPRE.sum_bornProb_mapB",
+   "MIPRE.sum_bornProb_mapA",
+   "MIPRE.sum_ite_bornProb_le_condFail",
+   "MIPRE.sum_ite_bornProb_one_le",
+   "MIPRE.POVM.ext'",
+   "MIPRE.POVM.map_map",
+   "MIPRE.exactlyOn_roleFamily"
+  ],
+  "pasted_helpers": 42,
+  "prooflines": 89,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.sum_gcEvB_le",
+  "source_name": "MIPRE.AnswerReduction.sum_gcEvB_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.sum_gcEvB_le :\n    ∑ x, gcEvB V n P hk S S' check B T x\n      ≤ Fintype.card (Fin (V.sampler.dim n) → 𝔽₂) *\n        (err6 V n P hk S S' check B T + 2916 * (1 - T.value)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)"
+  ],
+  "docstring": "**Bob's `J` against the check**, the mirror image.",
+  "module": "MIPRE.Background.AnswerReduction.SoundGameCheck",
+  "module_doc": "/-!\n# Soundness of answer reduction: the game check under the extracted measurement\n\nPiece AR-5e of `planning/answer-reduction.md` (the game check of `lem:ar-ar`): the probability\nthat the PCP check rejects the evaluations of Alice's simultaneous polynomial measurement `J`, at a\nuniform point, is at most its probability of rejecting Bob's `Point_6` answer plus their\ndisagreement (`sum_ite_bornProb_one_le`): the first is bounded by the typed game's failure at the\ntype pair of two `Point_6` questions, whose step 5 checks Bob's answer, and the second by the\nextraction (`sum_gcEvA_le`). The mirror image bounds Bob's `J` (`sum_gcEvB_le`).\n\nThe paper argues through its decoded strategy's closeness to the original (`lem:ar-ar`, the game\ncheck, with `lem:close-strategies-have-close-values`); the event transfer used here is linear in\nthe disagreement and needs no projectivity.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundGameCheck.lean#L238-L331",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundGameCheck.lean",
+  "lines": [
+   238,
+   331
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.AnswerReduction.pcpCl_exactlyOn",
+   "MIPRE.LIDT.Simul.sum_deltaSim_le",
+   "MIPRE.AnswerReduction.check_of_typedPred",
+   "MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy6_le",
+   "MIPRE.AnswerReduction.sum_edges_le",
+   "MIPRE.LIDT.Simul.inconsistency_eq_one_sub",
+   "MIPRE.CL.sum_comp_injective",
+   "MIPRE.LIDT.CL.Regs.pres_eval",
+   "MIPRE.CL.CLFun.truncate_reindex",
+   "MIPRE.CL.CLFun.eval_reindex",
+   "MIPRE.CL.pull_proj_compl",
+   "MIPRE.CL.CLFun.eval_truncate_of_le",
+   "MIPRE.sum_bornProb_mapB",
+   "MIPRE.sum_bornProb_mapA",
+   "MIPRE.sum_ite_bornProb_le_condFail'",
+   "MIPRE.sum_ite_bornProb_one_le'",
+   "MIPRE.POVM.ext'",
+   "MIPRE.POVM.map_map",
+   "MIPRE.exactlyOn_roleFamily"
+  ],
+  "pasted_helpers": 42,
+  "prooflines": 89,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.AnswerReduction.sum_edges_le",
+  "source_name": "MIPRE.AnswerReduction.sum_edges_le",
+  "formal_statement": "theorem MIPRE.AnswerReduction.sum_edges_le (T : TensorProductStrategy (typedGame V n P hk S S' check B)) {ι : Type*}\n    [Fintype ι] (e : ι → ArTy × ArTy) (he : Function.Injective e) :\n    ∑ j, ∑ x, ∑ w, edgeFail V n P hk S S' check B T (e j) x w\n      ≤ (Fintype.card (ArTy × ArTy) * Fintype.card (Fin (dim V n P) → 𝔽₂)) * (1 - T.value) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.AnswerReduction",
+   "open Finset MIPRE.CL MIPRE.CL.CLFun MIPRE.LIDT MIPRE.SAT MIPRE.AnswerReduction.Pcp MIPRE.Cost",
+   "variable {ℓ : ℕ} (V : Verifier (ℓ + 1)) (n : ℕ) (P : PcpParams) (hk : 1 ≤ P.k)",
+   "variable [NeZero P.m] {hm : P.m ∣ Fintype.card (Fq P hk)} {hm' : P.m' ∣ Fintype.card (Fq P hk)}"
+  ],
+  "docstring": "**Any set of type pairs inside the typed failure**: the failures at an injective family of type\npairs, summed over the oracle halves and the PCP vectors, add up to at most the number of type\npairs times the number of vectors times the typed game's failure.",
+  "module": "MIPRE.Background.AnswerReduction.SoundIsolate",
+  "module_doc": "/-!\n# Soundness of answer reduction: the per-seed low-degree games\n\nPiece AR-5b of `planning/answer-reduction.md` (`claim:ar-3`, `claim:ar-4`, `def:ar-seed-index`).\nA strategy for the typed answer-reduced game, restricted to one copy of the low-degree test at a\nrole pair where that copy is tested and to one seed of the input sampler, is a strategy for the\nseeded CL test of the copy's parameters (`copyStrategy`): its question maps a CL question to the\ntyped question whose PCP half the copy's presentation computes (`Regs.embedQ`) and whose oracle\nhalf the seed's role family gives, and its answers are parsed and read as answers of the copy's\ntest. The seeds are indexed by the full seed of the input sampler, as the blueprint's\n`def:ar-seed-index` asks.\n\nThe per-seed failures average to at most a constant times the typed failure\n(`sum_one_sub_value_copyStrategy_le`): the copy's nine type pairs are a fixed fraction of the\ntyped game's, and the copy's registers of a uniform PCP vector carry a uniform sample\n(`Regs.sum_sampleOf`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/AnswerReduction/SoundIsolate.lean#L169-L201",
+  "source_path": "MIPRE/Background/AnswerReduction/SoundIsolate.lean",
+  "lines": [
+   169,
+   201
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-global-tests",
+    "env": "lemma",
+    "title": "Global PCP consistency tests",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.TensorProductStrategy.failAt_nonneg",
+   "MIPRE.SampledGame.one_sub_value"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 25,
+  "is_target": false
+ }
+]

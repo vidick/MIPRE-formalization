@@ -1,0 +1,583 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.sourceAlmostProjective_nonneg",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.sourceAlmostProjective_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.sourceAlmostProjective_nonneg {Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState ι) (A : Measurement Outcome ι) :\n    0 ≤ ∑ a, ev ψ (A.outcome a - A.outcome a * A.outcome a) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The source idempotence defect of a measurement is nonnegative.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization",
+  "module_doc": "/-!\n# Section 5 — Rounding To Projectors Core\n\nInternal lemmas for the orthogonalization and rounding-to-projectors chain.\n\nThis file extracts the consistency-to-almost-projective and spectral/rounding\nsteps so that `QXPLayer.lean` can depend on them without importing the full\nSection 5 theorem file.\n\n## References\n\n- `references/ldt-paper/orthonormalization.tex`\n- `blueprint/src/chapter/ch04_projective.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Projectivization.lean#L498-L508",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Projectivization.lean",
+  "lines": [
+   498,
+   508
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Measurement.outcome_le_one",
+   "MIPStarRE.Quantum.sq_le_self"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.consistencyToAlmostProjective",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.consistencyToAlmostProjective",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.consistencyToAlmostProjective {Outcome : Type*}\n    {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype Outcome] [DecidableEq Outcome]\n    (ψ : QuantumState (ιA × ιB))\n    (A : Measurement Outcome ιA) (B : Measurement Outcome ιB) (ζ : Error) :\n    ConsRel ψ (uniformDistribution Unit)\n      (constSubMeasFamily A.toSubMeas)\n      (constSubMeasFamily B.toSubMeas) ζ →\n      AlmostProjMeasStatement ψ\n        (leftLiftedMeasurement (ιB := ιB) A)\n        (consistencyToAlmostProjectiveError ζ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Consistency implies almost-projective: if `A` is `ζ`-consistent\nwith `B`, then `A` is `2ζ`-almost-projective.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization",
+  "module_doc": "/-!\n# Section 5 — Rounding To Projectors Core\n\nInternal lemmas for the orthogonalization and rounding-to-projectors chain.\n\nThis file extracts the consistency-to-almost-projective and spectral/rounding\nsteps so that `QXPLayer.lean` can depend on them without importing the full\nSection 5 theorem file.\n\n## References\n\n- `references/ldt-paper/orthonormalization.tex`\n- `blueprint/src/chapter/ch04_projective.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Projectivization.lean#L510-L559",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Projectivization.lean",
+  "lines": [
+   510,
+   559
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_zero",
+   "MIPStarRE.LDT.leftTensor_one",
+   "MIPStarRE.LDT.qBipartiteConsDefect_nonneg"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 36,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.consistencyToAlmostProjective_right",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.consistencyToAlmostProjective_right",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.consistencyToAlmostProjective_right {Outcome : Type*}\n    {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype Outcome] [DecidableEq Outcome]\n    (ψ : QuantumState (ιA × ιB))\n    (A : Measurement Outcome ιA) (B : Measurement Outcome ιB) (ζ : Error) :\n    ConsRel ψ (uniformDistribution Unit)\n      (constSubMeasFamily A.toSubMeas)\n      (constSubMeasFamily B.toSubMeas) ζ →\n      AlmostProjMeasStatement ψ\n        (rightLiftedMeasurement (ιA := ιA) B)\n        (consistencyToAlmostProjectiveError ζ) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Right-register form of consistency-to-almost-projective: if `A` and `B`\nare `ζ`-consistent across \\(H_A\\otimes H_B\\), then Bob's lifted measurement is\n`2ζ`-almost-projective on the right tensor factor.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization",
+  "module_doc": "/-!\n# Section 5 — Rounding To Projectors Core\n\nInternal lemmas for the orthogonalization and rounding-to-projectors chain.\n\nThis file extracts the consistency-to-almost-projective and spectral/rounding\nsteps so that `QXPLayer.lean` can depend on them without importing the full\nSection 5 theorem file.\n\n## References\n\n- `references/ldt-paper/orthonormalization.tex`\n- `blueprint/src/chapter/ch04_projective.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Projectivization.lean#L561-L611",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Projectivization.lean",
+  "lines": [
+   561,
+   611
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_zero",
+   "MIPStarRE.LDT.rightTensor_one",
+   "MIPStarRE.LDT.qBipartiteConsDefect_nonneg"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 36,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.qSDD_leftPlaced_zeroProjSubMeas_le_one",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.qSDD_leftPlaced_zeroProjSubMeas_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.qSDD_leftPlaced_zeroProjSubMeas_le_one {Outcome : Type*}\n    {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype Outcome]\n    (ψ : QuantumState (ιA × ιB)) (hψ : ψ.IsNormalized)\n    (A : SubMeas Outcome ιA) :\n    qSDD ψ (leftPlacedSubMeas (ιB := ιB) A)\n      (leftPlacedSubMeas (ιB := ιB)\n        (zeroProjSubMeas (Outcome := Outcome) (ι := ιA)).toSubMeas) ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The zero projective submeasurement is within unit `qSDD` of any lifted\nsubmeasurement on a normalized state.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization",
+  "module_doc": "/-!\n# Section 5 — Rounding To Projectors Core\n\nInternal lemmas for the orthogonalization and rounding-to-projectors chain.\n\nThis file extracts the consistency-to-almost-projective and spectral/rounding\nsteps so that `QXPLayer.lean` can depend on them without importing the full\nSection 5 theorem file.\n\n## References\n\n- `references/ldt-paper/orthonormalization.tex`\n- `blueprint/src/chapter/ch04_projective.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Projectivization.lean#L627-L674",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Projectivization.lean",
+  "lines": [
+   627,
+   674
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.outcome_hermitian",
+   "MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_one"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 38,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.qSDD_rightPlaced_zeroProjSubMeas_le_one",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.qSDD_rightPlaced_zeroProjSubMeas_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.qSDD_rightPlaced_zeroProjSubMeas_le_one {Outcome : Type*}\n    {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype Outcome]\n    (ψ : QuantumState (ιA × ιB)) (hψ : ψ.IsNormalized)\n    (A : SubMeas Outcome ιB) :\n    qSDD ψ (rightPlacedSubMeas (ιA := ιA) A)\n      (rightPlacedSubMeas (ιA := ιA)\n        (zeroProjSubMeas (Outcome := Outcome) (ι := ιB)).toSubMeas) ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The zero projective submeasurement is within unit `qSDD` of any\nright-placed submeasurement on a normalized bipartite state.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.Projectivization",
+  "module_doc": "/-!\n# Section 5 — Rounding To Projectors Core\n\nInternal lemmas for the orthogonalization and rounding-to-projectors chain.\n\nThis file extracts the consistency-to-almost-projective and spectral/rounding\nsteps so that `QXPLayer.lean` can depend on them without importing the full\nSection 5 theorem file.\n\n## References\n\n- `references/ldt-paper/orthonormalization.tex`\n- `blueprint/src/chapter/ch04_projective.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Projectivization.lean#L676-L723",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/Projectivization.lean",
+  "lines": [
+   676,
+   723
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SubMeas.outcome_hermitian",
+   "MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_one"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 38,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.sqrt_orthonormalizationError_eq",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.sqrt_orthonormalizationError_eq",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.sqrt_orthonormalizationError_eq {ζ : Error} (hζ0 : 0 ≤ ζ) :\n    Real.sqrt (orthonormalizationError ζ) = 10 * Real.rpow ζ (1 / (8 : Error)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Square-root simplification for the orthonormalization error.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.ProjectivizationChain.Basic",
+  "module_doc": "/-!\n# Section 5 — basic projectivization data\n\nThis module contains the scalar estimates and elementary transport lemmas used\nby the orthonormalization projectivization chain.  The mathematical source is the\northonormalization-and-completion argument in `inductive_step.tex`, lines\n130--149, together with the orthonormalization theorem and the completion\nproposition cited there.\n\nThe declarations here are deliberately prior to the construction of the final\nprojective measurements.  They record the literal scalar obtained by composing\northonormalization with completion, its absorbed form in the unit-error regime,\nthe right-register transport available under permutation invariance, and the\nresidual hypotheses passed to the self-consistency handoff theorem.  The actual\nprojective-measurement output theorem is in `ProjectivizationChain.Output`.\n\nThe scalar computation is\n\n    ζ₂ = 2 · (100·ζ^{1/4}) + 4 · √(100·ζ^{1/4}) + 2·ζ\n       = 200·ζ^{1/4} + 40·ζ^{1/8} + 2·ζ.\n\nThe paper prints the closed form `ζ₂ = 200·ζ^{1/4} + 40·ζ^{1/8}`.  The Lean\ncascade uses the slightly widened absorbed scalar\n`200·ζ^{1/4} + 42·ζ^{1/8}` downstream, since in the non-vacuous regime\n`0 ≤ ζ ≤ 1` gives `2·ζ ≤ 2·ζ^{1/8}`.\n\n## Status\n\n- The orthonormalization step uses the source theorem `orthonormalization`.\n  The theorem has a tracked proof gap for the sharp paper constant; this file\n  no longer exposes its proof-stage construction data as a hypothesis of the\n  orthonormalization projectivization output statement.\n- The completion step uses the **fully-formalized** `completingToMeasurement`\n  (`\\leanok` in `blueprint/src/chapter/ch03_preliminaries.tex`), so no new\n  bridge is introduced here.\n- The output `Q` is now a `ProjMeas`. This uses the generic helper\n  `Preliminaries.completeAtOutcomeProj`, whose proof relies only on the\n  existing facts that `P.total` is a projection and that each `P_a` is\n  absorbed by `P.total`.\n\n## References\n\n- Paper: `references/ldt-paper/inductive_step.tex` lines 130–149\n  (application of `lem:orthonormalization-main-lemma` +\n  `prop:completing-to-measurement`).\n- Paper: `references/ldt-paper/orthonormalization.tex` lines 67–77\n  (`thm:orthonormalization`).\n- Paper: `references/ldt-paper/preliminaries.tex` lines 1101–1170\n  (`prop:completing-to-measurement`).\n- Blueprint: `blueprint/src/chapter/ch10_induction.tex` lines 350–360\n  (`eq:G-with-Q-A`).\n- Blueprint: `blueprint/src/chapter/ch04_projective.tex`\n  (orthonormalization theorem).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/ProjectivizationChain/Basic.lean#L146-L168",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/ProjectivizationChain/Basic.lean",
+  "lines": [
+   146,
+   168
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalizeAndCompleteError_le_absorbedZeta2",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalizeAndCompleteError_le_absorbedZeta2",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalizeAndCompleteError_le_absorbedZeta2 {ζ : Error}\n    (hζ0 : 0 ≤ ζ) (hζ1 : ζ ≤ 1) :\n    orthonormalizeAndCompleteError ζ ≤\n      200 * Real.rpow ζ (1 / (4 : Error)) +\n        42 * Real.rpow ζ (1 / (8 : Error)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The formal cascade scalar with coefficient `42` absorbs the literal\northonormalize-and-complete error in the non-vacuous unit regime.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.ProjectivizationChain.Basic",
+  "module_doc": "/-!\n# Section 5 — basic projectivization data\n\nThis module contains the scalar estimates and elementary transport lemmas used\nby the orthonormalization projectivization chain.  The mathematical source is the\northonormalization-and-completion argument in `inductive_step.tex`, lines\n130--149, together with the orthonormalization theorem and the completion\nproposition cited there.\n\nThe declarations here are deliberately prior to the construction of the final\nprojective measurements.  They record the literal scalar obtained by composing\northonormalization with completion, its absorbed form in the unit-error regime,\nthe right-register transport available under permutation invariance, and the\nresidual hypotheses passed to the self-consistency handoff theorem.  The actual\nprojective-measurement output theorem is in `ProjectivizationChain.Output`.\n\nThe scalar computation is\n\n    ζ₂ = 2 · (100·ζ^{1/4}) + 4 · √(100·ζ^{1/4}) + 2·ζ\n       = 200·ζ^{1/4} + 40·ζ^{1/8} + 2·ζ.\n\nThe paper prints the closed form `ζ₂ = 200·ζ^{1/4} + 40·ζ^{1/8}`.  The Lean\ncascade uses the slightly widened absorbed scalar\n`200·ζ^{1/4} + 42·ζ^{1/8}` downstream, since in the non-vacuous regime\n`0 ≤ ζ ≤ 1` gives `2·ζ ≤ 2·ζ^{1/8}`.\n\n## Status\n\n- The orthonormalization step uses the source theorem `orthonormalization`.\n  The theorem has a tracked proof gap for the sharp paper constant; this file\n  no longer exposes its proof-stage construction data as a hypothesis of the\n  orthonormalization projectivization output statement.\n- The completion step uses the **fully-formalized** `completingToMeasurement`\n  (`\\leanok` in `blueprint/src/chapter/ch03_preliminaries.tex`), so no new\n  bridge is introduced here.\n- The output `Q` is now a `ProjMeas`. This uses the generic helper\n  `Preliminaries.completeAtOutcomeProj`, whose proof relies only on the\n  existing facts that `P.total` is a projection and that each `P_a` is\n  absorbed by `P.total`.\n\n## References\n\n- Paper: `references/ldt-paper/inductive_step.tex` lines 130–149\n  (application of `lem:orthonormalization-main-lemma` +\n  `prop:completing-to-measurement`).\n- Paper: `references/ldt-paper/orthonormalization.tex` lines 67–77\n  (`thm:orthonormalization`).\n- Paper: `references/ldt-paper/preliminaries.tex` lines 1101–1170\n  (`prop:completing-to-measurement`).\n- Blueprint: `blueprint/src/chapter/ch10_induction.tex` lines 350–360\n  (`eq:G-with-Q-A`).\n- Blueprint: `blueprint/src/chapter/ch04_projective.tex`\n  (orthonormalization theorem).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/ProjectivizationChain/Basic.lean#L170-L187",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/ProjectivizationChain/Basic.lean",
+  "lines": [
+   170,
+   187
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.sqrt_orthonormalizationError_eq"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.sddRel_liftRight_of_liftLeft_permInv",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.sddRel_liftRight_of_liftLeft_permInv",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.sddRel_liftRight_of_liftLeft_permInv\n    {Question Outcome : Type*} {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    {ψ : QuantumState (ι × ι)}\n    (hperm : PermInvState ψ)\n    (𝒟 : Distribution Question)\n    (A B : IdxSubMeas Question Outcome ι) (δ : Error) :\n    SDDRel ψ 𝒟 (IdxSubMeas.liftLeft A) (IdxSubMeas.liftLeft B) δ →\n      SDDRel ψ 𝒟 (IdxSubMeas.liftRight A) (IdxSubMeas.liftRight B) δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Transport an `SDDRel` bound from left lifts to right lifts on a\npermutation-invariant bipartite state.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.ProjectivizationChain.Basic",
+  "module_doc": "/-!\n# Section 5 — basic projectivization data\n\nThis module contains the scalar estimates and elementary transport lemmas used\nby the orthonormalization projectivization chain.  The mathematical source is the\northonormalization-and-completion argument in `inductive_step.tex`, lines\n130--149, together with the orthonormalization theorem and the completion\nproposition cited there.\n\nThe declarations here are deliberately prior to the construction of the final\nprojective measurements.  They record the literal scalar obtained by composing\northonormalization with completion, its absorbed form in the unit-error regime,\nthe right-register transport available under permutation invariance, and the\nresidual hypotheses passed to the self-consistency handoff theorem.  The actual\nprojective-measurement output theorem is in `ProjectivizationChain.Output`.\n\nThe scalar computation is\n\n    ζ₂ = 2 · (100·ζ^{1/4}) + 4 · √(100·ζ^{1/4}) + 2·ζ\n       = 200·ζ^{1/4} + 40·ζ^{1/8} + 2·ζ.\n\nThe paper prints the closed form `ζ₂ = 200·ζ^{1/4} + 40·ζ^{1/8}`.  The Lean\ncascade uses the slightly widened absorbed scalar\n`200·ζ^{1/4} + 42·ζ^{1/8}` downstream, since in the non-vacuous regime\n`0 ≤ ζ ≤ 1` gives `2·ζ ≤ 2·ζ^{1/8}`.\n\n## Status\n\n- The orthonormalization step uses the source theorem `orthonormalization`.\n  The theorem has a tracked proof gap for the sharp paper constant; this file\n  no longer exposes its proof-stage construction data as a hypothesis of the\n  orthonormalization projectivization output statement.\n- The completion step uses the **fully-formalized** `completingToMeasurement`\n  (`\\leanok` in `blueprint/src/chapter/ch03_preliminaries.tex`), so no new\n  bridge is introduced here.\n- The output `Q` is now a `ProjMeas`. This uses the generic helper\n  `Preliminaries.completeAtOutcomeProj`, whose proof relies only on the\n  existing facts that `P.total` is a projection and that each `P_a` is\n  absorbed by `P.total`.\n\n## References\n\n- Paper: `references/ldt-paper/inductive_step.tex` lines 130–149\n  (application of `lem:orthonormalization-main-lemma` +\n  `prop:completing-to-measurement`).\n- Paper: `references/ldt-paper/orthonormalization.tex` lines 67–77\n  (`thm:orthonormalization`).\n- Paper: `references/ldt-paper/preliminaries.tex` lines 1101–1170\n  (`prop:completing-to-measurement`).\n- Blueprint: `blueprint/src/chapter/ch10_induction.tex` lines 350–360\n  (`eq:G-with-Q-A`).\n- Blueprint: `blueprint/src/chapter/ch04_projective.tex`\n  (orthonormalization theorem).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/ProjectivizationChain/Basic.lean#L212-L235",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/ProjectivizationChain/Basic.lean",
+  "lines": [
+   212,
+   235
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.qSDDCore_rightTensor_eq_leftTensor_of_permInv"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.qAlmostProjective",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.qAlmostProjective",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.qAlmostProjective {Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState ι)\n    (A : Measurement Outcome ι) (ζ : Error)\n    (data : QLayerData Outcome ι)\n    (hζ : 0 ≤ ζ)\n    (hζ_small : ζ ≤ 1 / (4 : Error)) :\n    RankReductionWitness ψ A ζ data →\n      (∑ a, (Qa data a * QTotal data * Qa data a - Qa data a)) ≤\n        (((4 : Error) * spectralTruncationError ζ) : ℂ) • (1 : MIPStarRE.Quantum.Op ι) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "**`Q` is almost projective** (`lem:q-almost-projective`).\n\nThe rank-reduced family satisfies the operator inequality\n`∑_a (Q_a Q Q_a - Q_a) ≤ 4√ζ · I`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.AlmostProjective",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P almost-projectivity\n\nAlmost-projective estimates for the rank-reduced `Q` family.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/AlmostProjective.lean#L96-L172",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/AlmostProjective.lean",
+  "lines": [
+   96,
+   172
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.spectralTruncationError_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 62,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.zetaQuarterRoot_nonneg",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.zetaQuarterRoot_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.zetaQuarterRoot_nonneg {ζ : Error} (hζ : 0 ≤ ζ) :\n    0 ≤ zetaQuarterRoot ζ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The quarter-root error term is nonnegative on nonnegative input.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.Core",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P core data\n\nScalar error estimates, core data structures, and shared operator-family\ndefinitions for the paper's `Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/Core.lean#L115-L119",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/Core.lean",
+  "lines": [
+   115,
+   119
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.truncationInequality",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.truncationInequality",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.truncationInequality (δ x : Error) :\n    0 < δ →\n      δ ≤ 1 / 2 →\n      0 ≤ x →\n      x ≤ 1 →\n      let trunc : Error := if 1 - δ ≤ x then 1 else 0\n      (x - trunc) ^ (2 : Nat) ≤ (1 / δ) * (x - x ^ (2 : Nat)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "**Scalar truncation inequality** (`lem:trunc-inequality`).\n\nFor `x ∈ [0,1]`, truncating at threshold `1 - δ` changes `x` by at most\n`(1 / δ) * (x - x^2)` in squared distance.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.Core",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P core data\n\nScalar error estimates, core data structures, and shared operator-family\ndefinitions for the paper's `Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/Core.lean#L121-L147",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/Core.lean",
+  "lines": [
+   121,
+   147
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.spectralTruncationError_nonneg",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.spectralTruncationError_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.spectralTruncationError_nonneg {ζ : Error} (hζ : 0 ≤ ζ) :\n    0 ≤ spectralTruncationError ζ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The truncation error is nonnegative on nonnegative input.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.Core",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P core data\n\nScalar error estimates, core data structures, and shared operator-family\ndefinitions for the paper's `Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/Core.lean#L149-L153",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/Core.lean",
+  "lines": [
+   149,
+   153
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.spectralTruncationError_le_zetaQuarterRoot",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.spectralTruncationError_le_zetaQuarterRoot",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.spectralTruncationError_le_zetaQuarterRoot (ζ : Error)\n    (hζ : 0 ≤ ζ) (hζq : ζ ≤ 1 / (4 : Error)) :\n    spectralTruncationError ζ ≤ zetaQuarterRoot ζ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Under the small-error hypothesis `ζ ≤ 1/4`, the spectral truncation error\nis bounded by the fourth-root error scale used in the `Q/X/XHat/P` layer.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.QCompleteness",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P q-completeness\n\nCompleteness estimates for the rank-reduced `Q` family in the paper's\n`Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/QCompleteness.lean#L154-L162",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/QCompleteness.lean",
+  "lines": [
+   154,
+   162
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.qCompleteness",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.qCompleteness",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.qCompleteness {Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState ι)\n    (A : Measurement Outcome ι) (ζ : Error)\n    (data : QLayerData Outcome ι)\n    (hψ : ψ.IsNormalized)\n    (hζ : 0 ≤ ζ)\n    (hζ_small : ζ ≤ 1 / (4 : Error)) :\n    RankReductionWitness ψ A ζ data →\n      ev ψ (QTotal data) ≥ 1 - 11 * zetaQuarterRoot ζ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "**Completeness of `Q`** (`lem:Q-completeness`).\n\nIf `Q_a` is the rank-reduced family from `lem:projective-low-rank-sum`, then\nits total operator `Q` has expectation at least `1 - 11 ζ^(1/4)`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.QCompleteness",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P q-completeness\n\nCompleteness estimates for the rank-reduced `Q` family in the paper's\n`Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/QCompleteness.lean#L164-L413",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/QCompleteness.lean",
+  "lines": [
+   164,
+   413
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.ev_mul_comm_of_psd",
+   "MIPStarRE.LDT.ev_abs_mul_le_sqrt",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.ev_adjoint_self_nonneg",
+   "MIPStarRE.LDT.Measurement.outcome_hermitian",
+   "MIPStarRE.LDT.Measurement.sum_eq",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.zetaQuarterRoot_nonneg",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.spectralTruncationError_nonneg",
+   "MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_one"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 235,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.sqrtQCompleteness",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.sqrtQCompleteness",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.sqrtQCompleteness {Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState ι)\n    (A : Measurement Outcome ι) (ζ : Error)\n    (data : QLayerData Outcome ι)\n    (hψ : ψ.IsNormalized)\n    (hζ : 0 ≤ ζ)\n    (hζ_small : ζ ≤ 1 / (4 : Error)) :\n    RankReductionWitness ψ A ζ data →\n      ev ψ (CFC.sqrt (QTotal data)) ≥ 1 - 12 * zetaQuarterRoot ζ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "**Completeness of `sqrt Q`** (`lem:sqrt-Q-completeness`).\n\nThe square root of the total operator `Q` remains almost complete on `ψ`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.QCompleteness",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P q-completeness\n\nCompleteness estimates for the rank-reduced `Q` family in the paper's\n`Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/QCompleteness.lean#L478-L529",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/QCompleteness.lean",
+  "lines": [
+   478,
+   529
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.ev_scale",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.zetaQuarterRoot_nonneg",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.spectralTruncationError_nonneg",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.spectralTruncationError_le_zetaQuarterRoot",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.qCompleteness"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 38,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_auxData_of_rank_bound",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_auxData_of_rank_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_auxData_of_rank_bound {Outcome : Type uOutcome}\n    [Fintype Outcome] [Nonempty Outcome]\n    {ι : Type uι} [Fintype ι] [Nonempty ι]\n    (m : Outcome → ℕ)\n    (hm : ∑ a, m a ≤ Fintype.card ι) :\n    ∃ auxSpace : FiniteHilbertSpace.{uι}, ∃ t : ProjMeas Outcome auxSpace.carrier,\n      t.total = 1 ∧ Fintype.card auxSpace.carrier ≤ Fintype.card ι := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Concrete auxiliary-space construction from a direct total-rank bound.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.LowRank",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P low-rank truncation\n\nRank-reduction auxiliary-space constructions and the low-rank truncation branch for\nthe paper's `Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/LowRank.lean#L113-L142",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/LowRank.lean",
+  "lines": [
+   113,
+   142
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_of_rank_bound",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_of_rank_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_of_rank_bound {Outcome : Type uOutcome}\n    {ι : Type uι} [Fintype ι] [DecidableEq ι] [Nonempty ι]\n    [Fintype Outcome] [Nonempty Outcome]\n    (ψ : QuantumState ι)\n    (A : Measurement Outcome ι) (ζ : Error)\n    (hζ : 0 ≤ ζ)\n    (R : OpFamily Outcome ι)\n    (hR : RoundingToProjectorsWitness ψ A ζ R)\n    (hrank : ∑ a, (R.outcome a).rank ≤ Fintype.card ι)\n    (source_almost_projective :\n      ∑ a, ev ψ (A.outcome a - A.outcome a * A.outcome a) ≤ 2 * ζ) :\n    ∃ data : QLayerData Outcome ι,\n      RankReductionWitness ψ A ζ data := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Concrete rank-reduction construction once the rounded projectors already have\ntotal rank at most the ambient dimension. This is the `r ≤ d` branch of the\npaper's rank-reduction proof, and is also the final packaging step after the\n`r > d` truncation branch constructs its lower-rank family.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.LowRank",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P low-rank truncation\n\nRank-reduction auxiliary-space constructions and the low-rank truncation branch for\nthe paper's `Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/LowRank.lean#L214-L260",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/LowRank.lean",
+  "lines": [
+   214,
+   260
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.spectralTruncationError_nonneg",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_auxData_of_rank_bound"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 30,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_truncate",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_truncate",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_truncate {Outcome : Type uOutcome}\n    {ι : Type uι} [Fintype ι] [DecidableEq ι] [Nonempty ι]\n    [Fintype Outcome] [Nonempty Outcome]\n    (ψ : QuantumState ι) (hψ : ψ.IsNormalized)\n    (A : Measurement Outcome ι) (ζ : Error)\n    (hζ : 0 ≤ ζ) (hζ_le : ζ ≤ 1 / 4)\n    (R : OpFamily Outcome ι)\n    (hR : RoundingToProjectorsWitness ψ A ζ R)\n    (source_almost_projective :\n      ∑ a, ev ψ (A.outcome a - A.outcome a * A.outcome a) ≤ 2 * ζ) :\n    ∃ data : QLayerData Outcome ι,\n      RankReductionWitness ψ A ζ data := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Construct the rank-reduced projector family in the `r > d` truncation\nbranch, starting from the rounded projectors `R_a`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.LowRank",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P low-rank truncation\n\nRank-reduction auxiliary-space constructions and the low-rank truncation branch for\nthe paper's `Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/LowRank.lean#L345-L531",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/LowRank.lean",
+  "lines": [
+   345,
+   531
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.ev_scale",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_auxData_of_rank_bound",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_of_rank_bound",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.sum_rank_le_scalar_mul_card_of_projectors_le",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.exists_large_subset_ordered",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.Truncation.sum_small_le_four_sqrt",
+   "MIPStarRE.LDT.Preliminaries.stateDependentDistanceOpRel_triangle",
+   "MIPStarRE.Quantum.ProjectorRangeONB.subprojector_isProj",
+   "MIPStarRE.Quantum.ProjectorRangeONB.subprojector_trace",
+   "MIPStarRE.Quantum.ProjectorRangeONB.subprojector_diff_eq_compl",
+   "MIPStarRE.Quantum.IsProj.trace_eq_rank"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 173,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_of_roundingWitness",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_of_roundingWitness",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_of_roundingWitness {Outcome : Type uOutcome}\n    {ι : Type uι} [Fintype ι] [DecidableEq ι] [Nonempty ι]\n    [Fintype Outcome]\n    (ψ : QuantumState ι)\n    (A : Measurement Outcome ι) (ζ : Error)\n    (hψ : ψ.IsNormalized)\n    (hζ : 0 ≤ ζ) (hζ_le : ζ ≤ 1 / 4)\n    (q : OpFamily Outcome ι)\n    (hrounded : RoundingToProjectorsWitness ψ A ζ q)\n    (source_almost_projective :\n      ∑ a, ev ψ (A.outcome a - A.outcome a * A.outcome a) ≤ 2 * ζ) :\n    ∃ data : QLayerData Outcome ι,\n      RankReductionWitness ψ A ζ data := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Internal rank-reduction constructor from an already rounded projective family.\n\nConstruct the paper's rank-reduced family `Q_a`, together with the auxiliary\nprojective measurement `T_a`, so that `Q_a` remains close to `A_a`, its total\nstays bounded by `(1 + 2√ζ)I`, and the auxiliary dimension is at most the\noriginal ambient dimension.\n\nPaper source: proof of `\\label{lem:projective-low-rank-sum}` in\n`references/ldt-paper/orthonormalization.tex:540-658`, after applying\n`\\label{lem:projective-non-measurement}`.\n\n**Source:** This is a source-faithful internal helper for the part of the proof\nafter the rounded family `R_a` has been obtained.  It starts from a chosen\nrounded family carrying the explicit witness\n`RoundingToProjectorsWitness ψ A ζ q`; equivalently, it consumes a concrete\nwitness of the statement `projectiveNonMeasurement ψ A ζ`.  The paper-facing\n`projectiveLowRankSum` applies the rounding lemma internally before calling\nthis constructor.\n\nThe auxiliary space `ℂ^m` and the projective measurement\n`T_a = ∑_i |a,i⟩⟨a,i|` come from the subsequent\n\"Matrix decomposition of `Q_a`\" definition (orthonormalization.tex:777-795).\nThe proof uses the `r ≤ d` rank-bound branch directly and otherwise performs\nthe paper's `r > d` truncation branch from orthonormalization.tex:559-658: it\nchooses the top-overlap `Large` set, assembles the truncated projectors from\n`MIPStarRE.Quantum.IsProj.rangeONB`, proves the `4√ζ` truncation error, and\nthen builds the finite auxiliary projective measurement from the resulting rank\nbound. The broader downstream `QXPLayerData` construction is intentionally\nseparated from this rank-reduction theorem: its statement now requires only the\nprimitive `X / XHat / P` identities used later, rather than explicit\nrectangular complex-SVD matrices.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.LowRank",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P low-rank truncation\n\nRank-reduction auxiliary-space constructions and the low-rank truncation branch for\nthe paper's `Q/X/XHat/P` intermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/LowRank.lean#L533-L591",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/LowRank.lean",
+  "lines": [
+   533,
+   591
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.projectiveLowRankSum_truncate"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.MakingMeasurementsProjective.sum_rank_le_scalar_mul_card_of_projectors_le",
+  "source_name": "MIPStarRE.LDT.MakingMeasurementsProjective.sum_rank_le_scalar_mul_card_of_projectors_le",
+  "formal_statement": "theorem MIPStarRE.LDT.MakingMeasurementsProjective.sum_rank_le_scalar_mul_card_of_projectors_le {Outcome : Type*} [Fintype Outcome]\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    (R : Outcome → MIPStarRE.Quantum.Op ι)\n    (hproj : ∀ a, MIPStarRE.Quantum.IsProj (R a))\n    (c : Error)\n    (htotal_le : (∑ a, R a) ≤ ((c : ℂ) • (1 : MIPStarRE.Quantum.Op ι))) :\n    ((∑ a, (R a).rank : ℕ) : Error) ≤ c * Fintype.card ι := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "If a family of projectors sums to at most `c • I`, then the sum of their\nranks is at most `c` times the ambient dimension.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.MakingMeasurementsProjective.QXPLayer.RankReduction.Sigma",
+  "module_doc": "/-!\n# Section 5 — Q/X/XHat/P rank reduction\n\nSigma-space projectors and rank-reduction lemmas for the paper's `Q/X/XHat/P`\nintermediate layer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/Sigma.lean#L147-L177",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/MakingMeasurementsProjective/QXPLayer/RankReduction/Sigma.lean",
+  "lines": [
+   147,
+   177
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.Quantum.IsProj.trace_eq_rank"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 22,
+  "is_target": false
+ }
+]

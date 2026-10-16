@@ -1,0 +1,829 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.kron_one_mulVec",
+  "source_name": "MIPRE.QLD.kron_one_mulVec",
+  "formal_statement": "theorem MIPRE.QLD.kron_one_mulVec {R C : Type*} [Fintype R] [DecidableEq R] [Fintype C] [DecidableEq C]\n    (φ : R → ℂ) (χ : C → ℂ) (B : Matrix C C ℂ) :\n    (((1 : Matrix R R ℂ) ⊗ₖ B) *ᵥ fun p : R × C => φ p.1 * χ p.2)\n      = fun p : R × C => φ p.1 * (B *ᵥ χ) p.2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The identity on one factor leaves the other's action alone.**",
+  "module": "MIPRE.Background.QLD.Chain",
+  "module_doc": "/-!\n# The pulling chain's index algebra\n\n`lem:qld-pauli-selfcons` is proved by a chain of eleven displays that ends at\n\n```\nsum_{g,h,g',h' : g - g_h = g' - g_h', (cd(g) - h) . u-tilde = a}\n  ((S-hat^W_g)_{A A'} (x) (tau^W_h)_{A''}) . ((S-hat^W_g')_{B B'} (x) (tau^W_h')_{B''})\n```\n\nand concludes by the observation that **this expression is symmetric between `(g, h)` and\n`(g', h')`**, so that the analogous derivation starting from Bob's exact Pauli measurement reaches\nthe same place, and the two are therefore close to each other. That observation is the whole reason\nthe lemma holds, and the reason it is not obvious is that the two conditions cutting out the index\nset look asymmetric: the second mentions both pairs, but the first mentions only `g` and `h`.\n\nThe paper's sentence is that the conditions `(cd(g) - h) . u-tilde = a` and `g - g_h = g' - g_h'`\nare together equivalent to `(cd(g') - h') . u-tilde = a` and `g - g_h = g' - g_h'`. This file is\nthat sentence, together with the rewriting of the exact Pauli measurement over the same index set\n(`eq:qld-pulling-2` and `eq:qld-pulling-2b`). It is pure index algebra: no state, no estimate.\n\nSubtraction is written as addition throughout, the field having characteristic two.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Chain.lean#L1279-L1299",
+  "source_path": "MIPRE/Background/QLD/Chain.lean",
+  "lines": [
+   1279,
+   1299
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.kron_mulVec_one",
+  "source_name": "MIPRE.QLD.kron_mulVec_one",
+  "formal_statement": "theorem MIPRE.QLD.kron_mulVec_one {R C : Type*} [Fintype R] [DecidableEq R] [Fintype C] [DecidableEq C]\n    (φ : R → ℂ) (χ : C → ℂ) (A : Matrix R R ℂ) :\n    ((A ⊗ₖ (1 : Matrix C C ℂ)) *ᵥ fun p : R × C => φ p.1 * χ p.2)\n      = fun p : R × C => (A *ᵥ φ) p.1 * χ p.2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The identity on the second factor leaves the first's action alone.**",
+  "module": "MIPRE.Background.QLD.Chain",
+  "module_doc": "/-!\n# The pulling chain's index algebra\n\n`lem:qld-pauli-selfcons` is proved by a chain of eleven displays that ends at\n\n```\nsum_{g,h,g',h' : g - g_h = g' - g_h', (cd(g) - h) . u-tilde = a}\n  ((S-hat^W_g)_{A A'} (x) (tau^W_h)_{A''}) . ((S-hat^W_g')_{B B'} (x) (tau^W_h')_{B''})\n```\n\nand concludes by the observation that **this expression is symmetric between `(g, h)` and\n`(g', h')`**, so that the analogous derivation starting from Bob's exact Pauli measurement reaches\nthe same place, and the two are therefore close to each other. That observation is the whole reason\nthe lemma holds, and the reason it is not obvious is that the two conditions cutting out the index\nset look asymmetric: the second mentions both pairs, but the first mentions only `g` and `h`.\n\nThe paper's sentence is that the conditions `(cd(g) - h) . u-tilde = a` and `g - g_h = g' - g_h'`\nare together equivalent to `(cd(g') - h') . u-tilde = a` and `g - g_h = g' - g_h'`. This file is\nthat sentence, together with the rewriting of the exact Pauli measurement over the same index set\n(`eq:qld-pulling-2` and `eq:qld-pulling-2b`). It is pure index algebra: no state, no estimate.\n\nSubtraction is written as addition throughout, the field having characteristic two.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Chain.lean#L1301-L1321",
+  "source_path": "MIPRE/Background/QLD/Chain.lean",
+  "lines": [
+   1301,
+   1321
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.bobHat_conj_bobWeyl",
+  "source_name": "MIPRE.QLD.MirrorSimul.bobHat_conj_bobWeyl",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.bobHat_conj_bobWeyl (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val))\n    (W : Bas) (u : Point F m) (c : F) (h : Anc F m) :\n    (M.bobHat W u c)ᴴ * M.bobWeyl W h * M.bobHat W u c\n      = (aOp (hatMats MB W u c) : Matrix ((dB × Anc F m) × M.Eb) _ ℂ)\n        ⊗ₖ proj (weylOf W) h := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**The far party's factor of the chain's sandwich**: a projector on `B B'` times a Weyl\noutcome on `B''`.",
+  "module": "MIPRE.Background.QLD.Chain",
+  "module_doc": "/-!\n# The pulling chain's index algebra\n\n`lem:qld-pauli-selfcons` is proved by a chain of eleven displays that ends at\n\n```\nsum_{g,h,g',h' : g - g_h = g' - g_h', (cd(g) - h) . u-tilde = a}\n  ((S-hat^W_g)_{A A'} (x) (tau^W_h)_{A''}) . ((S-hat^W_g')_{B B'} (x) (tau^W_h')_{B''})\n```\n\nand concludes by the observation that **this expression is symmetric between `(g, h)` and\n`(g', h')`**, so that the analogous derivation starting from Bob's exact Pauli measurement reaches\nthe same place, and the two are therefore close to each other. That observation is the whole reason\nthe lemma holds, and the reason it is not obvious is that the two conditions cutting out the index\nset look asymmetric: the second mentions both pairs, but the first mentions only `g` and `h`.\n\nThe paper's sentence is that the conditions `(cd(g) - h) . u-tilde = a` and `g - g_h = g' - g_h'`\nare together equivalent to `(cd(g') - h') . u-tilde = a` and `g - g_h = g' - g_h'`. This file is\nthat sentence, together with the rewriting of the exact Pauli measurement over the same index set\n(`eq:qld-pulling-2` and `eq:qld-pulling-2b`). It is pure index algebra: no state, no estimate.\n\nSubtraction is written as addition throughout, the field having characteristic two.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Chain.lean#L1438-L1456",
+  "source_path": "MIPRE/Background/QLD/Chain.lean",
+  "lines": [
+   1438,
+   1456
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.isPVM_hatMats",
+   "MIPRE.aOp_mul"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainP_le",
+  "source_name": "MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainP_le",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainP_le (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val))\n    (W : Bas) (v : Anc F m) (u : Point F m) :\n    ∑ a : F, snorm M.physVec\n        (∑ t ∈ univ.filter fun t : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) × Anc F m\n            => dotF (chainLabel t.1.1 t.1.2) v = a,\n          M.chainP W t * M.chainW W u t) ^ 2\n      ≤ ∑ g : LowIndDegPoly (F := F) (m := m) (d := d), snorm M.Φ\n          (aOp (((polyMarg M.SA W).mats g).val\n            * (1 - (aOp (hatMats MA W u (g.eval u)) : Matrix ((dA × Anc F m) × M.Ea) _ ℂ))))\n          ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**Displays `eq:qld-pulling-5` to `-8`.** The chain's terms on the physical cut, grouped by the\nmeasurement outcome: projectivity turns each group into a sum of sandwiches, Bob's factor is a\nprojector times a Weyl outcome and so sums away, and Alice's Weyl outcome sums out of hers,\nleaving the pair-measurement marginal against the complement of her own point measurement.",
+  "module": "MIPRE.Background.QLD.Chain",
+  "module_doc": "/-!\n# The pulling chain's index algebra\n\n`lem:qld-pauli-selfcons` is proved by a chain of eleven displays that ends at\n\n```\nsum_{g,h,g',h' : g - g_h = g' - g_h', (cd(g) - h) . u-tilde = a}\n  ((S-hat^W_g)_{A A'} (x) (tau^W_h)_{A''}) . ((S-hat^W_g')_{B B'} (x) (tau^W_h')_{B''})\n```\n\nand concludes by the observation that **this expression is symmetric between `(g, h)` and\n`(g', h')`**, so that the analogous derivation starting from Bob's exact Pauli measurement reaches\nthe same place, and the two are therefore close to each other. That observation is the whole reason\nthe lemma holds, and the reason it is not obvious is that the two conditions cutting out the index\nset look asymmetric: the second mentions both pairs, but the first mentions only `g` and `h`.\n\nThe paper's sentence is that the conditions `(cd(g) - h) . u-tilde = a` and `g - g_h = g' - g_h'`\nare together equivalent to `(cd(g') - h') . u-tilde = a` and `g - g_h = g' - g_h'`. This file is\nthat sentence, together with the rewriting of the exact Pauli measurement over the same index set\n(`eq:qld-pulling-2` and `eq:qld-pulling-2b`). It is pure index algebra: no state, no estimate.\n\nSubtraction is written as addition throughout, the field having characteristic two.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Chain.lean#L1515-L1552",
+  "source_path": "MIPRE/Background/QLD/Chain.lean",
+  "lines": [
+   1515,
+   1552
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.MirrorSimul.bobHat_conj_bobWeyl",
+   "MIPRE.QLD.isPVM_hatMats",
+   "MIPRE.sum_kron_le_one",
+   "MIPRE.snorm_sq_sum_proj_mul",
+   "MIPRE.mulVec_kron_kron_expVec",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_sub",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.aOp_sum",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.IsPVM.posSemidef",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.bornProb_reindex",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj",
+   "MIPRE.Weyl.epr_unit"
+  ],
+  "pasted_helpers": 59,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainQ_disagree_le",
+  "source_name": "MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainQ_disagree_le",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainQ_disagree_le (W : Bas) (v : Anc F m) (u : Point F m) :\n    ∑ a : F, snorm M.physVec\n        (∑ q ∈ (univ.filter fun q => chainQShift u q ≠ q.2.1.eval u).filter\n              fun q => dotF (chainLabel q.1.1 q.1.2) v = a,\n          M.chainQ W q * M.chainV W u q) ^ 2\n      ≤ ∑ q, ∑ c ∈ univ.filter fun c : F => c ≠ q.2.1.eval u,\n          qform M.physVec ((M.bobTail W u c)ᴴ * M.chainQ W q * M.bobTail W u c) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**The first two steps of `eq:qld-pulling-10`'s justification.** Projectivity turns the grouped\nsquared norm into a sum of sandwiches over the disagreeing pairs; each of those is one term of a\nsum over *all* outcomes the pair's own value excludes, and the rest of that sum is nonnegative; and\nthen the constraint tying the outcome to the index may be dropped.",
+  "module": "MIPRE.Background.QLD.Chain",
+  "module_doc": "/-!\n# The pulling chain's index algebra\n\n`lem:qld-pauli-selfcons` is proved by a chain of eleven displays that ends at\n\n```\nsum_{g,h,g',h' : g - g_h = g' - g_h', (cd(g) - h) . u-tilde = a}\n  ((S-hat^W_g)_{A A'} (x) (tau^W_h)_{A''}) . ((S-hat^W_g')_{B B'} (x) (tau^W_h')_{B''})\n```\n\nand concludes by the observation that **this expression is symmetric between `(g, h)` and\n`(g', h')`**, so that the analogous derivation starting from Bob's exact Pauli measurement reaches\nthe same place, and the two are therefore close to each other. That observation is the whole reason\nthe lemma holds, and the reason it is not obvious is that the two conditions cutting out the index\nset look asymmetric: the second mentions both pairs, but the first mentions only `g` and `h`.\n\nThe paper's sentence is that the conditions `(cd(g) - h) . u-tilde = a` and `g - g_h = g' - g_h'`\nare together equivalent to `(cd(g') - h') . u-tilde = a` and `g - g_h = g' - g_h'`. This file is\nthat sentence, together with the rewriting of the exact Pauli measurement over the same index set\n(`eq:qld-pulling-2` and `eq:qld-pulling-2b`). It is pure index algebra: no state, no estimate.\n\nSubtraction is written as addition throughout, the field having characteristic two.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Chain.lean#L1709-L1735",
+  "source_path": "MIPRE/Background/QLD/Chain.lean",
+  "lines": [
+   1709,
+   1735
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.snorm_sq_sum_proj_mul",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.posSemidef",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj"
+  ],
+  "pasted_helpers": 19,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.sum_qform_bobTail_eq",
+  "source_name": "MIPRE.QLD.MirrorSimul.sum_qform_bobTail_eq",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.sum_qform_bobTail_eq (W : Bas) (u : Point F m) :\n    (∑ q, ∑ c ∈ univ.filter fun c : F => c ≠ q.2.1.eval u,\n        qform M.physVec ((M.bobTail W u c)ᴴ * M.chainQ W q * M.bobTail W u c))\n      = ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),\n          ∑ c ∈ univ.filter fun c : F => c ≠ g.eval u,\n            bornProb M.physVec 1 (aOp (M.bobSand W u c g)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**Display `eq:qld-pulling-13a`**: Alice's family and Bob's Weyl outcome both sum to the\nidentity, so what is left of the bound carries neither.",
+  "module": "MIPRE.Background.QLD.Chain",
+  "module_doc": "/-!\n# The pulling chain's index algebra\n\n`lem:qld-pauli-selfcons` is proved by a chain of eleven displays that ends at\n\n```\nsum_{g,h,g',h' : g - g_h = g' - g_h', (cd(g) - h) . u-tilde = a}\n  ((S-hat^W_g)_{A A'} (x) (tau^W_h)_{A''}) . ((S-hat^W_g')_{B B'} (x) (tau^W_h')_{B''})\n```\n\nand concludes by the observation that **this expression is symmetric between `(g, h)` and\n`(g', h')`**, so that the analogous derivation starting from Bob's exact Pauli measurement reaches\nthe same place, and the two are therefore close to each other. That observation is the whole reason\nthe lemma holds, and the reason it is not obvious is that the two conditions cutting out the index\nset look asymmetric: the second mentions both pairs, but the first mentions only `g` and `h`.\n\nThe paper's sentence is that the conditions `(cd(g) - h) . u-tilde = a` and `g - g_h = g' - g_h'`\nare together equivalent to `(cd(g') - h') . u-tilde = a` and `g - g_h = g' - g_h'`. This file is\nthat sentence, together with the rewriting of the exact Pauli measurement over the same index set\n(`eq:qld-pulling-2` and `eq:qld-pulling-2b`). It is pure index algebra: no state, no estimate.\n\nSubtraction is written as addition throughout, the field having characteristic two.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Chain.lean#L1737-L1781",
+  "source_path": "MIPRE/Background/QLD/Chain.lean",
+  "lines": [
+   1737,
+   1781
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_sum",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj"
+  ],
+  "pasted_helpers": 22,
+  "prooflines": 36,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.sum_qform_bobLift_eq",
+  "source_name": "MIPRE.QLD.MirrorSimul.sum_qform_bobLift_eq",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.sum_qform_bobLift_eq (W : Bas)\n    (T : LowIndDegPoly (F := F) (m := m) (d := d)\n      → Matrix ((dB × Anc F m) × M.Eb) ((dB × Anc F m) × M.Eb) ℂ) :\n    (∑ q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)\n        × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m),\n      qform M.physVec ((M.bobLift (T q.2.1))ᴴ * M.chainQ W q * M.bobLift (T q.2.1)))\n      = ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),\n          bornProb M.Φ' ((T g)ᴴ * ((polyMarg M.SA' W).mats g).val * T g) 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**Alice's family and Bob's Weyl outcome sum away**, leaving a statement about the second cut\nalone. This is the shape both `eq:qld-pulling-10` and `eq:qld-pulling-11` end at.",
+  "module": "MIPRE.Background.QLD.Chain",
+  "module_doc": "/-!\n# The pulling chain's index algebra\n\n`lem:qld-pauli-selfcons` is proved by a chain of eleven displays that ends at\n\n```\nsum_{g,h,g',h' : g - g_h = g' - g_h', (cd(g) - h) . u-tilde = a}\n  ((S-hat^W_g)_{A A'} (x) (tau^W_h)_{A''}) . ((S-hat^W_g')_{B B'} (x) (tau^W_h')_{B''})\n```\n\nand concludes by the observation that **this expression is symmetric between `(g, h)` and\n`(g', h')`**, so that the analogous derivation starting from Bob's exact Pauli measurement reaches\nthe same place, and the two are therefore close to each other. That observation is the whole reason\nthe lemma holds, and the reason it is not obvious is that the two conditions cutting out the index\nset look asymmetric: the second mentions both pairs, but the first mentions only `g` and `h`.\n\nThe paper's sentence is that the conditions `(cd(g) - h) . u-tilde = a` and `g - g_h = g' - g_h'`\nare together equivalent to `(cd(g') - h') . u-tilde = a` and `g - g_h = g' - g_h'`. This file is\nthat sentence, together with the rewriting of the exact Pauli measurement over the same index set\n(`eq:qld-pulling-2` and `eq:qld-pulling-2b`). It is pure index algebra: no state, no estimate.\n\nSubtraction is written as addition throughout, the field having characteristic two.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Chain.lean#L1845-L1880",
+  "source_path": "MIPRE/Background/QLD/Chain.lean",
+  "lines": [
+   1845,
+   1880
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.mulVec_kron_kron_expVec",
+   "MIPRE.aOp_sum",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.bornProb_reindex",
+   "MIPRE.star_sgn",
+   "MIPRE.bornProb_swapVec",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj",
+   "MIPRE.Weyl.epr_unit"
+  ],
+  "pasted_helpers": 43,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainQ_agree_le",
+  "source_name": "MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainQ_agree_le",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainQ_agree_le (W : Bas) (v : Anc F m) (u : Point F m) :\n    ∑ a : F, snorm M.physVec\n        (∑ q ∈ (univ.filter fun q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)\n              × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) =>\n              chainQShift u q = q.2.1.eval u).filter\n            fun q => dotF (chainLabel q.1.1 q.1.2) v = a,\n          M.chainQ W q\n            * M.bobLift (1 - (aOp (hatMats MB W u (q.2.1.eval u))\n                : Matrix ((dB × Anc F m) × M.Eb) _ ℂ))) ^ 2\n      ≤ ∑ g : LowIndDegPoly (F := F) (m := m) (d := d), snorm M.Φ'\n          (aOp (((polyMarg M.SA' W).mats g).val\n            * (1 - (aOp (hatMats MB W u (g.eval u)) : Matrix ((dB × Anc F m) × M.Eb) _ ℂ))))\n          ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**Display `eq:qld-pulling-11`**: dropping Bob's point measurement from his side of the\nchain's endpoint costs item 2 of `lem:qld-helper`, read on the second cut. The index set carries\nthe agreement constraint, which the bound simply drops --- every sandwich is nonnegative.",
+  "module": "MIPRE.Background.QLD.Chain",
+  "module_doc": "/-!\n# The pulling chain's index algebra\n\n`lem:qld-pauli-selfcons` is proved by a chain of eleven displays that ends at\n\n```\nsum_{g,h,g',h' : g - g_h = g' - g_h', (cd(g) - h) . u-tilde = a}\n  ((S-hat^W_g)_{A A'} (x) (tau^W_h)_{A''}) . ((S-hat^W_g')_{B B'} (x) (tau^W_h')_{B''})\n```\n\nand concludes by the observation that **this expression is symmetric between `(g, h)` and\n`(g', h')`**, so that the analogous derivation starting from Bob's exact Pauli measurement reaches\nthe same place, and the two are therefore close to each other. That observation is the whole reason\nthe lemma holds, and the reason it is not obvious is that the two conditions cutting out the index\nset look asymmetric: the second mentions both pairs, but the first mentions only `g` and `h`.\n\nThe paper's sentence is that the conditions `(cd(g) - h) . u-tilde = a` and `g - g_h = g' - g_h'`\nare together equivalent to `(cd(g') - h') . u-tilde = a` and `g - g_h = g' - g_h'`. This file is\nthat sentence, together with the rewriting of the exact Pauli measurement over the same index set\n(`eq:qld-pulling-2` and `eq:qld-pulling-2b`). It is pure index algebra: no state, no estimate.\n\nSubtraction is written as addition throughout, the field having characteristic two.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Chain.lean#L1882-L1915",
+  "source_path": "MIPRE/Background/QLD/Chain.lean",
+  "lines": [
+   1882,
+   1915
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.MirrorSimul.sum_qform_bobLift_eq",
+   "MIPRE.snorm_sq_sum_proj_mul",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.posSemidef",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj"
+  ],
+  "pasted_helpers": 20,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_uniform_chainCoupled_agree_le",
+  "source_name": "MIPRE.QLD.sum_uniform_chainCoupled_agree_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_uniform_chainCoupled_agree_le (hd : 1 ≤ d)\n    {g g' : LowIndDegPoly (F := F) (m := m) (d := d)} {h h' : Anc F m}\n    (hne : ¬ ChainCoupled g g' h h') :\n    ∑ u, uniform (Point F m) u\n        * (if g.eval u + dotF h (indVec u) = g'.eval u + dotF h' (indVec u) then (1 : ℝ) else 0)\n      ≤ (m : ℝ) * d / Fintype.card F := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**Schwartz--Zippel for the chain's coupling.** Two index pairs that are not coupled carry\ndistinct polynomials, and distinct polynomials of individual degree at most `d` agree at a uniform\npoint with probability at most `md/q`. The encoding of a Weyl outcome is multilinear, so adding it\nkeeps the degree bound as long as `d` is at least one.",
+  "module": "MIPRE.Background.QLD.Chain",
+  "module_doc": "/-!\n# The pulling chain's index algebra\n\n`lem:qld-pauli-selfcons` is proved by a chain of eleven displays that ends at\n\n```\nsum_{g,h,g',h' : g - g_h = g' - g_h', (cd(g) - h) . u-tilde = a}\n  ((S-hat^W_g)_{A A'} (x) (tau^W_h)_{A''}) . ((S-hat^W_g')_{B B'} (x) (tau^W_h')_{B''})\n```\n\nand concludes by the observation that **this expression is symmetric between `(g, h)` and\n`(g', h')`**, so that the analogous derivation starting from Bob's exact Pauli measurement reaches\nthe same place, and the two are therefore close to each other. That observation is the whole reason\nthe lemma holds, and the reason it is not obvious is that the two conditions cutting out the index\nset look asymmetric: the second mentions both pairs, but the first mentions only `g` and `h`.\n\nThe paper's sentence is that the conditions `(cd(g) - h) . u-tilde = a` and `g - g_h = g' - g_h'`\nare together equivalent to `(cd(g') - h') . u-tilde = a` and `g - g_h = g' - g_h'`. This file is\nthat sentence, together with the rewriting of the exact Pauli measurement over the same index set\n(`eq:qld-pulling-2` and `eq:qld-pulling-2b`). It is pure index algebra: no state, no estimate.\n\nSubtraction is written as addition throughout, the field having characteristic two.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Chain.lean#L1947-L1976",
+  "source_path": "MIPRE/Background/QLD/Chain.lean",
+  "lines": [
+   1947,
+   1976
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.LowIndDegPoly.degreeOf_toMv_le",
+   "MIPRE.LowDegree.degreeOf_ind_le",
+   "MIPRE.LowDegree.prob_agree_le_individualDegree"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_uniform_chainCoupled_mass_le",
+  "source_name": "MIPRE.QLD.sum_uniform_chainCoupled_mass_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_uniform_chainCoupled_mass_le (hd : 1 ≤ d)\n    (w : ((LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)\n        × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)) → ℝ)\n    (hw0 : ∀ q, 0 ≤ w q) (hw : ∑ q, w q ≤ 1) :\n    (∑ u, uniform (Point F m) u\n        * ∑ q ∈ univ.filter fun q => MIPRE.QLD.chainQShift u q = q.2.1.eval u\n            ∧ ¬ ChainCoupled q.1.1 q.2.1 q.1.2 q.2.2, w q)\n      ≤ (m : ℝ) * d / Fintype.card F := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**Display `eq:qld-pulling-12`, as a bound on a weighted sum.** The chain's constraint is an\nequality of polynomial *values* at the sampled point; passing to equality of the polynomials\nthemselves discards only the tuples where distinct polynomials happen to agree there, and those\ncarry at most `md/q` of the weight.",
+  "module": "MIPRE.Background.QLD.Chain",
+  "module_doc": "/-!\n# The pulling chain's index algebra\n\n`lem:qld-pauli-selfcons` is proved by a chain of eleven displays that ends at\n\n```\nsum_{g,h,g',h' : g - g_h = g' - g_h', (cd(g) - h) . u-tilde = a}\n  ((S-hat^W_g)_{A A'} (x) (tau^W_h)_{A''}) . ((S-hat^W_g')_{B B'} (x) (tau^W_h')_{B''})\n```\n\nand concludes by the observation that **this expression is symmetric between `(g, h)` and\n`(g', h')`**, so that the analogous derivation starting from Bob's exact Pauli measurement reaches\nthe same place, and the two are therefore close to each other. That observation is the whole reason\nthe lemma holds, and the reason it is not obvious is that the two conditions cutting out the index\nset look asymmetric: the second mentions both pairs, but the first mentions only `g` and `h`.\n\nThe paper's sentence is that the conditions `(cd(g) - h) . u-tilde = a` and `g - g_h = g' - g_h'`\nare together equivalent to `(cd(g') - h') . u-tilde = a` and `g - g_h = g' - g_h'`. This file is\nthat sentence, together with the rewriting of the exact Pauli measurement over the same index set\n(`eq:qld-pulling-2` and `eq:qld-pulling-2b`). It is pure index algebra: no state, no estimate.\n\nSubtraction is written as addition throughout, the field having characteristic two.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Chain.lean#L2004-L2074",
+  "source_path": "MIPRE/Background/QLD/Chain.lean",
+  "lines": [
+   2004,
+   2074
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_uniform_chainCoupled_agree_le"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 59,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainQ_notCoupled_le",
+  "source_name": "MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainQ_notCoupled_le",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainQ_notCoupled_le (hd : 1 ≤ d) (W : Bas) (v : Anc F m) :\n    (∑ u, uniform (Point F m) u * ∑ a : F, snorm M.physVec\n        (∑ q ∈ (univ.filter fun q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)\n              × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) =>\n              MIPRE.QLD.chainQShift u q = q.2.1.eval u\n                ∧ ¬ ChainCoupled q.1.1 q.2.1 q.1.2 q.2.2).filter\n            fun q => dotF (chainLabel q.1.1 q.1.2) v = a,\n          M.chainQ W q) ^ 2)\n      ≤ (m : ℝ) * d / Fintype.card F := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**Display `eq:qld-pulling-12`**: the chain's constraint is an equality of polynomial *values*\nat the sampled point; passing to equality of the polynomials themselves discards only the tuples\nwhere distinct polynomials happen to agree there, and Schwartz--Zippel bounds that by `md/q`.",
+  "module": "MIPRE.Background.QLD.Chain",
+  "module_doc": "/-!\n# The pulling chain's index algebra\n\n`lem:qld-pauli-selfcons` is proved by a chain of eleven displays that ends at\n\n```\nsum_{g,h,g',h' : g - g_h = g' - g_h', (cd(g) - h) . u-tilde = a}\n  ((S-hat^W_g)_{A A'} (x) (tau^W_h)_{A''}) . ((S-hat^W_g')_{B B'} (x) (tau^W_h')_{B''})\n```\n\nand concludes by the observation that **this expression is symmetric between `(g, h)` and\n`(g', h')`**, so that the analogous derivation starting from Bob's exact Pauli measurement reaches\nthe same place, and the two are therefore close to each other. That observation is the whole reason\nthe lemma holds, and the reason it is not obvious is that the two conditions cutting out the index\nset look asymmetric: the second mentions both pairs, but the first mentions only `g` and `h`.\n\nThe paper's sentence is that the conditions `(cd(g) - h) . u-tilde = a` and `g - g_h = g' - g_h'`\nare together equivalent to `(cd(g') - h') . u-tilde = a` and `g - g_h = g' - g_h'`. This file is\nthat sentence, together with the rewriting of the exact Pauli measurement over the same index set\n(`eq:qld-pulling-2` and `eq:qld-pulling-2b`). It is pure index algebra: no state, no estimate.\n\nSubtraction is written as addition throughout, the field having characteristic two.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Chain.lean#L2099-L2138",
+  "source_path": "MIPRE/Background/QLD/Chain.lean",
+  "lines": [
+   2099,
+   2138
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_uniform_chainCoupled_mass_le",
+   "MIPRE.snorm_sq_sum_proj_mul",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.posSemidef",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj",
+   "MIPRE.Weyl.epr_unit"
+  ],
+  "pasted_helpers": 30,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.sum_bobPairProj_mulVec",
+  "source_name": "MIPRE.QLD.MirrorSimul.sum_bobPairProj_mulVec",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.sum_bobPairProj_mulVec (W : Bas) :\n    (∑ h : Anc F m, (bOp (M.bobPairProj W h)\n        : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m))\n          _ ℂ)) *ᵥ M.physVec = M.physVec := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**Display `eq:qld-pulling-4`: the appended pair's matched Weyl projectors leave the physical\nstate alone.** Both halves are Bob's in the physical grouping, and the pair is maximally entangled,\nso each matched pair acts as the projector on one half alone and those sum to the identity. This is\nthe step that brings the second pair's outcome into the chain.",
+  "module": "MIPRE.Background.QLD.Chain",
+  "module_doc": "/-!\n# The pulling chain's index algebra\n\n`lem:qld-pauli-selfcons` is proved by a chain of eleven displays that ends at\n\n```\nsum_{g,h,g',h' : g - g_h = g' - g_h', (cd(g) - h) . u-tilde = a}\n  ((S-hat^W_g)_{A A'} (x) (tau^W_h)_{A''}) . ((S-hat^W_g')_{B B'} (x) (tau^W_h')_{B''})\n```\n\nand concludes by the observation that **this expression is symmetric between `(g, h)` and\n`(g', h')`**, so that the analogous derivation starting from Bob's exact Pauli measurement reaches\nthe same place, and the two are therefore close to each other. That observation is the whole reason\nthe lemma holds, and the reason it is not obvious is that the two conditions cutting out the index\nset look asymmetric: the second mentions both pairs, but the first mentions only `g` and `h`.\n\nThe paper's sentence is that the conditions `(cd(g) - h) . u-tilde = a` and `g - g_h = g' - g_h'`\nare together equivalent to `(cd(g') - h') . u-tilde = a` and `g - g_h = g' - g_h'`. This file is\nthat sentence, together with the rewriting of the exact Pauli measurement over the same index set\n(`eq:qld-pulling-2` and `eq:qld-pulling-2b`). It is pure index algebra: no state, no estimate.\n\nSubtraction is written as addition throughout, the field having characteristic two.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Chain.lean#L2252-L2296",
+  "source_path": "MIPRE/Background/QLD/Chain.lean",
+  "lines": [
+   2252,
+   2296
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_epr_proj_mulVec",
+   "MIPRE.QLD.kron_one_mulVec",
+   "MIPRE.kronecker_sum_right"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 36,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.bobPairProj_mulVec",
+  "source_name": "MIPRE.QLD.MirrorSimul.bobPairProj_mulVec",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.bobPairProj_mulVec (W : Bas) (h : Anc F m) :\n    (bOp (M.bobPairProj W h)\n        : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m) × (((dB × Anc F m) × M.Eb) × Anc F m))\n          _ ℂ) *ᵥ M.physVec\n      = (bOp (M.bobWeyl W h)) *ᵥ M.physVec := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**One matched pair of Weyl projectors acts as Bob's Weyl outcome alone.** The pair the\nphysical grouping gives him entirely is maximally entangled, so the projector on its second half\nis redundant beside the one on its first.",
+  "module": "MIPRE.Background.QLD.Chain",
+  "module_doc": "/-!\n# The pulling chain's index algebra\n\n`lem:qld-pauli-selfcons` is proved by a chain of eleven displays that ends at\n\n```\nsum_{g,h,g',h' : g - g_h = g' - g_h', (cd(g) - h) . u-tilde = a}\n  ((S-hat^W_g)_{A A'} (x) (tau^W_h)_{A''}) . ((S-hat^W_g')_{B B'} (x) (tau^W_h')_{B''})\n```\n\nand concludes by the observation that **this expression is symmetric between `(g, h)` and\n`(g', h')`**, so that the analogous derivation starting from Bob's exact Pauli measurement reaches\nthe same place, and the two are therefore close to each other. That observation is the whole reason\nthe lemma holds, and the reason it is not obvious is that the two conditions cutting out the index\nset look asymmetric: the second mentions both pairs, but the first mentions only `g` and `h`.\n\nThe paper's sentence is that the conditions `(cd(g) - h) . u-tilde = a` and `g - g_h = g' - g_h'`\nare together equivalent to `(cd(g') - h') . u-tilde = a` and `g - g_h = g' - g_h'`. This file is\nthat sentence, together with the rewriting of the exact Pauli measurement over the same index set\n(`eq:qld-pulling-2` and `eq:qld-pulling-2b`). It is pure index algebra: no state, no estimate.\n\nSubtraction is written as addition throughout, the field having characteristic two.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Chain.lean#L2337-L2361",
+  "source_path": "MIPRE/Background/QLD/Chain.lean",
+  "lines": [
+   2337,
+   2361
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.kron_one_mulVec",
+   "MIPRE.aOp_mul",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj",
+   "MIPRE.Weyl.stateVec_epr"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.physLift_chainU3b_mulVec",
+  "source_name": "MIPRE.QLD.MirrorSimul.physLift_chainU3b_mulVec",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.physLift_chainU3b_mulVec (W : Bas) (v : Anc F m) (u : Point F m) (a : F) :\n    M.physLift (M.chainU3b W v u a) *ᵥ M.physVec\n      = (∑ t ∈ univ.filter fun t : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) × Anc F m\n            => dotF (chainLabel t.1.1 t.1.2) v = a,\n          M.chainP W t * (aOp (M.aliceHat W u (t.1.1.eval u))\n            * bOp (M.bobHat W u (t.1.1.eval u + dotF t.1.2 (indVec u) + dotF t.2 (indVec u)))))\n          *ᵥ M.physVec := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**Displays `eq:qld-pulling-4` and `-5`.** Resolving the identity on the appended pair brings\nits outcome into the chain, and each matched pair cuts Bob's point measurement down to the\nhatted point measurement at the shifted outcome. The step costs nothing.",
+  "module": "MIPRE.Background.QLD.Chain",
+  "module_doc": "/-!\n# The pulling chain's index algebra\n\n`lem:qld-pauli-selfcons` is proved by a chain of eleven displays that ends at\n\n```\nsum_{g,h,g',h' : g - g_h = g' - g_h', (cd(g) - h) . u-tilde = a}\n  ((S-hat^W_g)_{A A'} (x) (tau^W_h)_{A''}) . ((S-hat^W_g')_{B B'} (x) (tau^W_h')_{B''})\n```\n\nand concludes by the observation that **this expression is symmetric between `(g, h)` and\n`(g', h')`**, so that the analogous derivation starting from Bob's exact Pauli measurement reaches\nthe same place, and the two are therefore close to each other. That observation is the whole reason\nthe lemma holds, and the reason it is not obvious is that the two conditions cutting out the index\nset look asymmetric: the second mentions both pairs, but the first mentions only `g` and `h`.\n\nThe paper's sentence is that the conditions `(cd(g) - h) . u-tilde = a` and `g - g_h = g' - g_h'`\nare together equivalent to `(cd(g') - h') . u-tilde = a` and `g - g_h = g' - g_h'`. This file is\nthat sentence, together with the rewriting of the exact Pauli measurement over the same index set\n(`eq:qld-pulling-2` and `eq:qld-pulling-2b`). It is pure index algebra: no state, no estimate.\n\nSubtraction is written as addition throughout, the field having characteristic two.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Chain.lean#L2458-L2500",
+  "source_path": "MIPRE/Background/QLD/Chain.lean",
+  "lines": [
+   2458,
+   2500
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.MirrorSimul.sum_bobPairProj_mulVec",
+   "MIPRE.QLD.MirrorSimul.bobPairProj_mulVec",
+   "MIPRE.QLD.hatMats_mul_proj",
+   "MIPRE.aOp_mul"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.SimulPair.bornProb_mVec_ext",
+  "source_name": "MIPRE.QLD.SimulPair.bornProb_mVec_ext",
+  "formal_statement": "theorem MIPRE.QLD.SimulPair.bornProb_mVec_ext (X : Matrix dA dA ℂ) (Y : Matrix dB dB ℂ) :\n    bornProb P.mVec\n        (aOp (aOp (aOp X)) : Matrix ((((dA × Anc F m) × P.EA) × Anc F m)) _ ℂ)\n        (aOp Y : Matrix (dB × P.EB) _ ℂ)\n      = bornProb ψ X Y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.SimulPair",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (P : SimulPair ψ MA MB δ)"
+  ],
+  "docstring": "**The cut the chain runs on reproduces the strategy's own expectations** for operators\nextended by the identity on every ancilla: the padding by `Phi_reduced`, the entangled pair by\nits own norm.",
+  "module": "MIPRE.Background.QLD.ChainAssembly",
+  "module_doc": "/-!\n# The pulling chain, assembled\n\n`MIPRE/Background/QLD/Chain.lean` proves the eleven displays of `lem:qld-pauli-selfcons`'s\nderivation one at a time. This file names the terms they run through and reads the displays as\nbounds on *consecutive deviations*, which is the form the chaining inequality consumes.\n\n`chainT` is the chain, on the physical cut: ten terms for nine steps. The four displays\n`eq:qld-pulling-0` to `-3` are local in the grouping the state `Phi` lives on and enter lifted;\neverything from `-5` on is local in the physical grouping and enters directly. The three terms\nbetween `-3` and `-5` are left out, the chain paying nothing for them\n(`physLift_chainU3b_mulVec`).\n\nThree of the nine steps are free --- `eq:qld-pulling-2` and `-2b`, then `-3a` to `-5`, then\n`-9a` --- and the six that are not cost, in order: item 1 of `lem:qld-helper`, the game's\npoint--point consistency, item 2 of `lem:qld-helper`, `eq:qld-pulling-10` complete, item 2 of\n`lem:qld-helper` again at the second cut, and Schwartz--Zippel. The chain's total is nine times\ntheir sum, not two to the ninth power, because a chain's deviation telescopes and Cauchy--Schwarz\nagainst the constant one turns the squared norm of a sum of nine terms into nine times the sum of\ntheir squares (`sum_snorm_sq_chain_le`).\n\nThe last thing this file needs that `Chain.lean` did not have is the cost of `eq:qld-pulling-3`:\n`sum_uniform_xSqNorm_pt_le` reads the game's point--point consistency on the cut the chain runs\non, which the padded state reproduces because it reproduces the expanded state's expectations and\nthe expanded state's pair contributes only its norm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ChainAssembly.lean#L57-L75",
+  "source_path": "MIPRE/Background/QLD/ChainAssembly.lean",
+  "lines": [
+   57,
+   75
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.mulVec_kron_kron_expVec",
+   "MIPRE.Weyl.epr_unit"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.SimulPair.xSqNorm_mVec_ext",
+  "source_name": "MIPRE.QLD.SimulPair.xSqNorm_mVec_ext",
+  "formal_statement": "theorem MIPRE.QLD.SimulPair.xSqNorm_mVec_ext {X : Matrix dA dA ℂ} (hX : Xᴴ = X) (Y : Matrix dB dB ℂ) :\n    xSqNorm P.mVec\n        (aOp (aOp (aOp X)) : Matrix ((((dA × Anc F m) × P.EA) × Anc F m)) _ ℂ)\n        (aOp Y : Matrix (dB × P.EB) _ ℂ)\n      = xSqNorm ψ X Y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.SimulPair",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (P : SimulPair ψ MA MB δ)"
+  ],
+  "docstring": "**And so it reproduces the strategy's cross-party deviations.**",
+  "module": "MIPRE.Background.QLD.ChainAssembly",
+  "module_doc": "/-!\n# The pulling chain, assembled\n\n`MIPRE/Background/QLD/Chain.lean` proves the eleven displays of `lem:qld-pauli-selfcons`'s\nderivation one at a time. This file names the terms they run through and reads the displays as\nbounds on *consecutive deviations*, which is the form the chaining inequality consumes.\n\n`chainT` is the chain, on the physical cut: ten terms for nine steps. The four displays\n`eq:qld-pulling-0` to `-3` are local in the grouping the state `Phi` lives on and enter lifted;\neverything from `-5` on is local in the physical grouping and enters directly. The three terms\nbetween `-3` and `-5` are left out, the chain paying nothing for them\n(`physLift_chainU3b_mulVec`).\n\nThree of the nine steps are free --- `eq:qld-pulling-2` and `-2b`, then `-3a` to `-5`, then\n`-9a` --- and the six that are not cost, in order: item 1 of `lem:qld-helper`, the game's\npoint--point consistency, item 2 of `lem:qld-helper`, `eq:qld-pulling-10` complete, item 2 of\n`lem:qld-helper` again at the second cut, and Schwartz--Zippel. The chain's total is nine times\ntheir sum, not two to the ninth power, because a chain's deviation telescopes and Cauchy--Schwarz\nagainst the constant one turns the squared norm of a sum of nine terms into nine times the sum of\ntheir squares (`sum_snorm_sq_chain_le`).\n\nThe last thing this file needs that `Chain.lean` did not have is the cost of `eq:qld-pulling-3`:\n`sum_uniform_xSqNorm_pt_le` reads the game's point--point consistency on the cut the chain runs\non, which the padded state reproduces because it reproduces the expanded state's expectations and\nthe expanded state's pair contributes only its norm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ChainAssembly.lean#L77-L99",
+  "source_path": "MIPRE/Background/QLD/ChainAssembly.lean",
+  "lines": [
+   77,
+   99
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.SimulPair.bornProb_mVec_ext",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose"
+  ],
+  "pasted_helpers": 16,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.SimulPair.sum_uniform_xSqNorm_pt_le",
+  "source_name": "MIPRE.QLD.SimulPair.sum_uniform_xSqNorm_pt_le",
+  "formal_statement": "theorem MIPRE.QLD.SimulPair.sum_uniform_xSqNorm_pt_le {hm : m ∣ Fintype.card F} {ε : ℝ} (hψ : star ψ ⬝ᵥ ψ = 1)\n    (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)\n    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) :\n    ∑ u, uniform (Point F m) u * ∑ k : F, xSqNorm P.mVec (P.ptA W u k) (P.ptB W u k)\n      ≤ 2 * (86 * ε) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.SimulPair",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (P : SimulPair ψ MA MB δ)"
+  ],
+  "docstring": "**The cost of `eq:qld-pulling-3`**: the point measurements' own cross-party deviation, read\non the cut the chain runs on, is the game's point--point consistency and nothing more.",
+  "module": "MIPRE.Background.QLD.ChainAssembly",
+  "module_doc": "/-!\n# The pulling chain, assembled\n\n`MIPRE/Background/QLD/Chain.lean` proves the eleven displays of `lem:qld-pauli-selfcons`'s\nderivation one at a time. This file names the terms they run through and reads the displays as\nbounds on *consecutive deviations*, which is the form the chaining inequality consumes.\n\n`chainT` is the chain, on the physical cut: ten terms for nine steps. The four displays\n`eq:qld-pulling-0` to `-3` are local in the grouping the state `Phi` lives on and enter lifted;\neverything from `-5` on is local in the physical grouping and enters directly. The three terms\nbetween `-3` and `-5` are left out, the chain paying nothing for them\n(`physLift_chainU3b_mulVec`).\n\nThree of the nine steps are free --- `eq:qld-pulling-2` and `-2b`, then `-3a` to `-5`, then\n`-9a` --- and the six that are not cost, in order: item 1 of `lem:qld-helper`, the game's\npoint--point consistency, item 2 of `lem:qld-helper`, `eq:qld-pulling-10` complete, item 2 of\n`lem:qld-helper` again at the second cut, and Schwartz--Zippel. The chain's total is nine times\ntheir sum, not two to the ninth power, because a chain's deviation telescopes and Cauchy--Schwarz\nagainst the constant one turns the squared norm of a sum of nine terms into nine times the sum of\ntheir squares (`sum_snorm_sq_chain_le`).\n\nThe last thing this file needs that `Chain.lean` did not have is the cost of `eq:qld-pulling-3`:\n`sum_uniform_xSqNorm_pt_le` reads the game's point--point consistency on the cut the chain runs\non, which the padded state reproduces because it reproduces the expanded state's expectations and\nthe expanded state's pair contributes only its norm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ChainAssembly.lean#L101-L124",
+  "source_path": "MIPRE/Background/QLD/ChainAssembly.lean",
+  "lines": [
+   101,
+   124
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.SimulPair.xSqNorm_mVec_ext",
+   "MIPRE.QLD.sum_diag_eq_one_sub",
+   "MIPRE.QLD.inconsistency_pt_pt_le",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.one_sub_sum_bornProb_eq"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.chainT_five_sub_four",
+  "source_name": "MIPRE.QLD.MirrorSimul.chainT_five_sub_four",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.chainT_five_sub_four (W : Bas) (v : Anc F m) (u : Point F m) (a : F) :\n    M.chainT W v u 5 a - M.chainT W v u 4 a\n      = ∑ t ∈ univ.filter fun t : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) × Anc F m\n          => dotF (chainLabel t.1.1 t.1.2) v = a,\n        M.chainP W t * M.chainW W u t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**Step 4 to 5 is what `eq:qld-pulling-5` to `-7` bounds**: the gap between Alice's pair\nmeasurement with her own point measurement beside it and without.",
+  "module": "MIPRE.Background.QLD.ChainAssembly",
+  "module_doc": "/-!\n# The pulling chain, assembled\n\n`MIPRE/Background/QLD/Chain.lean` proves the eleven displays of `lem:qld-pauli-selfcons`'s\nderivation one at a time. This file names the terms they run through and reads the displays as\nbounds on *consecutive deviations*, which is the form the chaining inequality consumes.\n\n`chainT` is the chain, on the physical cut: ten terms for nine steps. The four displays\n`eq:qld-pulling-0` to `-3` are local in the grouping the state `Phi` lives on and enter lifted;\neverything from `-5` on is local in the physical grouping and enters directly. The three terms\nbetween `-3` and `-5` are left out, the chain paying nothing for them\n(`physLift_chainU3b_mulVec`).\n\nThree of the nine steps are free --- `eq:qld-pulling-2` and `-2b`, then `-3a` to `-5`, then\n`-9a` --- and the six that are not cost, in order: item 1 of `lem:qld-helper`, the game's\npoint--point consistency, item 2 of `lem:qld-helper`, `eq:qld-pulling-10` complete, item 2 of\n`lem:qld-helper` again at the second cut, and Schwartz--Zippel. The chain's total is nine times\ntheir sum, not two to the ninth power, because a chain's deviation telescopes and Cauchy--Schwarz\nagainst the constant one turns the squared norm of a sum of nine terms into nine times the sum of\ntheir squares (`sum_snorm_sq_chain_le`).\n\nThe last thing this file needs that `Chain.lean` did not have is the cost of `eq:qld-pulling-3`:\n`sum_uniform_xSqNorm_pt_le` reads the game's point--point consistency on the cut the chain runs\non, which the padded state reproduces because it reproduces the expanded state's expectations and\nthe expanded state's pair contributes only its norm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ChainAssembly.lean#L237-L264",
+  "source_path": "MIPRE/Background/QLD/ChainAssembly.lean",
+  "lines": [
+   237,
+   264
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_sub"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.chainT_five_eq_six",
+  "source_name": "MIPRE.QLD.MirrorSimul.chainT_five_eq_six",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.chainT_five_eq_six (W : Bas) (v : Anc F m) (u : Point F m) (a : F) :\n    M.chainT W v u 5 a = M.chainT W v u 6 a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**Step 5 to 6 is free**, being display `eq:qld-pulling-9a`: left-multiplying by Bob's own\npair measurement, which is the identity.",
+  "module": "MIPRE.Background.QLD.ChainAssembly",
+  "module_doc": "/-!\n# The pulling chain, assembled\n\n`MIPRE/Background/QLD/Chain.lean` proves the eleven displays of `lem:qld-pauli-selfcons`'s\nderivation one at a time. This file names the terms they run through and reads the displays as\nbounds on *consecutive deviations*, which is the form the chaining inequality consumes.\n\n`chainT` is the chain, on the physical cut: ten terms for nine steps. The four displays\n`eq:qld-pulling-0` to `-3` are local in the grouping the state `Phi` lives on and enter lifted;\neverything from `-5` on is local in the physical grouping and enters directly. The three terms\nbetween `-3` and `-5` are left out, the chain paying nothing for them\n(`physLift_chainU3b_mulVec`).\n\nThree of the nine steps are free --- `eq:qld-pulling-2` and `-2b`, then `-3a` to `-5`, then\n`-9a` --- and the six that are not cost, in order: item 1 of `lem:qld-helper`, the game's\npoint--point consistency, item 2 of `lem:qld-helper`, `eq:qld-pulling-10` complete, item 2 of\n`lem:qld-helper` again at the second cut, and Schwartz--Zippel. The chain's total is nine times\ntheir sum, not two to the ninth power, because a chain's deviation telescopes and Cauchy--Schwarz\nagainst the constant one turns the squared norm of a sum of nine terms into nine times the sum of\ntheir squares (`sum_snorm_sq_chain_le`).\n\nThe last thing this file needs that `Chain.lean` did not have is the cost of `eq:qld-pulling-3`:\n`sum_uniform_xSqNorm_pt_le` reads the game's point--point consistency on the cut the chain runs\non, which the padded state reproduces because it reproduces the expanded state's expectations and\nthe expanded state's pair contributes only its norm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ChainAssembly.lean#L278-L304",
+  "source_path": "MIPRE/Background/QLD/ChainAssembly.lean",
+  "lines": [
+   278,
+   304
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.IsPVM.coarse"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.chainT_six_sub_seven",
+  "source_name": "MIPRE.QLD.MirrorSimul.chainT_six_sub_seven",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.chainT_six_sub_seven (W : Bas) (v : Anc F m) (u : Point F m) (a : F) :\n    M.chainT W v u 6 a - M.chainT W v u 7 a\n      = ∑ q ∈ (univ.filter fun q : (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m)\n            × (LowIndDegPoly (F := F) (m := m) (d := d) × Anc F m) =>\n            chainQShift u q ≠ q.2.1.eval u).filter\n          fun q => dotF (chainLabel q.1.1 q.1.2) v = a,\n        M.chainQ W q * M.chainV W u q := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**Step 6 to 7 is `eq:qld-pulling-10`**: what the chain drops is the pairs whose outcomes\ndisagree at the sampled point.",
+  "module": "MIPRE.Background.QLD.ChainAssembly",
+  "module_doc": "/-!\n# The pulling chain, assembled\n\n`MIPRE/Background/QLD/Chain.lean` proves the eleven displays of `lem:qld-pauli-selfcons`'s\nderivation one at a time. This file names the terms they run through and reads the displays as\nbounds on *consecutive deviations*, which is the form the chaining inequality consumes.\n\n`chainT` is the chain, on the physical cut: ten terms for nine steps. The four displays\n`eq:qld-pulling-0` to `-3` are local in the grouping the state `Phi` lives on and enter lifted;\neverything from `-5` on is local in the physical grouping and enters directly. The three terms\nbetween `-3` and `-5` are left out, the chain paying nothing for them\n(`physLift_chainU3b_mulVec`).\n\nThree of the nine steps are free --- `eq:qld-pulling-2` and `-2b`, then `-3a` to `-5`, then\n`-9a` --- and the six that are not cost, in order: item 1 of `lem:qld-helper`, the game's\npoint--point consistency, item 2 of `lem:qld-helper`, `eq:qld-pulling-10` complete, item 2 of\n`lem:qld-helper` again at the second cut, and Schwartz--Zippel. The chain's total is nine times\ntheir sum, not two to the ninth power, because a chain's deviation telescopes and Cauchy--Schwarz\nagainst the constant one turns the squared norm of a sum of nine terms into nine times the sum of\ntheir squares (`sum_snorm_sq_chain_le`).\n\nThe last thing this file needs that `Chain.lean` did not have is the cost of `eq:qld-pulling-3`:\n`sum_uniform_xSqNorm_pt_le` reads the game's point--point consistency on the cut the chain runs\non, which the padded state reproduces because it reproduces the expanded state's expectations and\nthe expanded state's pair contributes only its norm.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ChainAssembly.lean#L306-L350",
+  "source_path": "MIPRE/Background/QLD/ChainAssembly.lean",
+  "lines": [
+   306,
+   350
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 36,
+  "is_target": false
+ }
+]

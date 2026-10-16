@@ -1,0 +1,639 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.RestrictedSoundness.qldExponent_pos",
+  "source_name": "MIPRE.Introspection.RestrictedSoundness.qldExponent_pos",
+  "formal_statement": "theorem MIPRE.Introspection.RestrictedSoundness.qldExponent_pos : 0 < qldExponent := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.RestrictedSoundness",
+   "open Matrix Finset Classical",
+   "open scoped Kronecker",
+   "variable {F : Type} [Field F] [Fintype F] [DecidableEq F]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.QLDExtractionAdapter",
+  "module_doc": "/-! # Actual QLD soundness witnesses in the introspection interface\n\nQLD reads all wrongly formatted Pauli answers as zero. The interface used by\nintrospection instead records the genuine full-register answer effects. Legal\nPauli support identifies those effects exactly, including at the zero register.\nThe ancillary spaces returned by QLD are then numbered without changing errors.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/QLDExtractionAdapter.lean#L240-L241",
+  "source_path": "MIPRE/Background/Introspection/QLDExtractionAdapter.lean",
+  "lines": [
+   240,
+   241
+  ],
+  "blueprint": [
+   {
+    "label": "cor:qld-valid",
+    "env": "corollary",
+    "title": "Theorem~\\ref{thm:qld} on the valid answers",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.RestrictedSoundness.profileCoefficient_one_le",
+  "source_name": "MIPRE.Introspection.RestrictedSoundness.profileCoefficient_one_le",
+  "formal_statement": "theorem MIPRE.Introspection.RestrictedSoundness.profileCoefficient_one_le (ℓ : ℕ) (a b : ℝ) :\n    1 ≤ profileCoefficient ℓ a b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.RestrictedSoundness",
+   "open Matrix Finset Classical MIPRE.Introspection.BinaryComplete"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.Introspection.RestrictedProfileSoundness",
+  "module_doc": "/-! # Uniform conditional soundness and return to the unpadded source\n\nThe external input supplies actual QLD extraction witnesses with a uniform\ntwo-term error profile. The restriction factor, the finite introspection loss,\nthe explicit-selector transport, and removal of source padding are proved here.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/RestrictedProfileSoundness.lean#L38-L39",
+  "source_path": "MIPRE/Background/Introspection/RestrictedProfileSoundness.lean",
+  "lines": [
+   38,
+   39
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-extracted-soundness",
+    "env": "lemma",
+    "title": "Introspection soundness from the extracted Pauli strategy",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.RestrictedSoundness.quantumValue_ge_of_extraction",
+  "source_name": "MIPRE.Introspection.RestrictedSoundness.quantumValue_ge_of_extraction",
+  "formal_statement": "theorem MIPRE.Introspection.RestrictedSoundness.quantumValue_ge_of_extraction\n    (hL : ∀ w, (L w).ExactlyOn univ)\n    (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)\n    (VA : Matrix (Seed m t × H) (Fin S.dA) ℂ)\n    (VB : Matrix (Seed m t × K) (Fin S.dB) ℂ)\n    (hVA : VAᴴ * VA = 1) (hVB : VBᴴ * VB = 1)\n    {ε δ : ℝ} (hδ : 0 ≤ δ) (hfail : 1 - S.value ≤ ε)\n    (hstate : ‖evec (isometricState VA VB (restriction hm b L D S).ψ -\n      registerState (Seed m t) ξ)‖ ≤ δ)\n    (hX : ∑ x : Seed m t, snorm (registerState (Seed m t) ξ) (aOp\n      (isometricImage VA ((restriction hm b L D S).PA.M (.pauli .X) (validAnswer b x)) -\n        (aOp (Honest.pauliXReadout (some x)) : Matrix (Seed m t × H) _ ℂ))) ^ 2 ≤ δ)\n    (hZ : ∑ z : Seed m t, snorm (registerState (Seed m t) ξ) (bOp\n      (isometricImage VB ((restriction hm b L D S).PB.M (.pauli .Z) (validAnswer b z)) -\n        (aOp (readout (some : Seed m t → Option (Seed m t)) (some z)) :\n          Matrix (Seed m t × K) _ ℂ))) ^ 2 ≤ δ) :\n    1 - validSoundnessCoefficient ℓ\n      (TypeGraph.edges QLD.adj (.pauli .X) (.pauli .Z) ℓ).card *\n      iteratedRoot (6 * ℓ + 2) (max ε δ) ≤ quantumValue (Honest.sourceGame L D) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.RestrictedSoundness",
+   "open Matrix Finset Classical MIPRE.Introspection.BinaryComplete",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F]",
+   "variable (hm : m ∣ Fintype.card F) (b : Module.Basis (Fin t) (ZMod 2) F)"
+  ],
+  "docstring": "Concrete valid-answer extraction estimates imply source-game soundness.\nThe common error is the maximum of full-game failure and extraction error.",
+  "module": "MIPRE.Background.Introspection.RestrictedSoundness",
+  "module_doc": "/-! # Source-game soundness from the restricted QLD strategy\n\nThe extraction inputs refer to the actual restricted QLD strategy, with scalar\ncompletion of malformed answers. The full-register answers retain their original\noperators, so the checked finite-game soundness theorem applies without a\nmalformed-mass hypothesis. Extraction existence remains an external input.\n\nThe isometry codomains and ideal projectors here use binary coordinates under\n`Weyl.binEquiv b`. Thus the witness interface explicitly records the coordinate\nconvention expected after the field-to-binary Pauli equivalence.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/RestrictedSoundness.lean#L71-L121",
+  "source_path": "MIPRE/Background/Introspection/RestrictedSoundness.lean",
+  "lines": [
+   71,
+   121
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-extracted-soundness",
+    "env": "lemma",
+    "title": "Introspection soundness from the extracted Pauli strategy",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.CLFun.eval_reindex",
+   "MIPRE.Introspection.TypedEstimates.quantumValue_ge_of_valid_isometric_images",
+   "MIPRE.TensorProductStrategy.value_eq_povmValue",
+   "MIPRE.SampledGame.dist_eq_card"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL_transport",
+  "source_name": "MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL_transport",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL_transport {dA dB : Type*} [Fintype dA] [DecidableEq dA]\n    [Fintype dB] [DecidableEq dB] (S : TensorProductStrategy (clGame (d := d) (ldc := 1) hm))\n    (eA : dA ≃ Fin S.dA) (eB : dB ≃ Fin S.dB) (ψ : dA × dB → ℂ)\n    (PA : ProjectiveMeasurement (CL.Question F m) (CL.Answer F m d 1) (Matrix dA dA ℂ))\n    (PB : ProjectiveMeasurement (CL.Question F m) (CL.Answer F m d 1) (Matrix dB dB ℂ))\n    (hψ : S.ψ = reindexVec eA eB ψ) (hPA : S.PA = PA.map (reindexStarAlgEquiv eA))\n    (hPB : S.PB = PB.map (reindexStarAlgEquiv eB))\n    (ε : ℝ) (hε : 0 ≤ ε) (hS : 1 - ε ≤ S.value) (hm1 : 1 ≤ m) (hd : 1 ≤ d) :\n    ∃ GA : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := m) (d := d))\n        (Matrix dA dA ℂ),\n    ∃ GB : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := m) (d := d))\n        (Matrix dB dB ℂ),\n      inconsistency (uniform (Point F m)) ψ (pointPOVM PA) (evalPOVM GB)\n          ≤ deltaCL (Fintype.card F) m d ε ∧\n        inconsistency (uniform (Point F m)) ψ (evalPOVM GA) (pointPOVM PB)\n          ≤ deltaCL (Fintype.card F) m d ε ∧\n        inconsistency (uniform Unit) ψ (fun _ => GA.toPOVM ()) (fun _ => GB.toPOVM ())\n          ≤ deltaCL (Fintype.card F) m d ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]"
+  ],
+  "docstring": "**The conclusion of `clSoundness_ldc_one_deltaCL`, read back along equivalences of the two\nregisters.** The strategy `S` is abstract; `eA`, `eB` identify its registers with `dA`, `dB`, and\n`hψ`, `hPA`, `hPB` identify its state and measurements with the reindexings of `ψ`, `PA`, `PB`.",
+  "module": "MIPRE.Background.LIDT.Adapter.Registers",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 7: strategies on arbitrary registers\n\n`clSoundness_ldc_one_deltaCL` takes a `TensorProductStrategy`, whose registers are `Fin dA` and\n`Fin dB`. The strategy the Pauli basis test's analysis hands it (`lem:qld-global-pvm`) is built\non structured registers --- the players' own spaces tensored with the expansion's ancillas and the\ncombining coefficients' ancillas --- and its value is a `povmValue`. This file restates the\nsoundness theorem for that form: a unit vector on `dA × dB`, projective measurement families on\n`Matrix dA dA ℂ` and `Matrix dB dB ℂ` indexed by the seeded test's questions, and the value\nhypothesis as a `povmValue`. The conclusion's two low-degree measurements live on the original\nregisters, and the three inconsistency bounds are stated against the original state.\n\nThe proof is bookkeeping: package the strategy with `TensorProductStrategy.ofProjective`, apply the\ntheorem, and read each conclusion back along `Fintype.equivFin` with `inconsistency_reindex`,\n`POVM.map_reindex` and `ProjectiveMeasurement.toPOVM_map_reindex`. Nothing about the test is used.\n\nOne Lean point is worth recording. The packaged strategy's dimension `S.dA` is `Fintype.card dA`\nonly up to unfolding, so a rewrite that has to match `Fin S.dA` against `Fin (Fintype.card dA)`\nfails. `clSoundness_ldc_one_deltaCL_transport` therefore takes the strategy abstractly, with the\nregister equivalences `eA : dA ≃ Fin S.dA`, `eB : dB ≃ Fin S.dB` and the identifications of its\nstate and measurements as hypotheses; everything is then syntactic, and the packaged strategy\nsupplies the hypotheses by `rfl`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Registers.lean#L57-L103",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Registers.lean",
+  "lines": [
+   57,
+   103
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LIDT.lidtError_le_deltaCL",
+   "MIPRE.LIDT.Adapter.clSoundness_ldc_one",
+   "MIPRE.POVM.map_reindex",
+   "MIPRE.inconsistency_reindex"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL_of_povm",
+  "source_name": "MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL_of_povm",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL_of_povm {dA dB : Type*} [Fintype dA] [DecidableEq dA]\n    [Fintype dB] [DecidableEq dB] (ψ : dA × dB → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1)\n    (MA : CL.Question F m → POVM (CL.Answer F m d 1) dA)\n    (MB : CL.Question F m → POVM (CL.Answer F m d 1) dB)\n    (ε : ℝ) (hε : 0 ≤ ε) (hS : 1 - ε ≤ povmValue (clGame (d := d) (ldc := 1) hm) ψ MA MB)\n    (hm1 : 1 ≤ m) (hd : 1 ≤ d) :\n    ∃ (PA : ProjectiveMeasurement (CL.Question F m) (CL.Answer F m d 1)\n          (Matrix (dA × CL.Answer F m d 1) (dA × CL.Answer F m d 1) ℂ))\n      (PB : ProjectiveMeasurement (CL.Question F m) (CL.Answer F m d 1)\n          (Matrix (dB × CL.Answer F m d 1) (dB × CL.Answer F m d 1) ℂ))\n      (GA : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := m) (d := d))\n          (Matrix (dA × CL.Answer F m d 1) (dA × CL.Answer F m d 1) ℂ))\n      (GB : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := m) (d := d))\n          (Matrix (dB × CL.Answer F m d 1) (dB × CL.Answer F m d 1) ℂ)),\n      (∀ x, (PA.toPOVM x).compress (CL.Answer.values fun _ => (0 : F)) = MA x)\n      ∧ (∀ y, (PB.toPOVM y).compress (CL.Answer.values fun _ => (0 : F)) = MB y)\n      ∧ inconsistency (uniform (Point F m))\n          (extVec2 ψ (CL.Answer.values fun _ => (0 : F)) (CL.Answer.values fun _ => (0 : F)))\n          (pointPOVM PA) (evalPOVM GB) ≤ deltaCL (Fintype.card F) m d ε\n      ∧ inconsistency (uniform (Point F m))\n          (extVec2 ψ (CL.Answer.values fun _ => (0 : F)) (CL.Answer.values fun _ => (0 : F)))\n          (evalPOVM GA) (pointPOVM PB) ≤ deltaCL (Fintype.card F) m d ε\n      ∧ inconsistency (uniform Unit)\n          (extVec2 ψ (CL.Answer.values fun _ => (0 : F)) (CL.Answer.values fun _ => (0 : F)))\n          (fun _ => GA.toPOVM ()) (fun _ => GB.toPOVM ()) ≤ deltaCL (Fintype.card F) m d ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]"
+  ],
+  "docstring": "**The `ldc = 1` case of `thm:lidt-cl-soundness`, for a strategy given by POVMs.** The\nstrategy is dilated to a projective one on `dA × Answer`, `dB × Answer`, with the default answer\n`values 0` as the ancilla state; the returned projective families `PA`, `PB` compress to `MA`, `MB`,\nand the low-degree measurements and the three bounds live on the twice-extended state.",
+  "module": "MIPRE.Background.LIDT.Adapter.Registers",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 7: strategies on arbitrary registers\n\n`clSoundness_ldc_one_deltaCL` takes a `TensorProductStrategy`, whose registers are `Fin dA` and\n`Fin dB`. The strategy the Pauli basis test's analysis hands it (`lem:qld-global-pvm`) is built\non structured registers --- the players' own spaces tensored with the expansion's ancillas and the\ncombining coefficients' ancillas --- and its value is a `povmValue`. This file restates the\nsoundness theorem for that form: a unit vector on `dA × dB`, projective measurement families on\n`Matrix dA dA ℂ` and `Matrix dB dB ℂ` indexed by the seeded test's questions, and the value\nhypothesis as a `povmValue`. The conclusion's two low-degree measurements live on the original\nregisters, and the three inconsistency bounds are stated against the original state.\n\nThe proof is bookkeeping: package the strategy with `TensorProductStrategy.ofProjective`, apply the\ntheorem, and read each conclusion back along `Fintype.equivFin` with `inconsistency_reindex`,\n`POVM.map_reindex` and `ProjectiveMeasurement.toPOVM_map_reindex`. Nothing about the test is used.\n\nOne Lean point is worth recording. The packaged strategy's dimension `S.dA` is `Fintype.card dA`\nonly up to unfolding, so a rewrite that has to match `Fin S.dA` against `Fin (Fintype.card dA)`\nfails. `clSoundness_ldc_one_deltaCL_transport` therefore takes the strategy abstractly, with the\nregister equivalences `eA : dA ≃ Fin S.dA`, `eB : dB ≃ Fin S.dB` and the identifications of its\nstate and measurements as hypotheses; everything is then syntactic, and the packaged strategy\nsupplies the hypotheses by `rfl`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Registers.lean#L183-L222",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Registers.lean",
+  "lines": [
+   183,
+   222
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL_transport",
+   "MIPRE.exists_projective_dilation",
+   "MIPRE.POVM.sum_val",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.TensorProductStrategy.value_eq_povmValue",
+   "MIPRE.bornProb_reindex",
+   "MIPRE.extVec2_unit"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.CL.rep_add_lineParam_smul",
+  "source_name": "MIPRE.LIDT.CL.rep_add_lineParam_smul",
+  "formal_statement": "theorem MIPRE.LIDT.CL.rep_add_lineParam_smul (w u : Point F m) :\n    rep w u + lineParam (rep w u) w u • w = u := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.CL",
+   "open Finset MIPRE",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d ldc : ℕ}"
+  ],
+  "docstring": "**Every point lies on its own seeded line, at the parameter `lineParam` computes**, whether\nor not the direction vanishes.",
+  "module": "MIPRE.Background.LIDT.Adapter.Value",
+  "module_doc": "/-!\n# The value of a strategy for the seeded test, sample by sample\n\nThe seeded test's question distribution is the push-forward of the uniform distribution on\n`Sample F m` under the two typed question maps. A strategy's failure probability is therefore the\naverage over samples of the conditional failure at the two questions the sample generates\n(`one_sub_povmValue_clGame`), and that average splits into the nine ordered type pairs\n(`sum_sample_eq`). The padded strategy of the Pauli basis test is analysed one type pair at a\ntime, which is what these two identities are for.\n\nThe file also records two facts about a seeded line question that the analysis reads off the\ngeometry: a point lies on its own line at the parameter `lineParam` computes, whether or not the\ndirection vanishes (`rep_add_lineParam_smul`), and a degenerate diagonal direction is rare\n(`sum_indicator_zeroBelow_eq_zero_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Value.lean#L60-L76",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Value.lean",
+  "lines": [
+   60,
+   76
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-setup",
+    "env": "lemma",
+    "title": "Admissible padded setup",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.rep_eq",
+   "MIPRE.LIDT.Adapter.canonLin_bot"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.CL.one_sub_povmValue_clGame",
+  "source_name": "MIPRE.LIDT.CL.one_sub_povmValue_clGame",
+  "formal_statement": "theorem MIPRE.LIDT.CL.one_sub_povmValue_clGame {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB]\n    [DecidableEq dB] (ψ : dA × dB → ℂ) (MA : Question F m → POVM (Answer F m d ldc) dA)\n    (MB : Question F m → POVM (Answer F m d ldc) dB) :\n    1 - povmValue (clGame (d := d) (ldc := ldc) hm) ψ MA MB\n      = (Fintype.card (Sample F m) : ℝ)⁻¹ * ∑ sm : Sample F m,\n          condFail (clGame hm) ψ MA MB (sm.question hm sm.tyA) (sm.question hm sm.tyB) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.CL",
+   "open Finset MIPRE",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d ldc : ℕ}",
+   "variable [NeZero m] (hm : m ∣ Fintype.card F)"
+  ],
+  "docstring": "**The failure probability of a POVM strategy in the seeded test is the average over the\nverifier's samples of the conditional failure at the two questions the sample generates.**",
+  "module": "MIPRE.Background.LIDT.Adapter.Value",
+  "module_doc": "/-!\n# The value of a strategy for the seeded test, sample by sample\n\nThe seeded test's question distribution is the push-forward of the uniform distribution on\n`Sample F m` under the two typed question maps. A strategy's failure probability is therefore the\naverage over samples of the conditional failure at the two questions the sample generates\n(`one_sub_povmValue_clGame`), and that average splits into the nine ordered type pairs\n(`sum_sample_eq`). The padded strategy of the Pauli basis test is analysed one type pair at a\ntime, which is what these two identities are for.\n\nThe file also records two facts about a seeded line question that the analysis reads off the\ngeometry: a point lies on its own line at the parameter `lineParam` computes, whether or not the\ndirection vanishes (`rep_add_lineParam_smul`), and a degenerate diagonal direction is rare\n(`sum_indicator_zeroBelow_eq_zero_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Value.lean#L134-L161",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Value.lean",
+  "lines": [
+   134,
+   161
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-setup",
+    "env": "lemma",
+    "title": "Admissible padded setup",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.prob_agreeOn_le_individualDegree",
+  "source_name": "MIPRE.LowDegree.prob_agreeOn_le_individualDegree",
+  "formal_statement": "theorem MIPRE.LowDegree.prob_agreeOn_le_individualDegree {f g : MvPolynomial σ F} (hfg : f ≠ g) {d : ℕ}\n    (hf : ∀ i, f.degreeOf i ≤ d) (hg : ∀ i, g.degreeOf i ≤ d) :\n    ((agreeOn f g).card : ℝ) / (Fintype.card F : ℝ) ^ Fintype.card σ\n      ≤ (Fintype.card σ : ℝ) * d / Fintype.card F := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open Finset MvPolynomial",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {σ : Type*} [Fintype σ] [DecidableEq σ]"
+  ],
+  "docstring": "**Schwartz--Zippel, individual-degree form, for any finite variable type**: two unequal\npolynomials of individual degree at most `d` in the variables `σ` agree at a uniformly random\npoint of `F^σ` with probability at most `|σ| d / q`.",
+  "module": "MIPRE.Background.LIDT.Coefficients",
+  "module_doc": "/-!\n# Coefficient vectors of low-individual-degree polynomials\n\n`LowIndDegPoly F n d` is a coefficient vector indexed by exponent vectors with entries at most `d`.\nThis file is the algebra of those vectors that more than one analysis needs, moved here from the\nPauli basis test's `Dummy.lean` and `Linear.lean` (where it was first written) so that the\nsimultaneous low-degree test, which sits below the Pauli test in the import graph, can use it.\nThe names are unchanged.\n\n* **Schwartz--Zippel for any finite variable type** (`prob_agreeOn_le_individualDegree`), and the\n  bridge `LowIndDegPoly.toMv` to `MvPolynomial` with its evaluation, coefficient and\n  individual-degree facts; `card_eval_eq_zero_le` is the form a nonzero coefficient vector needs.\n* **Coefficients of a monomial pattern.** `LowIndDegPoly.coef g T t` is the coefficient vector, in\n  the variables outside `T`, of the monomial `∏_{k ∈ T} u_k^{t k}`, and `eval_eq_sum_coef` is the\n  decomposition `g(u) = ∑_t u^t_T · (coef g T t)(u)`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Coefficients.lean#L43-L67",
+  "source_path": "MIPRE/Background/LIDT/Coefficients.lean",
+  "lines": [
+   43,
+   67
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-dummy",
+    "env": "lemma",
+    "title": "Removing dummy-coordinate dependence",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.prob_agree_le_individualDegree"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.prod_pow_patch",
+  "source_name": "MIPRE.LIDT.prod_pow_patch",
+  "formal_statement": "theorem MIPRE.LIDT.prod_pow_patch (T : Finset (Fin n)) (u : Point F n) {t e : Fin n → Fin (d + 1)}\n    (he : ∀ k ∈ T, e k = 0) :\n    (∏ k ∈ T, u k ^ (t k : ℕ)) * ∏ k, u k ^ (e k : ℕ)\n      = ∏ k, u k ^ ((patch T t e k : Fin (d + 1)) : ℕ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open Finset",
+   "variable {F : Type*} [Field F] {n d : ℕ}"
+  ],
+  "docstring": "The product of powers splits along `T`.",
+  "module": "MIPRE.Background.LIDT.Coefficients",
+  "module_doc": "/-!\n# Coefficient vectors of low-individual-degree polynomials\n\n`LowIndDegPoly F n d` is a coefficient vector indexed by exponent vectors with entries at most `d`.\nThis file is the algebra of those vectors that more than one analysis needs, moved here from the\nPauli basis test's `Dummy.lean` and `Linear.lean` (where it was first written) so that the\nsimultaneous low-degree test, which sits below the Pauli test in the import graph, can use it.\nThe names are unchanged.\n\n* **Schwartz--Zippel for any finite variable type** (`prob_agreeOn_le_individualDegree`), and the\n  bridge `LowIndDegPoly.toMv` to `MvPolynomial` with its evaluation, coefficient and\n  individual-degree facts; `card_eval_eq_zero_le` is the form a nonzero coefficient vector needs.\n* **Coefficients of a monomial pattern.** `LowIndDegPoly.coef g T t` is the coefficient vector, in\n  the variables outside `T`, of the monomial `∏_{k ∈ T} u_k^{t k}`, and `eval_eq_sum_coef` is the\n  decomposition `g(u) = ∑_t u^t_T · (coef g T t)(u)`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Coefficients.lean#L210-L229",
+  "source_path": "MIPRE/Background/LIDT/Coefficients.lean",
+  "lines": [
+   210,
+   229
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-extraction",
+    "env": "lemma",
+    "title": "Extracting exactly linear combined codewords",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.LowIndDegPoly.eval_eq_sum_coef",
+  "source_name": "MIPRE.LIDT.LowIndDegPoly.eval_eq_sum_coef",
+  "formal_statement": "theorem MIPRE.LIDT.LowIndDegPoly.eval_eq_sum_coef (g : LowIndDegPoly (F := F) (m := n) (d := d))\n    (T : Finset (Fin n)) (u : Point F n) :\n    g.eval u = ∑ t : Fin n → Fin (d + 1), (∏ k ∈ T, u k ^ (t k : ℕ)) * (g.coef T t).eval u := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.LowIndDegPoly",
+   "open Finset",
+   "variable {F : Type*} [Field F] {n d : ℕ}"
+  ],
+  "docstring": "**Decomposition along the patterns on `T`**: `g(u) = ∑_t u^t_T · (coef g T t)(u)`.",
+  "module": "MIPRE.Background.LIDT.Coefficients",
+  "module_doc": "/-!\n# Coefficient vectors of low-individual-degree polynomials\n\n`LowIndDegPoly F n d` is a coefficient vector indexed by exponent vectors with entries at most `d`.\nThis file is the algebra of those vectors that more than one analysis needs, moved here from the\nPauli basis test's `Dummy.lean` and `Linear.lean` (where it was first written) so that the\nsimultaneous low-degree test, which sits below the Pauli test in the import graph, can use it.\nThe names are unchanged.\n\n* **Schwartz--Zippel for any finite variable type** (`prob_agreeOn_le_individualDegree`), and the\n  bridge `LowIndDegPoly.toMv` to `MvPolynomial` with its evaluation, coefficient and\n  individual-degree facts; `card_eval_eq_zero_le` is the form a nonzero coefficient vector needs.\n* **Coefficients of a monomial pattern.** `LowIndDegPoly.coef g T t` is the coefficient vector, in\n  the variables outside `T`, of the monomial `∏_{k ∈ T} u_k^{t k}`, and `eval_eq_sum_coef` is the\n  decomposition `g(u) = ∑_t u^t_T · (coef g T t)(u)`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Coefficients.lean#L231-L276",
+  "source_path": "MIPRE/Background/LIDT/Coefficients.lean",
+  "lines": [
+   231,
+   276
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-extraction",
+    "env": "lemma",
+    "title": "Extracting exactly linear combined codewords",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.prod_pow_patch"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 42,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.LowIndDegPoly.eval_coef_of_eq_off",
+  "source_name": "MIPRE.LIDT.LowIndDegPoly.eval_coef_of_eq_off",
+  "formal_statement": "theorem MIPRE.LIDT.LowIndDegPoly.eval_coef_of_eq_off (g : LowIndDegPoly (F := F) (m := n) (d := d))\n    (T : Finset (Fin n)) (t : Fin n → Fin (d + 1)) {u u' : Point F n}\n    (h : ∀ k ∉ T, u k = u' k) : (g.coef T t).eval u = (g.coef T t).eval u' := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.LowIndDegPoly",
+   "open Finset",
+   "variable {F : Type*} [Field F] {n d : ℕ}"
+  ],
+  "docstring": "A coefficient vector on `T` reads no coordinate in `T`.",
+  "module": "MIPRE.Background.LIDT.Coefficients",
+  "module_doc": "/-!\n# Coefficient vectors of low-individual-degree polynomials\n\n`LowIndDegPoly F n d` is a coefficient vector indexed by exponent vectors with entries at most `d`.\nThis file is the algebra of those vectors that more than one analysis needs, moved here from the\nPauli basis test's `Dummy.lean` and `Linear.lean` (where it was first written) so that the\nsimultaneous low-degree test, which sits below the Pauli test in the import graph, can use it.\nThe names are unchanged.\n\n* **Schwartz--Zippel for any finite variable type** (`prob_agreeOn_le_individualDegree`), and the\n  bridge `LowIndDegPoly.toMv` to `MvPolynomial` with its evaluation, coefficient and\n  individual-degree facts; `card_eval_eq_zero_le` is the form a nonzero coefficient vector needs.\n* **Coefficients of a monomial pattern.** `LowIndDegPoly.coef g T t` is the coefficient vector, in\n  the variables outside `T`, of the monomial `∏_{k ∈ T} u_k^{t k}`, and `eval_eq_sum_coef` is the\n  decomposition `g(u) = ∑_t u^t_T · (coef g T t)(u)`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Coefficients.lean#L278-L292",
+  "source_path": "MIPRE/Background/LIDT/Coefficients.lean",
+  "lines": [
+   278,
+   292
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-ldc-extraction",
+    "env": "lemma",
+    "title": "Extracting exactly linear combined codewords",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "Orthogonalization.IsometryData.q_mul_w",
+  "source_name": "Orthogonalization.IsometryData.q_mul_w",
+  "formal_statement": "theorem Orthogonalization.IsometryData.q_mul_w (hw : IsometryData a q w) (i : ι) : q i * w i = w i := by sorry",
+  "preamble_opens": [
+   "open Orthogonalization",
+   "open Orthogonalization.IsometryData",
+   "open scoped ComplexOrder BigOperators",
+   "variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι] {a q w : ι → H →L[ℂ] H}"
+  ],
+  "docstring": "From (W1) and (W2): `q_i w_i = w_i`. Indeed\n`q_i w_i = ∑ j, (w_i w_j*) w_j = w_i ∑ j, w_j* w_j = w_i`.",
+  "module": "MIPRE.Background.Orthonormalization.Orthogonalization.Assembly",
+  "module_doc": "/-! ### The assembled projections -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Orthonormalization/Orthogonalization/Assembly.lean#L153-L169",
+  "source_path": "MIPRE/Background/Orthonormalization/Orthogonalization/Assembly.lean",
+  "lines": [
+   153,
+   169
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "Orthogonalization.assembledPVM_isStarProjection",
+  "source_name": "Orthogonalization.assembledPVM_isStarProjection",
+  "formal_statement": "theorem Orthogonalization.assembledPVM_isStarProjection (hw : IsometryData a q w) (i : ι) :\n    IsStarProjection (assembledPVM w i) := by sorry",
+  "preamble_opens": [
+   "open Orthogonalization",
+   "open scoped ComplexOrder BigOperators",
+   "variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι] {a q w : ι → H →L[ℂ] H}"
+  ],
+  "docstring": "Each `p_i = w_i* w_i` is a star projection: self-adjointness is\n`star_mul`/`star_star`, and idempotence follows from (W2) and\n`IsometryData.q_mul_w`, since\n`(w_i* w_i)(w_i* w_i) = w_i* (w_i w_i*) w_i = w_i* q_i w_i = w_i* w_i`.",
+  "module": "MIPRE.Background.Orthonormalization.Orthogonalization.Assembly",
+  "module_doc": "/-! ### The assembled projections -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Orthonormalization/Orthogonalization/Assembly.lean#L171-L187",
+  "source_path": "MIPRE/Background/Orthonormalization/Orthogonalization/Assembly.lean",
+  "lines": [
+   171,
+   187
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "Orthogonalization.IsometryData.q_mul_w"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "Orthogonalization.sqrt_mul_assembledPVM_mul_sqrt",
+  "source_name": "Orthogonalization.sqrt_mul_assembledPVM_mul_sqrt",
+  "formal_statement": "theorem Orthogonalization.sqrt_mul_assembledPVM_mul_sqrt (hw : IsometryData a q w)\n    (hq : ∀ i, IsStarProjection (q i)) (hqa : ∀ i, Commute (q i) (a i))\n    (ha0 : ∀ i, 0 ≤ a i) (i : ι) :\n    CFC.sqrt (∑ j, q j * a j) * assembledPVM w i * CFC.sqrt (∑ j, q j * a j) = q i * a i := by sorry",
+  "preamble_opens": [
+   "open Orthogonalization",
+   "open scoped ComplexOrder BigOperators",
+   "variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι] {a q w : ι → H →L[ℂ] H}"
+  ],
+  "docstring": "The paper's identity `|x| p_i |x| = q_i a_i` (with `|x| = √(∑ j, q_j a_j)`):\n`s p_i s = (w_i s)* (w_i s) = (q_i √a_i)* (q_i √a_i) = √a_i q_i √a_i = q_i a_i`,\nusing (W3), self-adjointness of `s` and of `√a_i`, idempotence of `q_i`, and the\nfact that `q_i` commutes with `√a_i`.",
+  "module": "MIPRE.Background.Orthonormalization.Orthogonalization.Assembly",
+  "module_doc": "/-! ### The assembled projections -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Orthonormalization/Orthogonalization/Assembly.lean#L193-L217",
+  "source_path": "MIPRE/Background/Orthonormalization/Orthogonalization/Assembly.lean",
+  "lines": [
+   193,
+   217
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "Orthogonalization.assembled_bound_core",
+  "source_name": "Orthogonalization.assembled_bound_core",
+  "formal_statement": "theorem Orthogonalization.assembled_bound_core (φ : (H →L[ℂ] H) →ₗ[ℂ] ℂ)\n    (hφ : ∀ x : H →L[ℂ] H, 0 ≤ φ (star x * x)) (hφ1 : φ 1 = 1)\n    (a q p : ι → H →L[ℂ] H) (s : H →L[ℂ] H)\n    (ha0 : ∀ i, 0 ≤ a i) (ha1 : ∑ i, a i = 1)\n    (hq : ∀ i, IsStarProjection (q i)) (hqa : ∀ i, Commute (q i) (a i))\n    (hp : ∀ i, IsStarProjection (p i)) (hpsum : ∑ i, p i = 1)\n    (hs0 : 0 ≤ s) (hs1 : s ≤ 1) (hss : s * s = ∑ j, q j * a j)\n    (hsp : ∀ i, s * p i * s = q i * a i)\n    (ε : ℝ) (hε : 1 - ε < (φ (∑ i, a i * a i)).re)\n    (hlarge : 1 - ε ≤ (φ (∑ i, q i * a i)).re) :\n    (φ (∑ i, star (a i - p i) * (a i - p i))).re < 9 * ε := by sorry",
+  "preamble_opens": [
+   "open Orthogonalization",
+   "open scoped ComplexOrder BigOperators",
+   "variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "**The core of step F3.** The paper's estimate, with the square root\n`|x| = √(∑ j, q_j a_j)` abstracted into an operator `s` subject only to the\nproperties the argument uses: `0 ≤ s ≤ 1`, `s² = ∑ j, q_j a_j` and\n`s p_i s = q_i a_i`.\n\nThe proof decomposes `a_i - p_i = b_i + d_i + c_i` with\n`b_i = (1 - q_i) a_i`, `d_i = p_i s - p_i`, `c_i = q_i a_i - p_i s`\nand bounds `‖b‖_φ² ≤ ε`, `‖d‖_φ² ≤ ε`, `‖c‖_φ² < ε`; three applications of the\ntriangle inequality (`phiNormSq_add_add_lt`) then give the constant `9`.",
+  "module": "MIPRE.Background.Orthonormalization.Orthogonalization.Assembly",
+  "module_doc": "/-! ### The assembled projections -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Orthonormalization/Orthogonalization/Assembly.lean#L307-L428",
+  "source_path": "MIPRE/Background/Orthonormalization/Orthogonalization/Assembly.lean",
+  "lines": [
+   307,
+   428
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "Orthogonalization.phiNormSq_add_add_lt"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 101,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "Orthogonalization.assembled_bound",
+  "source_name": "Orthogonalization.assembled_bound",
+  "formal_statement": "theorem Orthogonalization.assembled_bound (φ : (H →L[ℂ] H) →ₗ[ℂ] ℂ)\n    (hφ : ∀ x : H →L[ℂ] H, 0 ≤ φ (star x * x)) (hφ1 : φ 1 = 1)\n    (a q w : ι → H →L[ℂ] H) (ha0 : ∀ i, 0 ≤ a i) (ha1 : ∑ i, a i = 1)\n    (hq : ∀ i, IsStarProjection (q i)) (hqa : ∀ i, Commute (q i) (a i))\n    (hw : IsometryData a q w) (ε : ℝ) (hε : 1 - ε < (φ (∑ i, a i * a i)).re)\n    (hlarge : 1 - ε ≤ (φ (∑ i, q i * a i)).re) :\n    (φ (∑ i, star (a i - assembledPVM w i) * (a i - assembledPVM w i))).re < 9 * ε := by sorry",
+  "preamble_opens": [
+   "open Orthogonalization",
+   "open scoped ComplexOrder BigOperators",
+   "variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "**Step F3 of the proof of Theorem 1.2 in the finite case.** Given the\nisometry data `(w_i)` of Lemma 3.2 for a POVM `(a_i)` and the commuting\nprojections `(q_i)` of Lemma 3.1, the assembled PVM `p_i = w_i* w_i` satisfies\n`φ (∑ i, |a_i - p_i|²) < 9 ε` whenever `φ (∑ i, a_i²) > 1 - ε` and\n`φ (∑ i, q_i a_i) ≥ 1 - ε`.",
+  "module": "MIPRE.Background.Orthonormalization.Orthogonalization.Assembly",
+  "module_doc": "/-! ### The assembled projections -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Orthonormalization/Orthogonalization/Assembly.lean#L430-L452",
+  "source_path": "MIPRE/Background/Orthonormalization/Orthogonalization/Assembly.lean",
+  "lines": [
+   430,
+   452
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "Orthogonalization.assembled_bound_core",
+   "Orthogonalization.assembledPVM_isStarProjection",
+   "Orthogonalization.sqrt_mul_assembledPVM_mul_sqrt"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "Orthogonalization.FinDim.trace_blockProj",
+  "source_name": "Orthogonalization.FinDim.trace_blockProj",
+  "formal_statement": "theorem Orthogonalization.FinDim.trace_blockProj (q : ι → H →L[ℂ] H) :\n    LinearMap.trace ℂ (BlockSpace H ι) (blockProj q : BlockSpace H ι →ₗ[ℂ] BlockSpace H ι) =\n      ∑ i, LinearMap.trace ℂ H (q i : H →ₗ[ℂ] H) := by sorry",
+  "preamble_opens": [
+   "open Orthogonalization",
+   "open Orthogonalization.FinDim",
+   "open scoped InnerProductSpace ComplexOrder",
+   "open ContinuousLinearMap Module Orthogonalization",
+   "variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [FiniteDimensional ℂ H]",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The trace of the block projection is the sum of the traces of the blocks.",
+  "module": "MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Completion",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Orthonormalization/Orthogonalization/FinDim/Completion.lean#L157-L180",
+  "source_path": "MIPRE/Background/Orthonormalization/Orthogonalization/FinDim/Completion.lean",
+  "lines": [
+   157,
+   180
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 5,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "Orthogonalization.FinDim.exists_isometryData",
+  "source_name": "Orthogonalization.FinDim.exists_isometryData",
+  "formal_statement": "theorem Orthogonalization.FinDim.exists_isometryData (a q : ι → H →L[ℂ] H) (ha0 : ∀ i, 0 ≤ a i)\n    (hq : ∀ i, IsStarProjection (q i)) (hqa : ∀ i, Commute (q i) (a i))\n    (htr : ∑ i, LinearMap.trace ℂ H (q i : H →ₗ[ℂ] H) = (finrank ℂ H : ℂ)) :\n    ∃ w : ι → H →L[ℂ] H, IsometryData a q w := by sorry",
+  "preamble_opens": [
+   "open Orthogonalization",
+   "open Orthogonalization.FinDim",
+   "open scoped InnerProductSpace ComplexOrder",
+   "open ContinuousLinearMap Module Orthogonalization",
+   "variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [FiniteDimensional ℂ H]",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "**Step F2**: the isometry data exist in finite dimension.",
+  "module": "MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Completion",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Orthonormalization/Orthogonalization/FinDim/Completion.lean#L182-L266",
+  "source_path": "MIPRE/Background/Orthonormalization/Orthogonalization/FinDim/Completion.lean",
+  "lines": [
+   182,
+   266
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "Orthogonalization.FinDim.trace_blockProj",
+   "Orthogonalization.FinDim.exists_isometry_completion"
+  ],
+  "pasted_helpers": 18,
+  "prooflines": 80,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "Orthogonalization.FinDim.exists_isometry_completion",
+  "source_name": "Orthogonalization.FinDim.exists_isometry_completion",
+  "formal_statement": "theorem Orthogonalization.FinDim.exists_isometry_completion (T : H →L[ℂ] K) (s : H →L[ℂ] H)\n    (hs : IsSelfAdjoint s) (hs0 : 0 ≤ s) (hT : adjoint T ∘L T = s ∘L s)\n    (L : Submodule ℂ K) (hTL : LinearMap.range (T : H →ₗ[ℂ] K) ≤ L) (hL : finrank ℂ L = finrank ℂ H) :\n    ∃ u : H →L[ℂ] K, adjoint u ∘L u = 1 ∧ u ∘L adjoint u = L.starProjection ∧\n      u ∘L s = T := by sorry",
+  "preamble_opens": [
+   "open Orthogonalization",
+   "open Orthogonalization.FinDim",
+   "open scoped InnerProductSpace ComplexOrder",
+   "open Module ContinuousLinearMap",
+   "variable {H K : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [FiniteDimensional ℂ H]"
+  ],
+  "docstring": "**Isometric completion.**",
+  "module": "MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.Isometry",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Orthonormalization/Orthogonalization/FinDim/Isometry.lean#L119-L252",
+  "source_path": "MIPRE/Background/Orthonormalization/Orthogonalization/FinDim/Isometry.lean",
+  "lines": [
+   119,
+   252
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 128,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "Orthogonalization.FinDim.exists_jointEigenbasis",
+  "source_name": "Orthogonalization.FinDim.exists_jointEigenbasis",
+  "formal_statement": "theorem Orthogonalization.FinDim.exists_jointEigenbasis {x a : H →L[ℂ] H} (hx : IsSelfAdjoint x)\n    (ha : IsSelfAdjoint a) (hxa : Commute x a) : Nonempty (JointEigenbasis x a) := by sorry",
+  "preamble_opens": [
+   "open Orthogonalization",
+   "open Orthogonalization.FinDim",
+   "open scoped BigOperators ComplexOrder InnerProductSpace",
+   "open Module",
+   "variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [FiniteDimensional ℂ H]"
+  ],
+  "docstring": "**Simultaneous diagonalization.** Two commuting self-adjoint operators on a\nfinite-dimensional complex inner product space admit a joint orthonormal\neigenbasis with real eigenvalues.",
+  "module": "MIPRE.Background.Orthonormalization.Orthogonalization.FinDim.JointDiag",
+  "module_doc": "/-! ### Elementary consequences of the eigen-equations -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Orthonormalization/Orthogonalization/FinDim/JointDiag.lean#L197-L256",
+  "source_path": "MIPRE/Background/Orthonormalization/Orthogonalization/FinDim/JointDiag.lean",
+  "lines": [
+   197,
+   256
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 55,
+  "is_target": false
+ }
+]

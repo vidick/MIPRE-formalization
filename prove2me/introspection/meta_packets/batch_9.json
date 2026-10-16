@@ -1,0 +1,681 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.one_sub_two_mul_lt_sum_stateSqNorm",
+  "source_name": "MIPRE.QLD.one_sub_two_mul_lt_sum_stateSqNorm",
+  "formal_statement": "theorem MIPRE.QLD.one_sub_two_mul_lt_sum_stateSqNorm {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)\n    (Q : POVM A dA) (R : POVM A dB) (δ : ℝ) (hδ : 0 < δ)\n    (hcons : pairInconsistency ψ Q R ≤ δ) :\n    1 - 2 * δ < ∑ a, stateSqNorm ψ (((Q.mats a).val)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix Kronecker MIPRE",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {A : Type*} [Fintype A] [DecidableEq A]",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "**Consistency implies near-projectivity**, strictly, at any positive bound `δ` on the\ninconsistency. This is the step the blueprint's proof calls a Cauchy--Schwarz step; the strictness\nis the `γ²` slack in `(1 - γ)² = 1 - 2γ + γ²`, and it is what removes the compactness argument.",
+  "module": "MIPRE.Background.QLD.Consistency",
+  "module_doc": "/-!\n# From bipartite consistency to near-projectivity\n\nThe second half of blueprint `cor:ortho-from-consistency`. `Ortho.lean` turns *near-projectivity*\nof a POVM on Alice's factor into a projective measurement close to it; what the appendix has is\n*consistency* of Alice's POVM with one of Bob's. The bridge is a Cauchy--Schwarz step: writing\n`γ = ∑_{a ≠ b} ⟨ψ| Q_a ⊗ R_b |ψ⟩`, so that `∑_a ⟨ψ| Q_a ⊗ R_a |ψ⟩ = 1 - γ`,\n\n`1 - γ = ∑_a ⟨(Q_a ⊗ Id)ψ, (Id ⊗ R_a)ψ⟩ ≤ (∑_a ‖(Q_a ⊗ Id)ψ‖²)^{1/2} (∑_a ‖(Id ⊗ R_a)ψ‖²)^{1/2}`\n\nand the second factor is at most one because `∑_a R_a² ≤ ∑_a R_a = Id`.\n\n## A repair to the blueprint's proof\n\nThe blueprint and the paper close with a compactness step: the theorem gives a projective family\nonly for `ε > 2γ` strictly, and a limit along `ε ↓ 2γ` is taken inside the compact set of\nprojective measurements to reach the bound `18γ` itself. That step is not formalized, and it is\nnot needed. `(1 - γ)² = 1 - 2γ + γ²` has slack `γ²` over `1 - 2γ`, so the hypothesis of\n`exists_projective_of_nearProjective` already holds *strictly* at `ε = 2δ` whenever `γ ≤ δ` and\n`δ > 0`, whether or not `γ = 0`:\n\n* if `γ ≥ 1` the conclusion is vacuous, `1 - 2δ ≤ -1 < 0 ≤ ∑_a ‖(Q_a ⊗ Id)ψ‖²`;\n* otherwise `∑_a ‖(Q_a ⊗ Id)ψ‖² ≥ (1 - γ)² = 1 - 2γ + γ² > 1 - 2δ`, since `2γ - γ² < 2δ` holds\n  for every `γ ≤ δ` with `δ > 0` --- at `γ = δ` because `γ² > 0`, and at `γ < δ` because\n  `γ² ≥ 0`.\n\nSo `exists_projective_of_consistent` below is stated for a *bound* `δ > 0` on the inconsistency\nrather than for the inconsistency itself, and concludes the strict `< 18 δ`. It is what every\napplication needs, `η_ortho(δ) = 18 δ` being linear as the paper requires, and it costs no\ncompactness. The one thing it does not give is the exact `δ = 0` case, where the paper's limit\nyields a projective measurement agreeing with `Q` on `ψ` exactly; no application uses it.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Consistency.lean#L149-L189",
+  "source_path": "MIPRE/Background/QLD/Consistency.lean",
+  "lines": [
+   149,
+   189
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_diag_eq_one_sub",
+   "MIPRE.QLD.sum_normSq_stateVecB_le_one"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 34,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_snorm_sq_aOp_sub_bOp_le",
+  "source_name": "MIPRE.QLD.sum_snorm_sq_aOp_sub_bOp_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_snorm_sq_aOp_sub_bOp_le {v : N × K → ℂ} (hv : ‖evec v‖ = 1)\n    {X : Λ → Matrix N N ℂ} (hX0 : ∀ h, 0 ≤ X h) (hX1 : ∑ h, X h ≤ 1)\n    {T : Λ → Matrix K K ℂ} (hT : IsPVM T) :\n    ∑ h, snorm v ((aOp (X h) : Matrix (N × K) (N × K) ℂ) - bOp (T h)) ^ 2\n      ≤ 2 - 2 * ∑ h, bornProb v (X h) (T h) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {N K Λ : Type*} [Fintype N] [DecidableEq N] [Fintype K] [DecidableEq K] [Fintype Λ]"
+  ],
+  "docstring": "**Agreement to closeness, for a sub-POVM against a projective measurement.** The summed\ncross-party deviation is at most twice the disagreement. Expand each square: the cross terms are\nthe Born probabilities (the two factors commute); Bob's diagonal terms sum to exactly one\n(`T` is projective); Alice's are `<v| X_h² |v> ≤ <v| X_h |v>`, which sum to at most one.",
+  "module": "MIPRE.Background.QLD.Descent",
+  "module_doc": "/-!\n# The descent: from the projective dilation to the strategy, through agreement\n\n`MirrorSimul.swap_isometry` (`MIPRE/Background/QLD/SwapItemTwo.lean`) ends the swap isometry\nlemma on a *legal projective* strategy, with a *closeness* statement: conjugated by the swap\nunitary, the total Pauli measurement `C_h` is close to the honest projector `tau^W_h` on the\nstate `Δ = |aux> ⊗ |EPR_q>^M`. The theorem `thm:qld` quantifies over arbitrary POVM strategies\nand conjugates the *original* measurement operators by an isometry `phi`, so two passages remain\n--- from `V`-conjugation to `phi`-conjugation, and from the Naimark dilation back to the POVM\n--- and neither preserves a closeness statement. What each preserves is an **agreement**: a\nbilinear pairing `∑_h <Γ| X_h ⊗ T_h |Γ>` of one party's family against a family on the *other*\nparty. Such a pairing is linear in each family separately, so a pair of local isometries carries\nit verbatim, from the pushed-forward state to the original one, with each family replaced by its\ncompression (`bornProb_kronecker_mulVec`): the dilation's `N^† P_h N = A_h`, and `phi`'s. This\nis the paper's route, in the last paragraphs of the proof of `thm:pauli-appendix`; its `\\cnote`\nrecords that the step had been silent before adversarial review, precisely because Naimark\ndilation preserves consistency and not closeness.\n\nThe file is that route, as generic linear algebra over three finite types: nothing here knows\nabout the Pauli basis test.\n\n## The four moves\n\nOn `Δ`, `tau^W_h` on `A''` acts as `tau^W_h` on `B''` (the EPR pair is perfectly correlated);\nthat is the hypothesis `hmove`, and it turns every one-party deviation `aOp C_h - aOp tau_h` into\na cross-party one `aOp C_h - bOp T_h` on `Δ` (`snorm_aOp_sub_aOp_eq_of_move`). Then:\n\n* **closeness to agreement** (`sum_snorm_sq_aOp_sub_bOp_eq`): for `C` and `T` projective the\n  summed cross-party deviation is exactly `2 - 2 ∑_h <Δ| C_h ⊗ T_h |Δ>`;\n* **moving the state** (`abs_sum_bornProb_sub_le`): the pairing operator `∑_h X_h ⊗ T_h` is a\n  contraction whenever `X` is a sub-POVM and `T` projective (`bnd_sum_kronecker`), so moving the\n  pairing from `Δ` to the pushed-forward state `Γ` and back costs `2 ‖Γ - Δ‖` each way;\n* **the hypothesis `hagree`**: on `Γ` the pairing of the strategy's own family `X` is at least\n  that of `C` --- in the application the two are *equal*, by the compression identity; the\n  inequality is all the argument uses;\n* **agreement to closeness** (`sum_snorm_sq_aOp_sub_bOp_le`): for a sub-POVM `X` against a\n  projective `T` the summed deviation is at most `2 - 2 ∑_h <Δ| X_h ⊗ T_h |Δ>`, since\n  `X_h² ≤ X_h` and the diagonal terms sum to at most one.\n\nPut together (`sum_snorm_sq_descent_aOp`): a closeness `≤ c` of `C` to `tau` on `Δ` becomes a\ncloseness `≤ c + 8 r` of `X` to `tau` on `Δ`, where `r` bounds `‖Γ - Δ‖`. Neither conversion\ntakes a root: closeness to agreement is an identity for two projective families (item 2 of\n`fact:agreement`), and agreement ",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Descent.lean#L151-L186",
+  "source_path": "MIPRE/Background/QLD/Descent.lean",
+  "lines": [
+   151,
+   186
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_sub",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.aOp_sum"
+  ],
+  "pasted_helpers": 21,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.bnd_sum_kronecker",
+  "source_name": "MIPRE.QLD.bnd_sum_kronecker",
+  "formal_statement": "theorem MIPRE.QLD.bnd_sum_kronecker {X : Λ → Matrix N N ℂ} (hX0 : ∀ h, 0 ≤ X h) (hX1 : ∑ h, X h ≤ 1)\n    {T : Λ → Matrix K K ℂ} (hT : IsPVM T) :\n    Bnd (∑ h, X h ⊗ₖ T h) 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {N K Λ : Type*} [Fintype N] [DecidableEq N] [Fintype K] [DecidableEq K] [Fintype Λ]"
+  ],
+  "docstring": "**The pairing operator is a contraction.** For a sub-POVM `X` on one factor and a projective\n`T` on the other, `O = ∑_h X_h ⊗ T_h` satisfies `0 ≤ O ≤ ∑_h Id ⊗ T_h = Id`, hence\n`O^† O = O² ≤ O ≤ Id`.",
+  "module": "MIPRE.Background.QLD.Descent",
+  "module_doc": "/-!\n# The descent: from the projective dilation to the strategy, through agreement\n\n`MirrorSimul.swap_isometry` (`MIPRE/Background/QLD/SwapItemTwo.lean`) ends the swap isometry\nlemma on a *legal projective* strategy, with a *closeness* statement: conjugated by the swap\nunitary, the total Pauli measurement `C_h` is close to the honest projector `tau^W_h` on the\nstate `Δ = |aux> ⊗ |EPR_q>^M`. The theorem `thm:qld` quantifies over arbitrary POVM strategies\nand conjugates the *original* measurement operators by an isometry `phi`, so two passages remain\n--- from `V`-conjugation to `phi`-conjugation, and from the Naimark dilation back to the POVM\n--- and neither preserves a closeness statement. What each preserves is an **agreement**: a\nbilinear pairing `∑_h <Γ| X_h ⊗ T_h |Γ>` of one party's family against a family on the *other*\nparty. Such a pairing is linear in each family separately, so a pair of local isometries carries\nit verbatim, from the pushed-forward state to the original one, with each family replaced by its\ncompression (`bornProb_kronecker_mulVec`): the dilation's `N^† P_h N = A_h`, and `phi`'s. This\nis the paper's route, in the last paragraphs of the proof of `thm:pauli-appendix`; its `\\cnote`\nrecords that the step had been silent before adversarial review, precisely because Naimark\ndilation preserves consistency and not closeness.\n\nThe file is that route, as generic linear algebra over three finite types: nothing here knows\nabout the Pauli basis test.\n\n## The four moves\n\nOn `Δ`, `tau^W_h` on `A''` acts as `tau^W_h` on `B''` (the EPR pair is perfectly correlated);\nthat is the hypothesis `hmove`, and it turns every one-party deviation `aOp C_h - aOp tau_h` into\na cross-party one `aOp C_h - bOp T_h` on `Δ` (`snorm_aOp_sub_aOp_eq_of_move`). Then:\n\n* **closeness to agreement** (`sum_snorm_sq_aOp_sub_bOp_eq`): for `C` and `T` projective the\n  summed cross-party deviation is exactly `2 - 2 ∑_h <Δ| C_h ⊗ T_h |Δ>`;\n* **moving the state** (`abs_sum_bornProb_sub_le`): the pairing operator `∑_h X_h ⊗ T_h` is a\n  contraction whenever `X` is a sub-POVM and `T` projective (`bnd_sum_kronecker`), so moving the\n  pairing from `Δ` to the pushed-forward state `Γ` and back costs `2 ‖Γ - Δ‖` each way;\n* **the hypothesis `hagree`**: on `Γ` the pairing of the strategy's own family `X` is at least\n  that of `C` --- in the application the two are *equal*, by the compression identity; the\n  inequality is all the argument uses;\n* **agreement to closeness** (`sum_snorm_sq_aOp_sub_bOp_le`): for a sub-POVM `X` against a\n  projective `T` the summed deviation is at most `2 - 2 ∑_h <Δ| X_h ⊗ T_h |Δ>`, since\n  `X_h² ≤ X_h` and the diagonal terms sum to at most one.\n\nPut together (`sum_snorm_sq_descent_aOp`): a closeness `≤ c` of `C` to `tau` on `Δ` becomes a\ncloseness `≤ c + 8 r` of `X` to `tau` on `Δ`, where `r` bounds `‖Γ - Δ‖`. Neither conversion\ntakes a root: closeness to agreement is an identity for two projective families (item 2 of\n`fact:agreement`), and agreement ",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Descent.lean#L197-L223",
+  "source_path": "MIPRE/Background/QLD/Descent.lean",
+  "lines": [
+   197,
+   223
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.bnd_one_of_conjTranspose_mul_self_le",
+   "MIPRE.IsPVM.posSemidef"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.inconsistency_swapVec",
+  "source_name": "MIPRE.inconsistency_swapVec",
+  "formal_statement": "theorem MIPRE.inconsistency_swapVec {X A : Type*} [Fintype X] [Fintype A] [DecidableEq A] (μ : X → ℝ)\n    (ψ : dA × dB → ℂ) (M : X → POVM A dA) (N : X → POVM A dB) :\n    inconsistency μ (swapVec ψ) N M = inconsistency μ ψ M N := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "Exchanging the two parties exchanges the two families.",
+  "module": "MIPRE.Background.QLD.Dummy",
+  "module_doc": "/-!\n# Removing the dummy coordinates (`lem:qld-global-dummy`)\n\nThe global polynomial measurements of `lem:qld-global-pvm` have outcomes in\n`LowIndDegPoly F (4m) d`, polynomials in the `4m` coordinates of the padded point, while the\npadded point measurements read only the `2m + 2` coordinates `xBlk`, `zBlk`, `alph`, `bet`\n(`padPt_mats`). The remaining `2m - 2` coordinates are the paper's dummy coordinates `w`. This file\nproves that an outcome which reads a dummy coordinate carries little state weight: if the\nevaluated global measurement is `δ`-consistent, on average over a uniform point, with a point\nmeasurement that does not read the dummy coordinates, then the total weight of such outcomes is at\nmost `2δ / (1 - 8md/q)`, hence `4δ` once `16 m d ≤ q`.\n\n## The argument\n\nResample the dummy coordinates: for two independent uniform points `u`, `u'`, let `mix u u'` be\n`u` with its dummy coordinates replaced by those of `u'`. The point measurement is the same at `u`\nand at `mix u u'`, and `(u, u') ↦ (mix u u', mix u' u)` is an involution of the pairs, so the\nconsistency estimate holds at both points simultaneously. Adding the two, the operator\n`P_u(g(u)) + P_u(g(mix u u'))` is at most `2 · 1` when the two values agree and at most `1` when\nthey differ (two distinct elements of a POVM sum to at most the identity; no projectivity is\nused), which gives `∑_g ⟨G_g⟩ · Pr[g(u) = g(mix u u')] ≥ 1 - 2δ` (`sum_mass_mixAgree_ge`). For an\noutcome that reads a dummy coordinate, `g(u) - g(mix u u')` is a nonzero polynomial in the `8m`\ncoordinates of the pair, of individual degree at most `d`, so Schwartz--Zippel bounds the\nprobability by `8md/q` (`card_mixAgree_le`); for one that does not, the probability is `1`\n(`eval_mix_of_wIndep`). The two bounds give `sum_bad_mass_le`.\n\n## The bridge to `MvPolynomial`\n\n`LowIndDegPoly.toMv`, `degreeOf_rename_le` and `prob_agreeOn_le_individualDegree` (Schwartz--Zippel\nfor any finite variable type, which is what the pair `Fin (4m) ⊕ Fin (4m)` needs) were written\nhere and now live in `MIPRE/Background/LIDT/Coefficients.lean`, where the simultaneous low-degree\ntest can use them too.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Dummy.lean#L81-L91",
+  "source_path": "MIPRE/Background/QLD/Dummy.lean",
+  "lines": [
+   81,
+   91
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.bornProb_swapVec"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_uniform_eq_one",
+  "source_name": "MIPRE.sum_uniform_eq_one",
+  "formal_statement": "theorem MIPRE.sum_uniform_eq_one (X : Type*) [Fintype X] [Nonempty X] : ∑ x, uniform X x = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.Dummy",
+  "module_doc": "/-!\n# Removing the dummy coordinates (`lem:qld-global-dummy`)\n\nThe global polynomial measurements of `lem:qld-global-pvm` have outcomes in\n`LowIndDegPoly F (4m) d`, polynomials in the `4m` coordinates of the padded point, while the\npadded point measurements read only the `2m + 2` coordinates `xBlk`, `zBlk`, `alph`, `bet`\n(`padPt_mats`). The remaining `2m - 2` coordinates are the paper's dummy coordinates `w`. This file\nproves that an outcome which reads a dummy coordinate carries little state weight: if the\nevaluated global measurement is `δ`-consistent, on average over a uniform point, with a point\nmeasurement that does not read the dummy coordinates, then the total weight of such outcomes is at\nmost `2δ / (1 - 8md/q)`, hence `4δ` once `16 m d ≤ q`.\n\n## The argument\n\nResample the dummy coordinates: for two independent uniform points `u`, `u'`, let `mix u u'` be\n`u` with its dummy coordinates replaced by those of `u'`. The point measurement is the same at `u`\nand at `mix u u'`, and `(u, u') ↦ (mix u u', mix u' u)` is an involution of the pairs, so the\nconsistency estimate holds at both points simultaneously. Adding the two, the operator\n`P_u(g(u)) + P_u(g(mix u u'))` is at most `2 · 1` when the two values agree and at most `1` when\nthey differ (two distinct elements of a POVM sum to at most the identity; no projectivity is\nused), which gives `∑_g ⟨G_g⟩ · Pr[g(u) = g(mix u u')] ≥ 1 - 2δ` (`sum_mass_mixAgree_ge`). For an\noutcome that reads a dummy coordinate, `g(u) - g(mix u u')` is a nonzero polynomial in the `8m`\ncoordinates of the pair, of individual degree at most `d`, so Schwartz--Zippel bounds the\nprobability by `8md/q` (`card_mixAgree_le`); for one that does not, the probability is `1`\n(`eval_mix_of_wIndep`). The two bounds give `sum_bad_mass_le`.\n\n## The bridge to `MvPolynomial`\n\n`LowIndDegPoly.toMv`, `degreeOf_rename_le` and `prob_agreeOn_le_individualDegree` (Schwartz--Zippel\nfor any finite variable type, which is what the pair `Fin (4m) ⊕ Fin (4m)` needs) were written\nhere and now live in `MIPRE/Background/LIDT/Coefficients.lean`, where the simultaneous low-degree\ntest can use them too.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Dummy.lean#L93-L95",
+  "source_path": "MIPRE/Background/QLD/Dummy.lean",
+  "lines": [
+   93,
+   95
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-dummy",
+    "env": "lemma",
+    "title": "Removing dummy-coordinate dependence",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.inconsistency_evalPOVM_eq",
+  "source_name": "MIPRE.QLD.inconsistency_evalPOVM_eq",
+  "formal_statement": "theorem MIPRE.QLD.inconsistency_evalPOVM_eq (μ : Point F n → ℝ) (hμ : ∑ u, μ u = 1) {Φ : RA × RB → ℂ}\n    (hΦ : star Φ ⬝ᵥ Φ = 1)\n    (G : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := n) (d := d)) (Matrix RA RA ℂ))\n    (P : Point F n → POVM F RB) :\n    inconsistency μ Φ (evalPOVM G) P\n      = 1 - ∑ u, μ u * ∑ g, bornProb Φ (G.M () g) (((P u).mats (g.eval u)).val) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MvPolynomial",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {n d : ℕ} {RA RB : Type*} [Fintype RA]"
+  ],
+  "docstring": "**The inconsistency of an evaluated global measurement with a point measurement** is one minus\nthe average weight the global outcome's value at the point receives from the point measurement:\n`1 - ∑_u μ_u ∑_g ⟨G_g ⊗ P_u(g(u))⟩`.",
+  "module": "MIPRE.Background.QLD.Dummy",
+  "module_doc": "/-!\n# Removing the dummy coordinates (`lem:qld-global-dummy`)\n\nThe global polynomial measurements of `lem:qld-global-pvm` have outcomes in\n`LowIndDegPoly F (4m) d`, polynomials in the `4m` coordinates of the padded point, while the\npadded point measurements read only the `2m + 2` coordinates `xBlk`, `zBlk`, `alph`, `bet`\n(`padPt_mats`). The remaining `2m - 2` coordinates are the paper's dummy coordinates `w`. This file\nproves that an outcome which reads a dummy coordinate carries little state weight: if the\nevaluated global measurement is `δ`-consistent, on average over a uniform point, with a point\nmeasurement that does not read the dummy coordinates, then the total weight of such outcomes is at\nmost `2δ / (1 - 8md/q)`, hence `4δ` once `16 m d ≤ q`.\n\n## The argument\n\nResample the dummy coordinates: for two independent uniform points `u`, `u'`, let `mix u u'` be\n`u` with its dummy coordinates replaced by those of `u'`. The point measurement is the same at `u`\nand at `mix u u'`, and `(u, u') ↦ (mix u u', mix u' u)` is an involution of the pairs, so the\nconsistency estimate holds at both points simultaneously. Adding the two, the operator\n`P_u(g(u)) + P_u(g(mix u u'))` is at most `2 · 1` when the two values agree and at most `1` when\nthey differ (two distinct elements of a POVM sum to at most the identity; no projectivity is\nused), which gives `∑_g ⟨G_g⟩ · Pr[g(u) = g(mix u u')] ≥ 1 - 2δ` (`sum_mass_mixAgree_ge`). For an\noutcome that reads a dummy coordinate, `g(u) - g(mix u u')` is a nonzero polynomial in the `8m`\ncoordinates of the pair, of individual degree at most `d`, so Schwartz--Zippel bounds the\nprobability by `8md/q` (`card_mixAgree_le`); for one that does not, the probability is `1`\n(`eval_mix_of_wIndep`). The two bounds give `sum_bad_mass_le`.\n\n## The bridge to `MvPolynomial`\n\n`LowIndDegPoly.toMv`, `degreeOf_rename_le` and `prob_agreeOn_le_individualDegree` (Schwartz--Zippel\nfor any finite variable type, which is what the pair `Fin (4m) ⊕ Fin (4m)` needs) were written\nhere and now live in `MIPRE/Background/LIDT/Coefficients.lean`, where the simultaneous low-degree\ntest can use them too.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Dummy.lean#L130-L166",
+  "source_path": "MIPRE/Background/QLD/Dummy.lean",
+  "lines": [
+   130,
+   166
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-dummy",
+    "env": "lemma",
+    "title": "Removing dummy-coordinate dependence",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.aOp_sum",
+   "MIPRE.POVM.sum_val"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.errSum_anti",
+  "source_name": "MIPRE.QLD.errSum_anti",
+  "formal_statement": "theorem MIPRE.QLD.errSum_anti {b b' : ℝ} (hb' : 0 < b') (hbb : b' ≤ b) (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1)\n    (hq : 1 ≤ (q : ℝ)) : errSum b ε m d q ≤ errSum b' ε m d q := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.LIDT",
+   "variable {ε : ℝ} {m d q : ℕ}"
+  ],
+  "docstring": "**A smaller exponent makes every term larger**, since `ε ≤ 1 ≤ q` and `2 > 1`.",
+  "module": "MIPRE.Background.QLD.ErrorShape",
+  "module_doc": "/-!\n# The error shape of `thm:qld`\n\nBlueprint `thm:qld` states its error in one closed form,\n\n`δ_qld(ε, m, d, q) = a (md)^a (ε^b + q^{-b} + 2^{-bmd})`, for universal constants `a ≥ 1`,\n`0 < b < 1`.\n\nThe proof produces something else: a chain of explicit errors, each a polynomial with square\nroots in the one before it. `deltaQ` (`lem:qld-combined-points`) feeds `kappaPairs` and\n`deltaPairsD`, which feed `deltaPairs` (`lem:qld-pairs-of-lines`, at the collision probability\n`md/q + 1/q`), which feeds `deltaGS` (`lem:qld-global-success`); the seeded soundness theorem turns\nthat into `deltaLD = deltaCL q (4m) d deltaGS`; `deltaS` (`lem:qld-simultaneous`) and\n`deltaSelfCons` (`lem:qld-pauli-selfcons`) follow; and item 1 of `lem:qld-swap`\n(`MirrorSimul.exists_aux_close`) ends in `2 - 2 √(1 - η)` with `η = 2 √X + 2 X`. This file shows\nevery link is of the blueprint's form. It does so with a closure calculus rather than by bounding\nthe composite in one go, so that item 2's bound, built from the same operations, joins the class\nby the same combinators.\n\n## The class\n\n`ErrSmall f` says that there are `a ≥ 1` and `0 < b < 1` with\n`0 ≤ f ε m d q ≤ errShape a b ε m d q` at every tuple with `0 ≤ ε ≤ 1`, `m, d ≥ 1`, `q ≥ 2`. The\nconstants are quantified *first*: they may not depend on the parameters, which is what \"universal\"\nmeans in the blueprint. The range costs nothing. `q ≥ 2` because `q = |F|`, and `ε ≤ 1` because a\nfailure probability above one may be read as one, the shape being monotone in `ε`\n(`ErrSmall.exists_le_min_one`).\n\n## Why it is closed\n\nWrite `S_b = ε^b + q^{-b} + 2^{-bmd}` (`errSum`). Three facts do all the work.\n\n* On the range `S_b` is antitone in `b`, since `ε ≤ 1 ≤ q`, and `(md)^a` is monotone in `a`, since\n  `md ≥ 1`. So two errors with different constants are both below the shape at the larger `a` and\n  the smaller `b`: sums, nonnegative constant multiples and polynomial prefactors `(md)^r`.\n* `t ↦ t^B` is subadditive for `0 < B ≤ 1` (`Real.rpow_add_le_add_rpow`), while `a^B ≤ a` and\n  `((md)^a)^B ≤ (md)^a`; so `(a (md)^a S_b)^B ≤ a (md)^a S_{bB}`. Square roots are `B = 1/2`.\n  This is the only operation that shrinks the exponent, and the chain applies it a fixed finite\n  number of times, which is why `b` stays universal.\n* Each term of `S_b` is at most one on the range, so `S_b ≤ 3` and `S_b · S_b ≤ 3 S_b`: products.\n\nWhat is *not* in the class is a positive constant (`not_errSmall_one`, which also guards the\ndefinition against being vacuous): at fixed `m, d` the shape tends to `a (md)^a 2^{-bmd}` as\n`q → ∞` and `ε → 0`, and that tends to zero with `md`. So every constant in the chain has to arrive\nmultiplied by something small, and it does: `2/q`, `(md + 1)/q`.\n\n## The base cases\n\n`ε`, since `ε ≤ ε^{1/2}` on `[0, 1]`; `q^{-B}` and `2^{-Bmd}` for each `B > 0`; and\n`md/q = (md) q^{-1}`. The seeded soundness theorem enters through `ErrSmall.deltaCL_comp`: at\n`(q, 4m, d)` its error is `A (4md)^A (x^B + q^{-B} + 2^{-4Bmd})` with `A = clA`, ",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ErrorShape.lean#L122-L136",
+  "source_path": "MIPRE/Background/QLD/ErrorShape.lean",
+  "lines": [
+   122,
+   136
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-error",
+    "env": "lemma",
+    "title": "The error of the Pauli basis test",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.errSum_rpow_le",
+  "source_name": "MIPRE.QLD.errSum_rpow_le",
+  "formal_statement": "theorem MIPRE.QLD.errSum_rpow_le {b B : ℝ} (hB0 : 0 ≤ B) (hB1 : B ≤ 1) (hε0 : 0 ≤ ε) :\n    (errSum b ε m d q) ^ B ≤ errSum (b * B) ε m d q := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.LIDT",
+   "variable {ε : ℝ} {m d q : ℕ}"
+  ],
+  "docstring": "**A power `t ↦ t^B`, `0 ≤ B ≤ 1`, of the bracket is below the bracket at exponent `bB`**:\n`t ↦ t^B` is subadditive.",
+  "module": "MIPRE.Background.QLD.ErrorShape",
+  "module_doc": "/-!\n# The error shape of `thm:qld`\n\nBlueprint `thm:qld` states its error in one closed form,\n\n`δ_qld(ε, m, d, q) = a (md)^a (ε^b + q^{-b} + 2^{-bmd})`, for universal constants `a ≥ 1`,\n`0 < b < 1`.\n\nThe proof produces something else: a chain of explicit errors, each a polynomial with square\nroots in the one before it. `deltaQ` (`lem:qld-combined-points`) feeds `kappaPairs` and\n`deltaPairsD`, which feed `deltaPairs` (`lem:qld-pairs-of-lines`, at the collision probability\n`md/q + 1/q`), which feeds `deltaGS` (`lem:qld-global-success`); the seeded soundness theorem turns\nthat into `deltaLD = deltaCL q (4m) d deltaGS`; `deltaS` (`lem:qld-simultaneous`) and\n`deltaSelfCons` (`lem:qld-pauli-selfcons`) follow; and item 1 of `lem:qld-swap`\n(`MirrorSimul.exists_aux_close`) ends in `2 - 2 √(1 - η)` with `η = 2 √X + 2 X`. This file shows\nevery link is of the blueprint's form. It does so with a closure calculus rather than by bounding\nthe composite in one go, so that item 2's bound, built from the same operations, joins the class\nby the same combinators.\n\n## The class\n\n`ErrSmall f` says that there are `a ≥ 1` and `0 < b < 1` with\n`0 ≤ f ε m d q ≤ errShape a b ε m d q` at every tuple with `0 ≤ ε ≤ 1`, `m, d ≥ 1`, `q ≥ 2`. The\nconstants are quantified *first*: they may not depend on the parameters, which is what \"universal\"\nmeans in the blueprint. The range costs nothing. `q ≥ 2` because `q = |F|`, and `ε ≤ 1` because a\nfailure probability above one may be read as one, the shape being monotone in `ε`\n(`ErrSmall.exists_le_min_one`).\n\n## Why it is closed\n\nWrite `S_b = ε^b + q^{-b} + 2^{-bmd}` (`errSum`). Three facts do all the work.\n\n* On the range `S_b` is antitone in `b`, since `ε ≤ 1 ≤ q`, and `(md)^a` is monotone in `a`, since\n  `md ≥ 1`. So two errors with different constants are both below the shape at the larger `a` and\n  the smaller `b`: sums, nonnegative constant multiples and polynomial prefactors `(md)^r`.\n* `t ↦ t^B` is subadditive for `0 < B ≤ 1` (`Real.rpow_add_le_add_rpow`), while `a^B ≤ a` and\n  `((md)^a)^B ≤ (md)^a`; so `(a (md)^a S_b)^B ≤ a (md)^a S_{bB}`. Square roots are `B = 1/2`.\n  This is the only operation that shrinks the exponent, and the chain applies it a fixed finite\n  number of times, which is why `b` stays universal.\n* Each term of `S_b` is at most one on the range, so `S_b ≤ 3` and `S_b · S_b ≤ 3 S_b`: products.\n\nWhat is *not* in the class is a positive constant (`not_errSmall_one`, which also guards the\ndefinition against being vacuous): at fixed `m, d` the shape tends to `a (md)^a 2^{-bmd}` as\n`q → ∞` and `ε → 0`, and that tends to zero with `md`. So every constant in the chain has to arrive\nmultiplied by something small, and it does: `2/q`, `(md + 1)/q`.\n\n## The base cases\n\n`ε`, since `ε ≤ ε^{1/2}` on `[0, 1]`; `q^{-B}` and `2^{-Bmd}` for each `B > 0`; and\n`md/q = (md) q^{-1}`. The seeded soundness theorem enters through `ErrSmall.deltaCL_comp`: at\n`(q, 4m, d)` its error is `A (4md)^A (x^B + q^{-B} + 2^{-4Bmd})` with `A = clA`, ",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ErrorShape.lean#L149-L166",
+  "source_path": "MIPRE/Background/QLD/ErrorShape.lean",
+  "lines": [
+   149,
+   166
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-error",
+    "env": "lemma",
+    "title": "The error of the Pauli basis test",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.errShape_add",
+  "source_name": "MIPRE.QLD.errShape_add",
+  "formal_statement": "theorem MIPRE.QLD.errShape_add {a₁ a₂ b₁ b₂ : ℝ} (ha₁ : 1 ≤ a₁) (ha₂ : 1 ≤ a₂) (hb₁ : 0 < b₁)\n    (hb₂ : 0 < b₂) (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1) (hmd : 1 ≤ (m : ℝ) * d) (hq : 1 ≤ (q : ℝ)) :\n    errShape a₁ b₁ ε m d q + errShape a₂ b₂ ε m d q\n      ≤ errShape (a₁ + a₂) (min b₁ b₂) ε m d q := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.LIDT",
+   "variable {ε : ℝ} {m d q : ℕ}"
+  ],
+  "docstring": "**Sums.**",
+  "module": "MIPRE.Background.QLD.ErrorShape",
+  "module_doc": "/-!\n# The error shape of `thm:qld`\n\nBlueprint `thm:qld` states its error in one closed form,\n\n`δ_qld(ε, m, d, q) = a (md)^a (ε^b + q^{-b} + 2^{-bmd})`, for universal constants `a ≥ 1`,\n`0 < b < 1`.\n\nThe proof produces something else: a chain of explicit errors, each a polynomial with square\nroots in the one before it. `deltaQ` (`lem:qld-combined-points`) feeds `kappaPairs` and\n`deltaPairsD`, which feed `deltaPairs` (`lem:qld-pairs-of-lines`, at the collision probability\n`md/q + 1/q`), which feeds `deltaGS` (`lem:qld-global-success`); the seeded soundness theorem turns\nthat into `deltaLD = deltaCL q (4m) d deltaGS`; `deltaS` (`lem:qld-simultaneous`) and\n`deltaSelfCons` (`lem:qld-pauli-selfcons`) follow; and item 1 of `lem:qld-swap`\n(`MirrorSimul.exists_aux_close`) ends in `2 - 2 √(1 - η)` with `η = 2 √X + 2 X`. This file shows\nevery link is of the blueprint's form. It does so with a closure calculus rather than by bounding\nthe composite in one go, so that item 2's bound, built from the same operations, joins the class\nby the same combinators.\n\n## The class\n\n`ErrSmall f` says that there are `a ≥ 1` and `0 < b < 1` with\n`0 ≤ f ε m d q ≤ errShape a b ε m d q` at every tuple with `0 ≤ ε ≤ 1`, `m, d ≥ 1`, `q ≥ 2`. The\nconstants are quantified *first*: they may not depend on the parameters, which is what \"universal\"\nmeans in the blueprint. The range costs nothing. `q ≥ 2` because `q = |F|`, and `ε ≤ 1` because a\nfailure probability above one may be read as one, the shape being monotone in `ε`\n(`ErrSmall.exists_le_min_one`).\n\n## Why it is closed\n\nWrite `S_b = ε^b + q^{-b} + 2^{-bmd}` (`errSum`). Three facts do all the work.\n\n* On the range `S_b` is antitone in `b`, since `ε ≤ 1 ≤ q`, and `(md)^a` is monotone in `a`, since\n  `md ≥ 1`. So two errors with different constants are both below the shape at the larger `a` and\n  the smaller `b`: sums, nonnegative constant multiples and polynomial prefactors `(md)^r`.\n* `t ↦ t^B` is subadditive for `0 < B ≤ 1` (`Real.rpow_add_le_add_rpow`), while `a^B ≤ a` and\n  `((md)^a)^B ≤ (md)^a`; so `(a (md)^a S_b)^B ≤ a (md)^a S_{bB}`. Square roots are `B = 1/2`.\n  This is the only operation that shrinks the exponent, and the chain applies it a fixed finite\n  number of times, which is why `b` stays universal.\n* Each term of `S_b` is at most one on the range, so `S_b ≤ 3` and `S_b · S_b ≤ 3 S_b`: products.\n\nWhat is *not* in the class is a positive constant (`not_errSmall_one`, which also guards the\ndefinition against being vacuous): at fixed `m, d` the shape tends to `a (md)^a 2^{-bmd}` as\n`q → ∞` and `ε → 0`, and that tends to zero with `md`. So every constant in the chain has to arrive\nmultiplied by something small, and it does: `2/q`, `(md + 1)/q`.\n\n## The base cases\n\n`ε`, since `ε ≤ ε^{1/2}` on `[0, 1]`; `q^{-B}` and `2^{-Bmd}` for each `B > 0`; and\n`md/q = (md) q^{-1}`. The seeded soundness theorem enters through `ErrSmall.deltaCL_comp`: at\n`(q, 4m, d)` its error is `A (4md)^A (x^B + q^{-B} + 2^{-4Bmd})` with `A = clA`, ",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ErrorShape.lean#L210-L229",
+  "source_path": "MIPRE/Background/QLD/ErrorShape.lean",
+  "lines": [
+   210,
+   229
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-error",
+    "env": "lemma",
+    "title": "The error of the Pauli basis test",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.errSum_anti"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.errShape_rpow_le",
+  "source_name": "MIPRE.QLD.errShape_rpow_le",
+  "formal_statement": "theorem MIPRE.QLD.errShape_rpow_le {a b B : ℝ} (ha : 1 ≤ a) (hB0 : 0 ≤ B) (hB1 : B ≤ 1) (hε0 : 0 ≤ ε)\n    (hmd : 1 ≤ (m : ℝ) * d) :\n    (errShape a b ε m d q) ^ B ≤ errShape a (b * B) ε m d q := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.LIDT",
+   "variable {ε : ℝ} {m d q : ℕ}"
+  ],
+  "docstring": "**Powers `t ↦ t^B`, `0 ≤ B ≤ 1`**: the prefactor only shrinks, and the bracket is\nsubadditive. The exponent becomes `bB`.",
+  "module": "MIPRE.Background.QLD.ErrorShape",
+  "module_doc": "/-!\n# The error shape of `thm:qld`\n\nBlueprint `thm:qld` states its error in one closed form,\n\n`δ_qld(ε, m, d, q) = a (md)^a (ε^b + q^{-b} + 2^{-bmd})`, for universal constants `a ≥ 1`,\n`0 < b < 1`.\n\nThe proof produces something else: a chain of explicit errors, each a polynomial with square\nroots in the one before it. `deltaQ` (`lem:qld-combined-points`) feeds `kappaPairs` and\n`deltaPairsD`, which feed `deltaPairs` (`lem:qld-pairs-of-lines`, at the collision probability\n`md/q + 1/q`), which feeds `deltaGS` (`lem:qld-global-success`); the seeded soundness theorem turns\nthat into `deltaLD = deltaCL q (4m) d deltaGS`; `deltaS` (`lem:qld-simultaneous`) and\n`deltaSelfCons` (`lem:qld-pauli-selfcons`) follow; and item 1 of `lem:qld-swap`\n(`MirrorSimul.exists_aux_close`) ends in `2 - 2 √(1 - η)` with `η = 2 √X + 2 X`. This file shows\nevery link is of the blueprint's form. It does so with a closure calculus rather than by bounding\nthe composite in one go, so that item 2's bound, built from the same operations, joins the class\nby the same combinators.\n\n## The class\n\n`ErrSmall f` says that there are `a ≥ 1` and `0 < b < 1` with\n`0 ≤ f ε m d q ≤ errShape a b ε m d q` at every tuple with `0 ≤ ε ≤ 1`, `m, d ≥ 1`, `q ≥ 2`. The\nconstants are quantified *first*: they may not depend on the parameters, which is what \"universal\"\nmeans in the blueprint. The range costs nothing. `q ≥ 2` because `q = |F|`, and `ε ≤ 1` because a\nfailure probability above one may be read as one, the shape being monotone in `ε`\n(`ErrSmall.exists_le_min_one`).\n\n## Why it is closed\n\nWrite `S_b = ε^b + q^{-b} + 2^{-bmd}` (`errSum`). Three facts do all the work.\n\n* On the range `S_b` is antitone in `b`, since `ε ≤ 1 ≤ q`, and `(md)^a` is monotone in `a`, since\n  `md ≥ 1`. So two errors with different constants are both below the shape at the larger `a` and\n  the smaller `b`: sums, nonnegative constant multiples and polynomial prefactors `(md)^r`.\n* `t ↦ t^B` is subadditive for `0 < B ≤ 1` (`Real.rpow_add_le_add_rpow`), while `a^B ≤ a` and\n  `((md)^a)^B ≤ (md)^a`; so `(a (md)^a S_b)^B ≤ a (md)^a S_{bB}`. Square roots are `B = 1/2`.\n  This is the only operation that shrinks the exponent, and the chain applies it a fixed finite\n  number of times, which is why `b` stays universal.\n* Each term of `S_b` is at most one on the range, so `S_b ≤ 3` and `S_b · S_b ≤ 3 S_b`: products.\n\nWhat is *not* in the class is a positive constant (`not_errSmall_one`, which also guards the\ndefinition against being vacuous): at fixed `m, d` the shape tends to `a (md)^a 2^{-bmd}` as\n`q → ∞` and `ε → 0`, and that tends to zero with `md`. So every constant in the chain has to arrive\nmultiplied by something small, and it does: `2/q`, `(md + 1)/q`.\n\n## The base cases\n\n`ε`, since `ε ≤ ε^{1/2}` on `[0, 1]`; `q^{-B}` and `2^{-Bmd}` for each `B > 0`; and\n`md/q = (md) q^{-1}`. The seeded soundness theorem enters through `ErrSmall.deltaCL_comp`: at\n`(q, 4m, d)` its error is `A (4md)^A (x^B + q^{-B} + 2^{-4Bmd})` with `A = clA`, ",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ErrorShape.lean#L260-L280",
+  "source_path": "MIPRE/Background/QLD/ErrorShape.lean",
+  "lines": [
+   260,
+   280
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-error",
+    "env": "lemma",
+    "title": "The error of the Pauli basis test",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.errSum_rpow_le"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.errSmall_two_rpow_neg",
+  "source_name": "MIPRE.QLD.errSmall_two_rpow_neg",
+  "formal_statement": "theorem MIPRE.QLD.errSmall_two_rpow_neg {B : ℝ} (hB : 0 < B) :\n    ErrSmall fun _ m d _ => (2 : ℝ) ^ (-(B * m * d)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.LIDT"
+  ],
+  "docstring": "**`2^{-Bmd}` is small** for every `B > 0`.",
+  "module": "MIPRE.Background.QLD.ErrorShape",
+  "module_doc": "/-!\n# The error shape of `thm:qld`\n\nBlueprint `thm:qld` states its error in one closed form,\n\n`δ_qld(ε, m, d, q) = a (md)^a (ε^b + q^{-b} + 2^{-bmd})`, for universal constants `a ≥ 1`,\n`0 < b < 1`.\n\nThe proof produces something else: a chain of explicit errors, each a polynomial with square\nroots in the one before it. `deltaQ` (`lem:qld-combined-points`) feeds `kappaPairs` and\n`deltaPairsD`, which feed `deltaPairs` (`lem:qld-pairs-of-lines`, at the collision probability\n`md/q + 1/q`), which feeds `deltaGS` (`lem:qld-global-success`); the seeded soundness theorem turns\nthat into `deltaLD = deltaCL q (4m) d deltaGS`; `deltaS` (`lem:qld-simultaneous`) and\n`deltaSelfCons` (`lem:qld-pauli-selfcons`) follow; and item 1 of `lem:qld-swap`\n(`MirrorSimul.exists_aux_close`) ends in `2 - 2 √(1 - η)` with `η = 2 √X + 2 X`. This file shows\nevery link is of the blueprint's form. It does so with a closure calculus rather than by bounding\nthe composite in one go, so that item 2's bound, built from the same operations, joins the class\nby the same combinators.\n\n## The class\n\n`ErrSmall f` says that there are `a ≥ 1` and `0 < b < 1` with\n`0 ≤ f ε m d q ≤ errShape a b ε m d q` at every tuple with `0 ≤ ε ≤ 1`, `m, d ≥ 1`, `q ≥ 2`. The\nconstants are quantified *first*: they may not depend on the parameters, which is what \"universal\"\nmeans in the blueprint. The range costs nothing. `q ≥ 2` because `q = |F|`, and `ε ≤ 1` because a\nfailure probability above one may be read as one, the shape being monotone in `ε`\n(`ErrSmall.exists_le_min_one`).\n\n## Why it is closed\n\nWrite `S_b = ε^b + q^{-b} + 2^{-bmd}` (`errSum`). Three facts do all the work.\n\n* On the range `S_b` is antitone in `b`, since `ε ≤ 1 ≤ q`, and `(md)^a` is monotone in `a`, since\n  `md ≥ 1`. So two errors with different constants are both below the shape at the larger `a` and\n  the smaller `b`: sums, nonnegative constant multiples and polynomial prefactors `(md)^r`.\n* `t ↦ t^B` is subadditive for `0 < B ≤ 1` (`Real.rpow_add_le_add_rpow`), while `a^B ≤ a` and\n  `((md)^a)^B ≤ (md)^a`; so `(a (md)^a S_b)^B ≤ a (md)^a S_{bB}`. Square roots are `B = 1/2`.\n  This is the only operation that shrinks the exponent, and the chain applies it a fixed finite\n  number of times, which is why `b` stays universal.\n* Each term of `S_b` is at most one on the range, so `S_b ≤ 3` and `S_b · S_b ≤ 3 S_b`: products.\n\nWhat is *not* in the class is a positive constant (`not_errSmall_one`, which also guards the\ndefinition against being vacuous): at fixed `m, d` the shape tends to `a (md)^a 2^{-bmd}` as\n`q → ∞` and `ε → 0`, and that tends to zero with `md`. So every constant in the chain has to arrive\nmultiplied by something small, and it does: `2/q`, `(md + 1)/q`.\n\n## The base cases\n\n`ε`, since `ε ≤ ε^{1/2}` on `[0, 1]`; `q^{-B}` and `2^{-Bmd}` for each `B > 0`; and\n`md/q = (md) q^{-1}`. The seeded soundness theorem enters through `ErrSmall.deltaCL_comp`: at\n`(q, 4m, d)` its error is `A (4md)^A (x^B + q^{-B} + 2^{-4Bmd})` with `A = clA`, ",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ErrorShape.lean#L499-L515",
+  "source_path": "MIPRE/Background/QLD/ErrorShape.lean",
+  "lines": [
+   499,
+   515
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-error",
+    "env": "lemma",
+    "title": "The error of the Pauli basis test",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 6,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.errSmall_deltaGS",
+  "source_name": "MIPRE.QLD.errSmall_deltaGS",
+  "formal_statement": "theorem MIPRE.QLD.errSmall_deltaGS : ErrSmall fun ε m d q => deltaGS q m d ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.LIDT"
+  ],
+  "docstring": "`δ_GS`, the padded strategy's failure in the seeded test (`lem:qld-global-success`).",
+  "module": "MIPRE.Background.QLD.ErrorShape",
+  "module_doc": "/-!\n# The error shape of `thm:qld`\n\nBlueprint `thm:qld` states its error in one closed form,\n\n`δ_qld(ε, m, d, q) = a (md)^a (ε^b + q^{-b} + 2^{-bmd})`, for universal constants `a ≥ 1`,\n`0 < b < 1`.\n\nThe proof produces something else: a chain of explicit errors, each a polynomial with square\nroots in the one before it. `deltaQ` (`lem:qld-combined-points`) feeds `kappaPairs` and\n`deltaPairsD`, which feed `deltaPairs` (`lem:qld-pairs-of-lines`, at the collision probability\n`md/q + 1/q`), which feeds `deltaGS` (`lem:qld-global-success`); the seeded soundness theorem turns\nthat into `deltaLD = deltaCL q (4m) d deltaGS`; `deltaS` (`lem:qld-simultaneous`) and\n`deltaSelfCons` (`lem:qld-pauli-selfcons`) follow; and item 1 of `lem:qld-swap`\n(`MirrorSimul.exists_aux_close`) ends in `2 - 2 √(1 - η)` with `η = 2 √X + 2 X`. This file shows\nevery link is of the blueprint's form. It does so with a closure calculus rather than by bounding\nthe composite in one go, so that item 2's bound, built from the same operations, joins the class\nby the same combinators.\n\n## The class\n\n`ErrSmall f` says that there are `a ≥ 1` and `0 < b < 1` with\n`0 ≤ f ε m d q ≤ errShape a b ε m d q` at every tuple with `0 ≤ ε ≤ 1`, `m, d ≥ 1`, `q ≥ 2`. The\nconstants are quantified *first*: they may not depend on the parameters, which is what \"universal\"\nmeans in the blueprint. The range costs nothing. `q ≥ 2` because `q = |F|`, and `ε ≤ 1` because a\nfailure probability above one may be read as one, the shape being monotone in `ε`\n(`ErrSmall.exists_le_min_one`).\n\n## Why it is closed\n\nWrite `S_b = ε^b + q^{-b} + 2^{-bmd}` (`errSum`). Three facts do all the work.\n\n* On the range `S_b` is antitone in `b`, since `ε ≤ 1 ≤ q`, and `(md)^a` is monotone in `a`, since\n  `md ≥ 1`. So two errors with different constants are both below the shape at the larger `a` and\n  the smaller `b`: sums, nonnegative constant multiples and polynomial prefactors `(md)^r`.\n* `t ↦ t^B` is subadditive for `0 < B ≤ 1` (`Real.rpow_add_le_add_rpow`), while `a^B ≤ a` and\n  `((md)^a)^B ≤ (md)^a`; so `(a (md)^a S_b)^B ≤ a (md)^a S_{bB}`. Square roots are `B = 1/2`.\n  This is the only operation that shrinks the exponent, and the chain applies it a fixed finite\n  number of times, which is why `b` stays universal.\n* Each term of `S_b` is at most one on the range, so `S_b ≤ 3` and `S_b · S_b ≤ 3 S_b`: products.\n\nWhat is *not* in the class is a positive constant (`not_errSmall_one`, which also guards the\ndefinition against being vacuous): at fixed `m, d` the shape tends to `a (md)^a 2^{-bmd}` as\n`q → ∞` and `ε → 0`, and that tends to zero with `md`. So every constant in the chain has to arrive\nmultiplied by something small, and it does: `2/q`, `(md + 1)/q`.\n\n## The base cases\n\n`ε`, since `ε ≤ ε^{1/2}` on `[0, 1]`; `q^{-B}` and `2^{-Bmd}` for each `B > 0`; and\n`md/q = (md) q^{-1}`. The seeded soundness theorem enters through `ErrSmall.deltaCL_comp`: at\n`(q, 4m, d)` its error is `A (4md)^A (x^B + q^{-B} + 2^{-4Bmd})` with `A = clA`, ",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ErrorShape.lean#L572-L585",
+  "source_path": "MIPRE/Background/QLD/ErrorShape.lean",
+  "lines": [
+   572,
+   585
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-error",
+    "env": "lemma",
+    "title": "The error of the Pauli basis test",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.errShape_add",
+   "MIPRE.QLD.errShape_rpow_le"
+  ],
+  "pasted_helpers": 29,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.deltaCL_four_mul_le",
+  "source_name": "MIPRE.QLD.deltaCL_four_mul_le",
+  "formal_statement": "theorem MIPRE.QLD.deltaCL_four_mul_le {q m d : ℕ} {x : ℝ} (hx : 0 ≤ x) :\n    deltaCL q (4 * m) d x ≤ clA * 4 ^ clA * (((m : ℝ) * d) ^ clA *\n      (x ^ clB + (q : ℝ) ^ (-clB) + (2 : ℝ) ^ (-(clB * m * d)))) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.LIDT"
+  ],
+  "docstring": "**`δ_CL` at `(q, 4m, d)` is of the shape, with `4m` read as `m`**: `(4md)^A = 4^A (md)^A`,\nand `2^{-B·4md} ≤ 2^{-Bmd}`.",
+  "module": "MIPRE.Background.QLD.ErrorShape",
+  "module_doc": "/-!\n# The error shape of `thm:qld`\n\nBlueprint `thm:qld` states its error in one closed form,\n\n`δ_qld(ε, m, d, q) = a (md)^a (ε^b + q^{-b} + 2^{-bmd})`, for universal constants `a ≥ 1`,\n`0 < b < 1`.\n\nThe proof produces something else: a chain of explicit errors, each a polynomial with square\nroots in the one before it. `deltaQ` (`lem:qld-combined-points`) feeds `kappaPairs` and\n`deltaPairsD`, which feed `deltaPairs` (`lem:qld-pairs-of-lines`, at the collision probability\n`md/q + 1/q`), which feeds `deltaGS` (`lem:qld-global-success`); the seeded soundness theorem turns\nthat into `deltaLD = deltaCL q (4m) d deltaGS`; `deltaS` (`lem:qld-simultaneous`) and\n`deltaSelfCons` (`lem:qld-pauli-selfcons`) follow; and item 1 of `lem:qld-swap`\n(`MirrorSimul.exists_aux_close`) ends in `2 - 2 √(1 - η)` with `η = 2 √X + 2 X`. This file shows\nevery link is of the blueprint's form. It does so with a closure calculus rather than by bounding\nthe composite in one go, so that item 2's bound, built from the same operations, joins the class\nby the same combinators.\n\n## The class\n\n`ErrSmall f` says that there are `a ≥ 1` and `0 < b < 1` with\n`0 ≤ f ε m d q ≤ errShape a b ε m d q` at every tuple with `0 ≤ ε ≤ 1`, `m, d ≥ 1`, `q ≥ 2`. The\nconstants are quantified *first*: they may not depend on the parameters, which is what \"universal\"\nmeans in the blueprint. The range costs nothing. `q ≥ 2` because `q = |F|`, and `ε ≤ 1` because a\nfailure probability above one may be read as one, the shape being monotone in `ε`\n(`ErrSmall.exists_le_min_one`).\n\n## Why it is closed\n\nWrite `S_b = ε^b + q^{-b} + 2^{-bmd}` (`errSum`). Three facts do all the work.\n\n* On the range `S_b` is antitone in `b`, since `ε ≤ 1 ≤ q`, and `(md)^a` is monotone in `a`, since\n  `md ≥ 1`. So two errors with different constants are both below the shape at the larger `a` and\n  the smaller `b`: sums, nonnegative constant multiples and polynomial prefactors `(md)^r`.\n* `t ↦ t^B` is subadditive for `0 < B ≤ 1` (`Real.rpow_add_le_add_rpow`), while `a^B ≤ a` and\n  `((md)^a)^B ≤ (md)^a`; so `(a (md)^a S_b)^B ≤ a (md)^a S_{bB}`. Square roots are `B = 1/2`.\n  This is the only operation that shrinks the exponent, and the chain applies it a fixed finite\n  number of times, which is why `b` stays universal.\n* Each term of `S_b` is at most one on the range, so `S_b ≤ 3` and `S_b · S_b ≤ 3 S_b`: products.\n\nWhat is *not* in the class is a positive constant (`not_errSmall_one`, which also guards the\ndefinition against being vacuous): at fixed `m, d` the shape tends to `a (md)^a 2^{-bmd}` as\n`q → ∞` and `ε → 0`, and that tends to zero with `md`. So every constant in the chain has to arrive\nmultiplied by something small, and it does: `2/q`, `(md + 1)/q`.\n\n## The base cases\n\n`ε`, since `ε ≤ ε^{1/2}` on `[0, 1]`; `q^{-B}` and `2^{-Bmd}` for each `B > 0`; and\n`md/q = (md) q^{-1}`. The seeded soundness theorem enters through `ErrSmall.deltaCL_comp`: at\n`(q, 4m, d)` its error is `A (4md)^A (x^B + q^{-B} + 2^{-4Bmd})` with `A = clA`, ",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ErrorShape.lean#L587-L610",
+  "source_path": "MIPRE/Background/QLD/ErrorShape.lean",
+  "lines": [
+   587,
+   610
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.ErrSmall.of_cases",
+  "source_name": "MIPRE.QLD.ErrSmall.of_cases",
+  "formal_statement": "theorem MIPRE.QLD.ErrSmall.of_cases (hh : ErrSmall h) (hg : ErrSmall g) {C : ℝ} (hC : 0 ≤ C)\n    (hf : ∀ (ε : ℝ) (m d q : ℕ), 0 ≤ ε → ε ≤ 1 → 1 ≤ m → 1 ≤ d → 2 ≤ q →\n      0 ≤ f ε m d q ∧ f ε m d q ≤ C ∧ (g ε m d q < 1 → f ε m d q ≤ h ε m d q)) :\n    ErrSmall f := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.ErrSmall",
+   "open MIPRE.LIDT",
+   "variable {f g h : ℝ → ℕ → ℕ → ℕ → ℝ}"
+  ],
+  "docstring": "**A bounded error that is small wherever a small quantity is below one is small.** Where\n`g ≥ 1` the trivial bound `C ≤ C g` is itself small.",
+  "module": "MIPRE.Background.QLD.ErrorShape",
+  "module_doc": "/-!\n# The error shape of `thm:qld`\n\nBlueprint `thm:qld` states its error in one closed form,\n\n`δ_qld(ε, m, d, q) = a (md)^a (ε^b + q^{-b} + 2^{-bmd})`, for universal constants `a ≥ 1`,\n`0 < b < 1`.\n\nThe proof produces something else: a chain of explicit errors, each a polynomial with square\nroots in the one before it. `deltaQ` (`lem:qld-combined-points`) feeds `kappaPairs` and\n`deltaPairsD`, which feed `deltaPairs` (`lem:qld-pairs-of-lines`, at the collision probability\n`md/q + 1/q`), which feeds `deltaGS` (`lem:qld-global-success`); the seeded soundness theorem turns\nthat into `deltaLD = deltaCL q (4m) d deltaGS`; `deltaS` (`lem:qld-simultaneous`) and\n`deltaSelfCons` (`lem:qld-pauli-selfcons`) follow; and item 1 of `lem:qld-swap`\n(`MirrorSimul.exists_aux_close`) ends in `2 - 2 √(1 - η)` with `η = 2 √X + 2 X`. This file shows\nevery link is of the blueprint's form. It does so with a closure calculus rather than by bounding\nthe composite in one go, so that item 2's bound, built from the same operations, joins the class\nby the same combinators.\n\n## The class\n\n`ErrSmall f` says that there are `a ≥ 1` and `0 < b < 1` with\n`0 ≤ f ε m d q ≤ errShape a b ε m d q` at every tuple with `0 ≤ ε ≤ 1`, `m, d ≥ 1`, `q ≥ 2`. The\nconstants are quantified *first*: they may not depend on the parameters, which is what \"universal\"\nmeans in the blueprint. The range costs nothing. `q ≥ 2` because `q = |F|`, and `ε ≤ 1` because a\nfailure probability above one may be read as one, the shape being monotone in `ε`\n(`ErrSmall.exists_le_min_one`).\n\n## Why it is closed\n\nWrite `S_b = ε^b + q^{-b} + 2^{-bmd}` (`errSum`). Three facts do all the work.\n\n* On the range `S_b` is antitone in `b`, since `ε ≤ 1 ≤ q`, and `(md)^a` is monotone in `a`, since\n  `md ≥ 1`. So two errors with different constants are both below the shape at the larger `a` and\n  the smaller `b`: sums, nonnegative constant multiples and polynomial prefactors `(md)^r`.\n* `t ↦ t^B` is subadditive for `0 < B ≤ 1` (`Real.rpow_add_le_add_rpow`), while `a^B ≤ a` and\n  `((md)^a)^B ≤ (md)^a`; so `(a (md)^a S_b)^B ≤ a (md)^a S_{bB}`. Square roots are `B = 1/2`.\n  This is the only operation that shrinks the exponent, and the chain applies it a fixed finite\n  number of times, which is why `b` stays universal.\n* Each term of `S_b` is at most one on the range, so `S_b ≤ 3` and `S_b · S_b ≤ 3 S_b`: products.\n\nWhat is *not* in the class is a positive constant (`not_errSmall_one`, which also guards the\ndefinition against being vacuous): at fixed `m, d` the shape tends to `a (md)^a 2^{-bmd}` as\n`q → ∞` and `ε → 0`, and that tends to zero with `md`. So every constant in the chain has to arrive\nmultiplied by something small, and it does: `2/q`, `(md + 1)/q`.\n\n## The base cases\n\n`ε`, since `ε ≤ ε^{1/2}` on `[0, 1]`; `q^{-B}` and `2^{-Bmd}` for each `B > 0`; and\n`md/q = (md) q^{-1}`. The seeded soundness theorem enters through `ErrSmall.deltaCL_comp`: at\n`(q, 4m, d)` its error is `A (4md)^A (x^B + q^{-B} + 2^{-4Bmd})` with `A = clA`, ",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ErrorShape.lean#L721-L737",
+  "source_path": "MIPRE/Background/QLD/ErrorShape.lean",
+  "lines": [
+   721,
+   737
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-error",
+    "env": "lemma",
+    "title": "The error of the Pauli basis test",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.errShape_add"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.kron_sum",
+  "source_name": "MIPRE.QLD.kron_sum",
+  "formal_statement": "theorem MIPRE.QLD.kron_sum {iota : Type*} (s : Finset iota) (A : Matrix dA dA ℂ)\n    (B : iota → Matrix (n → F) (n → F) ℂ) :\n    A ⊗ₖ (∑ x ∈ s, B x) = ∑ x ∈ s, A ⊗ₖ B x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {G : Type*} [Fintype G] [DecidableEq G]",
+   "variable {dA : Type*} [Fintype dA] [DecidableEq dA]"
+  ],
+  "docstring": "`A (x) (sum_x B x) = sum_x (A (x) B x)`.",
+  "module": "MIPRE.Background.QLD.ExactPauli",
+  "module_doc": "/-!\n# Exact Pauli observables from a simultaneous pair measurement\n\nBlueprint `lem:qld-exact-paulis`, the part of it that is **exact**: given a projective measurement\n`S` whose outcomes are *pairs* `(g_X, g_Z)` and a map `cd` sending an outcome to a vector of\n`F_q^n`, the appendix builds binary observables on the enlarged space `dA (x) (C^q)^{(x) n}` which\nsatisfy the generalized Pauli relations with no error term at all. This file is that construction\nand those relations.\n\nNothing here is approximate, and nothing here mentions the game: every statement is an identity\nbetween matrices, with `IsPVM S` and `IsWeylFamily w` the only hypotheses. That is the point ---\nthe blueprint's proof paragraph says exactness comes \"from projectivity of the simultaneous\nmeasurement together with the group law of the Pauli basis\", and this file is the\nformalization of exactly that sentence. `thm:linearity` is not used.\n\n## The construction\n\nWrite `pi` for one of the two projections `(g_X, g_Z) |→ g_W`. Then\n\n* `sCoarse S pi g` is the `W`-marginal `S^W_g`, a projective measurement by `IsPVM.coarse`;\n* `mTilde` is the appendix's `eq:tilde_M`,\n  `M~^{W,u}_a = sum_g S^W_g (x) tau^W_{cd(g) . u + a}(u)`,\n  where `tau^W_c(u)` is the syndrome projector `MIPRE.Weyl.syn w u c` --- the level set of the\n  pairing with `u` --- so that `mTilde` is a projective measurement with outcomes in `F_q`;\n* `wTilde` is `eq:def-tildewj`, the binary observable\n  `W~^e(u) = sum_a (-1)^{tr(e a)} M~^{W,u}_a`, at a field element `e` (the appendix takes `e` in a\n  self-dual basis of `F_q` over `F_2`, which this file does not need).\n\n## The one identity everything follows from\n\n`wTilde_eq`: the observable **factorizes**,\n\n`W~^e(u) = pvmObs S (p |→ (-1)^{tr(e (cd (pi p) . u))})  (x)  w (e . u)`,\n\na signed sum of the *pair* measurement tensor a genuine Weyl operator. The `F_q`-valued syndrome\nlabel is what makes this work: summing the syndrome projectors against the character of `a`\nreassembles the Weyl operator on the line `r |→ r . u` (`MIPRE.Weyl.eq_sum_proj`), and the\n`cd(g) . u` shift becomes the sign the first factor carries.\n\nSelf-adjointness (`wTilde_conjTranspose`) and involutivity (`wTilde_mul_self`) are then the\n`pvmObs` calculus of `MIPRE/Foundations/PVM.lean` on the left factor and the group law on the\nright. The twisted commutation (`wTilde_mul_wTilde`) is the same: the two left factors are\nweightings of *one* projective measurement, so they commute exactly (`pvmObs_comm`), and the whole\nphase comes from the right factors' `MIPRE.Weyl.wX_mul_wZ`.\n\n## A repair carried over from the paper\n\nThe pinned paper's display for the commutation relation used to split into `e != e'` (claiming\nexact commutation) and `e = e'` (a phase). That is false: self-duality gives `tr(e_j e_{j'}) =\ndelta_{j j'}`, but `tr(e_j e_{j'} c)` need not vanish for `c` outside `F_2`, and the quantity in\nthe exponent is `e_j e_{j'} (u . v)` with `u . v` an arbitrary field element. The paper now states\nthe general phase",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ExactPauli.lean#L117-L125",
+  "source_path": "MIPRE/Background/QLD/ExactPauli.lean",
+  "lines": [
+   117,
+   125
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.mTilde_eq_sum",
+  "source_name": "MIPRE.QLD.mTilde_eq_sum",
+  "formal_statement": "theorem MIPRE.QLD.mTilde_eq_sum (u : n → F) (a : F) :\n    mTilde S pi cd w u a = ∑ p, S p ⊗ₖ syn w u (dotF (cd (pi p)) u + a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {G : Type*} [Fintype G] [DecidableEq G]",
+   "variable {dA : Type*} [Fintype dA] [DecidableEq dA]",
+   "variable (S : G × G → Matrix dA dA ℂ) (pi : G × G → G) (cd : G → (n → F))"
+  ],
+  "docstring": "The same sum indexed by the *pair* outcomes, which is the form the factorization starts\nfrom.",
+  "module": "MIPRE.Background.QLD.ExactPauli",
+  "module_doc": "/-!\n# Exact Pauli observables from a simultaneous pair measurement\n\nBlueprint `lem:qld-exact-paulis`, the part of it that is **exact**: given a projective measurement\n`S` whose outcomes are *pairs* `(g_X, g_Z)` and a map `cd` sending an outcome to a vector of\n`F_q^n`, the appendix builds binary observables on the enlarged space `dA (x) (C^q)^{(x) n}` which\nsatisfy the generalized Pauli relations with no error term at all. This file is that construction\nand those relations.\n\nNothing here is approximate, and nothing here mentions the game: every statement is an identity\nbetween matrices, with `IsPVM S` and `IsWeylFamily w` the only hypotheses. That is the point ---\nthe blueprint's proof paragraph says exactness comes \"from projectivity of the simultaneous\nmeasurement together with the group law of the Pauli basis\", and this file is the\nformalization of exactly that sentence. `thm:linearity` is not used.\n\n## The construction\n\nWrite `pi` for one of the two projections `(g_X, g_Z) |→ g_W`. Then\n\n* `sCoarse S pi g` is the `W`-marginal `S^W_g`, a projective measurement by `IsPVM.coarse`;\n* `mTilde` is the appendix's `eq:tilde_M`,\n  `M~^{W,u}_a = sum_g S^W_g (x) tau^W_{cd(g) . u + a}(u)`,\n  where `tau^W_c(u)` is the syndrome projector `MIPRE.Weyl.syn w u c` --- the level set of the\n  pairing with `u` --- so that `mTilde` is a projective measurement with outcomes in `F_q`;\n* `wTilde` is `eq:def-tildewj`, the binary observable\n  `W~^e(u) = sum_a (-1)^{tr(e a)} M~^{W,u}_a`, at a field element `e` (the appendix takes `e` in a\n  self-dual basis of `F_q` over `F_2`, which this file does not need).\n\n## The one identity everything follows from\n\n`wTilde_eq`: the observable **factorizes**,\n\n`W~^e(u) = pvmObs S (p |→ (-1)^{tr(e (cd (pi p) . u))})  (x)  w (e . u)`,\n\na signed sum of the *pair* measurement tensor a genuine Weyl operator. The `F_q`-valued syndrome\nlabel is what makes this work: summing the syndrome projectors against the character of `a`\nreassembles the Weyl operator on the line `r |→ r . u` (`MIPRE.Weyl.eq_sum_proj`), and the\n`cd(g) . u` shift becomes the sign the first factor carries.\n\nSelf-adjointness (`wTilde_conjTranspose`) and involutivity (`wTilde_mul_self`) are then the\n`pvmObs` calculus of `MIPRE/Foundations/PVM.lean` on the left factor and the group law on the\nright. The twisted commutation (`wTilde_mul_wTilde`) is the same: the two left factors are\nweightings of *one* projective measurement, so they commute exactly (`pvmObs_comm`), and the whole\nphase comes from the right factors' `MIPRE.Weyl.wX_mul_wZ`.\n\n## A repair carried over from the paper\n\nThe pinned paper's display for the commutation relation used to split into `e != e'` (claiming\nexact commutation) and `e = e'` (a phase). That is false: self-duality gives `tr(e_j e_{j'}) =\ndelta_{j j'}`, but `tr(e_j e_{j'} c)` need not vanish for `c` outside `F_2`, and the quantity in\nthe exponent is `e_j e_{j'} (u . v)` with `u . v` an arbitrary field element. The paper now states\nthe general phase",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ExactPauli.lean#L163-L167",
+  "source_path": "MIPRE/Background/QLD/ExactPauli.lean",
+  "lines": [
+   163,
+   167
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.wTilde_eq",
+  "source_name": "MIPRE.QLD.wTilde_eq",
+  "formal_statement": "theorem MIPRE.QLD.wTilde_eq (e : F) (u : n → F) :\n    wTilde S pi cd w e u = pvmObs S (fun p => sgn (cdPhase pi cd e u p)) ⊗ₖ w (e • u) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {G : Type*} [Fintype G] [DecidableEq G]",
+   "variable {dA : Type*} [Fintype dA] [DecidableEq dA]",
+   "variable (S : G × G → Matrix dA dA ℂ) (pi : G × G → G) (cd : G → (n → F))"
+  ],
+  "docstring": "**The observable factorizes** as a signed sum of the pair measurement tensor a Weyl operator:\n`W~^e(u) = pvmObs S ((-1)^{cdPhase}) (x) w (e . u)`.\n\nThe proof runs the appendix's displayed calculation backwards. Expanding `w (e . u)` in its own\nspectral projectors (`eq_sum_proj`, which needs no group law) and grouping the eigenvalue patterns\nby their pairing with `u` turns the right-hand side into a double sum over outcomes `p` and\nsyndromes `a`; the left-hand side is the same double sum after the substitution\n`a |→ cd(pi p) . u + a`, which for each fixed `p` is a bijection of `F_q`.",
+  "module": "MIPRE.Background.QLD.ExactPauli",
+  "module_doc": "/-!\n# Exact Pauli observables from a simultaneous pair measurement\n\nBlueprint `lem:qld-exact-paulis`, the part of it that is **exact**: given a projective measurement\n`S` whose outcomes are *pairs* `(g_X, g_Z)` and a map `cd` sending an outcome to a vector of\n`F_q^n`, the appendix builds binary observables on the enlarged space `dA (x) (C^q)^{(x) n}` which\nsatisfy the generalized Pauli relations with no error term at all. This file is that construction\nand those relations.\n\nNothing here is approximate, and nothing here mentions the game: every statement is an identity\nbetween matrices, with `IsPVM S` and `IsWeylFamily w` the only hypotheses. That is the point ---\nthe blueprint's proof paragraph says exactness comes \"from projectivity of the simultaneous\nmeasurement together with the group law of the Pauli basis\", and this file is the\nformalization of exactly that sentence. `thm:linearity` is not used.\n\n## The construction\n\nWrite `pi` for one of the two projections `(g_X, g_Z) |→ g_W`. Then\n\n* `sCoarse S pi g` is the `W`-marginal `S^W_g`, a projective measurement by `IsPVM.coarse`;\n* `mTilde` is the appendix's `eq:tilde_M`,\n  `M~^{W,u}_a = sum_g S^W_g (x) tau^W_{cd(g) . u + a}(u)`,\n  where `tau^W_c(u)` is the syndrome projector `MIPRE.Weyl.syn w u c` --- the level set of the\n  pairing with `u` --- so that `mTilde` is a projective measurement with outcomes in `F_q`;\n* `wTilde` is `eq:def-tildewj`, the binary observable\n  `W~^e(u) = sum_a (-1)^{tr(e a)} M~^{W,u}_a`, at a field element `e` (the appendix takes `e` in a\n  self-dual basis of `F_q` over `F_2`, which this file does not need).\n\n## The one identity everything follows from\n\n`wTilde_eq`: the observable **factorizes**,\n\n`W~^e(u) = pvmObs S (p |→ (-1)^{tr(e (cd (pi p) . u))})  (x)  w (e . u)`,\n\na signed sum of the *pair* measurement tensor a genuine Weyl operator. The `F_q`-valued syndrome\nlabel is what makes this work: summing the syndrome projectors against the character of `a`\nreassembles the Weyl operator on the line `r |→ r . u` (`MIPRE.Weyl.eq_sum_proj`), and the\n`cd(g) . u` shift becomes the sign the first factor carries.\n\nSelf-adjointness (`wTilde_conjTranspose`) and involutivity (`wTilde_mul_self`) are then the\n`pvmObs` calculus of `MIPRE/Foundations/PVM.lean` on the left factor and the group law on the\nright. The twisted commutation (`wTilde_mul_wTilde`) is the same: the two left factors are\nweightings of *one* projective measurement, so they commute exactly (`pvmObs_comm`), and the whole\nphase comes from the right factors' `MIPRE.Weyl.wX_mul_wZ`.\n\n## A repair carried over from the paper\n\nThe pinned paper's display for the commutation relation used to split into `e != e'` (claiming\nexact commutation) and `e = e'` (a phase). That is false: self-duality gives `tr(e_j e_{j'}) =\ndelta_{j j'}`, but `tr(e_j e_{j'} c)` need not vanish for `c` outside `F_2`, and the quantity in\nthe exponent is `e_j e_{j'} (u . v)` with `u . v` an arbitrary field element. The paper now states\nthe general phase",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/ExactPauli.lean#L182-L227",
+  "source_path": "MIPRE/Background/QLD/ExactPauli.lean",
+  "lines": [
+   182,
+   227
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-exact-paulis",
+    "env": "lemma",
+    "title": "Exact Pauli operators",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.kron_sum",
+   "MIPRE.QLD.mTilde_eq_sum",
+   "MIPRE.sgn_add",
+   "MIPRE.Weyl.eq_sum_proj"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 36,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.hatObs_comm_eq",
+  "source_name": "MIPRE.QLD.hatObs_comm_eq",
+  "formal_statement": "theorem MIPRE.QLD.hatObs_comm_eq (hm : m ∣ Fintype.card F) (MA : Question F m → POVM (Answer F m d) dA)\n    (c : Content F m) :\n    hatObs hm MA .X c * hatObs hm MA .Z c - hatObs hm MA .Z c * hatObs hm MA .X c\n      = (ptObs hm MA .X c * ptObs hm MA .Z c\n          - sgn (gam c.omega) • (ptObs hm MA .Z c * ptObs hm MA .X c))\n        ⊗ₖ (weylOf .X (ancVec c.omega .X) * weylOf .Z (ancVec c.omega .Z)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The two signs cancel.** The commutator of the hatted observables is the *signed* commutator\nof the strategy's, tensored with a unitary: the ancilla's twisted commutation contributes exactly\nthe sign `(-1)^{gamma(omega)}` that the strategy's carries.",
+  "module": "MIPRE.Background.QLD.Expanded",
+  "module_doc": "/-!\n# The expansion stage: the hatted point observables\n\nBlueprint `lem:qld-expanded-points`, the commutation half. The expansion adjoins\n`|EPR_q>^{(x) M}` to each player and replaces the point observable by\n\n```\n  W-hat^r(u) = W^r(u) (x) tau^W(r . ind_m(u)) ,\n```\n\nthe strategy's own observable tensored with a generalized Pauli on the ancilla. The point of\ndoing so is a **single exact cancellation**:\n\n* the strategy's two observables commute up to the sign `(-1)^{gamma(omega)}`\n  (`signed_commutation`), at `O(eps)`;\n* the two ancilla Pauli observables commute up to the *same* sign, **exactly** --- that is the\n  twisted commutation relation of `def:generalized-pauli`, and the sign is the same because\n  `gamma(omega)` *is* the form `tr(r_X ind(u_X) . r_Z ind(u_Z))` (`gam_eq_trDot`).\n\nSo the hatted observables commute up to nothing at all: the two signs multiply to one, and what\nis left is the strategy's error with no sign in it. Without the ancillas the two bases would only\ncommute up to an error carrying `(-1)^gamma`, which does not improve with `eps`.\n\n## What makes it cheap\n\nThree facts, none of them about the Pauli test. The ancilla operator that survives the\ncancellation is *unitary*, so it is invisible to the state-norm\n(`norm_stateVec_kron_unitary`); what is left has an **inert** ancilla, so it has the same norm on\nthe expanded state as on the original one (`norm_stateVec_expVec_kron_one`); and the ancilla state\nis a unit vector (`epr_unit`). The expansion therefore costs exactly the constant of\n`lem:qld-obs-commutation` and nothing more.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Expanded.lean#L124-L143",
+  "source_path": "MIPRE/Background/QLD/Expanded.lean",
+  "lines": [
+   124,
+   143
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-expanded-commutation",
+    "env": "lemma",
+    "title": "Expanded point observables commute",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Weyl.wX_mul_wZ"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.hatVec_unit",
+  "source_name": "MIPRE.QLD.hatVec_unit",
+  "formal_statement": "theorem MIPRE.QLD.hatVec_unit {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) :\n    star (hatVec (F := F) (m := m) ψ) ⬝ᵥ hatVec ψ = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.Expanded",
+  "module_doc": "/-!\n# The expansion stage: the hatted point observables\n\nBlueprint `lem:qld-expanded-points`, the commutation half. The expansion adjoins\n`|EPR_q>^{(x) M}` to each player and replaces the point observable by\n\n```\n  W-hat^r(u) = W^r(u) (x) tau^W(r . ind_m(u)) ,\n```\n\nthe strategy's own observable tensored with a generalized Pauli on the ancilla. The point of\ndoing so is a **single exact cancellation**:\n\n* the strategy's two observables commute up to the sign `(-1)^{gamma(omega)}`\n  (`signed_commutation`), at `O(eps)`;\n* the two ancilla Pauli observables commute up to the *same* sign, **exactly** --- that is the\n  twisted commutation relation of `def:generalized-pauli`, and the sign is the same because\n  `gamma(omega)` *is* the form `tr(r_X ind(u_X) . r_Z ind(u_Z))` (`gam_eq_trDot`).\n\nSo the hatted observables commute up to nothing at all: the two signs multiply to one, and what\nis left is the strategy's error with no sign in it. Without the ancillas the two bases would only\ncommute up to an error carrying `(-1)^gamma`, which does not improve with `eps`.\n\n## What makes it cheap\n\nThree facts, none of them about the Pauli test. The ancilla operator that survives the\ncancellation is *unitary*, so it is invisible to the state-norm\n(`norm_stateVec_kron_unitary`); what is left has an **inert** ancilla, so it has the same norm on\nthe expanded state as on the original one (`norm_stateVec_expVec_kron_one`); and the ancilla state\nis a unit vector (`epr_unit`). The expansion therefore costs exactly the constant of\n`lem:qld-obs-commutation` and nothing more.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Expanded.lean#L157-L159",
+  "source_path": "MIPRE/Background/QLD/Expanded.lean",
+  "lines": [
+   157,
+   159
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-expanded-commutation",
+    "env": "lemma",
+    "title": "Expanded point observables commute",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Weyl.epr_unit"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_bornProb_epr_synOfPOVM",
+  "source_name": "MIPRE.QLD.sum_bornProb_epr_synOfPOVM",
+  "formal_statement": "theorem MIPRE.QLD.sum_bornProb_epr_synOfPOVM {C : Type*} [Fintype C] [DecidableEq C] (W : Bas)\n    (φ : Anc F m → C) :\n    ∑ o : C, bornProb (epr (F := F) (n := Fin m → Bool)) (((synOfPOVM W φ).mats o).val)\n      (((synOfPOVM W φ).mats o).val) = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.Weyl MIPRE.LowDegree MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}"
+  ],
+  "docstring": "**The coarse-grained basis measurement is perfectly self-consistent on the maximally entangled\nstate.** This is the EPR stabilizer relation at the Born level, and it is the `1` that the\nexpansion contributes to every agreement probability --- exactly `1`, not `1 - O(eps)`.",
+  "module": "MIPRE.Background.QLD.Expanded",
+  "module_doc": "/-!\n# The expansion stage: the hatted point observables\n\nBlueprint `lem:qld-expanded-points`, the commutation half. The expansion adjoins\n`|EPR_q>^{(x) M}` to each player and replaces the point observable by\n\n```\n  W-hat^r(u) = W^r(u) (x) tau^W(r . ind_m(u)) ,\n```\n\nthe strategy's own observable tensored with a generalized Pauli on the ancilla. The point of\ndoing so is a **single exact cancellation**:\n\n* the strategy's two observables commute up to the sign `(-1)^{gamma(omega)}`\n  (`signed_commutation`), at `O(eps)`;\n* the two ancilla Pauli observables commute up to the *same* sign, **exactly** --- that is the\n  twisted commutation relation of `def:generalized-pauli`, and the sign is the same because\n  `gamma(omega)` *is* the form `tr(r_X ind(u_X) . r_Z ind(u_Z))` (`gam_eq_trDot`).\n\nSo the hatted observables commute up to nothing at all: the two signs multiply to one, and what\nis left is the strategy's error with no sign in it. Without the ancillas the two bases would only\ncommute up to an error carrying `(-1)^gamma`, which does not improve with `eps`.\n\n## What makes it cheap\n\nThree facts, none of them about the Pauli test. The ancilla operator that survives the\ncancellation is *unitary*, so it is invisible to the state-norm\n(`norm_stateVec_kron_unitary`); what is left has an **inert** ancilla, so it has the same norm on\nthe expanded state as on the original one (`norm_stateVec_expVec_kron_one`); and the ancilla state\nis a unit vector (`epr_unit`). The expansion therefore costs exactly the constant of\n`lem:qld-obs-commutation` and nothing more.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Expanded.lean#L227-L265",
+  "source_path": "MIPRE/Background/QLD/Expanded.lean",
+  "lines": [
+   227,
+   265
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.aOp_sum",
+   "MIPRE.Weyl.epr_unit",
+   "MIPRE.Weyl.stateVec_epr",
+   "MIPRE.Weyl.isPVM_synOf"
+  ],
+  "pasted_helpers": 18,
+  "prooflines": 32,
+  "is_target": false
+ }
+]

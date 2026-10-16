@@ -1,0 +1,744 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.abs_sum_qform_conjTranspose_mul_le",
+  "source_name": "MIPRE.abs_sum_qform_conjTranspose_mul_le",
+  "formal_statement": "theorem MIPRE.abs_sum_qform_conjTranspose_mul_le (v : N → ℂ) (s : Finset ι)\n    (M R : ι → Matrix N N ℂ) :\n    |∑ i ∈ s, qform v ((M i)ᴴ * R i)|\n      ≤ Real.sqrt (∑ i ∈ s, snorm v (M i) ^ 2) * Real.sqrt (∑ i ∈ s, snorm v (R i) ^ 2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {N : Type*} [Fintype N] [DecidableEq N] {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "**Cauchy--Schwarz across an index, with the first family not self-adjoint.**\n`Introspection.abs_sum_qform_mul_le` is the case where it is, so that `M * R` is already\n`Mᴴ * R`; the projector form of the chain's swap needs the general one.",
+  "module": "MIPRE.Background.QLD.Pulling",
+  "module_doc": "/-!\n# The estimates of `lem:qld-pauli-selfcons`, by polynomial outcome\n\n`MIPRE/Background/QLD/AncTransport.lean` closes the identities of the paper's pulling chain. Its\nestimates --- displays `eq:qld-pulling-7` and `eq:qld-pulling-11` --- consume the second item of\n`lem:qld-helper`, but not in the form that lemma is stated in. The helper is stated at an outcome\n`a` in `F_q`, which is what the expansion stage produces; the chain sums over the *polynomial*\noutcomes `g` of the simultaneous measurement, because the label `coded(g) . u-tilde` it carries is\na function of `g` and not of `g(u)`.\n\nThe two sums are equal, not merely comparable. Within a fibre of the evaluation the pair\nmeasurement's outcomes are orthogonal projectors, so every cross term of the squared norm\nvanishes, and the fibres partition the outcomes. That is `snorm_sq_sum_orthogonal` below, and the\nhelper in the chain's own indexing is its corollary.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Pulling.lean#L226-L245",
+  "source_path": "MIPRE/Background/QLD/Pulling.lean",
+  "lines": [
+   226,
+   245
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.abs_sum_qform_swap_proj_le",
+  "source_name": "MIPRE.abs_sum_qform_swap_proj_le",
+  "formal_statement": "theorem MIPRE.abs_sum_qform_swap_proj_le (v : N → ℂ) (s : Finset ι) {X Y S : ι → Matrix N N ℂ} {ε : ℝ}\n    (hXsa : ∀ i, (X i)ᴴ = X i) (hXidem : ∀ i, X i * X i = X i) (hYsa : ∀ i, (Y i)ᴴ = Y i)\n    (hSsa : ∀ i, (S i)ᴴ = S i) (hSidem : ∀ i, S i * S i = S i)\n    (hcomm : ∀ i, X i * S i = S i * X i)\n    (hε : ∑ i ∈ s, snorm v (S i * (X i - Y i)) ^ 2 ≤ ε)\n    (hY : ∑ i ∈ s, snorm v (S i * Y i) ^ 2 ≤ 1)\n    (hX : ∑ i ∈ s, snorm v (S i * X i) ^ 2 ≤ 1) :\n    |(∑ i ∈ s, qform v (X i * S i)) - ∑ i ∈ s, qform v (Y i * S i * Y i)|\n      ≤ 2 * Real.sqrt ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {N : Type*} [Fintype N] [DecidableEq N] {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "**Display `eq:qld-pulling-13`, with the deviation read through the projector.** The chain's\nsecond remaining estimate sandwiches a *projector* with the measurement it swaps, and what bounds\nthe cost is the deviation read through that projector --- summing the projector away is what makes\nthe bound `eps` rather than `eps` times the number of pair outcomes, which is what the bare form\nbelow would give. Otherwise the two are the same argument.",
+  "module": "MIPRE.Background.QLD.Pulling",
+  "module_doc": "/-!\n# The estimates of `lem:qld-pauli-selfcons`, by polynomial outcome\n\n`MIPRE/Background/QLD/AncTransport.lean` closes the identities of the paper's pulling chain. Its\nestimates --- displays `eq:qld-pulling-7` and `eq:qld-pulling-11` --- consume the second item of\n`lem:qld-helper`, but not in the form that lemma is stated in. The helper is stated at an outcome\n`a` in `F_q`, which is what the expansion stage produces; the chain sums over the *polynomial*\noutcomes `g` of the simultaneous measurement, because the label `coded(g) . u-tilde` it carries is\na function of `g` and not of `g(u)`.\n\nThe two sums are equal, not merely comparable. Within a fibre of the evaluation the pair\nmeasurement's outcomes are orthogonal projectors, so every cross term of the squared norm\nvanishes, and the fibres partition the outcomes. That is `snorm_sq_sum_orthogonal` below, and the\nhelper in the chain's own indexing is its corollary.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Pulling.lean#L247-L303",
+  "source_path": "MIPRE/Background/QLD/Pulling.lean",
+  "lines": [
+   247,
+   303
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.abs_sum_qform_conjTranspose_mul_le"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 43,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_snorm_sq_proj_comp_le",
+  "source_name": "MIPRE.sum_snorm_sq_proj_comp_le",
+  "formal_statement": "theorem MIPRE.sum_snorm_sq_proj_comp_le (v : N → ℂ) {P : ι → Matrix N N ℂ} (hP : IsPVM P)\n    (c : ι → κ) (Z : κ → Matrix N N ℂ) :\n    ∑ i, snorm v (P i * Z (c i)) ^ 2 ≤ ∑ k, snorm v (Z k) ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {N : Type*} [Fintype N] [DecidableEq N] {ι κ : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "**A projective family in front, indexed through a map to the operators' own index.** Each\nfibre of the map contributes at most the operator it names, because the projectors in a fibre sum\nto a projection and a projection is a contraction. Without the fibres this would be false: the\nindex `i` can be far larger than `k`, and summing one operator once per `i` would multiply the\nbound by the size of a fibre.",
+  "module": "MIPRE.Background.QLD.Pulling",
+  "module_doc": "/-!\n# The estimates of `lem:qld-pauli-selfcons`, by polynomial outcome\n\n`MIPRE/Background/QLD/AncTransport.lean` closes the identities of the paper's pulling chain. Its\nestimates --- displays `eq:qld-pulling-7` and `eq:qld-pulling-11` --- consume the second item of\n`lem:qld-helper`, but not in the form that lemma is stated in. The helper is stated at an outcome\n`a` in `F_q`, which is what the expansion stage produces; the chain sums over the *polynomial*\noutcomes `g` of the simultaneous measurement, because the label `coded(g) . u-tilde` it carries is\na function of `g` and not of `g(u)`.\n\nThe two sums are equal, not merely comparable. Within a fibre of the evaluation the pair\nmeasurement's outcomes are orthogonal projectors, so every cross term of the squared norm\nvanishes, and the fibres partition the outcomes. That is `snorm_sq_sum_orthogonal` below, and the\nhelper in the chain's own indexing is its corollary.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Pulling.lean#L380-L411",
+  "source_path": "MIPRE/Background/QLD/Pulling.lean",
+  "lines": [
+   380,
+   411
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.IsPVM.orthogonal"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.SimulPair.snorm_sq_evalMarg_eq_sum_polyMarg",
+  "source_name": "MIPRE.QLD.SimulPair.snorm_sq_evalMarg_eq_sum_polyMarg",
+  "formal_statement": "theorem MIPRE.QLD.SimulPair.snorm_sq_evalMarg_eq_sum_polyMarg (W : Bas) (u : Point F m) (a : F) :\n    snorm P.Φ (aOp ((((evalMarg P.SA W u).mats a).val)\n          * (1 - (aOp (hatMats MA W u a) : Matrix ((dA × Anc F m) × P.EA) _ ℂ)))) ^ 2\n      = ∑ g ∈ univ.filter fun g : LowIndDegPoly (F := F) (m := m) (d := d) => g.eval u = a,\n          snorm P.Φ (aOp (((polyMarg P.SA W).mats g).val\n            * (1 - (aOp (hatMats MA W u a) : Matrix ((dA × Anc F m) × P.EA) _ ℂ)))) ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.SimulPair",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable (P : SimulPair ψ MA MB δ)"
+  ],
+  "docstring": "**The evaluated marginal's same-party product, split by polynomial outcome.** The evaluated\nmarginal at `a` is the sum of the polynomial-indexed outcomes over the fibre `g(u) = a`, and those\nare orthogonal projectors, so the squared norms add.",
+  "module": "MIPRE.Background.QLD.Pulling",
+  "module_doc": "/-!\n# The estimates of `lem:qld-pauli-selfcons`, by polynomial outcome\n\n`MIPRE/Background/QLD/AncTransport.lean` closes the identities of the paper's pulling chain. Its\nestimates --- displays `eq:qld-pulling-7` and `eq:qld-pulling-11` --- consume the second item of\n`lem:qld-helper`, but not in the form that lemma is stated in. The helper is stated at an outcome\n`a` in `F_q`, which is what the expansion stage produces; the chain sums over the *polynomial*\noutcomes `g` of the simultaneous measurement, because the label `coded(g) . u-tilde` it carries is\na function of `g` and not of `g(u)`.\n\nThe two sums are equal, not merely comparable. Within a fibre of the evaluation the pair\nmeasurement's outcomes are orthogonal projectors, so every cross term of the squared norm\nvanishes, and the fibres partition the outcomes. That is `snorm_sq_sum_orthogonal` below, and the\nhelper in the chain's own indexing is its corollary.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Pulling.lean#L506-L533",
+  "source_path": "MIPRE/Background/QLD/Pulling.lean",
+  "lines": [
+   506,
+   533
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.POVM.map_map",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_sum",
+   "MIPRE.IsPVM.orthogonal",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.IsPVM.aOp"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.SimulPair.sum_snorm_sq_polyMarg_one_sub_le",
+  "source_name": "MIPRE.QLD.SimulPair.sum_snorm_sq_polyMarg_one_sub_le",
+  "formal_statement": "theorem MIPRE.QLD.SimulPair.sum_snorm_sq_polyMarg_one_sub_le {hm : m ∣ Fintype.card F} {ε : ℝ}\n    (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (W : Bas) :\n    ∑ u, uniform (Point F m) u\n        * ∑ g : LowIndDegPoly (F := F) (m := m) (d := d), snorm P.Φ\n          (aOp (((polyMarg P.SA W).mats g).val\n            * (1 - (aOp (hatMats MA W u (g.eval u)) : Matrix ((dA × Anc F m) × P.EA) _ ℂ)))) ^ 2\n      ≤ 4 * δ + 2 * (172 * ε) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.SimulPair",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable (P : SimulPair ψ MA MB δ)"
+  ],
+  "docstring": "**Item 2 of `lem:qld-helper`, in the chain's own indexing**: the same-party product of the\n*polynomial-indexed* marginal with the complement of Alice's point measurement at that outcome's\nown value. This is the form displays `eq:qld-pulling-7` and `eq:qld-pulling-11` consume.",
+  "module": "MIPRE.Background.QLD.Pulling",
+  "module_doc": "/-!\n# The estimates of `lem:qld-pauli-selfcons`, by polynomial outcome\n\n`MIPRE/Background/QLD/AncTransport.lean` closes the identities of the paper's pulling chain. Its\nestimates --- displays `eq:qld-pulling-7` and `eq:qld-pulling-11` --- consume the second item of\n`lem:qld-helper`, but not in the form that lemma is stated in. The helper is stated at an outcome\n`a` in `F_q`, which is what the expansion stage produces; the chain sums over the *polynomial*\noutcomes `g` of the simultaneous measurement, because the label `coded(g) . u-tilde` it carries is\na function of `g` and not of `g(u)`.\n\nThe two sums are equal, not merely comparable. Within a fibre of the evaluation the pair\nmeasurement's outcomes are orthogonal projectors, so every cross term of the squared norm\nvanishes, and the fibres partition the outcomes. That is `snorm_sq_sum_orthogonal` below, and the\nhelper in the chain's own indexing is its corollary.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Pulling.lean#L535-L562",
+  "source_path": "MIPRE/Background/QLD/Pulling.lean",
+  "lines": [
+   535,
+   562
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.SimulPair.sum_snorm_sq_evalMarg_one_sub_le",
+   "MIPRE.QLD.SimulPair.snorm_sq_evalMarg_eq_sum_polyMarg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.SimulPair.sum_bornProb_polyMarg_one_sub_le",
+  "source_name": "MIPRE.QLD.SimulPair.sum_bornProb_polyMarg_one_sub_le",
+  "formal_statement": "theorem MIPRE.QLD.SimulPair.sum_bornProb_polyMarg_one_sub_le (W : Bas) :\n    ∑ u, uniform (Point F m) u * ∑ g : LowIndDegPoly (F := F) (m := m) (d := d),\n        bornProb P.Φ (((polyMarg P.SA W).mats g).val)\n          (1 - (aOp (hatMats MB W u (g.eval u)) : Matrix ((dB × Anc F m) × P.EB) _ ℂ))\n      ≤ δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.SimulPair",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable (P : SimulPair ψ MA MB δ)"
+  ],
+  "docstring": "**Display `eq:qld-pulling-14`**: the complement of the helper's agreement, read by polynomial\noutcome. The sub-chain that justifies `eq:qld-pulling-10` terminates here, and the bound is the\nhelper's own `delta_S`: the marginal's outcomes sum to the identity, so the complementary mass is\none minus the agreement.",
+  "module": "MIPRE.Background.QLD.Pulling",
+  "module_doc": "/-!\n# The estimates of `lem:qld-pauli-selfcons`, by polynomial outcome\n\n`MIPRE/Background/QLD/AncTransport.lean` closes the identities of the paper's pulling chain. Its\nestimates --- displays `eq:qld-pulling-7` and `eq:qld-pulling-11` --- consume the second item of\n`lem:qld-helper`, but not in the form that lemma is stated in. The helper is stated at an outcome\n`a` in `F_q`, which is what the expansion stage produces; the chain sums over the *polynomial*\noutcomes `g` of the simultaneous measurement, because the label `coded(g) . u-tilde` it carries is\na function of `g` and not of `g(u)`.\n\nThe two sums are equal, not merely comparable. Within a fibre of the evaluation the pair\nmeasurement's outcomes are orthogonal projectors, so every cross term of the squared norm\nvanishes, and the fibres partition the outcomes. That is `snorm_sq_sum_orthogonal` below, and the\nhelper in the chain's own indexing is its corollary.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Pulling.lean#L564-L598",
+  "source_path": "MIPRE/Background/QLD/Pulling.lean",
+  "lines": [
+   564,
+   598
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_diag_eq_one_sub",
+   "MIPRE.sum_uniform_eq_one",
+   "MIPRE.sum_bornProb_map_eq",
+   "MIPRE.POVM.map_map",
+   "MIPRE.aOp_sum",
+   "MIPRE.IsPVM.coarse"
+  ],
+  "pasted_helpers": 18,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_uniform_agree_le",
+  "source_name": "MIPRE.QLD.sum_uniform_agree_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_uniform_agree_le\n    {p q : LowIndDegPoly (F := F) (m := m) (d := d)} (hne : p.toMv ≠ q.toMv) :\n    ∑ u, uniform (Point F m) u * (if p.eval u = q.eval u then (1 : ℝ) else 0)\n      ≤ (m : ℝ) * d / Fintype.card F := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "open MvPolynomial",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]"
+  ],
+  "docstring": "**Schwartz--Zippel for two low-individual-degree outcomes.** Distinct polynomials of individual\ndegree at most `d` agree at a uniform point with probability at most `md/q`. No lower bound on `d`\nis needed: both polynomials carry the same degree bound, so the hypothesis\n`prob_agree_le_individualDegree` wants is already met.",
+  "module": "MIPRE.Background.QLD.Pulling",
+  "module_doc": "/-!\n# The estimates of `lem:qld-pauli-selfcons`, by polynomial outcome\n\n`MIPRE/Background/QLD/AncTransport.lean` closes the identities of the paper's pulling chain. Its\nestimates --- displays `eq:qld-pulling-7` and `eq:qld-pulling-11` --- consume the second item of\n`lem:qld-helper`, but not in the form that lemma is stated in. The helper is stated at an outcome\n`a` in `F_q`, which is what the expansion stage produces; the chain sums over the *polynomial*\noutcomes `g` of the simultaneous measurement, because the label `coded(g) . u-tilde` it carries is\na function of `g` and not of `g(u)`.\n\nThe two sums are equal, not merely comparable. Within a fibre of the evaluation the pair\nmeasurement's outcomes are orthogonal projectors, so every cross term of the squared norm\nvanishes, and the fibres partition the outcomes. That is `snorm_sq_sum_orthogonal` below, and the\nhelper in the chain's own indexing is its corollary.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Pulling.lean#L612-L632",
+  "source_path": "MIPRE/Background/QLD/Pulling.lean",
+  "lines": [
+   612,
+   632
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.LowIndDegPoly.degreeOf_toMv_le",
+   "MIPRE.LowDegree.prob_agree_le_individualDegree"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.sum_uniform_agree_mass_le",
+  "source_name": "MIPRE.QLD.sum_uniform_agree_mass_le",
+  "formal_statement": "theorem MIPRE.QLD.sum_uniform_agree_mass_le {ι : Type*} [Fintype ι] [DecidableEq ι]\n    {p q : ι → LowIndDegPoly (F := F) (m := m) (d := d)} (w : ι → ℝ)\n    (hne : ∀ i, w i ≠ 0 → (p i).toMv ≠ (q i).toMv) (hw0 : ∀ i, 0 ≤ w i) (hw : ∑ i, w i ≤ 1) :\n    ∑ u, uniform (Point F m) u\n        * ∑ i ∈ univ.filter fun i => (p i).eval u = (q i).eval u, w i\n      ≤ (m : ℝ) * d / Fintype.card F := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "open MvPolynomial",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]"
+  ],
+  "docstring": "**Restricting a weighted sum to pointwise agreement costs `md/q`**, at every index whose\nweight is nonzero and whose two polynomials are distinct. This is display `eq:qld-pulling-12`: the\nchain's sum is constrained by an equality of polynomial *values* at the sampled point, and passing\nto equality of the polynomials themselves discards only the tuples where distinct polynomials\nhappen to agree there. The weights are the Born probabilities of a projective family, hence\nnonnegative and summing to at most one.\n\nThe hypothesis is asked only where the weight is nonzero, which is what lets the same packaging\nserve `eq:qld-unitary-8` of `lem:qld-swap` item 2: there the index is a *pair* and the diagonal,\nwhere the two polynomials coincide, is excluded by the weight rather than by the index set.",
+  "module": "MIPRE.Background.QLD.Pulling",
+  "module_doc": "/-!\n# The estimates of `lem:qld-pauli-selfcons`, by polynomial outcome\n\n`MIPRE/Background/QLD/AncTransport.lean` closes the identities of the paper's pulling chain. Its\nestimates --- displays `eq:qld-pulling-7` and `eq:qld-pulling-11` --- consume the second item of\n`lem:qld-helper`, but not in the form that lemma is stated in. The helper is stated at an outcome\n`a` in `F_q`, which is what the expansion stage produces; the chain sums over the *polynomial*\noutcomes `g` of the simultaneous measurement, because the label `coded(g) . u-tilde` it carries is\na function of `g` and not of `g(u)`.\n\nThe two sums are equal, not merely comparable. Within a fibre of the evaluation the pair\nmeasurement's outcomes are orthogonal projectors, so every cross term of the squared norm\nvanishes, and the fibres partition the outcomes. That is `snorm_sq_sum_orthogonal` below, and the\nhelper in the chain's own indexing is its corollary.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Pulling.lean#L634-L671",
+  "source_path": "MIPRE/Background/QLD/Pulling.lean",
+  "lines": [
+   634,
+   671
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.sum_uniform_agree_le"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.errSmall_qldErr",
+  "source_name": "MIPRE.QLD.errSmall_qldErr",
+  "formal_statement": "theorem MIPRE.QLD.errSmall_qldErr : ErrSmall qldErr := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.LIDT"
+  ],
+  "docstring": "**`δ_qld` is of the shape of `thm:qld`.** `ErrSmall.of_cases` at `g = 48 md/q + qldHlt`:\nwhere `g < 1` both summands are below one, so the chain applies and `qldErr ≤ qldBound`; and\n`qldErr ≤ 4` everywhere.",
+  "module": "MIPRE.Background.QLD.QLDError",
+  "module_doc": "/-!\n# The error of `thm:qld`, named once\n\n`MirrorSimul.swap_isometry` (`MIPRE/Background/QLD/SwapItemTwo.lean`) closes the swap isometry\nlemma `lem:qld-swap` for a legal projective strategy, at the `MirrorSimul` that\n`exists_mirrorSimul` builds. Its two bounds, and the hypothesis it needs, are explicit expressions\nin the chain's constants. What `thm:qld` asserts is one function of `(ε, m, d, q)`, of the closed\nform `a (md)^a (ε^b + q^{-b} + 2^{-bmd})` (`errShape`). This file names that function, `qldErr`,\nand proves it is of the closed form (`exists_qldErr_le`). The assembly of `thm:qld` then only has\nto show that each of the theorem's two items is at most `qldErr`, for which `le_qldErr` is the\ninterface.\n\n## The constants\n\nAlong the chain, with `q` standing for `Fintype.card F`:\n\n* `qldDelta = δ_S(δ_ld)`, the error of the `MirrorSimul` that `exists_mirrorSimul` returns;\n* `qldHlt = 2 √X + 2 X` at `X = deltaSelfCons qldDelta`, the quantity `swap_isometry` needs below\n  one (its hypothesis `hlt`);\n* `qldEta = etaItemOne qldDelta`, item 1's bound on the **squared** distance to the product state\n  `|aux> ⊗ |EPR_q>^M`;\n* `qldBound = deltaItemTwo qldDelta … qldEta + 9 √qldEta`.\n\n`qldBound` is chosen to dominate both items of the theorem at once. Item 1 of `thm:qld` bounds the\ndistance itself, not its square, so it costs `√qldEta` (`sqrt_qldEta_le_qldBound`). Item 2 costs\nitem 2 of `lem:qld-swap` plus the descent the paper makes after it, from conjugation by the swap\nunitary `V` on the projective dilation to conjugation of the original POVM by the embedding\n`φ = V ∘ (· ⊗ EPR ⊗ padding)`. That descent goes through the agreement with `τ^W` on the\n*opposite* half of the pair, which local isometries carry verbatim; it moves the pairing from the\nproduct state to the embedded state and back, at `2 r` each way with `r = √qldEta` the distance of\nitem 1, and the conversions between closeness and agreement double that. So it costs `8 √qldEta`\n(`itemTwo_le_qldBound`), and the spare `√qldEta` is item 1's.\n\n## Outside the regime\n\nTwo hypotheses stand between a strategy and `swap_isometry`: the regime `48 m d ≤ q`, which\n`exists_mirrorSimul` needs (the paper's appendix works under `16 m d ≤ q`; the constant `48` is\nwhere `lem:qld-global-separate` is formalized, `GlobalPair.one_sub_two_eta_ge`), and `qldHlt < 1`.\nWhere either fails, `thm:qld` takes a trivial bound: the distance between two unit vectors is at\nmost `2`, and so is the summed deviation of a sub-POVM from `τ^W` on a state that carries the pair.\nThe cap is `4`, the paper's bound on the state-dependent distance between any two POVMs, which is\nabove both. So `qldErr` is `min qldBound 4` inside and `4` outside (`qldErr_of_regime`,\n`qldErr_of_not`).\n\nThat this costs nothing is `ErrSmall.of_cases` at the small quantity `g = 48 md/q + qldHlt`: where\n`g < 1` both hypotheses hold, since each summand is nonnegative; and where `g ≥ 1` the constant\n`4` is at most `4 g`, which is itself of the shape. This is the paper",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/QLDError.lean#L279-L295",
+  "source_path": "MIPRE/Background/QLD/QLDError.lean",
+  "lines": [
+   279,
+   295
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-error",
+    "env": "lemma",
+    "title": "The error of the Pauli basis test",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.errShape_add",
+   "MIPRE.QLD.errShape_rpow_le",
+   "MIPRE.QLD.errSmall_two_rpow_neg",
+   "MIPRE.QLD.errSmall_deltaGS",
+   "MIPRE.QLD.deltaCL_four_mul_le",
+   "MIPRE.QLD.ErrSmall.of_cases"
+  ],
+  "pasted_helpers": 59,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.PauliCL.SamplerProgram.query_dimension",
+  "source_name": "MIPRE.QLD.PauliCL.SamplerProgram.query_dimension",
+  "formal_statement": "theorem MIPRE.QLD.PauliCL.SamplerProgram.query_dimension (p : Parameters) :\n    query (p, encode (TypedSampler.Query.dimension : TypedSampler.Query Ty)) =\n      encode ((3 * p.2.2.length + 3) * p.1.length) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.PauliCL",
+   "open MIPRE.QLD.PauliCL.SamplerProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program",
+   "open MIPRE.Introspection.PauliStageProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.SamplerQueryProgram",
+  "module_doc": "/-! # The actual uniform Pauli query router\n\nEvery input tree is parsed by total programs. Dimension, marginal, linear and\nfactor queries use the uniform programs on the supplied parameters; the type\ntable is the fixed twenty-six-element table only.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/SamplerQueryProgram.lean#L66-L70",
+  "source_path": "MIPRE/Background/QLD/SamplerQueryProgram.lean",
+  "lines": [
+   66,
+   70
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-executable-pauli-queries",
+    "env": "lemma",
+    "title": "Executable binary Pauli queries",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 6,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.PauliCL.SamplerProgram.query_marginal",
+  "source_name": "MIPRE.QLD.PauliCL.SamplerProgram.query_marginal",
+  "formal_statement": "theorem MIPRE.QLD.PauliCL.SamplerProgram.query_marginal (p : Parameters) (w : Player) (T : Ty) (r : ℕ) (z : BitStr) :\n    query (p, encode (TypedSampler.Query.atType T (.marginal w r z))) =\n      encode (marginalBits (p, programTag T, r, z, z)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.PauliCL",
+   "open MIPRE.QLD.PauliCL.SamplerProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program",
+   "open MIPRE.Introspection.PauliStageProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.SamplerQueryProgram",
+  "module_doc": "/-! # The actual uniform Pauli query router\n\nEvery input tree is parsed by total programs. Dimension, marginal, linear and\nfactor queries use the uniform programs on the supplied parameters; the type\ntable is the fixed twenty-six-element table only.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/SamplerQueryProgram.lean#L72-L80",
+  "source_path": "MIPRE/Background/QLD/SamplerQueryProgram.lean",
+  "lines": [
+   72,
+   80
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-executable-pauli-queries",
+    "env": "lemma",
+    "title": "Executable binary Pauli queries",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.CL.Detyping.Program.parse_query"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.PauliCL.SamplerProgram.query_linear",
+  "source_name": "MIPRE.QLD.PauliCL.SamplerProgram.query_linear",
+  "formal_statement": "theorem MIPRE.QLD.PauliCL.SamplerProgram.query_linear (p : Parameters) (w : Player) (T : Ty) (r : ℕ) (u y : BitStr) :\n    query (p, encode (TypedSampler.Query.atType T (.linear w r u y))) =\n      encode (linearBits (p, programTag T, r, u, y)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.PauliCL",
+   "open MIPRE.QLD.PauliCL.SamplerProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program",
+   "open MIPRE.Introspection.PauliStageProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.SamplerQueryProgram",
+  "module_doc": "/-! # The actual uniform Pauli query router\n\nEvery input tree is parsed by total programs. Dimension, marginal, linear and\nfactor queries use the uniform programs on the supplied parameters; the type\ntable is the fixed twenty-six-element table only.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/SamplerQueryProgram.lean#L82-L90",
+  "source_path": "MIPRE/Background/QLD/SamplerQueryProgram.lean",
+  "lines": [
+   82,
+   90
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-executable-pauli-queries",
+    "env": "lemma",
+    "title": "Executable binary Pauli queries",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.CL.Detyping.Program.parse_query"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.PauliCL.SamplerProgram.query_factor",
+  "source_name": "MIPRE.QLD.PauliCL.SamplerProgram.query_factor",
+  "formal_statement": "theorem MIPRE.QLD.PauliCL.SamplerProgram.query_factor (p : Parameters) (w : Player) (T : Ty) (r : ℕ) (u : BitStr) :\n    query (p, encode (TypedSampler.Query.atType T (.factor w r u))) =\n      encode (factorBits (p, r)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.PauliCL",
+   "open MIPRE.QLD.PauliCL.SamplerProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL MIPRE.CL.Detyping.Program",
+   "open MIPRE.Introspection.PauliStageProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.SamplerQueryProgram",
+  "module_doc": "/-! # The actual uniform Pauli query router\n\nEvery input tree is parsed by total programs. Dimension, marginal, linear and\nfactor queries use the uniform programs on the supplied parameters; the type\ntable is the fixed twenty-six-element table only.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/SamplerQueryProgram.lean#L92-L99",
+  "source_path": "MIPRE/Background/QLD/SamplerQueryProgram.lean",
+  "lines": [
+   92,
+   99
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-executable-pauli-queries",
+    "env": "lemma",
+    "title": "Executable binary Pauli queries",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.Program.parse_query"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.snorm_sq_obs_sub_le",
+  "source_name": "MIPRE.QLD.snorm_sq_obs_sub_le",
+  "formal_statement": "theorem MIPRE.QLD.snorm_sq_obs_sub_le {Λ : Type*} [Fintype Λ] (w : N → ℂ) (α : Λ → ℂ)\n    (hα : ∀ a, ‖α a‖ ≤ 1) (A B : Λ → Matrix N N ℂ) :\n    snorm w ((∑ a, α a • A a) - ∑ a, α a • B a) ^ 2\n      ≤ (Fintype.card Λ : ℝ) * ∑ a, snorm w (A a - B a) ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {N : Type*} [Fintype N] [DecidableEq N]"
+  ],
+  "docstring": "**Lemma `lem:qld-povm-to-obs` in the state-norm form the chain's conclusion takes.** A\nweighted sum of measurement elements is close to the corresponding weighted sum of the other\nfamily's, at the cost of a factor the size of the outcome set: the triangle inequality over the\noutcomes, then Cauchy--Schwarz against the constant one.",
+  "module": "MIPRE.Background.QLD.SelfCons",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/SelfCons.lean#L22-L45",
+  "source_path": "MIPRE/Background/QLD/SelfCons.lean",
+  "lines": [
+   22,
+   45
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sq_sum_le_card_mul_sum_sq"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.MirrorSimul.snorm_sq_wTilde_le",
+  "source_name": "MIPRE.QLD.MirrorSimul.snorm_sq_wTilde_le",
+  "formal_statement": "theorem MIPRE.QLD.MirrorSimul.snorm_sq_wTilde_le {hm : m ∣ Fintype.card F} {ε : ℝ}\n    (hψ : star ψ ⬝ᵥ ψ = 1) (hfail : 1 - povmValue (qldGame hm) ψ MA MB ≤ ε)\n    (hprojA : ∀ q, IsPVM fun a => (((MA q).mats a).val))\n    (hprojB : ∀ q, IsPVM fun a => (((MB q).mats a).val)) (hd : 1 ≤ d)\n    (W : Bas) (e : F) (v : Anc F m) :\n    snorm M.physVec ((aOp (M.aliceWTilde W e v)\n        : Matrix ((((dA × Anc F m) × M.Ea) × Anc F m)\n            × (((dB × Anc F m) × M.Eb) × Anc F m))\n          ((((dA × Anc F m) × M.Ea) × Anc F m)\n            × (((dB × Anc F m) × M.Eb) × Anc F m)) ℂ)\n        - bOp (M.bobWTilde W e v)) ^ 2\n      ≤ 2 * (4 * (9 * (10 * δ + 860 * ε + 2 * Real.sqrt (172 * ε)\n        + (m : ℝ) * d / Fintype.card F))) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.MirrorSimul",
+   "open Finset Matrix MIPRE MIPRE.LIDT MIPRE.LowDegree MIPRE.Weyl",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
+   "variable {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable (M : MirrorSimul ψ MA MB δ)"
+  ],
+  "docstring": "**Lemma `lem:qld-pauli-selfcons`**: the two parties' exact Pauli *observables* agree.\n\nThe passage from the measurements to the observable is the paper's, and it is not\nLemma `lem:qld-povm-to-obs` applied to the whole outcome set --- that would cost a factor the\nsize of the field. The family is coarse-grained first, along the character the observable reads\n(`sum_xSqNorm_fibre_le`, which is free for projective families), and only the resulting\n*two*-outcome family is turned into an observable. The factor is therefore two.",
+  "module": "MIPRE.Background.QLD.SelfCons",
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/SelfCons.lean#L213-L282",
+  "source_path": "MIPRE/Background/QLD/SelfCons.lean",
+  "lines": [
+   213,
+   282
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-pauli-selfcons",
+    "env": "lemma",
+    "title": "Self-consistency of the exact Pauli observables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_le",
+   "MIPRE.sum_uniform_eq_one",
+   "MIPRE.QLD.snorm_sq_obs_sub_le",
+   "MIPRE.QLD.swapVec_unit",
+   "MIPRE.QLD.povmValue_swapped_le",
+   "MIPRE.sum_bornProb_le_map",
+   "MIPRE.aOp_smul",
+   "MIPRE.aOp_sum",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.one_sub_sum_bornProb_eq",
+   "MIPRE.Weyl.epr_unit"
+  ],
+  "pasted_helpers": 48,
+  "prooflines": 49,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.LowIndDegPoly.eval_restrictOff",
+  "source_name": "MIPRE.LIDT.LowIndDegPoly.eval_restrictOff",
+  "formal_statement": "theorem MIPRE.LIDT.LowIndDegPoly.eval_restrictOff (g : LowIndDegPoly (F := F) (m := n) (d := d))\n    (T : Finset (Fin n)) (z u : Point F n) :\n    (g.restrictOff T z).eval u = g.eval (fun k => if k ∈ T then z k else u k) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.LowIndDegPoly",
+   "open Finset",
+   "variable {F : Type*} [Field F] {n d : ℕ}"
+  ],
+  "docstring": "The restricted vector evaluates as `g` at the point with the `T` coordinates from `z`.",
+  "module": "MIPRE.Background.QLD.Separate",
+  "module_doc": "/-!\n# Separating the two point variables (`lem:qld-global-separate`)\n\nAn outcome `g = α g₁ + β g₂` of the global measurement that is linear in the combining\ncoordinates (`IsLinAB`, `lem:qld-global-linear`) is *good* when `g₁` reads only the `x` block and\n`g₂` only the `z` block: `g = α g_X(x) + β g_Z(z)` (`IsGood`). This file bounds the weight of the\nlinear outcomes that are not good, from the two ordered-product estimates of\n`lem:qld-global-products`: the order `X_a Z_b` controls the outcomes whose `g₂` reads a coordinate\noutside the `z` block, and the order `Z_b X_a` those whose `g₁` reads a coordinate outside the `x`\nblock.\n\n## The argument\n\nFor a linear outcome and a base point `u₀`, the fibre `{αa + βb = α g₁(u₀) + β g₂(u₀)}` always\ncontains the diagonal pair `(g₁(u₀), g₂(u₀))`, and contains any other pair for at most `q` of the\n`q²` values of `(α, β)`. So the average over `(α, β)` of `‖(S ⊗ B_u(g(u))) Φ‖²` is at most\n`2/q · ⟨S⟩ + W(g₁(u₀), g₂(u₀))`, with `W(a, b) = ‖(S ⊗ X_a Z_b) Φ‖² ≤ ⟨S ⊗ Z_b⟩`. Averaging over\n`u₀`, read as a uniform `z` block with the other coordinates uniform and independent\n(`sum_uniform_mixOn`): for fixed `z`, `u ↦ g₂(u)` is a polynomial in the other coordinates\n(`LowIndDegPoly.restrictOff`) which, if `g₂` reads a coordinate outside the `z` block, is\nnon-constant except for a set of `z` of probability at most `4md/q` (Schwartz--Zippel on a\nnonzero coefficient), and where it is non-constant each value `b` is taken with probability at\nmost `4md/q`, so `E ⟨S ⊗ Z_{g₂(u)}(z)⟩ ≤ 8md/q · ⟨S⟩`. Altogether\n`E_u ‖(S ⊗ B_u(g(u))) Φ‖² ≤ η ⟨S⟩` with `η = (2 + 8md)/q`, and the assembly of\n`lem:qld-global-linear` gives `(1 - 2η) · (weight of these outcomes) ≤ 2Δ`. The other block is\nthe mirror image, with the roles of `(X, a, α)` and `(Z, b, β)` exchanged.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Separate.lean#L82-L102",
+  "source_path": "MIPRE/Background/QLD/Separate.lean",
+  "lines": [
+   82,
+   102
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-separate",
+    "env": "lemma",
+    "title": "Separating the two point variables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.LowIndDegPoly.eval_coef_of_eq_off",
+   "MIPRE.LIDT.LowIndDegPoly.eval_eq_sum_coef"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.LowIndDegPoly.exists_coef_ne_zero_of_depOutside",
+  "source_name": "MIPRE.LIDT.LowIndDegPoly.exists_coef_ne_zero_of_depOutside",
+  "formal_statement": "theorem MIPRE.LIDT.LowIndDegPoly.exists_coef_ne_zero_of_depOutside\n    {g : LowIndDegPoly (F := F) (m := n) (d := d)} {T : Finset (Fin n)} (h : g.DepOutside T) :\n    ∃ t : Fin n → Fin (d + 1), (∀ k ∈ T, t k = 0) ∧ t ≠ 0 ∧ g.coef Tᶜ t ≠ 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.LowIndDegPoly",
+   "open Finset",
+   "variable {F : Type*} [Field F] {n d : ℕ}"
+  ],
+  "docstring": "A vector depending on a coordinate off `T` has a nonzero coefficient vector at a nonzero pattern\nsupported off `T`.",
+  "module": "MIPRE.Background.QLD.Separate",
+  "module_doc": "/-!\n# Separating the two point variables (`lem:qld-global-separate`)\n\nAn outcome `g = α g₁ + β g₂` of the global measurement that is linear in the combining\ncoordinates (`IsLinAB`, `lem:qld-global-linear`) is *good* when `g₁` reads only the `x` block and\n`g₂` only the `z` block: `g = α g_X(x) + β g_Z(z)` (`IsGood`). This file bounds the weight of the\nlinear outcomes that are not good, from the two ordered-product estimates of\n`lem:qld-global-products`: the order `X_a Z_b` controls the outcomes whose `g₂` reads a coordinate\noutside the `z` block, and the order `Z_b X_a` those whose `g₁` reads a coordinate outside the `x`\nblock.\n\n## The argument\n\nFor a linear outcome and a base point `u₀`, the fibre `{αa + βb = α g₁(u₀) + β g₂(u₀)}` always\ncontains the diagonal pair `(g₁(u₀), g₂(u₀))`, and contains any other pair for at most `q` of the\n`q²` values of `(α, β)`. So the average over `(α, β)` of `‖(S ⊗ B_u(g(u))) Φ‖²` is at most\n`2/q · ⟨S⟩ + W(g₁(u₀), g₂(u₀))`, with `W(a, b) = ‖(S ⊗ X_a Z_b) Φ‖² ≤ ⟨S ⊗ Z_b⟩`. Averaging over\n`u₀`, read as a uniform `z` block with the other coordinates uniform and independent\n(`sum_uniform_mixOn`): for fixed `z`, `u ↦ g₂(u)` is a polynomial in the other coordinates\n(`LowIndDegPoly.restrictOff`) which, if `g₂` reads a coordinate outside the `z` block, is\nnon-constant except for a set of `z` of probability at most `4md/q` (Schwartz--Zippel on a\nnonzero coefficient), and where it is non-constant each value `b` is taken with probability at\nmost `4md/q`, so `E ⟨S ⊗ Z_{g₂(u)}(z)⟩ ≤ 8md/q · ⟨S⟩`. Altogether\n`E_u ‖(S ⊗ B_u(g(u))) Φ‖² ≤ η ⟨S⟩` with `η = (2 + 8md)/q`, and the assembly of\n`lem:qld-global-linear` gives `(1 - 2η) · (weight of these outcomes) ≤ 2Δ`. The other block is\nthe mirror image, with the roles of `(X, a, α)` and `(Z, b, β)` exchanged.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Separate.lean#L110-L127",
+  "source_path": "MIPRE/Background/QLD/Separate.lean",
+  "lines": [
+   110,
+   127
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-separate",
+    "env": "lemma",
+    "title": "Separating the two point variables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 4,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.pAB_eq_linAB_of_isLinAB",
+  "source_name": "MIPRE.QLD.pAB_eq_linAB_of_isLinAB",
+  "formal_statement": "theorem MIPRE.QLD.pAB_eq_linAB_of_isLinAB (hd : 1 ≤ d) {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}\n    (hg : IsLinAB g) (u₀ : Point F (4 * m)) :\n    pAB g u₀ = linAB hd ((gA hd g).eval u₀) ((gB hd g).eval u₀) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]"
+  ],
+  "docstring": "**A linear outcome read at the combining coordinates is the linear form of its two\ncoefficients.**",
+  "module": "MIPRE.Background.QLD.Separate",
+  "module_doc": "/-!\n# Separating the two point variables (`lem:qld-global-separate`)\n\nAn outcome `g = α g₁ + β g₂` of the global measurement that is linear in the combining\ncoordinates (`IsLinAB`, `lem:qld-global-linear`) is *good* when `g₁` reads only the `x` block and\n`g₂` only the `z` block: `g = α g_X(x) + β g_Z(z)` (`IsGood`). This file bounds the weight of the\nlinear outcomes that are not good, from the two ordered-product estimates of\n`lem:qld-global-products`: the order `X_a Z_b` controls the outcomes whose `g₂` reads a coordinate\noutside the `z` block, and the order `Z_b X_a` those whose `g₁` reads a coordinate outside the `x`\nblock.\n\n## The argument\n\nFor a linear outcome and a base point `u₀`, the fibre `{αa + βb = α g₁(u₀) + β g₂(u₀)}` always\ncontains the diagonal pair `(g₁(u₀), g₂(u₀))`, and contains any other pair for at most `q` of the\n`q²` values of `(α, β)`. So the average over `(α, β)` of `‖(S ⊗ B_u(g(u))) Φ‖²` is at most\n`2/q · ⟨S⟩ + W(g₁(u₀), g₂(u₀))`, with `W(a, b) = ‖(S ⊗ X_a Z_b) Φ‖² ≤ ⟨S ⊗ Z_b⟩`. Averaging over\n`u₀`, read as a uniform `z` block with the other coordinates uniform and independent\n(`sum_uniform_mixOn`): for fixed `z`, `u ↦ g₂(u)` is a polynomial in the other coordinates\n(`LowIndDegPoly.restrictOff`) which, if `g₂` reads a coordinate outside the `z` block, is\nnon-constant except for a set of `z` of probability at most `4md/q` (Schwartz--Zippel on a\nnonzero coefficient), and where it is non-constant each value `b` is taken with probability at\nmost `4md/q`, so `E ⟨S ⊗ Z_{g₂(u)}(z)⟩ ≤ 8md/q · ⟨S⟩`. Altogether\n`E_u ‖(S ⊗ B_u(g(u))) Φ‖² ≤ η ⟨S⟩` with `η = (2 + 8md)/q`, and the assembly of\n`lem:qld-global-linear` gives `(1 - 2η) · (weight of these outcomes) ≤ 2Δ`. The other block is\nthe mirror image, with the roles of `(X, a, α)` and `(Z, b, β)` exchanged.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Separate.lean#L257-L291",
+  "source_path": "MIPRE/Background/QLD/Separate.lean",
+  "lines": [
+   257,
+   291
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-separate",
+    "env": "lemma",
+    "title": "Separating the two point variables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 5,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.isGood_of",
+  "source_name": "MIPRE.QLD.isGood_of",
+  "formal_statement": "theorem MIPRE.QLD.isGood_of (hd : 1 ≤ d) {g : LowIndDegPoly (F := F) (m := 4 * m) (d := d)}\n    (hlin : IsLinAB g) (hA : ¬ (gA hd g).DepOutside xSet) (hB : ¬ (gB hd g).DepOutside zSet) :\n    IsGood g := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]"
+  ],
+  "docstring": "A linear outcome whose coefficient of `α` reads only the `x` block and whose coefficient of\n`β` reads only the `z` block is good.",
+  "module": "MIPRE.Background.QLD.Separate",
+  "module_doc": "/-!\n# Separating the two point variables (`lem:qld-global-separate`)\n\nAn outcome `g = α g₁ + β g₂` of the global measurement that is linear in the combining\ncoordinates (`IsLinAB`, `lem:qld-global-linear`) is *good* when `g₁` reads only the `x` block and\n`g₂` only the `z` block: `g = α g_X(x) + β g_Z(z)` (`IsGood`). This file bounds the weight of the\nlinear outcomes that are not good, from the two ordered-product estimates of\n`lem:qld-global-products`: the order `X_a Z_b` controls the outcomes whose `g₂` reads a coordinate\noutside the `z` block, and the order `Z_b X_a` those whose `g₁` reads a coordinate outside the `x`\nblock.\n\n## The argument\n\nFor a linear outcome and a base point `u₀`, the fibre `{αa + βb = α g₁(u₀) + β g₂(u₀)}` always\ncontains the diagonal pair `(g₁(u₀), g₂(u₀))`, and contains any other pair for at most `q` of the\n`q²` values of `(α, β)`. So the average over `(α, β)` of `‖(S ⊗ B_u(g(u))) Φ‖²` is at most\n`2/q · ⟨S⟩ + W(g₁(u₀), g₂(u₀))`, with `W(a, b) = ‖(S ⊗ X_a Z_b) Φ‖² ≤ ⟨S ⊗ Z_b⟩`. Averaging over\n`u₀`, read as a uniform `z` block with the other coordinates uniform and independent\n(`sum_uniform_mixOn`): for fixed `z`, `u ↦ g₂(u)` is a polynomial in the other coordinates\n(`LowIndDegPoly.restrictOff`) which, if `g₂` reads a coordinate outside the `z` block, is\nnon-constant except for a set of `z` of probability at most `4md/q` (Schwartz--Zippel on a\nnonzero coefficient), and where it is non-constant each value `b` is taken with probability at\nmost `4md/q`, so `E ⟨S ⊗ Z_{g₂(u)}(z)⟩ ≤ 8md/q · ⟨S⟩`. Altogether\n`E_u ‖(S ⊗ B_u(g(u))) Φ‖² ≤ η ⟨S⟩` with `η = (2 + 8md)/q`, and the assembly of\n`lem:qld-global-linear` gives `(1 - 2η) · (weight of these outcomes) ≤ 2Δ`. The other block is\nthe mirror image, with the roles of `(X, a, α)` and `(Z, b, β)` exchanged.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Separate.lean#L311-L349",
+  "source_path": "MIPRE/Background/QLD/Separate.lean",
+  "lines": [
+   311,
+   349
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-separate",
+    "env": "lemma",
+    "title": "Separating the two point variables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 6,
+  "prooflines": 33,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.card_filter_linear_le",
+  "source_name": "MIPRE.QLD.card_filter_linear_le",
+  "formal_statement": "theorem MIPRE.QLD.card_filter_linear_le {c₁ c₂ : F} (h : ¬ (c₁ = 0 ∧ c₂ = 0)) :\n    (univ.filter fun ab : F × F => ab.1 * c₁ + ab.2 * c₂ = 0).card ≤ Fintype.card F := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open Finset Matrix MIPRE MIPRE.LIDT",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {RA RB : Type*} [Fintype RA]"
+  ],
+  "docstring": "A nontrivial linear form on `F²` vanishes on at most `q` pairs.",
+  "module": "MIPRE.Background.QLD.Separate",
+  "module_doc": "/-!\n# Separating the two point variables (`lem:qld-global-separate`)\n\nAn outcome `g = α g₁ + β g₂` of the global measurement that is linear in the combining\ncoordinates (`IsLinAB`, `lem:qld-global-linear`) is *good* when `g₁` reads only the `x` block and\n`g₂` only the `z` block: `g = α g_X(x) + β g_Z(z)` (`IsGood`). This file bounds the weight of the\nlinear outcomes that are not good, from the two ordered-product estimates of\n`lem:qld-global-products`: the order `X_a Z_b` controls the outcomes whose `g₂` reads a coordinate\noutside the `z` block, and the order `Z_b X_a` those whose `g₁` reads a coordinate outside the `x`\nblock.\n\n## The argument\n\nFor a linear outcome and a base point `u₀`, the fibre `{αa + βb = α g₁(u₀) + β g₂(u₀)}` always\ncontains the diagonal pair `(g₁(u₀), g₂(u₀))`, and contains any other pair for at most `q` of the\n`q²` values of `(α, β)`. So the average over `(α, β)` of `‖(S ⊗ B_u(g(u))) Φ‖²` is at most\n`2/q · ⟨S⟩ + W(g₁(u₀), g₂(u₀))`, with `W(a, b) = ‖(S ⊗ X_a Z_b) Φ‖² ≤ ⟨S ⊗ Z_b⟩`. Averaging over\n`u₀`, read as a uniform `z` block with the other coordinates uniform and independent\n(`sum_uniform_mixOn`): for fixed `z`, `u ↦ g₂(u)` is a polynomial in the other coordinates\n(`LowIndDegPoly.restrictOff`) which, if `g₂` reads a coordinate outside the `z` block, is\nnon-constant except for a set of `z` of probability at most `4md/q` (Schwartz--Zippel on a\nnonzero coefficient), and where it is non-constant each value `b` is taken with probability at\nmost `4md/q`, so `E ⟨S ⊗ Z_{g₂(u)}(z)⟩ ≤ 8md/q · ⟨S⟩`. Altogether\n`E_u ‖(S ⊗ B_u(g(u))) Φ‖² ≤ η ⟨S⟩` with `η = (2 + 8md)/q`, and the assembly of\n`lem:qld-global-linear` gives `(1 - 2η) · (weight of these outcomes) ≤ 2Δ`. The other block is\nthe mirror image, with the roles of `(X, a, α)` and `(Z, b, β)` exchanged.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/Separate.lean#L375-L402",
+  "source_path": "MIPRE/Background/QLD/Separate.lean",
+  "lines": [
+   375,
+   402
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-separate",
+    "env": "lemma",
+    "title": "Separating the two point variables",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 24,
+  "is_target": false
+ }
+]

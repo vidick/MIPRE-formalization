@@ -1,0 +1,621 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.dis_map_le",
+  "source_name": "MIPRE.dis_map_le",
+  "formal_statement": "theorem MIPRE.dis_map_le {C : Type*} [Fintype C] [DecidableEq C] (ψ : dA × dB → ℂ) (M : POVM Λ dA)\n    (N : POVM Λ dB) (f : Λ → C) : dis ψ (M.map f) (N.map f) ≤ dis ψ M N := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker",
+   "variable {Λ : Type*} [Fintype Λ] {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB]"
+  ],
+  "docstring": "**Data processing**: a common coarse-graining can only decrease the disagreement.",
+  "module": "MIPRE.Foundations.Disagreement",
+  "module_doc": "/-!\n# The disagreement of two parties' measurements\n\nThe probability `dis ψ M N = 1 - ∑_a ⟨ψ| M_a ⊗ N_a |ψ⟩` that Alice's POVM `M` and Bob's `N`,\nmeasured on `ψ`, return different outcomes, and four facts about it that the soundness of answer\nreduction uses throughout:\n\n* it only decreases under a common coarse-graining (`dis_map_le`);\n* disagreements chain across the two parties, linearly (`sum_dis_triangle`, from\n  `agreeSum_triangle`): Alice's `A` against Bob's `D` through Bob's `B` and Alice's `C`;\n* the probability of an event under Alice's measurement is at most its probability under Bob's,\n  plus their disagreement (`sum_ite_bornProb_one_le`): no square root is lost, and the two\n  measurements need not be projective;\n* a subtest whose acceptance forces the agreement of two readings of the answers bounds their\n  disagreement by its conditional failure, and a subtest whose acceptance excludes an event bounds\n  that event's probability by it (`sum_ite_bornProb_le_condFail`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Disagreement.lean#L60-L78",
+  "source_path": "MIPRE/Foundations/Disagreement.lean",
+  "lines": [
+   60,
+   78
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb_map",
+   "MIPRE.POVM.posSemidef"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.dis_eq_sum_ne",
+  "source_name": "MIPRE.dis_eq_sum_ne",
+  "formal_statement": "theorem MIPRE.dis_eq_sum_ne {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) [DecidableEq Λ] (M : POVM Λ dA)\n    (N : POVM Λ dB) :\n    dis ψ M N = ∑ a, ∑ b, if a = b then 0 else bornProb ψ ((M.mats a).val) ((N.mats b).val) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker",
+   "variable {Λ : Type*} [Fintype Λ] {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB]"
+  ],
+  "docstring": "The disagreement is the sum of the off-diagonal Born probabilities.",
+  "module": "MIPRE.Foundations.Disagreement",
+  "module_doc": "/-!\n# The disagreement of two parties' measurements\n\nThe probability `dis ψ M N = 1 - ∑_a ⟨ψ| M_a ⊗ N_a |ψ⟩` that Alice's POVM `M` and Bob's `N`,\nmeasured on `ψ`, return different outcomes, and four facts about it that the soundness of answer\nreduction uses throughout:\n\n* it only decreases under a common coarse-graining (`dis_map_le`);\n* disagreements chain across the two parties, linearly (`sum_dis_triangle`, from\n  `agreeSum_triangle`): Alice's `A` against Bob's `D` through Bob's `B` and Alice's `C`;\n* the probability of an event under Alice's measurement is at most its probability under Bob's,\n  plus their disagreement (`sum_ite_bornProb_one_le`): no square root is lost, and the two\n  measurements need not be projective;\n* a subtest whose acceptance forces the agreement of two readings of the answers bounds their\n  disagreement by its conditional failure, and a subtest whose acceptance excludes an event bounds\n  that event's probability by it (`sum_ite_bornProb_le_condFail`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Disagreement.lean#L80-L95",
+  "source_path": "MIPRE/Foundations/Disagreement.lean",
+  "lines": [
+   80,
+   95
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_ite_bornProb_one_le",
+  "source_name": "MIPRE.sum_ite_bornProb_one_le",
+  "formal_statement": "theorem MIPRE.sum_ite_bornProb_one_le {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) [DecidableEq Λ]\n    (M : POVM Λ dA) (N : POVM Λ dB) (E : Λ → Prop) [DecidablePred E] :\n    ∑ a, (if E a then bornProb ψ ((M.mats a).val) (1 : Matrix dB dB ℂ) else 0)\n      ≤ ∑ b, (if E b then bornProb ψ (1 : Matrix dA dA ℂ) ((N.mats b).val) else 0)\n        + dis ψ M N := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker",
+   "variable {Λ : Type*} [Fintype Λ] {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB]"
+  ],
+  "docstring": "**An event transfers across the parties**: its probability under Alice's measurement is at\nmost its probability under Bob's plus their disagreement.",
+  "module": "MIPRE.Foundations.Disagreement",
+  "module_doc": "/-!\n# The disagreement of two parties' measurements\n\nThe probability `dis ψ M N = 1 - ∑_a ⟨ψ| M_a ⊗ N_a |ψ⟩` that Alice's POVM `M` and Bob's `N`,\nmeasured on `ψ`, return different outcomes, and four facts about it that the soundness of answer\nreduction uses throughout:\n\n* it only decreases under a common coarse-graining (`dis_map_le`);\n* disagreements chain across the two parties, linearly (`sum_dis_triangle`, from\n  `agreeSum_triangle`): Alice's `A` against Bob's `D` through Bob's `B` and Alice's `C`;\n* the probability of an event under Alice's measurement is at most its probability under Bob's,\n  plus their disagreement (`sum_ite_bornProb_one_le`): no square root is lost, and the two\n  measurements need not be projective;\n* a subtest whose acceptance forces the agreement of two readings of the answers bounds their\n  disagreement by its conditional failure, and a subtest whose acceptance excludes an event bounds\n  that event's probability by it (`sum_ite_bornProb_le_condFail`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Disagreement.lean#L97-L141",
+  "source_path": "MIPRE/Foundations/Disagreement.lean",
+  "lines": [
+   97,
+   141
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.dis_eq_sum_ne",
+   "MIPRE.aOp_sum",
+   "MIPRE.POVM.sum_val",
+   "MIPRE.POVM.posSemidef"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 38,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_ite_bornProb_one_le_prime",
+  "source_name": "MIPRE.sum_ite_bornProb_one_le'",
+  "formal_statement": "theorem MIPRE.sum_ite_bornProb_one_le_prime {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) [DecidableEq Λ]\n    (M : POVM Λ dA) (N : POVM Λ dB) (E : Λ → Prop) [DecidablePred E] :\n    ∑ b, (if E b then bornProb ψ (1 : Matrix dA dA ℂ) ((N.mats b).val) else 0)\n      ≤ ∑ a, (if E a then bornProb ψ ((M.mats a).val) (1 : Matrix dB dB ℂ) else 0)\n        + dis ψ M N := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker",
+   "variable {Λ : Type*} [Fintype Λ] {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB]"
+  ],
+  "docstring": "The mirror image: an event transfers from Bob's measurement to Alice's.",
+  "module": "MIPRE.Foundations.Disagreement",
+  "module_doc": "/-!\n# The disagreement of two parties' measurements\n\nThe probability `dis ψ M N = 1 - ∑_a ⟨ψ| M_a ⊗ N_a |ψ⟩` that Alice's POVM `M` and Bob's `N`,\nmeasured on `ψ`, return different outcomes, and four facts about it that the soundness of answer\nreduction uses throughout:\n\n* it only decreases under a common coarse-graining (`dis_map_le`);\n* disagreements chain across the two parties, linearly (`sum_dis_triangle`, from\n  `agreeSum_triangle`): Alice's `A` against Bob's `D` through Bob's `B` and Alice's `C`;\n* the probability of an event under Alice's measurement is at most its probability under Bob's,\n  plus their disagreement (`sum_ite_bornProb_one_le`): no square root is lost, and the two\n  measurements need not be projective;\n* a subtest whose acceptance forces the agreement of two readings of the answers bounds their\n  disagreement by its conditional failure, and a subtest whose acceptance excludes an event bounds\n  that event's probability by it (`sum_ite_bornProb_le_condFail`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Disagreement.lean#L143-L187",
+  "source_path": "MIPRE/Foundations/Disagreement.lean",
+  "lines": [
+   143,
+   187
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.dis_eq_sum_ne",
+   "MIPRE.aOp_sum",
+   "MIPRE.POVM.sum_val",
+   "MIPRE.POVM.posSemidef"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 39,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.dis_le_sum_dis_map_add",
+  "source_name": "MIPRE.dis_le_sum_dis_map_add",
+  "formal_statement": "theorem MIPRE.dis_le_sum_dis_map_add {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) [DecidableEq Λ]\n    (M : POVM Λ dA) (N : POVM Λ dB) {Y R : Type*} [Fintype Y] [Fintype R] [DecidableEq R]\n    {ν : Y → ℝ} (hν0 : ∀ y, 0 ≤ ν y) (hν1 : ∑ y, ν y = 1) (ev : Y → Λ → R) {ε : ℝ}\n    (hε : 0 ≤ ε)\n    (hsep : ∀ g g', g ≠ g' → ∑ y, ν y * (if ev y g = ev y g' then 1 else 0) ≤ ε) :\n    dis ψ M N ≤ ∑ y, ν y * dis ψ (M.map (ev y)) (N.map (ev y)) + ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker",
+   "variable {Λ : Type*} [Fintype Λ] {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB]"
+  ],
+  "docstring": "**From evaluations to outcomes**: when distinct outcomes are separated by an evaluation map at\na point drawn from `ν`, colliding with probability at most `ε`, the disagreement of the outcomes is\nat most the average disagreement of the evaluations, plus `ε`. Neither measurement need be\nprojective.",
+  "module": "MIPRE.Foundations.Disagreement",
+  "module_doc": "/-!\n# The disagreement of two parties' measurements\n\nThe probability `dis ψ M N = 1 - ∑_a ⟨ψ| M_a ⊗ N_a |ψ⟩` that Alice's POVM `M` and Bob's `N`,\nmeasured on `ψ`, return different outcomes, and four facts about it that the soundness of answer\nreduction uses throughout:\n\n* it only decreases under a common coarse-graining (`dis_map_le`);\n* disagreements chain across the two parties, linearly (`sum_dis_triangle`, from\n  `agreeSum_triangle`): Alice's `A` against Bob's `D` through Bob's `B` and Alice's `C`;\n* the probability of an event under Alice's measurement is at most its probability under Bob's,\n  plus their disagreement (`sum_ite_bornProb_one_le`): no square root is lost, and the two\n  measurements need not be projective;\n* a subtest whose acceptance forces the agreement of two readings of the answers bounds their\n  disagreement by its conditional failure, and a subtest whose acceptance excludes an event bounds\n  that event's probability by it (`sum_ite_bornProb_le_condFail`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Disagreement.lean#L189-L258",
+  "source_path": "MIPRE/Foundations/Disagreement.lean",
+  "lines": [
+   189,
+   258
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb_map",
+   "MIPRE.dis_eq_sum_ne",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.sum_bornProb"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 60,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_dis_triangle",
+  "source_name": "MIPRE.sum_dis_triangle",
+  "formal_statement": "theorem MIPRE.sum_dis_triangle {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) (A C : X → POVM Λ dA)\n    (B D : X → POVM Λ dB) :\n    ∑ x, dis ψ (A x) (D x)\n      ≤ 11 * (∑ x, dis ψ (A x) (B x) + ∑ x, dis ψ (C x) (B x) + ∑ x, dis ψ (C x) (D x)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker",
+   "variable {Λ : Type*} [Fintype Λ] {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB]",
+   "variable {X : Type*} [Fintype X] [Nonempty X]"
+  ],
+  "docstring": "**The disagreement triangle** across the two parties, on a uniform index: Alice's `A` against\nBob's `D`, through Bob's `B` and Alice's `C`.",
+  "module": "MIPRE.Foundations.Disagreement",
+  "module_doc": "/-!\n# The disagreement of two parties' measurements\n\nThe probability `dis ψ M N = 1 - ∑_a ⟨ψ| M_a ⊗ N_a |ψ⟩` that Alice's POVM `M` and Bob's `N`,\nmeasured on `ψ`, return different outcomes, and four facts about it that the soundness of answer\nreduction uses throughout:\n\n* it only decreases under a common coarse-graining (`dis_map_le`);\n* disagreements chain across the two parties, linearly (`sum_dis_triangle`, from\n  `agreeSum_triangle`): Alice's `A` against Bob's `D` through Bob's `B` and Alice's `C`;\n* the probability of an event under Alice's measurement is at most its probability under Bob's,\n  plus their disagreement (`sum_ite_bornProb_one_le`): no square root is lost, and the two\n  measurements need not be projective;\n* a subtest whose acceptance forces the agreement of two readings of the answers bounds their\n  disagreement by its conditional failure, and a subtest whose acceptance excludes an event bounds\n  that event's probability by it (`sum_ite_bornProb_le_condFail`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Disagreement.lean#L273-L298",
+  "source_path": "MIPRE/Foundations/Disagreement.lean",
+  "lines": [
+   273,
+   298
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_snorm_sq_triangle3",
+   "MIPRE.sum_stateSqNorm_le_one",
+   "MIPRE.xDev_eq",
+   "MIPRE.weightA_ge",
+   "MIPRE.weightB_ge",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.sum_bornProb"
+  ],
+  "pasted_helpers": 20,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_ite_bornProb_le_condFail",
+  "source_name": "MIPRE.sum_ite_bornProb_le_condFail",
+  "formal_statement": "theorem MIPRE.sum_ite_bornProb_le_condFail (hψ : star ψ ⬝ᵥ ψ = 1) {x : X} {y : Y} (E : B → Prop)\n    [DecidablePred E] (hD : ∀ a b, G.D x y a b = true → ¬ E b) :\n    ∑ b, (if E b then bornProb ψ (1 : Matrix dA dA ℂ) (((MB y).mats b).val) else 0)\n      ≤ condFail G ψ MA MB x y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker",
+   "variable {Λ : Type*} [Fintype Λ] {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB]",
+   "variable {X Y A B C : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B] [Fintype C]"
+  ],
+  "docstring": "**A subtest excluding an event of Bob's answer bounds its probability.**",
+  "module": "MIPRE.Foundations.Disagreement",
+  "module_doc": "/-!\n# The disagreement of two parties' measurements\n\nThe probability `dis ψ M N = 1 - ∑_a ⟨ψ| M_a ⊗ N_a |ψ⟩` that Alice's POVM `M` and Bob's `N`,\nmeasured on `ψ`, return different outcomes, and four facts about it that the soundness of answer\nreduction uses throughout:\n\n* it only decreases under a common coarse-graining (`dis_map_le`);\n* disagreements chain across the two parties, linearly (`sum_dis_triangle`, from\n  `agreeSum_triangle`): Alice's `A` against Bob's `D` through Bob's `B` and Alice's `C`;\n* the probability of an event under Alice's measurement is at most its probability under Bob's,\n  plus their disagreement (`sum_ite_bornProb_one_le`): no square root is lost, and the two\n  measurements need not be projective;\n* a subtest whose acceptance forces the agreement of two readings of the answers bounds their\n  disagreement by its conditional failure, and a subtest whose acceptance excludes an event bounds\n  that event's probability by it (`sum_ite_bornProb_le_condFail`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Disagreement.lean#L315-L346",
+  "source_path": "MIPRE/Foundations/Disagreement.lean",
+  "lines": [
+   315,
+   346
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.aOp_sum",
+   "MIPRE.POVM.sum_val",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.sum_bornProb"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_ite_bornProb_le_condFail_prime",
+  "source_name": "MIPRE.sum_ite_bornProb_le_condFail'",
+  "formal_statement": "theorem MIPRE.sum_ite_bornProb_le_condFail_prime (hψ : star ψ ⬝ᵥ ψ = 1) {x : X} {y : Y} (E : A → Prop)\n    [DecidablePred E] (hD : ∀ a b, G.D x y a b = true → ¬ E a) :\n    ∑ a, (if E a then bornProb ψ (((MA x).mats a).val) (1 : Matrix dB dB ℂ) else 0)\n      ≤ condFail G ψ MA MB x y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker",
+   "variable {Λ : Type*} [Fintype Λ] {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB]",
+   "variable {X Y A B C : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B] [Fintype C]"
+  ],
+  "docstring": "The mirror image, for an event of Alice's answer.",
+  "module": "MIPRE.Foundations.Disagreement",
+  "module_doc": "/-!\n# The disagreement of two parties' measurements\n\nThe probability `dis ψ M N = 1 - ∑_a ⟨ψ| M_a ⊗ N_a |ψ⟩` that Alice's POVM `M` and Bob's `N`,\nmeasured on `ψ`, return different outcomes, and four facts about it that the soundness of answer\nreduction uses throughout:\n\n* it only decreases under a common coarse-graining (`dis_map_le`);\n* disagreements chain across the two parties, linearly (`sum_dis_triangle`, from\n  `agreeSum_triangle`): Alice's `A` against Bob's `D` through Bob's `B` and Alice's `C`;\n* the probability of an event under Alice's measurement is at most its probability under Bob's,\n  plus their disagreement (`sum_ite_bornProb_one_le`): no square root is lost, and the two\n  measurements need not be projective;\n* a subtest whose acceptance forces the agreement of two readings of the answers bounds their\n  disagreement by its conditional failure, and a subtest whose acceptance excludes an event bounds\n  that event's probability by it (`sum_ite_bornProb_le_condFail`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Disagreement.lean#L348-L376",
+  "source_path": "MIPRE/Foundations/Disagreement.lean",
+  "lines": [
+   348,
+   376
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.POVM.sum_val",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.sum_bornProb"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.dis_map_eq_sum",
+  "source_name": "MIPRE.dis_map_eq_sum",
+  "formal_statement": "theorem MIPRE.dis_map_eq_sum {ψ : dA × dB → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) (M : POVM A dA) (N : POVM B dB)\n    (f : A → C) (g : B → C) :\n    dis ψ (M.map f) (N.map g) = ∑ a, ∑ b, (if f a = g b then 0 else 1)\n      * bornProb ψ ((M.mats a).val) ((N.mats b).val) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker",
+   "variable {Λ : Type*} [Fintype Λ] {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB]",
+   "variable {X Y A B C : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B] [Fintype C]"
+  ],
+  "docstring": "The disagreement of two readings is the weight of the outcome pairs they read differently.",
+  "module": "MIPRE.Foundations.Disagreement",
+  "module_doc": "/-!\n# The disagreement of two parties' measurements\n\nThe probability `dis ψ M N = 1 - ∑_a ⟨ψ| M_a ⊗ N_a |ψ⟩` that Alice's POVM `M` and Bob's `N`,\nmeasured on `ψ`, return different outcomes, and four facts about it that the soundness of answer\nreduction uses throughout:\n\n* it only decreases under a common coarse-graining (`dis_map_le`);\n* disagreements chain across the two parties, linearly (`sum_dis_triangle`, from\n  `agreeSum_triangle`): Alice's `A` against Bob's `D` through Bob's `B` and Alice's `C`;\n* the probability of an event under Alice's measurement is at most its probability under Bob's,\n  plus their disagreement (`sum_ite_bornProb_one_le`): no square root is lost, and the two\n  measurements need not be projective;\n* a subtest whose acceptance forces the agreement of two readings of the answers bounds their\n  disagreement by its conditional failure, and a subtest whose acceptance excludes an event bounds\n  that event's probability by it (`sum_ite_bornProb_le_condFail`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Disagreement.lean#L378-L393",
+  "source_path": "MIPRE/Foundations/Disagreement.lean",
+  "lines": [
+   378,
+   393
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_bornProb_map",
+   "MIPRE.sum_bornProb"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.condFail_le_of",
+  "source_name": "MIPRE.condFail_le_of",
+  "formal_statement": "theorem MIPRE.condFail_le_of (hψ : star ψ ⬝ᵥ ψ = 1) {x : X} {y : Y} (EA : A → Prop) (EB : B → Prop)\n    [DecidablePred EA] [DecidablePred EB] (f : A → C) (g : B → C)\n    (hD : ∀ a b, ¬ EA a → ¬ EB b → f a = g b → G.D x y a b = true) :\n    condFail G ψ MA MB x y\n      ≤ ∑ a, (if EA a then bornProb ψ (((MA x).mats a).val) (1 : Matrix dB dB ℂ) else 0)\n        + ∑ b, (if EB b then bornProb ψ (1 : Matrix dA dA ℂ) (((MB y).mats b).val) else 0)\n        + dis ψ ((MA x).map f) ((MB y).map g) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped Kronecker",
+   "variable {Λ : Type*} [Fintype Λ] {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB]",
+   "variable {X Y A B C : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B] [Fintype C]"
+  ],
+  "docstring": "**A subtest accepting when two events are avoided and two readings agree** fails at most the\nevents' probabilities plus the readings' disagreement.",
+  "module": "MIPRE.Foundations.Disagreement",
+  "module_doc": "/-!\n# The disagreement of two parties' measurements\n\nThe probability `dis ψ M N = 1 - ∑_a ⟨ψ| M_a ⊗ N_a |ψ⟩` that Alice's POVM `M` and Bob's `N`,\nmeasured on `ψ`, return different outcomes, and four facts about it that the soundness of answer\nreduction uses throughout:\n\n* it only decreases under a common coarse-graining (`dis_map_le`);\n* disagreements chain across the two parties, linearly (`sum_dis_triangle`, from\n  `agreeSum_triangle`): Alice's `A` against Bob's `D` through Bob's `B` and Alice's `C`;\n* the probability of an event under Alice's measurement is at most its probability under Bob's,\n  plus their disagreement (`sum_ite_bornProb_one_le`): no square root is lost, and the two\n  measurements need not be projective;\n* a subtest whose acceptance forces the agreement of two readings of the answers bounds their\n  disagreement by its conditional failure, and a subtest whose acceptance excludes an event bounds\n  that event's probability by it (`sum_ite_bornProb_le_condFail`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Disagreement.lean#L395-L459",
+  "source_path": "MIPRE/Foundations/Disagreement.lean",
+  "lines": [
+   395,
+   459
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.dis_map_eq_sum",
+   "MIPRE.aOp_sum",
+   "MIPRE.POVM.sum_val",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.sum_bornProb"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 56,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.POVM.ext_prime",
+  "source_name": "MIPRE.POVM.ext'",
+  "formal_statement": "theorem MIPRE.POVM.ext_prime {M N : POVM A d} (h : ∀ a, (((M.mats a)).val) = (((N.mats a)).val)) : M = N := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.POVM",
+   "open ComplexOrder Matrix",
+   "variable {n : Type*} [Fintype n]",
+   "variable {X A d : Type*} [Fintype X] [Fintype A] [Fintype d] [DecidableEq d]"
+  ],
+  "docstring": "**A POVM is determined by its operators.** The remaining fields are propositions.",
+  "module": "MIPRE.Foundations.Distances",
+  "module_doc": "/-!\n# Distance measures\n\nThis file contains the definitions of the blueprint subsection \"Distance measures\"\n(Section 2, \"Foundations\"): the dimension-normalized Hilbert--Schmidt inner product and\nsquared norm on complex matrices, and the distance between two families of POVMs\nrelative to a question distribution.\n\n## Main definitions\n\n- `MIPRE.hsInner`: the dimension-normalized Hilbert--Schmidt inner product\n  `⟨A, B⟩_hs = τ(Aᴴ B)`, where `τ = Tr/d` is the dimension-normalized trace\n  (blueprint `def:hs-norm`).\n- `MIPRE.hsNormSq`: the squared dimension-normalized Hilbert--Schmidt norm\n  `‖A‖²_hs = τ(Aᴴ A)` (blueprint `def:hs-norm`).\n- `MIPRE.povmDistance`: the squared distance `𝔼_{x ∼ μ} ∑ₐ ‖M^x_a - N^x_a‖²_hs`\n  between two families of POVMs (blueprint `def:distance`).\n- `MIPRE.IsPOVMClose`: the δ-closeness relation `M ≈_δ N` of the blueprint.\n\n## Implementation notes\n\n- As elsewhere in the foundations, question distributions are bare real-valued\n  functions: `povmDistance` and `IsPOVMClose` take any `μ : X → ℝ`, and results about\n  them will assume nonnegativity and normalization as needed.\n- `⟨A, A⟩_hs` is a nonnegative real for every `A`, but proving so requires a positivity\n  argument; `hsNormSq` takes the real part `.re` so that the definition carries no\n  proof obligations. Nonnegativity is recorded separately in `hsNormSq_nonneg`.\n- The blueprint writes the POVM distance as `𝔼_{x ∼ μ} ∑ₐ τ((M^x_a - N^x_a)²)`; since\n  differences of POVM elements are Hermitian, this agrees with the definition here (see\n  `hsNormSq_of_isHermitian`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Distances.lean#L106-L113",
+  "source_path": "MIPRE/Foundations/Distances.lean",
+  "lines": [
+   106,
+   113
+  ],
+  "blueprint": [
+   {
+    "label": "def:expanded-state",
+    "env": "definition",
+    "title": "The expanded state, and an inert ancilla",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.POVM.map_map",
+  "source_name": "MIPRE.POVM.map_map",
+  "formal_statement": "theorem MIPRE.POVM.map_map {B C : Type*} [Fintype B] [DecidableEq B] [Fintype C] [DecidableEq C]\n    (M : POVM A d) (f : A → B) (g : B → C) :\n    (M.map f).map g = M.map fun a => g (f a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.POVM",
+   "open ComplexOrder Matrix",
+   "variable {n : Type*} [Fintype n]",
+   "variable {X A d : Type*} [Fintype X] [Fintype A] [Fintype d] [DecidableEq d]"
+  ],
+  "docstring": "**Relabelling twice is relabelling once**: the level sets of `g ∘ f` are the unions of the\nlevel sets of `f` along the level sets of `g`.",
+  "module": "MIPRE.Foundations.Distances",
+  "module_doc": "/-!\n# Distance measures\n\nThis file contains the definitions of the blueprint subsection \"Distance measures\"\n(Section 2, \"Foundations\"): the dimension-normalized Hilbert--Schmidt inner product and\nsquared norm on complex matrices, and the distance between two families of POVMs\nrelative to a question distribution.\n\n## Main definitions\n\n- `MIPRE.hsInner`: the dimension-normalized Hilbert--Schmidt inner product\n  `⟨A, B⟩_hs = τ(Aᴴ B)`, where `τ = Tr/d` is the dimension-normalized trace\n  (blueprint `def:hs-norm`).\n- `MIPRE.hsNormSq`: the squared dimension-normalized Hilbert--Schmidt norm\n  `‖A‖²_hs = τ(Aᴴ A)` (blueprint `def:hs-norm`).\n- `MIPRE.povmDistance`: the squared distance `𝔼_{x ∼ μ} ∑ₐ ‖M^x_a - N^x_a‖²_hs`\n  between two families of POVMs (blueprint `def:distance`).\n- `MIPRE.IsPOVMClose`: the δ-closeness relation `M ≈_δ N` of the blueprint.\n\n## Implementation notes\n\n- As elsewhere in the foundations, question distributions are bare real-valued\n  functions: `povmDistance` and `IsPOVMClose` take any `μ : X → ℝ`, and results about\n  them will assume nonnegativity and normalization as needed.\n- `⟨A, A⟩_hs` is a nonnegative real for every `A`, but proving so requires a positivity\n  argument; `hsNormSq` takes the real part `.re` so that the definition carries no\n  proof obligations. Nonnegativity is recorded separately in `hsNormSq_nonneg`.\n- The blueprint writes the POVM distance as `𝔼_{x ∼ μ} ∑ₐ τ((M^x_a - N^x_a)²)`; since\n  differences of POVM elements are Hermitian, this agrees with the definition here (see\n  `hsNormSq_of_isHermitian`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Distances.lean#L120-L140",
+  "source_path": "MIPRE/Foundations/Distances.lean",
+  "lines": [
+   120,
+   140
+  ],
+  "blueprint": [
+   {
+    "label": "def:expanded-state",
+    "env": "definition",
+    "title": "The expanded state, and an inert ancilla",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.POVM.ext'"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TensorProductStrategy.sum_born",
+  "source_name": "MIPRE.TensorProductStrategy.sum_born",
+  "formal_statement": "theorem MIPRE.TensorProductStrategy.sum_born (S : TensorProductStrategy G) (x : X) (y : Y) :\n    ∑ a, ∑ b, S.born x y a b = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TensorProductStrategy",
+   "open Matrix Kronecker Finset",
+   "variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable {X' Y' A' B' : Type*} [Fintype X'] [Fintype Y'] [Fintype A'] [Fintype B']",
+   "variable {G : Game X Y A B}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.GameAdapt",
+  "module_doc": "/-!\n# Playing a strategy for one game as a strategy for another\n\n`MIPRE.Foundations.GameTransport` compares games that share their question alphabets and their\ndistribution. This file drops both assumptions, which is what a *reduction* between two\ngenuinely different games needs: given a strategy `S` for `G`, a map `qA` of the target game's\nquestions into `G`'s and a coarse-graining `rA` of `G`'s answers into the target's, `S.adapt`\nplays `S` through them.\n\n## The conditional success probability\n\nEverything is organized around `succAt S x y`, the probability that `S` is accepted *given* the\nquestion pair `(x, y)`, and its complement `failAt`. The value is the `μ`-average of `succAt`\n(`value_eq_sum_succAt`), so\n\n`1 - S.value = ∑ x y, μ x y * failAt S x y`  (`one_sub_value_eq_sum_failAt`),\n\nwhich is the form a reduction compares across two games: an inequality between failure\nprobabilities, each weighted by its own game's distribution.\n\n## What the adapter costs\n\n`failAt_adapt_le` says the adapted strategy fails no more often at `(x', y')` than `S` does at\n`(qA x', qB y')`, provided every tuple `G` accepts is still accepted after coarse-graining\n(`hD`). The summed statements ask `hD` only where `G'.μ` is nonzero, and that is not a\nconvenience: a question pair outside the target's support may well be one the target *rejects*\nand the source accepts --- for the seeded CL test, a pair of two line questions, which the\ncanonical-line test has no subtest for --- so the unrestricted hypothesis would be false. Summing, the price is entirely in the distributions: `one_sub_value_adapt_le` asks that\nthe push-forward of `G'`'s distribution along `(qA, qB)` be dominated by `C` times `G`'s, and\nconcludes `1 - (S.adapt …).value ≤ C * (1 - S.value)`.\n\n## Derandomization\n\nA reduction usually cannot choose the question map canonically: the target's question is\ntypically a *coarser* object than `G`'s — a line rather than a seeded description of a line —\nso one has to pick a preimage, and for any fixed choice the push-forward bound is off by the\nsize of the fibre. `exists_one_sub_value_adapt_le` is the averaged form. It asks only that the\npush-forward bound hold on average over a finite family of question maps, and returns one\nmember of the family achieving the conclusion. That is the \"choose the best seed\" step, and the\naveraging is exactly where the fibre size is paid back.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/GameAdapt.lean#L153-L155",
+  "source_path": "MIPRE/Foundations/GameAdapt.lean",
+  "lines": [
+   153,
+   155
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TensorProductStrategy.failAt_nonneg",
+  "source_name": "MIPRE.TensorProductStrategy.failAt_nonneg",
+  "formal_statement": "theorem MIPRE.TensorProductStrategy.failAt_nonneg (S : TensorProductStrategy G) (x : X) (y : Y) : 0 ≤ S.failAt x y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TensorProductStrategy",
+   "open Matrix Kronecker Finset",
+   "variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable {X' Y' A' B' : Type*} [Fintype X'] [Fintype Y'] [Fintype A'] [Fintype B']",
+   "variable {G : Game X Y A B}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.GameAdapt",
+  "module_doc": "/-!\n# Playing a strategy for one game as a strategy for another\n\n`MIPRE.Foundations.GameTransport` compares games that share their question alphabets and their\ndistribution. This file drops both assumptions, which is what a *reduction* between two\ngenuinely different games needs: given a strategy `S` for `G`, a map `qA` of the target game's\nquestions into `G`'s and a coarse-graining `rA` of `G`'s answers into the target's, `S.adapt`\nplays `S` through them.\n\n## The conditional success probability\n\nEverything is organized around `succAt S x y`, the probability that `S` is accepted *given* the\nquestion pair `(x, y)`, and its complement `failAt`. The value is the `μ`-average of `succAt`\n(`value_eq_sum_succAt`), so\n\n`1 - S.value = ∑ x y, μ x y * failAt S x y`  (`one_sub_value_eq_sum_failAt`),\n\nwhich is the form a reduction compares across two games: an inequality between failure\nprobabilities, each weighted by its own game's distribution.\n\n## What the adapter costs\n\n`failAt_adapt_le` says the adapted strategy fails no more often at `(x', y')` than `S` does at\n`(qA x', qB y')`, provided every tuple `G` accepts is still accepted after coarse-graining\n(`hD`). The summed statements ask `hD` only where `G'.μ` is nonzero, and that is not a\nconvenience: a question pair outside the target's support may well be one the target *rejects*\nand the source accepts --- for the seeded CL test, a pair of two line questions, which the\ncanonical-line test has no subtest for --- so the unrestricted hypothesis would be false. Summing, the price is entirely in the distributions: `one_sub_value_adapt_le` asks that\nthe push-forward of `G'`'s distribution along `(qA, qB)` be dominated by `C` times `G`'s, and\nconcludes `1 - (S.adapt …).value ≤ C * (1 - S.value)`.\n\n## Derandomization\n\nA reduction usually cannot choose the question map canonically: the target's question is\ntypically a *coarser* object than `G`'s — a line rather than a seeded description of a line —\nso one has to pick a preimage, and for any fixed choice the push-forward bound is off by the\nsize of the fibre. `exists_one_sub_value_adapt_le` is the averaged form. It asks only that the\npush-forward bound hold on average over a finite family of question maps, and returns one\nmember of the family achieving the conclusion. That is the \"choose the best seed\" step, and the\naveraging is exactly where the fibre size is paid back.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/GameAdapt.lean#L176-L177",
+  "source_path": "MIPRE/Foundations/GameAdapt.lean",
+  "lines": [
+   176,
+   177
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TensorProductStrategy.sum_born"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TensorProductStrategy.born_adapt",
+  "source_name": "MIPRE.TensorProductStrategy.born_adapt",
+  "formal_statement": "theorem MIPRE.TensorProductStrategy.born_adapt (S : TensorProductStrategy G) (G' : Game X' Y' A' B')\n    (qA : X' → X) (qB : Y' → Y) (rA : X' → A → A') (rB : Y' → B → B') (x' : X') (y' : Y')\n    (a' : A') (b' : B') :\n    (S.adapt G' qA qB rA rB).born x' y' a' b'\n      = ∑ a ∈ Finset.univ.filter (fun a => rA x' a = a'),\n          ∑ b ∈ Finset.univ.filter (fun b => rB y' b = b'), S.born (qA x') (qB y') a b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TensorProductStrategy",
+   "open Matrix Kronecker Finset",
+   "variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable {X' Y' A' B' : Type*} [Fintype X'] [Fintype Y'] [Fintype A'] [Fintype B']",
+   "variable {G : Game X Y A B}",
+   "variable [DecidableEq A'] [DecidableEq B']"
+  ],
+  "docstring": "The adapted Born-rule probability is the sum over the fibres of the coarse-graining.",
+  "module": "MIPRE.Foundations.GameAdapt",
+  "module_doc": "/-!\n# Playing a strategy for one game as a strategy for another\n\n`MIPRE.Foundations.GameTransport` compares games that share their question alphabets and their\ndistribution. This file drops both assumptions, which is what a *reduction* between two\ngenuinely different games needs: given a strategy `S` for `G`, a map `qA` of the target game's\nquestions into `G`'s and a coarse-graining `rA` of `G`'s answers into the target's, `S.adapt`\nplays `S` through them.\n\n## The conditional success probability\n\nEverything is organized around `succAt S x y`, the probability that `S` is accepted *given* the\nquestion pair `(x, y)`, and its complement `failAt`. The value is the `μ`-average of `succAt`\n(`value_eq_sum_succAt`), so\n\n`1 - S.value = ∑ x y, μ x y * failAt S x y`  (`one_sub_value_eq_sum_failAt`),\n\nwhich is the form a reduction compares across two games: an inequality between failure\nprobabilities, each weighted by its own game's distribution.\n\n## What the adapter costs\n\n`failAt_adapt_le` says the adapted strategy fails no more often at `(x', y')` than `S` does at\n`(qA x', qB y')`, provided every tuple `G` accepts is still accepted after coarse-graining\n(`hD`). The summed statements ask `hD` only where `G'.μ` is nonzero, and that is not a\nconvenience: a question pair outside the target's support may well be one the target *rejects*\nand the source accepts --- for the seeded CL test, a pair of two line questions, which the\ncanonical-line test has no subtest for --- so the unrestricted hypothesis would be false. Summing, the price is entirely in the distributions: `one_sub_value_adapt_le` asks that\nthe push-forward of `G'`'s distribution along `(qA, qB)` be dominated by `C` times `G`'s, and\nconcludes `1 - (S.adapt …).value ≤ C * (1 - S.value)`.\n\n## Derandomization\n\nA reduction usually cannot choose the question map canonically: the target's question is\ntypically a *coarser* object than `G`'s — a line rather than a seeded description of a line —\nso one has to pick a preimage, and for any fixed choice the push-forward bound is off by the\nsize of the fibre. `exists_one_sub_value_adapt_le` is the averaged form. It asks only that the\npush-forward bound hold on average over a finite family of question maps, and returns one\nmember of the family achieving the conclusion. That is the \"choose the best seed\" step, and the\naveraging is exactly where the fibre size is paid back.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/GameAdapt.lean#L220-L239",
+  "source_path": "MIPRE/Foundations/GameAdapt.lean",
+  "lines": [
+   220,
+   239
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TensorProductStrategy.succAt_adapt_eq",
+  "source_name": "MIPRE.TensorProductStrategy.succAt_adapt_eq",
+  "formal_statement": "theorem MIPRE.TensorProductStrategy.succAt_adapt_eq (S : TensorProductStrategy G) (G' : Game X' Y' A' B')\n    (qA : X' → X) (qB : Y' → Y) (rA : X' → A → A') (rB : Y' → B → B') (x' : X') (y' : Y') :\n    (S.adapt G' qA qB rA rB).succAt x' y'\n      = ∑ a, ∑ b, (if G'.D x' y' (rA x' a) (rB y' b) then 1 else 0)\n          * S.born (qA x') (qB y') a b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TensorProductStrategy",
+   "open Matrix Kronecker Finset",
+   "variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable {X' Y' A' B' : Type*} [Fintype X'] [Fintype Y'] [Fintype A'] [Fintype B']",
+   "variable {G : Game X Y A B}",
+   "variable [DecidableEq A'] [DecidableEq B']"
+  ],
+  "docstring": "The adapted conditional success probability, as a sum over `G`'s answers: the\ncoarse-graining disappears into the decision predicate.",
+  "module": "MIPRE.Foundations.GameAdapt",
+  "module_doc": "/-!\n# Playing a strategy for one game as a strategy for another\n\n`MIPRE.Foundations.GameTransport` compares games that share their question alphabets and their\ndistribution. This file drops both assumptions, which is what a *reduction* between two\ngenuinely different games needs: given a strategy `S` for `G`, a map `qA` of the target game's\nquestions into `G`'s and a coarse-graining `rA` of `G`'s answers into the target's, `S.adapt`\nplays `S` through them.\n\n## The conditional success probability\n\nEverything is organized around `succAt S x y`, the probability that `S` is accepted *given* the\nquestion pair `(x, y)`, and its complement `failAt`. The value is the `μ`-average of `succAt`\n(`value_eq_sum_succAt`), so\n\n`1 - S.value = ∑ x y, μ x y * failAt S x y`  (`one_sub_value_eq_sum_failAt`),\n\nwhich is the form a reduction compares across two games: an inequality between failure\nprobabilities, each weighted by its own game's distribution.\n\n## What the adapter costs\n\n`failAt_adapt_le` says the adapted strategy fails no more often at `(x', y')` than `S` does at\n`(qA x', qB y')`, provided every tuple `G` accepts is still accepted after coarse-graining\n(`hD`). The summed statements ask `hD` only where `G'.μ` is nonzero, and that is not a\nconvenience: a question pair outside the target's support may well be one the target *rejects*\nand the source accepts --- for the seeded CL test, a pair of two line questions, which the\ncanonical-line test has no subtest for --- so the unrestricted hypothesis would be false. Summing, the price is entirely in the distributions: `one_sub_value_adapt_le` asks that\nthe push-forward of `G'`'s distribution along `(qA, qB)` be dominated by `C` times `G`'s, and\nconcludes `1 - (S.adapt …).value ≤ C * (1 - S.value)`.\n\n## Derandomization\n\nA reduction usually cannot choose the question map canonically: the target's question is\ntypically a *coarser* object than `G`'s — a line rather than a seeded description of a line —\nso one has to pick a preimage, and for any fixed choice the push-forward bound is off by the\nsize of the fibre. `exists_one_sub_value_adapt_le` is the averaged form. It asks only that the\npush-forward bound hold on average over a finite family of question maps, and returns one\nmember of the family achieving the conclusion. That is the \"choose the best seed\" step, and the\naveraging is exactly where the fibre size is paid back.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/GameAdapt.lean#L241-L258",
+  "source_path": "MIPRE/Foundations/GameAdapt.lean",
+  "lines": [
+   241,
+   258
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TensorProductStrategy.born_adapt"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TensorProductStrategy.one_sub_value_adapt_le_sum",
+  "source_name": "MIPRE.TensorProductStrategy.one_sub_value_adapt_le_sum",
+  "formal_statement": "theorem MIPRE.TensorProductStrategy.one_sub_value_adapt_le_sum (S : TensorProductStrategy G) (G' : Game X' Y' A' B')\n    (qA : X' → X) (qB : Y' → Y) (rA : X' → A → A') (rB : Y' → B → B')\n    (hD : ∀ x' y' a b, G'.μ x' y' ≠ 0 →\n      G.D (qA x') (qB y') a b = true → G'.D x' y' (rA x' a) (rB y' b) = true) :\n    1 - (S.adapt G' qA qB rA rB).value\n      ≤ ∑ x, ∑ y, (∑ x' ∈ Finset.univ.filter (fun x' => qA x' = x),\n          ∑ y' ∈ Finset.univ.filter (fun y' => qB y' = y), G'.μ x' y') * S.failAt x y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TensorProductStrategy",
+   "open Matrix Kronecker Finset",
+   "variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable {X' Y' A' B' : Type*} [Fintype X'] [Fintype Y'] [Fintype A'] [Fintype B']",
+   "variable {G : Game X Y A B}",
+   "variable [DecidableEq A'] [DecidableEq B']",
+   "variable [DecidableEq X] [DecidableEq Y]"
+  ],
+  "docstring": "The failure of the adapted strategy, bounded by `G`'s failure weighted by the push-forward\nof `G'`'s distribution.",
+  "module": "MIPRE.Foundations.GameAdapt",
+  "module_doc": "/-!\n# Playing a strategy for one game as a strategy for another\n\n`MIPRE.Foundations.GameTransport` compares games that share their question alphabets and their\ndistribution. This file drops both assumptions, which is what a *reduction* between two\ngenuinely different games needs: given a strategy `S` for `G`, a map `qA` of the target game's\nquestions into `G`'s and a coarse-graining `rA` of `G`'s answers into the target's, `S.adapt`\nplays `S` through them.\n\n## The conditional success probability\n\nEverything is organized around `succAt S x y`, the probability that `S` is accepted *given* the\nquestion pair `(x, y)`, and its complement `failAt`. The value is the `μ`-average of `succAt`\n(`value_eq_sum_succAt`), so\n\n`1 - S.value = ∑ x y, μ x y * failAt S x y`  (`one_sub_value_eq_sum_failAt`),\n\nwhich is the form a reduction compares across two games: an inequality between failure\nprobabilities, each weighted by its own game's distribution.\n\n## What the adapter costs\n\n`failAt_adapt_le` says the adapted strategy fails no more often at `(x', y')` than `S` does at\n`(qA x', qB y')`, provided every tuple `G` accepts is still accepted after coarse-graining\n(`hD`). The summed statements ask `hD` only where `G'.μ` is nonzero, and that is not a\nconvenience: a question pair outside the target's support may well be one the target *rejects*\nand the source accepts --- for the seeded CL test, a pair of two line questions, which the\ncanonical-line test has no subtest for --- so the unrestricted hypothesis would be false. Summing, the price is entirely in the distributions: `one_sub_value_adapt_le` asks that\nthe push-forward of `G'`'s distribution along `(qA, qB)` be dominated by `C` times `G`'s, and\nconcludes `1 - (S.adapt …).value ≤ C * (1 - S.value)`.\n\n## Derandomization\n\nA reduction usually cannot choose the question map canonically: the target's question is\ntypically a *coarser* object than `G`'s — a line rather than a seeded description of a line —\nso one has to pick a preimage, and for any fixed choice the push-forward bound is off by the\nsize of the fibre. `exists_one_sub_value_adapt_le` is the averaged form. It asks only that the\npush-forward bound hold on average over a finite family of question maps, and returns one\nmember of the family achieving the conclusion. That is the \"choose the best seed\" step, and the\naveraging is exactly where the fibre size is paid back.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/GameAdapt.lean#L288-L314",
+  "source_path": "MIPRE/Foundations/GameAdapt.lean",
+  "lines": [
+   288,
+   314
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TensorProductStrategy.succAt_adapt_eq"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TensorProductStrategy.exists_one_sub_value_adapt_le",
+  "source_name": "MIPRE.TensorProductStrategy.exists_one_sub_value_adapt_le",
+  "formal_statement": "theorem MIPRE.TensorProductStrategy.exists_one_sub_value_adapt_le {Seed : Type*} [Fintype Seed] [Nonempty Seed]\n    (S : TensorProductStrategy G) (G' : Game X' Y' A' B')\n    (qA : Seed → X' → X) (qB : Seed → Y' → Y) (rA : Seed → X' → A → A')\n    (rB : Seed → Y' → B → B') (C : ℝ)\n    (hD : ∀ σ x' y' a b, G'.μ x' y' ≠ 0 →\n      G.D (qA σ x') (qB σ y') a b = true → G'.D x' y' (rA σ x' a) (rB σ y' b) = true)\n    (hμ : ∀ x y, (∑ σ, ∑ x' ∈ Finset.univ.filter (fun x' => qA σ x' = x),\n        ∑ y' ∈ Finset.univ.filter (fun y' => qB σ y' = y), G'.μ x' y')\n      ≤ (Fintype.card Seed : ℝ) * (C * G.μ x y)) :\n    ∃ σ : Seed,\n      1 - (S.adapt G' (qA σ) (qB σ) (rA σ) (rB σ)).value ≤ C * (1 - S.value) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TensorProductStrategy",
+   "open Matrix Kronecker Finset",
+   "variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable {X' Y' A' B' : Type*} [Fintype X'] [Fintype Y'] [Fintype A'] [Fintype B']",
+   "variable {G : Game X Y A B}",
+   "variable [DecidableEq A'] [DecidableEq B']",
+   "variable [DecidableEq X] [DecidableEq Y]"
+  ],
+  "docstring": "**The averaged form of `one_sub_value_adapt_le`.** The push-forward bound need only hold on\naverage over a finite family of question maps; some member of the family then achieves the\nconclusion. This is how a reduction that must *choose* a preimage of each target question pays\nback the size of the fibre.",
+  "module": "MIPRE.Foundations.GameAdapt",
+  "module_doc": "/-!\n# Playing a strategy for one game as a strategy for another\n\n`MIPRE.Foundations.GameTransport` compares games that share their question alphabets and their\ndistribution. This file drops both assumptions, which is what a *reduction* between two\ngenuinely different games needs: given a strategy `S` for `G`, a map `qA` of the target game's\nquestions into `G`'s and a coarse-graining `rA` of `G`'s answers into the target's, `S.adapt`\nplays `S` through them.\n\n## The conditional success probability\n\nEverything is organized around `succAt S x y`, the probability that `S` is accepted *given* the\nquestion pair `(x, y)`, and its complement `failAt`. The value is the `μ`-average of `succAt`\n(`value_eq_sum_succAt`), so\n\n`1 - S.value = ∑ x y, μ x y * failAt S x y`  (`one_sub_value_eq_sum_failAt`),\n\nwhich is the form a reduction compares across two games: an inequality between failure\nprobabilities, each weighted by its own game's distribution.\n\n## What the adapter costs\n\n`failAt_adapt_le` says the adapted strategy fails no more often at `(x', y')` than `S` does at\n`(qA x', qB y')`, provided every tuple `G` accepts is still accepted after coarse-graining\n(`hD`). The summed statements ask `hD` only where `G'.μ` is nonzero, and that is not a\nconvenience: a question pair outside the target's support may well be one the target *rejects*\nand the source accepts --- for the seeded CL test, a pair of two line questions, which the\ncanonical-line test has no subtest for --- so the unrestricted hypothesis would be false. Summing, the price is entirely in the distributions: `one_sub_value_adapt_le` asks that\nthe push-forward of `G'`'s distribution along `(qA, qB)` be dominated by `C` times `G`'s, and\nconcludes `1 - (S.adapt …).value ≤ C * (1 - S.value)`.\n\n## Derandomization\n\nA reduction usually cannot choose the question map canonically: the target's question is\ntypically a *coarser* object than `G`'s — a line rather than a seeded description of a line —\nso one has to pick a preimage, and for any fixed choice the push-forward bound is off by the\nsize of the fibre. `exists_one_sub_value_adapt_le` is the averaged form. It asks only that the\npush-forward bound hold on average over a finite family of question maps, and returns one\nmember of the family achieving the conclusion. That is the \"choose the best seed\" step, and the\naveraging is exactly where the fibre size is paid back.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/GameAdapt.lean#L336-L377",
+  "source_path": "MIPRE/Foundations/GameAdapt.lean",
+  "lines": [
+   336,
+   377
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TensorProductStrategy.one_sub_value_adapt_le_sum",
+   "MIPRE.TensorProductStrategy.failAt_nonneg"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.ProjectiveMeasurement.consistency",
+  "source_name": "MIPRE.ProjectiveMeasurement.consistency",
+  "formal_statement": "theorem MIPRE.ProjectiveMeasurement.consistency (P : ProjectiveMeasurement X A 𝒜) (τ : TracialState 𝒜) (x : X)\n    {a b : A} (hab : a ≠ b) : τ (P.M x a * P.M x b) = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.ProjectiveMeasurement",
+   "open ComplexOrder Kronecker Matrix",
+   "open scoped MatrixOrder",
+   "variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable {𝒜 ℬ : Type*} [Ring 𝒜] [StarRing 𝒜] [Module ℂ 𝒜]",
+   "variable [DecidableEq A]"
+  ],
+  "docstring": "Perfect consistency: against a tracial state, a projective measurement family\nanswers unequal answers to equal questions with probability zero. This is why the\n\"consistent\" condition of a PCC strategy (blueprint `def:pcc`) is automatic for\nsynchronous strategies.",
+  "module": "MIPRE.Foundations.Games",
+  "module_doc": "/-!\n# Games, strategies, and values\n\nThis file contains the definitions of blueprint Section 2.1 (\"Games, strategies, and\nvalues\") of the MIP* = RE formalization project: two-player one-round nonlocal games, the\nthree classes of strategies (tensor-product, synchronous, and commuting), the associated\nvalues, and the entanglement requirement.\n\nThe three strategy classes are built on a common skeleton, which this file factors out:\na question-indexed family of projective measurements in a complex star algebra\n(`MIPRE.ProjectiveMeasurement`). Tensor-product strategies instantiate it on two matrix\nalgebras joined by a state vector and the Born rule; synchronous strategies instantiate\nit on one matrix algebra `ℂ^{d×d}`, evaluated against the dimension-normalized trace;\ncommuting strategies are the general case of an abstract unital C*-algebra with a\ntracial state (`MIPRE.TracialState`), evaluated by the generic value\n`MIPRE.tracialValue`. The inclusion of synchronous into commuting strategies is\n`MIPRE.SyncStrategy.toCommutingStrategy`, which preserves the value definitionally; the\ncomparison of values (blueprint `lem:sync-le-valco`) follows.\n\nThe matrix-based definitions (`POVM`, `SynchronousGame`, and the synchronous value)\nagree with those of `MIPRE.HaltingGameValue`, which is kept self-contained. The\nsynchronous strategy is packaged differently there (with `POVM`s in place of a\n`ProjectiveMeasurement`); `MIPRE.SyncStrategy.ofPOVM` and `MIPRE.SyncStrategy.value_eq`\nprovide the correspondence.\n\n## Main definitions\n\n- `MIPRE.Game`: two-player one-round games (blueprint `def:game`).\n- `MIPRE.SynchronousGame`: synchronous games, with the interpretation\n  `MIPRE.SynchronousGame.toGame` (blueprint `def:sync-game`).\n- `MIPRE.ProjectiveMeasurement`: question-indexed projective measurement families in a\n  star ring, the common skeleton of the three strategy classes.\n- `MIPRE.TracialState`: tracial states on a complex star algebra;\n  `MIPRE.normalizedTrace` is the normalized matrix trace `Tr(·)/d`.\n- `MIPRE.tracialValue`: the generic value of a projective measurement family against a\n  tracial state.\n- `MIPRE.POVM`: positive operator-valued measures, following the QuantumLib\n  (Lean-QuantumInfo) definition; the vocabulary of the distance measures\n  (`MIPRE.Foundations.Distances`) and of the correspondence with\n  `MIPRE.HaltingGameValue`.\n- `MIPRE.TensorProductStrategy`: finite-dimensional tensor-product strategies, with\n  projective measurements on both factors (blueprint `def:tensor-strategy`).\n- `MIPRE.quantumValue`: the quantum value `val*` of a game (blueprint `def:q-value`).\n- `MIPRE.SyncStrategy`: synchronous strategies (blueprint `def:sync-strategy`), the\n  instantiation of the skeleton at `ℂ^{d×d}` with the normalized trace.\n- `MIPRE.SyncStrategy.IsPCC`: PCC (projective, consistent, and commuting) strategies\n  (blueprint `def:pcc`).\n- `MIPRE.syncValue`: the synchronous value of a synchronous game (blueprint\n  `def:sync-value`).\n- `MIPRE.CommutingStrate",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Games.lean#L294-L313",
+  "source_path": "MIPRE/Foundations/Games.lean",
+  "lines": [
+   294,
+   313
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Cost.Prog.parseProg_wellScoped",
+  "source_name": "MIPRE.Cost.Prog.parseProg_wellScoped",
+  "formal_statement": "theorem MIPRE.Cost.Prog.parseProg_wellScoped : parseProg.WellScoped 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Cost",
+   "open MIPRE.Cost.Prog",
+   "open MIPRE.Cost.Data"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Halting.Serial",
+  "module_doc": "/-!\n# Reading and writing descriptions, in the ambient model\n\nThe two programs that move between a datum and its postorder serialization\n(`Data.toBitsPost`, `Halting/Descriptions.lean`):\n\n* `Prog.parseProg`: the stack machine `Data.stackRun` on a bit string, returning the top of the\n  final stack (`Data.parse`). The compressor's decider reads the description it was handed with\n  it (`Halting/Compressor.lean`).\n* `Prog.serProg`: the postorder serialization of a datum, by a loop over a list of pending\n  items — a datum still to be written, or a marker for the closing `1` of a pair — accumulating\n  the bits in reverse and reversing at the end. The compressor writes its output with it.\n\nBoth run in time quadratic in the size of their input: each step copies the remainder of the\nwork list and the accumulator.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Halting/Serial.lean#L102-L102",
+  "source_path": "MIPRE/Foundations/Halting/Serial.lean",
+  "lines": [
+   102,
+   102
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ }
+]

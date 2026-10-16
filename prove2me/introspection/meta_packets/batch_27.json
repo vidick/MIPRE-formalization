@@ -1,0 +1,747 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.conditional_normalizer_change",
+  "source_name": "MIPRE.Introspection.conditional_normalizer_change",
+  "formal_statement": "theorem MIPRE.Introspection.conditional_normalizer_change (ψ : H × K → ℂ)\n    (M : I → Matrix H H ℂ) (R Q : Y → Matrix K K ℂ)\n    (f : Y → I → Z) (hM : IsPVM M) :\n    (∑ p : Y × Z, snorm ψ\n      (fibSum M (f p.1) p.2 ⊗ₖ R p.1 - fibSum M (f p.1) p.2 ⊗ₖ Q p.1) ^ 2) ≤\n      ∑ y, snorm ψ (bOp (R y - Q y)) ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {H K I Y Z : Type*}"
+  ],
+  "docstring": "Summing the complete keyed Alice PVM removes it from the normalizer error.",
+  "module": "MIPRE.Foundations.Introspection.ConditionalNormalizer",
+  "module_doc": "/-! # Replacing a conditional hiding normalizer by its ideal prefix\n\nThe coarse outcome map may depend on the retained conditioning label. Positivity\nof the ideal commuting prefix/fine-projector products lets us retain the fine\nagreement without a factor depending on either outcome alphabet. The resulting\nreplacement costs three times each of the conditional, prefix, and fine errors.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ConditionalNormalizer.lean#L145-L162",
+  "source_path": "MIPRE/Foundations/Introspection/ConditionalNormalizer.lean",
+  "lines": [
+   145,
+   162
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-conditional-normalizer",
+    "env": "lemma",
+    "title": "Dimension-independent conditional normalizer replacement",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_snorm_sq_mul_le",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.aOp_sum",
+   "MIPRE.IsPVM.coarse"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.fibSum_mul_of_reject",
+  "source_name": "MIPRE.Introspection.fibSum_mul_of_reject",
+  "formal_statement": "theorem MIPRE.Introspection.fibSum_mul_of_reject (P : I → Matrix H H ℂ) (R : Matrix H H ℂ)\n    (hP : ∑ i, P i = 1) (f : I → Z) (z₀ : Z)\n    (hzero : ∀ i, f i ≠ z₀ → P i * R = 0) (z : Z) :\n    fibSum P f z * R = if z = z₀ then R else 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "variable {H I O Y Z : Type*} [Fintype H] [DecidableEq H]"
+  ],
+  "docstring": "A complete family restricted to its only possible coarse outcome acts as\nthe identity on a compatible projector.",
+  "module": "MIPRE.Foundations.Introspection.ConditionalNormalizerExact",
+  "module_doc": "/-! # Exact conditional products from rejected-outcome orthogonality -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ConditionalNormalizerExact.lean#L21-L44",
+  "source_path": "MIPRE/Foundations/Introspection/ConditionalNormalizerExact.lean",
+  "lines": [
+   21,
+   44
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.conditionalIdeal_eq_coarse_of_reject",
+  "source_name": "MIPRE.Introspection.conditionalIdeal_eq_coarse_of_reject",
+  "formal_statement": "theorem MIPRE.Introspection.conditionalIdeal_eq_coarse_of_reject\n    (P : I → Matrix H H ℂ) (N : O → Matrix H H ℂ) (Q : Y → Matrix H H ℂ)\n    (f : Y → I → Z) (g : O → Y × Z)\n    (hP : IsPVM P) (hN : IsPVM N)\n    (hc : ∀ y i, Commute (Q y) (P i))\n    (hprefix : ∀ y o, Q y * N o = if (g o).1 = y then N o else 0)\n    (hreject : ∀ i o, f (g o).1 i ≠ (g o).2 → P i * N o = 0)\n    (p : Y × Z) : conditionalIdeal P Q f p = fibSum N g p := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "variable {H I O Y Z : Type*} [Fintype H] [DecidableEq H]"
+  ],
+  "docstring": "If a later PVM's prefix is selected by `Q`, and all rejected keyed\ncomparisons are orthogonal, the conditional ideal product is exactly its\ncoarse later measurement.",
+  "module": "MIPRE.Foundations.Introspection.ConditionalNormalizerExact",
+  "module_doc": "/-! # Exact conditional products from rejected-outcome orthogonality -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ConditionalNormalizerExact.lean#L46-L78",
+  "source_path": "MIPRE/Foundations/Introspection/ConditionalNormalizerExact.lean",
+  "lines": [
+   46,
+   78
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-concrete-ideal-step",
+    "env": "lemma",
+    "title": "The concrete ideal hiding step",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.fibSum_mul_of_reject"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.hideOp_conditionalIdeal_eq_next",
+  "source_name": "MIPRE.Introspection.Honest.hideOp_conditionalIdeal_eq_next",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.hideOp_conditionalIdeal_eq_next (P : CL.CLFun F ι ℓ) (k : ℕ)\n    (hk : k + 1 < ℓ) (h : P.SupportedOn univ)\n    (p : Option (ι → F) × Option (HideLabel F ι)) :\n    conditionalIdeal (hideOp P k h) (hidingPrefixOp P (k + 1))\n      (fun y a => TypedEstimates.hidingNextGuarded P k y (hideLabelCoarse P k a)) p =\n        fibSum (hideOp P (k + 1) h) (hideLabelNext P k) p := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "Exact identification of the conditional ideal product with the next\nhonest hiding PVM coarsened by the actual test's retained answer map. Every\npremise is supplied by the recursively constructed honest operators.",
+  "module": "MIPRE.Foundations.Introspection.ConditionalNormalizerIdeal",
+  "module_doc": "/-! # Concrete ideal prefixes for honest hiding\n\nThe next Z prefix is a marginal of the adjacent honest hiding PVM. Thus its\ncommutation with the preceding honest hiding family follows from the proved\nadjacent commutation, without a new commutation assumption.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ConditionalNormalizerIdeal.lean#L145-L169",
+  "source_path": "MIPRE/Foundations/Introspection/ConditionalNormalizerIdeal.lean",
+  "lines": [
+   145,
+   169
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.linear_measurements_commute",
+   "MIPRE.Introspection.conditionalIdeal_eq_coarse_of_reject",
+   "MIPRE.Introspection.CLChecks.outputPrefix_outputPrefix",
+   "MIPRE.Introspection.CLChecks.dualReadout_proj_compl_prefix",
+   "MIPRE.Introspection.CLChecks.proj_outputPrefix_cons",
+   "MIPRE.Introspection.Honest.hideRegister_entry_nonzero",
+   "MIPRE.Introspection.Honest.hideRegister_marginal",
+   "MIPRE.Introspection.Honest.hideRegister_accepts_next",
+   "MIPRE.Introspection.Honest.hideRegister_commute_next",
+   "MIPRE.Introspection.linear_measurement_isPVM",
+   "MIPRE.Introspection.registerOp_isPVM",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj"
+  ],
+  "pasted_helpers": 41,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.hideRegister_transpose",
+  "source_name": "MIPRE.Introspection.Honest.hideRegister_transpose",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.hideRegister_transpose (P : CL.CLFun F ι ℓ) (k : ℕ)\n    (V : Finset ι) (h : P.SupportedOn V) (a : HideLabel F ι) :\n    (hideRegister P k V h a)ᵀ = hideRegister P k V h a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "Adaptive branches preserve symmetry outcome by outcome; no comparison\nbetween operators in different branches is required.",
+  "module": "MIPRE.Foundations.Introspection.ConditionalNormalizerIdealMirror",
+  "module_doc": "/-! # Exact EPR mirrors of the concrete honest hiding operators\n\nEvery local Weyl readout is symmetric in characteristic two. The adaptive\nconstruction, its coordinate transports, and its coarse sums preserve that\nproperty, even when later measurements depend on earlier outcomes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ConditionalNormalizerIdealMirror.lean#L50-L72",
+  "source_path": "MIPRE/Foundations/Introspection/ConditionalNormalizerIdealMirror.lean",
+  "lines": [
+   50,
+   72
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.linear_measurements_commute"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.hideCoarseOp_aux_step_of_normalizer",
+  "source_name": "MIPRE.Introspection.Honest.hideCoarseOp_aux_step_of_normalizer",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.hideCoarseOp_aux_step_of_normalizer (P : CL.CLFun F ι ℓ) (k : ℕ)\n    (hk : k + 1 < ℓ) (h : P.SupportedOn univ)\n    (ξ : H × K → ℂ) (hξ : ‖evec ξ‖ = 1)\n    (N : POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K))\n    (hN : IsPVM (fun a => (N.mats a).val)) {δ : ℝ}\n    (hpaired : ∑ p, snorm (registerState (ι → F) ξ)\n      (bOp (((N.map (TypedEstimates.hidingNextLater P k)).mats p).val) -\n        bOp (conditionalIdeal\n          (fun i => (aOp (hideCoarseOp P k h i) : Matrix ((ι → F) × K) _ ℂ))\n          (fun y => aOp (hidingPrefixOp P (k + 1) y))\n          (TypedEstimates.hidingNextGuarded P k) p)) ^ 2 ≤ δ) :\n    (∑ z, xSqNorm (registerState (ι → F) ξ)\n      (aOp (hideCoarseOp P (k + 1) h z) : Matrix ((ι → F) × H) _ ℂ)\n      (((N.map (TypedEstimates.hidingCoarse P (k + 1))).mats z).val)) ≤ δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {F ι A PauliAnswer H K : Type*}"
+  ],
+  "docstring": "The paired normalizer bound implies rigidity of the actual next coarse\nHide measurement on the full seed/auxiliary carrier. All ideal mirrors and\nconditional product identities are supplied by the honest construction.",
+  "module": "MIPRE.Foundations.Introspection.ConditionalNormalizerStepAux",
+  "module_doc": "/-! # The next hiding step on an EPR seed with arbitrary auxiliaries -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ConditionalNormalizerStepAux.lean#L72-L115",
+  "source_path": "MIPRE/Foundations/Introspection/ConditionalNormalizerStepAux.lean",
+  "lines": [
+   72,
+   115
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-actual-hiding-rigidity-step",
+    "env": "lemma",
+    "title": "An actual adjacent hiding rigidity step",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.POVM.map_map",
+   "MIPRE.norm_evec_expVec",
+   "MIPRE.mulVec_kron_kron_expVec",
+   "MIPRE.Introspection.linear_measurements_commute",
+   "MIPRE.Introspection.Honest.hideOp_conditionalIdeal_eq_next",
+   "MIPRE.Introspection.Honest.hideRegister_transpose",
+   "MIPRE.Introspection.Honest.hideRegister_marginal",
+   "MIPRE.Introspection.Honest.hideRegister_commute_next",
+   "MIPRE.Introspection.Honest.coarseOp_comp",
+   "MIPRE.Introspection.linear_measurement_isPVM",
+   "MIPRE.Introspection.readout_isPVM",
+   "MIPRE.Introspection.registerOp_isPVM",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_sum",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.sum_bornProb_le_fibSum",
+   "MIPRE.IsPVM.aOp",
+   "MIPRE.one_sub_sum_bornProb_eq",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj",
+   "MIPRE.Weyl.stateVec_epr"
+  ],
+  "pasted_helpers": 52,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.hiding_next_register_rigidity",
+  "source_name": "MIPRE.Introspection.TypedEstimates.hiding_next_register_rigidity",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.hiding_next_register_rigidity\n    (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (P : PauliType → CL.CLFun (ZMod 2) κ 3) (L : Bool → CL.CLFun F ι ℓ)\n    (projectPauli : PauliAnswer → ι → F)\n    (D : (ι → F) → (ι → F) → A → A → Bool)\n    (DP : PauliType → PauliType → (κ → ZMod 2) → (κ → ZMod 2) →\n      PauliAnswer → PauliAnswer → Bool)\n    (ξ : H × K → ℂ) (hξ : star ξ ⬝ᵥ ξ = 1)\n    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × H))\n    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) ((ι → F) × K))\n    {ε δ εfine : ℝ}\n    (hfail : 1 - povmValue (parsedGame E X Z P L projectPauli D DP)\n      (registerState (ι → F) ξ) MA MB ≤ ε)\n    (w : Bool) (k j : Fin ℓ) (hk : k.val + 1 = j.val)\n    (hL : (L w).SupportedOn univ)\n    (hMA : IsPVM (fun a => ((MA (QuestionType.hide w k, 0)).mats a).val))\n    (hMB : IsPVM (fun b => ((MB (QuestionType.hide w j, 0)).mats b).val))\n    (hfine : ∑ i, xSqNorm (registerState (ι → F) ξ)\n      ((((MA (QuestionType.hide w k, 0)).map (hidingCoarse (L w) k.val)).mats i).val)\n      (aOp (hideCoarseOp (L w) k.val hL i) : Matrix ((ι → F) × K) _ ℂ) ≤ εfine)\n    (hintro : ∑ y, snorm (registerState (ι → F) ξ) (bOp\n      ((((MB (QuestionType.introspect w, 0)).map\n        (reportedPrefix (L w) j.val .introspect)).mats y).val -\n          (aOp (hidingPrefixOp (L w) j.val y) : Matrix ((ι → F) × K) _ ℂ))) ^ 2 ≤ δ) :\n    (∑ z, xSqNorm (registerState (ι → F) ξ)\n      (aOp (hideCoarseOp (L w) j.val hL z) : Matrix ((ι → F) × H) _ ℂ)\n      ((((MB (QuestionType.hide w j, 0)).map (hidingCoarse (L w) j.val)).mats z).val)) ≤\n        (6 + 48 * ((ℓ - j.val + 1 : ℕ) : ℝ) ^ 2) * (TypeGraph.edges E X Z ℓ).card * ε +\n          6 * δ + 3 * εfine := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical MIPRE.Introspection.Honest",
+   "open scoped Kronecker",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "The actual next Hide measurement is rigid with no dimension or answer\nalphabet factor. All ideal commutation, mirror, and accepted-answer facts are\nproved from the construction. The remaining inputs are the preceding fine\nrigidity and the Introspect-prefix estimate from sampling/Pauli extraction.",
+  "module": "MIPRE.Foundations.Introspection.ConditionalNormalizerStepGame",
+  "module_doc": "/-! # A concrete adjacent hiding rigidity step in the actual parsed game\n\nThe state has the extracted EPR seed and an arbitrary normalized auxiliary\nstate. Only the preceding fine estimate and the Introspect-prefix estimate\nare induction inputs. The actual game supplies the conditional relation and\npropagates the required normalizer through its hiding/Read/Introspect chain.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ConditionalNormalizerStepGame.lean#L32-L89",
+  "source_path": "MIPRE/Foundations/Introspection/ConditionalNormalizerStepGame.lean",
+  "lines": [
+   32,
+   89
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-actual-hiding-rigidity-step",
+    "env": "lemma",
+    "title": "An actual adjacent hiding rigidity step",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.linear_measurements_commute",
+   "MIPRE.Introspection.Honest.hideCoarseOp_aux_step_of_normalizer",
+   "MIPRE.Introspection.TypedEstimates.hiding_next_normalizer_estimate",
+   "MIPRE.Introspection.TypedEstimates.hidingNormalizer_estimate",
+   "MIPRE.Introspection.Honest.hideRegister_marginal",
+   "MIPRE.Introspection.Honest.hideRegister_commute_next",
+   "MIPRE.Introspection.linear_measurement_isPVM",
+   "MIPRE.Introspection.readout_isPVM",
+   "MIPRE.Introspection.registerOp_isPVM",
+   "MIPRE.aOp_mul",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.IsPVM.aOp",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.isWeylFamily_wZ",
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj",
+   "MIPRE.Weyl.epr_unit"
+  ],
+  "pasted_helpers": 29,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionPreparation.prog_runs",
+  "source_name": "MIPRE.Introspection.DecisionPreparation.prog_runs",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionPreparation.prog_runs (c : ℕ) (z : Data) :\n    ∃ time, (prog c).Runs z (encode (resources c z)) time := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionPreparation",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Introspection.SourceCompiler"
+  ],
+  "docstring": "Exact resource preparation is total for every input tree, including zero\nparameters and malformed raw decision inputs.",
+  "module": "MIPRE.Foundations.Introspection.DecisionPreparation",
+  "module_doc": "/-! # Preparing shared resources for the introspection decision kernel\n\nThe uniform program receives `cons (encode ((S,D),λ)) raw`. It generates the\nsingle unary clock, exponential source index, canonical unary Pauli parameters\nand binary register bounds. The raw decision input and source metadata are\nretained verbatim. A fixed polynomial-time kernel then consumes these resources.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/DecisionPreparation.lean#L151-L187",
+  "source_path": "MIPRE/Foundations/Introspection/DecisionPreparation.lean",
+  "lines": [
+   151,
+   187
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.routeOneCall_closed",
+   "MIPRE.Cost.Prog.routeOneCall_indirect",
+   "MIPRE.Introspection.ClockArithmetic.uniformProg_closed",
+   "MIPRE.Introspection.ClockArithmetic.uniformProg_runs",
+   "MIPRE.Introspection.PauliSamplerParameters.prog_closed",
+   "MIPRE.Introspection.PauliSamplerParameters.prog_runs",
+   "MIPRE.Introspection.SourceCompiler.boundsProg_runs"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionPreparation.compiler_closed",
+  "source_name": "MIPRE.Introspection.DecisionPreparation.compiler_closed",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionPreparation.compiler_closed (c : ℕ) (kernel : PolyTimeFun KernelInput Bool) (M : Metadata) :\n    (compiler c kernel M).WellScoped 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionPreparation",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Introspection.SourceCompiler"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.DecisionPreparation",
+  "module_doc": "/-! # Preparing shared resources for the introspection decision kernel\n\nThe uniform program receives `cons (encode ((S,D),λ)) raw`. It generates the\nsingle unary clock, exponential source index, canonical unary Pauli parameters\nand binary register bounds. The raw decision input and source metadata are\nretained verbatim. A fixed polynomial-time kernel then consumes these resources.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/DecisionPreparation.lean#L210-L211",
+  "source_path": "MIPRE/Foundations/Introspection/DecisionPreparation.lean",
+  "lines": [
+   210,
+   211
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.routeOneCall_closed",
+   "MIPRE.Cost.hardcode_wellScoped",
+   "MIPRE.Introspection.ClockArithmetic.uniformProg_closed",
+   "MIPRE.Introspection.PauliSamplerParameters.prog_closed"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionPreparation.boundsCost_le_majorant",
+  "source_name": "MIPRE.Introspection.DecisionPreparation.boundsCost_le_majorant",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionPreparation.boundsCost_le_majorant {c lam n v : ℕ} (hc : 1 ≤ c)\n    (hl : lam ≤ v) (hn : n ≤ v) (hu : lam*n ≤ v) :\n    boundsCost c lam n ≤ boundsMajorant c v := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionPreparation",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Introspection.SourceCompiler Polynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.DecisionPreparationCost",
+  "module_doc": "/-! # Uniform costs for one shared introspection resource preparation -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/DecisionPreparationCost.lean#L26-L70",
+  "source_path": "MIPRE/Foundations/Introspection/DecisionPreparationCost.lean",
+  "lines": [
+   26,
+   70
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.PauliSamplerParameters.selectorBits_le_fieldBits"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 42,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.DecisionPreparation.prog_runs_poly",
+  "source_name": "MIPRE.Introspection.DecisionPreparation.prog_runs_poly",
+  "formal_statement": "theorem MIPRE.Introspection.DecisionPreparation.prog_runs_poly {c v : ℕ} (hc : 1 ≤ c) (z : Data)\n    (hl : 1 ≤ inputLambda z) (hn : 1 ≤ inputIndex z)\n    (hz : z.size ≤ v) (hB : ansBound 5 (inputLambda z) (inputIndex z) ≤ v) :\n    ∃ time ≤ (preparationPoly c).eval v,\n      (prog c).Runs z (encode (resources c z)) time := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.DecisionPreparation",
+   "open MIPRE.Cost MIPRE.Cost.Prog MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Introspection.SourceCompiler Polynomial"
+  ],
+  "docstring": "All preparation work is polynomial in a common bound for the original\ninput and the one shared clock. The theorem keeps zero parameters separate.",
+  "module": "MIPRE.Foundations.Introspection.DecisionPreparationCost",
+  "module_doc": "/-! # Uniform costs for one shared introspection resource preparation -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/DecisionPreparationCost.lean#L125-L201",
+  "source_path": "MIPRE/Foundations/Introspection/DecisionPreparationCost.lean",
+  "lines": [
+   125,
+   201
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.routeOneCall_closed",
+   "MIPRE.Introspection.ClockArithmetic.uniformProg_closed",
+   "MIPRE.Introspection.ClockArithmetic.uniformProg_runs",
+   "MIPRE.Introspection.ClockArithmetic.growingClock_cost_le",
+   "MIPRE.Introspection.ClockSimulation.reindexCost_le",
+   "MIPRE.Introspection.ClockSimulation.reindexProg_runs_cost",
+   "MIPRE.Introspection.DecisionPreparation.boundsCost_le_majorant",
+   "MIPRE.Introspection.PauliSamplerParameters.prog_closed",
+   "MIPRE.Introspection.PauliSamplerParameters.cost_le_majorant",
+   "MIPRE.Introspection.PauliSamplerParameters.costMajorant_polyBounded",
+   "MIPRE.Introspection.PauliSamplerParameters.prog_runs_cost",
+   "MIPRE.Introspection.SourceCompiler.boundsProg_runs_cost"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 69,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.errorProfile_power",
+  "source_name": "MIPRE.Introspection.errorProfile_power",
+  "formal_statement": "theorem MIPRE.Introspection.errorProfile_power {C a b r x ε : ℝ}\n    (hC : 0 ≤ C) (ha : 0 ≤ a) (hr0 : 0 ≤ r) (hr1 : r ≤ 1)\n    (hx : 1 ≤ x) (hε : 0 ≤ ε) :\n    C * (errorProfile a b x ε) ^ r ≤\n      errorProfile (powerCoefficient C a r) (b * r) x ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection"
+  ],
+  "docstring": "A fixed concave power of the original soundness profile has the required final shape.",
+  "module": "MIPRE.Foundations.Introspection.ErrorBounds",
+  "module_doc": "/-! # Normalizing the final introspection error\n\nThe paper's final soundness estimate absorbs any fixed concave power and\nconstant multiple into `a * (x^a * ε^b + x^(-b))`. The coefficient and the new\nexponent are explicit here, including the normalization `a ≥ 1`, `0 < b ≤ 1`.\nNo induction estimate is assumed or encoded by the definitions in this file.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ErrorBounds.lean#L40-L69",
+  "source_path": "MIPRE/Foundations/Introspection/ErrorBounds.lean",
+  "lines": [
+   40,
+   69
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-error-absorption",
+    "env": "lemma",
+    "title": "Absorbing fixed introspection error losses",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.errorProfile_scale_input",
+  "source_name": "MIPRE.Introspection.errorProfile_scale_input",
+  "formal_statement": "theorem MIPRE.Introspection.errorProfile_scale_input {a b c x ε : ℝ}\n    (ha : 0 ≤ a) (hc : 0 ≤ c) (hx : 0 ≤ x) (hε : 0 ≤ ε) :\n    errorProfile a b x (c * ε) ≤ max 1 (c ^ b) * errorProfile a b x ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection"
+  ],
+  "docstring": "Scaling the test error, as happens in detyping, changes only a fixed coefficient.",
+  "module": "MIPRE.Foundations.Introspection.ErrorBounds",
+  "module_doc": "/-! # Normalizing the final introspection error\n\nThe paper's final soundness estimate absorbs any fixed concave power and\nconstant multiple into `a * (x^a * ε^b + x^(-b))`. The coefficient and the new\nexponent are explicit here, including the normalization `a ≥ 1`, `0 < b ≤ 1`.\nNo induction estimate is assumed or encoded by the definitions in this file.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ErrorBounds.lean#L127-L142",
+  "source_path": "MIPRE/Foundations/Introspection/ErrorBounds.lean",
+  "lines": [
+   127,
+   142
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-error-absorption",
+    "env": "lemma",
+    "title": "Absorbing fixed introspection error losses",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.errorProfile_scaled_power",
+  "source_name": "MIPRE.Introspection.errorProfile_scaled_power",
+  "formal_statement": "theorem MIPRE.Introspection.errorProfile_scaled_power {C a b c r x ε : ℝ}\n    (hC : 0 ≤ C) (ha : 0 ≤ a) (hc : 0 ≤ c) (hr0 : 0 ≤ r) (hr1 : r ≤ 1)\n    (hx : 1 ≤ x) (hε : 0 ≤ ε) :\n    C * (errorProfile a b x (c * ε)) ^ r ≤\n      errorProfile (powerCoefficient (C * (max 1 (c ^ b)) ^ r) a r) (b * r) x ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection"
+  ],
+  "docstring": "Constant rescaling of the input error followed by a concave power is absorbed too.",
+  "module": "MIPRE.Foundations.Introspection.ErrorBounds",
+  "module_doc": "/-! # Normalizing the final introspection error\n\nThe paper's final soundness estimate absorbs any fixed concave power and\nconstant multiple into `a * (x^a * ε^b + x^(-b))`. The coefficient and the new\nexponent are explicit here, including the normalization `a ≥ 1`, `0 < b ≤ 1`.\nNo induction estimate is assumed or encoded by the definitions in this file.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/ErrorBounds.lean#L144-L158",
+  "source_path": "MIPRE/Foundations/Introspection/ErrorBounds.lean",
+  "lines": [
+   144,
+   158
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-error-absorption",
+    "env": "lemma",
+    "title": "Absorbing fixed introspection error losses",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.errorProfile_power",
+   "MIPRE.Introspection.errorProfile_scale_input"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 9,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.FieldTableProgram.tableProg_correct",
+  "source_name": "MIPRE.Introspection.FieldTableProgram.tableProg_correct",
+  "formal_statement": "theorem MIPRE.Introspection.FieldTableProgram.tableProg_correct (k : ℕ) (hk : 1 ≤ k) {m : ℕ}\n    (x : Fin m → (shoupBinField k hk).carrier)\n    (h : (Fin m → Bool) → (shoupBinField k hk).carrier) :\n    tableProg (unary k, List.ofFn (fun j => (shoupBinField k hk).toBits (x j)),\n      List.ofFn (fun i : Fin (2 ^ m) =>\n        (shoupBinField k hk).toBits (h ((cubeEnumeration m).symm i)))) =\n      (shoupBinField k hk).toBits (MvPolynomial.eval x (ldEnc h)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.FieldTableProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.SAT MIPRE.LowDegree MIPRE.Introspection.FieldIndicatorProgram"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.FieldTableProg",
+  "module_doc": "/-! # Evaluating a faithfully ordered full Pauli answer\n\nThe answer table is ordered by the little-endian binary rank of its Boolean\ncube argument. The evaluator scans only the supplied rows, so even a malformed\nshort answer is processed in polynomial time. On a full canonical table it\ncomputes the low-degree encoding at an arbitrary field point.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/FieldTableProg.lean#L87-L118",
+  "source_path": "MIPRE/Foundations/Introspection/FieldTableProg.lean",
+  "lines": [
+   87,
+   118
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits",
+   "MIPRE.LowDegree.BinaryLinear.xorBits_vectorBits",
+   "MIPRE.SAT.shoupMulProg_encoding",
+   "MIPRE.SAT.bitsVal_injective",
+   "MIPRE.SAT.shoupBinField_charP",
+   "MIPRE.SAT.shoupRoot_eval_toBits",
+   "MIPRE.SAT.shoupRoot_eval_eq_iff"
+  ],
+  "pasted_helpers": 20,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.conditionalReadout_isPVM",
+  "source_name": "MIPRE.Introspection.conditionalReadout_isPVM",
+  "formal_statement": "theorem MIPRE.Introspection.conditionalReadout_isPVM (f : I → X) (P : X → A → Matrix H H ℂ)\n    (hP : ∀ x, IsPVM (P x)) : IsPVM (conditionalReadout f P) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker ComplexOrder MatrixOrder",
+   "variable {I X Y A B H K : Type*}"
+  ],
+  "docstring": "The question-dependent auxiliary family gives an actual joint PVM.",
+  "module": "MIPRE.Foundations.Introspection.FinalExtraction",
+  "module_doc": "/-! # Extracting the original strategy from introspective readouts\n\nThis proves the final game-value calculation in the soundness proof of\n`introspection.tex`. Once the induction has produced a question readout tensored\nwith an auxiliary measurement depending on that question, the original strategy\nuses precisely those auxiliary measurements and the auxiliary state. The value\nidentity below is exact, including the question-distribution normalization.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/FinalExtraction.lean#L36-L51",
+  "source_path": "MIPRE/Foundations/Introspection/FinalExtraction.lean",
+  "lines": [
+   36,
+   51
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-final-extraction",
+    "env": "lemma",
+    "title": "Exact final strategy extraction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.readout_isPVM",
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryDecision.guarded_iff",
+  "source_name": "MIPRE.Introspection.AuxiliaryDecision.guarded_iff",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryDecision.guarded_iff (U : ClockedUniversalMachine) (X Z : P)\n    (project : PolyTimeFun (Input P 7) BitStr) (x : Input P 7) :\n    guarded U X Z project x = true ↔\n      prefixGuard U x = true ∧ prefixGuard U (swap x) = true ∧ check U X Z project x = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryDecision",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.Introspection.AuxiliaryProgram",
+   "variable {P : Type*} [Fintype P] [DecidableEq P] [SizedEncoding P]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Introspection.GuardedAuxiliaryProgram",
+  "module_doc": "/-! # Auxiliary decision with both local prefix guards\n\nThe guards are applied to all hiding and Read endpoints, including consistency\nloops. This is the executable counterpart of `PrefixGuard.guarded` and makes\nits completeness and soundness transports available to the final verifier.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/GuardedAuxiliaryProgram.lean#L29-L33",
+  "source_path": "MIPRE/Foundations/Introspection/GuardedAuxiliaryProgram.lean",
+  "lines": [
+   29,
+   33
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.Honest.pauliXReadout_firstHide",
+  "source_name": "MIPRE.Introspection.Honest.pauliXReadout_firstHide",
+  "formal_statement": "theorem MIPRE.Introspection.Honest.pauliXReadout_firstHide (P : CL.CLFun F ι ℓ) (h : P.SupportedOn univ)\n    (z : Option (HideLabel F ι)) :\n    fibSum (pauliXReadout (F := F) (ι := ι)) (Option.map (firstHideAnswer P)) z =\n      hideCoarseOp P 0 h z := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.Honest",
+   "open Finset Matrix Classical MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F ι : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]"
+  ],
+  "docstring": "The ideal full-register first Hide family equals the tested coarsening\nof ideal Pauli-X, with a complete dummy outcome.",
+  "module": "MIPRE.Foundations.Introspection.HidingBaseOperators",
+  "module_doc": "/-! # The ideal first hiding family is the full Pauli-X coarsening -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingBaseOperators.lean#L56-L73",
+  "source_path": "MIPRE/Foundations/Introspection/HidingBaseOperators.lean",
+  "lines": [
+   56,
+   73
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-hiding-initialization",
+    "env": "lemma",
+    "title": "Initializing hiding from the actual Pauli tests",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.Honest.coarseOp_comp",
+   "MIPRE.Introspection.Honest.hideOp_zero_eq_firstHideOp"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.hiding_first_register_rigidity_cross",
+  "source_name": "MIPRE.Introspection.TypedEstimates.hiding_first_register_rigidity_cross",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.hiding_first_register_rigidity_cross\n    (w : Bool) (k : Fin ℓ) (hk : k.val = 0) (hL : (L w).SupportedOn univ)\n    (qX : κ → ZMod 2) (hqX : ∀ z, (P X).eval z = qX)\n    (hMA : IsPVM (fun a => ((MA (.inl X, qX)).mats a).val)) {δX : ℝ}\n    (hPauli : ∑ x, xSqNorm (registerState (ι → F) ξ)\n      ((((MA (.inl X, qX)).map (pauliProjection projectPauli)).mats x).val)\n      (aOp (Honest.pauliXReadout x) : Matrix ((ι → F) × K) _ ℂ) ≤ δX) :\n    hidingBobError L w hL ξ MB k ≤ 4 * (TypeGraph.edges E X Z ℓ).card * ε + 2 * δX := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "A cross-party extracted Pauli-X guarantee initializes the actual hiding\nchain. Only the Pauli-X measurement needs projectivity at this step.",
+  "module": "MIPRE.Foundations.Introspection.HidingBaseRigidity",
+  "module_doc": "/-! # Initializing hiding rigidity from the extracted Pauli-X family\n\nThe fine Pauli-X replacement estimate is first converted to cross-party\nconsistency using its exact EPR mirror. Projective coarse-graining therefore\ncosts nothing. The actual Pauli-X/first-hiding edge then identifies the first\nhiding family, with error `2 deltaX + 4 |E| epsilon` on a full EPR-plus-auxiliary\nstate. No first-hiding rigidity hypothesis is used.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingBaseRigidity.lean#L58-L98",
+  "source_path": "MIPRE/Foundations/Introspection/HidingBaseRigidity.lean",
+  "lines": [
+   58,
+   98
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_xSqNorm_le_of_two_step",
+   "MIPRE.POVM.map_map",
+   "MIPRE.mulVec_kron_kron_expVec",
+   "MIPRE.Introspection.Honest.hideRegister_transpose",
+   "MIPRE.Introspection.Honest.pauliXReadout_firstHide",
+   "MIPRE.Introspection.TypedEstimates.constant_edge_agreement_estimate",
+   "MIPRE.aOp_sub",
+   "MIPRE.aOp_sum",
+   "MIPRE.IsPVM.coarse",
+   "MIPRE.sum_bornProb_le_fibSum",
+   "MIPRE.IsPVM.aOp",
+   "MIPRE.one_sub_sum_bornProb_eq",
+   "MIPRE.Weyl.isWeylFamily_wX",
+   "MIPRE.Weyl.epr_unit",
+   "MIPRE.Weyl.stateVec_epr",
+   "MIPRE.Weyl.isPVM_synOf"
+  ],
+  "pasted_helpers": 32,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.coarse_joint_commutator_bound",
+  "source_name": "MIPRE.Introspection.coarse_joint_commutator_bound",
+  "formal_statement": "theorem MIPRE.Introspection.coarse_joint_commutator_bound (ψ : H × K → ℂ)\n    (M : POVM A H) (N : POVM C H) (B : POVM O K)\n    (hB : IsPVM (fun b => (B.mats b).val)) (f : O → A × C) :\n    (∑ a, ∑ c, stateSqNorm ψ\n      ((M.mats a).val * (N.mats c).val - (N.mats c).val * (M.mats a).val)) ≤\n      16 * (coarseJointLeftError ψ M B f + coarseJointRightError ψ N B f) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix MIPRE.Weyl Classical",
+   "open scoped Kronecker",
+   "variable {H K A B C O : Type*}"
+  ],
+  "docstring": "The coarse joint measurement is used directly. In particular this theorem\ndoes not coarse-grain an already established commutator estimate.",
+  "module": "MIPRE.Foundations.Introspection.HidingInduction",
+  "module_doc": "/-! # One product-form induction step from the coarse joint measurements\n\nThe two commutators needed by Pauli mixing are derived from the tested\nmarginals of actual projective measurements on the other party. Coarse-graining\nis performed before applying the commutation analysis. The error does not\ndepend on the size of a coarse-graining fibre.\n\nThe final theorem constructs the residual POVMs on `V \\ U`, from averaged\ncross-party errors on one ambient EPR state. Identifying these measurements\nwith the prefix-conditioned introspection strategy is a separate obligation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/HidingInduction.lean#L54-L74",
+  "source_path": "MIPRE/Foundations/Introspection/HidingInduction.lean",
+  "lines": [
+   54,
+   74
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-coarse-product-stage",
+    "env": "lemma",
+    "title": "Product-form stage from coarse tests",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.commutation_analysis",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_sub",
+   "MIPRE.IsPVM.coarse"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 13,
+  "is_target": false
+ }
+]

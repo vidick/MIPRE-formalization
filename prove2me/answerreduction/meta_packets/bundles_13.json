@@ -1,0 +1,3228 @@
+[
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Machinery_Marginalization_Y",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Y",
+  "module_doc": "/-!\n# Full-slice y-marginalization endpoint\n\nThis module contains the y-side evaluated tensor marginalization block for the\n`ABAB` full-slice tensor average.  It imports the collision and postprocessing\nmachinery from `Machinery.Marginalization.Core` and preserves the original\npublic marginalization theorem.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Marginalization/Y.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Marginalization/Y.lean",
+  "defmat": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Y.0.MIPStarRE.LDT.Commutativity.evaluatedSliceABABtensorYDataAvg",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Y.0.MIPStarRE.LDT.Commutativity.evaluatedSliceABABtensorYDataTerm"
+  ],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Y.0.MIPStarRE.LDT.Commutativity.evaluatedSliceABABtensorAvg_eq_yData",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Y.0.MIPStarRE.LDT.Commutativity.evaluatedSliceABABtensorYData_point",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Y.0.MIPStarRE.LDT.Commutativity.evaluatedSliceABABtensor_yEvaluation_eq_xFull_add_collision"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Y.0.MIPStarRE.LDT.Commutativity.evaluatedSliceABABtensorAvg_eq_yData",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     151,
+     189
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Y.0.MIPStarRE.LDT.Commutativity.evaluatedSliceABABtensorYDataAvg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     85,
+     91
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Y.0.MIPStarRE.LDT.Commutativity.evaluatedSliceABABtensorYDataTerm",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     70,
+     83
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Y.0.MIPStarRE.LDT.Commutativity.evaluatedSliceABABtensorYData_point",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     93,
+     149
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Y.0.MIPStarRE.LDT.Commutativity.evaluatedSliceABABtensor_yEvaluation_eq_xFull_add_collision",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     191,
+     311
+    ]
+   }
+  ],
+  "lines": 635,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyPolynomialFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Stability",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Normalization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Products",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Approximation",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceBounds_PhaseOneThree",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceCommutation_Averages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_EvaluationSpecialization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_Pullback",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Polynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_PolynomialAgreement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Averages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Machinery_Marginalization_Core"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Y.0.MIPStarRE.LDT.Commutativity.evaluatedSliceABABtensorYDataAvg": [
+    "/-- The evaluated `ABA ⊗ B` tensor average reindexed as `((u, (x, y)), v)`",
+    "and with the outcome sum in y-first order. -/"
+   ],
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Marginalization.Y.0.MIPStarRE.LDT.Commutativity.evaluatedSliceABABtensorYDataTerm": [
+    "/-- The evaluated `ABA ⊗ B` tensor summand block reindexed as",
+    "`((u, (x, y)), v)` and with the outcome sum in y-first order. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Machinery_Normalization",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Machinery.Normalization",
+  "module_doc": "/-!\n# Full-slice normalization and self-consistency machinery\n\nNormalization-condition bounds, evaluated projective submeasurements, and\nfull-slice and evaluated-slice self-consistency estimates used by the scalar-to-tensor\ncomparison.\n\nThe tensor-form estimates are internal to the scalar/tensor comparison recorded\nin `docs/decisions/713-scalar-tensor-decision.md`; downstream code should use\nthe scalar public API exposed by the full-slice transport theorems.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Normalization.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Machinery/Normalization.lean",
+  "defmat": [
+   "MIPStarRE.LDT.Commutativity.evaluateAtProjSubMeas"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.Commutativity.evaluateAtProjSubMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     85,
+     94
+    ]
+   }
+  ],
+  "lines": 401,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyPolynomialFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Stability",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Normalization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Products",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Approximation",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceBounds_PhaseOneThree",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceCommutation_Averages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_EvaluationSpecialization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_Pullback",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Polynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_PolynomialAgreement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Averages"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.Commutativity.evaluateAtProjSubMeas": [
+    "/-- Evaluate a polynomial-indexed projective submeasurement at a point, retaining",
+    "projectivity of the postprocessed outcomes.",
+    "",
+    "This reuses the shared postprocessing projectivity lemma rather than",
+    "reproving the orthogonality/postprocessing infrastructure locally. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Bridges_Closeness",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.Closeness",
+  "module_doc": "/-!\n# Full-slice scalar-to-tensor closeness comparison\n\n`closenessOfIP` comparisons transform scalar quartic averages into manifestly\npositive tensor-form partners.  The same route includes tensor-marginalization\nidentities connecting full-slice and evaluated-slice `ABAB` averages.\n\nThe core `closenessOfIP` scalar↔tensor comparison lemmas are factored into\n`ClosenessCore.lean` (extracted per #1127).\n\nThe tensor-form lemmas are internal to the scalar/tensor comparison recorded in\n`docs/decisions/713-scalar-tensor-decision.md`; downstream code should use the\nscalar public API exposed by the full-slice transport theorems.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Bridges/Closeness.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Bridges/Closeness.lean",
+  "defmat": [],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.Closeness.0.MIPStarRE.LDT.Commutativity.evaluatedSliceABAB_scalar_to_ABABtensor",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.Closeness.0.MIPStarRE.LDT.Commutativity.leftTensor_sandwich_adjoint_normalization_family"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.Closeness.0.MIPStarRE.LDT.Commutativity.evaluatedSliceABAB_scalar_to_ABABtensor",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     224,
+     322
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.Closeness.0.MIPStarRE.LDT.Commutativity.leftTensor_sandwich_adjoint_normalization_family",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     92,
+     105
+    ]
+   }
+  ],
+  "lines": 518,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyPolynomialFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Stability",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Normalization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Products",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Approximation",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceBounds_PhaseOneThree",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceCommutation_Averages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_EvaluationSpecialization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_Pullback",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Polynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_PolynomialAgreement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Averages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Machinery_Marginalization_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Machinery_Marginalization_Y",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Machinery_Normalization"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Bridges_QSDD",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.QSDD",
+  "module_doc": "/-!\n# Full-slice `qSDDOp` averaging identity\n\nAveraging identities expanding the full-slice `qSDDOp` and proving the scalar\ncommutation identity `fullSliceCommutation_qSDDOp_avg_eq`.\n\nThis scalar expansion is used by the full-slice transport theorems that compare\nthe quartic scalar averages appearing in `commutativity-G.tex`.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Bridges/QSDD.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/Bridges/QSDD.lean",
+  "defmat": [],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.QSDD.0.MIPStarRE.LDT.Commutativity.fullSliceCommutation_qSDDOp_avg_expand_full"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.Bridges.QSDD.0.MIPStarRE.LDT.Commutativity.fullSliceCommutation_qSDDOp_avg_expand_full",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     75,
+     162
+    ]
+   }
+  ],
+  "lines": 484,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyPolynomialFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Stability",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Normalization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Products",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Approximation",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceBounds_PhaseOneThree",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceCommutation_Averages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_EvaluationSpecialization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_Pullback",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Polynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_PolynomialAgreement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Averages"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_ZeroBounds",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.ZeroBounds",
+  "module_doc": "/-!\n# Zero-family bounds on the full-slice product\n\nPointwise `qSDDOp` bounds and averaged `SDDOpRel` bounds for the\nordered `fullSliceProductLeft` and reversed `fullSliceProductRight`\nfactors against the zero family, each at most 1.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/ZeroBounds.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Transport/FullSlice/ZeroBounds.lean",
+  "defmat": [],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.ZeroBounds.0.MIPStarRE.LDT.Commutativity.fullSliceProductLeft_qSDDOp_zero_le_one",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.ZeroBounds.0.MIPStarRE.LDT.Commutativity.zero_qSDDOp_fullSliceProductRight_le_one"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.ZeroBounds.0.MIPStarRE.LDT.Commutativity.fullSliceProductLeft_qSDDOp_zero_le_one",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     59,
+     155
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Transport.FullSlice.ZeroBounds.0.MIPStarRE.LDT.Commutativity.zero_qSDDOp_fullSliceProductRight_le_one",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     157,
+     240
+    ]
+   }
+  ],
+  "lines": 577,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyPolynomialFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Stability",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Normalization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Products",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Approximation",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceBounds_PhaseOneThree",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceCommutation_Averages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_EvaluationSpecialization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_Pullback",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Polynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_PolynomialAgreement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Averages"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Main_Auxiliary_HEvalTransport",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.HEvalTransport",
+  "module_doc": "/-!\n# Section 11 commutativity: hEval/closenessOfIP transport\n\nEvaluated-side closeness-of-IP transport and strong `hEval` bounds\n(`eq:evaluate-gcom-at-points` through `eq:don't-understand-the-numbering-system`).\n\nProvides the evaluated-side `closenessOfIP` chain on `CAB` products,\nincluding zero-operator triangulation helpers and the sharp bound\n`fullSlice_closenessOfIP_CAB_hEval_sqrt` and its paper-envelope estimate\n`fullSlice_closenessOfIP_CAB_hEval`.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Main/Auxiliary/HEvalTransport.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Main/Auxiliary/HEvalTransport.lean",
+  "defmat": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.HEvalTransport.0.MIPStarRE.LDT.Commutativity.zeroEvaluatedSliceOpFamily"
+  ],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.HEvalTransport.0.MIPStarRE.LDT.Commutativity.evaluatedSliceProductLeft_qSDDOp_zero_le_one",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.HEvalTransport.0.MIPStarRE.LDT.Commutativity.zero_qSDDOp_evaluatedSliceProductRight_le_one"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.HEvalTransport.0.MIPStarRE.LDT.Commutativity.evaluatedSliceProductLeft_qSDDOp_zero_le_one",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     109,
+     205
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.HEvalTransport.0.MIPStarRE.LDT.Commutativity.zeroEvaluatedSliceOpFamily",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     103,
+     107
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.HEvalTransport.0.MIPStarRE.LDT.Commutativity.zero_qSDDOp_evaluatedSliceProductRight_le_one",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     207,
+     290
+    ]
+   }
+  ],
+  "lines": 596,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyPolynomialFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Stability",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Normalization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Products",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Approximation",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceBounds_PhaseOneThree",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceCommutation_Averages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_EvaluationSpecialization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_Pullback",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Polynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_PolynomialAgreement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Averages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Machinery_Marginalization_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Machinery_Marginalization_Y",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Machinery_Normalization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Bridges_Closeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Bridges_QSDD",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_ZeroBounds"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.HEvalTransport.0.MIPStarRE.LDT.Commutativity.zeroEvaluatedSliceOpFamily": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Main_Auxiliary_ScalarMarginalization",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization",
+  "module_doc": "/-!\n# Section 11 commutativity: scalar marginalization lemmas\n\nSchwartz–Zippel marginalization helpers (`eq:evaluate-gcom-at-points`,\n`eq:gcom4-diff`) used in the final full-slice commutation theorem.\n\nThe public lemmas `fullSlice_scalar_marginalize_x` and\n`fullSlice_scalar_marginalize_y` are pure scalar inequalities.  Their proofs\ncompose internal tensor-form comparisons over the tensor averages defined in\n`Transport/FullSlice/Averages.lean`, with `closenessOfIP` at cost `√ζ` each.\n\nSee `docs/decisions/713-scalar-tensor-decision.md` for the full decision record.\n\n## References\n\n- `references/ldt-paper/commutativity-G.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Main/Auxiliary/ScalarMarginalization.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/Main/Auxiliary/ScalarMarginalization.lean",
+  "defmat": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization.0.MIPStarRE.LDT.Commutativity.evaluatedPointProj"
+  ],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization.0.MIPStarRE.LDT.Commutativity.abs_sub_le_of_two_step",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization.0.MIPStarRE.LDT.Commutativity.avgOver_slice_total_left_sandwich_eq",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization.0.MIPStarRE.LDT.Commutativity.evaluatedSliceABAAvg_eq_leftSandwichExpectation",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization.0.MIPStarRE.LDT.Commutativity.fullSliceABAAvg_eq_leftSandwichExpectation",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization.0.MIPStarRE.LDT.Commutativity.fullSlice_middleSandwichExpectation_eq_evaluated",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization.0.MIPStarRE.LDT.Commutativity.sum_ev_leftTensor_sandwich_total",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization.0.MIPStarRE.LDT.Commutativity.sum_ev_middle_total"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization.0.MIPStarRE.LDT.Commutativity.abs_sub_le_of_two_step",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     102,
+     107
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization.0.MIPStarRE.LDT.Commutativity.avgOver_slice_total_left_sandwich_eq",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     137,
+     152
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization.0.MIPStarRE.LDT.Commutativity.evaluatedPointProj",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     93,
+     100
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization.0.MIPStarRE.LDT.Commutativity.evaluatedSliceABAAvg_eq_leftSandwichExpectation",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     197,
+     265
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization.0.MIPStarRE.LDT.Commutativity.fullSliceABAAvg_eq_leftSandwichExpectation",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     154,
+     195
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization.0.MIPStarRE.LDT.Commutativity.fullSlice_middleSandwichExpectation_eq_evaluated",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     267,
+     327
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization.0.MIPStarRE.LDT.Commutativity.sum_ev_leftTensor_sandwich_total",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     109,
+     121
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization.0.MIPStarRE.LDT.Commutativity.sum_ev_middle_total",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     123,
+     135
+    ]
+   }
+  ],
+  "lines": 646,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CompletionTransfer",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyPolynomialFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Stability",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Normalization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Products",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Approximation",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceBounds_PhaseOneThree",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceCommutation_Averages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_EvaluationSpecialization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_Pullback",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Polynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_PolynomialAgreement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Averages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Machinery_Marginalization_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Machinery_Marginalization_Y",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Machinery_Normalization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Bridges_Closeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_Bridges_QSDD",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Transport_FullSlice_ZeroBounds"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.Main.Auxiliary.ScalarMarginalization.0.MIPStarRE.LDT.Commutativity.evaluatedPointProj": [
+    "/-- The evaluated point family viewed as a projective submeasurement family. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_SharedHelpers_SharedLine",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine",
+  "module_doc": "/-!\n# Section 10 commutativity points: shared-line helpers\n\nCompatibility lemmas between sampled point pairs and shared-diagonal line\nquestions, used by both the lift and drop comparisons.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/SharedLine.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/SharedHelpers/SharedLine.lean",
+  "defmat": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine.0.MIPStarRE.LDT.CommutativityPoints.pointPairSharedDiagonalLine_ignore_first_equiv",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine.0.MIPStarRE.LDT.CommutativityPoints.pointPairSharedDiagonalLine_ignore_second_equiv"
+  ],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine.0.MIPStarRE.LDT.CommutativityPoints.sharedDiagonalLineQuestionOfPointPair_of_line",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine.0.MIPStarRE.LDT.CommutativityPoints.sharedDiagonalLineQuestionOfPointPair_sampledPointPair"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine.0.MIPStarRE.LDT.CommutativityPoints.pointPairSharedDiagonalLine_ignore_first_equiv",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     136,
+     158
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine.0.MIPStarRE.LDT.CommutativityPoints.pointPairSharedDiagonalLine_ignore_second_equiv",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     160,
+     180
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine.0.MIPStarRE.LDT.CommutativityPoints.sharedDiagonalLineQuestionOfPointPair_of_line",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     94,
+     134
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine.0.MIPStarRE.LDT.CommutativityPoints.sharedDiagonalLineQuestionOfPointPair_sampledPointPair",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     70,
+     92
+    ]
+   }
+  ],
+  "lines": 449,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Approximation"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine.0.MIPStarRE.LDT.CommutativityPoints.pointPairSharedDiagonalLine_ignore_first_equiv": null,
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.SharedHelpers.SharedLine.0.MIPStarRE.LDT.CommutativityPoints.pointPairSharedDiagonalLine_ignore_second_equiv": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_BridgeTheorems_DropBridges",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.BridgeTheorems.DropBridges",
+  "module_doc": "/-!\n# Section 10 commutativity points: drop comparisons\n\nComparison lemmas that drop structure from the mixed line family back to the\nordered diagonal-line product, used in the drop direction of the Section 10\npoint-commutativity argument.\n\n## References\n\n- `references/ldt-paper/commutativity-points.tex`\n- `blueprint/src/chapter/ch08_commutativity.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/BridgeTheorems/DropBridges.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/CommutativityPoints/BridgeTheorems/DropBridges.lean",
+  "defmat": [],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.BridgeTheorems.DropBridges.0.MIPStarRE.LDT.CommutativityPoints.orderedDropFromLineComparison",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.BridgeTheorems.DropBridges.0.MIPStarRE.LDT.CommutativityPoints.reversedDropFromLineComparison",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.BridgeTheorems.DropBridges.0.MIPStarRE.LDT.CommutativityPoints.reversedDropToPointsComparison"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.BridgeTheorems.DropBridges.0.MIPStarRE.LDT.CommutativityPoints.orderedDropFromLineComparison",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     193,
+     221
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.BridgeTheorems.DropBridges.0.MIPStarRE.LDT.CommutativityPoints.reversedDropFromLineComparison",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     68,
+     191
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.CommutativityPoints.BridgeTheorems.DropBridges.0.MIPStarRE.LDT.CommutativityPoints.reversedDropToPointsComparison",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     223,
+     331
+    ]
+   }
+  ],
+  "lines": 621,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Approximation",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_SharedHelpers_SharedLine"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {}
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_GCommStability_Scalar_RawSecond",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.Scalar.RawSecond",
+  "module_doc": "/-!\n# Section 11 commutativity: raw second scalar stability bound\n\nThe raw uncollapsed form of the second scalar stability estimate.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/GCommStability/Scalar/RawSecond.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/GCommStability/Scalar/RawSecond.lean",
+  "defmat": [
+   "MIPStarRE.LDT.Commutativity.gCommStabilityTwoRawScalarDefect"
+  ],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.Scalar.RawSecond.0.MIPStarRE.LDT.Commutativity.avgOver_right_linear",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.Scalar.RawSecond.0.MIPStarRE.LDT.Commutativity.gCommStabilityTwo_raw_left_sum_le",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.Scalar.RawSecond.0.MIPStarRE.LDT.Commutativity.gCommStabilityTwo_raw_scalar_pointwise_bound",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.Scalar.RawSecond.0.MIPStarRE.LDT.Commutativity.sum_ev_leftTensor_mul_rightTensor_const"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.Commutativity.gCommStabilityTwoRawScalarDefect",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     163,
+     187
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.Scalar.RawSecond.0.MIPStarRE.LDT.Commutativity.avgOver_right_linear",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     86,
+     146
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.Scalar.RawSecond.0.MIPStarRE.LDT.Commutativity.gCommStabilityTwo_raw_left_sum_le",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     189,
+     272
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.Scalar.RawSecond.0.MIPStarRE.LDT.Commutativity.gCommStabilityTwo_raw_scalar_pointwise_bound",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     274,
+     696
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.Scalar.RawSecond.0.MIPStarRE.LDT.Commutativity.sum_ev_leftTensor_mul_rightTensor_const",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     148,
+     161
+    ]
+   }
+  ],
+  "lines": 987,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyPolynomialFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Stability",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Normalization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Products",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Approximation"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.Commutativity.gCommStabilityTwoRawScalarDefect": [
+    "/-- Raw uncollapsed scalar defect for the paper's second `G`-commutativity",
+    "stability estimate after the right-register point-product swap.",
+    "",
+    "For fixed slice height `x`, this is the expression from",
+    "`commutativity-G.tex`, `clm:g-comm-stability2`, before collapsing the",
+    "`(v,y), b`-average into `gCommStabilityTwoR`.  The left register contains",
+    "`G^x_g B^{v,y}_b (1-G^x)`, while the right register contains the swapped point",
+    "product `P^{v,y}_b P^{u,x}_{g(u)}`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_ScalarApproximation_PaperChainPhaseFive",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainPhaseFive",
+  "module_doc": "/-!\n# Phase-five endpoint for the evaluated-slice paper chain\n\nThis file isolates the paper line-87 removal endpoint and the finite\nreindexing to the raw scalar `G`-commutativity stability defect.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainPhaseFive.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/PaperChainPhaseFive.lean",
+  "defmat": [
+   "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseEightTailRight",
+   "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseFivePaperOrderedDefect",
+   "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseFivePaperRemoved",
+   "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseFivePaperSwappedDefect",
+   "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseSevenGonnaCite",
+   "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseSixFirstRemoved",
+   "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseSixFirstReverse"
+  ],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainPhaseFive.0.MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseFivePaperSwappedDefect_appendPoint_expansion",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainPhaseFive.0.MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseFivePaper_term_diff",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainPhaseFive.0.MIPStarRE.LDT.Commutativity.phaseFivePaper_fiber_sum_ev"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseEightTailRight",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     128,
+     140
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseFivePaperOrderedDefect",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     142,
+     160
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseFivePaperRemoved",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     68,
+     84
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseFivePaperSwappedDefect",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     162,
+     181
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseSevenGonnaCite",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     115,
+     126
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseSixFirstRemoved",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     101,
+     113
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseSixFirstReverse",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     86,
+     99
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainPhaseFive.0.MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseFivePaperSwappedDefect_appendPoint_expansion",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     436,
+     498
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainPhaseFive.0.MIPStarRE.LDT.Commutativity.evaluatedSlice_phaseFivePaper_term_diff",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     183,
+     263
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.PaperChainPhaseFive.0.MIPStarRE.LDT.Commutativity.phaseFivePaper_fiber_sum_ev",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     367,
+     434
+    ]
+   }
+  ],
+  "lines": 695,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyPolynomialFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Stability",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Normalization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Products",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Approximation",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceBounds_PhaseOneThree",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceCommutation_Averages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_SharedHelpers_SharedLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_BridgeTheorems_DropBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_GCommStability_Scalar_RawSecond"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseEightTailRight": [
+    "/-- Paper line 118 endpoint after moving the second factor to the right register. -/"
+   ],
+   "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseFivePaperOrderedDefect": [
+    "/-- Ordered missing-mass defect for the paper phase-five removal.",
+    "",
+    "This is the defect before swapping the two right-register point measurements:",
+    "`G^{u,x}_a G^{v,y}_b (1-G^x) ⊗ A^{u,x}_a A^{v,y}_b`. -/"
+   ],
+   "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseFivePaperRemoved": [
+    "/-- Paper line-87 endpoint after removing the trailing `G^x.total`.",
+    "",
+    "At question `q = ((u,x),(v,y))` and outcome `(a,b)`, this is",
+    "`G^{u,x}_a G^{v,y}_b ⊗ A^{u,x}_a A^{v,y}_b`. -/"
+   ],
+   "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseFivePaperSwappedDefect": [
+    "/-- Swapped missing-mass defect for the paper phase-five removal.",
+    "",
+    "After the right-register point swap, this reindexes to",
+    "`gCommStabilityTwoRawScalarDefect`: the right register is",
+    "`A^{v,y}_b A^{u,x}_a`. -/"
+   ],
+   "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseSevenGonnaCite": [
+    "/-- Paper line 104 endpoint `eq:gonna-cite-this-in-just-a-bit`. -/"
+   ],
+   "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseSixFirstRemoved": [
+    "/-- Paper line 102 endpoint after simplifying the first-coordinate projector. -/"
+   ],
+   "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseSixFirstReverse": [
+    "/-- Paper line 101 endpoint after reversing the first `eq:add-an-a` insertion. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_GCommStability_Scalar_First",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.GCommStability.Scalar.First",
+  "module_doc": "/-!\n# Section 11 commutativity: first scalar stability bound\n\nThe first scalar stability defect and its Cauchy--Schwarz boundedness proof.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/GCommStability/Scalar/First.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/GCommStability/Scalar/First.lean",
+  "defmat": [
+   "MIPStarRE.LDT.Commutativity.gCommStabilityR",
+   "MIPStarRE.LDT.Commutativity.gCommStabilityScalarDefect"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.Commutativity.gCommStabilityR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     45,
+     58
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Commutativity.gCommStabilityScalarDefect",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     60,
+     81
+    ]
+   }
+  ],
+  "lines": 388,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyPolynomialFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Stability",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Normalization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Products",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Approximation"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.Commutativity.gCommStabilityR": [
+    "/-- The paper's slice submeasurement `R^y_g = E_{u,x} \\sum_a G^{u,x}_a G^y_g G^{u,x}_a`. -/"
+   ],
+   "MIPStarRE.LDT.Commutativity.gCommStabilityScalarDefect": [
+    "/-- Named scalar defect for the first paper stability claim.",
+    "",
+    "For fixed `y`, this is the collapsed scalar from `commutativity-G.tex`,",
+    "equation `eq:bound-this-right-now!`: `gCommStabilityR` contains the averaged",
+    "left-register sandwich `R_g^y = E_{u,x} \\sum_a G_a^{u,x} G_g^y G_a^{u,x}`,",
+    "the factor `(1 - (G y).total)` is the paper's left-register `(I - G^y)`, and",
+    "`IdxPolyFamily.averagedSlicePointEvaluationOperator` is the right-register",
+    "average `E_v A^{v,y}_{g(v)}`.  Thus each summand has tensor placement",
+    "`(R_g^y (I-G^y)) ⊗ E_v A^{v,y}_{g(v)}`.  This is the scalar expression bounded",
+    "by `gCommStability_scalar`, not the overlap `SDDOpRel` package. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_ScalarApproximation_ProcessedG_PhaseTwo",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.PhaseTwo",
+  "module_doc": "/-!\n# Phase 2 stability defect infrastructure\n\nInternal helper definitions and lemmas for the Phase 2 scalar bridge in\n`ProcessedG`.  These definitions extract and bound the one-dimensional stability\ndefect controlled by `gCommStability_scalar` (the paper's `clm:g-comm-stability`),\nreindex the question-level defect into the stability defect via finite\nmarginalization, and perform the subtraction algebra that rewrites the phase-2\ninsertion/removal difference as the negative defect.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/PhaseTwo.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/PhaseTwo.lean",
+  "defmat": [
+   "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseTwoQuestionDefect",
+   "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseTwoStabilityDefect"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseTwoQuestionDefect",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     140,
+     160
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseTwoStabilityDefect",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     93,
+     112
+    ]
+   }
+  ],
+  "lines": 403,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyPolynomialFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Stability",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Normalization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Products",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Approximation",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceBounds_PhaseOneThree",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceCommutation_Averages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_SharedHelpers_SharedLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_BridgeTheorems_DropBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_GCommStability_Scalar_First"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseTwoQuestionDefect": [
+    "/-- The still-unmarginalized phase-2 defect at a sampled evaluated-slice question.",
+    "",
+    "This is the exact question-level term obtained after expanding",
+    "`totalSandwichFamily` and using",
+    "`S * G^y.total - S = -S * (1 - G^y.total)` for the left-register sandwich `S`.",
+    "The remaining reindexing residual averages this term to",
+    "`evaluatedSlicePhaseTwoStabilityDefect`. -/"
+   ],
+   "MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseTwoStabilityDefect": [
+    "/-- The scalar defect controlled by `gCommStability_scalar` after averaging out",
+    "all evaluated-slice variables except the second slice height `y`.",
+    "",
+    "This is the paper's boundedness witness term for `clm:g-comm-stability`: for a",
+    "fixed `y`, `gCommStabilityR params family y` averages the left-register sandwich",
+    "`G^{u,x}_a G^y_g G^{u,x}_a`, while",
+    "`IdxPolyFamily.averagedSlicePointEvaluationOperator strategy y g` averages the",
+    "right-register point answer `A^{v,y}_{g(v)}` over the tail point `v`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_ScalarApproximation_ProcessedG_MainChain",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.MainChain",
+  "module_doc": "/-!\n# Main scalar chain assembly\n\nThe core lemma `evaluatedSlice_scalar_chain_bound` that assembles the ten-step\nscalar approximation chain for `lem:comm-data-processed-g`.  This is the\nheavyweight proof corresponding to `references/ldt-paper/commutativity-G.tex`,\nlines 72–131.  Phases 1, 3, 4, 6–7, and 8–9 are supplied by the reverse and\ntail parts of the paper chain; Phase 2 uses the reindexing infrastructure from\n`PhaseTwo`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/MainChain.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Commutativity/ScalarApproximation/ProcessedG/MainChain.lean",
+  "defmat": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.MainChain.0.MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseFourInserted",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.MainChain.0.MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseFourSwapped",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.MainChain.0.MIPStarRE.LDT.Commutativity.evaluatedSlicePointSwapRightPrefix"
+  ],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.MainChain.0.MIPStarRE.LDT.Commutativity.evaluatedSlice_pointSwap_right_bound_of_norms",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.MainChain.0.MIPStarRE.LDT.Commutativity.evaluatedSlice_pointSwap_right_prefix_normalization"
+  ],
+  "kept": [
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.MainChain.0.MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseFourInserted",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     104,
+     115
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.MainChain.0.MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseFourSwapped",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     117,
+     128
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.MainChain.0.MIPStarRE.LDT.Commutativity.evaluatedSlicePointSwapRightPrefix",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     130,
+     140
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.MainChain.0.MIPStarRE.LDT.Commutativity.evaluatedSlice_pointSwap_right_bound_of_norms",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     163,
+     215
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.MainChain.0.MIPStarRE.LDT.Commutativity.evaluatedSlice_pointSwap_right_prefix_normalization",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     142,
+     161
+    ]
+   }
+  ],
+  "lines": 500,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_DistanceBounds",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ConsistencyBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichPrep_InnerProduct",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_SwitchSandwichMain_Completeness",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_BipartiteSelfConsistency_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_CauchySchwarz",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyPolynomialFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Stability",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Defs_Normalization",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_Scaffold_Products",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Approximation",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceBounds_PhaseOneThree",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_EvaluatedSliceCommutation_Averages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_SharedHelpers_SharedLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_BridgeTheorems_DropBridges",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_GCommStability_Scalar_RawSecond",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_ScalarApproximation_PaperChainPhaseFive",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_GCommStability_Scalar_First",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Commutativity_ScalarApproximation_ProcessedG_PhaseTwo"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.MainChain.0.MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseFourInserted": null,
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.MainChain.0.MIPStarRE.LDT.Commutativity.evaluatedSlicePhaseFourSwapped": null,
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Commutativity.ScalarApproximation.ProcessedG.MainChain.0.MIPStarRE.LDT.Commutativity.evaluatedSlicePointSwapRightPrefix": [
+    "/-- Shared left-register prefix for the ProcessedG right-register point-swap bounds. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Defs_Tuples",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Tuples",
+  "module_doc": "/-!\n# Section 12 — Definitions: tuples and operators\n\nTuple distributions, type abbreviations, and basic operator helpers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Defs/Tuples.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Defs/Tuples.lean",
+  "defmat": [
+   "MIPStarRE.LDT.Pasting.GHatOutcome",
+   "MIPStarRE.LDT.Pasting.GHatTupleOutcome",
+   "MIPStarRE.LDT.Pasting.GHatType",
+   "MIPStarRE.LDT.Pasting.InterpolationEligible",
+   "MIPStarRE.LDT.Pasting.SandwichedLineQuestion",
+   "MIPStarRE.LDT.Pasting.SlicePairQuestion",
+   "MIPStarRE.LDT.Pasting.SliceQuestion",
+   "MIPStarRE.LDT.Pasting.VerticalLineQuestion",
+   "MIPStarRE.LDT.Pasting.bernoulliTailOperator",
+   "MIPStarRE.LDT.Pasting.distinctTupleDistribution",
+   "MIPStarRE.LDT.Pasting.distinctTupleSupport",
+   "MIPStarRE.LDT.Pasting.gHatTupleHammingWeight",
+   "MIPStarRE.LDT.Pasting.gHatTupleSupport",
+   "MIPStarRE.LDT.Pasting.gHatTupleType",
+   "MIPStarRE.LDT.Pasting.gHatTypeOperator",
+   "MIPStarRE.LDT.Pasting.gHatTypeWeight",
+   "MIPStarRE.LDT.Pasting.multiplyByTotalOnLeft",
+   "MIPStarRE.LDT.Pasting.multiplyByTotalOnRight",
+   "MIPStarRE.LDT.Pasting.outcomesByType",
+   "MIPStarRE.LDT.Pasting.prependTypeBit",
+   "MIPStarRE.LDT.Pasting.truncatedTypeSums"
+  ],
+  "embedded": [
+   "MIPStarRE.LDT.Pasting.distinctTupleDistribution_support",
+   "MIPStarRE.LDT.Pasting.mem_distinctTupleSupport"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.Pasting.GHatOutcome",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     163,
+     164
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.GHatTupleOutcome",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     172,
+     174
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.GHatType",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     176,
+     177
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.InterpolationEligible",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     279,
+     284
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.SandwichedLineQuestion",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     179,
+     181
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.SlicePairQuestion",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     169,
+     170
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.SliceQuestion",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     166,
+     167
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.VerticalLineQuestion",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     183,
+     184
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.bernoulliTailOperator",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     212,
+     218
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.distinctTupleDistribution",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     108,
+     113
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.distinctTupleDistribution_support",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     115,
+     117
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.distinctTupleSupport",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     66,
+     70
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.gHatTupleHammingWeight",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     266,
+     270
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.gHatTupleSupport",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     258,
+     264
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.gHatTupleType",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     252,
+     256
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.gHatTypeOperator",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     194,
+     197
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.gHatTypeWeight",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     186,
+     188
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.mem_distinctTupleSupport",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     72,
+     76
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.multiplyByTotalOnLeft",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     245,
+     250
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.multiplyByTotalOnRight",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     238,
+     243
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.outcomesByType",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     272,
+     277
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.prependTypeBit",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     190,
+     192
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.truncatedTypeSums",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     199,
+     210
+    ]
+   }
+  ],
+  "lines": 419,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.Pasting.GHatOutcome": [
+    "/-- The outcome type of the completed family `\\widehat G`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.GHatTupleOutcome": [
+    "/-- The outcome type of a `k`-tuple of completed-slice answers. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.GHatType": [
+    "/-- A Boolean type pattern for a completed-slice tuple. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.InterpolationEligible": [
+    "/-- A completed-slice tuple is eligible for interpolation exactly when its type has",
+    "Hamming weight at least `d + 1`, matching the paper's `|w| ≥ d+1` filter. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.SandwichedLineQuestion": [
+    "/-- A sandwiched-line question consists of a point and a `k`-tuple of slice heights. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.SlicePairQuestion": [
+    "/-- The question type for an ordered pair of slice heights. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.SliceQuestion": [
+    "/-- The question type for a single slice height. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.VerticalLineQuestion": [
+    "/-- The question type for vertical lines, identified with their base point. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.bernoulliTailOperator": [
+    "/-- The Bernoulli tail operator from `lem:chernoff-bernoulli-matrix`:",
+    "`F(X) = ∑_{r=degree+1}^{k} C(k,r) · X^r · (I - X)^{k-r}`.",
+    "This is the matrix-valued Bernoulli tail probability. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.distinctTupleDistribution": [
+    "/-- Uniform distribution on pairwise-distinct `k`-tuples from `Fq`.",
+    "Support is the set of injective functions `Fin k → Fq params`;",
+    "weight is uniform `1 / |support|` on support, `0` outside. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.distinctTupleSupport": [
+    "/-- The finite support of the distinct-tuple distribution. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.gHatTupleHammingWeight": [
+    "/-- The Hamming weight of a completed-slice tuple. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.gHatTupleSupport": [
+    "/-- The support of a completed-slice tuple, i.e. the indices whose outcomes are",
+    "genuine polynomials rather than `⊥`. This matches the paper's support of the type",
+    "`τ ∈ {0,1}^k`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.gHatTupleType": [
+    "/-- Record which completed-slice outcomes are genuine polynomial outcomes. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.gHatTypeOperator": [
+    "/-- The operator monomial associated with a type `τ`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.gHatTypeWeight": [
+    "/-- The Hamming weight `|τ|` of a type `τ ∈ {0,1}^k`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.multiplyByTotalOnLeft": [
+    "/-- Multiply each outcome operator by a total operator on the left. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.multiplyByTotalOnRight": [
+    "/-- Multiply each outcome operator by a total operator on the right. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.outcomesByType": [
+    "/-- The set `\\mathsf{Outcomes}_\\tau` of completed-slice tuples whose `Some`/`none`",
+    "pattern is prescribed by the type `τ`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.prependTypeBit": [
+    "/-- Prepend one type bit to a tail type. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.truncatedTypeSums": [
+    "/-- `def:truncated-type-sums`.",
+    "",
+    "Fixing a tail type `τ_tail`, this sums the source-style monomials contributed by",
+    "all prefixes whose total Hamming weight can still reach the interpolation",
+    "threshold `d + 1`. The parameter `prefixLen` is the paper's `ℓ - 1`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Defs_Interpolation",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Interpolation",
+  "module_doc": "/-!\n# Section 12 — Definitions: interpolation\n\nInterpolation helpers extracted from `Pasting.Defs`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Defs/Interpolation.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Defs/Interpolation.lean",
+  "defmat": [
+   "MIPStarRE.LDT.Pasting.InterpolationSupportWitness",
+   "MIPStarRE.LDT.Pasting.extractSlicePoly",
+   "MIPStarRE.LDT.Pasting.fallbackInterpolatedPolynomial",
+   "MIPStarRE.LDT.Pasting.gHatTupleOutcomeTail",
+   "MIPStarRE.LDT.Pasting.interpolateCompletedSlicesFromSupport",
+   "MIPStarRE.LDT.Pasting.interpolationEligible_decidablePred",
+   "MIPStarRE.LDT.Pasting.interpolationSupportWitness",
+   "MIPStarRE.LDT.Pasting.pointTupleTail"
+  ],
+  "embedded": [
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Interpolation.0.MIPStarRE.LDT.Pasting.interpolateCompletedSlicesFromSupport_degree",
+   "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Interpolation.0.MIPStarRE.LDT.Pasting.natDegree_lagrangeBasis_le_card_sub_one"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.Pasting.InterpolationSupportWitness",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     139,
+     150
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.extractSlicePoly",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     103,
+     110
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.fallbackInterpolatedPolynomial",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     91,
+     101
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.gHatTupleOutcomeTail",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     85,
+     89
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.interpolateCompletedSlicesFromSupport",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     258,
+     288
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.interpolationEligible_decidablePred",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     130,
+     137
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.interpolationSupportWitness",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     152,
+     171
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.pointTupleTail",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     80,
+     83
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Interpolation.0.MIPStarRE.LDT.Pasting.interpolateCompletedSlicesFromSupport_degree",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     173,
+     256
+    ]
+   },
+   {
+    "name": "_private.MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Interpolation.0.MIPStarRE.LDT.Pasting.natDegree_lagrangeBasis_le_card_sub_one",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     112,
+     128
+    ]
+   }
+  ],
+  "lines": 508,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomialEmbedding",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Defs_Tuples"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.Pasting.InterpolationSupportWitness": [
+    "/-- Paper origin: `references/ldt-paper/ld-pasting.tex:473-482`",
+    "(interpolation step of the second construction, requiring `|w| \\geq d+1`",
+    "genuine outcomes).",
+    "",
+    "A `d+1`-element interpolation support together with the proof fields that show it",
+    "lies inside the genuine completed-slice support. The support is chosen from the",
+    "finite-set existence theorem `Finset.exists_subset_card_eq`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.extractSlicePoly": [
+    "/-- Extract the polynomial from a genuine slice outcome. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.fallbackInterpolatedPolynomial": [
+    "/-- The distinguished global polynomial `h₀` used for the pasted completion outcome.",
+    "",
+    "It is also the default value on tuples that have already been filtered out of the",
+    "actual interpolation path (for example nonglobal tuples after the",
+    "`IsGloballyConsistent` restriction).  We take `h₀` to be the zero polynomial, which",
+    "trivially satisfies the low-individual-degree bound. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.gHatTupleOutcomeTail": [
+    "/-- Remove the first coordinate from a tuple of completed slice outcomes. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.interpolateCompletedSlicesFromSupport": [
+    "/-- Interpolate from a specified `d+1`-element index set to recover",
+    "a polynomial in `m+1` variables via Lagrange interpolation.",
+    "The caller must provide `hσsupport : σ ⊆ gHatTupleSupport gs`, i.e. every",
+    "interpolation node is a genuine completed-slice outcome. This keeps the support",
+    "precondition explicit instead of silently falling back to the zero polynomial.",
+    "",
+    "The degree bound (`lowIndividualDegree ≤ d`) holds for any `σ` with",
+    "`σ.card = d+1`; the interpolation correctness property (that `restrictAtHeight`",
+    "of the result agrees with each slice) additionally requires distinct evaluation",
+    "points, which are ensured by the caller together with `hσsupport`.",
+    "",
+    "The coefficient is Mathlib's `Lagrange.basis σ v i`, the polynomial",
+    "`∏ j ∈ σ.erase i, (X - v j) / (v i - v j)`, evaluated at the appended",
+    "coordinate. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.interpolationEligible_decidablePred": [
+    "/-- `InterpolationEligible params` is decidable without invoking classical logic:",
+    "it is the finite inequality `d + 1 ≤ |support(gs)|`, where the support is computed",
+    "by filtering the finite index set. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.interpolationSupportWitness": [
+    "/-- Paper origin: `references/ldt-paper/ld-pasting.tex:473-482`",
+    "(interpolation step of the second construction, requiring `|w| \\geq d+1`",
+    "genuine outcomes).",
+    "",
+    "Construct a `d+1`-point interpolation support inside the genuine support of an",
+    "interpolation-eligible tuple.",
+    "",
+    "**Source:** This is the source-faithful finite-support selection required by the",
+    "interpolation step cited above; the paper assumes such a support after the",
+    "cardinality lower bound is known. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.pointTupleTail": [
+    "/-- Remove the first coordinate from a tuple of slice questions. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Defs_Families",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Defs.Families",
+  "module_doc": "/-!\n# Section 12 — Definitions: consistency and families\n\nGlobal-consistency predicates and the completed-slice family constructions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Defs/Families.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Defs/Families.lean",
+  "defmat": [
+   "MIPStarRE.LDT.Pasting.IsGloballyConsistent",
+   "MIPStarRE.LDT.Pasting.completePartLeftFamily",
+   "MIPStarRE.LDT.Pasting.completePartRightFamily",
+   "MIPStarRE.LDT.Pasting.completePartSubMeas",
+   "MIPStarRE.LDT.Pasting.gHatIdxMeas",
+   "MIPStarRE.LDT.Pasting.globallyConsistentWitness",
+   "MIPStarRE.LDT.Pasting.incompletePartLeftFamily",
+   "MIPStarRE.LDT.Pasting.incompletePartRightFamily",
+   "MIPStarRE.LDT.Pasting.incompletePartSubMeas",
+   "MIPStarRE.LDT.Pasting.interpolateCompletedSlices",
+   "MIPStarRE.LDT.Pasting.isGloballyConsistent_decidablePred"
+  ],
+  "embedded": [
+   "MIPStarRE.LDT.Pasting.completePartSubMeas_outcome_unit",
+   "MIPStarRE.LDT.Pasting.completePartSubMeas_total"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.Pasting.IsGloballyConsistent",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     66,
+     80
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.completePartLeftFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     198,
+     203
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.completePartRightFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     205,
+     210
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.completePartSubMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     144,
+     147
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.completePartSubMeas_outcome_unit",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     155,
+     161
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.completePartSubMeas_total",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     149,
+     153
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.gHatIdxMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     171,
+     175
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.globallyConsistentWitness",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     107,
+     115
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.incompletePartLeftFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     212,
+     217
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.incompletePartRightFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     219,
+     224
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.incompletePartSubMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     163,
+     169
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.interpolateCompletedSlices",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     117,
+     142
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.isGloballyConsistent_decidablePred",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     82,
+     90
+    ]
+   }
+  ],
+  "lines": 447,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomialEmbedding",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyPolynomialFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Defs_Tuples",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Defs_Interpolation"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.Pasting.IsGloballyConsistent": [
+    "/-- A completed-slice tuple `gs` is globally consistent at evaluation",
+    "points `xs` if there exists a single polynomial `h` in `m+1` variables",
+    "whose restriction to each genuine slice height `xᵢ` agrees with the",
+    "corresponding slice polynomial `gᵢ`.",
+    "",
+    "This matches the paper's `Global_τ(x)` predicate from",
+    "`references/ldt-paper/ld-pasting.tex` lines 1123-1131. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.completePartLeftFamily": [
+    "/-- Left tensor-placement for the complete part `G^x`",
+    "on the bipartite space `d * d`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.completePartRightFamily": [
+    "/-- Right tensor-placement for the complete part `G^x`",
+    "on the bipartite space `d * d`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.completePartSubMeas": [
+    "/-- Aggregate the polynomial outcomes of `G^x` into its complete part `G^x`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.gHatIdxMeas": [
+    "/-- Complete each projective slice submeasurement by adjoining the failure outcome. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.globallyConsistentWitness": [
+    "/-- Paper origin: `references/ldt-paper/ld-pasting.tex:1131-1135`",
+    "(definition of `\\mathsf{Global}_{\\tau}(x)`).",
+    "",
+    "Choose a witness polynomial for a globally consistent tuple. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.incompletePartLeftFamily": [
+    "/-- Left tensor-placement for the incomplete part `G^x_⊥`",
+    "on the bipartite space `d * d`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.incompletePartRightFamily": [
+    "/-- Right tensor-placement for the incomplete part `G^x_⊥`",
+    "on the bipartite space `d * d`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.incompletePartSubMeas": [
+    "/-- Placeholder for the incomplete part `G^x_⊥ = I - G^x`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.interpolateCompletedSlices": [
+    "/-- Recover a global polynomial from a completed-slice tuple.",
+    "",
+    "On the actual pasting path this map is only applied after restricting to tuples in",
+    "`Global_τ(x)` with `|τ| ≥ d+1`, so the ineligible branch lies outside the support",
+    "of `pastedInterpolationFamily`. We nevertheless make the nonempty ineligible branch",
+    "honest: for globally consistent tuples of length `k + 1` that fail the eligibility",
+    "cutoff, we return a chosen witness polynomial rather than a placeholder.",
+    "",
+    "The empty-tuple branch keeps the distinguished fallback outcome `h₀`, matching the",
+    "completion outcome used in `constructedPastedMeasurement`.",
+    "",
+    "In the eligible branch we still keep the explicit interpolation support witness: a",
+    "chosen subset `σ ⊆ support(gs)` of size `d+1` is packaged together with its proof",
+    "fields and then passed to `interpolateCompletedSlicesFromSupport`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.isGloballyConsistent_decidablePred": [
+    "/-- `IsGloballyConsistent params xs` is only classically decidable.",
+    "The predicate quantifies over a witness polynomial in the ambient global polynomial",
+    "space, so there is no finitary decision procedure to search for such a witness.",
+    "This nonconstructive instance is used only for finite `restrictSubMeas` filters. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Sandwich_Switcheroo",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Sandwich.Switcheroo",
+  "module_doc": "/-!\n# Section 12 — Sandwich constructions: switcheroo families\n\nSwitcheroo, complete-part, and half-product operator families.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Sandwich/Switcheroo.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Sandwich/Switcheroo.lean",
+  "defmat": [
+   "MIPStarRE.LDT.Pasting.completePartPointProductLeft",
+   "MIPStarRE.LDT.Pasting.completePartPointProductRight",
+   "MIPStarRE.LDT.Pasting.completePartTotalProductLeft",
+   "MIPStarRE.LDT.Pasting.completePartTotalProductRight",
+   "MIPStarRE.LDT.Pasting.gHatHalfProductOutcomeOperator",
+   "MIPStarRE.LDT.Pasting.gHatHalfProductTotalOperator",
+   "MIPStarRE.LDT.Pasting.gHatPairProductLeft",
+   "MIPStarRE.LDT.Pasting.gHatPairProductRight",
+   "MIPStarRE.LDT.Pasting.gHatRotatedHalfProductOutcomeOperator",
+   "MIPStarRE.LDT.Pasting.gHatRotatedHalfProductTotalOperator",
+   "MIPStarRE.LDT.Pasting.gHatSelfConsistencyLeftFamily",
+   "MIPStarRE.LDT.Pasting.gHatSelfConsistencyRightFamily",
+   "MIPStarRE.LDT.Pasting.gHatTupleOutcomeConsEquiv'",
+   "MIPStarRE.LDT.Pasting.incompletePartPointProductLeft",
+   "MIPStarRE.LDT.Pasting.incompletePartPointProductRight",
+   "MIPStarRE.LDT.Pasting.incompletePartTotalProductLeft",
+   "MIPStarRE.LDT.Pasting.incompletePartTotalProductRight",
+   "MIPStarRE.LDT.Pasting.switcherooAggregateLeft",
+   "MIPStarRE.LDT.Pasting.switcherooAggregateRight",
+   "MIPStarRE.LDT.Pasting.switcherooPointProductLeft",
+   "MIPStarRE.LDT.Pasting.switcherooPointProductRight",
+   "MIPStarRE.LDT.Pasting.switcherooSelfConsistencyLeft",
+   "MIPStarRE.LDT.Pasting.switcherooSelfConsistencyRight"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.Pasting.completePartPointProductLeft",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     126,
+     134
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.completePartPointProductRight",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     136,
+     144
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.completePartTotalProductLeft",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     146,
+     154
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.completePartTotalProductRight",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     156,
+     164
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.gHatHalfProductOutcomeOperator",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     238,
+     246
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.gHatHalfProductTotalOperator",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     248,
+     257
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.gHatPairProductLeft",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     218,
+     226
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.gHatPairProductRight",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     228,
+     236
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.gHatRotatedHalfProductOutcomeOperator",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     259,
+     268
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.gHatRotatedHalfProductTotalOperator",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     270,
+     278
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.gHatSelfConsistencyLeftFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     206,
+     210
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.gHatSelfConsistencyRightFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     212,
+     216
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.gHatTupleOutcomeConsEquiv'",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     280,
+     292
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.incompletePartPointProductLeft",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     166,
+     174
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.incompletePartPointProductRight",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     176,
+     184
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.incompletePartTotalProductLeft",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     186,
+     194
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.incompletePartTotalProductRight",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     196,
+     204
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.switcherooAggregateLeft",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     102,
+     112
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.switcherooAggregateRight",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     114,
+     124
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.switcherooPointProductLeft",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     77,
+     87
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.switcherooPointProductRight",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     89,
+     100
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.switcherooSelfConsistencyLeft",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     63,
+     68
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.switcherooSelfConsistencyRight",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     70,
+     75
+    ]
+   }
+  ],
+  "lines": 570,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomialEmbedding",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyPolynomialFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Defs_Tuples",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Defs_Interpolation",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Defs_Families"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.Pasting.completePartPointProductLeft": [
+    "/-- Concrete family for `G^x_g G^y`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.completePartPointProductRight": [
+    "/-- Concrete family for `G^y G^x_g`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.completePartTotalProductLeft": [
+    "/-- Concrete family for `G^x G^y`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.completePartTotalProductRight": [
+    "/-- Concrete family for `G^y G^x`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.gHatHalfProductOutcomeOperator": [
+    "/-- The ordered half-product `\\widehat G^{x_1}_{g_1} \\cdots \\widehat G^{x_k}_{g_k}`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.gHatHalfProductTotalOperator": [
+    "/-- The total half-product",
+    "`\\sum_{g_1,\\dots,g_k} \\widehat G^{x_1}_{g_1} \\cdots \\widehat G^{x_k}_{g_k}`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.gHatPairProductLeft": [
+    "/-- Concrete family for the pairwise product `\\widehat G^x_g \\widehat G^y_h`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.gHatPairProductRight": [
+    "/-- Concrete family for the reversed pairwise product `\\widehat G^y_h \\widehat G^x_g`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.gHatRotatedHalfProductOutcomeOperator": [
+    "/-- The cyclically rotated half-product",
+    "`\\widehat G^{x_2}_{g_2} \\cdots \\widehat G^{x_k}_{g_k} \\widehat G^{x_1}_{g_1}`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.gHatRotatedHalfProductTotalOperator": [
+    "/-- The total cyclically rotated half-product. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.gHatSelfConsistencyLeftFamily": [
+    "/-- Left tensor-placement for `\\widehat G^x_g`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.gHatSelfConsistencyRightFamily": [
+    "/-- Right tensor-placement for `\\widehat G^x_g`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.gHatTupleOutcomeConsEquiv'": [
+    "/-- Splitting a nonempty completed-outcome tuple into its first outcome and tail. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.incompletePartPointProductLeft": [
+    "/-- Concrete family for `G^x_g G^y_⊥`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.incompletePartPointProductRight": [
+    "/-- Concrete family for `G^y_⊥ G^x_g`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.incompletePartTotalProductLeft": [
+    "/-- Concrete family for `G^x_⊥ G^y_⊥`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.incompletePartTotalProductRight": [
+    "/-- Concrete family for `G^y_⊥ G^x_⊥`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.switcherooAggregateLeft": [
+    "/-- Concrete aggregate family for `G^x M^y_o`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.switcherooAggregateRight": [
+    "/-- Concrete aggregate family for `M^y_o G^x`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.switcherooPointProductLeft": [
+    "/-- Concrete hypothesis family for `G^x_g M^y_o`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.switcherooPointProductRight": [
+    "/-- Concrete hypothesis family for `M^y_o G^x_g` on the",
+    "`Polynomial params × Outcome` outcome type. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.switcherooSelfConsistencyLeft": [
+    "/-- Left tensor-placement for the auxiliary family `M^x_o`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.switcherooSelfConsistencyRight": [
+    "/-- Right tensor-placement for the auxiliary family `M^x_o`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Sandwich_GHatSandwich",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Sandwich.GHatSandwich",
+  "module_doc": "/-!\n# Section 12 — Sandwich constructions: `GHat` sandwich families\n\nCompleted-slice sandwich families and restriction helpers.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Sandwich/GHatSandwich.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Sandwich/GHatSandwich.lean",
+  "defmat": [
+   "MIPStarRE.LDT.Pasting.gHatHalfSandwichLeft",
+   "MIPStarRE.LDT.Pasting.gHatHalfSandwichRight",
+   "MIPStarRE.LDT.Pasting.gHatSandwichFamily",
+   "MIPStarRE.LDT.Pasting.interpolationEligibleSandwichFamily",
+   "MIPStarRE.LDT.Pasting.restrictSubMeas"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.Pasting.gHatHalfSandwichLeft",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     364,
+     372
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.gHatHalfSandwichRight",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     374,
+     382
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.gHatSandwichFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     189,
+     318
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.interpolationEligibleSandwichFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     354,
+     362
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.restrictSubMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     320,
+     340
+    ]
+   }
+  ],
+  "lines": 532,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomialEmbedding",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyPolynomialFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Defs_Tuples",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Defs_Interpolation",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Defs_Families",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Sandwich_Switcheroo"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.Pasting.gHatHalfSandwichLeft": [
+    "/-- Concrete family for the half-sandwich product of `k` completed slices. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.gHatHalfSandwichRight": [
+    "/-- Concrete family for the cyclically permuted half-sandwich product. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.gHatSandwichFamily": [
+    "/-- Concrete family for the full sandwich",
+    "`\\widehat G^{x_1}_{g_1} \\cdots \\widehat G^{x_k}_{g_k} \\cdots \\widehat G^{x_1}_{g_1}`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.interpolationEligibleSandwichFamily": [
+    "/-- Restrict the sandwiched completed-slice family to tuples with support of size at",
+    "least `d + 1`, matching the `|τ| ≥ d+1` filter in the paper before interpolation. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.restrictSubMeas": [
+    "/-- Restrict a submeasurement to the outcomes satisfying `p`, dropping all other",
+    "mass from the total operator. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Sandwich_PastedFamilies",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Pasting.Sandwich.PastedFamilies",
+  "module_doc": "/-!\n# Section 12 — Sandwich constructions: pasted families\n\nPasted interpolation families, recurrence weights, and final operator families.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Sandwich/PastedFamilies.lean",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Pasting/Sandwich/PastedFamilies.lean",
+  "defmat": [
+   "MIPStarRE.LDT.Pasting.allOutcomesExpansionFamily",
+   "MIPStarRE.LDT.Pasting.averagedEligibleSandwichSubMeas",
+   "MIPStarRE.LDT.Pasting.averagedSandwichByTypeSubMeas",
+   "MIPStarRE.LDT.Pasting.averagedSliceAppendedSubMeas",
+   "MIPStarRE.LDT.Pasting.bernoulliTailFromFamily",
+   "MIPStarRE.LDT.Pasting.bernoulliTailSubMeas",
+   "MIPStarRE.LDT.Pasting.constructedPastedMeasurement",
+   "MIPStarRE.LDT.Pasting.constructedPastedSubMeas",
+   "MIPStarRE.LDT.Pasting.fromHToGRecurrenceWeight",
+   "MIPStarRE.LDT.Pasting.fromHToGTailStageFamily",
+   "MIPStarRE.LDT.Pasting.hRestrictionToVerticalLine",
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily",
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointRightFamily",
+   "MIPStarRE.LDT.Pasting.liftedVerticalLineAnswerFamily",
+   "MIPStarRE.LDT.Pasting.pastedFallbackOutcome",
+   "MIPStarRE.LDT.Pasting.pastedInterpolationFamily",
+   "MIPStarRE.LDT.Pasting.pastedMeasurementTotal",
+   "MIPStarRE.LDT.Pasting.verticalLineMeasurementFamily"
+  ],
+  "embedded": [
+   "MIPStarRE.LDT.Pasting.bernoulliTailSubMeas_outcome",
+   "MIPStarRE.LDT.Pasting.bernoulliTailSubMeas_total"
+  ],
+  "kept": [
+   {
+    "name": "MIPStarRE.LDT.Pasting.allOutcomesExpansionFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     275,
+     281
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.averagedEligibleSandwichSubMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     94,
+     102
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.averagedSandwichByTypeSubMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     315,
+     343
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.averagedSliceAppendedSubMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     129,
+     140
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.bernoulliTailFromFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     306,
+     313
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.bernoulliTailSubMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     283,
+     290
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.bernoulliTailSubMeas_outcome",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     292,
+     297
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.bernoulliTailSubMeas_total",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     299,
+     304
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.constructedPastedMeasurement",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     117,
+     127
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.constructedPastedSubMeas",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     104,
+     110
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.fromHToGRecurrenceWeight",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     63,
+     71
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.fromHToGTailStageFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     345,
+     371
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.hRestrictionToVerticalLine",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     259,
+     267
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     233,
+     245
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointRightFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     247,
+     257
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.liftedVerticalLineAnswerFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     201,
+     210
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.pastedFallbackOutcome",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     112,
+     115
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.pastedInterpolationFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     73,
+     92
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.pastedMeasurementTotal",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     269,
+     273
+    ]
+   },
+   {
+    "name": "MIPStarRE.LDT.Pasting.verticalLineMeasurementFamily",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     161,
+     169
+    ]
+   }
+  ],
+  "lines": 599,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersBase",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_AxisParallelLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_DiagonalLine",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomials",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LowDegreePolynomial",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Basic",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_Order",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_TracePairing",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_BlockDiagonal",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_FiniteMatrix_NormalizedTrace",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_Distribution",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_QuantumState",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OperatorExpectations",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_SubMeasurementFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_ParametersFiniteAnswers",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_PMFAverages",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_OpFamily",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_Quantum_Measurement",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_MakingMeasurementsProjective_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_MeasurementLift",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Preliminaries_ComparisonCore",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Basic_LinePolynomialEmbedding",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyPolynomialFamilies",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyRole_Algebra",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_StrategyFailures",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_ExpansionHypercubeGraph_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_GlobalVariance_Defs_Core",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Defs",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_CommutativityPoints_Approximation",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Defs_Tuples",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Defs_Interpolation",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Defs_Families",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Sandwich_Switcheroo",
+   "import Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Sandwich_GHatSandwich"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPStarRE.LDT.Pasting.allOutcomesExpansionFamily": [
+    "/-- The expansion over all outcome types `τ`, written as the",
+    "total mass of the averaged sandwich family restricted to `|τ| ≥ d+1`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.averagedEligibleSandwichSubMeas": [
+    "/-- The averaged sandwiched family restricted to outcome tuples of type `τ`",
+    "with `|τ| ≥ d+1`, as in `lem:over-all-outcomes`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.averagedSandwichByTypeSubMeas": [
+    "/-- Average the sandwiched completed-slice family over tuples whose completed/",
+    "incomplete pattern is exactly `τtail`.",
+    "",
+    "This is the paper's operator",
+    "$$",
+    "\\mathbb E_{x_{\\ge \\ell}} \\sum_{g_{\\ge \\ell} \\in \\mathsf{Outcomes}_{\\tau_{\\ge \\ell}}}",
+    "  \\widehat H^{x_{\\ge \\ell}}_{g_{\\ge \\ell}},",
+    "$$",
+    "written in the existing `SubMeas Unit` API so that its total operator is the",
+    "relevant suffix-stage matrix.  Unlike the old `fromHToG` recurrence families,",
+    "this keeps the `\\widehat H^{x_{\\ge \\ell}}_{g_{\\ge \\ell}}` suffix visible instead",
+    "of collapsing immediately to the full `k`-step total mass.",
+    "",
+    "When this is used in `fromHToG`, the suffix length is `tailLen = k - ℓ`, and",
+    "the expectation is the paper's independent uniform average over the remaining",
+    "slice points `x_{≥ℓ}`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.averagedSliceAppendedSubMeas": [
+    "/-- Degree-zero candidate pasted submeasurement obtained by averaging the slice",
+    "family and viewing each slice polynomial as a polynomial in one more variable.",
+    "",
+    "Paper origin: `references/ldt-paper/ld-pasting.tex:12-55`.  This is a",
+    "Lean-only construction for the `d = 0` branch of `thm:ld-pasting`, where the",
+    "ordinary interpolation construction is not available because `d + 1 = 1`",
+    "collapses the distinct-height argument.  It introduces no additional",
+    "hypothesis. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.bernoulliTailFromFamily": [
+    "/-- The Bernoulli-tail polynomial in the averaged complete operator `G = E_x \\sum_g G^x_g`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.bernoulliTailSubMeas": [
+    "/-- The one-outcome submeasurement whose unique effect is the Bernoulli-tail",
+    "operator of `X`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.constructedPastedMeasurement": [
+    "/-- The specific pasted measurement obtained by completing the constructed pasted submeasurement.",
+    "",
+    "The paper adds all missing mass `I - H_total` to a single distinguished polynomial",
+    "outcome `h₀` (the fallback interpolant).  So the outcome operator for `h₀` becomes",
+    "`H_{h₀} + (I - H_total)` while all other outcomes keep their original operators, and",
+    "the total is genuinely the identity `I`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.constructedPastedSubMeas": [
+    "/-- The specific pasted submeasurement constructed from the sandwich/interpolation scheme. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.fromHToGRecurrenceWeight": [
+    "/-- Source-style recurrence weight `S_{τtail}` from `lem:from-H-to-G`.",
+    "",
+    "The parameter `prefixLen` is the number of type bits already converted into the",
+    "Bernoulli polynomial.  This is exactly `truncatedTypeSums` specialized to the",
+    "averaged complete operator `G = E_x ∑_g G^x_g`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.fromHToGTailStageFamily": [
+    "/-- The stage-`ℓ` suffix family from the proof of `lem:from-H-to-G`, for a fixed",
+    "remaining tail type `τ_{≥ℓ}`.",
+    "",
+    "This is the operator-valued quantity displayed termwise in",
+    "`references/ldt-paper/ld-pasting.tex`, equation",
+    "`eq:i-think-this-is-what-i'm-supposed-to-prove-2` (lines 1386–1391), and in the",
+    "parallel blueprint discussion in `blueprint/src/chapter/ch09_pasting.tex`.",
+    "The parameter `prefixLen` is the Lean 0-based stage index. In the ambient",
+    "`k`-step recurrence where this family is used, the remaining tail length is",
+    "`tailLen = k - prefixLen`, so Lean stage `prefixLen` corresponds to the paper's",
+    "stage `prefixLen + 1`.",
+    "",
+    "Concretely, this records",
+    "$$",
+    "\\mathbb E_{x_{\\ge \\ell}} \\sum_{g_{\\ge \\ell} \\in \\mathsf{Outcomes}_{\\tau_{\\ge \\ell}}}",
+    "  \\widehat H^{x_{\\ge \\ell}}_{g_{\\ge \\ell}} \\otimes S_{\\tau_{\\ge \\ell}}.",
+    "$$ -/"
+   ],
+   "MIPStarRE.LDT.Pasting.hRestrictionToVerticalLine": [
+    "/-- Restrict a global polynomial-valued submeasurement to the vertical line through `u`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily": [
+    "/-- Explicit value extracted from the `i`-th genuine slice outcome at the test point.",
+    "",
+    "The paper's one-point sandwich comparison only sums over tuples with",
+    "`g_i ≠ ⊥`; the `none` mass is therefore removed before postprocessing. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointRightFamily": [
+    "/-- Explicit value extracted from the vertical line measurement `B^u` at the slice height `x_i`. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.liftedVerticalLineAnswerFamily": [
+    "/-- Pull back the vertical-line answer family along `truncatePoint`, then read",
+    "its line polynomial at the lifted point's final coordinate. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.pastedFallbackOutcome": [
+    "/-- The distinguished fallback polynomial `h₀` that receives the completion mass. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.pastedInterpolationFamily": [
+    "/-- The interpolated operator `H^{x_1,\\dots,x_k}_h` restricted to tuples that are",
+    "globally consistent with a single polynomial.",
+    "",
+    "The paper's definition (`references/ldt-paper/ld-pasting.tex` lines 474–495) sums",
+    "only tuples `(g_1,…,g_k)` in `Global_τ(x)` — those consistent with a single",
+    "polynomial `h` — and then interpolates. The `|τ| ≥ d+1` eligibility filter is",
+    "applied by `interpolationEligibleSandwichFamily`; this definition additionally",
+    "restricts to globally consistent tuples via `IsGloballyConsistent`.",
+    "Consequently, `pastedInterpolationFamily` is supported only on tuples satisfying",
+    "both restrictions, and any fallback or default value in",
+    "`interpolateCompletedSlices` is irrelevant off that restricted support. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.pastedMeasurementTotal": [
+    "/-- Collapse a submeasurement to its `Unit`-valued total operator. -/"
+   ],
+   "MIPStarRE.LDT.Pasting.verticalLineMeasurementFamily": [
+    "/-- Placeholder family for the vertical axis-parallel line measurement `B^u_f`. -/"
+   ]
+  }
+ }
+]

@@ -1,0 +1,675 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Circuit.lastInputValue_range",
+  "source_name": "MIPRE.SAT.Circuit.lastInputValue_range",
+  "formal_statement": "theorem MIPRE.SAT.Circuit.lastInputValue_range (C : Circuit) (k i : ℕ) (x w : ℕ → α) :\n    lastInputValue ((List.range k).map (fun j => (C.gates.getD j (.const false), w j)))\n      i (x i) = Sum.elim x w (C.inputRef k i) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Circuit",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial",
+   "variable {α : Type*} [SizedEncoding α]"
+  ],
+  "docstring": "The executable scan reads exactly the variable selected by input-copy routing.",
+  "module": "MIPRE.Foundations.SAT.InputRoutingProg",
+  "module_doc": "/-!\n# Effective lookup of the preceding input copy\n\nThe field evaluator scans the already supplied gate/value pairs. A read of\ninput `i` uses the last value attached to an earlier input gate for `i`, or\nthe external input value if there is no such gate. Binary indices are compared\ndirectly; malformed large indices never cause unary expansion.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/InputRoutingProg.lean#L48-L62",
+  "source_path": "MIPRE/Foundations/SAT/InputRoutingProg.lean",
+  "lines": [
+   48,
+   62
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-circuit-evaluator",
+    "env": "lemma",
+    "title": "Effective circuit polynomial evaluation",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Cnf5.sat_pad_iff",
+  "source_name": "MIPRE.SAT.Cnf5.sat_pad_iff",
+  "formal_statement": "theorem MIPRE.SAT.Cnf5.sat_pad_iff {ℓ r ℓ' r' : ℕ} (hℓ : ℓ ≤ ℓ') (hr : r ≤ r')\n    (φ : Cnf5 (Fin (2 ^ ℓ)) (Fin (2 ^ ℓ))\n      (Fin (2 ^ r)) (Fin (2 ^ r)) (Fin (2 ^ r)))\n    (a b : Fin (2 ^ ℓ') → Bool) (w₁ w₂ w₃ : Fin (2 ^ r') → Bool) :\n    (pad hℓ hr φ).Sat a b w₁ w₂ w₃ ↔\n      φ.Sat (a ∘ blockInclusion hℓ) (b ∘ blockInclusion hℓ)\n        (w₁ ∘ blockInclusion hr) (w₂ ∘ blockInclusion hr) (w₃ ∘ blockInclusion hr) ∧\n      (∀ i : Fin (2 ^ ℓ'), 2 ^ ℓ ≤ (i : ℕ) → a i = decide ((i : ℕ) % 2 = 0)) ∧\n      (∀ i : Fin (2 ^ ℓ'), 2 ^ ℓ ≤ (i : ℕ) → b i = decide ((i : ℕ) % 2 = 0)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Cnf5"
+  ],
+  "docstring": "Padding satisfaction is exactly original satisfaction and both complete blank tails.",
+  "module": "MIPRE.Foundations.SAT.Padding",
+  "module_doc": "/-!\n# Padding decoupled descriptions\n\nThe semantic content of `prop:exciting-padding-prop` in `answer_reduction.tex`.\nThe original clauses are embedded in the larger five blocks. Additional clauses\nforce both answer tails to be blank tapes; the three auxiliary tails are free.\nIn particular, the conclusion preserves `Circuit.DescribesDecider`, which specifies\nevery answer bit, rather than merely preserving the accepted answer prefixes.\nThe circuit construction and its running time are separate obligations.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Padding.lean#L75-L103",
+  "source_path": "MIPRE/Foundations/SAT/Padding.lean",
+  "lines": [
+   75,
+   103
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-padding-semantics",
+    "env": "lemma",
+    "title": "Padding preserves the complete answer tapes",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Circuit.DescribesDecider.of_pad",
+  "source_name": "MIPRE.SAT.Circuit.DescribesDecider.of_pad",
+  "formal_statement": "theorem MIPRE.SAT.Circuit.DescribesDecider.of_pad {C C' : Circuit} {ℓ r ℓ' r' : ℕ}\n    {D : Decider} {n T : ℕ} {x y : Cost.BitStr}\n    (hC : C.DescribesDecider ℓ r D n x y T) (hℓ : ℓ ≤ ℓ') (hr : r ≤ r')\n    (hT : 2 * T ≤ 2 ^ ℓ)\n    (hpad : C'.formula5 ℓ' r' = Cnf5.pad hℓ hr (C.formula5 ℓ r)) :\n    C'.DescribesDecider ℓ' r' D n x y T := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Circuit",
+   "open MIPRE.SAT.Circuit.DescribesDecider"
+  ],
+  "docstring": "A circuit implementing the padded clause set still describes the same decider,\nincluding the entire answer tapes and their blank tails.",
+  "module": "MIPRE.Foundations.SAT.Padding",
+  "module_doc": "/-!\n# Padding decoupled descriptions\n\nThe semantic content of `prop:exciting-padding-prop` in `answer_reduction.tex`.\nThe original clauses are embedded in the larger five blocks. Additional clauses\nforce both answer tails to be blank tapes; the three auxiliary tails are free.\nIn particular, the conclusion preserves `Circuit.DescribesDecider`, which specifies\nevery answer bit, rather than merely preserving the accepted answer prefixes.\nThe circuit construction and its running time are separate obligations.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Padding.lean#L116-L151",
+  "source_path": "MIPRE/Foundations/SAT/Padding.lean",
+  "lines": [
+   116,
+   151
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-padding-semantics",
+    "env": "lemma",
+    "title": "Padding preserves the complete answer tapes",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.SAT.Cnf5.sat_pad_iff"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.viewFormat_rawView",
+  "source_name": "MIPRE.SAT.viewFormat_rawView",
+  "formal_statement": "theorem MIPRE.SAT.viewFormat_rawView {P : PcpParams} {k : ℕ} (E : BinField k) (hk : P.k = k)\n    (pf : PcpProof P E.carrier) (z : Fin P.m' → E.carrier) :\n    ViewFormat P (pf.rawView E z).1 (pf.rawView E z).2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.Cost MIPRE.LowDegree MvPolynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.Pcp",
+  "module_doc": "/-!\n# The bespoke PCP for deciders: the statement\n\n`MIPRE.SAT.PcpDecider` is blueprint `thm:pcp-decider` — the paper's theorem of the same name\nin `answer_reduction.tex` — the classical half of answer reduction: a verifier that, given a\ndecider specification and a *PCP view* (a point `z ∈ 𝔽_q^{m'}` and a claimed evaluation of the\nproof at `z`), accepts an honest low-degree proof with probability `1` and forces any\nlow-degree proof accepted with probability more than `1/2` to encode answers the decider\naccepts. It consumes `lem:decoupled-5sat` — the decoupled 5SAT description of the decider is\nwhat the proof's constraint polynomials arithmetize — and `lem:schwartz-zippel`.\n\nStated here, before anything is proved, so that the consumers in chapter 6 (`ld_compiler.tex`'s\ntyped PCP sampler, and `thm:answer-reduction` through it) can be written against it, exactly as\n`SuccinctCookLevin` and `DecoupledDescriber` were stated before being inhabited.\n\n## What the statement needs\n\n* `BinField k` — a field of size `2^k` with a fixed `k`-bit representation of its elements.\n  The paper's admissible field size is `q = 2^k` with `k` odd and the representation is the one\n  the self-dual normal basis of `lem:self-dual-basis` supplies; all the *statement* needs is the\n  size and the representation. `SAT.QuotientField.shoupAdmissibleField` supplies this\n  interface in the polynomial power basis, with uniform addition and multiplication\n  programs. Consumers requiring a self-dual normal basis still need `lem:self-dual-basis`.\n* `PcpParams` — `def:pcpparams`. Only `k, m, s` are data: `d = 7` and `m' = 5m + 5 + s` are\n  determined, and the paper's `q` is `2^k`.\n* `PcpProof` — `def:pcp-proof`: five `m`-variate polynomials and `m' + 1` `m'`-variate ones,\n  all of individual degree at most `d`.\n* `PcpProof.ev` — `def:pcp-eval`, the evaluation `(α₁ … α₅, β₀ … β_{m'})` at a point, with\n  `αᵢ = gᵢ(xᵢ)` reading the `i`-th of the five `m`-coordinate blocks of `z` (`PcpParams.block`).\n* `ViewFormat` — the format check item 1 requires the verifier to perform, and\n  `PcpProof.rawView` the honest view in the verifier's bit-level input format.\n\n## Two things this statement carries, and one it does not\n\nIt carries the blueprint's repair of a confirmed source defect (`rem:pcp-power-of-two`): both\n`m` and `m'` are required to be powers of two dividing `q`, where the source's padding\nguarantees it only for the outer `m'`. Without the inner one the conditionally linear functions\nof the `m`-variate test's lines are ill defined.\n\nIt does *not* carry the source's lower bound on `q` (`eq:pcp-q-choice`,\n`q ≥ (max\\{Q,2\\} · a'(d m'(m'+6))^{a'})^{1/b'}`), which is stated in terms of the universal\nconstants of `thm:lidt-cl-soundness` and is consumed not here but in `ld_compiler.tex`, where\nthe answer-reduced verifier's soundness error is assembled. The blueprint's statement of\n`thm:pcp-decider` does not state it either; when the consumer is written it will need to be\nadded here or re-derived the",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Pcp.lean#L196-L205",
+  "source_path": "MIPRE/Foundations/SAT/Pcp.lean",
+  "lines": [
+   196,
+   205
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-format",
+    "env": "lemma",
+    "title": "The PCP's proof format and query structure",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.PcpAlgebra.degreeOf_constraint_le",
+  "source_name": "MIPRE.SAT.PcpAlgebra.degreeOf_constraint_le",
+  "formal_statement": "theorem MIPRE.SAT.PcpAlgebra.degreeOf_constraint_le (φ : MvPolynomial (Fin m) F)\n    (g : Fin 5 → MvPolynomial (Fin m) F) (sign : Fin 5 → Fin m) {d : ℕ}\n    (hφ : ∀ j, φ.degreeOf j ≤ 6) (hg : ∀ i j, (g i).degreeOf j ≤ d) (j : Fin m) :\n    (constraint φ g sign).degreeOf j ≤ 6 + 5 * max d 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.PcpAlgebra",
+   "open Finset MvPolynomial MIPRE.LowDegree",
+   "variable {F : Type*} [Field F] {m : ℕ}"
+  ],
+  "docstring": "The conservative individual-degree bound used in the source's soundness proof.\nIt does not rely on disjointness of the five blocks.",
+  "module": "MIPRE.Foundations.SAT.PcpAlgebra",
+  "module_doc": "/-!\n# The algebraic tests of the classical PCP\n\nThe formula test and Boolean-cube zero test from `thm:pcp-decider`. These lemmas\nconcern polynomials and their evaluations. Circuit padding, the embedding of the\nfive answer blocks, and the verifier's ambient program are separate obligations.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/PcpAlgebra.lean#L56-L74",
+  "source_path": "MIPRE/Foundations/SAT/PcpAlgebra.lean",
+  "lines": [
+   56,
+   74
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-algebra-tests",
+    "env": "lemma",
+    "title": "The algebraic PCP tests",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.PcpAlgebra.degreeOf_zeroCombination_le",
+  "source_name": "MIPRE.SAT.PcpAlgebra.degreeOf_zeroCombination_le",
+  "formal_statement": "theorem MIPRE.SAT.PcpAlgebra.degreeOf_zeroCombination_le (c : Fin m → MvPolynomial (Fin m) F) {d : ℕ}\n    (hc : ∀ i j, (c i).degreeOf j ≤ d) (j : Fin m) :\n    (zeroCombination c).degreeOf j ≤ d + 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.PcpAlgebra",
+   "open Finset MvPolynomial MIPRE.LowDegree",
+   "variable {F : Type*} [Field F] {m : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.PcpAlgebra",
+  "module_doc": "/-!\n# The algebraic tests of the classical PCP\n\nThe formula test and Boolean-cube zero test from `thm:pcp-decider`. These lemmas\nconcern polynomials and their evaluations. Circuit padding, the embedding of the\nfive answer blocks, and the verifier's ambient program are separate obligations.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/PcpAlgebra.lean#L76-L89",
+  "source_path": "MIPRE/Foundations/SAT/PcpAlgebra.lean",
+  "lines": [
+   76,
+   89
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-algebra-tests",
+    "env": "lemma",
+    "title": "The algebraic PCP tests",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.PcpAlgebra.literal_product_degree_le",
+  "source_name": "MIPRE.SAT.PcpAlgebra.literal_product_degree_le",
+  "formal_statement": "theorem MIPRE.SAT.PcpAlgebra.literal_product_degree_le (g : Fin 5 → MvPolynomial (Fin P.m) F)\n    (hg : ∀ i j, (g i).degreeOf j ≤ 1) (j : Fin P.m') :\n    (∏ i, (liftAnswer i (g i) - X (P.signIndex i))).degreeOf j ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.PcpAlgebra",
+   "open Finset MvPolynomial MIPRE.LowDegree",
+   "variable {P : PcpParams} {F : Type*} [Field F]"
+  ],
+  "docstring": "A coordinate belongs to at most one of the five literal factors.",
+  "module": "MIPRE.Foundations.SAT.PcpBlocks",
+  "module_doc": "/-!\n# The five disjoint answer blocks of the classical PCP\n\nThe answer polynomials have `m` variables; the formula and certificates have\n`5*m + 5 + s` variables. This file transports the former into the latter without\nlosing the individual-degree bound. In particular, the honest constraint has\ndegree at most seven, rather than the soundness proof's coarse bound of 41.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/PcpBlocks.lean#L118-L150",
+  "source_path": "MIPRE/Foundations/SAT/PcpBlocks.lean",
+  "lines": [
+   118,
+   150
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-proof-algebra",
+    "env": "lemma",
+    "title": "PCP answer blocks, honest proof and decoded clauses",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 5,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.PcpAlgebra.exists_proof_of_satisfying_assignment",
+  "source_name": "MIPRE.SAT.PcpAlgebra.exists_proof_of_satisfying_assignment",
+  "formal_statement": "theorem MIPRE.SAT.PcpAlgebra.exists_proof_of_satisfying_assignment\n    (φ : MvPolynomial (Fin P.m') F) (hφdeg : ∀ j, φ.degreeOf j ≤ 6)\n    (hφbool : ∀ y : Fin P.m' → Bool, eval (pt y) φ = 0 ∨ eval (pt y) φ = 1)\n    (a : Fin 5 → (Fin P.m → Bool) → Bool)\n    (hsat : ∀ y : Fin P.m' → Bool, eval (pt y) φ = 1 →\n      ∃ i : Fin 5, a i (P.block i y) = y (P.signIndex i)) :\n    ∃ pf : PcpProof P F,\n      (∀ i, pf.g i = ldEnc (fun x => ofBool (a i x))) ∧\n      ∀ z, TypedAccepts φ z (pf.ev z) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.PcpAlgebra",
+   "open Finset MvPolynomial MIPRE.LowDegree",
+   "variable {P : PcpParams} {F : Type*} [Field F]"
+  ],
+  "docstring": "The honest low-degree PCP, including its degree-seven certificates and its\nfive prescribed answer polynomials, exists for every satisfying Boolean assignment.",
+  "module": "MIPRE.Foundations.SAT.PcpBlocks",
+  "module_doc": "/-!\n# The five disjoint answer blocks of the classical PCP\n\nThe answer polynomials have `m` variables; the formula and certificates have\n`5*m + 5 + s` variables. This file transports the former into the latter without\nlosing the individual-degree bound. In particular, the honest constraint has\ndegree at most seven, rather than the soundness proof's coarse bound of 41.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/PcpBlocks.lean#L174-L209",
+  "source_path": "MIPRE/Foundations/SAT/PcpBlocks.lean",
+  "lines": [
+   174,
+   209
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-proof-algebra",
+    "env": "lemma",
+    "title": "PCP answer blocks, honest proof and decoded clauses",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.degreeOf_ind_le",
+   "MIPRE.LowDegree.exists_zero_basis",
+   "MIPRE.SAT.PcpAlgebra.literal_product_degree_le"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.PcpAlgebra.decoded_clause_of_majority",
+  "source_name": "MIPRE.SAT.PcpAlgebra.decoded_clause_of_majority",
+  "formal_statement": "theorem MIPRE.SAT.PcpAlgebra.decoded_clause_of_majority [Fintype F] [DecidableEq F]\n    (φ : MvPolynomial (Fin P.m') F) (hφ : ∀ j, φ.degreeOf j ≤ 6)\n    (pf : PcpProof P F) (hq : 82 * P.m' ≤ Fintype.card F)\n    (S : Finset (Fin P.m' → F)) (hS : ∀ z ∈ S, TypedAccepts φ z (pf.ev z))\n    (hmajority : Fintype.card F ^ P.m' < 2 * S.card)\n    (y : Fin P.m' → Bool) (hy : eval (pt y) φ = 1) :\n    ∃ i : Fin 5, coded (pf.g i) (P.block i y) = ofBool (y (P.signIndex i)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.PcpAlgebra",
+   "open Finset MvPolynomial MIPRE.LowDegree",
+   "variable {P : PcpParams} {F : Type*} [Field F]"
+  ],
+  "docstring": "Majority acceptance of any low-degree proof yields a satisfying decoded\nfive-tuple for every Boolean clause described by the arithmetized formula.",
+  "module": "MIPRE.Foundations.SAT.PcpBlocks",
+  "module_doc": "/-!\n# The five disjoint answer blocks of the classical PCP\n\nThe answer polynomials have `m` variables; the formula and certificates have\n`5*m + 5 + s` variables. This file transports the former into the latter without\nlosing the individual-degree bound. In particular, the honest constraint has\ndegree at most seven, rather than the soundness proof's coarse bound of 41.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/PcpBlocks.lean#L211-L231",
+  "source_path": "MIPRE/Foundations/SAT/PcpBlocks.lean",
+  "lines": [
+   211,
+   231
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-proof-algebra",
+    "env": "lemma",
+    "title": "PCP answer blocks, honest proof and decoded clauses",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.eq_of_majority_agree",
+   "MIPRE.SAT.PcpAlgebra.degreeOf_constraint_le",
+   "MIPRE.SAT.PcpAlgebra.degreeOf_zeroCombination_le"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.quotientBinField_toBits_ofBits",
+  "source_name": "MIPRE.SAT.quotientBinField_toBits_ofBits",
+  "formal_statement": "theorem MIPRE.SAT.quotientBinField_toBits_ofBits (l : BitStr) (hlen : l.length = f.natDegree) :\n    (quotientBinField f hf).toBits ((quotientBinField f hf).ofBits l) = l := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open Finset MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial MIPRE.Cost",
+   "variable (f : Polynomial (ZMod 2)) (hf : f.Monic) [Fact (Irreducible f)]"
+  ],
+  "docstring": "Every correctly sized bit string is the canonical representation of its\ndecoded field element. In particular, raw equality tests are faithful.",
+  "module": "MIPRE.Foundations.SAT.QuotientField",
+  "module_doc": "/-!\n# Binary fields represented in the polynomial power basis\n\nUnlike an arbitrary basis of a Galois field, the power basis of `F₂[X]/(f)`\nconnects directly to the uniform coefficient-list programs. This is the field\nrepresentation needed for the classical PCP's arithmetic. A self-dual normal\nrepresentation and its change-of-basis algorithm remain separate constructions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/QuotientField.lean#L67-L82",
+  "source_path": "MIPRE/Foundations/SAT/QuotientField.lean",
+  "lines": [
+   67,
+   82
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-binary-field-arithmetic",
+    "env": "lemma",
+    "title": "Effective polynomial-basis field arithmetic",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.quotientBinField_ofBits",
+  "source_name": "MIPRE.SAT.quotientBinField_ofBits",
+  "formal_statement": "theorem MIPRE.SAT.quotientBinField_ofBits (l : BitStr) (hlen : l.length = f.natDegree) :\n    (quotientBinField f hf).ofBits l = evalBits (AdjoinRoot.root f) l := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open Finset MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial MIPRE.Cost",
+   "variable (f : Polynomial (ZMod 2)) (hf : f.Monic) [Fact (Irreducible f)]"
+  ],
+  "docstring": "Correct-width coefficient decoding is evaluation at the quotient's root.",
+  "module": "MIPRE.Foundations.SAT.QuotientField",
+  "module_doc": "/-!\n# Binary fields represented in the polynomial power basis\n\nUnlike an arbitrary basis of a Galois field, the power basis of `F₂[X]/(f)`\nconnects directly to the uniform coefficient-list programs. This is the field\nrepresentation needed for the classical PCP's arithmetic. A self-dual normal\nrepresentation and its change-of-basis algorithm remain separate constructions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/QuotientField.lean#L84-L96",
+  "source_path": "MIPRE/Foundations/SAT/QuotientField.lean",
+  "lines": [
+   84,
+   96
+  ],
+  "blueprint": [
+   {
+    "label": "lem:effective-binary-field-arithmetic",
+    "env": "lemma",
+    "title": "Effective polynomial-basis field arithmetic",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 10,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.shoupBinField_charP",
+  "source_name": "MIPRE.SAT.shoupBinField_charP",
+  "formal_statement": "theorem MIPRE.SAT.shoupBinField_charP (k : ℕ) (hk : 1 ≤ k) : CharP (shoupBinField k hk).carrier 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open Finset MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial MIPRE.Cost"
+  ],
+  "docstring": "The degree metadata does not change the quotient carrier or its arithmetic.",
+  "module": "MIPRE.Foundations.SAT.QuotientField",
+  "module_doc": "/-!\n# Binary fields represented in the polynomial power basis\n\nUnlike an arbitrary basis of a Galois field, the power basis of `F₂[X]/(f)`\nconnects directly to the uniform coefficient-list programs. This is the field\nrepresentation needed for the classical PCP's arithmetic. A self-dual normal\nrepresentation and its change-of-basis algorithm remain separate constructions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/QuotientField.lean#L167-L172",
+  "source_path": "MIPRE/Foundations/SAT/QuotientField.lean",
+  "lines": [
+   167,
+   172
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-circuit-evaluator",
+    "env": "lemma",
+    "title": "Effective circuit polynomial evaluation",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.shoupIrreducible_irreducible"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.shoupBinField_toBits_ofBits",
+  "source_name": "MIPRE.SAT.shoupBinField_toBits_ofBits",
+  "formal_statement": "theorem MIPRE.SAT.shoupBinField_toBits_ofBits (k : ℕ) (hk : 1 ≤ k) (l : BitStr) (hl : l.length = k) :\n    (shoupBinField k hk).toBits ((shoupBinField k hk).ofBits l) = l := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open Finset MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial MIPRE.Cost"
+  ],
+  "docstring": "Canonical decoding is unchanged by the explicit degree bookkeeping.",
+  "module": "MIPRE.Foundations.SAT.QuotientField",
+  "module_doc": "/-!\n# Binary fields represented in the polynomial power basis\n\nUnlike an arbitrary basis of a Galois field, the power basis of `F₂[X]/(f)`\nconnects directly to the uniform coefficient-list programs. This is the field\nrepresentation needed for the classical PCP's arithmetic. A self-dual normal\nrepresentation and its change-of-basis algorithm remain separate constructions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/QuotientField.lean#L174-L180",
+  "source_path": "MIPRE/Foundations/SAT/QuotientField.lean",
+  "lines": [
+   174,
+   180
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-circuit-evaluator",
+    "env": "lemma",
+    "title": "Effective circuit polynomial evaluation",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.shoupIrreducible_monic",
+   "MIPRE.LowDegree.shoupIrreducible_irreducible",
+   "MIPRE.LowDegree.shoupIrreducible_natDegree",
+   "MIPRE.SAT.quotientBinField_toBits_ofBits"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.shoupRoot_equation",
+  "source_name": "MIPRE.SAT.shoupRoot_equation",
+  "formal_statement": "theorem MIPRE.SAT.shoupRoot_equation (k : ℕ) (hk : 1 ≤ k) :\n    shoupRoot k hk ^ (shoupLowerCoeffs (unary k)).length =\n      evalBits (shoupRoot k hk) (shoupLowerCoeffs (unary k)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open Finset MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial MIPRE.Cost"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.SAT.QuotientField",
+  "module_doc": "/-!\n# Binary fields represented in the polynomial power basis\n\nUnlike an arbitrary basis of a Galois field, the power basis of `F₂[X]/(f)`\nconnects directly to the uniform coefficient-list programs. This is the field\nrepresentation needed for the classical PCP's arithmetic. A self-dual normal\nrepresentation and its change-of-basis algorithm remain separate constructions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/QuotientField.lean#L190-L195",
+  "source_path": "MIPRE/Foundations/SAT/QuotientField.lean",
+  "lines": [
+   190,
+   195
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-executable-tests",
+    "env": "lemma",
+    "title": "The executable PCP tests",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits",
+   "MIPRE.LowDegree.BinaryPolynomial.normalize_monic",
+   "MIPRE.LowDegree.shoupIrreducible_monic",
+   "MIPRE.LowDegree.shoupIrreducible_irreducible",
+   "MIPRE.LowDegree.shoupIrreducible_natDegree"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.shoupRoot_eval_toBits",
+  "source_name": "MIPRE.SAT.shoupRoot_eval_toBits",
+  "formal_statement": "theorem MIPRE.SAT.shoupRoot_eval_toBits (k : ℕ) (hk : 1 ≤ k) (a : (shoupBinField k hk).carrier) :\n    evalBits (shoupRoot k hk) ((shoupBinField k hk).toBits a) = a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open Finset MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial MIPRE.Cost"
+  ],
+  "docstring": "A canonical Shoup coefficient vector evaluates to its original field element.",
+  "module": "MIPRE.Foundations.SAT.QuotientField",
+  "module_doc": "/-!\n# Binary fields represented in the polynomial power basis\n\nUnlike an arbitrary basis of a Galois field, the power basis of `F₂[X]/(f)`\nconnects directly to the uniform coefficient-list programs. This is the field\nrepresentation needed for the classical PCP's arithmetic. A self-dual normal\nrepresentation and its change-of-basis algorithm remain separate constructions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/QuotientField.lean#L197-L205",
+  "source_path": "MIPRE/Foundations/SAT/QuotientField.lean",
+  "lines": [
+   197,
+   205
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-executable-tests",
+    "env": "lemma",
+    "title": "The executable PCP tests",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.shoupIrreducible_monic",
+   "MIPRE.LowDegree.shoupIrreducible_irreducible",
+   "MIPRE.LowDegree.shoupIrreducible_natDegree",
+   "MIPRE.SAT.quotientBinField_ofBits"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.shoupRoot_eval_eq_iff",
+  "source_name": "MIPRE.SAT.shoupRoot_eval_eq_iff",
+  "formal_statement": "theorem MIPRE.SAT.shoupRoot_eval_eq_iff (k : ℕ) (hk : 1 ≤ k) (a b : BitStr)\n    (ha : a.length = k) (hb : b.length = k) :\n    evalBits (shoupRoot k hk) a = evalBits (shoupRoot k hk) b ↔ a = b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open Finset MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial MIPRE.Cost"
+  ],
+  "docstring": "Equality at the Shoup root is faithful on the verifier's fixed-width vectors.",
+  "module": "MIPRE.Foundations.SAT.QuotientField",
+  "module_doc": "/-!\n# Binary fields represented in the polynomial power basis\n\nUnlike an arbitrary basis of a Galois field, the power basis of `F₂[X]/(f)`\nconnects directly to the uniform coefficient-list programs. This is the field\nrepresentation needed for the classical PCP's arithmetic. A self-dual normal\nrepresentation and its change-of-basis algorithm remain separate constructions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/QuotientField.lean#L207-L215",
+  "source_path": "MIPRE/Foundations/SAT/QuotientField.lean",
+  "lines": [
+   207,
+   215
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-executable-tests",
+    "env": "lemma",
+    "title": "The executable PCP tests",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.shoupIrreducible_monic",
+   "MIPRE.LowDegree.shoupIrreducible_irreducible",
+   "MIPRE.LowDegree.shoupIrreducible_natDegree",
+   "MIPRE.SAT.quotientBinField_toBits_ofBits",
+   "MIPRE.SAT.quotientBinField_ofBits"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Fml.exists_circuit",
+  "source_name": "MIPRE.SAT.Fml.exists_circuit",
+  "formal_statement": "theorem MIPRE.SAT.Fml.exists_circuit (N : ℕ) (f : (Fin N → Bool) → Bool) :\n    ∃ C : Circuit, C.WellFormed ∧ C.inputs = N ∧ C.size ≤ 7 * 2 ^ N ∧\n      ∀ x : Fin N → Bool, C.evalBits (List.ofFn x) = f x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Fml"
+  ],
+  "docstring": "**Every Boolean function on `N` bits is computed by a well-formed circuit on `N` inputs**\nof at most `7 · 2^N` gates.",
+  "module": "MIPRE.Foundations.SAT.Table",
+  "module_doc": "/-!\n# Every Boolean function has a circuit\n\nThe formula of a Boolean function on `N` bits from its truth table (`Fml.table`): a mux tree\non the bits, of size at most `7 · 2^N`. Its circuit is well-formed (`Fml.toCircuit_wellFormed`)\nand computes the function (`Fml.eval_table`). This is how the check circuit of the\nCook–Levin tableau of the interpreter machine is obtained: from the truth table of the\nlocal check predicate, as in the paper's `lem:pack-check-size`\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Table.lean#L66-L77",
+  "source_path": "MIPRE/Foundations/SAT/Table.lean",
+  "lines": [
+   66,
+   77
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Fml.toCircuit_wellFormed",
+   "MIPRE.SAT.Fml.eval_toCircuit"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 7,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.gateClauses_iff",
+  "source_name": "MIPRE.SAT.gateClauses_iff",
+  "formal_statement": "theorem MIPRE.SAT.gateClauses_iff (inp gv : ℕ → V) (y : V) (g : Gate) (w : V → Bool) (vals : List Bool)\n    (hv : ∀ u ∈ g.refs, vals.getD u false = w (gv u)) :\n    (∀ c ∈ gateClauses inp gv y g, c.eval w = true) ↔ w y = g.eval (fun i => w (inp i)) vals := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "variable {V : Type*}"
+  ],
+  "docstring": "The clauses of a gate hold iff its variable carries the gate's value, when the argument\nvariables carry the argument values.",
+  "module": "MIPRE.Foundations.SAT.Tseitin",
+  "module_doc": "/-!\n# The circuit-to-3SAT reduction\n\n`Circuit.tseitin C inp gv` is the 3SAT formula of a circuit `C` on variables `inp i` for its\ninputs and `gv g` for its gates (`lem:circuit-to-sat-reduction`, `lem:tseitin` with the\noutput-wire conjunct of the F7.2 erratum): for every gate the clauses saying that its\nvariable is the gate's function of its arguments' variables, and the unit clause on the\noutput gate. `tseitin_sat_iff`: for a circuit reading only earlier gates, `C(x) = 1` iff some\nassignment agreeing with `x` on the inputs satisfies the formula; `tseitin_values`: a\nsatisfying assignment carries the gate values. The tableau of the Cook–Levin theorem is\nthis reduction applied to the local check circuit at every window\n(`planning/succinct-cook-levin.md`, S1).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Tseitin.lean#L43-L72",
+  "source_path": "MIPRE/Foundations/SAT/Tseitin.lean",
+  "lines": [
+   43,
+   72
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Circuit.tseitin_values",
+  "source_name": "MIPRE.SAT.Circuit.tseitin_values",
+  "formal_statement": "theorem MIPRE.SAT.Circuit.tseitin_values (C : Circuit) (hC : C.RefsLt) (inp gv : ℕ → V) (w : V → Bool)\n    (hSat : ∀ c ∈ C.tseitin inp gv, c.eval w = true) :\n    ∀ g < C.gates.length, w (gv g) = C.valueAt (fun i => w (inp i)) g := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Circuit",
+   "variable {V : Type*}"
+  ],
+  "docstring": "A satisfying assignment of the gate clauses carries the gate values.",
+  "module": "MIPRE.Foundations.SAT.Tseitin",
+  "module_doc": "/-!\n# The circuit-to-3SAT reduction\n\n`Circuit.tseitin C inp gv` is the 3SAT formula of a circuit `C` on variables `inp i` for its\ninputs and `gv g` for its gates (`lem:circuit-to-sat-reduction`, `lem:tseitin` with the\noutput-wire conjunct of the F7.2 erratum): for every gate the clauses saying that its\nvariable is the gate's function of its arguments' variables, and the unit clause on the\noutput gate. `tseitin_sat_iff`: for a circuit reading only earlier gates, `C(x) = 1` iff some\nassignment agreeing with `x` on the inputs satisfies the formula; `tseitin_values`: a\nsatisfying assignment carries the gate values. The tableau of the Cook–Levin theorem is\nthis reduction applied to the local check circuit at every window\n(`planning/succinct-cook-levin.md`, S1).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Tseitin.lean#L89-L105",
+  "source_path": "MIPRE/Foundations/SAT/Tseitin.lean",
+  "lines": [
+   89,
+   105
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Circuit.valueAt_eq",
+   "MIPRE.SAT.gateClauses_iff"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.Circuit.valueAt_congr",
+  "source_name": "MIPRE.SAT.Circuit.valueAt_congr",
+  "formal_statement": "theorem MIPRE.SAT.Circuit.valueAt_congr (C : Circuit) (hin : C.InputsLt) (x x' : ℕ → Bool)\n    (hx : ∀ i < C.inputs, x i = x' i) : ∀ g, C.valueAt x g = C.valueAt x' g := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.Circuit",
+   "variable {V : Type*}"
+  ],
+  "docstring": "The gate values depend only on the inputs the circuit reads.",
+  "module": "MIPRE.Foundations.SAT.Tseitin",
+  "module_doc": "/-!\n# The circuit-to-3SAT reduction\n\n`Circuit.tseitin C inp gv` is the 3SAT formula of a circuit `C` on variables `inp i` for its\ninputs and `gv g` for its gates (`lem:circuit-to-sat-reduction`, `lem:tseitin` with the\noutput-wire conjunct of the F7.2 erratum): for every gate the clauses saying that its\nvariable is the gate's function of its arguments' variables, and the unit clause on the\noutput gate. `tseitin_sat_iff`: for a circuit reading only earlier gates, `C(x) = 1` iff some\nassignment agreeing with `x` on the inputs satisfies the formula; `tseitin_values`: a\nsatisfying assignment carries the gate values. The tableau of the Cook–Levin theorem is\nthis reduction applied to the local check circuit at every window\n(`planning/succinct-cook-levin.md`, S1).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Tseitin.lean#L112-L135",
+  "source_path": "MIPRE/Foundations/SAT/Tseitin.lean",
+  "lines": [
+   112,
+   135
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Circuit.valueAt_eq"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 21,
+  "is_target": false
+ }
+]

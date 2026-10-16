@@ -1,0 +1,647 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.kronecker_sum_right",
+  "source_name": "MIPRE.kronecker_sum_right",
+  "formal_statement": "theorem MIPRE.kronecker_sum_right {dA dB ι : Type*} (M : Matrix dA dA ℂ) (s : Finset ι)\n    (f : ι → Matrix dB dB ℂ) : M ⊗ₖ (∑ i ∈ s, f i) = ∑ i ∈ s, M ⊗ₖ f i := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.POVMValue",
+  "module_doc": "/-!\n# The value of a POVM strategy, and its conditional failures\n\n`MIPRE.TensorProductStrategy` is projective by construction, which is the right definition of\nthe quantum value (`lem:povm-value-eq` says allowing POVMs changes nothing). But a *soundness*\nargument often has to start from an arbitrary POVM strategy --- blueprint\n`lem:ms-direct-anticomm` is stated for one, and its whole point is that no projectivity is\nassumed --- so this file gives the unbundled value of a POVM strategy and the conditional\nfailure probabilities that soundness arguments actually consume.\n\nNothing here is bundled into a structure: the data is a state and two question-indexed families\nof POVMs on arbitrary finite local spaces, which is how it arrives.\n\n## Main definitions\n\n- `MIPRE.bornProb`: `⟨ψ| E_A ⊗ E_B |ψ⟩`, as a real;\n- `MIPRE.povmValue`: the value of a POVM strategy;\n- `MIPRE.condFail`: the failure probability *conditioned* on a question pair.\n\n## Main statements\n\n- `MIPRE.sum_bornProb`: the Born probabilities of a pair of POVMs sum to one on a unit vector;\n- `MIPRE.one_sub_povmValue_eq`: the failure probability is the average of the conditional ones;\n- `MIPRE.condFail_le_div`: a conditional failure is at most the failure probability divided by\n  the question pair's weight. This is the step that turns \"fails with probability `ε`\" into a\n  bound on each subtest, and the division by the weight is why soundness constants carry the\n  number of subtests.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/POVMValue.lean#L57-L63",
+  "source_path": "MIPRE/Foundations/POVMValue.lean",
+  "lines": [
+   57,
+   63
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_kronecker_left",
+  "source_name": "MIPRE.sum_kronecker_left",
+  "formal_statement": "theorem MIPRE.sum_kronecker_left {dA dB ι : Type*} (s : Finset ι) (f : ι → Matrix dA dA ℂ)\n    (N : Matrix dB dB ℂ) : (∑ i ∈ s, f i) ⊗ₖ N = ∑ i ∈ s, f i ⊗ₖ N := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.POVMValue",
+  "module_doc": "/-!\n# The value of a POVM strategy, and its conditional failures\n\n`MIPRE.TensorProductStrategy` is projective by construction, which is the right definition of\nthe quantum value (`lem:povm-value-eq` says allowing POVMs changes nothing). But a *soundness*\nargument often has to start from an arbitrary POVM strategy --- blueprint\n`lem:ms-direct-anticomm` is stated for one, and its whole point is that no projectivity is\nassumed --- so this file gives the unbundled value of a POVM strategy and the conditional\nfailure probabilities that soundness arguments actually consume.\n\nNothing here is bundled into a structure: the data is a state and two question-indexed families\nof POVMs on arbitrary finite local spaces, which is how it arrives.\n\n## Main definitions\n\n- `MIPRE.bornProb`: `⟨ψ| E_A ⊗ E_B |ψ⟩`, as a real;\n- `MIPRE.povmValue`: the value of a POVM strategy;\n- `MIPRE.condFail`: the failure probability *conditioned* on a question pair.\n\n## Main statements\n\n- `MIPRE.sum_bornProb`: the Born probabilities of a pair of POVMs sum to one on a unit vector;\n- `MIPRE.one_sub_povmValue_eq`: the failure probability is the average of the conditional ones;\n- `MIPRE.condFail_le_div`: a conditional failure is at most the failure probability divided by\n  the question pair's weight. This is the step that turns \"fails with probability `ε`\" into a\n  bound on each subtest, and the division by the weight is why soundness constants carry the\n  number of subtests.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/POVMValue.lean#L65-L71",
+  "source_path": "MIPRE/Foundations/POVMValue.lean",
+  "lines": [
+   65,
+   71
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.POVM.sub_mul_self_le_one",
+  "source_name": "MIPRE.POVM.sub_mul_self_le_one",
+  "formal_statement": "theorem MIPRE.POVM.sub_mul_self_le_one {A d : Type*} [Fintype A] [Fintype d] [DecidableEq d]\n    (M : POVM A d) (p q : A) :\n    (((M.mats p).val - (M.mats q).val) * ((M.mats p).val - (M.mats q).val))\n      ≤ (1 : Matrix d d ℂ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.POVM",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder"
+  ],
+  "docstring": "**The difference of two POVM elements is a self-adjoint contraction.** This is what makes a\ntwo-outcome coarse-graining of a POVM a `±1`-observable in every estimate: `X† = X` and\n`X† X ≤ 1`, with no projectivity. Outcomes other than the two chosen contribute nothing.",
+  "module": "MIPRE.Foundations.POVMValue",
+  "module_doc": "/-!\n# The value of a POVM strategy, and its conditional failures\n\n`MIPRE.TensorProductStrategy` is projective by construction, which is the right definition of\nthe quantum value (`lem:povm-value-eq` says allowing POVMs changes nothing). But a *soundness*\nargument often has to start from an arbitrary POVM strategy --- blueprint\n`lem:ms-direct-anticomm` is stated for one, and its whole point is that no projectivity is\nassumed --- so this file gives the unbundled value of a POVM strategy and the conditional\nfailure probabilities that soundness arguments actually consume.\n\nNothing here is bundled into a structure: the data is a state and two question-indexed families\nof POVMs on arbitrary finite local spaces, which is how it arrives.\n\n## Main definitions\n\n- `MIPRE.bornProb`: `⟨ψ| E_A ⊗ E_B |ψ⟩`, as a real;\n- `MIPRE.povmValue`: the value of a POVM strategy;\n- `MIPRE.condFail`: the failure probability *conditioned* on a question pair.\n\n## Main statements\n\n- `MIPRE.sum_bornProb`: the Born probabilities of a pair of POVMs sum to one on a unit vector;\n- `MIPRE.one_sub_povmValue_eq`: the failure probability is the average of the conditional ones;\n- `MIPRE.condFail_le_div`: a conditional failure is at most the failure probability divided by\n  the question pair's weight. This is the step that turns \"fails with probability `ε`\" into a\n  bound on each subtest, and the division by the weight is why soundness constants carry the\n  number of subtests.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/POVMValue.lean#L91-L115",
+  "source_path": "MIPRE/Foundations/POVMValue.lean",
+  "lines": [
+   91,
+   115
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.POVM.sum_val"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.bornProb_nonneg",
+  "source_name": "MIPRE.bornProb_nonneg",
+  "formal_statement": "theorem MIPRE.bornProb_nonneg (ψ : dA × dB → ℂ) {EA : Matrix dA dA ℂ} {EB : Matrix dB dB ℂ}\n    (hA : EA.PosSemidef) (hB : EB.PosSemidef) : 0 ≤ bornProb ψ EA EB := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.POVMValue",
+  "module_doc": "/-!\n# The value of a POVM strategy, and its conditional failures\n\n`MIPRE.TensorProductStrategy` is projective by construction, which is the right definition of\nthe quantum value (`lem:povm-value-eq` says allowing POVMs changes nothing). But a *soundness*\nargument often has to start from an arbitrary POVM strategy --- blueprint\n`lem:ms-direct-anticomm` is stated for one, and its whole point is that no projectivity is\nassumed --- so this file gives the unbundled value of a POVM strategy and the conditional\nfailure probabilities that soundness arguments actually consume.\n\nNothing here is bundled into a structure: the data is a state and two question-indexed families\nof POVMs on arbitrary finite local spaces, which is how it arrives.\n\n## Main definitions\n\n- `MIPRE.bornProb`: `⟨ψ| E_A ⊗ E_B |ψ⟩`, as a real;\n- `MIPRE.povmValue`: the value of a POVM strategy;\n- `MIPRE.condFail`: the failure probability *conditioned* on a question pair.\n\n## Main statements\n\n- `MIPRE.sum_bornProb`: the Born probabilities of a pair of POVMs sum to one on a unit vector;\n- `MIPRE.one_sub_povmValue_eq`: the failure probability is the average of the conditional ones;\n- `MIPRE.condFail_le_div`: a conditional failure is at most the failure probability divided by\n  the question pair's weight. This is the step that turns \"fails with probability `ε`\" into a\n  bound on each subtest, and the division by the weight is why soundness constants carry the\n  number of subtests.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/POVMValue.lean#L133-L136",
+  "source_path": "MIPRE/Foundations/POVMValue.lean",
+  "lines": [
+   133,
+   136
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.condFail_le_div",
+  "source_name": "MIPRE.condFail_le_div",
+  "formal_statement": "theorem MIPRE.condFail_le_div (hψ : star ψ ⬝ᵥ ψ = 1) {ε : ℝ} (hfail : 1 - povmValue G ψ MA MB ≤ ε)\n    {x : X} {y : Y} (hμ : 0 < G.μ x y) :\n    condFail G ψ MA MB x y ≤ ε / G.μ x y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix Kronecker",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {X Y A B : Type*} [Fintype X] [Fintype Y] [Fintype A] [Fintype B]",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {G : Game X Y A B} {ψ : dA × dB → ℂ} {MA : X → POVM A dA} {MB : Y → POVM B dB}"
+  ],
+  "docstring": "**From a failure bound to a bound on one subtest.**",
+  "module": "MIPRE.Foundations.POVMValue",
+  "module_doc": "/-!\n# The value of a POVM strategy, and its conditional failures\n\n`MIPRE.TensorProductStrategy` is projective by construction, which is the right definition of\nthe quantum value (`lem:povm-value-eq` says allowing POVMs changes nothing). But a *soundness*\nargument often has to start from an arbitrary POVM strategy --- blueprint\n`lem:ms-direct-anticomm` is stated for one, and its whole point is that no projectivity is\nassumed --- so this file gives the unbundled value of a POVM strategy and the conditional\nfailure probabilities that soundness arguments actually consume.\n\nNothing here is bundled into a structure: the data is a state and two question-indexed families\nof POVMs on arbitrary finite local spaces, which is how it arrives.\n\n## Main definitions\n\n- `MIPRE.bornProb`: `⟨ψ| E_A ⊗ E_B |ψ⟩`, as a real;\n- `MIPRE.povmValue`: the value of a POVM strategy;\n- `MIPRE.condFail`: the failure probability *conditioned* on a question pair.\n\n## Main statements\n\n- `MIPRE.sum_bornProb`: the Born probabilities of a pair of POVMs sum to one on a unit vector;\n- `MIPRE.one_sub_povmValue_eq`: the failure probability is the average of the conditional ones;\n- `MIPRE.condFail_le_div`: a conditional failure is at most the failure probability divided by\n  the question pair's weight. This is the step that turns \"fails with probability `ε`\" into a\n  bound on each subtest, and the division by the weight is why soundness constants carry the\n  number of subtests.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/POVMValue.lean#L216-L230",
+  "source_path": "MIPRE/Foundations/POVMValue.lean",
+  "lines": [
+   216,
+   230
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.sum_bornProb"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.IsPVM.posSemidef",
+  "source_name": "MIPRE.IsPVM.posSemidef",
+  "formal_statement": "theorem MIPRE.IsPVM.posSemidef (h : IsPVM P) (a : Λ) : (P a).PosSemidef := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.IsPVM",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {n Λ : Type*} [Fintype n] [DecidableEq n] [Fintype Λ] [DecidableEq Λ]",
+   "variable {P : Λ → Matrix n n ℂ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.PVM",
+  "module_doc": "/-!\n# Observables of a projective measurement\n\nA projective measurement `P : Λ → Matrix n n ℂ` and a weighting `ε : Λ → ℂ` give the operator\n`pvmObs P ε = ∑_a ε a • P a`. The one fact worth isolating is that this is a **ring\nhomomorphism** in `ε`:\n\n`pvmObs P ε * pvmObs P δ = pvmObs P (ε * δ)`,  `pvmObs P 1 = 1`,\n\nbecause the projections are mutually orthogonal (`IsPVM.orthogonal`). Everything the rigidity\narguments want about signed sums of a projective measurement follows: with `ε` valued in\n`{±1}`, `pvmObs P ε` is a self-adjoint reflection; two weightings of the *same* measurement\ncommute, whatever they are; and if `ε δ η` is constantly `s` then `pvmObs P ε * pvmObs P δ *\npvmObs P η = s • 1` exactly.\n\nThat last one is what a linear-constraint-system game's Alice-side dilation buys: the three\nreflections of one constraint commute and multiply to the constraint's sign, with no error\nterm. Blueprint `lem:ms-direct-anticomm` is the consumer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/PVM.lean#L53-L57",
+  "source_path": "MIPRE/Foundations/PVM.lean",
+  "lines": [
+   53,
+   57
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.pvmObs_mul",
+  "source_name": "MIPRE.pvmObs_mul",
+  "formal_statement": "theorem MIPRE.pvmObs_mul (h : IsPVM P) (ε δ : Λ → ℂ) :\n    pvmObs P ε * pvmObs P δ = pvmObs P (ε * δ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {n Λ : Type*} [Fintype n] [DecidableEq n] [Fintype Λ] [DecidableEq Λ]",
+   "variable {P : Λ → Matrix n n ℂ}"
+  ],
+  "docstring": "**`pvmObs P` is multiplicative.** This is the whole content of the file.",
+  "module": "MIPRE.Foundations.PVM",
+  "module_doc": "/-!\n# Observables of a projective measurement\n\nA projective measurement `P : Λ → Matrix n n ℂ` and a weighting `ε : Λ → ℂ` give the operator\n`pvmObs P ε = ∑_a ε a • P a`. The one fact worth isolating is that this is a **ring\nhomomorphism** in `ε`:\n\n`pvmObs P ε * pvmObs P δ = pvmObs P (ε * δ)`,  `pvmObs P 1 = 1`,\n\nbecause the projections are mutually orthogonal (`IsPVM.orthogonal`). Everything the rigidity\narguments want about signed sums of a projective measurement follows: with `ε` valued in\n`{±1}`, `pvmObs P ε` is a self-adjoint reflection; two weightings of the *same* measurement\ncommute, whatever they are; and if `ε δ η` is constantly `s` then `pvmObs P ε * pvmObs P δ *\npvmObs P η = s • 1` exactly.\n\nThat last one is what a linear-constraint-system game's Alice-side dilation buys: the three\nreflections of one constraint commute and multiply to the constraint's sign, with no error\nterm. Blueprint `lem:ms-direct-anticomm` is the consumer.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/PVM.lean#L136-L149",
+  "source_path": "MIPRE/Foundations/PVM.lean",
+  "lines": [
+   136,
+   149
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.IsPVM.orthogonal"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_dotProduct_fourierVecRaw",
+  "source_name": "MIPRE.sum_dotProduct_fourierVecRaw",
+  "formal_statement": "theorem MIPRE.sum_dotProduct_fourierVecRaw (T : (n → F) → (N → ℂ)) :\n    ∑ e : n → F, star (fourierVecRaw T e) ⬝ᵥ fourierVecRaw T e\n      = (Fintype.card (n → F) : ℂ) * ∑ a : n → F, star (T a) ⬝ᵥ T a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {N : Type*} [Fintype N] [DecidableEq N]"
+  ],
+  "docstring": "**The character sum, on the sesquilinear form.** Only the diagonal survives.",
+  "module": "MIPRE.Foundations.Parseval",
+  "module_doc": "/-!\n# Parseval for the character transform\n\nThe combining stage of the Pauli appendix moves between two descriptions of the same data: an\n`F_q`-valued measurement `{P_a}` and its **binary observables**\n`O^r = sum_a (-1)^{tr(ar)} P_a`, one for each `r in F_q`. The two are Fourier transforms of each\nother, and what the estimates need is that the transform is an **isometry**: a bound on the\nobservables, averaged over `r`, is a bound on the measurement elements, summed over `a`, and\nconversely.\n\nThis file is that dictionary, for vectors and for families of matrices applied to a state:\n\n* `fourierVec` is the transform of a family of vectors indexed by `V = F_q^n`, against the\n  characters of the trace form, and `sum_norm_fourierVec_sq` is Parseval --- an identity, not an\n  estimate;\n* `trObs` is the observable of an `F_q`-indexed family at a parameter `r`, `trObs_fourier` inverts\n  it, and `sum_stateSqNorm_eq_avg_trObs` is Parseval in the form the appendix uses: the sum over\n  outcomes of the squared state-norms of the elements is the average over `r` of the squared\n  state-norms of the observables.\n\nThe one-field character orthogonality it all rests on is `MIPRE.Weyl.sum_sgn_trMul`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Parseval.lean#L58-L93",
+  "source_path": "MIPRE/Foundations/Parseval.lean",
+  "lines": [
+   58,
+   93
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sgn_add",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.sum_sgn_trDot"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.dotProduct_star_self",
+  "source_name": "MIPRE.dotProduct_star_self",
+  "formal_statement": "theorem MIPRE.dotProduct_star_self (v : N → ℂ) : star v ⬝ᵥ v = ((‖evec v‖ ^ 2 : ℝ) : ℂ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {N : Type*} [Fintype N] [DecidableEq N]"
+  ],
+  "docstring": "The sesquilinear form of a vector with itself is its squared norm, as a complex number.",
+  "module": "MIPRE.Foundations.Parseval",
+  "module_doc": "/-!\n# Parseval for the character transform\n\nThe combining stage of the Pauli appendix moves between two descriptions of the same data: an\n`F_q`-valued measurement `{P_a}` and its **binary observables**\n`O^r = sum_a (-1)^{tr(ar)} P_a`, one for each `r in F_q`. The two are Fourier transforms of each\nother, and what the estimates need is that the transform is an **isometry**: a bound on the\nobservables, averaged over `r`, is a bound on the measurement elements, summed over `a`, and\nconversely.\n\nThis file is that dictionary, for vectors and for families of matrices applied to a state:\n\n* `fourierVec` is the transform of a family of vectors indexed by `V = F_q^n`, against the\n  characters of the trace form, and `sum_norm_fourierVec_sq` is Parseval --- an identity, not an\n  estimate;\n* `trObs` is the observable of an `F_q`-indexed family at a parameter `r`, `trObs_fourier` inverts\n  it, and `sum_stateSqNorm_eq_avg_trObs` is Parseval in the form the appendix uses: the sum over\n  outcomes of the squared state-norms of the elements is the average over `r` of the squared\n  state-norms of the observables.\n\nThe one-field character orthogonality it all rests on is `MIPRE.Weyl.sum_sgn_trMul`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Parseval.lean#L95-L104",
+  "source_path": "MIPRE/Foundations/Parseval.lean",
+  "lines": [
+   95,
+   104
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 8,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_norm_fourierVecRaw_sq",
+  "source_name": "MIPRE.sum_norm_fourierVecRaw_sq",
+  "formal_statement": "theorem MIPRE.sum_norm_fourierVecRaw_sq (T : (n → F) → (N → ℂ)) :\n    ∑ e : n → F, ‖evec (fourierVecRaw T e)‖ ^ 2\n      = (Fintype.card (n → F) : ℝ) * ∑ a : n → F, ‖evec (T a)‖ ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {N : Type*} [Fintype N] [DecidableEq N]"
+  ],
+  "docstring": "**Parseval for the character transform.** The transform is an isometry up to the\nnormalization: the sum of the squared norms of the transform is the *average* of the squared\nnorms of the family. No hypothesis on the family at all.",
+  "module": "MIPRE.Foundations.Parseval",
+  "module_doc": "/-!\n# Parseval for the character transform\n\nThe combining stage of the Pauli appendix moves between two descriptions of the same data: an\n`F_q`-valued measurement `{P_a}` and its **binary observables**\n`O^r = sum_a (-1)^{tr(ar)} P_a`, one for each `r in F_q`. The two are Fourier transforms of each\nother, and what the estimates need is that the transform is an **isometry**: a bound on the\nobservables, averaged over `r`, is a bound on the measurement elements, summed over `a`, and\nconversely.\n\nThis file is that dictionary, for vectors and for families of matrices applied to a state:\n\n* `fourierVec` is the transform of a family of vectors indexed by `V = F_q^n`, against the\n  characters of the trace form, and `sum_norm_fourierVec_sq` is Parseval --- an identity, not an\n  estimate;\n* `trObs` is the observable of an `F_q`-indexed family at a parameter `r`, `trObs_fourier` inverts\n  it, and `sum_stateSqNorm_eq_avg_trObs` is Parseval in the form the appendix uses: the sum over\n  outcomes of the squared state-norms of the elements is the average over `r` of the squared\n  state-norms of the observables.\n\nThe one-field character orthogonality it all rests on is `MIPRE.Weyl.sum_sgn_trMul`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Parseval.lean#L106-L122",
+  "source_path": "MIPRE/Foundations/Parseval.lean",
+  "lines": [
+   106,
+   122
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-points",
+    "env": "lemma",
+    "title": "Padded point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_dotProduct_fourierVecRaw",
+   "MIPRE.dotProduct_star_self"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_norm_fourierVec_sq",
+  "source_name": "MIPRE.sum_norm_fourierVec_sq",
+  "formal_statement": "theorem MIPRE.sum_norm_fourierVec_sq (T : (n → F) → (N → ℂ)) :\n    ∑ e : n → F, ‖evec (fourierVec T e)‖ ^ 2\n      = (Fintype.card (n → F) : ℝ)⁻¹ * ∑ a : n → F, ‖evec (T a)‖ ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {N : Type*} [Fintype N] [DecidableEq N]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Parseval",
+  "module_doc": "/-!\n# Parseval for the character transform\n\nThe combining stage of the Pauli appendix moves between two descriptions of the same data: an\n`F_q`-valued measurement `{P_a}` and its **binary observables**\n`O^r = sum_a (-1)^{tr(ar)} P_a`, one for each `r in F_q`. The two are Fourier transforms of each\nother, and what the estimates need is that the transform is an **isometry**: a bound on the\nobservables, averaged over `r`, is a bound on the measurement elements, summed over `a`, and\nconversely.\n\nThis file is that dictionary, for vectors and for families of matrices applied to a state:\n\n* `fourierVec` is the transform of a family of vectors indexed by `V = F_q^n`, against the\n  characters of the trace form, and `sum_norm_fourierVec_sq` is Parseval --- an identity, not an\n  estimate;\n* `trObs` is the observable of an `F_q`-indexed family at a parameter `r`, `trObs_fourier` inverts\n  it, and `sum_stateSqNorm_eq_avg_trObs` is Parseval in the form the appendix uses: the sum over\n  outcomes of the squared state-norms of the elements is the average over `r` of the squared\n  state-norms of the observables.\n\nThe one-field character orthogonality it all rests on is `MIPRE.Weyl.sum_sgn_trMul`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Parseval.lean#L124-L140",
+  "source_path": "MIPRE/Foundations/Parseval.lean",
+  "lines": [
+   124,
+   140
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_norm_fourierVecRaw_sq"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.trFourier_trObs",
+  "source_name": "MIPRE.trFourier_trObs",
+  "formal_statement": "theorem MIPRE.trFourier_trObs (P : F → Matrix N N ℂ) (a : F) : trFourier (trObs P) a = P a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {N : Type*} [Fintype N] [DecidableEq N]"
+  ],
+  "docstring": "**Fourier inversion over one copy of the field.**",
+  "module": "MIPRE.Foundations.Parseval",
+  "module_doc": "/-!\n# Parseval for the character transform\n\nThe combining stage of the Pauli appendix moves between two descriptions of the same data: an\n`F_q`-valued measurement `{P_a}` and its **binary observables**\n`O^r = sum_a (-1)^{tr(ar)} P_a`, one for each `r in F_q`. The two are Fourier transforms of each\nother, and what the estimates need is that the transform is an **isometry**: a bound on the\nobservables, averaged over `r`, is a bound on the measurement elements, summed over `a`, and\nconversely.\n\nThis file is that dictionary, for vectors and for families of matrices applied to a state:\n\n* `fourierVec` is the transform of a family of vectors indexed by `V = F_q^n`, against the\n  characters of the trace form, and `sum_norm_fourierVec_sq` is Parseval --- an identity, not an\n  estimate;\n* `trObs` is the observable of an `F_q`-indexed family at a parameter `r`, `trObs_fourier` inverts\n  it, and `sum_stateSqNorm_eq_avg_trObs` is Parseval in the form the appendix uses: the sum over\n  outcomes of the squared state-norms of the elements is the average over `r` of the squared\n  state-norms of the observables.\n\nThe one-field character orthogonality it all rests on is `MIPRE.Weyl.sum_sgn_trMul`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Parseval.lean#L156-L172",
+  "source_path": "MIPRE/Foundations/Parseval.lean",
+  "lines": [
+   156,
+   172
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-combined-points",
+    "env": "lemma",
+    "title": "Combined $XZ$ point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sgn_add",
+   "MIPRE.Weyl.sum_sgn_linear"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_dotProduct_trVecRaw",
+  "source_name": "MIPRE.sum_dotProduct_trVecRaw",
+  "formal_statement": "theorem MIPRE.sum_dotProduct_trVecRaw (T : F → (N → ℂ)) :\n    ∑ r : F, star (trVecRaw T r) ⬝ᵥ trVecRaw T r\n      = (Fintype.card F : ℂ) * ∑ c : F, star (T c) ⬝ᵥ T c := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {N : Type*} [Fintype N] [DecidableEq N]",
+   "variable {A : Type*} [Fintype A] [DecidableEq A]",
+   "variable {dA : Type*} [Fintype dA] [DecidableEq dA]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Parseval",
+  "module_doc": "/-!\n# Parseval for the character transform\n\nThe combining stage of the Pauli appendix moves between two descriptions of the same data: an\n`F_q`-valued measurement `{P_a}` and its **binary observables**\n`O^r = sum_a (-1)^{tr(ar)} P_a`, one for each `r in F_q`. The two are Fourier transforms of each\nother, and what the estimates need is that the transform is an **isometry**: a bound on the\nobservables, averaged over `r`, is a bound on the measurement elements, summed over `a`, and\nconversely.\n\nThis file is that dictionary, for vectors and for families of matrices applied to a state:\n\n* `fourierVec` is the transform of a family of vectors indexed by `V = F_q^n`, against the\n  characters of the trace form, and `sum_norm_fourierVec_sq` is Parseval --- an identity, not an\n  estimate;\n* `trObs` is the observable of an `F_q`-indexed family at a parameter `r`, `trObs_fourier` inverts\n  it, and `sum_stateSqNorm_eq_avg_trObs` is Parseval in the form the appendix uses: the sum over\n  outcomes of the squared state-norms of the elements is the average over `r` of the squared\n  state-norms of the observables.\n\nThe one-field character orthogonality it all rests on is `MIPRE.Weyl.sum_sgn_trMul`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Parseval.lean#L253-L300",
+  "source_path": "MIPRE/Foundations/Parseval.lean",
+  "lines": [
+   253,
+   300
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sgn_add",
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.sum_sgn_linear"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 45,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_norm_char_two_sq",
+  "source_name": "MIPRE.sum_norm_char_two_sq",
+  "formal_statement": "theorem MIPRE.sum_norm_char_two_sq (T : F × F → (N → ℂ)) :\n    ∑ q : F × F, ‖evec (∑ p : F × F,\n        sgn (Algebra.trace (ZMod 2) F (q.1 * p.1)\n          + Algebra.trace (ZMod 2) F (q.2 * p.2)) • T p)‖ ^ 2\n      = ((Fintype.card F : ℝ) * (Fintype.card F : ℝ)) * ∑ p : F × F, ‖evec (T p)‖ ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {N : Type*} [Fintype N] [DecidableEq N]",
+   "variable {A : Type*} [Fintype A] [DecidableEq A]",
+   "variable {dA : Type*} [Fintype dA] [DecidableEq dA]"
+  ],
+  "docstring": "**Parseval over two copies of the field**, in the product-indexed shape the combining stage\nuses.",
+  "module": "MIPRE.Foundations.Parseval",
+  "module_doc": "/-!\n# Parseval for the character transform\n\nThe combining stage of the Pauli appendix moves between two descriptions of the same data: an\n`F_q`-valued measurement `{P_a}` and its **binary observables**\n`O^r = sum_a (-1)^{tr(ar)} P_a`, one for each `r in F_q`. The two are Fourier transforms of each\nother, and what the estimates need is that the transform is an **isometry**: a bound on the\nobservables, averaged over `r`, is a bound on the measurement elements, summed over `a`, and\nconversely.\n\nThis file is that dictionary, for vectors and for families of matrices applied to a state:\n\n* `fourierVec` is the transform of a family of vectors indexed by `V = F_q^n`, against the\n  characters of the trace form, and `sum_norm_fourierVec_sq` is Parseval --- an identity, not an\n  estimate;\n* `trObs` is the observable of an `F_q`-indexed family at a parameter `r`, `trObs_fourier` inverts\n  it, and `sum_stateSqNorm_eq_avg_trObs` is Parseval in the form the appendix uses: the sum over\n  outcomes of the squared state-norms of the elements is the average over `r` of the squared\n  state-norms of the observables.\n\nThe one-field character orthogonality it all rests on is `MIPRE.Weyl.sum_sgn_trMul`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Parseval.lean#L316-L354",
+  "source_path": "MIPRE/Foundations/Parseval.lean",
+  "lines": [
+   316,
+   354
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-points",
+    "env": "lemma",
+    "title": "Padded point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_norm_fourierVecRaw_sq"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_avg_norm_fibre_sq",
+  "source_name": "MIPRE.sum_avg_norm_fibre_sq",
+  "formal_statement": "theorem MIPRE.sum_avg_norm_fibre_sq (U : F × F → (N → ℂ)) (hU : ∑ p : F × F, U p = 0) :\n    ∑ ab : F × F, ((Fintype.card F : ℝ)⁻¹ * (Fintype.card F : ℝ)⁻¹) *\n        ∑ c : F, ‖evec (∑ p ∈ univ.filter fun p : F × F =>\n          ab.1 * p.1 + ab.2 * p.2 = c, U p)‖ ^ 2\n      = (1 - (Fintype.card F : ℝ)⁻¹) * ∑ p : F × F, ‖evec (U p)‖ ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix MIPRE.Weyl",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {N : Type*} [Fintype N] [DecidableEq N]",
+   "variable {A : Type*} [Fintype A] [DecidableEq A]",
+   "variable {dA : Type*} [Fintype dA] [DecidableEq dA]"
+  ],
+  "docstring": "**Parseval for a coarse-graining by a linear form.** A family of vectors indexed by\n`F_q x F_q` that *sums to zero* has, on average over `(alpha, beta)` uniform, fibre sums under\n`(a, b) |-> alpha a + beta b` whose total squared norm is `1 - 1/q` times the family's own. In\nparticular it is at most the family's: the fibres have `q` elements, and a per-fibre triangle\ninequality would cost exactly that factor, which this avoids.\n\nThe zero-sum hypothesis is what kills the `r = 0` character; without it the statement is false\n(take `U` supported on one point).",
+  "module": "MIPRE.Foundations.Parseval",
+  "module_doc": "/-!\n# Parseval for the character transform\n\nThe combining stage of the Pauli appendix moves between two descriptions of the same data: an\n`F_q`-valued measurement `{P_a}` and its **binary observables**\n`O^r = sum_a (-1)^{tr(ar)} P_a`, one for each `r in F_q`. The two are Fourier transforms of each\nother, and what the estimates need is that the transform is an **isometry**: a bound on the\nobservables, averaged over `r`, is a bound on the measurement elements, summed over `a`, and\nconversely.\n\nThis file is that dictionary, for vectors and for families of matrices applied to a state:\n\n* `fourierVec` is the transform of a family of vectors indexed by `V = F_q^n`, against the\n  characters of the trace form, and `sum_norm_fourierVec_sq` is Parseval --- an identity, not an\n  estimate;\n* `trObs` is the observable of an `F_q`-indexed family at a parameter `r`, `trObs_fourier` inverts\n  it, and `sum_stateSqNorm_eq_avg_trObs` is Parseval in the form the appendix uses: the sum over\n  outcomes of the squared state-norms of the elements is the average over `r` of the squared\n  state-norms of the observables.\n\nThe one-field character orthogonality it all rests on is `MIPRE.Weyl.sum_sgn_trMul`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Parseval.lean#L358-L462",
+  "source_path": "MIPRE/Foundations/Parseval.lean",
+  "lines": [
+   358,
+   462
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-padded-points",
+    "env": "lemma",
+    "title": "Padded point measurements",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_dotProduct_trVecRaw",
+   "MIPRE.sum_norm_char_two_sq",
+   "MIPRE.dotProduct_star_self"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 92,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.qform_sum_ge_of_close",
+  "source_name": "MIPRE.qform_sum_ge_of_close",
+  "formal_statement": "theorem MIPRE.qform_sum_ge_of_close {v : N → ℂ} (hv : ‖evec v‖ = 1) {M P : C → Matrix N N ℂ}\n    (hM : IsPVM M) (hP0 : ∀ c, (0 : Matrix N N ℂ) ≤ P c)\n    (hPsum : ∑ c, P c ≤ (1 : Matrix N N ℂ))\n    {δ : ℝ} (hclose : ∑ c, snorm v (M c - P c) ^ 2 ≤ δ) :\n    1 - 2 * Real.sqrt δ ≤ ∑ c, qform v (P c) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {N : Type*} [Fintype N] [DecidableEq N] {C : Type*} [Fintype C] [DecidableEq C]"
+  ],
+  "docstring": "**NW19's Fact 4.31.** A family of positive operators summing to at most the identity, which is\n`delta`-close to a projective measurement on a state, carries all but `2 sqrt(delta)` of the mass.\nTwo Cauchy--Schwarz steps against the same deviation: one moves from `1` to `sum <M_c P_c>`, the\nother from there to `sum <P_c^2>`, and `P_c^2 <= P_c`.",
+  "module": "MIPRE.Foundations.Pasting",
+  "module_doc": "/-!\n# Pasting two measurements into one\n\nThe blueprint's missing piece for `lem:qld-pairs-of-lines`: NW19's Fact 4.35, the paper's\n`lem:pasting-updated`. One party holds a *joint* projective measurement `A_{a,b}`; the other holds\ntwo projective measurements `G_1` and `G_2` whose coarse-grainings along evaluation maps agree with\n`A`'s two marginals. The conclusion is that `A` agrees with the **sandwich**\n`J_{g_1, g_2} = G_2^{g_2} G_1^{g_1} G_2^{g_2}`, coarse-grained by evaluating both outcomes.\n\nTwo facts beyond the sandwich chain of `MIPRE/Foundations/Sandwich.lean` are needed, and they are\nproved first.\n\n* **A sub-measurement close to a projective measurement carries almost all the mass**\n  (`qform_sum_ge_of_close`, NW19's Fact 4.31). Two Cauchy--Schwarz steps against the same\n  deviation, and the loss is `2 sqrt(delta)`.\n* **Multiplying by the projector of the same outcome costs nothing** (`sum_snorm_sq_cool`, the\n  paper's `lem:cool-closeness-fact` in its partition form). The cross terms vanish by mutual\n  orthogonality and each diagonal term loses only `A_a <= Id`. The partition form is what matters:\n  the consumers apply it to the `q` fibres of an outcome map at once, and the single-subset form\n  would cost a factor `q` there.\n\nThe sandwich is where a **collision probability** enters. `G_2^{g_2} G_1 G_2^{g_2}` summed over a\nfibre of `g_2 |-> g_2(y)` is a *pinching* of `G_1` by that fibre, not a conjugation by the fibre's\nprojector, and the difference is the cross terms `g_2 \\ne g_2'` with `g_2(y) = g_2'(y)`. Those are\nrare exactly when the outcome map separates the family, which for line polynomials is\nSchwartz--Zippel.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pasting.lean#L84-L149",
+  "source_path": "MIPRE/Foundations/Pasting.lean",
+  "lines": [
+   84,
+   149
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.sum_weighted_mul_le_sqrt"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 57,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.aOp_zero",
+  "source_name": "MIPRE.aOp_zero",
+  "formal_statement": "theorem MIPRE.aOp_zero : (aOp (0 : Matrix dA dA ℂ) : Matrix (dA × dB) (dA × dB) ℂ) = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.Pasting",
+  "module_doc": "/-!\n# Pasting two measurements into one\n\nThe blueprint's missing piece for `lem:qld-pairs-of-lines`: NW19's Fact 4.35, the paper's\n`lem:pasting-updated`. One party holds a *joint* projective measurement `A_{a,b}`; the other holds\ntwo projective measurements `G_1` and `G_2` whose coarse-grainings along evaluation maps agree with\n`A`'s two marginals. The conclusion is that `A` agrees with the **sandwich**\n`J_{g_1, g_2} = G_2^{g_2} G_1^{g_1} G_2^{g_2}`, coarse-grained by evaluating both outcomes.\n\nTwo facts beyond the sandwich chain of `MIPRE/Foundations/Sandwich.lean` are needed, and they are\nproved first.\n\n* **A sub-measurement close to a projective measurement carries almost all the mass**\n  (`qform_sum_ge_of_close`, NW19's Fact 4.31). Two Cauchy--Schwarz steps against the same\n  deviation, and the loss is `2 sqrt(delta)`.\n* **Multiplying by the projector of the same outcome costs nothing** (`sum_snorm_sq_cool`, the\n  paper's `lem:cool-closeness-fact` in its partition form). The cross terms vanish by mutual\n  orthogonality and each diagonal term loses only `A_a <= Id`. The partition form is what matters:\n  the consumers apply it to the `q` fibres of an outcome map at once, and the single-subset form\n  would cost a factor `q` there.\n\nThe sandwich is where a **collision probability** enters. `G_2^{g_2} G_1 G_2^{g_2}` summed over a\nfibre of `g_2 |-> g_2(y)` is a *pinching* of `G_1` by that fibre, not a conjugation by the fibre's\nprojector, and the difference is the cross terms `g_2 \\ne g_2'` with `g_2(y) = g_2'(y)`. Those are\nrare exactly when the outcome map separates the family, which for line polynomials is\nSchwartz--Zippel.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pasting.lean#L283-L284",
+  "source_path": "MIPRE/Foundations/Pasting.lean",
+  "lines": [
+   283,
+   284
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_bornProb_le_fibSum",
+  "source_name": "MIPRE.sum_bornProb_le_fibSum",
+  "formal_statement": "theorem MIPRE.sum_bornProb_le_fibSum (ψ : dA × dB → ℂ) {X : α → Matrix dA dA ℂ}\n    {X' : α → Matrix dB dB ℂ} (hX : IsPVM X) (hX' : IsPVM X') (e : α → β) :\n    ∑ a, bornProb ψ (X a) (X' a) ≤ ∑ b, bornProb ψ (fibSum X e b) (fibSum X' e b) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "Coarse-graining adds the off-diagonal Born probabilities, which are nonnegative.",
+  "module": "MIPRE.Foundations.Pasting",
+  "module_doc": "/-!\n# Pasting two measurements into one\n\nThe blueprint's missing piece for `lem:qld-pairs-of-lines`: NW19's Fact 4.35, the paper's\n`lem:pasting-updated`. One party holds a *joint* projective measurement `A_{a,b}`; the other holds\ntwo projective measurements `G_1` and `G_2` whose coarse-grainings along evaluation maps agree with\n`A`'s two marginals. The conclusion is that `A` agrees with the **sandwich**\n`J_{g_1, g_2} = G_2^{g_2} G_1^{g_1} G_2^{g_2}`, coarse-grained by evaluating both outcomes.\n\nTwo facts beyond the sandwich chain of `MIPRE/Foundations/Sandwich.lean` are needed, and they are\nproved first.\n\n* **A sub-measurement close to a projective measurement carries almost all the mass**\n  (`qform_sum_ge_of_close`, NW19's Fact 4.31). Two Cauchy--Schwarz steps against the same\n  deviation, and the loss is `2 sqrt(delta)`.\n* **Multiplying by the projector of the same outcome costs nothing** (`sum_snorm_sq_cool`, the\n  paper's `lem:cool-closeness-fact` in its partition form). The cross terms vanish by mutual\n  orthogonality and each diagonal term loses only `A_a <= Id`. The partition form is what matters:\n  the consumers apply it to the `q` fibres of an outcome map at once, and the single-subset form\n  would cost a factor `q` there.\n\nThe sandwich is where a **collision probability** enters. `G_2^{g_2} G_1 G_2^{g_2}` summed over a\nfibre of `g_2 |-> g_2(y)` is a *pinching* of `G_1` by that fibre, not a conjugation by the fibre's\nprojector, and the difference is the cross terms `g_2 \\ne g_2'` with `g_2(y) = g_2'(y)`. Those are\nrare exactly when the outcome map separates the family, which for line polynomials is\nSchwartz--Zippel.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pasting.lean#L330-L345",
+  "source_path": "MIPRE/Foundations/Pasting.lean",
+  "lines": [
+   330,
+   345
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pasting-updated",
+    "env": "lemma",
+    "title": "Pasting, the two-measurement case",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.kronecker_sum_right",
+   "MIPRE.sum_kronecker_left",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.IsPVM.posSemidef"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.sum_snorm_sq_comm_eq",
+  "source_name": "MIPRE.sum_snorm_sq_comm_eq",
+  "formal_statement": "theorem MIPRE.sum_snorm_sq_comm_eq {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖ = 1)\n    {A : R1 → Matrix dB dB ℂ} {B : G2 → Matrix dB dB ℂ} (hA : IsPVM A) (hB : IsPVM B) :\n    ∑ a : R1, ∑ g : G2, snorm ψ (bOp (A a * B g - B g * A a) : Matrix (dA × dB) _ ℂ) ^ 2\n      = 2 - 2 * ∑ a : R1, ∑ g : G2,\n          qform ψ (bOp (A a * B g * A a * B g) : Matrix (dA × dB) _ ℂ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {Z Y G2 R1 R2 : Type*} [Fintype Z] [DecidableEq Z] [Fintype Y] [DecidableEq Y]"
+  ],
+  "docstring": "The commutator sum of two projective families on Bob's factor, written as the deficit of one\noverlap. Both the fine-grained and the coarse-grained commutators have this shape, and it is what\nlets them be compared.",
+  "module": "MIPRE.Foundations.Pasting",
+  "module_doc": "/-!\n# Pasting two measurements into one\n\nThe blueprint's missing piece for `lem:qld-pairs-of-lines`: NW19's Fact 4.35, the paper's\n`lem:pasting-updated`. One party holds a *joint* projective measurement `A_{a,b}`; the other holds\ntwo projective measurements `G_1` and `G_2` whose coarse-grainings along evaluation maps agree with\n`A`'s two marginals. The conclusion is that `A` agrees with the **sandwich**\n`J_{g_1, g_2} = G_2^{g_2} G_1^{g_1} G_2^{g_2}`, coarse-grained by evaluating both outcomes.\n\nTwo facts beyond the sandwich chain of `MIPRE/Foundations/Sandwich.lean` are needed, and they are\nproved first.\n\n* **A sub-measurement close to a projective measurement carries almost all the mass**\n  (`qform_sum_ge_of_close`, NW19's Fact 4.31). Two Cauchy--Schwarz steps against the same\n  deviation, and the loss is `2 sqrt(delta)`.\n* **Multiplying by the projector of the same outcome costs nothing** (`sum_snorm_sq_cool`, the\n  paper's `lem:cool-closeness-fact` in its partition form). The cross terms vanish by mutual\n  orthogonality and each diagonal term loses only `A_a <= Id`. The partition form is what matters:\n  the consumers apply it to the `q` fibres of an outcome map at once, and the single-subset form\n  would cost a factor `q` there.\n\nThe sandwich is where a **collision probability** enters. `G_2^{g_2} G_1 G_2^{g_2}` summed over a\nfibre of `g_2 |-> g_2(y)` is a *pinching* of `G_1` by that fibre, not a conjugation by the fibre's\nprojector, and the difference is the cross terms `g_2 \\ne g_2'` with `g_2(y) = g_2'(y)`. Those are\nrare exactly when the outcome map separates the family, which for line polynomials is\nSchwartz--Zippel.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pasting.lean#L368-L428",
+  "source_path": "MIPRE/Foundations/Pasting.lean",
+  "lines": [
+   368,
+   428
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pasting-updated",
+    "env": "lemma",
+    "title": "Pasting, the two-measurement case",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 16,
+  "prooflines": 53,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.abs_sigma_sub_cloud_le",
+  "source_name": "MIPRE.abs_sigma_sub_cloud_le",
+  "formal_statement": "theorem MIPRE.abs_sigma_sub_cloud_le {ψ : dA × dB → ℂ} (hψ : ‖evec ψ‖ = 1) {Ga : K → Matrix dA dA ℂ}\n    (hR : IsPVM R) (hG : IsPVM G) :\n    |(∑ a : R1, ∑ g : K, qform ψ (bOp (R a * G g * R a * G g) : Matrix (dA × dB) _ ℂ))\n        - ∑ a : R1, ∑ g : K, bornProb ψ (Ga g) (R a * G g * R a)|\n      ≤ Real.sqrt (∑ g : K, xSqNorm ψ (Ga g) (G g)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder Kronecker",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
+   "variable {R1 R2 K : Type*} [Fintype R1] [DecidableEq R1] [Fintype R2] [DecidableEq R2]",
+   "variable {R : R1 → Matrix dB dB ℂ} {G : K → Matrix dB dB ℂ}"
+  ],
+  "docstring": "**The cloud step.** Replacing Bob's outer factor by Alice's copy of it costs the square root of\ntheir cross-party deviation --- and nothing depending on the size of `K`, because one factor `R a`\nstays in front of the deviation, so the sum over `a` is absorbed rather than repeated.",
+  "module": "MIPRE.Foundations.Pasting",
+  "module_doc": "/-!\n# Pasting two measurements into one\n\nThe blueprint's missing piece for `lem:qld-pairs-of-lines`: NW19's Fact 4.35, the paper's\n`lem:pasting-updated`. One party holds a *joint* projective measurement `A_{a,b}`; the other holds\ntwo projective measurements `G_1` and `G_2` whose coarse-grainings along evaluation maps agree with\n`A`'s two marginals. The conclusion is that `A` agrees with the **sandwich**\n`J_{g_1, g_2} = G_2^{g_2} G_1^{g_1} G_2^{g_2}`, coarse-grained by evaluating both outcomes.\n\nTwo facts beyond the sandwich chain of `MIPRE/Foundations/Sandwich.lean` are needed, and they are\nproved first.\n\n* **A sub-measurement close to a projective measurement carries almost all the mass**\n  (`qform_sum_ge_of_close`, NW19's Fact 4.31). Two Cauchy--Schwarz steps against the same\n  deviation, and the loss is `2 sqrt(delta)`.\n* **Multiplying by the projector of the same outcome costs nothing** (`sum_snorm_sq_cool`, the\n  paper's `lem:cool-closeness-fact` in its partition form). The cross terms vanish by mutual\n  orthogonality and each diagonal term loses only `A_a <= Id`. The partition form is what matters:\n  the consumers apply it to the `q` fibres of an outcome map at once, and the single-subset form\n  would cost a factor `q` there.\n\nThe sandwich is where a **collision probability** enters. `G_2^{g_2} G_1 G_2^{g_2}` summed over a\nfibre of `g_2 |-> g_2(y)` is a *pinching* of `G_1` by that fibre, not a conjugation by the fibre's\nprojector, and the difference is the cross terms `g_2 \\ne g_2'` with `g_2(y) = g_2'(y)`. Those are\nrare exactly when the outcome map separates the family, which for line polynomials is\nSchwartz--Zippel.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Pasting.lean#L480-L549",
+  "source_path": "MIPRE/Foundations/Pasting.lean",
+  "lines": [
+   480,
+   549
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pasting-updated",
+    "env": "lemma",
+    "title": "Pasting, the two-measurement case",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_snorm_sq_mul_le",
+   "MIPRE.sum_weighted_mul_le_sqrt"
+  ],
+  "pasted_helpers": 35,
+  "prooflines": 62,
+  "is_target": false
+ }
+]

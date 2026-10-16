@@ -1,0 +1,688 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.generalizeBLineCollisionExpansion_polysum_le_error",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.generalizeBLineCollisionExpansion_polysum_le_error",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.generalizeBLineCollisionExpansion_polysum_le_error\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (G : SubMeas (Polynomial params) ι) :\n    (∑ g : Polynomial params,\n      generalizeBLineCollisionExpansion params strategy strategy.state G g) ≤\n      generalizeBError params := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Polynomial-sum analogue of `generalizeBLineCollisionExpansion_le_error`.\n\nThe line-collision expansion summed over all polynomials is bounded by\n`generalizeBError = md/q` *without* multiplying by the polynomial cardinality.\nThe proof first applies the per-polynomial Schwartz-Zippel coefficient bound,\nthen uses `generalizeBLineCollisionTensorMass_polysum_le_one` to bound the joint\ntensor mass.  This is the cardinality-free reformulation of\n`expansion.tex:282-289` underlying `eq:equivalent-local-variance`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.PolynomialSumBounds",
+  "module_doc": "/-! # Polynomial-sum (cardinality-free) bounds for Section 8 transport\n\nCardinality-free sum-over-`g` bounds for the building blocks of the local-variance\ntransport chain.  These avoid the per-polynomial blow-up that one would get by\nsumming the pointwise estimates: instead they use both the line-measurement POVM\nidentity `∑_f B^ℓ_f = B^ℓ.total` and the polynomial submeasurement normalization\n`∑_g G_g = G.total ≤ 1` to keep the right-register weight under control.\n\n## Paper anchor\n\n`references/ldt-paper/expansion.tex`, lines 282-289 (proof of `lem:generalize-b`)\nand lines 317-321 (`eq:equivalent-local-variance`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/PolynomialSumBounds.lean#L148-L258",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/PolynomialSumBounds.lean",
+  "lines": [
+   148,
+   258
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_le_const",
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_const_mul",
+   "MIPStarRE.LDT.avgOver_sum",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.Polynomial.restrictToAxisParallelLine_apply",
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor",
+   "MIPStarRE.LDT.GlobalVariance.generalizeBLineCollisionCoefficient_le"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 95,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.generalizeBSeedCollisionExpansion_polysum_le_error",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.generalizeBSeedCollisionExpansion_polysum_le_error",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.generalizeBSeedCollisionExpansion_polysum_le_error\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (G : SubMeas (Polynomial params) ι) :\n    (∑ g : Polynomial params,\n      generalizeBSeedCollisionExpansion params strategy strategy.state G g) ≤\n      generalizeBError params := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Polynomial-sum analogue of `generalizeBSeedCollisionExpansion_le_error`.\n\nThis is just the line/parameter expansion-equality identity composed with the\npolynomial-sum line bound.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.PolynomialSumBounds",
+  "module_doc": "/-! # Polynomial-sum (cardinality-free) bounds for Section 8 transport\n\nCardinality-free sum-over-`g` bounds for the building blocks of the local-variance\ntransport chain.  These avoid the per-polynomial blow-up that one would get by\nsumming the pointwise estimates: instead they use both the line-measurement POVM\nidentity `∑_f B^ℓ_f = B^ℓ.total` and the polynomial submeasurement normalization\n`∑_g G_g = G.total ≤ 1` to keep the right-register weight under control.\n\n## Paper anchor\n\n`references/ldt-paper/expansion.tex`, lines 282-289 (proof of `lem:generalize-b`)\nand lines 317-321 (`eq:equivalent-local-variance`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/PolynomialSumBounds.lean#L260-L285",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/PolynomialSumBounds.lean",
+  "lines": [
+   260,
+   285
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.GlobalVariance.generalizeBSeedCollisionExpansion_eq_lineCollisionExpansion",
+   "MIPStarRE.LDT.GlobalVariance.generalizeBLineCollisionExpansion_polysum_le_error"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.generalizeBCollisionResidual_polysum_le_error",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.generalizeBCollisionResidual_polysum_le_error",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.generalizeBCollisionResidual_polysum_le_error\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (G : SubMeas (Polynomial params) ι) :\n    (∑ g : Polynomial params,\n      generalizeBCollisionResidual params strategy strategy.state G g) ≤\n      generalizeBError params := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Polynomial-sum analogue of `generalizeBCollisionResidual_le_error`.\n\nReduces to the line/parameter expansion via the incident-question reindexing\nidentity, then applies the polynomial-sum line bound.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.PolynomialSumBounds",
+  "module_doc": "/-! # Polynomial-sum (cardinality-free) bounds for Section 8 transport\n\nCardinality-free sum-over-`g` bounds for the building blocks of the local-variance\ntransport chain.  These avoid the per-polynomial blow-up that one would get by\nsumming the pointwise estimates: instead they use both the line-measurement POVM\nidentity `∑_f B^ℓ_f = B^ℓ.total` and the polynomial submeasurement normalization\n`∑_g G_g = G.total ≤ 1` to keep the right-register weight under control.\n\n## Paper anchor\n\n`references/ldt-paper/expansion.tex`, lines 282-289 (proof of `lem:generalize-b`)\nand lines 317-321 (`eq:equivalent-local-variance`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/PolynomialSumBounds.lean#L287-L312",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/PolynomialSumBounds.lean",
+  "lines": [
+   287,
+   312
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.GlobalVariance.avgOver_axisParallelLineQuestionDistribution",
+   "MIPStarRE.LDT.GlobalVariance.generalizeBSeedCollisionExpansion_polysum_le_error"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.generalizeBDeviationAtPolynomial_polysum_le_error",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.generalizeBDeviationAtPolynomial_polysum_le_error",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.generalizeBDeviationAtPolynomial_polysum_le_error\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (G : SubMeas (Polynomial params) ι) :\n    (∑ g : Polynomial params,\n      generalizeBDeviationAtPolynomial params strategy strategy.state G g) ≤\n      generalizeBError params := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Polynomial-sum analogue of `generalizeBPointwiseSchwartzZippel`.\n\nThis is the cardinality-free bound that mirrors `expansion.tex:282-289`: the\ntotal weighted Schwartz-Zippel residual summed over all polynomials is bounded\nby `md/q`, not `N · md/q`.  This is exactly the form used inside\n`eq:equivalent-local-variance` for the `md/q` transport steps in\n`lem:local-variance-of-points` (steps 3 and 4 of the six-step chain in\n`expansion.tex:308-309`).",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.PolynomialSumBounds",
+  "module_doc": "/-! # Polynomial-sum (cardinality-free) bounds for Section 8 transport\n\nCardinality-free sum-over-`g` bounds for the building blocks of the local-variance\ntransport chain.  These avoid the per-polynomial blow-up that one would get by\nsumming the pointwise estimates: instead they use both the line-measurement POVM\nidentity `∑_f B^ℓ_f = B^ℓ.total` and the polynomial submeasurement normalization\n`∑_g G_g = G.total ≤ 1` to keep the right-register weight under control.\n\n## Paper anchor\n\n`references/ldt-paper/expansion.tex`, lines 282-289 (proof of `lem:generalize-b`)\nand lines 317-321 (`eq:equivalent-local-variance`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/PolynomialSumBounds.lean#L314-L343",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/PolynomialSumBounds.lean",
+  "lines": [
+   314,
+   343
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.GlobalVariance.generalizeBDeviationAtPolynomial_eq_collisionResidual",
+   "MIPStarRE.LDT.GlobalVariance.generalizeBCollisionResidual_polysum_le_error"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.pointConditionedEventSelfConsistency",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.pointConditionedEventSelfConsistency",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.pointConditionedEventSelfConsistency\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (g : Polynomial params) :\n    SDDRel strategy.state (uniformDistribution (Point params))\n      (IdxSubMeas.liftLeft\n        (fun u : Point params =>\n          pointConditionedEventSubMeasAtPolynomial params strategy g u))\n      (IdxSubMeas.liftRight\n        (fun u : Point params =>\n          pointConditionedEventSubMeasAtPolynomial params strategy g u))\n      (2 * delta) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The `2δ` self-consistency interface for the point event\n`A^u_{g(u)}`.\n\nThis is the evaluated, two-outcome version of the first/last moves in\n`lem:local-variance-of-points` (`expansion.tex`, lines 305--306 and 310--311):\npostprocess the point measurement by the event `a = g(u)`, then apply\n`prop:two-notions-of-self-consistency-after-evaluation` to the good-strategy\nself-consistency branch. The remaining six-step proof still has to pull this\npoint-distribution estimate to the hypercube-edge sampling and weight it by\n`(G_g)^{1/2}` via `prop:cab-approx-delta`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Point",
+  "module_doc": "/-! # Point-event self-consistency transport\n\nThis module contains the point self-consistency endpoints for the six-step\nlocal-variance transport chain in `lem:local-variance-of-points`\n(`expansion.tex`, lines 300--311).  These are the first and last `2δ`\nmoves; the point-line `2ε` moves live in `PointLine.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/Point.lean#L67-L115",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/Point.lean",
+  "lines": [
+   67,
+   115
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.twoNotionsOfSelfConsistencyAfterEvaluation"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.pointConditionedEventSelfConsistency_weighted_point",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.pointConditionedEventSelfConsistency_weighted_point",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.pointConditionedEventSelfConsistency_weighted_point\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (G : SubMeas (Polynomial params) ι)\n    (g : Polynomial params) :\n    avgOver (uniformDistribution (Point params))\n      (fun u =>\n        let D := weightedPointConditionedOperatorAtPolynomial params strategy G g u -\n          weightedPointConditionedRightOperatorAtPolynomial params strategy G g u\n        ev strategy.state (Dᴴ * D)) ≤\n      2 * delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The first self-consistency move in `lem:local-variance-of-points`, after\napplying `prop:cab-approx-delta` with the multiplier `I ⊗ (G_g)^{1/2}` but\nbefore pulling the point marginal to the hypercube-edge distribution.\n\nThis proves the weighted native-distribution version of `expansion.tex`,\nlines 305--306:\n`A^u_{g(u)} ⊗ (G_g)^{1/2} ≈_{2δ} I ⊗ (G_g)^{1/2} A^u_{g(u)}`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Point",
+  "module_doc": "/-! # Point-event self-consistency transport\n\nThis module contains the point self-consistency endpoints for the six-step\nlocal-variance transport chain in `lem:local-variance-of-points`\n(`expansion.tex`, lines 300--311).  These are the first and last `2δ`\nmoves; the point-line `2ε` moves live in `PointLine.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/Point.lean#L117-L187",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/Point.lean",
+  "lines": [
+   117,
+   187
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.ev_adjoint_self_nonneg",
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+   "MIPStarRE.LDT.rightTensor_mul_rightTensor",
+   "MIPStarRE.LDT.GlobalVariance.pointConditionedEventSelfConsistency",
+   "MIPStarRE.LDT.GlobalVariance.rightPolynomialWeightSqrt_contraction",
+   "MIPStarRE.LDT.Preliminaries.cabApproxDelta"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 50,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.pointConditionedEventSelfConsistency_weighted_point_sum",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.pointConditionedEventSelfConsistency_weighted_point_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.pointConditionedEventSelfConsistency_weighted_point_sum\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (G : SubMeas (Polynomial params) ι) :\n    (∑ g : Polynomial params,\n      avgOver (uniformDistribution (Point params))\n        (fun u =>\n          let D := weightedPointConditionedOperatorAtPolynomial params strategy G g u -\n            weightedPointConditionedRightOperatorAtPolynomial params strategy G g u\n          ev strategy.state (Dᴴ * D))) ≤\n      2 * delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Grouped-by-evaluation-value endpoint for the first self-consistency move in\n`lem:local-variance-of-points`.\n\nThis is the sum-level analogue of `pointConditionedEventSelfConsistency_weighted_point`.\nIt follows the transport at `references/ldt-paper/expansion.tex`, lines\n305--306, but first groups all polynomials with the same value `g(u)`.  The\nmultiplier family is `0` away from the fiber `a = g(u)` and is\n`I ⊗ (G_g)^{1/2}` on that fiber, so the `cabApproxDelta` contraction is supplied\nby the submeasurement inequality `∑_{g : g(u)=a} G_g ≤ I`.  Consequently the\nbound is `2δ` for the polynomial sum, with no polynomial-cardinality loss.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Point",
+  "module_doc": "/-! # Point-event self-consistency transport\n\nThis module contains the point self-consistency endpoints for the six-step\nlocal-variance transport chain in `lem:local-variance-of-points`\n(`expansion.tex`, lines 300--311).  These are the first and last `2δ`\nmoves; the point-line `2ε` moves live in `PointLine.lean`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/Point.lean#L189-L264",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/Point.lean",
+  "lines": [
+   189,
+   264
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+   "MIPStarRE.LDT.rightTensor_mul_rightTensor",
+   "MIPStarRE.LDT.GlobalVariance.cabApproxDelta_sum_from_sdd",
+   "MIPStarRE.LDT.Preliminaries.twoNotionsOfSelfConsistency"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 52,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.axisParallelBaseEventConsistency",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.axisParallelBaseEventConsistency",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.axisParallelBaseEventConsistency\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (g : Polynomial params) :\n    ConsRel strategy.state (uniformDistribution (AxisParallelTestSample params))\n      (fun s : AxisParallelTestSample params =>\n        pointConditionedEventSubMeasAtPolynomial params strategy g s.1)\n      (fun s : AxisParallelTestSample params =>\n        postprocess (axisParallelLineAnswerFamily strategy s)\n          (fun a : Fq params => if a = g s.1 then some () else none))\n      eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The `ε` consistency interface for the point-line event at the base point of\nan axis-parallel test sample.\n\nFor a sample `(u,i)`, the point side is the event `A^u_{g(u)}` and the line side\nis the line-answer event obtained by evaluating the line polynomial at the base\nparameter and testing equality with `g(u)`. This is the consistency input that\nfeeds the `2ε` approximation step at `expansion.tex`, line 307; the later\nedge-transport proof still has to reindex from the base-point test sampling to\nan arbitrary incident pair `(ℓ,u)` (using axis-line rebasing covariance) and then\napply `prop:simeq-to-approx`/`prop:cab-approx-delta`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine",
+  "module_doc": "/-! # Axis-parallel point-line self-consistency transport\n\nThis module contains the point-line consistency and rebasing interfaces used in\nthe middle two `2ε` moves of the local-variance transport chain in\n`lem:local-variance-of-points` (`expansion.tex`, lines 306--307 and\n309--310).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/PointLine.lean#L70-L108",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/PointLine.lean",
+  "lines": [
+   70,
+   108
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.consRelDataProcessing_questionDependent"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.axisParallelBaseEventApproximation_swapped",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.axisParallelBaseEventApproximation_swapped",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.axisParallelBaseEventApproximation_swapped\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (g : Polynomial params) :\n    SDDRel strategy.state (uniformDistribution (AxisParallelTestSample params))\n      (IdxSubMeas.liftLeft\n        (fun s : AxisParallelTestSample params =>\n          postprocess (axisParallelLineAnswerFamily strategy s)\n            (fun a : Fq params => if a = g s.1 then some () else none)))\n      (IdxSubMeas.liftRight\n        (fun s : AxisParallelTestSample params =>\n          pointConditionedEventSubMeasAtPolynomial params strategy g s.1))\n      (2 * eps) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The symmetric `2ε` approximation interface for the point-line event.\n\nThis is the orientation used in `expansion.tex`, lines 306--307 and 309--310:\nthe line event is placed on the left register and the point event on the right\nregister.  It is obtained from `axisParallelBaseEventConsistency` by first\nswapping the two prover roles using the symmetric strategy state, then applying\n`prop:simeq-to-approx`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine",
+  "module_doc": "/-! # Axis-parallel point-line self-consistency transport\n\nThis module contains the point-line consistency and rebasing interfaces used in\nthe middle two `2ε` moves of the local-variance transport chain in\n`lem:local-variance-of-points` (`expansion.tex`, lines 306--307 and\n309--310).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/PointLine.lean#L137-L190",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/PointLine.lean",
+  "lines": [
+   137,
+   190
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.GlobalVariance.axisParallelBaseEventConsistency",
+   "MIPStarRE.LDT.Preliminaries.simeqToApprox",
+   "MIPStarRE.LDT.consRel_symm_of_density_fixed"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.axisParallelBaseEventApproximation_weighted_sample",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.axisParallelBaseEventApproximation_weighted_sample",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.axisParallelBaseEventApproximation_weighted_sample\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (G : SubMeas (Polynomial params) ι)\n    (g : Polynomial params) :\n    avgOver (uniformDistribution (AxisParallelTestSample params))\n      (fun s =>\n        let qu : AxisParallelLineQuestion params :=\n          ({ base := s.1, direction := s.2 }, s.1)\n        let D := weightedGeneralizeBLeftOperatorAtPolynomial params strategy G g qu -\n          weightedPointConditionedRightOperatorAtPolynomial params strategy G g s.1\n        ev strategy.state (Dᴴ * D)) ≤\n      2 * eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The selected, square-root weighted point-line approximation on the native\naxis-parallel base-point sample distribution.\n\nAfter `prop:cab-approx-delta` with multiplier `I ⊗ (G_g)^{1/2}`, the swapped\nbase-event approximation gives the paper's line-306 to line-307 move at a\nsample `(u,i)`: the line question is represented by the rebased line with base\n`u` and direction `i`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine",
+  "module_doc": "/-! # Axis-parallel point-line self-consistency transport\n\nThis module contains the point-line consistency and rebasing interfaces used in\nthe middle two `2ε` moves of the local-variance transport chain in\n`lem:local-variance-of-points` (`expansion.tex`, lines 306--307 and\n309--310).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/PointLine.lean#L192-L271",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/PointLine.lean",
+  "lines": [
+   192,
+   271
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.ev_adjoint_self_nonneg",
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+   "MIPStarRE.LDT.rightTensor_mul_rightTensor",
+   "MIPStarRE.LDT.SubMeas.postprocess_comp",
+   "MIPStarRE.LDT.GlobalVariance.axisParallelBaseEventApproximation_swapped",
+   "MIPStarRE.LDT.GlobalVariance.rightPolynomialWeightSqrt_contraction",
+   "MIPStarRE.LDT.Preliminaries.cabApproxDelta"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 57,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.generalizeBLeftOperatorAtPolynomial_rebaseAt_pointAt",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.generalizeBLeftOperatorAtPolynomial_rebaseAt_pointAt",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.generalizeBLeftOperatorAtPolynomial_rebaseAt_pointAt\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (g : Polynomial params)\n    (ℓ : AxisParallelLine params) (t : Fq params) :\n    generalizeBLeftOperatorAtPolynomial params strategy g (ℓ, ℓ.pointAt t) =\n      generalizeBLeftOperatorAtPolynomial params strategy g\n        (AxisParallelLine.rebaseAt ℓ t, ℓ.pointAt t) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Rebasing an incident axis-parallel line question at its sampled point does\nnot change the evaluated line event operator.\n\nThe left operator is the event `f(t)=g(ℓ(t))` for the line measurement on `ℓ`.\nAfter rebasing `ℓ` at `t`, the sampled point is the new base point and the same\nevent is read as `f(0)=g(ℓ(t))`.  This is exactly the strategy's axis-parallel\nmeasurement covariance, via `AxisParallelCovariantMeasurement.reparamInvariant`,\nand is the operator-level reindexing used in `expansion.tex:300-307`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine",
+  "module_doc": "/-! # Axis-parallel point-line self-consistency transport\n\nThis module contains the point-line consistency and rebasing interfaces used in\nthe middle two `2ε` moves of the local-variance transport chain in\n`lem:local-variance-of-points` (`expansion.tex`, lines 306--307 and\n309--310).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/PointLine.lean#L273-L301",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/PointLine.lean",
+  "lines": [
+   273,
+   301
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.AxisParallelCovariantMeasurement.reparamInvariant"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.axisParallelPointLineConsistency_weighted_leftToRightLineQuestion",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.axisParallelPointLineConsistency_weighted_leftToRightLineQuestion",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.axisParallelPointLineConsistency_weighted_leftToRightLineQuestion\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (G : SubMeas (Polynomial params) ι)\n    (g : Polynomial params) :\n    avgOver (axisParallelLineQuestionDistribution params)\n      (fun qu =>\n        let D := weightedGeneralizeBLeftOperatorAtPolynomial params strategy G g qu -\n          weightedPointConditionedRightOperatorAtPolynomial params strategy G g qu.2\n        ev strategy.state (Dᴴ * D)) ≤\n      2 * eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The weighted line-to-point approximation after reindexing the base-point test\nsample to an arbitrary incident line question.\n\nThis is the paper's step 5 (`expansion.tex`, line 309--310), before coupling the\nline question with the second endpoint of the hypercube-edge presentation: for\n`v ∈ ℓ`, `B^ℓ_[f(v)=g(v)] ⊗ (G_g)^{1/2}` is `2ε`-close to\n`I ⊗ (G_g)^{1/2} A^v_{g(v)}`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine",
+  "module_doc": "/-! # Axis-parallel point-line self-consistency transport\n\nThis module contains the point-line consistency and rebasing interfaces used in\nthe middle two `2ε` moves of the local-variance transport chain in\n`lem:local-variance-of-points` (`expansion.tex`, lines 306--307 and\n309--310).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/PointLine.lean#L323-L372",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/PointLine.lean",
+  "lines": [
+   323,
+   372
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.GlobalVariance.avgOver_axisParallelLineQuestionDistribution_to_axisParallelTestSample",
+   "MIPStarRE.LDT.GlobalVariance.generalizeBLeftOperatorAtPolynomial_rebaseAt_pointAt",
+   "MIPStarRE.LDT.GlobalVariance.axisParallelBaseEventApproximation_weighted_sample"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 29,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.axisParallelPointLineConsistency_weighted_rightToLeftLineQuestion",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.axisParallelPointLineConsistency_weighted_rightToLeftLineQuestion",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.axisParallelPointLineConsistency_weighted_rightToLeftLineQuestion\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (G : SubMeas (Polynomial params) ι)\n    (g : Polynomial params) :\n    avgOver (axisParallelLineQuestionDistribution params)\n      (fun qu =>\n        let D := weightedPointConditionedRightOperatorAtPolynomial params strategy G g qu.2 -\n          weightedGeneralizeBLeftOperatorAtPolynomial params strategy G g qu\n        ev strategy.state (Dᴴ * D)) ≤\n      2 * eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The reverse weighted point-to-line approximation after incident-line\nreindexing.\n\nThis is the paper's step 2 (`expansion.tex`, line 306--307):\n`I ⊗ (G_g)^{1/2} A^u_{g(u)}` is `2ε`-close to\n`B^ℓ_[f(u)=g(u)] ⊗ (G_g)^{1/2}` for an incident line question `(ℓ,u)`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.PointLine",
+  "module_doc": "/-! # Axis-parallel point-line self-consistency transport\n\nThis module contains the point-line consistency and rebasing interfaces used in\nthe middle two `2ε` moves of the local-variance transport chain in\n`lem:local-variance-of-points` (`expansion.tex`, lines 306--307 and\n309--310).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/PointLine.lean#L374-L411",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/PointLine.lean",
+  "lines": [
+   374,
+   411
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.GlobalVariance.axisParallelPointLineConsistency_weighted_leftToRightLineQuestion",
+   "MIPStarRE.LDT.GlobalVariance.ev_adjoint_sub_swap"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.ev_adjoint_sub_swap",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.ev_adjoint_sub_swap",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.ev_adjoint_sub_swap\n    {κ : Type*} [Fintype κ] [DecidableEq κ]\n    (ψ : QuantumState κ) (X Y : MIPStarRE.Quantum.Op κ) :\n    ev ψ (((Y - X)ᴴ) * (Y - X)) =\n      ev ψ (((X - Y)ᴴ) * (X - Y)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Utilities",
+  "module_doc": "/-! # Sampling and operator-symmetry utilities\n\nSupport lemmas for the good-strategy self-consistency transport\n(`SelfConsistencyTransport`):\n\n* `ev_adjoint_sub_swap` — squared-distance invariance under swapping endpoints\n  (used by the reverse `generalize-b` step and by\n  `pointConditionedEventSelfConsistency_weighted_rightEdge`);\n* `generalizeBReversePointwiseBound` — the reverse `lem:generalize-b` step at\n  `expansion.tex:309`;\n* `avgOver_rerandomizeCoord_fst` / `avgOver_rerandomizeCoord_snd` — both\n  marginals of the hypercube-edge sampling distribution are uniform\n  (`expansion.tex:300–302`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/Utilities.lean#L94-L116",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/Utilities.lean",
+  "lines": [
+   94,
+   116
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.generalizeBReversePointwiseBound",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.generalizeBReversePointwiseBound",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.generalizeBReversePointwiseBound\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (ψbi : QuantumState (ι × ι))\n    (G : SubMeas (Polynomial params) ι)\n    (hgen : GeneralizeBStatement params strategy ψbi G)\n    (g : Polynomial params) :\n    avgOver (axisParallelLineQuestionDistribution params)\n      (fun qu =>\n        let D := weightedGeneralizeBRightOperatorAtPolynomial params strategy G g qu -\n          weightedGeneralizeBLeftOperatorAtPolynomial params strategy G g qu\n        ev ψbi (Dᴴ * D)) ≤ generalizeBError params := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The reverse `lem:generalize-b` step used at\n`references/ldt-paper/expansion.tex`, line 309.\n\nThe paper first moves from the evaluated line event to the exact restriction\n(line 308), then uses the same estimate in the reverse direction at the second\nsampled point (line 309).  The squared-distance expression is unchanged by\nswapping the two endpoints, because `(Y - X) = -(X - Y)`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Utilities",
+  "module_doc": "/-! # Sampling and operator-symmetry utilities\n\nSupport lemmas for the good-strategy self-consistency transport\n(`SelfConsistencyTransport`):\n\n* `ev_adjoint_sub_swap` — squared-distance invariance under swapping endpoints\n  (used by the reverse `generalize-b` step and by\n  `pointConditionedEventSelfConsistency_weighted_rightEdge`);\n* `generalizeBReversePointwiseBound` — the reverse `lem:generalize-b` step at\n  `expansion.tex:309`;\n* `avgOver_rerandomizeCoord_fst` / `avgOver_rerandomizeCoord_snd` — both\n  marginals of the hypercube-edge sampling distribution are uniform\n  (`expansion.tex:300–302`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/Utilities.lean#L142-L176",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/Utilities.lean",
+  "lines": [
+   142,
+   176
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.GlobalVariance.ev_adjoint_sub_swap"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.rightPolynomialWeightSqrt_contraction",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.rightPolynomialWeightSqrt_contraction",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.rightPolynomialWeightSqrt_contraction\n    (params : Parameters)\n    [FieldModel params.q]\n    (G : SubMeas (Polynomial params) ι) (g : Polynomial params) :\n    (rightTensor (ι₁ := ι) (polynomialWeightSqrtOperator params G g))ᴴ *\n        rightTensor (ι₁ := ι) (polynomialWeightSqrtOperator params G g) ≤\n      1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The right tensor of the square-root polynomial weight is a contraction.\n\nThe square of `(G_g)^{1/2}` is the submeasurement outcome `G_g`, and every\noutcome of a submeasurement is bounded by the identity.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Utilities",
+  "module_doc": "/-! # Sampling and operator-symmetry utilities\n\nSupport lemmas for the good-strategy self-consistency transport\n(`SelfConsistencyTransport`):\n\n* `ev_adjoint_sub_swap` — squared-distance invariance under swapping endpoints\n  (used by the reverse `generalize-b` step and by\n  `pointConditionedEventSelfConsistency_weighted_rightEdge`);\n* `generalizeBReversePointwiseBound` — the reverse `lem:generalize-b` step at\n  `expansion.tex:309`;\n* `avgOver_rerandomizeCoord_fst` / `avgOver_rerandomizeCoord_snd` — both\n  marginals of the hypercube-edge sampling distribution are uniform\n  (`expansion.tex:300–302`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/Utilities.lean#L231-L254",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/Utilities.lean",
+  "lines": [
+   231,
+   254
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.rightTensor_mul_rightTensor",
+   "MIPStarRE.LDT.SubMeas.outcome_le_one",
+   "MIPStarRE.LDT.rightTensor_le_one"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.rightPolynomialWeightSqrt_grouped_contraction",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.rightPolynomialWeightSqrt_grouped_contraction",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.rightPolynomialWeightSqrt_grouped_contraction\n    (params : Parameters)\n    [FieldModel params.q]\n    (G : SubMeas (Polynomial params) ι)\n    (u : Point params) (a : Fq params) :\n    ∑ g : Polynomial params,\n        (if a = g u then rightTensor (ι₁ := ι) (polynomialWeightSqrtOperator params G g)\n          else 0)ᴴ *\n          (if a = g u then rightTensor (ι₁ := ι) (polynomialWeightSqrtOperator params G g)\n            else 0) ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Grouped-by-evaluation-value submeasurement contraction for `(G_g)^{1/2}`.\n\nFor a fixed point `u` and a field element `a`, sum over all polynomials `g`\nwith `g(u) = a` of the `rightTensor` of `(G_g)^{1/2} * (G_g)^{1/2}ᴴ`.\nThe contraction `∑_{g : g(u)=a} G_g ≤ I` follows from the submeasurement\ninequality `G.total ≤ I`.  This is the key algebraic input that allows the\n`cabApproxDelta` multiplier family in `cabApproxDelta_sum_from_sdd` and the\nsum-form `2ε` endpoints to group polynomials by their evaluation value without\nincurring a cardinality factor.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Utilities",
+  "module_doc": "/-! # Sampling and operator-symmetry utilities\n\nSupport lemmas for the good-strategy self-consistency transport\n(`SelfConsistencyTransport`):\n\n* `ev_adjoint_sub_swap` — squared-distance invariance under swapping endpoints\n  (used by the reverse `generalize-b` step and by\n  `pointConditionedEventSelfConsistency_weighted_rightEdge`);\n* `generalizeBReversePointwiseBound` — the reverse `lem:generalize-b` step at\n  `expansion.tex:309`;\n* `avgOver_rerandomizeCoord_fst` / `avgOver_rerandomizeCoord_snd` — both\n  marginals of the hypercube-edge sampling distribution are uniform\n  (`expansion.tex:300–302`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/Utilities.lean#L256-L306",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/Utilities.lean",
+  "lines": [
+   256,
+   306
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.rightTensor_mul_rightTensor",
+   "MIPStarRE.LDT.rightTensor_le_one",
+   "MIPStarRE.LDT.rightTensor_finset_sum"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.cabApproxDelta_sum_from_sdd",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.cabApproxDelta_sum_from_sdd",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.cabApproxDelta_sum_from_sdd\n    {Sample : Type*}\n    (params : Parameters)\n    [FieldModel params.q]\n    (ψ : QuantumState (ι × ι))\n    (𝒟 : Distribution Sample)\n    (base : Sample → Point params)\n    (left right : Sample → Fq params → MIPStarRE.Quantum.Op (ι × ι))\n    (L R : Sample → Polynomial params → MIPStarRE.Quantum.Op (ι × ι))\n    (G : SubMeas (Polynomial params) ι)\n    (η : Error)\n    (hbase : avgOver 𝒟 (fun s => qSDDCore ψ (left s) (right s)) ≤ η)\n    (hleft : ∀ s g,\n      rightTensor (ι₁ := ι) (polynomialWeightSqrtOperator params G g) *\n          left s (g (base s)) =\n        L s g)\n    (hright : ∀ s g,\n      rightTensor (ι₁ := ι) (polynomialWeightSqrtOperator params G g) *\n          right s (g (base s)) =\n        R s g) :\n    (∑ g : Polynomial params,\n      avgOver 𝒟 (fun s => ev ψ (((L s g - R s g)ᴴ) * (L s g - R s g)))) ≤\n      η := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Shared polynomial-sum `cabApproxDelta` transport.\n\nThe argument keeps the answer space at `Fq params`, applies\n`prop:cab-approx-delta` with multiplier\n`if a = g(base s) then I ⊗ (G_g)^{1/2} else 0`, and uses the grouped\ncontraction `rightPolynomialWeightSqrt_grouped_contraction`.  The bridge\nhypotheses identify the surviving fiber `a = g(base s)` with the weighted\nleft and right operators desired by the caller.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransport.Utilities",
+  "module_doc": "/-! # Sampling and operator-symmetry utilities\n\nSupport lemmas for the good-strategy self-consistency transport\n(`SelfConsistencyTransport`):\n\n* `ev_adjoint_sub_swap` — squared-distance invariance under swapping endpoints\n  (used by the reverse `generalize-b` step and by\n  `pointConditionedEventSelfConsistency_weighted_rightEdge`);\n* `generalizeBReversePointwiseBound` — the reverse `lem:generalize-b` step at\n  `expansion.tex:309`;\n* `avgOver_rerandomizeCoord_fst` / `avgOver_rerandomizeCoord_snd` — both\n  marginals of the hypercube-edge sampling distribution are uniform\n  (`expansion.tex:300–302`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/Utilities.lean#L308-L393",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransport/Utilities.lean",
+  "lines": [
+   308,
+   393
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_sum",
+   "MIPStarRE.LDT.avgOver_congr",
+   "MIPStarRE.LDT.ev_zero",
+   "MIPStarRE.LDT.GlobalVariance.rightPolynomialWeightSqrt_grouped_contraction",
+   "MIPStarRE.LDT.Preliminaries.cabApproxDelta"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 55,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.axisParallelBaseEventApproximation_weighted_sample_sum",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.axisParallelBaseEventApproximation_weighted_sample_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.axisParallelBaseEventApproximation_weighted_sample_sum\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (G : SubMeas (Polynomial params) ι) :\n    (∑ g : Polynomial params,\n      avgOver (uniformDistribution (AxisParallelTestSample params))\n        (fun s =>\n          let qu : AxisParallelLineQuestion params :=\n            ({ base := s.1, direction := s.2 }, s.1)\n          let D := weightedGeneralizeBLeftOperatorAtPolynomial params strategy G g qu -\n            weightedPointConditionedRightOperatorAtPolynomial params strategy G g s.1\n          ev strategy.state (Dᴴ * D))) ≤\n      2 * eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Sum-level base-sample form of the `2ε` axis-parallel consistency move,\noriented with the line event on the left register and the point event on the\nright register.\n\nThis is the polynomial-sum version of\n`axisParallelBaseEventApproximation_weighted_sample`: instead of fixing `g`\nand postprocessing both sides to the `Option Unit` event `a = g(u)`, we keep\nthe full `Fq params` answer space and use the multiplier\n`C s a g := if a = g s.1 then rightTensor (G_g)^{1/2} else 0` inside\n`prop:cab-approx-delta`.  The contraction\n`∀ s a, ∑_g (C s a g)ᴴ * (C s a g) ≤ I` is supplied by\n`rightPolynomialWeightSqrt_grouped_contraction`, which uses the submeasurement\ninequality `∑_{g : g(s.1) = a} G_g ≤ I`.  Consequently the bound is `2ε` for\nthe polynomial sum, with no polynomial-cardinality loss.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransportSum",
+  "module_doc": "/-! ## Sum-form (cardinality-free) `2ε` axis-parallel consistency endpoints\n\nThe lemmas below are the polynomial-sum (i.e. unnormalized `∑_g`) analogues of\nthe per-`g` `2ε` endpoints above.  They keep the answer space at `Fq params`\nrather than postprocessing to the per-`g` `Option Unit` event, then group\npolynomials by the common value `g(u)` via the `cabApproxDelta` multiplier\n`if a = g s.1 then rightTensor (G_g)^{1/2} else 0`.  Combined with the\nsubmeasurement contraction `∑_{g : g(u) = a} G_g ≤ I` from\n`rightPolynomialWeightSqrt_grouped_contraction`, this gives `2ε` for the full\npolynomial sum, with no polynomial-cardinality loss.  These are the steps 2 and\n5 sum-level inputs to `eq:equivalent-local-variance`\n(`references/ldt-paper/expansion.tex:317--321`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransportSum.lean#L132-L245",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransportSum.lean",
+  "lines": [
+   132,
+   245
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.rightTensor_mul_leftTensor_eq_opTensor",
+   "MIPStarRE.LDT.rightTensor_mul_rightTensor",
+   "MIPStarRE.LDT.GlobalVariance.cabApproxDelta_sum_from_sdd",
+   "MIPStarRE.LDT.Preliminaries.simeqToApprox",
+   "MIPStarRE.LDT.consRel_symm_of_density_fixed"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 84,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.GlobalVariance.axisParallelPointLineConsistency_weighted_leftToRightLineQuestion_sum",
+  "source_name": "MIPStarRE.LDT.GlobalVariance.axisParallelPointLineConsistency_weighted_leftToRightLineQuestion_sum",
+  "formal_statement": "theorem MIPStarRE.LDT.GlobalVariance.axisParallelPointLineConsistency_weighted_leftToRightLineQuestion_sum\n    (params : Parameters)\n    [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta gamma : Error)\n    (hgood : strategy.IsGood eps delta gamma)\n    (G : SubMeas (Polynomial params) ι) :\n    (∑ g : Polynomial params,\n      avgOver (axisParallelLineQuestionDistribution params)\n        (fun qu =>\n          let D := weightedGeneralizeBLeftOperatorAtPolynomial params strategy G g qu -\n            weightedPointConditionedRightOperatorAtPolynomial params strategy G g qu.2\n          ev strategy.state (Dᴴ * D))) ≤\n      2 * eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Sum-level form of the weighted line-to-point approximation\n(`expansion.tex:309--310`, paper step 5) on the\n`axisParallelLineQuestionDistribution` distribution.\n\nThis is the polynomial-sum analogue of\n`axisParallelPointLineConsistency_weighted_leftToRightLineQuestion`.  After\nreindexing the line-question sampling along its incident-pair structure (using\nthe existing rebasing covariance for the line operator), it reduces to the\nsum-level base-sample bound `axisParallelBaseEventApproximation_weighted_sample_sum`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.GlobalVariance.Theorems.SelfConsistencyTransportSum",
+  "module_doc": "/-! ## Sum-form (cardinality-free) `2ε` axis-parallel consistency endpoints\n\nThe lemmas below are the polynomial-sum (i.e. unnormalized `∑_g`) analogues of\nthe per-`g` `2ε` endpoints above.  They keep the answer space at `Fq params`\nrather than postprocessing to the per-`g` `Option Unit` event, then group\npolynomials by the common value `g(u)` via the `cabApproxDelta` multiplier\n`if a = g s.1 then rightTensor (G_g)^{1/2} else 0`.  Combined with the\nsubmeasurement contraction `∑_{g : g(u) = a} G_g ≤ I` from\n`rightPolynomialWeightSqrt_grouped_contraction`, this gives `2ε` for the full\npolynomial sum, with no polynomial-cardinality loss.  These are the steps 2 and\n5 sum-level inputs to `eq:equivalent-local-variance`\n(`references/ldt-paper/expansion.tex:317--321`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransportSum.lean#L247-L315",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/GlobalVariance/Theorems/SelfConsistencyTransportSum.lean",
+  "lines": [
+   247,
+   315
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.GlobalVariance.avgOver_axisParallelLineQuestionDistribution_to_axisParallelTestSample",
+   "MIPStarRE.LDT.GlobalVariance.generalizeBLeftOperatorAtPolynomial_rebaseAt_pointAt",
+   "MIPStarRE.LDT.GlobalVariance.axisParallelBaseEventApproximation_weighted_sample_sum"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 46,
+  "is_target": false
+ }
+]

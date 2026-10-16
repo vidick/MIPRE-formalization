@@ -1,0 +1,645 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.extendsAnswers_of_encodesAccepted",
+  "source_name": "MIPRE.TM.CookLevin.Desc.extendsAnswers_of_encodesAccepted",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.extendsAnswers_of_encodesAccepted (hT : T ≤ Sof e)\n    (hlen : FixedLen e 𝒟.prog n T x y) (hTm : T + 3 < 2 ^ W e)\n    (hrb : ∀ ap bp : BitStr, ap.length ≤ T → bp.length ≤ T →\n      runBound 𝒟.prog n x y ap bp T ≤ Sof e)\n    (h4T : 4 * T ≤ 2 ^ mOf e Gc) (a b : Fin (2 * T) → Bool)\n    (h : EncodesAccepted 𝒟 n x y T a b) :\n    ExtendsAnswers h4T ((descCirc e T 𝒟.prog n x y).formula3 (mOf e Gc)) a b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost Fml",
+   "variable (𝒟 : Decider) (n T : ℕ) (x y : BitStr) (e : ℕ)"
+  ],
+  "docstring": "**Completeness**: if the answers encode strings the decider accepts within `T`, the\ndescribed formula has a satisfying assignment extending them.",
+  "module": "MIPRE.TM.CookLevin.Sat",
+  "module_doc": "/-!\n# The described formula and the answers\n\nThe two halves of item 1 of `thm:succinct-sat` for the describer: a satisfying assignment of\nthe described formula extending the two answer blocks exists iff the blocks are the two-bit\ntape encodings (`tapeBits`) of strings of length at most `T` that the decider accepts within\n`T` (`planning/succinct-cook-levin.md`, S3).\n\nThe bridge in both directions is the decoding: an assignment of the formula gives the tableau\nassignment `w ∘ idxOf` (`sat_tableau_of_sat_formula3`), and an assignment of the tableau gives\nthe formula assignment `decodeVar · |>.elim false` (`sat_formula3_of_sat_tableau`). The answer\nblocks match because the canonical index of an answer cell is its answer index (`idxOf_ans`)\nand because a time-`0` row of a free tape reads exactly the tape encoding of the string it\nholds (`decide_val_inputCellVal`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Sat.lean#L186-L238",
+  "source_path": "MIPRE/TM/CookLevin/Sat.lean",
+  "lines": [
+   186,
+   238
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Fml.eval_addConstRel_iff",
+   "MIPRE.SAT.bitsVal_injective",
+   "MIPRE.SAT.Fml.eval_toCircuit",
+   "MIPRE.SAT.Fml.exists_circuit",
+   "MIPRE.SAT.Circuit.tseitin_sat_of_values",
+   "MIPRE.TM.CookLevin.chk_eval_run",
+   "MIPRE.TM.CookLevin.freeClauses_sat",
+   "MIPRE.TM.CookLevin.inputPos_cfgAt_le",
+   "MIPRE.TM.CookLevin.workTapePos_cfgAt_bounds",
+   "MIPRE.TM.CookLevin.outputSymbol_of_accepting",
+   "MIPRE.TM.CookLevin.Desc.ibOf_getD",
+   "MIPRE.TM.CookLevin.Desc.tapeSpec",
+   "MIPRE.TM.CookLevin.Desc.exists_cell",
+   "MIPRE.TM.CookLevin.Desc.eval_winMatchN",
+   "MIPRE.TM.CookLevin.Desc.evalFields_litFields",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_ans",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_emitOne_iff",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_emitBad_iff",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_emitted_iff",
+   "MIPRE.TM.CookLevin.Desc.eval_isAuxF",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_cell_iff",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_head_iff",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_state_iff",
+   "MIPRE.TM.CookLevin.Desc.bitsVal_bitsOfNat",
+   "MIPRE.TM.CookLevin.Desc.chk_isCheckCircuit",
+   "MIPRE.TM.CookLevin.Desc.decide_val_inputCellVal",
+   "MIPRE.TM.CookLevin.HeadsIn.headCell_bounds",
+   "MIPRE.TM.CookLevin.Desc.windowPred_iff",
+   "MIPRE.TM.Interp.accepts_of_acceptsWithin"
+  ],
+  "pasted_helpers": 258,
+  "prooflines": 44,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.encodesAccepted_of_extendsAnswers",
+  "source_name": "MIPRE.TM.CookLevin.Desc.encodesAccepted_of_extendsAnswers",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.encodesAccepted_of_extendsAnswers (hT : T ≤ Sof e)\n    (hlen : FixedLen e 𝒟.prog n T x y) (hTm : T + 3 < 2 ^ W e)\n    (h4T : 4 * T ≤ 2 ^ mOf e Gc) (a b : Fin (2 * T) → Bool)\n    (h : ExtendsAnswers h4T ((descCirc e T 𝒟.prog n x y).formula3 (mOf e Gc)) a b) :\n    EncodesAccepted 𝒟 n x y T a b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost Fml",
+   "variable (𝒟 : Decider) (n T : ℕ) (x y : BitStr) (e : ℕ)"
+  ],
+  "docstring": "**Soundness**: a satisfying assignment of the described formula extending the answers gives\nstrings of length at most `T`, encoded by the answers, that the decider accepts within `T`.",
+  "module": "MIPRE.TM.CookLevin.Sat",
+  "module_doc": "/-!\n# The described formula and the answers\n\nThe two halves of item 1 of `thm:succinct-sat` for the describer: a satisfying assignment of\nthe described formula extending the two answer blocks exists iff the blocks are the two-bit\ntape encodings (`tapeBits`) of strings of length at most `T` that the decider accepts within\n`T` (`planning/succinct-cook-levin.md`, S3).\n\nThe bridge in both directions is the decoding: an assignment of the formula gives the tableau\nassignment `w ∘ idxOf` (`sat_tableau_of_sat_formula3`), and an assignment of the tableau gives\nthe formula assignment `decodeVar · |>.elim false` (`sat_formula3_of_sat_tableau`). The answer\nblocks match because the canonical index of an answer cell is its answer index (`idxOf_ans`)\nand because a time-`0` row of a free tape reads exactly the tape encoding of the string it\nholds (`decide_val_inputCellVal`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Sat.lean#L248-L330",
+  "source_path": "MIPRE/TM/CookLevin/Sat.lean",
+  "lines": [
+   248,
+   330
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Fml.exists_circuit",
+   "MIPRE.TM.CookLevin.Desc.idxOf_ans",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_ans",
+   "MIPRE.TM.CookLevin.Desc.chk_isCheckCircuit",
+   "MIPRE.TM.CookLevin.Desc.decide_val_inputCellVal",
+   "MIPRE.TM.CookLevin.Desc.sat_tableau_of_sat_formula3",
+   "MIPRE.TM.CookLevin.acceptsIn_of_tableau_sat",
+   "MIPRE.TM.Interp.acceptsWithin_of_accepts"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 76,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.not_isBdry_iff",
+  "source_name": "MIPRE.TM.CookLevin.not_isBdry_iff",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.not_isBdry_iff (p : Pos S) : ¬ p.IsBdry ↔ 2 ≤ (p : ℕ) ∧ (p : ℕ) + 2 < numCells S := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "open MultiTapeTM (moveInputPos moveInputPos_zero moveInputPos_neg_of_ne_left",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Semantics",
+  "module_doc": "/-!\n# The windows of a run are locally consistent\n\n`localCfgOf M acc c js` is the local configuration read off a configuration `c` and its\nsuccessor at the window `js`; its encoding is the assignment of the run on the window's\nvariables (`encode_localCfgOf`), and it is locally consistent\n(`locallyConsistent_localCfgOf`): the completeness half of the tableau's correctness\n(`planning/succinct-cook-levin.md`, S1). The proof is the case analysis of the paper's\n`lem:correct-tableau` on where the heads are, with the clamping of the input heads\n(`Turing.moveInputPos`) matched against the tableau's rule (`newOffset`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Semantics.lean#L43-L44",
+  "source_path": "MIPRE/TM/CookLevin/Semantics.lean",
+  "lines": [
+   43,
+   44
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.headCell_step_le",
+  "source_name": "MIPRE.TM.CookLevin.headCell_step_le",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.headCell_step_le (c : Cfg i w Symbol State input) (d : Tape i w) :\n    -1 ≤ headCell (S := S) (M.step c) d - headCell (S := S) c d ∧\n      headCell (S := S) (M.step c) d - headCell (S := S) c d ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "open MultiTapeTM (moveInputPos moveInputPos_zero moveInputPos_neg_of_ne_left",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]",
+   "variable (M : MultiInputTM i w Symbol State) (acc : Symbol) {input : Fin i → List Symbol}"
+  ],
+  "docstring": "A head moves by at most one cell in a step.",
+  "module": "MIPRE.TM.CookLevin.Semantics",
+  "module_doc": "/-!\n# The windows of a run are locally consistent\n\n`localCfgOf M acc c js` is the local configuration read off a configuration `c` and its\nsuccessor at the window `js`; its encoding is the assignment of the run on the window's\nvariables (`encode_localCfgOf`), and it is locally consistent\n(`locallyConsistent_localCfgOf`): the completeness half of the tableau's correctness\n(`planning/succinct-cook-levin.md`, S1). The proof is the case analysis of the paper's\n`lem:correct-tableau` on where the heads are, with the clamping of the input heads\n(`Turing.moveInputPos`) matched against the tableau's rule (`newOffset`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Semantics.lean#L143-L160",
+  "source_path": "MIPRE/TM/CookLevin/Semantics.lean",
+  "lines": [
+   143,
+   160
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.far_localCfgOf",
+  "source_name": "MIPRE.TM.CookLevin.far_localCfgOf",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.far_localCfgOf (c : Cfg i w Symbol State input) (js : Tape i w → Center S) (d : Tape i w)\n    (hfar : (localCfgOf M acc c js).HeadFar d) :\n    (localCfgOf M acc c js).cellPost d = (localCfgOf M acc c js).cellPre d 2 ∧\n      (localCfgOf M acc c js).headPost d = false := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "open MultiTapeTM (moveInputPos moveInputPos_zero moveInputPos_neg_of_ne_left",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]",
+   "variable (M : MultiInputTM i w Symbol State) (acc : Symbol) {input : Fin i → List Symbol}"
+  ],
+  "docstring": "A tape whose head is not near the center keeps its center cell and has no head there\nafter the step.",
+  "module": "MIPRE.TM.CookLevin.Semantics",
+  "module_doc": "/-!\n# The windows of a run are locally consistent\n\n`localCfgOf M acc c js` is the local configuration read off a configuration `c` and its\nsuccessor at the window `js`; its encoding is the assignment of the run on the window's\nvariables (`encode_localCfgOf`), and it is locally consistent\n(`locallyConsistent_localCfgOf`): the completeness half of the tableau's correctness\n(`planning/succinct-cook-levin.md`, S1). The proof is the case analysis of the paper's\n`lem:correct-tableau` on where the heads are, with the clamping of the input heads\n(`Turing.moveInputPos`) matched against the tableau's rule (`newOffset`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Semantics.lean#L162-L195",
+  "source_path": "MIPRE/TM/CookLevin/Semantics.lean",
+  "lines": [
+   162,
+   195
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.headCell_step_le"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.toOpt_inputCellVal_headCell",
+  "source_name": "MIPRE.TM.CookLevin.toOpt_inputCellVal_headCell",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.toOpt_inputCellVal_headCell (c : Cfg i w Symbol State input) (j : Fin i) (p : Pos S)\n    (hp : (p : ℕ) = (c.inputPos j : ℕ) + 2) (hnb : ¬ p.IsBdry) :\n    (inputCellVal (input j) p).toOpt = c.inputSymbol j := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "open MultiTapeTM (moveInputPos moveInputPos_zero moveInputPos_neg_of_ne_left",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]",
+   "variable (M : MultiInputTM i w Symbol State) (acc : Symbol) {input : Fin i → List Symbol}"
+  ],
+  "docstring": "The symbol under an input head is the cell of the tableau at the head's cell.",
+  "module": "MIPRE.TM.CookLevin.Semantics",
+  "module_doc": "/-!\n# The windows of a run are locally consistent\n\n`localCfgOf M acc c js` is the local configuration read off a configuration `c` and its\nsuccessor at the window `js`; its encoding is the assignment of the run on the window's\nvariables (`encode_localCfgOf`), and it is locally consistent\n(`locallyConsistent_localCfgOf`): the completeness half of the tableau's correctness\n(`planning/succinct-cook-levin.md`, S1). The proof is the case analysis of the paper's\n`lem:correct-tableau` on where the heads are, with the clamping of the input heads\n(`Turing.moveInputPos`) matched against the tableau's rule (`newOffset`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Semantics.lean#L230-L251",
+  "source_path": "MIPRE/TM/CookLevin/Semantics.lean",
+  "lines": [
+   230,
+   251
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.HeadsIn.headCell_bounds",
+  "source_name": "MIPRE.TM.CookLevin.HeadsIn.headCell_bounds",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.HeadsIn.headCell_bounds {c : Cfg i w Symbol State input} (h : HeadsIn c S) (d : Tape i w) :\n    2 ≤ headCell (S := S) c d ∧ headCell (S := S) c d + 2 < numCells S := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.HeadsIn",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "open MultiTapeTM (moveInputPos moveInputPos_zero moveInputPos_neg_of_ne_left",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]",
+   "variable (M : MultiInputTM i w Symbol State) (acc : Symbol) {input : Fin i → List Symbol}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Semantics",
+  "module_doc": "/-!\n# The windows of a run are locally consistent\n\n`localCfgOf M acc c js` is the local configuration read off a configuration `c` and its\nsuccessor at the window `js`; its encoding is the assignment of the run on the window's\nvariables (`encode_localCfgOf`), and it is locally consistent\n(`locallyConsistent_localCfgOf`): the completeness half of the tableau's correctness\n(`planning/succinct-cook-levin.md`, S1). The proof is the case analysis of the paper's\n`lem:correct-tableau` on where the heads are, with the clamping of the input heads\n(`Turing.moveInputPos`) matched against the tableau's rule (`newOffset`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Semantics.lean#L266-L276",
+  "source_path": "MIPRE/TM/CookLevin/Semantics.lean",
+  "lines": [
+   266,
+   276
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 8,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.fullStep_localCfgOf",
+  "source_name": "MIPRE.TM.CookLevin.fullStep_localCfgOf",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.fullStep_localCfgOf (c : Cfg i w Symbol State input) (js : Tape i w → Center S)\n    (hin : HeadsIn c S) (δ : Tape i w → Fin 5)\n    (hδ : ∀ d, 1 ≤ (δ d : ℕ) ∧ (δ d : ℕ) ≤ 3 ∧ (localCfgOf M acc c js).HeadAt d (δ d)) :\n    FullStep M acc (localCfgOf M acc c js) δ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "open MultiTapeTM (moveInputPos moveInputPos_zero moveInputPos_neg_of_ne_left",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]",
+   "variable (M : MultiInputTM i w Symbol State) (acc : Symbol) {input : Fin i → List Symbol}"
+  ],
+  "docstring": "When every head is at an offset `1..3`, the local configuration of the run satisfies the\nfull transition check.",
+  "module": "MIPRE.TM.CookLevin.Semantics",
+  "module_doc": "/-!\n# The windows of a run are locally consistent\n\n`localCfgOf M acc c js` is the local configuration read off a configuration `c` and its\nsuccessor at the window `js`; its encoding is the assignment of the run on the window's\nvariables (`encode_localCfgOf`), and it is locally consistent\n(`locallyConsistent_localCfgOf`): the completeness half of the tableau's correctness\n(`planning/succinct-cook-levin.md`, S1). The proof is the case analysis of the paper's\n`lem:correct-tableau` on where the heads are, with the clamping of the input heads\n(`Turing.moveInputPos`) matched against the tableau's rule (`newOffset`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Semantics.lean#L293-L460",
+  "source_path": "MIPRE/TM/CookLevin/Semantics.lean",
+  "lines": [
+   293,
+   460
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.toOpt_inputCellVal_headCell",
+   "MIPRE.TM.CookLevin.HeadsIn.headCell_bounds",
+   "MIPRE.TM.CookLevin.not_isBdry_iff"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 161,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.fullStep_post_eq",
+  "source_name": "MIPRE.TM.CookLevin.fullStep_post_eq",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.fullStep_post_eq {L L' : LocalCfg i w Symbol State} (δ : Tape i w → Fin 5)\n    (hL : FullStep M acc L δ) (hL' : FullStep M acc L' δ)\n    (hc : L.cellPre = L'.cellPre) (hh : L.headPre = L'.headPre) (hs : L.statePre = L'.statePre) :\n    L.cellPost = L'.cellPost ∧ L.headPost = L'.headPost ∧ L.statePost = L'.statePost ∧\n      L.emitOne = L'.emitOne ∧ L.emitBad = L'.emitBad := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "variable {i w : ℕ} {Symbol State : Type*} [DecidableEq Symbol] [DecidableEq State]"
+  ],
+  "docstring": "Two windows satisfying the full-step check at the same offsets, with the same time-`t`\npart, have the same time-`t + 1` part.",
+  "module": "MIPRE.TM.CookLevin.Sound",
+  "module_doc": "/-!\n# Soundness of the Cook–Levin tableau\n\nA satisfying assignment of the tableau formula comes from an accepting run\n(`acceptsIn_of_tableau_sat`), and the equivalence `tableau_sat_iff`\n(`planning/succinct-cook-levin.md`, S1).\n\n* The successor part of a locally consistent window is a function of its time-`t` part\n  (`post_of_pre`): two locally consistent local configurations with the same cells, heads\n  and state at time `t`, one of them with at most one head per tape, agree on the cell and\n  head at time `t + 1` of every tape whose head is far, and on everything when every head is\n  in the window.\n* The free input strings are read off the time-`0` rows (`freeString`): the symbols from\n  cell `3` up to the first blank, which the free-tape clauses make well defined\n  (`FreeFacts.cell_eq`).\n* The rows encode the run (`rows_of_sat`), by induction on time: the window centered at a\n  cell, with the other windows centered at the heads, determines the cell and head at the\n  next time; the window centered at every head determines the state and the emission bits.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Sound.lean#L45-L84",
+  "source_path": "MIPRE/TM/CookLevin/Sound.lean",
+  "lines": [
+   45,
+   84
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 32,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.post_of_pre",
+  "source_name": "MIPRE.TM.CookLevin.post_of_pre",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.post_of_pre {L L' : LocalCfg i w Symbol State} (hL : LocallyConsistent M acc L)\n    (hL' : LocallyConsistent M acc L') (hno : ∀ d, ¬ L'.TwoHeads d)\n    (hc : L.cellPre = L'.cellPre) (hh : L.headPre = L'.headPre) (hs : L.statePre = L'.statePre) :\n    (∀ d, L'.HeadFar d → L.cellPost d = L'.cellPost d ∧ L.headPost d = L'.headPost d) ∧\n    ((∀ d, ∃ δ : Fin 5, 1 ≤ (δ : ℕ) ∧ (δ : ℕ) ≤ 3 ∧ L'.HeadAt d δ) →\n      L.cellPost = L'.cellPost ∧ L.headPost = L'.headPost ∧ L.statePost = L'.statePost ∧\n        L.emitOne = L'.emitOne ∧ L.emitBad = L'.emitBad) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "variable {i w : ℕ} {Symbol State : Type*} [DecidableEq Symbol] [DecidableEq State]"
+  ],
+  "docstring": "**The successor part of a locally consistent window is determined by its time-`t`\npart.** For every tape whose head is far the cell and head at time `t + 1`, and when every\nhead is in the window everything.",
+  "module": "MIPRE.TM.CookLevin.Sound",
+  "module_doc": "/-!\n# Soundness of the Cook–Levin tableau\n\nA satisfying assignment of the tableau formula comes from an accepting run\n(`acceptsIn_of_tableau_sat`), and the equivalence `tableau_sat_iff`\n(`planning/succinct-cook-levin.md`, S1).\n\n* The successor part of a locally consistent window is a function of its time-`t` part\n  (`post_of_pre`): two locally consistent local configurations with the same cells, heads\n  and state at time `t`, one of them with at most one head per tape, agree on the cell and\n  head at time `t + 1` of every tape whose head is far, and on everything when every head is\n  in the window.\n* The free input strings are read off the time-`0` rows (`freeString`): the symbols from\n  cell `3` up to the first blank, which the free-tape clauses make well defined\n  (`FreeFacts.cell_eq`).\n* The rows encode the run (`rows_of_sat`), by induction on time: the window centered at a\n  cell, with the other windows centered at the heads, determines the cell and head at the\n  next time; the window centered at every head determines the state and the emission bits.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Sound.lean#L86-L120",
+  "source_path": "MIPRE/TM/CookLevin/Sound.lean",
+  "lines": [
+   86,
+   120
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.fullStep_post_eq"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.FreeFacts.cell_eq",
+  "source_name": "MIPRE.TM.CookLevin.FreeFacts.cell_eq",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.FreeFacts.cell_eq {a : TabVar i w Symbol State S G → Bool} {j : Fin i}\n    (F : FreeFacts s₀ s₁ a j) (p : Pos S) (v : CellVal Symbol) :\n    a (.cell 0 (.inl j) p v) = decide (v = inputCellVal (freeString a j s₀ s₁) p) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.FreeFacts",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]",
+   "variable (s₀ s₁ : Symbol)",
+   "variable {s₀ s₁}"
+  ],
+  "docstring": "**The time-`0` row of a free tape is the encoding of the string read off it.**",
+  "module": "MIPRE.TM.CookLevin.Sound",
+  "module_doc": "/-!\n# Soundness of the Cook–Levin tableau\n\nA satisfying assignment of the tableau formula comes from an accepting run\n(`acceptsIn_of_tableau_sat`), and the equivalence `tableau_sat_iff`\n(`planning/succinct-cook-levin.md`, S1).\n\n* The successor part of a locally consistent window is a function of its time-`t` part\n  (`post_of_pre`): two locally consistent local configurations with the same cells, heads\n  and state at time `t`, one of them with at most one head per tape, agree on the cell and\n  head at time `t + 1` of every tape whose head is far, and on everything when every head is\n  in the window.\n* The free input strings are read off the time-`0` rows (`freeString`): the symbols from\n  cell `3` up to the first blank, which the free-tape clauses make well defined\n  (`FreeFacts.cell_eq`).\n* The rows encode the run (`rows_of_sat`), by induction on time: the window centered at a\n  cell, with the other windows centered at the heads, determines the cell and head at the\n  next time; the window centered at every head determines the state and the emission bits.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Sound.lean#L229-L279",
+  "source_path": "MIPRE/TM/CookLevin/Sound.lean",
+  "lines": [
+   229,
+   279
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.not_isBdry_iff"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 46,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.window_of_sat",
+  "source_name": "MIPRE.TM.CookLevin.window_of_sat",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.window_of_sat (a : TabVar i w Symbol State S G → Bool) (t : Fin S)\n    (c : Cfg i w Symbol State input) (hrow : RowOk a t.castSucc c) (js : Tape i w → Center S)\n    (hwin : checkPred M acc (fun v => a (winVarOf (G := G) t js v))) :\n    ∃ L : LocalCfg i w Symbol State, LocallyConsistent M acc L ∧\n      (∀ v, L.encode v = a (winVarOf (G := G) t js v)) ∧\n      L.cellPre = (localCfgOf M acc c js).cellPre ∧ L.headPre = (localCfgOf M acc c js).headPre ∧\n      L.statePre = (localCfgOf M acc c js).statePre := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]"
+  ],
+  "docstring": "A locally consistent window of `a` at step `t` whose time-`t` part is that of `c`.",
+  "module": "MIPRE.TM.CookLevin.Sound",
+  "module_doc": "/-!\n# Soundness of the Cook–Levin tableau\n\nA satisfying assignment of the tableau formula comes from an accepting run\n(`acceptsIn_of_tableau_sat`), and the equivalence `tableau_sat_iff`\n(`planning/succinct-cook-levin.md`, S1).\n\n* The successor part of a locally consistent window is a function of its time-`t` part\n  (`post_of_pre`): two locally consistent local configurations with the same cells, heads\n  and state at time `t`, one of them with at most one head per tape, agree on the cell and\n  head at time `t + 1` of every tape whose head is far, and on everything when every head is\n  in the window.\n* The free input strings are read off the time-`0` rows (`freeString`): the symbols from\n  cell `3` up to the first blank, which the free-tape clauses make well defined\n  (`FreeFacts.cell_eq`).\n* The rows encode the run (`rows_of_sat`), by induction on time: the window centered at a\n  cell, with the other windows centered at the heads, determines the cell and head at the\n  next time; the window centered at every head determines the state and the emission bits.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Sound.lean#L298-L323",
+  "source_path": "MIPRE/TM/CookLevin/Sound.lean",
+  "lines": [
+   298,
+   323
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.cellCenter_cases",
+  "source_name": "MIPRE.TM.CookLevin.cellCenter_cases",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.cellCenter_cases (c : Cfg i w Symbol State input) (hin : HeadsIn c S) (d : Tape i w)\n    (p : Pos S) (hnb : ¬ p.IsBdry) :\n    (∀ d', ∃ δ : Fin 5, 1 ≤ (δ : ℕ) ∧ (δ : ℕ) ≤ 3 ∧\n      (localCfgOf M acc c (cellCenter c hin d p hnb)).HeadAt d' δ) ∨\n    (localCfgOf M acc c (cellCenter c hin d p hnb)).HeadFar d := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]"
+  ],
+  "docstring": "At the window of a cell, either every head is in its window or the head of the cell's\ntape is far.",
+  "module": "MIPRE.TM.CookLevin.Sound",
+  "module_doc": "/-!\n# Soundness of the Cook–Levin tableau\n\nA satisfying assignment of the tableau formula comes from an accepting run\n(`acceptsIn_of_tableau_sat`), and the equivalence `tableau_sat_iff`\n(`planning/succinct-cook-levin.md`, S1).\n\n* The successor part of a locally consistent window is a function of its time-`t` part\n  (`post_of_pre`): two locally consistent local configurations with the same cells, heads\n  and state at time `t`, one of them with at most one head per tape, agree on the cell and\n  head at time `t + 1` of every tape whose head is far, and on everything when every head is\n  in the window.\n* The free input strings are read off the time-`0` rows (`freeString`): the symbols from\n  cell `3` up to the first blank, which the free-tape clauses make well defined\n  (`FreeFacts.cell_eq`).\n* The rows encode the run (`rows_of_sat`), by induction on time: the window centered at a\n  cell, with the other windows centered at the heads, determines the cell and head at the\n  next time; the window centered at every head determines the state and the emission bits.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Sound.lean#L377-L402",
+  "source_path": "MIPRE/TM/CookLevin/Sound.lean",
+  "lines": [
+   377,
+   402
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.not_isBdry_iff"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.rowOk_step",
+  "source_name": "MIPRE.TM.CookLevin.rowOk_step",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.rowOk_step (a : TabVar i w Symbol State S G → Bool) (t : Fin S)\n    (c : Cfg i w Symbol State input) (hrow : RowOk a t.castSucc c) (hin : HeadsIn c S)\n    (hin' : HeadsIn (M.step c) S)\n    (hwin : ∀ js, checkPred M acc (fun v => a (winVarOf (G := G) t js v)))\n    (hbdry : ∀ d (p : Pos S) v, p.IsBdry → a (.cell t.succ d p v) = decide (v = .bdry))\n    (hbdryh : ∀ d (p : Pos S), p.IsBdry → a (.head t.succ d p) = false) :\n    RowOk a t.succ (M.step c) ∧ a (.emitOne t) = decide (M.outputSymbol c = some acc) ∧\n      a (.emitBad t) = decide (M.outputSymbol c ≠ none ∧ M.outputSymbol c ≠ some acc) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]"
+  ],
+  "docstring": "**A row encoding `c` is followed by a row encoding `M.step c`**, when every window is\nlocally consistent; the emission bits of the step are those of `c`.",
+  "module": "MIPRE.TM.CookLevin.Sound",
+  "module_doc": "/-!\n# Soundness of the Cook–Levin tableau\n\nA satisfying assignment of the tableau formula comes from an accepting run\n(`acceptsIn_of_tableau_sat`), and the equivalence `tableau_sat_iff`\n(`planning/succinct-cook-levin.md`, S1).\n\n* The successor part of a locally consistent window is a function of its time-`t` part\n  (`post_of_pre`): two locally consistent local configurations with the same cells, heads\n  and state at time `t`, one of them with at most one head per tape, agree on the cell and\n  head at time `t + 1` of every tape whose head is far, and on everything when every head is\n  in the window.\n* The free input strings are read off the time-`0` rows (`freeString`): the symbols from\n  cell `3` up to the first blank, which the free-tape clauses make well defined\n  (`FreeFacts.cell_eq`).\n* The rows encode the run (`rows_of_sat`), by induction on time: the window centered at a\n  cell, with the other windows centered at the heads, determines the cell and head at the\n  next time; the window centered at every head determines the state and the emission bits.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Sound.lean#L406-L480",
+  "source_path": "MIPRE/TM/CookLevin/Sound.lean",
+  "lines": [
+   406,
+   480
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.HeadsIn.headCell_bounds",
+   "MIPRE.TM.CookLevin.fullStep_localCfgOf",
+   "MIPRE.TM.CookLevin.not_isBdry_iff",
+   "MIPRE.TM.CookLevin.far_localCfgOf",
+   "MIPRE.TM.CookLevin.window_of_sat",
+   "MIPRE.TM.CookLevin.cellCenter_cases",
+   "MIPRE.TM.CookLevin.post_of_pre"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 64,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.sat_window",
+  "source_name": "MIPRE.TM.CookLevin.sat_window",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.sat_window (hchk : IsCheckCircuit M acc chk) (hC : chk.RefsLt) (hin : chk.InputsLt)\n    (hne : chk.gates ≠ []) (t : Fin S) (js : Tape i w → Center S) :\n    checkPred M acc (fun v => a (winVarOf (G := chk.gates.length) t js v)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]",
+   "variable (hSat : (tableau M s₀ s₁ S fixed chk).Sat a)"
+  ],
+  "docstring": "The window clauses force, through the check circuit, local consistency of every\nwindow.",
+  "module": "MIPRE.TM.CookLevin.Sound",
+  "module_doc": "/-!\n# Soundness of the Cook–Levin tableau\n\nA satisfying assignment of the tableau formula comes from an accepting run\n(`acceptsIn_of_tableau_sat`), and the equivalence `tableau_sat_iff`\n(`planning/succinct-cook-levin.md`, S1).\n\n* The successor part of a locally consistent window is a function of its time-`t` part\n  (`post_of_pre`): two locally consistent local configurations with the same cells, heads\n  and state at time `t`, one of them with at most one head per tape, agree on the cell and\n  head at time `t + 1` of every tape whose head is far, and on everything when every head is\n  in the window.\n* The free input strings are read off the time-`0` rows (`freeString`): the symbols from\n  cell `3` up to the first blank, which the free-tape clauses make well defined\n  (`FreeFacts.cell_eq`).\n* The rows encode the run (`rows_of_sat`), by induction on time: the window centered at a\n  cell, with the other windows centered at the heads, determines the cell and head at the\n  next time; the window centered at every head determines the state and the emission bits.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Sound.lean#L588-L603",
+  "source_path": "MIPRE/TM/CookLevin/Sound.lean",
+  "lines": [
+   588,
+   603
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Circuit.tseitin_values",
+   "MIPRE.SAT.Circuit.valueAt_congr"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.rowOk_zero",
+  "source_name": "MIPRE.TM.CookLevin.rowOk_zero",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.rowOk_zero : RowOk (input := inputOf s₀ s₁ fixed chk a) a 0 (M.initCfg _) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]",
+   "variable (hSat : (tableau M s₀ s₁ S fixed chk).Sat a)"
+  ],
+  "docstring": "Row `0` encodes the initial configuration on the inputs read off the assignment.",
+  "module": "MIPRE.TM.CookLevin.Sound",
+  "module_doc": "/-!\n# Soundness of the Cook–Levin tableau\n\nA satisfying assignment of the tableau formula comes from an accepting run\n(`acceptsIn_of_tableau_sat`), and the equivalence `tableau_sat_iff`\n(`planning/succinct-cook-levin.md`, S1).\n\n* The successor part of a locally consistent window is a function of its time-`t` part\n  (`post_of_pre`): two locally consistent local configurations with the same cells, heads\n  and state at time `t`, one of them with at most one head per tape, agree on the cell and\n  head at time `t + 1` of every tape whose head is far, and on everything when every head is\n  in the window.\n* The free input strings are read off the time-`0` rows (`freeString`): the symbols from\n  cell `3` up to the first blank, which the free-tape clauses make well defined\n  (`FreeFacts.cell_eq`).\n* The rows encode the run (`rows_of_sat`), by induction on time: the window centered at a\n  cell, with the other windows centered at the heads, determines the cell and head at the\n  next time; the window centered at every head determines the state and the emission bits.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Sound.lean#L605-L632",
+  "source_path": "MIPRE/TM/CookLevin/Sound.lean",
+  "lines": [
+   605,
+   632
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.FreeFacts.cell_eq"
+  ],
+  "pasted_helpers": 12,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.rows_of_sat",
+  "source_name": "MIPRE.TM.CookLevin.rows_of_sat",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.rows_of_sat (hchk : IsCheckCircuit M acc chk) (hC : chk.RefsLt) (hin : chk.InputsLt)\n    (hne : chk.gates ≠ []) (t : ℕ) (ht : t ≤ S) :\n    RowOk (input := inputOf s₀ s₁ fixed chk a) a ⟨t, Nat.lt_succ_of_le ht⟩ (cfgAt M t) ∧\n      a (.emitted ⟨t, Nat.lt_succ_of_le ht⟩) =\n        decide (M.outputString (M.initCfg (inputOf s₀ s₁ fixed chk a)) t ≠ []) ∧\n      (M.outputString (M.initCfg (inputOf s₀ s₁ fixed chk a)) t).length ≤ 1 ∧\n      ∀ s ∈ M.outputString (M.initCfg (inputOf s₀ s₁ fixed chk a)) t, s = acc := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]",
+   "variable (hSat : (tableau M s₀ s₁ S fixed chk).Sat a)"
+  ],
+  "docstring": "**The rows of a satisfying assignment encode the run** on the inputs read off it, with\nthe emission bookkeeping: `emitted t` iff something was output before time `t`, at most one\nsymbol, and only `acc`.",
+  "module": "MIPRE.TM.CookLevin.Sound",
+  "module_doc": "/-!\n# Soundness of the Cook–Levin tableau\n\nA satisfying assignment of the tableau formula comes from an accepting run\n(`acceptsIn_of_tableau_sat`), and the equivalence `tableau_sat_iff`\n(`planning/succinct-cook-levin.md`, S1).\n\n* The successor part of a locally consistent window is a function of its time-`t` part\n  (`post_of_pre`): two locally consistent local configurations with the same cells, heads\n  and state at time `t`, one of them with at most one head per tape, agree on the cell and\n  head at time `t + 1` of every tape whose head is far, and on everything when every head is\n  in the window.\n* The free input strings are read off the time-`0` rows (`freeString`): the symbols from\n  cell `3` up to the first blank, which the free-tape clauses make well defined\n  (`FreeFacts.cell_eq`).\n* The rows encode the run (`rows_of_sat`), by induction on time: the window centered at a\n  cell, with the other windows centered at the heads, determines the cell and head at the\n  next time; the window centered at every head determines the state and the emission bits.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Sound.lean#L634-L708",
+  "source_path": "MIPRE/TM/CookLevin/Sound.lean",
+  "lines": [
+   634,
+   708
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.inputPos_cfgAt_le",
+   "MIPRE.TM.CookLevin.workTapePos_cfgAt_bounds",
+   "MIPRE.TM.CookLevin.rowOk_step",
+   "MIPRE.TM.CookLevin.sat_window",
+   "MIPRE.TM.CookLevin.rowOk_zero"
+  ],
+  "pasted_helpers": 18,
+  "prooflines": 65,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.acceptsIn_of_tableau_sat",
+  "source_name": "MIPRE.TM.CookLevin.acceptsIn_of_tableau_sat",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.acceptsIn_of_tableau_sat (hchk : IsCheckCircuit M acc chk) (hC : chk.RefsLt)\n    (hin : chk.InputsLt) (hne : chk.gates ≠ []) :\n    (∀ j x, fixed j = some x → inputOf s₀ s₁ fixed chk a j = x) ∧\n    (∀ j, fixed j = none → ∀ s ∈ inputOf s₀ s₁ fixed chk a j, s = s₀ ∨ s = s₁) ∧\n    (∀ j (p : Pos S) v, a (.cell 0 (.inl j) p v) =\n      decide (v = inputCellVal (inputOf s₀ s₁ fixed chk a j) p)) ∧\n    AcceptsIn M acc (inputOf s₀ s₁ fixed chk a) S := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open Turing MIPRE.SAT MultiInputTM",
+   "variable {i w : ℕ} {Symbol State : Type*} [Fintype Symbol] [DecidableEq Symbol] [Fintype State]",
+   "variable (hSat : (tableau M s₀ s₁ S fixed chk).Sat a)"
+  ],
+  "docstring": "**Soundness of the tableau.** A satisfying assignment reads, on its time-`0` rows, the\ninputs `inputOf`, which extend the fixed strings by strings over `{s₀, s₁}`, and `M`\naccepts them within `S` steps.",
+  "module": "MIPRE.TM.CookLevin.Sound",
+  "module_doc": "/-!\n# Soundness of the Cook–Levin tableau\n\nA satisfying assignment of the tableau formula comes from an accepting run\n(`acceptsIn_of_tableau_sat`), and the equivalence `tableau_sat_iff`\n(`planning/succinct-cook-levin.md`, S1).\n\n* The successor part of a locally consistent window is a function of its time-`t` part\n  (`post_of_pre`): two locally consistent local configurations with the same cells, heads\n  and state at time `t`, one of them with at most one head per tape, agree on the cell and\n  head at time `t + 1` of every tape whose head is far, and on everything when every head is\n  in the window.\n* The free input strings are read off the time-`0` rows (`freeString`): the symbols from\n  cell `3` up to the first blank, which the free-tape clauses make well defined\n  (`FreeFacts.cell_eq`).\n* The rows encode the run (`rows_of_sat`), by induction on time: the window centered at a\n  cell, with the other windows centered at the heads, determines the cell and head at the\n  next time; the window centered at every head determines the state and the emission bits.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Sound.lean#L710-L734",
+  "source_path": "MIPRE/TM/CookLevin/Sound.lean",
+  "lines": [
+   710,
+   734
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.rowOk_zero",
+   "MIPRE.TM.CookLevin.rows_of_sat"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.windowPred_iff",
+  "source_name": "MIPRE.TM.CookLevin.Desc.windowPred_iff",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.windowPred_iff (c : Cand) :\n    WindowPred e chk.gates.length chk c ↔\n      ∃ cl ∈ windowClauses (S := Sof e) chk, c.Dec e chk.gates.length cl := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost",
+   "variable (e G : ℕ)",
+   "variable (chk : Circuit) (hC : chk.RefsLt) (hin : chk.InputsLt)"
+  ],
+  "docstring": "**The window family is exact**: a candidate satisfies `WindowPred` iff it decodes to a\nwindow clause of the tableau.",
+  "module": "MIPRE.TM.CookLevin.Window",
+  "module_doc": "/-!\n# The window family, on decoded fields\n\nThe window clauses of the tableau are the Tseitin clauses of the check circuit `chk` at\nevery step `t` and window `js` (`windowClauses`). Every such clause has a gate literal\n(`aux t js g`) in its third position: the *templates* of a gate (`gateTemplates`) list its\nclauses as triples of literal *specs* — a gate index (`.aux u`) or a window input (`.win n`)\n— with their signs, and the clause is recovered from the templates by instantiating the\nspecs at `(t, js)` (`gateClauses_eq_templates`). A candidate matches a template when its\nthird record is a gate variable of the template's gate and the other two records denote the\nspec's variable relative to it (`SpecMatch`: the time and centers are read off the third\nrecord). `windowPred_iff`: the candidate decodes to a window clause iff it matches a\ntemplate of a gate, or is the output unit clause (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Window.lean#L205-L253",
+  "source_path": "MIPRE/TM/CookLevin/Window.lean",
+  "lines": [
+   205,
+   253
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.decodeVar_emitOne_iff",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_emitBad_iff",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_aux_iff",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_cell_iff",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_head_iff",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_state_iff"
+  ],
+  "pasted_helpers": 16,
+  "prooflines": 43,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.Interp.copyTree_scan",
+  "source_name": "MIPRE.TM.Interp.copyTree_scan",
+  "formal_statement": "theorem MIPRE.TM.Interp.copyTree_scan {k : ProgId} {pc : Fin maxPc} {src t : WT}\n    (hins : instrAt k pc = .copyTree src (some t) false) (hpc : pc.val + 1 < maxPc)\n    (hst : src ≠ t) (hsc : src ≠ CNT) (htc : t ≠ CNT) (v : Data) :\n    ∀ (c : Cfg input) (d : ℕ), c.state = some ⟨k, pc, p1⟩ → 1 ≤ d →\n      Unary (c.workTapes CNT) d → c.workTapePos CNT = d →\n      Holds (c.workTapes src) (c.workTapePos src) (S v) →\n    ∃ n ≤ 3 * v.size, ∃ c', Reach c n c' [] ∧ c'.state = scanExit k pc hpc d ∧\n      Untouched c c' [] [src, CNT, t] ∧\n      c'.workTapes src = c.workTapes src ∧ c'.workTapePos src = c.workTapePos src + v.size ∧\n      Unary (c'.workTapes CNT) (d - 1) ∧ c'.workTapePos CNT = d - 1 ∧ DstEff t c c' (S v) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.Interp",
+   "open Turing MultiInputTM MIPRE.TM.Interp.Phase MIPRE.Cost",
+   "variable {input : Fin 7 → List Sym}"
+  ],
+  "docstring": "The scan of `copyTree src (some t) false` over `S(v)` from `d ≥ 1` pending subtrees.",
+  "module": "MIPRE.TM.Interp.CopyTree",
+  "module_doc": "/-!\n# The `copyTree` routine\n\nCopying (or skipping) a preorder-serialized value: a scan with a unary counter of the\npending subtrees on `CNT`, one more per `1` (a node with two children, itself consumed) and\none fewer per `0` (a leaf), finishing when none is pending. The scan from `d ≥ 1` pending\nsubtrees over `S(v)` leaves `d - 1` pending (`copyTree_scan`), finishing when `d = 1`; the\ninstruction starts with one (`exec_copyTree`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/CopyTree.lean#L68-L232",
+  "source_path": "MIPRE/TM/Interp/CopyTree.lean",
+  "lines": [
+   68,
+   232
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 37,
+  "prooflines": 154,
+  "is_target": false
+ }
+]

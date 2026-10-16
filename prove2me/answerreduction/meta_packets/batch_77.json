@@ -1,0 +1,629 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.nbitsR_apply",
+  "source_name": "MIPRE.TM.CookLevin.Desc.nbitsR_apply",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.nbitsR_apply {w : PolyTimeFun ι Unary} {bs : PolyTimeFun ι BitStr} {i : ι} (k : ℕ)\n    (h : ∀ j, (bs i).getD j false = k.testBit j) : nbitsR w bs i = nbits (w i).length k := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun",
+   "variable {ι : Type*} [SizedEncoding ι]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.LayoutProg",
+  "module_doc": "/-!\n# The layout arithmetic as programs\n\nThe widths and offsets of the index layout (`Layout.lean`) as programs. Two conventions make\nthem cheap:\n\n* **widths and offsets are unary.** `W e`, `mOf e G`, the field offsets: all are affine in\n  `e` with small coefficients, so in unary they are `append` and iterated `append`, and no\n  arithmetic program is needed. `e` itself must be unary in any case — the formulas are of\n  size polynomial in `e`, so a binary `e` would make the output exponential in the input.\n* **a constant of a field is a resize of a bit string.** `resize w bs` keeps the low `w` bits\n  of `bs`, padding with `false`, and `resize_eq_nbits` identifies it with `nbits w k` for any\n  `bs` whose bits are those of `k`. So `nbits w (2 * T)` is a resize of `false :: T.bits` and\n  `nbits w (T + 3)` one of `incBits (incBits (incBits T.bits))`, with no multiplication or\n  addition on numbers (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/LayoutProg.lean#L171-L173",
+  "source_path": "MIPRE/TM/CookLevin/LayoutProg.lean",
+  "lines": [
+   171,
+   173
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 5,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.nbitsR_num",
+  "source_name": "MIPRE.TM.CookLevin.Desc.nbitsR_num",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.nbitsR_num (w : PolyTimeFun ι Unary) (kR : PolyTimeFun ι ℕ) (i : ι) :\n    nbitsR w (ap₁ natBits kR) i = nbits (w i).length (kR i) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun",
+   "variable {ι : Type*} [SizedEncoding ι]"
+  ],
+  "docstring": "The constant read off a width in unary and a reader of the number itself.",
+  "module": "MIPRE.TM.CookLevin.LayoutProg",
+  "module_doc": "/-!\n# The layout arithmetic as programs\n\nThe widths and offsets of the index layout (`Layout.lean`) as programs. Two conventions make\nthem cheap:\n\n* **widths and offsets are unary.** `W e`, `mOf e G`, the field offsets: all are affine in\n  `e` with small coefficients, so in unary they are `append` and iterated `append`, and no\n  arithmetic program is needed. `e` itself must be unary in any case — the formulas are of\n  size polynomial in `e`, so a binary `e` would make the output exponential in the input.\n* **a constant of a field is a resize of a bit string.** `resize w bs` keeps the low `w` bits\n  of `bs`, padding with `false`, and `resize_eq_nbits` identifies it with `nbits w k` for any\n  `bs` whose bits are those of `k`. So `nbits w (2 * T)` is a resize of `false :: T.bits` and\n  `nbits w (T + 3)` one of `incBits (incBits (incBits T.bits))`, with no multiplication or\n  addition on numbers (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/LayoutProg.lean#L183-L186",
+  "source_path": "MIPRE/TM/CookLevin/LayoutProg.lean",
+  "lines": [
+   183,
+   186
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.nbitsR_apply"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.InputsLt.linkFml",
+  "source_name": "MIPRE.TM.CookLevin.Desc.InputsLt.linkFml",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.InputsLt.linkFml (h : ℓ ≤ r) : (linkFml ℓ r T).InputsLt (2 * ℓ + 3 * r + 5) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.CookLevin.Desc.InputsLt",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost Fml",
+   "variable (ℓ r T : ℕ)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Link",
+  "module_doc": "/-!\n# The link clauses of the decoupled describer\n\nRows 2 to 9 of the paper's circuit (`prop:explicit-succinct-deciders`): the clause families\nthat tie the two answer blocks `a, b` of a decoupled 5SAT instance to the first `4T`\nvariables of the three auxiliary blocks, pin the padding of `a` and `b` above `2T`, and force\nthe three auxiliary blocks to agree.\n\n`Link` is the disjunction of the eight conditions on a decoded clause and `linkFml` the\nformula that decides it on the `2ℓ + 3r + 5` input bits, with `eval_linkFml` their\nequivalence. Every comparison is made at width `r`, with the two `ℓ`-bit answer indices\nzero-padded: at width `ℓ` the constant `2T` is not representable when `T` is a power of two,\nsince then `2T = 2 ^ ℓ` exactly (`planning/decoupled-5sat.md`, A1b).\n\n**The parities of rows 4 to 7 are a repair of the verification campaign.** Blocks are\n`0`-indexed and the blank encodes as `10`, so the honest padding starts at the even index\n`2T` and puts `1` at even indices and `0` at odd ones. The pre-repair text had it the other\nway round, which is violated by the honest assignment and breaks completeness. Our\n`tapeBits` past the end of a string is the blank cell, hence `true` at even and `false` at\nodd positions, so it agrees with the repaired parity.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Link.lean#L104-L145",
+  "source_path": "MIPRE/TM/CookLevin/Link.lean",
+  "lines": [
+   104,
+   145
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 22,
+  "prooflines": 41,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.eval_linkFml",
+  "source_name": "MIPRE.TM.CookLevin.Desc.eval_linkFml",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.eval_linkFml {ℓ r T : ℕ} (hℓr : ℓ ≤ r) (hr : 1 ≤ r) (hT : 2 * T < 2 ^ r)\n    (c : Clause5 (Fin (2 ^ ℓ)) (Fin (2 ^ ℓ)) (Fin (2 ^ r)) (Fin (2 ^ r)) (Fin (2 ^ r))) :\n    (linkFml ℓ r T).eval (fun i => (clauseInput5 ℓ r c).getD i false) = true ↔ Link ℓ r T c := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost Fml",
+   "variable (ℓ r T : ℕ)"
+  ],
+  "docstring": "**The link formula decides the link conditions.**",
+  "module": "MIPRE.TM.CookLevin.Link",
+  "module_doc": "/-!\n# The link clauses of the decoupled describer\n\nRows 2 to 9 of the paper's circuit (`prop:explicit-succinct-deciders`): the clause families\nthat tie the two answer blocks `a, b` of a decoupled 5SAT instance to the first `4T`\nvariables of the three auxiliary blocks, pin the padding of `a` and `b` above `2T`, and force\nthe three auxiliary blocks to agree.\n\n`Link` is the disjunction of the eight conditions on a decoded clause and `linkFml` the\nformula that decides it on the `2ℓ + 3r + 5` input bits, with `eval_linkFml` their\nequivalence. Every comparison is made at width `r`, with the two `ℓ`-bit answer indices\nzero-padded: at width `ℓ` the constant `2T` is not representable when `T` is a power of two,\nsince then `2T = 2 ^ ℓ` exactly (`planning/decoupled-5sat.md`, A1b).\n\n**The parities of rows 4 to 7 are a repair of the verification campaign.** Blocks are\n`0`-indexed and the blank encodes as `10`, so the honest padding starts at the even index\n`2T` and puts `1` at even indices and `0` at odd ones. The pre-repair text had it the other\nway round, which is violated by the honest assignment and breaks completeness. Our\n`tapeBits` past the end of a string is the blank cell, hence `true` at even and `false` at\nodd positions, so it agrees with the repaired parity.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Link.lean#L243-L308",
+  "source_path": "MIPRE/TM/CookLevin/Link.lean",
+  "lines": [
+   243,
+   308
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Fml.eval_addConstRel_iff",
+   "MIPRE.SAT.bitsVal_injective",
+   "MIPRE.TM.CookLevin.Desc.ibOf_getD",
+   "MIPRE.TM.CookLevin.Desc.bitsVal_bitsOfNat"
+  ],
+  "pasted_helpers": 47,
+  "prooflines": 62,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.map_layout_clause",
+  "source_name": "MIPRE.TM.CookLevin.Pad.map_layout_clause",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.map_layout_clause {ℓ r m : ℕ} (hℓ : ℓ ≤ m) (hr : r ≤ m)\n    (c : Clause5 (Fin (2 ^ ℓ)) (Fin (2 ^ ℓ))\n      (Fin (2 ^ r)) (Fin (2 ^ r)) (Fin (2 ^ r))) :\n    (layout ℓ r m).map (fun i => (clauseInput5 m m\n      (c.map (Cnf5.blockInclusion hℓ) (Cnf5.blockInclusion hℓ)\n        (Cnf5.blockInclusion hr) (Cnf5.blockInclusion hr) (Cnf5.blockInclusion hr))).getD i false) =\n      clauseInput5 ℓ r c := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun Fml MIPRE.TM.CookLevin.Desc"
+  ],
+  "docstring": "Reading the renaming table in a padded clause recovers the original input bits.",
+  "module": "MIPRE.TM.CookLevin.Padded",
+  "module_doc": "/-!\n# The padded five-block clause describer\n\nThe construction in `prop:exciting-padding-prop` of `answer_reduction.tex`,\napplied to the formula used by the existing decoupled describer. Five index\nblocks acquire the common width `m`; the two answer tails are forced to be blank.\nFormula renaming preserves the original tree, so the construction remains\npolynomial in the old formula and the new width.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Padded.lean#L70-L117",
+  "source_path": "MIPRE/TM/CookLevin/Padded.lean",
+  "lines": [
+   70,
+   117
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.ibOf_getD"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 40,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.eval_blankSigns",
+  "source_name": "MIPRE.TM.CookLevin.Pad.eval_blankSigns",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.eval_blankSigns {m : ℕ} (hm : 1 ≤ m)\n    (c : Clause5 (Fin (2 ^ m)) (Fin (2 ^ m))\n      (Fin (2 ^ m)) (Fin (2 ^ m)) (Fin (2 ^ m))) :\n    ((blankSign 0 (5 * m)).eval (fun i => (clauseInput5 m m c).getD i false) = true ↔\n      c.l₁.pos = decide ((c.l₁.var : ℕ) % 2 = 0)) ∧\n    ((blankSign m (5 * m + 1)).eval (fun i => (clauseInput5 m m c).getD i false) = true ↔\n      c.l₂.pos = decide ((c.l₂.var : ℕ) % 2 = 0)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun Fml MIPRE.TM.CookLevin.Desc"
+  ],
+  "docstring": "The two answer-tail predicates have precisely the source's repaired parity.",
+  "module": "MIPRE.TM.CookLevin.Padded",
+  "module_doc": "/-!\n# The padded five-block clause describer\n\nThe construction in `prop:exciting-padding-prop` of `answer_reduction.tex`,\napplied to the formula used by the existing decoupled describer. Five index\nblocks acquire the common width `m`; the two answer tails are forced to be blank.\nFormula renaming preserves the original tree, so the construction remains\npolynomial in the old formula and the new width.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Padded.lean#L137-L161",
+  "source_path": "MIPRE/TM/CookLevin/Padded.lean",
+  "lines": [
+   137,
+   161
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 10,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.formula5_circuit",
+  "source_name": "MIPRE.TM.CookLevin.Pad.formula5_circuit",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.formula5_circuit {ℓ r m : ℕ} (hℓ : ℓ ≤ m) (hr : r ≤ m) (hm : 1 ≤ m)\n    (f : Fml) (hf : f.InputsLt (2 * ℓ + 3 * r + 5)) :\n    (circuit ℓ r m f).formula5 m m =\n      Cnf5.pad hℓ hr ((f.toCircuit (2 * ℓ + 3 * r + 5)).formula5 ℓ r) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun Fml MIPRE.TM.CookLevin.Desc"
+  ],
+  "docstring": "The constructed circuit describes exactly the padded clause set.",
+  "module": "MIPRE.TM.CookLevin.Padded",
+  "module_doc": "/-!\n# The padded five-block clause describer\n\nThe construction in `prop:exciting-padding-prop` of `answer_reduction.tex`,\napplied to the formula used by the existing decoupled describer. Five index\nblocks acquire the common width `m`; the two answer tails are forced to be blank.\nFormula renaming preserves the original tree, so the construction remains\npolynomial in the old formula and the new width.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Padded.lean#L163-L226",
+  "source_path": "MIPRE/TM/CookLevin/Padded.lean",
+  "lines": [
+   163,
+   226
+  ],
+  "blueprint": [
+   {
+    "label": "prop:pcp-padded-describer",
+    "env": "proposition",
+    "title": "Effective padded descriptions with an explicit output budget",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.SAT.Fml.eval_toCircuit",
+   "MIPRE.TM.CookLevin.Desc.ibOf_getD",
+   "MIPRE.TM.CookLevin.Desc.bitsVal_bitsOfNat",
+   "MIPRE.TM.CookLevin.Pad.map_layout_clause",
+   "MIPRE.TM.CookLevin.Pad.eval_blankSigns"
+  ],
+  "pasted_helpers": 31,
+  "prooflines": 59,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.formula_inputsLt",
+  "source_name": "MIPRE.TM.CookLevin.Pad.formula_inputsLt",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.formula_inputsLt {ℓ r m : ℕ} (hℓ : ℓ ≤ m) (hr : r ≤ m)\n    (f : Fml) (hf : f.InputsLt (2 * ℓ + 3 * r + 5)) :\n    (formula ℓ r m f).InputsLt (5 * m + 5) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun Fml MIPRE.TM.CookLevin.Desc"
+  ],
+  "docstring": "Padding does not introduce references beyond the new input arity.",
+  "module": "MIPRE.TM.CookLevin.Padded",
+  "module_doc": "/-!\n# The padded five-block clause describer\n\nThe construction in `prop:exciting-padding-prop` of `answer_reduction.tex`,\napplied to the formula used by the existing decoupled describer. Five index\nblocks acquire the common width `m`; the two answer tails are forced to be blank.\nFormula renaming preserves the original tree, so the construction remains\npolynomial in the old formula and the new width.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Padded.lean#L241-L266",
+  "source_path": "MIPRE/TM/CookLevin/Padded.lean",
+  "lines": [
+   241,
+   266
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 10,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.innerDim_isPow",
+  "source_name": "MIPRE.TM.CookLevin.Pad.innerDim_isPow",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.innerDim_isPow (T σ : ℕ) : ∃ j, innerDim T σ = 2 ^ j := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun Fml MIPRE.TM.CookLevin.Desc"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Padded",
+  "module_doc": "/-!\n# The padded five-block clause describer\n\nThe construction in `prop:exciting-padding-prop` of `answer_reduction.tex`,\napplied to the formula used by the existing decoupled describer. Five index\nblocks acquire the common width `m`; the two answer tails are forced to be blank.\nFormula renaming preserves the original tree, so the construction remains\npolynomial in the old formula and the new width.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Padded.lean#L352-L352",
+  "source_path": "MIPRE/TM/CookLevin/Padded.lean",
+  "lines": [
+   352,
+   352
+  ],
+  "blueprint": [
+   {
+    "label": "prop:pcp-padded-describer",
+    "env": "proposition",
+    "title": "Effective padded descriptions with an explicit output budget",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.two_mul_le_innerDim",
+  "source_name": "MIPRE.TM.CookLevin.Pad.two_mul_le_innerDim",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.two_mul_le_innerDim (T σ : ℕ) : 2 * T ≤ 2 ^ innerDim T σ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun Fml MIPRE.TM.CookLevin.Desc"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Padded",
+  "module_doc": "/-!\n# The padded five-block clause describer\n\nThe construction in `prop:exciting-padding-prop` of `answer_reduction.tex`,\napplied to the formula used by the existing decoupled describer. Five index\nblocks acquire the common width `m`; the two answer tails are forced to be blank.\nFormula renaming preserves the original tree, so the construction remains\npolynomial in the old formula and the new width.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Padded.lean#L362-L367",
+  "source_path": "MIPRE/TM/CookLevin/Padded.lean",
+  "lines": [
+   362,
+   367
+  ],
+  "blueprint": [
+   {
+    "label": "prop:pcp-padded-describer",
+    "env": "proposition",
+    "title": "Effective padded descriptions with an explicit output budget",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.describe_describes",
+  "source_name": "MIPRE.TM.CookLevin.Pad.describe_describes",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.describe_describes (D : Decider) (n T Q σ : ℕ) (x y : BitStr)\n    (hV : Valid D.prog n T Q σ x y) :\n    (describe ((D.prog, n, T, Q, σ), x, y)).DescribesDecider\n      (innerDim T σ) (innerDim T σ) D n x y T := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun Fml MIPRE.TM.CookLevin.Desc"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.Padded",
+  "module_doc": "/-!\n# The padded five-block clause describer\n\nThe construction in `prop:exciting-padding-prop` of `answer_reduction.tex`,\napplied to the formula used by the existing decoupled describer. Five index\nblocks acquire the common width `m`; the two answer tails are forced to be blank.\nFormula renaming preserves the original tree, so the construction remains\npolynomial in the old formula and the new width.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Padded.lean#L403-L417",
+  "source_path": "MIPRE/TM/CookLevin/Padded.lean",
+  "lines": [
+   403,
+   417
+  ],
+  "blueprint": [
+   {
+    "label": "prop:pcp-padded-describer",
+    "env": "proposition",
+    "title": "Effective padded descriptions with an explicit output budget",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.SAT.Circuit.DescribesDecider.of_pad",
+   "MIPRE.TM.CookLevin.Desc.litFields_inputsLt",
+   "MIPRE.TM.CookLevin.Desc.nbitsR_apply",
+   "MIPRE.TM.CookLevin.Desc.InputsLt.linkFml",
+   "MIPRE.TM.CookLevin.Pad.formula5_circuit"
+  ],
+  "pasted_helpers": 105,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.outerDimProg_apply",
+  "source_name": "MIPRE.TM.CookLevin.Pad.outerDimProg_apply",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.outerDimProg_apply (p : ParamInput) :\n    outerDimProg p = outerDim p.1 p.2.1 p.2.2.1 p.2.2.2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.TM.CookLevin.Desc"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.PaddingParams",
+  "module_doc": "/-!\n# Effective parameters for exact succinct padding\n\nBoth dimensions and the exact gate count are computed from binary parameters\nin polynomial time in their bit lengths. Only the logarithmically bounded\ninner dimension is expanded to unary; the much larger gate count stays binary.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PaddingParams.lean#L36-L42",
+  "source_path": "MIPRE/TM/CookLevin/PaddingParams.lean",
+  "lines": [
+   36,
+   42
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.roundUpProg_apply"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.chk_isCheckCircuit",
+  "source_name": "MIPRE.TM.CookLevin.Desc.chk_isCheckCircuit",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.chk_isCheckCircuit : IsCheckCircuit U Sym.one chk := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost"
+  ],
+  "docstring": "The check circuit computes the local check predicate: the hypothesis of the correctness\nof the tableau (`IsCheckCircuit`, `lem:correct-tableau`).",
+  "module": "MIPRE.TM.CookLevin.Params",
+  "module_doc": "/-!\n# The parameters of the describer: the check circuit and the tableau length\n\nTwo constants and one choice.\n\n* `chk` is the check circuit of the interpreter machine: the truth-table circuit\n  (`Fml.table`) of its local check predicate `checkPred U 1`, of `winCard 7 6 Sym Ctl` inputs\n  and at most `7 · 2 ^ winCard` gates — an enormous constant, exactly as the paper's\n  `lem:pack-check-size`, and formally harmless. `chk_isCheckCircuit` is the hypothesis of\n  `lem:correct-tableau`; `Gc` is its gate count.\n* `eOf T σ = 5 (⌈log T⌉ + ⌈log σ⌉) + 24` is the exponent of the tableau length: under the\n  validity hypotheses and `|a|, |b| ≤ T`, the accepting run of `U` is shorter than\n  `2 ^ eOf T σ` (`runBound_le_two_pow`), so the tableau of `Sof (eOf T σ)` steps is long\n  enough. The bound comes from an explicit fifth-power majorant of `runBound`\n  (`runBound_le`) (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Params.lean#L70-L84",
+  "source_path": "MIPRE/TM/CookLevin/Params.lean",
+  "lines": [
+   70,
+   84
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Fml.exists_circuit"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.runBound_le",
+  "source_name": "MIPRE.TM.CookLevin.Desc.runBound_le",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.runBound_le (hV : Valid D n T Q σ x y) (ha : a.length ≤ T) (hb : b.length ≤ T) :\n    runBound D n x y a b T ≤ 400000 * (T + σ + 1) ^ 5 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost",
+   "variable (D : Prog) (n T Q σ : ℕ) (x y a b : BitStr)"
+  ],
+  "docstring": "**A fifth-power majorant of the run bound of the interpreter machine** under the validity\nhypotheses and `|a|, |b| ≤ T`.",
+  "module": "MIPRE.TM.CookLevin.Params",
+  "module_doc": "/-!\n# The parameters of the describer: the check circuit and the tableau length\n\nTwo constants and one choice.\n\n* `chk` is the check circuit of the interpreter machine: the truth-table circuit\n  (`Fml.table`) of its local check predicate `checkPred U 1`, of `winCard 7 6 Sym Ctl` inputs\n  and at most `7 · 2 ^ winCard` gates — an enormous constant, exactly as the paper's\n  `lem:pack-check-size`, and formally harmless. `chk_isCheckCircuit` is the hypothesis of\n  `lem:correct-tableau`; `Gc` is its gate count.\n* `eOf T σ = 5 (⌈log T⌉ + ⌈log σ⌉) + 24` is the exponent of the tableau length: under the\n  validity hypotheses and `|a|, |b| ≤ T`, the accepting run of `U` is shorter than\n  `2 ^ eOf T σ` (`runBound_le_two_pow`), so the tableau of `Sof (eOf T σ)` steps is long\n  enough. The bound comes from an explicit fifth-power majorant of `runBound`\n  (`runBound_le`) (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Params.lean#L103-L219",
+  "source_path": "MIPRE/TM/CookLevin/Params.lean",
+  "lines": [
+   103,
+   219
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 113,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.runBound_le_two_pow",
+  "source_name": "MIPRE.TM.CookLevin.Desc.runBound_le_two_pow",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.runBound_le_two_pow (D : Prog) (n T Q σ : ℕ) (x y a b : BitStr)\n    (hV : Valid D n T Q σ x y) (ha : a.length ≤ T) (hb : b.length ≤ T) :\n    runBound D n x y a b T ≤ Sof (eOf T σ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost"
+  ],
+  "docstring": "**The run of the interpreter machine fits in the tableau**: under the validity hypotheses\nand `|a|, |b| ≤ T`, its accepting run is at most `Sof (eOf T σ)` steps.",
+  "module": "MIPRE.TM.CookLevin.Params",
+  "module_doc": "/-!\n# The parameters of the describer: the check circuit and the tableau length\n\nTwo constants and one choice.\n\n* `chk` is the check circuit of the interpreter machine: the truth-table circuit\n  (`Fml.table`) of its local check predicate `checkPred U 1`, of `winCard 7 6 Sym Ctl` inputs\n  and at most `7 · 2 ^ winCard` gates — an enormous constant, exactly as the paper's\n  `lem:pack-check-size`, and formally harmless. `chk_isCheckCircuit` is the hypothesis of\n  `lem:correct-tableau`; `Gc` is its gate count.\n* `eOf T σ = 5 (⌈log T⌉ + ⌈log σ⌉) + 24` is the exponent of the tableau length: under the\n  validity hypotheses and `|a|, |b| ≤ T`, the accepting run of `U` is shorter than\n  `2 ^ eOf T σ` (`runBound_le_two_pow`), so the tableau of `Sof (eOf T σ)` steps is long\n  enough. The bound comes from an explicit fifth-power majorant of `runBound`\n  (`runBound_le`) (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Params.lean#L236-L253",
+  "source_path": "MIPRE/TM/CookLevin/Params.lean",
+  "lines": [
+   236,
+   253
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.runBound_le"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.fixedCircuit_wellFormed",
+  "source_name": "MIPRE.TM.CookLevin.Pad.fixedCircuit_wellFormed",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.fixedCircuit_wellFormed (D : Prog) (n T Q σ : ℕ) (x y : BitStr) :\n    (fixedCircuit D n T Q σ x y).WellFormed := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial MvPolynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.PcpBridge",
+  "module_doc": "/-! # The raw verifier and its fixed typed clause polynomial -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpBridge.lean#L23-L24",
+  "source_path": "MIPRE/TM/CookLevin/PcpBridge.lean",
+  "lines": [
+   23,
+   24
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Fml.toCircuit_wellFormed",
+   "MIPRE.SAT.Circuit.wellFormed_copyOutput",
+   "MIPRE.TM.CookLevin.Desc.litFields_inputsLt",
+   "MIPRE.TM.CookLevin.Desc.nbitsR_apply",
+   "MIPRE.TM.CookLevin.Desc.InputsLt.linkFml",
+   "MIPRE.TM.CookLevin.Pad.formula_inputsLt"
+  ],
+  "pasted_helpers": 108,
+  "prooflines": 0,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.fixedCircuit_inputs",
+  "source_name": "MIPRE.TM.CookLevin.Pad.fixedCircuit_inputs",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.fixedCircuit_inputs (D : Prog) (n T Q σ : ℕ) (x y : BitStr) :\n    (fixedCircuit D n T Q σ x y).inputs = 5 * (pcpParams n T Q σ).m + 5 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial MvPolynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.PcpBridge",
+  "module_doc": "/-! # The raw verifier and its fixed typed clause polynomial -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpBridge.lean#L26-L28",
+  "source_path": "MIPRE/TM/CookLevin/PcpBridge.lean",
+  "lines": [
+   26,
+   28
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.nbitsR_apply"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.fixedCircuit_describes",
+  "source_name": "MIPRE.TM.CookLevin.Pad.fixedCircuit_describes",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.fixedCircuit_describes (D : Decider) (n T Q σ : ℕ) (x y : BitStr)\n    (hV : Valid D.prog n T Q σ x y) :\n    (fixedCircuit D.prog n T Q σ x y).DescribesDecider\n      (pcpParams n T Q σ).m (pcpParams n T Q σ).m D n x y T := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial MvPolynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.PcpBridge",
+  "module_doc": "/-! # The raw verifier and its fixed typed clause polynomial -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpBridge.lean#L37-L41",
+  "source_path": "MIPRE/TM/CookLevin/PcpBridge.lean",
+  "lines": [
+   37,
+   41
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Fml.toCircuit_wellFormed",
+   "MIPRE.SAT.Circuit.eval_copyOutput",
+   "MIPRE.SAT.Circuit.wellFormed_copyOutput",
+   "MIPRE.TM.CookLevin.Desc.litFields_inputsLt",
+   "MIPRE.TM.CookLevin.Desc.nbitsR_apply",
+   "MIPRE.TM.CookLevin.Desc.InputsLt.linkFml",
+   "MIPRE.TM.CookLevin.Pad.formula_inputsLt",
+   "MIPRE.TM.CookLevin.Pad.describe_describes"
+  ],
+  "pasted_helpers": 110,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.pcpParams_degree_pos",
+  "source_name": "MIPRE.TM.CookLevin.Pad.pcpParams_degree_pos",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.pcpParams_degree_pos (n T Q σ : ℕ) : 1 ≤ (pcpParams n T Q σ).k := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial MvPolynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.PcpBridge",
+  "module_doc": "/-! # The raw verifier and its fixed typed clause polynomial -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpBridge.lean#L48-L51",
+  "source_path": "MIPRE/TM/CookLevin/PcpBridge.lean",
+  "lines": [
+   48,
+   51
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.verifierCircuitValue_typed",
+  "source_name": "MIPRE.TM.CookLevin.Pad.verifierCircuitValue_typed",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.verifierCircuitValue_typed (D : Prog) (n T Q σ : ℕ) (x y : BitStr)\n    (hV : Valid D n T Q σ x y) (E : BinField (pcpParams n T Q σ).k) [CharP E.carrier 2]\n    (root : E.carrier)\n    (hroot : root ^ (pcpModulus n T Q σ).length = BinaryPolynomial.evalBits root (pcpModulus n T Q σ))\n    (hencode : ∀ a : E.carrier, BinaryPolynomial.evalBits root (E.toBits a) = a)\n    (z : Fin (pcpParams n T Q σ).m' → E.carrier)\n    (α : Fin 5 → E.carrier) (β : Fin ((pcpParams n T Q σ).m' + 1) → E.carrier) :\n    BinaryPolynomial.evalBits root (verifierCircuitValue\n      (pcpInput D n T Q σ x y (E.vecBits z) (E.vecBits α ++ E.vecBits β))) =\n      eval z (clausePolynomial D n T Q σ x y hV) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial MvPolynomial"
+  ],
+  "docstring": "The raw circuit value decodes to the fixed typed clause polynomial.",
+  "module": "MIPRE.TM.CookLevin.PcpBridge",
+  "module_doc": "/-! # The raw verifier and its fixed typed clause polynomial -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpBridge.lean#L76-L100",
+  "source_path": "MIPRE/TM/CookLevin/PcpBridge.lean",
+  "lines": [
+   76,
+   100
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.shoupIrreducible_monic",
+   "MIPRE.LowDegree.shoupIrreducible_natDegree",
+   "MIPRE.SAT.BinField.eval_circuitBits_vecBits",
+   "MIPRE.TM.CookLevin.Pad.outerDimProg_apply",
+   "MIPRE.TM.CookLevin.Pad.pcpParams_degree_pos",
+   "MIPRE.TM.CookLevin.Pad.fixedCircuit_wellFormed",
+   "MIPRE.TM.CookLevin.Pad.fixedCircuit_inputs"
+  ],
+  "pasted_helpers": 19,
+  "prooflines": 14,
+  "is_target": false
+ }
+]

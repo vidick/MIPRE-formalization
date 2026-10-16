@@ -1,0 +1,633 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.eq_diag_zero_of_qmapS",
+  "source_name": "MIPRE.LIDT.Adapter.eq_diag_zero_of_qmapS",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.eq_diag_zero_of_qmapS (hm : m ∣ Fintype.card F) (σc : Seed F m)\n    {u₀ : Point F m} {s₀ : F} {yp : Point F m} {s : Sample F m}\n    (h1 : qmapS hm σc s.questions.1 = CL.Question.dline u₀ s₀ 0)\n    (h2 : qmapS hm σc s.questions.2 = CL.Question.point yp) :\n    ∃ j : Fin m, s = Sample.diag false (revPoint yp) j (0 : Fin ((j : ℕ) + 1) → F) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d ldc : ℕ} [NeZero m]"
+  ],
+  "docstring": "**A singleton `DLine` question comes only from a sample with zero direction.**",
+  "module": "MIPRE.Background.LIDT.Adapter.Weights",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 5: both tests' distributions, as counts\n\nThe reduction's remaining obligation is a push-forward bound between the two tests' question\ndistributions, and both are defined as sums over a `Sample` type against an indicator. So the\nfirst thing to do is to turn each into a *count*, after which the bound is arithmetic on\ncardinalities rather than on sums.\n\n* `clGame`'s distribution is uniform over its samples, so it is the number of samples producing\n  the question pair, over the total (`clGame_μ_eq`).\n* `lidtGame`'s is not uniform — its three subtests are weighted `1/3` each and its diagonal\n  directions carry a factor `q^{-(j+1)}` — so the best that can be said in general is that it is\n  the sum of the weights of the samples producing the pair (`lidtGame_μ_eq`). That sum is a\n  singleton for the point and axis-parallel shapes and a geometric series over the admissible\n  `j` for the diagonal one, which is where the `q^{χ s}` against `q^{j+1}` matching of\n  `planning/lidt-cl-adapter.md` lives.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Weights.lean#L1193-L1236",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Weights.lean",
+  "lines": [
+   1193,
+   1236
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.exists_diag_of_qmapS_dline"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 38,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.pushforward_diag_zero",
+  "source_name": "MIPRE.LIDT.Adapter.pushforward_diag_zero",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.pushforward_diag_zero (hm : m ∣ Fintype.card F) (u₀ : Point F m) (s₀ : F) (yp : Point F m) :\n    (∑ σc : Seed F m,\n        ∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = CL.Question.dline u₀ s₀ 0),\n        ∑ y' ∈ Finset.univ.filter (fun y' => qmapS hm σc y' = CL.Question.point yp),\n          (lidtGame F m d).μ x' y')\n      ≤ (Fintype.card (Seed F m) : ℝ) *\n          (3 * m * (clGame (d := d) (ldc := ldc) hm).μ\n            (CL.Question.dline u₀ s₀ 0) (CL.Question.point yp)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d ldc : ℕ} [NeZero m]"
+  ],
+  "docstring": "**The singleton diagonal shape of the push-forward bound.** The `m` contributing samples have\nweight at most `1/(6 m q^m q)`, the family pins the seed index but *not* the scale, and the seeded\ntest has `q^{m-1}` samples for this question --- which is why `diagIdx` sends singleton lines to\nthe last block. The three combine at `C = 3m` with a factor `2` to spare.",
+  "module": "MIPRE.Background.LIDT.Adapter.Weights",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 5: both tests' distributions, as counts\n\nThe reduction's remaining obligation is a push-forward bound between the two tests' question\ndistributions, and both are defined as sums over a `Sample` type against an indicator. So the\nfirst thing to do is to turn each into a *count*, after which the bound is arithmetic on\ncardinalities rather than on sums.\n\n* `clGame`'s distribution is uniform over its samples, so it is the number of samples producing\n  the question pair, over the total (`clGame_μ_eq`).\n* `lidtGame`'s is not uniform — its three subtests are weighted `1/3` each and its diagonal\n  directions carry a factor `q^{-(j+1)}` — so the best that can be said in general is that it is\n  the sum of the weights of the samples producing the pair (`lidtGame_μ_eq`). That sum is a\n  singleton for the point and axis-parallel shapes and a geometric series over the admissible\n  `j` for the diagonal one, which is where the `q^{χ s}` against `q^{j+1}` matching of\n  `planning/lidt-cl-adapter.md` lives.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Weights.lean#L1274-L1419",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Weights.lean",
+  "lines": [
+   1274,
+   1419
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.canonLin_bot",
+   "MIPRE.LIDT.Adapter.card_filter_clDiag_ge",
+   "MIPRE.LIDT.Adapter.sum_fibre_μ_eq_sum_samples",
+   "MIPRE.LIDT.Adapter.sum_sum_le_card_mul",
+   "MIPRE.LIDT.Adapter.card_filter_seed_le",
+   "MIPRE.LIDT.Adapter.eq_diag_zero_of_qmapS",
+   "MIPRE.LIDT.CL.card_div_pos"
+  ],
+  "pasted_helpers": 19,
+  "prooflines": 134,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.card_filter_pinned_le",
+  "source_name": "MIPRE.LIDT.Adapter.card_filter_pinned_le",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.card_filter_pinned_le (i : Fin m) (P : Seed F m → Prop) [DecidablePred P]\n    (hP : ∀ a ∈ Finset.univ.filter P, ∀ b ∈ Finset.univ.filter P,\n      a.1 i = b.1 i ∧ (a.2 : F) = (b.2 : F)) :\n    (Finset.univ.filter P).card ≤ (Fintype.card F / m) ^ (m - 1) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d ldc : ℕ} [NeZero m]"
+  ],
+  "docstring": "**A set of family members agreeing at one seed index and on the scale has at most\n`(q/m)^{m-1}` elements.**",
+  "module": "MIPRE.Background.LIDT.Adapter.Weights",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 5: both tests' distributions, as counts\n\nThe reduction's remaining obligation is a push-forward bound between the two tests' question\ndistributions, and both are defined as sums over a `Sample` type against an indicator. So the\nfirst thing to do is to turn each into a *count*, after which the bound is arithmetic on\ncardinalities rather than on sums.\n\n* `clGame`'s distribution is uniform over its samples, so it is the number of samples producing\n  the question pair, over the total (`clGame_μ_eq`).\n* `lidtGame`'s is not uniform — its three subtests are weighted `1/3` each and its diagonal\n  directions carry a factor `q^{-(j+1)}` — so the best that can be said in general is that it is\n  the sum of the weights of the samples producing the pair (`lidtGame_μ_eq`). That sum is a\n  singleton for the point and axis-parallel shapes and a geometric series over the admissible\n  `j` for the diagonal one, which is where the `q^{χ s}` against `q^{j+1}` matching of\n  `planning/lidt-cl-adapter.md` lives.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Weights.lean#L1443-L1462",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Weights.lean",
+  "lines": [
+   1443,
+   1462
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.through_eq_through_revPoint",
+  "source_name": "MIPRE.LIDT.Adapter.through_eq_through_revPoint",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.through_eq_through_revPoint {u z w : Point F m} {c : F} (hc : c ≠ 0)\n    (hz : ∃ k, z k ≠ 0)\n    (h : c • (revPoint (Line.through u z).2 : Point F m) = w) :\n    Line.through u z = Line.through u (revPoint w) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d ldc : ℕ} [NeZero m]"
+  ],
+  "docstring": "**Rescaling the reversed direction identifies the two canonical presentations.**",
+  "module": "MIPRE.Background.LIDT.Adapter.Weights",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 5: both tests' distributions, as counts\n\nThe reduction's remaining obligation is a push-forward bound between the two tests' question\ndistributions, and both are defined as sums over a `Sample` type against an indicator. So the\nfirst thing to do is to turn each into a *count*, after which the bound is arithmetic on\ncardinalities rather than on sums.\n\n* `clGame`'s distribution is uniform over its samples, so it is the number of samples producing\n  the question pair, over the total (`clGame_μ_eq`).\n* `lidtGame`'s is not uniform — its three subtests are weighted `1/3` each and its diagonal\n  directions carry a factor `q^{-(j+1)}` — so the best that can be said in general is that it is\n  the sum of the weights of the samples producing the pair (`lidtGame_μ_eq`). That sum is a\n  singleton for the point and axis-parallel shapes and a geometric series over the admissible\n  `j` for the diagonal one, which is where the `q^{χ s}` against `q^{j+1}` matching of\n  `planning/lidt-cl-adapter.md` lives.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Weights.lean#L1508-L1529",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Weights.lean",
+  "lines": [
+   1508,
+   1529
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.through_eq_through_iff"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.forced_of_qmapS_dline",
+  "source_name": "MIPRE.LIDT.Adapter.forced_of_qmapS_dline",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.forced_of_qmapS_dline (hm : m ∣ Fintype.card F) (σc : Seed F m)\n    {u₀ : Point F m} {s₀ : F} {w yp : Point F m} {s : Sample F m} (hw : w ≠ 0)\n    (h1 : qmapS hm σc s.questions.1 = CL.Question.dline u₀ s₀ w)\n    (h2 : qmapS hm σc s.questions.2 = CL.Question.point yp) :\n    s.questions = ((Question.diagLine (Line.through (revPoint yp) (revPoint w))\n      : Question F m), Question.point (revPoint yp)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d ldc : ℕ} [NeZero m]"
+  ],
+  "docstring": "**A sample mapping to a nondegenerate `DLine` question asks the reversed line at the\nreversed point.**",
+  "module": "MIPRE.Background.LIDT.Adapter.Weights",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 5: both tests' distributions, as counts\n\nThe reduction's remaining obligation is a push-forward bound between the two tests' question\ndistributions, and both are defined as sums over a `Sample` type against an indicator. So the\nfirst thing to do is to turn each into a *count*, after which the bound is arithmetic on\ncardinalities rather than on sums.\n\n* `clGame`'s distribution is uniform over its samples, so it is the number of samples producing\n  the question pair, over the total (`clGame_μ_eq`).\n* `lidtGame`'s is not uniform — its three subtests are weighted `1/3` each and its diagonal\n  directions carry a factor `q^{-(j+1)}` — so the best that can be said in general is that it is\n  the sum of the weights of the samples producing the pair (`lidtGame_μ_eq`). That sum is a\n  singleton for the point and axis-parallel shapes and a geometric series over the admissible\n  `j` for the diagonal one, which is where the `q^{χ s}` against `q^{j+1}` matching of\n  `planning/lidt-cl-adapter.md` lives.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Weights.lean#L1542-L1562",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Weights.lean",
+  "lines": [
+   1542,
+   1562
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.exists_diag_of_qmapS_dline",
+   "MIPRE.LIDT.Adapter.through_eq_through_revPoint"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.base_of_qmapS_dline",
+  "source_name": "MIPRE.LIDT.Adapter.base_of_qmapS_dline",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.base_of_qmapS_dline (hm : m ∣ Fintype.card F) (σc : Seed F m)\n    {u₀ : Point F m} {s₀ : F} {w yp : Point F m} {s : Sample F m} (hw : w ≠ 0)\n    (h1 : qmapS hm σc s.questions.1 = CL.Question.dline u₀ s₀ w)\n    (h2 : qmapS hm σc s.questions.2 = CL.Question.point yp) :\n    u₀ = CL.rep w yp\n      ∧ chi hm s₀ = diagIdx (Line.through (revPoint yp) (revPoint w) : Line F m)\n      ∧ ∀ k : Fin m, (k : ℕ) < ((chi hm s₀ : Fin m) : ℕ) → w k = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d ldc : ℕ} [NeZero m]"
+  ],
+  "docstring": "**What a contributing sample forces, for a nondegenerate `DLine` question.**",
+  "module": "MIPRE.Background.LIDT.Adapter.Weights",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 5: both tests' distributions, as counts\n\nThe reduction's remaining obligation is a push-forward bound between the two tests' question\ndistributions, and both are defined as sums over a `Sample` type against an indicator. So the\nfirst thing to do is to turn each into a *count*, after which the bound is arithmetic on\ncardinalities rather than on sums.\n\n* `clGame`'s distribution is uniform over its samples, so it is the number of samples producing\n  the question pair, over the total (`clGame_μ_eq`).\n* `lidtGame`'s is not uniform — its three subtests are weighted `1/3` each and its diagonal\n  directions carry a factor `q^{-(j+1)}` — so the best that can be said in general is that it is\n  the sum of the weights of the samples producing the pair (`lidtGame_μ_eq`). That sum is a\n  singleton for the point and axis-parallel shapes and a geometric series over the admissible\n  `j` for the diagonal one, which is where the `q^{χ s}` against `q^{j+1}` matching of\n  `planning/lidt-cl-adapter.md` lives.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Weights.lean#L1564-L1588",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Weights.lean",
+  "lines": [
+   1564,
+   1588
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.rep_eq",
+   "MIPRE.LIDT.Adapter.canonLin_bot",
+   "MIPRE.LIDT.Adapter.forced_of_qmapS_dline"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.pushforward_diag_ne",
+  "source_name": "MIPRE.LIDT.Adapter.pushforward_diag_ne",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.pushforward_diag_ne (hm : m ∣ Fintype.card F) (u₀ : Point F m) (s₀ : F) {w : Point F m}\n    (hw : w ≠ 0) (yp : Point F m) :\n    (∑ σc : Seed F m,\n        ∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = CL.Question.dline u₀ s₀ w),\n        ∑ y' ∈ Finset.univ.filter (fun y' => qmapS hm σc y' = CL.Question.point yp),\n          (lidtGame F m d).μ x' y')\n      ≤ (Fintype.card (Seed F m) : ℝ) *\n          (3 * m * (clGame (d := d) (ldc := ldc) hm).μ\n            (CL.Question.dline u₀ s₀ w) (CL.Question.point yp)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d ldc : ℕ} [NeZero m]"
+  ],
+  "docstring": "**The nondegenerate diagonal shape of the push-forward bound.** At most `m q` samples\ncontribute, each of weight at most `1/(6 m q^m q^{J+1})`, and the family is pinned both at the\nseed index and on the scale, so only `(q/m)^{m-1}` of its members can contribute. Against the\nseeded test's `q^{χ}` samples, with `J + 1 + χ = m`, the constant comes out `3q/(2(q-1))`, which\n`C = 3m` covers for every `q ≥ 2`.",
+  "module": "MIPRE.Background.LIDT.Adapter.Weights",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 5: both tests' distributions, as counts\n\nThe reduction's remaining obligation is a push-forward bound between the two tests' question\ndistributions, and both are defined as sums over a `Sample` type against an indicator. So the\nfirst thing to do is to turn each into a *count*, after which the bound is arithmetic on\ncardinalities rather than on sums.\n\n* `clGame`'s distribution is uniform over its samples, so it is the number of samples producing\n  the question pair, over the total (`clGame_μ_eq`).\n* `lidtGame`'s is not uniform — its three subtests are weighted `1/3` each and its diagonal\n  directions carry a factor `q^{-(j+1)}` — so the best that can be said in general is that it is\n  the sum of the weights of the samples producing the pair (`lidtGame_μ_eq`). That sum is a\n  singleton for the point and axis-parallel shapes and a geometric series over the admissible\n  `j` for the diagonal one, which is where the `q^{χ s}` against `q^{j+1}` matching of\n  `planning/lidt-cl-adapter.md` lives.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Weights.lean#L1590-L1754",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Weights.lean",
+  "lines": [
+   1590,
+   1754
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.card_filter_diag_le",
+   "MIPRE.LIDT.Adapter.weight_le_of_questions_diag",
+   "MIPRE.LIDT.Adapter.card_filter_clDiag_ge",
+   "MIPRE.LIDT.Adapter.sum_fibre_μ_eq_sum_samples",
+   "MIPRE.LIDT.Adapter.sum_sum_le_card_mul",
+   "MIPRE.LIDT.Adapter.card_filter_pinned_le",
+   "MIPRE.LIDT.Adapter.forced_of_qmapS_dline",
+   "MIPRE.LIDT.Adapter.base_of_qmapS_dline",
+   "MIPRE.LIDT.CL.card_div_pos"
+  ],
+  "pasted_helpers": 22,
+  "prooflines": 151,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.filter_qmapS_line_line_eq_empty",
+  "source_name": "MIPRE.LIDT.Adapter.filter_qmapS_line_line_eq_empty",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.filter_qmapS_line_line_eq_empty (hm : m ∣ Fintype.card F) (σc : Seed F m)\n    (x y : CL.Question F m) (hx : ∀ u, x ≠ CL.Question.point u)\n    (hy : ∀ u, y ≠ CL.Question.point u) :\n    Finset.univ.filter (fun s : Sample F m =>\n        qmapS hm σc s.questions.1 = x ∧ qmapS hm σc s.questions.2 = y) = ∅ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d ldc : ℕ} [NeZero m]"
+  ],
+  "docstring": "**No sample of the canonical-line test asks two lines.**",
+  "module": "MIPRE.Background.LIDT.Adapter.Weights",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 5: both tests' distributions, as counts\n\nThe reduction's remaining obligation is a push-forward bound between the two tests' question\ndistributions, and both are defined as sums over a `Sample` type against an indicator. So the\nfirst thing to do is to turn each into a *count*, after which the bound is arithmetic on\ncardinalities rather than on sums.\n\n* `clGame`'s distribution is uniform over its samples, so it is the number of samples producing\n  the question pair, over the total (`clGame_μ_eq`).\n* `lidtGame`'s is not uniform — its three subtests are weighted `1/3` each and its diagonal\n  directions carry a factor `q^{-(j+1)}` — so the best that can be said in general is that it is\n  the sum of the weights of the samples producing the pair (`lidtGame_μ_eq`). That sum is a\n  singleton for the point and axis-parallel shapes and a geometric series over the admissible\n  `j` for the diagonal one, which is where the `q^{χ s}` against `q^{j+1}` matching of\n  `planning/lidt-cl-adapter.md` lives.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Weights.lean#L1762-L1781",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Weights.lean",
+  "lines": [
+   1762,
+   1781
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.pushforward_line_line",
+  "source_name": "MIPRE.LIDT.Adapter.pushforward_line_line",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.pushforward_line_line (hm : m ∣ Fintype.card F) (x y : CL.Question F m)\n    (hx : ∀ u, x ≠ CL.Question.point u) (hy : ∀ u, y ≠ CL.Question.point u) :\n    (∑ σc : Seed F m, ∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = x),\n        ∑ y' ∈ Finset.univ.filter (fun y' => qmapS hm σc y' = y), (lidtGame F m d).μ x' y')\n      ≤ (Fintype.card (Seed F m) : ℝ) *\n          (3 * m * (clGame (d := d) (ldc := ldc) hm).μ x y) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d ldc : ℕ} [NeZero m]"
+  ],
+  "docstring": "**The shapes with a line on both sides carry no weight.**",
+  "module": "MIPRE.Background.LIDT.Adapter.Weights",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 5: both tests' distributions, as counts\n\nThe reduction's remaining obligation is a push-forward bound between the two tests' question\ndistributions, and both are defined as sums over a `Sample` type against an indicator. So the\nfirst thing to do is to turn each into a *count*, after which the bound is arithmetic on\ncardinalities rather than on sums.\n\n* `clGame`'s distribution is uniform over its samples, so it is the number of samples producing\n  the question pair, over the total (`clGame_μ_eq`).\n* `lidtGame`'s is not uniform — its three subtests are weighted `1/3` each and its diagonal\n  directions carry a factor `q^{-(j+1)}` — so the best that can be said in general is that it is\n  the sum of the weights of the samples producing the pair (`lidtGame_μ_eq`). That sum is a\n  singleton for the point and axis-parallel shapes and a geometric series over the admissible\n  `j` for the diagonal one, which is where the `q^{χ s}` against `q^{j+1}` matching of\n  `planning/lidt-cl-adapter.md` lives.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Weights.lean#L1783-L1806",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Weights.lean",
+  "lines": [
+   1783,
+   1806
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.sum_fibre_μ_eq_sum_samples",
+   "MIPRE.LIDT.Adapter.filter_qmapS_line_line_eq_empty"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Adapter.pushforward_le",
+  "source_name": "MIPRE.LIDT.Adapter.pushforward_le",
+  "formal_statement": "theorem MIPRE.LIDT.Adapter.pushforward_le (hm : m ∣ Fintype.card F) (x y : CL.Question F m) :\n    (∑ σc : Seed F m, ∑ x' ∈ Finset.univ.filter (fun x' => qmapS hm σc x' = x),\n        ∑ y' ∈ Finset.univ.filter (fun y' => qmapS hm σc y' = y), (lidtGame F m d).μ x' y')\n      ≤ (Fintype.card (Seed F m) : ℝ) *\n          (3 * m * (clGame (d := d) (ldc := ldc) hm).μ x y) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Adapter",
+   "open Finset MIPRE.LIDT MIPRE.LIDT.CL",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d ldc : ℕ} [NeZero m]"
+  ],
+  "docstring": "**The push-forward bound, assembled.** The average over the family of the canonical-line\ntest's mass on the fibre of a seeded question pair is at most `3m` times the seeded test's mass\non it. This is the hypothesis `exists_one_sub_value_adapt_le` asks for, and `3m` is the constant\n`thm:lidt-cl-soundness` multiplies its `ε` by --- polynomial in `m`, as `δ_CL` allows, and free\nof `q`, which it does not.",
+  "module": "MIPRE.Background.LIDT.Adapter.Weights",
+  "module_doc": "/-!\n# The seeded-CL adapter, part 5: both tests' distributions, as counts\n\nThe reduction's remaining obligation is a push-forward bound between the two tests' question\ndistributions, and both are defined as sums over a `Sample` type against an indicator. So the\nfirst thing to do is to turn each into a *count*, after which the bound is arithmetic on\ncardinalities rather than on sums.\n\n* `clGame`'s distribution is uniform over its samples, so it is the number of samples producing\n  the question pair, over the total (`clGame_μ_eq`).\n* `lidtGame`'s is not uniform — its three subtests are weighted `1/3` each and its diagonal\n  directions carry a factor `q^{-(j+1)}` — so the best that can be said in general is that it is\n  the sum of the weights of the samples producing the pair (`lidtGame_μ_eq`). That sum is a\n  singleton for the point and axis-parallel shapes and a geometric series over the admissible\n  `j` for the diagonal one, which is where the `q^{χ s}` against `q^{j+1}` matching of\n  `planning/lidt-cl-adapter.md` lives.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Adapter/Weights.lean#L1826-L1857",
+  "source_path": "MIPRE/Background/LIDT/Adapter/Weights.lean",
+  "lines": [
+   1826,
+   1857
+  ],
+  "blueprint": [
+   {
+    "label": "lem:lidt-cl-adapter-weights",
+    "env": "lemma",
+    "title": "The adapter's cost in the question distributions",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.sum_fibre_μ_eq_sum_samples",
+   "MIPRE.LIDT.Adapter.pushforward_axis",
+   "MIPRE.LIDT.Adapter.pushforward_point",
+   "MIPRE.LIDT.Adapter.pushforward_diag_zero",
+   "MIPRE.LIDT.Adapter.pushforward_diag_ne",
+   "MIPRE.LIDT.Adapter.pushforward_line_line"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.LowIndDegPoly.eval_blockPoly",
+  "source_name": "MIPRE.LIDT.LowIndDegPoly.eval_blockPoly",
+  "formal_statement": "theorem MIPRE.LIDT.LowIndDegPoly.eval_blockPoly {idx : Fin n' → Fin n} (hinj : Function.Injective idx)\n    {H : LowIndDegPoly (F := F) (m := n) (d := d)}\n    (hsupp : ∀ e, H e ≠ 0 → ∀ k, (∀ j, idx j ≠ k) → e k = 0) (u : Point F n) :\n    (H.blockPoly idx).eval (fun j => u (idx j)) = H.eval u := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.LowIndDegPoly",
+   "open Finset",
+   "variable {F : Type*} [Field F] {n n' d : ℕ}"
+  ],
+  "docstring": "**A vector supported on the range of `idx` evaluates through the block.**",
+  "module": "MIPRE.Background.LIDT.BlockPoly",
+  "module_doc": "/-!\n# A polynomial on a block of the variables\n\nA coefficient vector in `n` variables read on a block of them, as a coefficient vector in the\nblock's `n'` variables (`LowIndDegPoly.blockPoly`), and the exponent vectors that carry it\n(`expandIdx`). Moved from `MIPRE/Background/QLD/Complete.lean`, where the Pauli basis test's\ncompletion uses them, so that answer reduction can use them without importing that test.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/BlockPoly.lean#L62-L88",
+  "source_path": "MIPRE/Background/LIDT/BlockPoly.lean",
+  "lines": [
+   62,
+   88
+  ],
+  "blueprint": [
+   {
+    "label": "lem:qld-global-complete",
+    "env": "lemma",
+    "title": "Completing the pair measurement projectively",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Bridge.inconsistency_eq_bipartiteConsError",
+  "source_name": "MIPRE.LIDT.Bridge.inconsistency_eq_bipartiteConsError",
+  "formal_statement": "theorem MIPRE.LIDT.Bridge.inconsistency_eq_bipartiteConsError (S : TensorProductStrategy (lidtGame F m d))\n    {X X' α α' : Type*} [Fintype X] [Fintype X'] [DecidableEq X'] [Nonempty X'] [Fintype α]\n    [DecidableEq α] [Fintype α']\n    (qe : X ≃ X') (e : α ≃ α')\n    (M : X → POVM α (Fin S.dA)) (N : X → POVM α (Fin S.dB))\n    (A : IdxSubMeas X' α' (Fin S.dA)) (B : IdxSubMeas X' α' (Fin S.dB))\n    (hA : ∀ x', (A x').total = 1) (hB : ∀ x', (B x').total = 1)\n    (hM : ∀ x a, ((M x).mats a).val = (A (qe x)).outcome (e a))\n    (hN : ∀ x a, ((N x).mats a).val = (B (qe x)).outcome (e a)) :\n    inconsistency (uniform X) S.ψ M N =\n      bipartiteConsError (toProjStrat S).state (uniformDistribution X') A B := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Bridge",
+   "open MIPStarRE.LDT (QuantumState ev opTensor qBipartiteConsDefect bipartiteConsError",
+   "open Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]"
+  ],
+  "docstring": "Our inconsistency of two POVM families agrees with MIPStarRE's consistency error of\ntwo complete submeasurement families, when questions and outcomes are matched along\nequivalences `qe`, `e` and the state is the pure state of a strategy.",
+  "module": "MIPRE.Background.LIDT.Bridge.Consistency",
+  "module_doc": "/-!\n# Bridge, part 7: consistency\n\nOur `inconsistency μ ψ M N = 𝔼_{x∼μ} ∑_{a≠b} ⟨ψ| M^x_a ⊗ N^x_b |ψ⟩` for families of\nPOVMs, versus MIPStarRE's `bipartiteConsError ψ 𝒟 A B`, an average of\n`max 0 (⟨A_tot ⊗ B_tot⟩ − ∑ₐ ⟨A_a ⊗ B_a⟩)` over a weighted distribution. For complete\nmeasurements, uniform distributions, and the pure state of a strategy, the two agree once\nquestions and outcomes are matched along equivalences (`inconsistency_eq_bipartiteConsError`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Bridge/Consistency.lean#L29-L55",
+  "source_path": "MIPRE/Background/LIDT/Bridge/Consistency.lean",
+  "lines": [
+   29,
+   55
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.opTensor_sum_left_univ",
+   "MIPStarRE.LDT.opTensor_sum_right_univ",
+   "MIPStarRE.Quantum.normalizedTrace_smul",
+   "MIPStarRE.Quantum.normalizedTrace_mul_comm"
+  ],
+  "pasted_helpers": 9,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Bridge.soundness",
+  "source_name": "MIPRE.LIDT.Bridge.soundness",
+  "formal_statement": "theorem MIPRE.LIDT.Bridge.soundness (S : TensorProductStrategy (lidtGame F m d)) (ε : ℝ) (hS : 1 - ε ≤ S.value)\n    (k : ℕ) (hk : 400 * m * d ≤ k) (hk0 : 0 < k) :\n    ∃ GA : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := m) (d := d))\n        (Matrix (Fin S.dA) (Fin S.dA) ℂ),\n    ∃ GB : ProjectiveMeasurement Unit (LowIndDegPoly (F := F) (m := m) (d := d))\n        (Matrix (Fin S.dB) (Fin S.dB) ℂ),\n      inconsistency (uniform (Point F m)) S.ψ (pointPOVMA S) (evalPOVM GB) ≤\n          lidtError m d (Fintype.card F) k ε ∧\n        inconsistency (uniform (Point F m)) S.ψ (evalPOVM GA) (pointPOVMB S) ≤\n          lidtError m d (Fintype.card F) k ε ∧\n        inconsistency (uniform Unit) S.ψ (fun _ => GA.toPOVM ()) (fun _ => GB.toPOVM ()) ≤\n          lidtError m d (Fintype.card F) k ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Bridge",
+   "open MIPStarRE.LDT (ProjMeas SubMeas IdxSubMeas ev opTensor)",
+   "open scoped MatrixOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]"
+  ],
+  "docstring": "The soundness theorem, assembled from the MIPStarRE main theorem.",
+  "module": "MIPRE.Background.LIDT.Bridge.Main",
+  "module_doc": "/-!\n# Bridge, part 8: the soundness theorem in our vocabulary\n\nThe main theorem `MIPStarRE.LDT.Test.mainFormal`, applied to the induced strategy\n`toProjStrat S`, produces two MIPStarRE projective measurements with outcomes in the\npolynomials of individual degree at most `d`; `ofProjMeas` reads them as our projective\nmeasurements with outcomes in `LowIndDegPoly`, and the three consistency conclusions are\ntransferred with `inconsistency_eq_bipartiteConsError`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Bridge/Main.lean#L92-L128",
+  "source_path": "MIPRE/Background/LIDT/Bridge/Main.lean",
+  "lines": [
+   92,
+   128
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LIDT.Bridge.inconsistency_eq_bipartiteConsError",
+   "MIPRE.LIDT.Line.param_through",
+   "MIPRE.LIDT.Bridge.failure_eq_sum",
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.ev_finset_sum",
+   "MIPStarRE.LDT.ev_sum",
+   "MIPStarRE.LDT.opTensor_sum_left_finset",
+   "MIPStarRE.LDT.opTensor_sum_right_finset",
+   "MIPStarRE.LDT.opTensor_sum_left_univ",
+   "MIPStarRE.LDT.opTensor_sum_right_univ",
+   "MIPStarRE.LDT.SubMeas.postprocess_comp",
+   "MIPStarRE.LDT.qBipartiteConsDefect_le_one_of_isNormalized",
+   "MIPStarRE.LDT.Test.mainFormalConclusion_ofRoleRegisterScalarBoundary",
+   "MIPStarRE.Quantum.normalizedTrace_smul",
+   "MIPStarRE.Quantum.normalizedTrace_mul_comm"
+  ],
+  "pasted_helpers": 51,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Line.through_add_smul",
+  "source_name": "MIPRE.LIDT.Line.through_add_smul",
+  "formal_statement": "theorem MIPRE.LIDT.Line.through_add_smul (u v : Point F m) (t : F) :\n    through (u + t • v) v = through u v := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Line",
+   "open MIPStarRE.LDT (Fq ProjMeas SubMeas Measurement IdxProjMeas AxisParallelLine DiagonalLine",
+   "open scoped MatrixOrder ComplexOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ}"
+  ],
+  "docstring": "The canonical presentation only depends on the line.",
+  "module": "MIPRE.Background.LIDT.Bridge.Measurement",
+  "module_doc": "/-!\n# Bridge, part 3: measurements\n\nA strategy for our game carries one projective measurement per question, with outcomes\nin `Answer F m d`. The MIPStarRE strategy container `ProjStrat` wants instead\n\n* point measurements with outcomes in the coded field,\n* a measurement for *every* presentation `(base, direction)` of an axis-parallel line,\n  with outcomes the polynomials of degree `≤ d` in the parameter of that presentation,\n  covariant under rebasing the presentation (`AxisParallelMeasurementReparamInvariant`),\n* and likewise for diagonal lines.\n\nThis file builds these from the strategy's measurements at the *canonical* line\nquestions: the measurement at a presentation `ℓ` is the coarse-graining\n(`ProjMeas.postprocess`) of the measurement at the canonical question of `ℓ` along the\nmap sending an answer `g` (a polynomial in the canonical parameter `s`) to the polynomial\n`t ↦ g(b + c·t)` in the parameter `t` of `ℓ`, where `s = b + c·t` is the change of\nparameters. Covariance under rebasing then follows from the composition law\n`affine_comp_shift`, and ill-typed answers are sent to the zero polynomial.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Bridge/Measurement.lean#L62-L78",
+  "source_path": "MIPRE/Background/LIDT/Bridge/Measurement.lean",
+  "lines": [
+   62,
+   78
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Line.param_through",
+  "source_name": "MIPRE.LIDT.Line.param_through",
+  "formal_statement": "theorem MIPRE.LIDT.Line.param_through (u v : Point F m) :\n    (through u v).param u =\n      if h : ∃ j, v j ≠ 0 then u (Fin.find (fun j => v j ≠ 0) h) else 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Line",
+   "open MIPStarRE.LDT (Fq ProjMeas SubMeas Measurement IdxProjMeas AxisParallelLine DiagonalLine",
+   "open scoped MatrixOrder ComplexOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ}"
+  ],
+  "docstring": "The parameter of the base point on its canonical presentation.",
+  "module": "MIPRE.Background.LIDT.Bridge.Measurement",
+  "module_doc": "/-!\n# Bridge, part 3: measurements\n\nA strategy for our game carries one projective measurement per question, with outcomes\nin `Answer F m d`. The MIPStarRE strategy container `ProjStrat` wants instead\n\n* point measurements with outcomes in the coded field,\n* a measurement for *every* presentation `(base, direction)` of an axis-parallel line,\n  with outcomes the polynomials of degree `≤ d` in the parameter of that presentation,\n  covariant under rebasing the presentation (`AxisParallelMeasurementReparamInvariant`),\n* and likewise for diagonal lines.\n\nThis file builds these from the strategy's measurements at the *canonical* line\nquestions: the measurement at a presentation `ℓ` is the coarse-graining\n(`ProjMeas.postprocess`) of the measurement at the canonical question of `ℓ` along the\nmap sending an answer `g` (a polynomial in the canonical parameter `s`) to the polynomial\n`t ↦ g(b + c·t)` in the parameter `t` of `ℓ`, where `s = b + c·t` is the change of\nparameters. Covariance under rebasing then follows from the composition law\n`affine_comp_shift`, and ill-typed answers are sent to the zero polynomial.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Bridge/Measurement.lean#L89-L107",
+  "source_path": "MIPRE/Background/LIDT/Bridge/Measurement.lean",
+  "lines": [
+   89,
+   107
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Bridge.axisMeas_invariant",
+  "source_name": "MIPRE.LIDT.Bridge.axisMeas_invariant",
+  "formal_statement": "theorem MIPRE.LIDT.Bridge.axisMeas_invariant (P : ProjectiveMeasurement (Question F m) (Answer F m d) (Matrix n n ℂ)) :\n    AxisParallelMeasurementReparamInvariant (lidtParams F m d) (axisMeas P) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Bridge",
+   "open MIPStarRE.LDT (Fq ProjMeas SubMeas Measurement IdxProjMeas AxisParallelLine DiagonalLine",
+   "open scoped MatrixOrder ComplexOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.Bridge.Measurement",
+  "module_doc": "/-!\n# Bridge, part 3: measurements\n\nA strategy for our game carries one projective measurement per question, with outcomes\nin `Answer F m d`. The MIPStarRE strategy container `ProjStrat` wants instead\n\n* point measurements with outcomes in the coded field,\n* a measurement for *every* presentation `(base, direction)` of an axis-parallel line,\n  with outcomes the polynomials of degree `≤ d` in the parameter of that presentation,\n  covariant under rebasing the presentation (`AxisParallelMeasurementReparamInvariant`),\n* and likewise for diagonal lines.\n\nThis file builds these from the strategy's measurements at the *canonical* line\nquestions: the measurement at a presentation `ℓ` is the coarse-graining\n(`ProjMeas.postprocess`) of the measurement at the canonical question of `ℓ` along the\nmap sending an answer `g` (a polynomial in the canonical parameter `s`) to the polynomial\n`t ↦ g(b + c·t)` in the parameter `t` of `ℓ`, where `s = b + c·t` is the change of\nparameters. Covariance under rebasing then follows from the composition law\n`affine_comp_shift`, and ill-typed answers are sent to the zero polynomial.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Bridge/Measurement.lean#L282-L289",
+  "source_path": "MIPRE/Background/LIDT/Bridge/Measurement.lean",
+  "lines": [
+   282,
+   289
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LIDT.Line.through_add_smul"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Bridge.diagMeas_invariant",
+  "source_name": "MIPRE.LIDT.Bridge.diagMeas_invariant",
+  "formal_statement": "theorem MIPRE.LIDT.Bridge.diagMeas_invariant (P : ProjectiveMeasurement (Question F m) (Answer F m d) (Matrix n n ℂ)) :\n    DiagonalMeasurementReparamInvariant (lidtParams F m d) (diagMeas P) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Bridge",
+   "open MIPStarRE.LDT (Fq ProjMeas SubMeas Measurement IdxProjMeas AxisParallelLine DiagonalLine",
+   "open scoped MatrixOrder ComplexOrder",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.Bridge.Measurement",
+  "module_doc": "/-!\n# Bridge, part 3: measurements\n\nA strategy for our game carries one projective measurement per question, with outcomes\nin `Answer F m d`. The MIPStarRE strategy container `ProjStrat` wants instead\n\n* point measurements with outcomes in the coded field,\n* a measurement for *every* presentation `(base, direction)` of an axis-parallel line,\n  with outcomes the polynomials of degree `≤ d` in the parameter of that presentation,\n  covariant under rebasing the presentation (`AxisParallelMeasurementReparamInvariant`),\n* and likewise for diagonal lines.\n\nThis file builds these from the strategy's measurements at the *canonical* line\nquestions: the measurement at a presentation `ℓ` is the coarse-graining\n(`ProjMeas.postprocess`) of the measurement at the canonical question of `ℓ` along the\nmap sending an answer `g` (a polynomial in the canonical parameter `s`) to the polynomial\n`t ↦ g(b + c·t)` in the parameter `t` of `ℓ`, where `s = b + c·t` is the change of\nparameters. Covariance under rebasing then follows from the composition law\n`affine_comp_shift`, and ill-typed answers are sent to the zero polynomial.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Bridge/Measurement.lean#L325-L332",
+  "source_path": "MIPRE/Background/LIDT/Bridge/Measurement.lean",
+  "lines": [
+   325,
+   332
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LIDT.Line.through_add_smul"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Bridge.failure_eq_sum",
+  "source_name": "MIPRE.LIDT.Bridge.failure_eq_sum",
+  "formal_statement": "theorem MIPRE.LIDT.Bridge.failure_eq_sum (S : TensorProductStrategy (lidtGame F m d)) :\n    (toProjStrat S).lowIndividualDegreeFailureProbability = ∑ s : Sample F m, s.weight * mdef S s := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Bridge",
+   "open MIPStarRE.LDT (ProjStrat QuantumState ev opTensor qBipartiteConsDefect bipartiteConsError",
+   "open scoped Kronecker",
+   "open Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d : ℕ} [NeZero m]"
+  ],
+  "docstring": "The MIPStarRE failure probability is the weighted sum of the branch defects over our\nsamples.",
+  "module": "MIPRE.Background.LIDT.Bridge.Value",
+  "module_doc": "/-!\n# Bridge, part 6: the value of a strategy bounds the MIPStarRE failure probability\n\nMIPStarRE's hypothesis is a bound on `lowIndividualDegreeFailureProbability`, a\ntrace-based surrogate for the failure probability: an average, over the verifier's\nsamples, of consistency defects between coarse-grained measurements. Our hypothesis is\na bound on the value `S.value` of the strategy in the game. This file shows\n\n  `(toProjStrat S).lowIndividualDegreeFailureProbability ≤ 1 - S.value`.\n\nThe value is the sum over samples `s` of `s.weight · acc s` where `acc s` is the\nacceptance probability given the questions of `s` (`value_eq_sum`). For each sample the\ndefect of the corresponding branch is at most the rejection probability `1 - acc s`,\nby `qBipartiteConsDefect_postprocess_le`, because acceptance forces the two\ncoarse-grained outcomes to agree (the coarse-graining of the line answer is its\nevaluation at the sampled point, that of the point answer is its value). The branch\nweights of the two developments agree, which gives the bound after reindexing the\nsample spaces through the field coding.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Bridge/Value.lean#L310-L330",
+  "source_path": "MIPRE/Background/LIDT/Bridge/Value.lean",
+  "lines": [
+   310,
+   330
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.CL.card_div_pos",
+  "source_name": "MIPRE.LIDT.CL.card_div_pos",
+  "formal_statement": "theorem MIPRE.LIDT.CL.card_div_pos [NeZero m] (hm : m ∣ Fintype.card F) : 0 < Fintype.card F / m := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.CL",
+   "open Finset MIPRE.LIDT",
+   "variable (F : Type*) [Field F] [Fintype F] [DecidableEq F] (m d ldc : ℕ)",
+   "variable {F m}"
+  ],
+  "docstring": "The block size `q / m`, positive and with `m * (q/m) = q`.",
+  "module": "MIPRE.Background.LIDT.CLGame",
+  "module_doc": "/-!\n# The seeded CL low individual degree test\n\nBlueprint `def:lidt-cl`, the paper's typed low-degree game `game^ld` (`ldt.tex`,\n`sec:ld-game` and `fig:ld-decider`), with parameters `(q, m, d, ldc)`, `q = #F` admissible\nand `m ∣ q`. This is the test the paper's padded and simultaneous Pauli uses, and it is *not*\nthe canonical-line test `MIPRE.LIDT.lidtGame` whose soundness is formalized: the two differ in\nwhich lines they sample and in how they label answers, which is the whole content of\n`lem:lidt-reduction-setup`.\n\n## What makes it \"seeded\"\n\nA question of type `ALine` is a pair `(u₀, s) ∈ F^m × F`, not a line. The seed `s` selects the\ndirection `e_{χ(s)}`, where `χ(s)` reads off which of the `m` equal blocks of `F` (there are\n`q/m` elements each, using `m ∣ q`) the element `s` falls into. So `q/m` seeds describe the\nsame geometric line, **and they remain different questions**: a strategy is free to answer\ndifferently on two descriptions of one line, which is exactly why the reduction to the\ncanonical-line test needs a choice or averaging argument.\n\n`DLine` questions are triples `(u₀, s, v')` where `v'` is `v` with its first `χ(s)` coordinates\nzeroed. Base points are the canonical representatives `u₀ = L^Ln_w(u)` of\n`MIPRE.CL.canonLin` (blueprint `def:cl-canonical`), `w` being the direction.\n\n## The distribution\n\nThe verifier samples the ordered type pair uniformly from the nine possibilities and\n`(u, s, v)` uniformly from `F^m × F × F^m`, then hands each player the content its type\nprescribes. Every sample has the same weight, so normalization is one division rather than the\nsubtest bookkeeping the canonical-line game needs.\n\n## The decision predicate\n\n`fig:ld-decider` is a format check and then three numbered subtests. The check is the table at\nthe top of the figure, and the text around it is explicit that it *rejects*: \"If the answers\nreturned by the players do not fit this format the decision procedure rejects.\" The subtests\nare: equal types, accept iff the answers agree; a line type against `Point`, accept iff every\none of the `ldc` polynomials evaluated at the parameter of the point gives the corresponding\ncoordinate of the point answer; and \"in all cases where no action is indicated, accept\".\n\n`Question.fmtOk` is the check and `subtests` the rest, with `accepts` their conjunction. The\nseparation matters because the two clauses that look alike are not: an answer of the wrong\nformat for its question type is *rejected*, while a well-formatted answer to one of the two\ncross type pairs `(ALine, DLine)` and `(DLine, ALine)` is *accepted* --- that is the `2/9` of\nthe question mass on which this test checks nothing.\n\nLeaving the format check out makes the test vacuous, and an earlier version of this file did\nleave it out. The constant strategy answering `values 0` to *every* question, the two line\ntypes included, then passes every subtest through the catch-all, so the game has a value-`1`\nstrategy whose point measurements are an arbitrary functio",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/CLGame.lean#L100-L104",
+  "source_path": "MIPRE/Background/LIDT/CLGame.lean",
+  "lines": [
+   100,
+   104
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.CL.chi_val",
+  "source_name": "MIPRE.LIDT.CL.chi_val",
+  "formal_statement": "theorem MIPRE.LIDT.CL.chi_val [NeZero m] (hm : m ∣ Fintype.card F) (s : F) :\n    (chi hm s : ℕ) = (Fintype.equivFin F s).val / (Fintype.card F / m) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.CL",
+   "open Finset MIPRE.LIDT",
+   "variable (F : Type*) [Field F] [Fintype F] [DecidableEq F] (m d ldc : ℕ)",
+   "variable {F m}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.CLGame",
+  "module_doc": "/-!\n# The seeded CL low individual degree test\n\nBlueprint `def:lidt-cl`, the paper's typed low-degree game `game^ld` (`ldt.tex`,\n`sec:ld-game` and `fig:ld-decider`), with parameters `(q, m, d, ldc)`, `q = #F` admissible\nand `m ∣ q`. This is the test the paper's padded and simultaneous Pauli uses, and it is *not*\nthe canonical-line test `MIPRE.LIDT.lidtGame` whose soundness is formalized: the two differ in\nwhich lines they sample and in how they label answers, which is the whole content of\n`lem:lidt-reduction-setup`.\n\n## What makes it \"seeded\"\n\nA question of type `ALine` is a pair `(u₀, s) ∈ F^m × F`, not a line. The seed `s` selects the\ndirection `e_{χ(s)}`, where `χ(s)` reads off which of the `m` equal blocks of `F` (there are\n`q/m` elements each, using `m ∣ q`) the element `s` falls into. So `q/m` seeds describe the\nsame geometric line, **and they remain different questions**: a strategy is free to answer\ndifferently on two descriptions of one line, which is exactly why the reduction to the\ncanonical-line test needs a choice or averaging argument.\n\n`DLine` questions are triples `(u₀, s, v')` where `v'` is `v` with its first `χ(s)` coordinates\nzeroed. Base points are the canonical representatives `u₀ = L^Ln_w(u)` of\n`MIPRE.CL.canonLin` (blueprint `def:cl-canonical`), `w` being the direction.\n\n## The distribution\n\nThe verifier samples the ordered type pair uniformly from the nine possibilities and\n`(u, s, v)` uniformly from `F^m × F × F^m`, then hands each player the content its type\nprescribes. Every sample has the same weight, so normalization is one division rather than the\nsubtest bookkeeping the canonical-line game needs.\n\n## The decision predicate\n\n`fig:ld-decider` is a format check and then three numbered subtests. The check is the table at\nthe top of the figure, and the text around it is explicit that it *rejects*: \"If the answers\nreturned by the players do not fit this format the decision procedure rejects.\" The subtests\nare: equal types, accept iff the answers agree; a line type against `Point`, accept iff every\none of the `ldc` polynomials evaluated at the parameter of the point gives the corresponding\ncoordinate of the point answer; and \"in all cases where no action is indicated, accept\".\n\n`Question.fmtOk` is the check and `subtests` the rest, with `accepts` their conjunction. The\nseparation matters because the two clauses that look alike are not: an answer of the wrong\nformat for its question type is *rejected*, while a well-formatted answer to one of the two\ncross type pairs `(ALine, DLine)` and `(DLine, ALine)` is *accepted* --- that is the `2/9` of\nthe question mass on which this test checks nothing.\n\nLeaving the format check out makes the test vacuous, and an earlier version of this file did\nleave it out. The constant strategy answering `values 0` to *every* question, the two line\ntypes included, then passes every subtest through the catch-all, so the game has a value-`1`\nstrategy whose point measurements are an arbitrary functio",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/CLGame.lean#L106-L108",
+  "source_path": "MIPRE/Background/LIDT/CLGame.lean",
+  "lines": [
+   106,
+   108
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 0,
+  "is_target": false
+ }
+]

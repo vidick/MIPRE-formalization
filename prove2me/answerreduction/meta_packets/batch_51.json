@@ -1,0 +1,583 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.qBipartiteConsDefect_nonneg",
+  "source_name": "MIPStarRE.LDT.qBipartiteConsDefect_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.qBipartiteConsDefect_nonneg {Outcome : Type*}\n    {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype Outcome]\n    (ψ : QuantumState (ιA × ιB))\n    (A : SubMeas Outcome ιA) (B : SubMeas Outcome ιB) :\n    0 ≤ qBipartiteConsDefect ψ A B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The bipartite consistency defect is nonneg by definition (`max 0 _`).",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs",
+  "module_doc": "/-!\n# Section 3 — Definitions\n\nCore definitions for the low individual degree test: evaluation families,\nmatching mass, consistency defect, and test-passing predicates.\n\nAll operator fields now use `Op ι` directly with a generic `Fintype` index `ι`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/Defs.lean#L381-L388",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/Defs.lean",
+  "lines": [
+   381,
+   388
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.bipartiteConsError_nonneg",
+  "source_name": "MIPStarRE.LDT.bipartiteConsError_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.bipartiteConsError_nonneg {Question Outcome : Type*}\n    {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype Outcome]\n    (ψ : QuantumState (ιA × ιB)) (𝒟 : Distribution Question)\n    (A : IdxSubMeas Question Outcome ιA)\n    (B : IdxSubMeas Question Outcome ιB) :\n    0 ≤ bipartiteConsError ψ 𝒟 A B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The averaged bipartite consistency error is nonneg.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs",
+  "module_doc": "/-!\n# Section 3 — Definitions\n\nCore definitions for the low individual degree test: evaluation families,\nmatching mass, consistency defect, and test-passing predicates.\n\nAll operator fields now use `Op ι` directly with a generic `Fintype` index `ι`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/Defs.lean#L390-L399",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/Defs.lean",
+  "lines": [
+   390,
+   399
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_nonneg",
+   "MIPStarRE.LDT.qBipartiteConsDefect_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.qBipartiteConsDefect_le_one_of_isNormalized",
+  "source_name": "MIPStarRE.LDT.qBipartiteConsDefect_le_one_of_isNormalized",
+  "formal_statement": "theorem MIPStarRE.LDT.qBipartiteConsDefect_le_one_of_isNormalized {Outcome : Type*}\n    {ιA ιB : Type*} [Fintype Outcome] [Fintype ιA] [DecidableEq ιA] [Fintype ιB]\n    [DecidableEq ιB]\n    (ψ : QuantumState (ιA × ιB)) (hψ : ψ.IsNormalized)\n    (A : SubMeas Outcome ιA) (B : SubMeas Outcome ιB) :\n    qBipartiteConsDefect ψ A B ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "For a normalized state, a bipartite consistency defect is at most `1`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs",
+  "module_doc": "/-!\n# Section 3 — Definitions\n\nCore definitions for the low individual degree test: evaluation families,\nmatching mass, consistency defect, and test-passing predicates.\n\nAll operator fields now use `Op ι` directly with a generic `Fintype` index `ι`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/Defs.lean#L412-L433",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/Defs.lean",
+  "lines": [
+   412,
+   433
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_mono",
+   "MIPStarRE.LDT.opTensor_le_leftTensor",
+   "MIPStarRE.LDT.SubMeas.total_nonneg",
+   "MIPStarRE.LDT.leftTensor_le_one"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.bipartiteSSCError_nonneg",
+  "source_name": "MIPStarRE.LDT.bipartiteSSCError_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.bipartiteSSCError_nonneg {Question Outcome : Type*}\n    {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState (ι × ι)) (𝒟 : Distribution Question)\n    (A : IdxSubMeas Question Outcome ι) :\n    0 ≤ bipartiteSSCError ψ 𝒟 A := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The averaged bipartite strong self-consistency error is nonneg.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs",
+  "module_doc": "/-!\n# Section 3 — Definitions\n\nCore definitions for the low individual degree test: evaluation families,\nmatching mass, consistency defect, and test-passing predicates.\n\nAll operator fields now use `Op ι` directly with a generic `Fintype` index `ι`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/Defs.lean#L473-L481",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/Defs.lean",
+  "lines": [
+   473,
+   481
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_nonneg"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.postprocess_total",
+  "source_name": "MIPStarRE.LDT.postprocess_total",
+  "formal_statement": "theorem MIPStarRE.LDT.postprocess_total {α β : Type*} {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype α] [Fintype β]\n    (A : SubMeas α ι) (f : α → β) :\n    (postprocess A f).total = A.total := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Postprocessing preserves the total operator.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs",
+  "module_doc": "/-!\n# Section 3 — Definitions\n\nCore definitions for the low individual degree test: evaluation families,\nmatching mass, consistency defect, and test-passing predicates.\n\nAll operator fields now use `Op ι` directly with a generic `Fintype` index `ι`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/Defs.lean#L485-L490",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/Defs.lean",
+  "lines": [
+   485,
+   490
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.mainFormalConclusion_ofRoleRegisterScalarBoundary",
+  "source_name": "MIPStarRE.LDT.Test.mainFormalConclusion_ofRoleRegisterScalarBoundary",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.mainFormalConclusion_ofRoleRegisterScalarBoundary\n    (params : Parameters)\n    [FieldModel params.q]\n    {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA]\n    [Fintype ιB] [DecidableEq ιB]\n    (strategy : ProjStrat params ιA ιB)\n    (eps : Error)\n    (hpass : strategy.PassesLowIndividualDegreeTest eps)\n    (k : ℕ)\n    (hk : 400 * params.m * params.d ≤ k)\n    (hk0 : 0 < k)\n    (hsmall : ¬ 1 ≤ mainFormalError params k eps) :\n    ∃ G_A : ProjMeas (Polynomial params) ιA,\n      ∃ G_B : ProjMeas (Polynomial params) ιB,\n        ConsRel strategy.state (uniformDistribution (Point params))\n            (IdxProjMeas.toIdxSubMeas strategy.pointMeasurementA)\n            (polynomialEvaluationFamily params G_B.toSubMeas)\n            (mainFormalError params k eps) ∧\n          ConsRel strategy.state (uniformDistribution (Point params))\n            (polynomialEvaluationFamily params G_A.toSubMeas)\n            (IdxProjMeas.toIdxSubMeas strategy.pointMeasurementB)\n            (mainFormalError params k eps) ∧\n          ConsRel strategy.state (uniformDistribution Unit)\n            (constSubMeasFamily G_A.toSubMeas)\n            (constSubMeasFamily G_B.toSubMeas)\n            (mainFormalError params k eps) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Source role-register conclusion after the scalar branch has supplied\n`0 < k`.\n\nThis theorem is not an additional hypothesis of `thm:main-formal`; it isolates\nthe checked two-space role-register construction from the scalar absorption at\nthe corrected nonzero sampling boundary.  The proof uses\n`ProjStrat.sourceRoleRegisterFinalPointConsistency` and then weakens the three\nexplicit pre-absorption errors to `mainFormalError` by the existing Step 8\nscalar cascade.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.MainFormal",
+  "module_doc": "/-!\n# Main-formal soundness theorem\n\nThis module contains the corrected two-space final theorem for\n`thm:main-formal`.  The theorem starts from a general projective strategy\n`ProjStrat params ιA ιB`, applies the heterogeneous role-register route, and\nabsorbs the explicit intermediate errors into the final parameter\n`mainFormalError`.\n\nThe public theorem uses the confirmed large-`k` correction `k ≥ 400 m d` and\nthe nonzero sampling condition `0 < k`.  These are documented in\n`docs/paper-gaps/issue-906-main-formal-k-bound.tex` and\n`docs/paper-gaps/issue-422-main-formal-zero-k-boundary.tex`.\n\n## References\n\n* Paper: `references/ldt-paper/test_definition.tex`,\n  `thm:main-formal` at line 180; its proof is in\n  `references/ldt-paper/inductive_step.tex` (lines 26–236).\n* Blueprint: `blueprint/src/chapter/ch02_test.tex`,\n  `\\label{thm:main-formal}`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/MainFormal.lean#L139-L247",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/MainFormal.lean",
+  "lines": [
+   139,
+   247
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.MakingMeasurementsProjective.sqrt_orthonormalizationError_eq",
+   "MIPStarRE.LDT.MakingMeasurementsProjective.orthonormalizeAndCompleteError_le_absorbedZeta2",
+   "MIPStarRE.LDT.ConsRel.mono",
+   "MIPStarRE.LDT.bipartiteConsError_nonneg",
+   "MIPStarRE.LDT.Test.zeta4Repaired_bound",
+   "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterFinalPointConsistency",
+   "MIPStarRE.LDT.Test.mainFormalError_ge_one_of_one_lt_eps",
+   "MIPStarRE.LDT.Test.mainFormalError_ge_one_of_q_lt_d",
+   "MIPStarRE.LDT.Test.mainFormalInductionNu_nonneg",
+   "MIPStarRE.LDT.Test.mainFormalInductionNu_bound",
+   "MIPStarRE.LDT.ProjStrat.axisParallelRoleAverage_nonneg",
+   "MIPStarRE.LDT.ProjStrat.diagonalRoleAverage_nonneg"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 73,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.consRel_constPolynomialEvaluation_heterogeneous",
+  "source_name": "MIPStarRE.LDT.Test.consRel_constPolynomialEvaluation_heterogeneous",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.consRel_constPolynomialEvaluation_heterogeneous\n    {params : Parameters} [FieldModel params.q]\n    {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    (ψ : QuantumState (ιA × ιB))\n    (A : Measurement (Polynomial params) ιA) (B : Measurement (Polynomial params) ιB)\n    {δ : Error}\n    (h : ConsRel ψ (uniformDistribution Unit)\n      (constSubMeasFamily A.toSubMeas)\n      (constSubMeasFamily B.toSubMeas) δ) :\n    ConsRel ψ (uniformDistribution (Point params))\n      (polynomialEvaluationFamily params A.toSubMeas)\n      (polynomialEvaluationFamily params B.toSubMeas) δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Heterogeneous form of `consRel_constPolynomialEvaluation`.\n\nThe same data-processing argument applies when Alice's polynomial measurement\nacts on `H_A` and Bob's on `H_B`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ProjectiveConsistency.Evaluation",
+  "module_doc": "/-!\n# Projective consistency evaluation\n\nThis module contains the data-processing lemmas which turn polynomial-level\nprojective consistency into pointwise consistency after evaluation at a sampled\npoint.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ProjectiveConsistency/Evaluation.lean#L116-L175",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ProjectiveConsistency/Evaluation.lean",
+  "lines": [
+   116,
+   175
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_uniform_const",
+   "MIPStarRE.LDT.Preliminaries.consRelDataProcessing_questionDependent"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 44,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.projectiveEvaluationConsistency_ofFullPolynomialConsistency_heterogeneous",
+  "source_name": "MIPStarRE.LDT.Test.projectiveEvaluationConsistency_ofFullPolynomialConsistency_heterogeneous",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.projectiveEvaluationConsistency_ofFullPolynomialConsistency_heterogeneous\n    {params : Parameters} [FieldModel params.q]\n    {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    {ψ : QuantumState (ιA × ιB)}\n    (Q_A : ProjMeas (Polynomial params) ιA) (Q_B : ProjMeas (Polynomial params) ιB)\n    {ζ₃ : Error}\n    (hline : SDDRel ψ (uniformDistribution Unit)\n      (constSubMeasFamily (leftPlacedSubMeas (ιB := ιB) Q_A.toSubMeas))\n      (constSubMeasFamily (rightPlacedSubMeas (ιA := ιA) Q_B.toSubMeas)) ζ₃) :\n    ConsRel ψ (uniformDistribution (Point params))\n      (polynomialEvaluationFamily params Q_A.toSubMeas)\n      (polynomialEvaluationFamily params Q_B.toSubMeas) (ζ₃ / 2) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Heterogeneous form of\n`projectiveEvaluationConsistency_ofFullPolynomialConsistency`.\n\nIt first applies the two-space projective converse to the placed\nstate-dependent-distance relation, and then evaluates the polynomial outcomes\nat the sampled point.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ProjectiveConsistency.Evaluation",
+  "module_doc": "/-!\n# Projective consistency evaluation\n\nThis module contains the data-processing lemmas which turn polynomial-level\nprojective consistency into pointwise consistency after evaluation at a sampled\npoint.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ProjectiveConsistency/Evaluation.lean#L211-L248",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ProjectiveConsistency/Evaluation.lean",
+  "lines": [
+   211,
+   248
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.approxToSimeq_heterogeneous",
+   "MIPStarRE.LDT.Test.consRel_constPolynomialEvaluation_heterogeneous"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.errorCascade_le_mainFormalError",
+  "source_name": "MIPStarRE.LDT.Test.errorCascade_le_mainFormalError",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.errorCascade_le_mainFormalError {params : Parameters} {k : ℕ} {eps : Error}\n    (h : CascadeHypotheses params k eps) {ν σ ζ₁ ζ₂ ζ₃ : Error}\n    (hνNN : 0 ≤ ν)\n    (hν : ν ≤ 10000 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (2 : ℕ)) *\n      (Real.rpow eps (1 / (1024 : Error)) +\n        Real.rpow ((params.d : Error) / (params.q : Error)) (1 / (1024 : Error))))\n    (hσEq : σ = cascadeSigma params k ν)\n    (hζ₁Eq : ζ₁ = cascadeZeta1 params eps σ)\n    (hζ₂Eq : ζ₂ = cascadeZeta2 ζ₁)\n    (hζ₃Eq : ζ₃ = cascadeZeta3 ζ₁ ζ₂) :\n    σ ≤ mainFormalError params k eps ∧\n    ζ₁ ≤ mainFormalError params k eps ∧\n    ζ₂ ≤ mainFormalError params k eps ∧\n    ζ₃ ≤ 2 * mainFormalError params k eps ∧\n    cascadeZeta4 σ ζ₁ ζ₃ ≤ mainFormalError params k eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators"
+  ],
+  "docstring": "**Paper lines 230--234.** Packages the five cascade bounds into the tuple\nused by `mainFormal`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.CascadeBounds.Final",
+  "module_doc": "/-!\n# Error cascade — final assembly\n\nThis module contains the final tuple-valued consolidator for the error cascade\nin Step 8 of the main inductive step.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 230--234.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/Final.lean#L66-L95",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/Final.lean",
+  "lines": [
+   66,
+   95
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Test.zeta1_bound",
+   "MIPStarRE.LDT.Test.sigma_bound",
+   "MIPStarRE.LDT.Test.zeta3_bound",
+   "MIPStarRE.LDT.Test.zeta2_bound",
+   "MIPStarRE.LDT.Test.zeta4_bound"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.cascadeSigma_tight_bound",
+  "source_name": "MIPStarRE.LDT.Test.cascadeSigma_tight_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.cascadeSigma_tight_bound {params : Parameters} {k : ℕ} {eps : Error}\n    (h : CascadeHypotheses params k eps) {ν : Error}\n    (hν : ν ≤ 10000 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (2 : ℕ)) *\n      (Real.rpow eps (1 / (1024 : Error)) +\n        Real.rpow ((params.d : Error) / (params.q : Error)) (1 / (1024 : Error)))) :\n    cascadeSigma params k ν ≤\n      10000 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (4 : ℕ)) *\n        stepEnvelope params k eps (1024 : Error) (80000 : Error) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.CascadeBounds.SigmaZeta1",
+  "module_doc": "/-!\n# Error cascade — bounds for `σ` and `ζ₁`\n\nThis module proves the tight and absorbing bounds for the first two cascade\nvariables, `σ` and `ζ₁`.  The later variables `ζ₂`, `ζ₃`, and `ζ₄`, together\nwith the top-level consolidator `errorCascade_le_mainFormalError`, are in the\nsubsequent leaves of `Test.MainTheorem.ScalarBounds.CascadeBounds`.\n\nThe first cascade steps have three components:\n\n* The **tight cascade bound** (`cascadeSigma_tight_bound`, `cascadeZeta1_bound`, …),\n  deriving the native estimate directly from the cascade definition.\n* The **absorbing bound** (`sigma_bound`, `zeta1_bound`, …), coarsening the\n  tight estimate to the final `mainFormalEnvelope` envelope.\n* The corresponding nonnegativity lemmas (`cascadeSigma_nonneg`,\n  `cascadeZeta1_nonneg`), used by the later cascade estimates.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 187–234.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/SigmaZeta1.lean#L100-L170",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/SigmaZeta1.lean",
+  "lines": [
+   100,
+   170
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 63,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.sigma_bound",
+  "source_name": "MIPStarRE.LDT.Test.sigma_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.sigma_bound {params : Parameters} {k : ℕ} {eps : Error}\n    (h : CascadeHypotheses params k eps) {ν : Error}\n    (hν : ν ≤ 10000 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (2 : ℕ)) *\n      (Real.rpow eps (1 / (1024 : Error)) +\n        Real.rpow ((params.d : Error) / (params.q : Error)) (1 / (1024 : Error)))) :\n    cascadeSigma params k ν ≤\n      10000 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (4 : ℕ)) *\n        mainFormalEnvelope params k eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators"
+  ],
+  "docstring": "**Paper lines 189–193.** The paper's bound for `σ` is absorbed by\n`10000 · k² · m⁴ · mainFormalEnvelope`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.CascadeBounds.SigmaZeta1",
+  "module_doc": "/-!\n# Error cascade — bounds for `σ` and `ζ₁`\n\nThis module proves the tight and absorbing bounds for the first two cascade\nvariables, `σ` and `ζ₁`.  The later variables `ζ₂`, `ζ₃`, and `ζ₄`, together\nwith the top-level consolidator `errorCascade_le_mainFormalError`, are in the\nsubsequent leaves of `Test.MainTheorem.ScalarBounds.CascadeBounds`.\n\nThe first cascade steps have three components:\n\n* The **tight cascade bound** (`cascadeSigma_tight_bound`, `cascadeZeta1_bound`, …),\n  deriving the native estimate directly from the cascade definition.\n* The **absorbing bound** (`sigma_bound`, `zeta1_bound`, …), coarsening the\n  tight estimate to the final `mainFormalEnvelope` envelope.\n* The corresponding nonnegativity lemmas (`cascadeSigma_nonneg`,\n  `cascadeZeta1_nonneg`), used by the later cascade estimates.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 187–234.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/SigmaZeta1.lean#L172-L195",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/SigmaZeta1.lean",
+  "lines": [
+   172,
+   195
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Test.cascadeSigma_tight_bound"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.cascadeZeta1_bound_special",
+  "source_name": "MIPStarRE.LDT.Test.cascadeZeta1_bound_special",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.cascadeZeta1_bound_special {params : Parameters} {k : ℕ} {eps : Error}\n    (h : CascadeHypotheses params k eps) {ν : Error}\n    (hν : ν ≤ 10000 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (2 : ℕ)) *\n      (Real.rpow eps (1 / (1024 : Error)) +\n        Real.rpow ((params.d : Error) / (params.q : Error)) (1 / (1024 : Error))))\n    (hkm1 : k = 1 ∧ params.m = 1) :\n    cascadeZeta1 params eps (cascadeSigma params k ν) ≤\n      20204 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (4 : ℕ)) *\n        stepEnvelope params k eps (2048 : Error) (160000 : Error) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.CascadeBounds.SigmaZeta1",
+  "module_doc": "/-!\n# Error cascade — bounds for `σ` and `ζ₁`\n\nThis module proves the tight and absorbing bounds for the first two cascade\nvariables, `σ` and `ζ₁`.  The later variables `ζ₂`, `ζ₃`, and `ζ₄`, together\nwith the top-level consolidator `errorCascade_le_mainFormalError`, are in the\nsubsequent leaves of `Test.MainTheorem.ScalarBounds.CascadeBounds`.\n\nThe first cascade steps have three components:\n\n* The **tight cascade bound** (`cascadeSigma_tight_bound`, `cascadeZeta1_bound`, …),\n  deriving the native estimate directly from the cascade definition.\n* The **absorbing bound** (`sigma_bound`, `zeta1_bound`, …), coarsening the\n  tight estimate to the final `mainFormalEnvelope` envelope.\n* The corresponding nonnegativity lemmas (`cascadeSigma_nonneg`,\n  `cascadeZeta1_nonneg`), used by the later cascade estimates.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 187–234.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/SigmaZeta1.lean#L210-L299",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/SigmaZeta1.lean",
+  "lines": [
+   210,
+   299
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 5,
+  "prooflines": 81,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.cascadeZeta1_bound_general",
+  "source_name": "MIPStarRE.LDT.Test.cascadeZeta1_bound_general",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.cascadeZeta1_bound_general {params : Parameters} {k : ℕ} {eps : Error}\n    (h : CascadeHypotheses params k eps) {ν : Error}\n    (hν : ν ≤ 10000 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (2 : ℕ)) *\n      (Real.rpow eps (1 / (1024 : Error)) +\n        Real.rpow ((params.d : Error) / (params.q : Error)) (1 / (1024 : Error))))\n    (hkm1 : ¬ (k = 1 ∧ params.m = 1)) :\n    cascadeZeta1 params eps (cascadeSigma params k ν) ≤\n      20204 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (4 : ℕ)) *\n        stepEnvelope params k eps (2048 : Error) (160000 : Error) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.CascadeBounds.SigmaZeta1",
+  "module_doc": "/-!\n# Error cascade — bounds for `σ` and `ζ₁`\n\nThis module proves the tight and absorbing bounds for the first two cascade\nvariables, `σ` and `ζ₁`.  The later variables `ζ₂`, `ζ₃`, and `ζ₄`, together\nwith the top-level consolidator `errorCascade_le_mainFormalError`, are in the\nsubsequent leaves of `Test.MainTheorem.ScalarBounds.CascadeBounds`.\n\nThe first cascade steps have three components:\n\n* The **tight cascade bound** (`cascadeSigma_tight_bound`, `cascadeZeta1_bound`, …),\n  deriving the native estimate directly from the cascade definition.\n* The **absorbing bound** (`sigma_bound`, `zeta1_bound`, …), coarsening the\n  tight estimate to the final `mainFormalEnvelope` envelope.\n* The corresponding nonnegativity lemmas (`cascadeSigma_nonneg`,\n  `cascadeZeta1_nonneg`), used by the later cascade estimates.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 187–234.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/SigmaZeta1.lean#L301-L465",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/SigmaZeta1.lean",
+  "lines": [
+   301,
+   465
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Test.cascadeSigma_tight_bound",
+   "MIPStarRE.LDT.Test.sqrt_scaled_stepEnvelope_le",
+   "MIPStarRE.LDT.Test.mdq_le_k2m4_stepEnvelope2048"
+  ],
+  "pasted_helpers": 14,
+  "prooflines": 156,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.zeta1_bound",
+  "source_name": "MIPStarRE.LDT.Test.zeta1_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.zeta1_bound {params : Parameters} {k : ℕ} {eps : Error}\n    (h : CascadeHypotheses params k eps) {ν σ : Error}\n    (hν : ν ≤ 10000 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (2 : ℕ)) *\n      (Real.rpow eps (1 / (1024 : Error)) +\n        Real.rpow ((params.d : Error) / (params.q : Error)) (1 / (1024 : Error))))\n    (hσEq : σ = cascadeSigma params k ν) :\n    cascadeZeta1 params eps σ ≤ mainFormalError params k eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators"
+  ],
+  "docstring": "**Paper lines 196–201.** The concrete `ζ₁` built from `σ = cascadeSigma params k ν`\nis absorbed by `mainFormalError`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.CascadeBounds.SigmaZeta1",
+  "module_doc": "/-!\n# Error cascade — bounds for `σ` and `ζ₁`\n\nThis module proves the tight and absorbing bounds for the first two cascade\nvariables, `σ` and `ζ₁`.  The later variables `ζ₂`, `ζ₃`, and `ζ₄`, together\nwith the top-level consolidator `errorCascade_le_mainFormalError`, are in the\nsubsequent leaves of `Test.MainTheorem.ScalarBounds.CascadeBounds`.\n\nThe first cascade steps have three components:\n\n* The **tight cascade bound** (`cascadeSigma_tight_bound`, `cascadeZeta1_bound`, …),\n  deriving the native estimate directly from the cascade definition.\n* The **absorbing bound** (`sigma_bound`, `zeta1_bound`, …), coarsening the\n  tight estimate to the final `mainFormalEnvelope` envelope.\n* The corresponding nonnegativity lemmas (`cascadeSigma_nonneg`,\n  `cascadeZeta1_nonneg`), used by the later cascade estimates.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 187–234.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/SigmaZeta1.lean#L479-L512",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/SigmaZeta1.lean",
+  "lines": [
+   479,
+   512
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Test.cascadeZeta1_bound_general",
+   "MIPStarRE.LDT.Test.cascadeZeta1_bound_special"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.cascadeZeta2_bound",
+  "source_name": "MIPStarRE.LDT.Test.cascadeZeta2_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.cascadeZeta2_bound {params : Parameters} {k : ℕ} {eps : Error}\n    (h : CascadeHypotheses params k eps) {ν : Error} (hνNN : 0 ≤ ν)\n    (hν : ν ≤ 10000 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (2 : ℕ)) *\n      (Real.rpow eps (1 / (1024 : Error)) +\n        Real.rpow ((params.d : Error) / (params.q : Error)) (1 / (1024 : Error)))) :\n    cascadeZeta2 (cascadeZeta1 params eps (cascadeSigma params k ν)) ≤\n      2568 * (k : Error) * (params.m : Error) *\n        stepEnvelope params k eps (16384 : Error) (1280000 : Error) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.CascadeBounds.Zeta2Zeta3",
+  "module_doc": "/-!\n# Error cascade — bounds for `ζ₂` and `ζ₃`\n\nThis module contains the middle cascade estimates used in Step 8 of the main\ninductive step: the absorbing bounds for `ζ₂` and `ζ₃` obtained from the\n`σ` and `ζ₁` estimates.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 205--217 and 230.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/Zeta2Zeta3.lean#L70-L125",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/Zeta2Zeta3.lean",
+  "lines": [
+   70,
+   125
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Test.cascadeZeta1_bound_general",
+   "MIPStarRE.LDT.Test.cascadeZeta1_bound_special",
+   "MIPStarRE.LDT.Test.stepEnvelope_rpow_quarter_le",
+   "MIPStarRE.LDT.Test.stepEnvelope_rpow_eighth_le",
+   "MIPStarRE.LDT.Test.rpow_Z1_factor_le"
+  ],
+  "pasted_helpers": 15,
+  "prooflines": 48,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.zeta2_bound",
+  "source_name": "MIPStarRE.LDT.Test.zeta2_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.zeta2_bound {params : Parameters} {k : ℕ} {eps : Error}\n    (h : CascadeHypotheses params k eps) {ν σ ζ₁ : Error} (hνNN : 0 ≤ ν)\n    (hν : ν ≤ 10000 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (2 : ℕ)) *\n      (Real.rpow eps (1 / (1024 : Error)) +\n        Real.rpow ((params.d : Error) / (params.q : Error)) (1 / (1024 : Error))))\n    (hσEq : σ = cascadeSigma params k ν)\n    (hζ₁Eq : ζ₁ = cascadeZeta1 params eps σ) :\n    cascadeZeta2 ζ₁ ≤ mainFormalError params k eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators"
+  ],
+  "docstring": "**Paper lines 205–212, with the formal `ζ₂` widening.** The concrete `ζ₂`\nbuilt from `ζ₁ = cascadeZeta1 params eps σ` and `σ = cascadeSigma params k ν`\nis absorbed by `mainFormalError`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.CascadeBounds.Zeta2Zeta3",
+  "module_doc": "/-!\n# Error cascade — bounds for `ζ₂` and `ζ₃`\n\nThis module contains the middle cascade estimates used in Step 8 of the main\ninductive step: the absorbing bounds for `ζ₂` and `ζ₃` obtained from the\n`σ` and `ζ₁` estimates.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 205--217 and 230.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/Zeta2Zeta3.lean#L127-L172",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/Zeta2Zeta3.lean",
+  "lines": [
+   127,
+   172
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Test.cascadeZeta2_bound"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.cascadeZeta3_bound",
+  "source_name": "MIPStarRE.LDT.Test.cascadeZeta3_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.cascadeZeta3_bound {params : Parameters} {k : ℕ} {eps : Error}\n    (h : CascadeHypotheses params k eps) {ν : Error} (hνNN : 0 ≤ ν)\n    (hν : ν ≤ 10000 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (2 : ℕ)) *\n      (Real.rpow eps (1 / (1024 : Error)) +\n        Real.rpow ((params.d : Error) / (params.q : Error)) (1 / (1024 : Error)))) :\n    cascadeZeta3\n        (cascadeZeta1 params eps (cascadeSigma params k ν))\n        (cascadeZeta2 (cascadeZeta1 params eps (cascadeSigma params k ν))) ≤\n      150000 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (4 : ℕ)) *\n        stepEnvelope params k eps (16384 : Error) (1280000 : Error) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.CascadeBounds.Zeta2Zeta3",
+  "module_doc": "/-!\n# Error cascade — bounds for `ζ₂` and `ζ₃`\n\nThis module contains the middle cascade estimates used in Step 8 of the main\ninductive step: the absorbing bounds for `ζ₂` and `ζ₃` obtained from the\n`σ` and `ζ₁` estimates.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 205--217 and 230.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/Zeta2Zeta3.lean#L174-L235",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/Zeta2Zeta3.lean",
+  "lines": [
+   174,
+   235
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Test.cascadeZeta1_bound_general",
+   "MIPStarRE.LDT.Test.cascadeZeta1_bound_special",
+   "MIPStarRE.LDT.Test.cascadeZeta2_bound"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 52,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.zeta3_bound",
+  "source_name": "MIPStarRE.LDT.Test.zeta3_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.zeta3_bound {params : Parameters} {k : ℕ} {eps : Error}\n    (h : CascadeHypotheses params k eps) {ν σ ζ₁ ζ₂ : Error} (hνNN : 0 ≤ ν)\n    (hν : ν ≤ 10000 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (2 : ℕ)) *\n      (Real.rpow eps (1 / (1024 : Error)) +\n        Real.rpow ((params.d : Error) / (params.q : Error)) (1 / (1024 : Error))))\n    (hσEq : σ = cascadeSigma params k ν)\n    (hζ₁Eq : ζ₁ = cascadeZeta1 params eps σ)\n    (hζ₂Eq : ζ₂ = cascadeZeta2 ζ₁) :\n    cascadeZeta3 ζ₁ ζ₂ ≤ 2 * mainFormalError params k eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators"
+  ],
+  "docstring": "**Paper lines 214–217 and 230.** The concrete `ζ₃` built from the cascade\nchain is rewritten as `ζ₃ ≤ 2 · mainFormalError`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.CascadeBounds.Zeta2Zeta3",
+  "module_doc": "/-!\n# Error cascade — bounds for `ζ₂` and `ζ₃`\n\nThis module contains the middle cascade estimates used in Step 8 of the main\ninductive step: the absorbing bounds for `ζ₂` and `ζ₃` obtained from the\n`σ` and `ζ₁` estimates.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 205--217 and 230.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/Zeta2Zeta3.lean#L237-L274",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/Zeta2Zeta3.lean",
+  "lines": [
+   237,
+   274
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Test.cascadeZeta3_bound"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.cascadeZeta4_bound",
+  "source_name": "MIPStarRE.LDT.Test.cascadeZeta4_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.cascadeZeta4_bound {params : Parameters} {k : ℕ} {eps : Error}\n    (h : CascadeHypotheses params k eps) {ν : Error} (hνNN : 0 ≤ ν)\n    (hν : ν ≤ 10000 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (2 : ℕ)) *\n      (Real.rpow eps (1 / (1024 : Error)) +\n        Real.rpow ((params.d : Error) / (params.q : Error)) (1 / (1024 : Error)))) :\n    cascadeZeta4 (cascadeSigma params k ν)\n        (cascadeZeta1 params eps (cascadeSigma params k ν))\n        (cascadeZeta3\n          (cascadeZeta1 params eps (cascadeSigma params k ν))\n          (cascadeZeta2 (cascadeZeta1 params eps (cascadeSigma params k ν)))) ≤\n      40000 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (4 : ℕ)) *\n        stepEnvelope params k eps (32768 : Error) (2560000 : Error) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.CascadeBounds.Zeta4",
+  "module_doc": "/-!\n# Error cascade — bound for `ζ₄`\n\nThis module contains the `ζ₄` cascade estimate used in Step 8 of the main\ninductive step and its absorption into `mainFormalError`.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 220--228.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/Zeta4.lean#L76-L207",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/Zeta4.lean",
+  "lines": [
+   76,
+   207
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Test.cascadeZeta1_bound_general",
+   "MIPStarRE.LDT.Test.cascadeSigma_tight_bound",
+   "MIPStarRE.LDT.Test.cascadeZeta1_bound_special",
+   "MIPStarRE.LDT.Test.cascadeZeta3_bound",
+   "MIPStarRE.LDT.Test.sqrt_scaled_stepEnvelope_le"
+  ],
+  "pasted_helpers": 15,
+  "prooflines": 120,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Test.zeta4_bound",
+  "source_name": "MIPStarRE.LDT.Test.zeta4_bound",
+  "formal_statement": "theorem MIPStarRE.LDT.Test.zeta4_bound {params : Parameters} {k : ℕ} {eps : Error}\n    (h : CascadeHypotheses params k eps) {ν σ ζ₁ ζ₂ ζ₃ : Error} (hνNN : 0 ≤ ν)\n    (hν : ν ≤ 10000 * ((k : Error) ^ (2 : ℕ)) * ((params.m : Error) ^ (2 : ℕ)) *\n      (Real.rpow eps (1 / (1024 : Error)) +\n        Real.rpow ((params.d : Error) / (params.q : Error)) (1 / (1024 : Error))))\n    (hσEq : σ = cascadeSigma params k ν)\n    (hζ₁Eq : ζ₁ = cascadeZeta1 params eps σ)\n    (hζ₂Eq : ζ₂ = cascadeZeta2 ζ₁)\n    (hζ₃Eq : ζ₃ = cascadeZeta3 ζ₁ ζ₂) :\n    cascadeZeta4 σ ζ₁ ζ₃ ≤ mainFormalError params k eps := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Test",
+   "open scoped BigOperators"
+  ],
+  "docstring": "**Paper lines 220–228.** The concrete `ζ₄` built from the cascade chain is\nabsorbed by `mainFormalError`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.MainTheorem.ScalarBounds.CascadeBounds.Zeta4",
+  "module_doc": "/-!\n# Error cascade — bound for `ζ₄`\n\nThis module contains the `ζ₄` cascade estimate used in Step 8 of the main\ninductive step and its absorption into `mainFormalError`.\n\n## References\n\n* `references/ldt-paper/inductive_step.tex`, lines 220--228.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/Zeta4.lean#L209-L246",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/MainTheorem/ScalarBounds/CascadeBounds/Zeta4.lean",
+  "lines": [
+   209,
+   246
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Test.cascadeZeta4_bound"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 26,
+  "is_target": false
+ }
+]

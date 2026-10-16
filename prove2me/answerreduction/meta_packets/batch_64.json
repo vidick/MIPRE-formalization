@@ -1,0 +1,653 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.map_composedSumBits",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.map_composedSumBits",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.map_composedSumBits (p g : BitStr) (hp : p.length = f.natDegree)\n    (hpoly : f = polyOfBits (p ++ [true])) (hg : (polyOfBits g).Monic) :\n    (polyOfBits (composedSumBits p g)).map (algebraMap (ZMod 2) (AdjoinRoot f)) =\n      composedSumPolynomial (polyOfBits g) (AdjoinRoot.root f) f.natDegree := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost MIPRE.LowDegree.BinaryPolynomial Polynomial MIPRE.LowDegree.BinaryFiniteField",
+   "variable (f : Polynomial (ZMod 2)) (hf : f.Monic) [Fact (Irreducible f)]"
+  ],
+  "docstring": "The executable composed-sum output has the specified product interpretation.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryComposedSum",
+  "module_doc": "/-! # Correctness of the effective coprime-degree composed-sum construction -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryComposedSum.lean#L27-L67",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryComposedSum.lean",
+  "lines": [
+   27,
+   67
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits",
+   "MIPRE.LowDegree.BinaryQuotient.evalBits_eq_head_of_zero_or_one",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_shiftReduce",
+   "MIPRE.LowDegree.BinaryPolynomial.length_mulReduce",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_mulReduce",
+   "MIPRE.LowDegree.BinaryQuotient.root_eq",
+   "MIPRE.LowDegree.BinaryQuotient.linearMulCarry_width",
+   "MIPRE.LowDegree.BinaryQuotient.coeffPolynomial_linearMulCarry",
+   "MIPRE.LowDegree.BinaryQuotient.mulCoeffLists_width",
+   "MIPRE.LowDegree.BinaryQuotient.coeffPolynomial_mulCoeffLists"
+  ],
+  "pasted_helpers": 21,
+  "prooflines": 35,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.composedSumBits_correct",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.composedSumBits_correct",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.composedSumBits_correct (p g : BitStr) (hp : p.length = f.natDegree)\n    (hpoly : f = polyOfBits (p ++ [true])) (hg : (polyOfBits g).Monic)\n    (hgi : Irreducible (polyOfBits g)) (hcop : f.natDegree.Coprime (polyOfBits g).natDegree) :\n    (polyOfBits (composedSumBits p g)).Monic ∧ Irreducible (polyOfBits (composedSumBits p g)) ∧\n      (polyOfBits (composedSumBits p g)).natDegree = f.natDegree * (polyOfBits g).natDegree := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost MIPRE.LowDegree.BinaryPolynomial Polynomial MIPRE.LowDegree.BinaryFiniteField",
+   "variable (f : Polynomial (ZMod 2)) (hf : f.Monic) [Fact (Irreducible f)]"
+  ],
+  "docstring": "The uniform composed-sum program combines irreducible polynomials of coprime degrees.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryComposedSum",
+  "module_doc": "/-! # Correctness of the effective coprime-degree composed-sum construction -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryComposedSum.lean#L83-L117",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryComposedSum.lean",
+  "lines": [
+   83,
+   117
+  ],
+  "blueprint": [
+   {
+    "label": "lem:binary-coprime-degree-combination",
+    "env": "lemma",
+    "title": "Effective combination of coprime degrees",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryQuotient.map_composedSumBits",
+   "MIPRE.LowDegree.BinaryFiniteField.minpoly_natDegree_add_of_coprime"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 28,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits",
+  "source_name": "MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits (z : R) (p : BitStr) (hp : p ≠ []) : evalBits z (oneBits p) = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryPolynomial",
+   "open MIPRE.Cost",
+   "variable {R : Type*} [CommRing R]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.LowDegree.BinaryConstants",
+  "module_doc": "/-! # Fixed-width zero and one for binary polynomial quotients -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryConstants.lean#L31-L32",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryConstants.lean",
+  "lines": [
+   31,
+   32
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryFiniteField.frobenius_period_add_of_coprime",
+  "source_name": "MIPRE.LowDegree.BinaryFiniteField.frobenius_period_add_of_coprime",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryFiniteField.frobenius_period_add_of_coprime (x y : R) (a b n : ℕ) (hab : a.Coprime b)\n    (hx : iterateFrobenius R 2 a x = x) (hy : iterateFrobenius R 2 b y = y)\n    (hs : iterateFrobenius R 2 n (x + y) = x + y) :\n    iterateFrobenius R 2 n x = x ∧ iterateFrobenius R 2 n y = y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryFiniteField",
+   "open Polynomial",
+   "variable {R : Type*} [CommRing R] [CharP R 2]"
+  ],
+  "docstring": "A period of a sum is a period of both summands when their given periods are coprime.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryCoprimeDegree",
+  "module_doc": "/-! # Exact degrees of sums with coprime binary field degrees -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryCoprimeDegree.lean#L38-L92",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryCoprimeDegree.lean",
+  "lines": [
+   38,
+   92
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 50,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryFiniteField.minpoly_natDegree_add_of_coprime",
+  "source_name": "MIPRE.LowDegree.BinaryFiniteField.minpoly_natDegree_add_of_coprime",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryFiniteField.minpoly_natDegree_add_of_coprime (x y : L)\n    (hx : IsIntegral (ZMod 2) x) (hy : IsIntegral (ZMod 2) y)\n    (hab : (minpoly (ZMod 2) x).natDegree.Coprime (minpoly (ZMod 2) y).natDegree) :\n    (minpoly (ZMod 2) (x + y)).natDegree =\n      (minpoly (ZMod 2) x).natDegree * (minpoly (ZMod 2) y).natDegree := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryFiniteField",
+   "open Polynomial",
+   "variable {R : Type*} [CommRing R] [CharP R 2]",
+   "variable {L : Type*} [Field L] [Algebra (ZMod 2) L]"
+  ],
+  "docstring": "Summing algebraic binary elements of coprime degrees multiplies their exact degrees.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryCoprimeDegree",
+  "module_doc": "/-! # Exact degrees of sums with coprime binary field degrees -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryCoprimeDegree.lean#L102-L134",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryCoprimeDegree.lean",
+  "lines": [
+   102,
+   134
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryFiniteField.frobenius_period_add_of_coprime"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryPolynomial.cyclotomicSeedBits_correct",
+  "source_name": "MIPRE.LowDegree.BinaryPolynomial.cyclotomicSeedBits_correct",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryPolynomial.cyclotomicSeedBits_correct (q : ℕ) (hq : q.Prime) (hq2 : q ≠ 2) :\n    (polyOfBits (cyclotomicSeedBits (unary q))).Monic ∧\n    Irreducible (polyOfBits (cyclotomicSeedBits (unary q))) ∧\n    polyOfBits (cyclotomicSeedBits (unary q)) ∣ cyclotomic q (ZMod 2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryPolynomial",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial"
+  ],
+  "docstring": "The chosen seed is a specified monic irreducible divisor of the prime cyclotomic polynomial.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryCyclotomicSeed",
+  "module_doc": "/-!\n# The deterministic cyclotomic seed for odd prime-power construction\n\nFor an odd prime `q`, factor `1+X+...+X^(q-1)` and choose the first factor in the\nspecified factorization order. This gives a concrete irreducible polynomial of\ndegree equal to the order of two modulo `q`; it does not enumerate fields.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryCyclotomicSeed.lean#L69-L103",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryCyclotomicSeed.lean",
+  "lines": [
+   69,
+   103
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.typedBasis_span",
+   "MIPRE.LowDegree.BinaryPolynomial.natDegree_polyOfBits_append_true",
+   "MIPRE.LowDegree.BinaryPolynomial.monic_polyOfBits_append_true",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits",
+   "MIPRE.LowDegree.BinaryPolynomial.divModBits_width",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.append_reduced",
+   "MIPRE.LowDegree.BinaryLinear.binary_eq_zero_or_one",
+   "MIPRE.LowDegree.BinaryLinear.getD_vectorBits",
+   "MIPRE.LowDegree.BinaryQuotient.factorBitsProg_factors",
+   "MIPRE.LowDegree.BinaryPolynomial.gcdStep_correct",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_xor",
+   "MIPRE.LowDegree.BinaryQuotient.quotientComponentsProg_correct",
+   "MIPRE.LowDegree.BinaryQuotient.componentFactors_toBits_prod",
+   "MIPRE.LowDegree.BinaryQuotient.fixedMatrix_ker",
+   "MIPRE.LowDegree.BinaryQuotient.square_injective",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.eq_zero_of_pivots_zero",
+   "MIPRE.LowDegree.ComponentFamily.split",
+   "MIPRE.LowDegree.decidesComponent_of_mem_span"
+  ],
+  "pasted_helpers": 65,
+  "prooflines": 30,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.DegreeArithmetic.ascendingUnary_eq",
+  "source_name": "MIPRE.LowDegree.DegreeArithmetic.ascendingUnary_eq",
+  "formal_statement": "theorem MIPRE.LowDegree.DegreeArithmetic.ascendingUnary_eq (u : Unary) :\n    ascendingUnary u = List.ofFn (fun i : Fin (u.length + 1) => unary (i : ℕ)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.DegreeArithmetic",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun"
+  ],
+  "docstring": "The enumeration is the bounded canonical unary list from zero to the input.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryDegreeDecomposition",
+  "module_doc": "/-! # Executable prime-power decomposition of a unary requested degree -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryDegreeDecomposition.lean#L23-L39",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryDegreeDecomposition.lean",
+  "lines": [
+   23,
+   39
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryDegreeFactors.degreeFactors_prod",
+  "source_name": "MIPRE.LowDegree.BinaryDegreeFactors.degreeFactors_prod",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryDegreeFactors.degreeFactors_prod (n : ℕ) (hn : 0 < n) : (degreeFactors n).prod = n := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryDegreeFactors"
+  ],
+  "docstring": "The complete bounded list reconstructs every positive input degree.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryDegreeFactors",
+  "module_doc": "/-!\n# Prime-power degree decomposition\n\nThis list is used only in the proof of the all-degrees constructor. The\nexecutable constructor computes the same prime-power factors by bounded unary\narithmetic. Indices outside the prime support contribute the neutral factor one.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryDegreeFactors.lean#L23-L36",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryDegreeFactors.lean",
+  "lines": [
+   23,
+   36
+  ],
+  "blueprint": [
+   {
+    "label": "lem:binary-degree-decomposition",
+    "env": "lemma",
+    "title": "Effective unary prime-power decomposition",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryPolynomial.evalBits_shiftReduce_division",
+  "source_name": "MIPRE.LowDegree.BinaryPolynomial.evalBits_shiftReduce_division",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryPolynomial.evalBits_shiftReduce_division (z : R) (p a : BitStr)\n    (hlen : a.length = p.length) :\n    evalBits z (shiftReduce p a) +\n      (evalBits z p + z ^ p.length) * ofBool (a.getLastD false) = z * evalBits z a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryPolynomial",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial",
+   "variable {R : Type*} [CommRing R] [CharP R 2]"
+  ],
+  "docstring": "The discarded bit records exactly the multiple of the monic modulus\nremoved by one reduction step, without any assumption that the modulus vanishes.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryDivision",
+  "module_doc": "/-!\n# Division by binary monic polynomials\n\nThe divisor is represented by its lower coefficients `p`; the leading one is\nimplicit. Horner long division keeps a fixed-width remainder and records each\ndiscarded leading coefficient in the quotient. Division by the constant one\nhas a separate branch. No irreducibility or field structure is assumed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryDivision.lean#L23-L42",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryDivision.lean",
+  "lines": [
+   23,
+   42
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_xor"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryPolynomial.evalBits_divisionStep",
+  "source_name": "MIPRE.LowDegree.BinaryPolynomial.evalBits_divisionStep",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryPolynomial.evalBits_divisionStep (z : R) (p q r : BitStr) (b : Bool) (hp : p ≠ [])\n    (hr : r.length = p.length) :\n    (evalBits z p + z ^ p.length) * evalBits z (divisionStep (p, q, r) b).2.1 +\n      evalBits z (divisionStep (p, q, r) b).2.2 =\n    ofBool b + z * ((evalBits z p + z ^ p.length) * evalBits z q + evalBits z r) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryPolynomial",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial",
+   "variable {R : Type*} [CommRing R] [CharP R 2]"
+  ],
+  "docstring": "The division-step invariant is an identity in any characteristic-two ring.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryDivision",
+  "module_doc": "/-!\n# Division by binary monic polynomials\n\nThe divisor is represented by its lower coefficients `p`; the leading one is\nimplicit. Horner long division keeps a fixed-width remainder and records each\ndiscarded leading coefficient in the quotient. Division by the constant one\nhas a separate branch. No irreducibility or field structure is assumed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryDivision.lean#L104-L126",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryDivision.lean",
+  "lines": [
+   104,
+   126
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_shiftReduce_division",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_xor",
+   "MIPRE.LowDegree.BinaryPolynomial.length_shiftReduce"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryPolynomial.evalBits_divisionFold",
+  "source_name": "MIPRE.LowDegree.BinaryPolynomial.evalBits_divisionFold",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryPolynomial.evalBits_divisionFold (z : R) (p a : BitStr) (hp : p ≠ []) :\n    (evalBits z p + z ^ p.length) * evalBits z (divisionFold p a).2.1 +\n      evalBits z (divisionFold p a).2.2 = evalBits z a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryPolynomial",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial",
+   "variable {R : Type*} [CommRing R] [CharP R 2]"
+  ],
+  "docstring": "Horner long division reconstructs the dividend.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryDivision",
+  "module_doc": "/-!\n# Division by binary monic polynomials\n\nThe divisor is represented by its lower coefficients `p`; the leading one is\nimplicit. Horner long division keeps a fixed-width remainder and records each\ndiscarded leading coefficient in the quotient. Division by the constant one\nhas a separate branch. No irreducibility or field structure is assumed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryDivision.lean#L128-L146",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryDivision.lean",
+  "lines": [
+   128,
+   146
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_divisionStep",
+   "MIPRE.LowDegree.BinaryPolynomial.length_shiftReduce"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryPolynomial.divModBits_width",
+  "source_name": "MIPRE.LowDegree.BinaryPolynomial.divModBits_width",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryPolynomial.divModBits_width (p a : BitStr) :\n    (divModBits p a).1.length ≤ a.length ∧ (divModBits p a).2.length ≤ p.length := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryPolynomial",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial",
+   "variable {R : Type*} [CommRing R] [CharP R 2]"
+  ],
+  "docstring": "Output widths are bounded by the input and divisor widths.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryDivision",
+  "module_doc": "/-!\n# Division by binary monic polynomials\n\nThe divisor is represented by its lower coefficients `p`; the leading one is\nimplicit. Horner long division keeps a fixed-width remainder and records each\ndiscarded leading coefficient in the quotient. Division by the constant one\nhas a separate branch. No irreducibility or field structure is assumed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryDivision.lean#L154-L162",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryDivision.lean",
+  "lines": [
+   154,
+   162
+  ],
+  "blueprint": [
+   {
+    "label": "lem:binary-monic-division",
+    "env": "lemma",
+    "title": "Effective monic binary division",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.length_shiftReduce"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.binary_eq_zero_or_one",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.binary_eq_zero_or_one",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.binary_eq_zero_or_one (x : ZMod 2) : x = 0 ∨ x = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "variable {n t : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.LowDegree.BinaryEchelon",
+  "module_doc": "/-! # Triangular pivot bases and certified binary reduction -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryEchelon.lean#L24-L26",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryEchelon.lean",
+  "lines": [
+   24,
+   26
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.append_reduced",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.append_reduced",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.IsPivotBasis.append_reduced {b : List (Pivot n t)} (hb : IsPivotBasis b)\n    (r : Row n t) (j : Fin n) (hj : (typedReduce b r).1 j = 1) :\n    IsPivotBasis (b ++ [(j, typedReduce b r)]) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "open MIPRE.LowDegree.BinaryLinear.IsPivotBasis",
+   "variable {n t : ℕ}"
+  ],
+  "docstring": "A reduced nonzero row can be appended at any of its nonzero coordinates.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryEchelon",
+  "module_doc": "/-! # Triangular pivot bases and certified binary reduction -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryEchelon.lean#L61-L75",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryEchelon.lean",
+  "lines": [
+   61,
+   75
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.binary_eq_zero_or_one"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryLinear.getD_vectorBits",
+  "source_name": "MIPRE.LowDegree.BinaryLinear.getD_vectorBits",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryLinear.getD_vectorBits {n : ℕ} (v : Fin n → ZMod 2) (j : Fin n) :\n    (vectorBits v).getD j false = bit (v j) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryLinear",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.LowDegree.BinaryElimination",
+  "module_doc": "/-!\n# Binary elimination with coefficient certificates\n\nEach row carries both its vector and a coefficient vector describing that vector\nin the original generating family. Reduction XORs both components together.\nThe program is uniformly polynomial-time even for malformed pivots and rows.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryElimination.lean#L61-L63",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryElimination.lean",
+  "lines": [
+   61,
+   63
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.factorBitsProg_factors",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.factorBitsProg_factors",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.factorBitsProg_factors (p : BitStr) (hp : p.length = f.natDegree)\n    (hpoly : f = polyOfBits (p ++ [true])) (hp0 : p ≠ []) (hs : Squarefree f) :\n    ∀ a ∈ factorBitsProg p, (polyOfBits a).Monic ∧ Irreducible (polyOfBits a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun Polynomial MIPRE.LowDegree.BinaryPolynomial",
+   "variable (f : Polynomial (ZMod 2)) (hf : f.Monic)"
+  ],
+  "docstring": "Every output of squarefree binary factorization is monic and irreducible.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryFactorization",
+  "module_doc": "/-!\n# Deterministic squarefree factorization over the binary field\n\nFrobenius fixed-space separation computes primitive idempotents of the monic\nquotient. The factor supported by an idempotent represented by `E` is\n`gcd(f, E - 1)`. All executing operations are uniform ambient programs; the\nfinite-ring arguments justify correctness without enumerating the quotient.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryFactorization.lean#L65-L85",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryFactorization.lean",
+  "lines": [
+   65,
+   85
+  ],
+  "blueprint": [
+   {
+    "label": "lem:binary-squarefree-factorization",
+    "env": "lemma",
+    "title": "Deterministic squarefree binary factorization",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.typedBasis_span",
+   "MIPRE.LowDegree.BinaryPolynomial.monic_polyOfBits_append_true",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits",
+   "MIPRE.LowDegree.BinaryPolynomial.divModBits_width",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.append_reduced",
+   "MIPRE.LowDegree.BinaryLinear.binary_eq_zero_or_one",
+   "MIPRE.LowDegree.BinaryLinear.getD_vectorBits",
+   "MIPRE.LowDegree.BinaryPolynomial.gcdStep_correct",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_xor",
+   "MIPRE.LowDegree.BinaryQuotient.quotientComponentsProg_correct",
+   "MIPRE.LowDegree.BinaryQuotient.componentFactor_prime",
+   "MIPRE.LowDegree.BinaryQuotient.fixedMatrix_ker",
+   "MIPRE.LowDegree.BinaryQuotient.square_injective",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.eq_zero_of_pivots_zero",
+   "MIPRE.LowDegree.ComponentFamily.split",
+   "MIPRE.LowDegree.decidesComponent_of_mem_span"
+  ],
+  "pasted_helpers": 62,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.factor_dropLast_factors",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.factor_dropLast_factors",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.factor_dropLast_factors (a : BitStr) (ha : a.getLastD false = true)\n    (hp : 0 < (polyOfBits a).natDegree) (hs : Squarefree (polyOfBits a)) :\n    ∀ b ∈ factorBitsProg a.dropLast,\n      b.getLastD false = true ∧ (polyOfBits b).Monic ∧ Irreducible (polyOfBits b) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost Polynomial MIPRE.LowDegree.BinaryPolynomial"
+  ],
+  "docstring": "Every factor of a positive-degree squarefree canonical polynomial is irreducible.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryFactorizationCanonical",
+  "module_doc": "/-! # Canonical factor outputs and the executable irreducibility test -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryFactorizationCanonical.lean#L36-L53",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryFactorizationCanonical.lean",
+  "lines": [
+   36,
+   53
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.natDegree_polyOfBits_append_true",
+   "MIPRE.LowDegree.BinaryPolynomial.monic_polyOfBits_append_true",
+   "MIPRE.LowDegree.BinaryQuotient.factorBitsProg_factors",
+   "MIPRE.LowDegree.BinaryPolynomial.gcdStep_correct"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryQuotient.factor_dropLast_tail_isEmpty_iff",
+  "source_name": "MIPRE.LowDegree.BinaryQuotient.factor_dropLast_tail_isEmpty_iff",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryQuotient.factor_dropLast_tail_isEmpty_iff (a : BitStr) (ha : a.getLastD false = true)\n    (hp : 0 < (polyOfBits a).natDegree) (hs : Squarefree (polyOfBits a)) :\n    (factorBitsProg a.dropLast).tail.isEmpty = true ↔ Irreducible (polyOfBits a) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryQuotient",
+   "open MIPRE.Cost Polynomial MIPRE.LowDegree.BinaryPolynomial"
+  ],
+  "docstring": "The list stopping test is exactly irreducibility on valid factorization inputs.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryFactorizationCanonical",
+  "module_doc": "/-! # Canonical factor outputs and the executable irreducibility test -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryFactorizationCanonical.lean#L65-L89",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryFactorizationCanonical.lean",
+  "lines": [
+   65,
+   89
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryLinear.typedBasis_span",
+   "MIPRE.LowDegree.BinaryPolynomial.natDegree_polyOfBits_append_true",
+   "MIPRE.LowDegree.BinaryPolynomial.monic_polyOfBits_append_true",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits",
+   "MIPRE.LowDegree.BinaryPolynomial.divModBits_width",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.append_reduced",
+   "MIPRE.LowDegree.BinaryLinear.binary_eq_zero_or_one",
+   "MIPRE.LowDegree.BinaryLinear.getD_vectorBits",
+   "MIPRE.LowDegree.BinaryQuotient.factor_dropLast_factors",
+   "MIPRE.LowDegree.BinaryPolynomial.gcdStep_correct",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_xor",
+   "MIPRE.LowDegree.BinaryQuotient.quotientComponentsProg_correct",
+   "MIPRE.LowDegree.BinaryQuotient.componentFactors_toBits_prod",
+   "MIPRE.LowDegree.BinaryQuotient.fixedMatrix_ker",
+   "MIPRE.LowDegree.BinaryQuotient.square_injective",
+   "MIPRE.LowDegree.BinaryLinear.IsPivotBasis.eq_zero_of_pivots_zero",
+   "MIPRE.LowDegree.ComponentFamily.split",
+   "MIPRE.LowDegree.decidesComponent_of_mem_span"
+  ],
+  "pasted_helpers": 65,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryFiniteField.mem_range_iff_pow_card",
+  "source_name": "MIPRE.LowDegree.BinaryFiniteField.mem_range_iff_pow_card",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryFiniteField.mem_range_iff_pow_card {K L : Type*} [Field K] [Field L] [Finite K]\n    [Algebra K L] (x : L) :\n    x ∈ (algebraMap K L).range ↔ x ^ Nat.card K = x := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryFiniteField",
+   "open Polynomial"
+  ],
+  "docstring": "The fixed points of the base field's cardinality power are exactly that field.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryFiniteFieldDegree",
+  "module_doc": "/-! # Finite-field membership and exact degree in power-of-two extensions -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryFiniteFieldDegree.lean#L15-L29",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryFiniteFieldDegree.lean",
+  "lines": [
+   15,
+   29
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LowDegree.BinaryFiniteField.minpoly_natDegree_of_not_mem_range",
+  "source_name": "MIPRE.LowDegree.BinaryFiniteField.minpoly_natDegree_of_not_mem_range",
+  "formal_statement": "theorem MIPRE.LowDegree.BinaryFiniteField.minpoly_natDegree_of_not_mem_range {K L : Type*} [Field K] [Field L]\n    [Finite K] [Algebra K L] [Algebra (ZMod 2) L] [FiniteDimensional (ZMod 2) L]\n    (t : ℕ) (hK : Nat.card K = 2 ^ (2 ^ t))\n    (hL : Module.finrank (ZMod 2) L = 2 ^ (t + 1)) (x : L)\n    (hx : x ∉ (algebraMap K L).range) :\n    (minpoly (ZMod 2) x).natDegree = 2 ^ (t + 1) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LowDegree",
+   "open MIPRE.LowDegree.BinaryFiniteField",
+   "open Polynomial"
+  ],
+  "docstring": "In a binary extension of degree `2^(t+1)`, every element outside the\nindex-two subfield has the full extension degree.",
+  "module": "MIPRE.Foundations.LowDegree.BinaryFiniteFieldDegree",
+  "module_doc": "/-! # Finite-field membership and exact degree in power-of-two extensions -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/LowDegree/BinaryFiniteFieldDegree.lean#L31-L54",
+  "source_path": "MIPRE/Foundations/LowDegree/BinaryFiniteFieldDegree.lean",
+  "lines": [
+   31,
+   54
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryFiniteField.mem_range_iff_pow_card"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ }
+]

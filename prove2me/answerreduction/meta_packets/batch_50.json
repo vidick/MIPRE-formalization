@@ -1,0 +1,570 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.final_fields_self_closeness_of_small_errors",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.final_fields_self_closeness_of_small_errors",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.final_fields_self_closeness_of_small_errors\n    (params : Parameters) [FieldModel params.q]\n    (strategy : SymStrat params ι)\n    (eps delta : Error)\n    (heps : 0 ≤ eps) (heps_le_one : eps ≤ 1)\n    (hdelta : 0 ≤ delta) (hdelta_le_one : delta ≤ 1)\n    (hd_le_q : (params.d : Error) ≤ (params.q : Error))\n    (Hhat : SubMeas (Polynomial params) ι)\n    (H : ProjSubMeas (Polynomial params) ι)\n    (hssc :\n      BipartiteSSCRel strategy.state (uniformDistribution Unit)\n        (constSubMeasFamily Hhat)\n        (selfImprovementHelperError params eps delta))\n    (horth :\n      SDDRel strategy.state (uniformDistribution Unit)\n        (constSubMeasFamily Hhat.liftLeft)\n        (constSubMeasFamily H.toSubMeas.liftLeft)\n        (selfImprovementOrthogonalizationError params eps delta)) :\n    SDDRel strategy.state (uniformDistribution Unit)\n      (constSubMeasFamily\n        (leftPlacedSubMeas (ιB := ι) H.toSubMeas))\n      (constSubMeasFamily\n        (rightPlacedSubMeas (ιA := ι) H.toSubMeas))\n      (selfImprovementError params eps delta) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Literal-threshold self-closeness construction under the standard\nunit-interval hypotheses.\n\nThis wraps `final_fields_self_closeness` with the numerical absorption\n`final_fields_self_closeness_error_le_selfImprovementError`, giving exactly\nthe `selfCloseness` threshold used in `SelfImprovementFinalFields`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Results.SelfImprovementTop.SelfCloseness",
+  "module_doc": "/-!\n# Final-fields self-closeness construction\n\nThis module contains the self-closeness transport used to fill the `selfCloseness`\nfield of `SelfImprovementFinalFields`.  The statements formalize the triangle\ntransport through helper self-consistency and the orthonormalization SDD step in\n`references/ldt-paper/self_improvement.tex`, lines 727--741.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/SelfImprovementTop/SelfCloseness.lean#L216-L256",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Results/SelfImprovementTop/SelfCloseness.lean",
+  "lines": [
+   216,
+   256
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SelfImprovement.final_fields_self_closeness",
+   "MIPStarRE.LDT.SelfImprovement.final_fields_self_closeness_error_le_selfImprovementError"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.final_fields_projective_residual_error_le_selfImprovementError",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.final_fields_projective_residual_error_le_selfImprovementError",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.final_fields_projective_residual_error_le_selfImprovementError\n    (params : Parameters) [FieldModel params.q]\n    (eps delta : Error)\n    (heps : 0 ≤ eps) (heps_le_one : eps ≤ 1)\n    (hdelta : 0 ≤ delta) (hdelta_le_one : delta ≤ 1)\n    (hd_le_q : (params.d : Error) ≤ (params.q : Error)) :\n    selfImprovementHelperError params eps delta +\n        Real.sqrt (selfImprovementDataProcessingError params eps delta) ≤\n      selfImprovementError params eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "Final projective-residual threshold absorption (`self_improvement.tex`,\nlines 803--810).\n\nThe natural error emitted by the projective residual construction is\n`ζ̂ + √ζ̂_dataprocess`. Under the standard unit-interval hypotheses for\n`ε`, `δ`, and `d/q`, this theorem absorbs that natural error into the literal\n`selfImprovementError` threshold used by `SelfImprovementConclusion`.  Lean\nrecords the third unit-interval hypothesis as `d ≤ q`, equivalently `d/q ≤ 1`\nbecause `q` is positive.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final",
+  "module_doc": "/-!\n# Section 9 — final-stage numerical threshold absorptions\n\nThis module contains the final-stage arithmetic comparisons which absorb the natural\nprojective-output error terms into the literal `selfImprovementError` threshold.\nThe estimates formalize the exponent-monotonicity bookkeeping in\n`references/ldt-paper/self_improvement.tex`, lines 803--810, and are used by the\nfinal-field construction theorems in the self-improvement theorem.\n\nThe helper-stage estimates, including the square-root bound on the global-variance\nerror, are in `Thresholds.Helper`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Final.lean#L482-L517",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Final.lean",
+  "lines": [
+   482,
+   517
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SelfImprovement.d_q_ratio_nonneg"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.final_fields_point_consistency_total_difference_error_le_selfImprovementError",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.final_fields_point_consistency_total_difference_error_le_selfImprovementError",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.final_fields_point_consistency_total_difference_error_le_selfImprovementError\n    (params : Parameters) [FieldModel params.q]\n    (eps delta : Error)\n    (heps : 0 ≤ eps) (heps_le_one : eps ≤ 1)\n    (hdelta : 0 ≤ delta) (hdelta_le_one : delta ≤ 1)\n    (hd_le_q : (params.d : Error) ≤ (params.q : Error)) :\n    2 * selfImprovementHelperError params eps delta +\n        Real.sqrt (selfImprovementDataProcessingError params eps delta) +\n        2 * Real.sqrt (selfImprovementOrthogonalizationError params eps delta) ≤\n      selfImprovementError params eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "Final point-consistency threshold absorption from a total-difference bound.\n\nThe fallback submeasurement-total route contributes the natural error\n\n`2 * ζ̂ + √ζ̂_dataprocess + 2 * √ζ̂_ortho`.\n\nUnder the standard unit-interval hypotheses for `ε`, `δ`, and `d/q`, this is\nstill absorbed by the literal `selfImprovementError` threshold.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final",
+  "module_doc": "/-!\n# Section 9 — final-stage numerical threshold absorptions\n\nThis module contains the final-stage arithmetic comparisons which absorb the natural\nprojective-output error terms into the literal `selfImprovementError` threshold.\nThe estimates formalize the exponent-monotonicity bookkeeping in\n`references/ldt-paper/self_improvement.tex`, lines 803--810, and are used by the\nfinal-field construction theorems in the self-improvement theorem.\n\nThe helper-stage estimates, including the square-root bound on the global-variance\nerror, are in `Thresholds.Helper`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Final.lean#L519-L588",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Final.lean",
+  "lines": [
+   519,
+   588
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SelfImprovement.d_q_ratio_nonneg",
+   "MIPStarRE.LDT.SelfImprovement.d_q_ratio_le_one_of_d_le_q"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 52,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.final_fields_completeness_error_le_selfImprovementError",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.final_fields_completeness_error_le_selfImprovementError",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.final_fields_completeness_error_le_selfImprovementError\n    (params : Parameters) [FieldModel params.q]\n    (eps delta : Error)\n    (heps : 0 ≤ eps) (heps_le_one : eps ≤ 1)\n    (hdelta : 0 ≤ delta) (hdelta_le_one : delta ≤ 1)\n    (hd_le_q : (params.d : Error) ≤ (params.q : Error)) :\n    2 * selfImprovementHelperError params eps delta +\n        2 * Real.sqrt (selfImprovementOrthogonalizationError params eps delta) ≤\n      selfImprovementError params eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "Final completeness threshold absorption (`self_improvement.tex`,\nlines 803--810).\n\nThe natural error emitted by the projective completeness transport is\n`2ζ̂ + 2 sqrt ζ̂_ortho`. Under the standard unit-interval hypotheses for\n`ε`, `δ`, and `d/q`, this theorem absorbs that natural error into the literal\n`selfImprovementError` threshold used by `SelfImprovementFinalFields`.  Lean\nrecords the third unit-interval hypothesis as `d ≤ q`, equivalently `d/q ≤ 1`\nbecause `q` is positive.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final",
+  "module_doc": "/-!\n# Section 9 — final-stage numerical threshold absorptions\n\nThis module contains the final-stage arithmetic comparisons which absorb the natural\nprojective-output error terms into the literal `selfImprovementError` threshold.\nThe estimates formalize the exponent-monotonicity bookkeeping in\n`references/ldt-paper/self_improvement.tex`, lines 803--810, and are used by the\nfinal-field construction theorems in the self-improvement theorem.\n\nThe helper-stage estimates, including the square-root bound on the global-variance\nerror, are in `Thresholds.Helper`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Final.lean#L591-L652",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Final.lean",
+  "lines": [
+   591,
+   652
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SelfImprovement.d_q_ratio_nonneg",
+   "MIPStarRE.LDT.SelfImprovement.d_q_ratio_le_one_of_d_le_q"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 44,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.final_fields_self_closeness_error_le_selfImprovementError",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.final_fields_self_closeness_error_le_selfImprovementError",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.final_fields_self_closeness_error_le_selfImprovementError\n    (params : Parameters) [FieldModel params.q]\n    (eps delta : Error)\n    (heps : 0 ≤ eps) (heps_le_one : eps ≤ 1)\n    (hdelta : 0 ≤ delta) (hdelta_le_one : delta ≤ 1)\n    (hd_le_q : (params.d : Error) ≤ (params.q : Error)) :\n    3 * (selfImprovementOrthogonalizationError params eps delta +\n        2 * selfImprovementHelperError params eps delta +\n        selfImprovementOrthogonalizationError params eps delta) ≤\n      selfImprovementError params eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "Final self-closeness threshold absorption (`self_improvement.tex`,\nlines 803--810).\n\nThe natural error emitted by the projective self-closeness transport is\n`3 * (ζ̂_ortho + 2ζ̂ + ζ̂_ortho)`. Under the standard unit-interval hypotheses\nfor `ε`, `δ`, and `d/q`, this theorem absorbs that natural error into the\nliteral `selfImprovementError` threshold used by `SelfImprovementFinalFields`.\nLean records the third unit-interval hypothesis as `d ≤ q`, equivalently\n`d/q ≤ 1` because `q` is positive.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Final",
+  "module_doc": "/-!\n# Section 9 — final-stage numerical threshold absorptions\n\nThis module contains the final-stage arithmetic comparisons which absorb the natural\nprojective-output error terms into the literal `selfImprovementError` threshold.\nThe estimates formalize the exponent-monotonicity bookkeeping in\n`references/ldt-paper/self_improvement.tex`, lines 803--810, and are used by the\nfinal-field construction theorems in the self-improvement theorem.\n\nThe helper-stage estimates, including the square-root bound on the global-variance\nerror, are in `Thresholds.Helper`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Final.lean#L654-L715",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Final.lean",
+  "lines": [
+   654,
+   715
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SelfImprovement.d_q_ratio_le_one_of_d_le_q"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 42,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.d_q_ratio_nonneg",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.d_q_ratio_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.d_q_ratio_nonneg (params : Parameters) :\n    (0 : Error) ≤ ((params.d : Error) / (params.q : Error)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "The ratio `d/q`, viewed in the error scalar field, is nonnegative.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Helper",
+  "module_doc": "/-!\n# Section 9 — helper-stage numerical threshold absorptions\n\nReusable arithmetic threshold lemmas that compare the *natural* paper sums of\nerrors emitted by the helper-stage self-improvement constructions against the\nliteral `selfImprovementHelperError` threshold used by the final-field\nstatements (`SelfImprovementFinalFields` in `Statements.lean`).\n\nThe helper-stage absorptions formalize the displayed paper inequalities:\n\n* `references/ldt-paper/self_improvement.tex`, lines 438--443 — point\n  consistency: `4 √ζ_var ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 595--603 — strong\n  self-consistency: `11 √ζ_var + √(2δ) + md/q ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 403--414 — completeness:\n  `3 √δ ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 614--624 — boundedness:\n  `3 √δ + 4 √ζ_var ≤ ζ̂`.\n\nThe final-stage comparisons with `selfImprovementError` are collected in\n`Thresholds.Final`.\n\nBlueprint mirrors:\n\n* `blueprint/src/chapter/ch07_self_improvement.tex`, lines 161--168 (point\n  consistency) and 256--279 (strong self-consistency / boundedness).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean#L103-L106",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean",
+  "lines": [
+   103,
+   106
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.d_q_ratio_le_one_of_d_le_q",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.d_q_ratio_le_one_of_d_le_q",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.d_q_ratio_le_one_of_d_le_q\n    (params : Parameters)\n    (hd_le_q : (params.d : Error) ≤ (params.q : Error)) :\n    ((params.d : Error) / (params.q : Error)) ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "If `d ≤ q`, then the ratio `d/q` is at most one.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Helper",
+  "module_doc": "/-!\n# Section 9 — helper-stage numerical threshold absorptions\n\nReusable arithmetic threshold lemmas that compare the *natural* paper sums of\nerrors emitted by the helper-stage self-improvement constructions against the\nliteral `selfImprovementHelperError` threshold used by the final-field\nstatements (`SelfImprovementFinalFields` in `Statements.lean`).\n\nThe helper-stage absorptions formalize the displayed paper inequalities:\n\n* `references/ldt-paper/self_improvement.tex`, lines 438--443 — point\n  consistency: `4 √ζ_var ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 595--603 — strong\n  self-consistency: `11 √ζ_var + √(2δ) + md/q ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 403--414 — completeness:\n  `3 √δ ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 614--624 — boundedness:\n  `3 √δ + 4 √ζ_var ≤ ζ̂`.\n\nThe final-stage comparisons with `selfImprovementError` are collected in\n`Thresholds.Final`.\n\nBlueprint mirrors:\n\n* `blueprint/src/chapter/ch07_self_improvement.tex`, lines 161--168 (point\n  consistency) and 256--279 (strong self-consistency / boundedness).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean#L108-L113",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean",
+  "lines": [
+   108,
+   113
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.sqrt_100m_le_10m",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.sqrt_100m_le_10m",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.sqrt_100m_le_10m (params : Parameters) :\n    Real.sqrt (100 * (params.m : Error)) ≤ 10 * (params.m : Error) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "For `m ≥ 1`, `√(100m) ≤ 10m`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Helper",
+  "module_doc": "/-!\n# Section 9 — helper-stage numerical threshold absorptions\n\nReusable arithmetic threshold lemmas that compare the *natural* paper sums of\nerrors emitted by the helper-stage self-improvement constructions against the\nliteral `selfImprovementHelperError` threshold used by the final-field\nstatements (`SelfImprovementFinalFields` in `Statements.lean`).\n\nThe helper-stage absorptions formalize the displayed paper inequalities:\n\n* `references/ldt-paper/self_improvement.tex`, lines 438--443 — point\n  consistency: `4 √ζ_var ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 595--603 — strong\n  self-consistency: `11 √ζ_var + √(2δ) + md/q ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 403--414 — completeness:\n  `3 √δ ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 614--624 — boundedness:\n  `3 √δ + 4 √ζ_var ≤ ζ̂`.\n\nThe final-stage comparisons with `selfImprovementError` are collected in\n`Thresholds.Final`.\n\nBlueprint mirrors:\n\n* `blueprint/src/chapter/ch07_self_improvement.tex`, lines 161--168 (point\n  consistency) and 256--279 (strong self-consistency / boundedness).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean#L115-L122",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean",
+  "lines": [
+   115,
+   122
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.sqrt_10m_le_4m",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.sqrt_10m_le_4m",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.sqrt_10m_le_4m (params : Parameters) :\n    Real.sqrt (10 * (params.m : Error)) ≤ 4 * (params.m : Error) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "For `m ≥ 1`, `√(10m) ≤ 4m`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Helper",
+  "module_doc": "/-!\n# Section 9 — helper-stage numerical threshold absorptions\n\nReusable arithmetic threshold lemmas that compare the *natural* paper sums of\nerrors emitted by the helper-stage self-improvement constructions against the\nliteral `selfImprovementHelperError` threshold used by the final-field\nstatements (`SelfImprovementFinalFields` in `Statements.lean`).\n\nThe helper-stage absorptions formalize the displayed paper inequalities:\n\n* `references/ldt-paper/self_improvement.tex`, lines 438--443 — point\n  consistency: `4 √ζ_var ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 595--603 — strong\n  self-consistency: `11 √ζ_var + √(2δ) + md/q ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 403--414 — completeness:\n  `3 √δ ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 614--624 — boundedness:\n  `3 √δ + 4 √ζ_var ≤ ζ̂`.\n\nThe final-stage comparisons with `selfImprovementError` are collected in\n`Thresholds.Final`.\n\nBlueprint mirrors:\n\n* `blueprint/src/chapter/ch07_self_improvement.tex`, lines 161--168 (point\n  consistency) and 256--279 (strong self-consistency / boundedness).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean#L124-L131",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean",
+  "lines": [
+   124,
+   131
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.sqrt_400m_le_20m",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.sqrt_400m_le_20m",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.sqrt_400m_le_20m (params : Parameters) :\n    Real.sqrt (400 * (params.m : Error)) ≤ 20 * (params.m : Error) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "For `m ≥ 1`, `√(400m) ≤ 20m`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Helper",
+  "module_doc": "/-!\n# Section 9 — helper-stage numerical threshold absorptions\n\nReusable arithmetic threshold lemmas that compare the *natural* paper sums of\nerrors emitted by the helper-stage self-improvement constructions against the\nliteral `selfImprovementHelperError` threshold used by the final-field\nstatements (`SelfImprovementFinalFields` in `Statements.lean`).\n\nThe helper-stage absorptions formalize the displayed paper inequalities:\n\n* `references/ldt-paper/self_improvement.tex`, lines 438--443 — point\n  consistency: `4 √ζ_var ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 595--603 — strong\n  self-consistency: `11 √ζ_var + √(2δ) + md/q ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 403--414 — completeness:\n  `3 √δ ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 614--624 — boundedness:\n  `3 √δ + 4 √ζ_var ≤ ζ̂`.\n\nThe final-stage comparisons with `selfImprovementError` are collected in\n`Thresholds.Final`.\n\nBlueprint mirrors:\n\n* `blueprint/src/chapter/ch07_self_improvement.tex`, lines 161--168 (point\n  consistency) and 256--279 (strong self-consistency / boundedness).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean#L133-L140",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean",
+  "lines": [
+   133,
+   140
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.sqrt_960m_le_31m",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.sqrt_960m_le_31m",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.sqrt_960m_le_31m (params : Parameters) :\n    Real.sqrt (960 * (params.m : Error)) ≤ 31 * (params.m : Error) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "For `m ≥ 1`, `√(960m) ≤ 31m`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Helper",
+  "module_doc": "/-!\n# Section 9 — helper-stage numerical threshold absorptions\n\nReusable arithmetic threshold lemmas that compare the *natural* paper sums of\nerrors emitted by the helper-stage self-improvement constructions against the\nliteral `selfImprovementHelperError` threshold used by the final-field\nstatements (`SelfImprovementFinalFields` in `Statements.lean`).\n\nThe helper-stage absorptions formalize the displayed paper inequalities:\n\n* `references/ldt-paper/self_improvement.tex`, lines 438--443 — point\n  consistency: `4 √ζ_var ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 595--603 — strong\n  self-consistency: `11 √ζ_var + √(2δ) + md/q ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 403--414 — completeness:\n  `3 √δ ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 614--624 — boundedness:\n  `3 √δ + 4 √ζ_var ≤ ζ̂`.\n\nThe final-stage comparisons with `selfImprovementError` are collected in\n`Thresholds.Final`.\n\nBlueprint mirrors:\n\n* `blueprint/src/chapter/ch07_self_improvement.tex`, lines 161--168 (point\n  consistency) and 256--279 (strong self-consistency / boundedness).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean#L142-L149",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean",
+  "lines": [
+   142,
+   149
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 5,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.sqrt_selfImprovementVarianceError_le",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.sqrt_selfImprovementVarianceError_le",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.sqrt_selfImprovementVarianceError_le\n    (params : Parameters) [FieldModel params.q]\n    (eps delta : Error)\n    (heps : 0 ≤ eps) (hdelta : 0 ≤ delta) :\n    Real.sqrt (selfImprovementVarianceError params eps delta) ≤\n      5 * (params.m : Error) *\n        (Real.sqrt eps + Real.sqrt delta +\n          Real.sqrt ((params.d : Error) / (params.q : Error))) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "Paper-faithful square-root bound on the variance error\n(`self_improvement.tex`, lines 440--442).",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Helper",
+  "module_doc": "/-!\n# Section 9 — helper-stage numerical threshold absorptions\n\nReusable arithmetic threshold lemmas that compare the *natural* paper sums of\nerrors emitted by the helper-stage self-improvement constructions against the\nliteral `selfImprovementHelperError` threshold used by the final-field\nstatements (`SelfImprovementFinalFields` in `Statements.lean`).\n\nThe helper-stage absorptions formalize the displayed paper inequalities:\n\n* `references/ldt-paper/self_improvement.tex`, lines 438--443 — point\n  consistency: `4 √ζ_var ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 595--603 — strong\n  self-consistency: `11 √ζ_var + √(2δ) + md/q ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 403--414 — completeness:\n  `3 √δ ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 614--624 — boundedness:\n  `3 √δ + 4 √ζ_var ≤ ζ̂`.\n\nThe final-stage comparisons with `selfImprovementError` are collected in\n`Thresholds.Final`.\n\nBlueprint mirrors:\n\n* `blueprint/src/chapter/ch07_self_improvement.tex`, lines 161--168 (point\n  consistency) and 256--279 (strong self-consistency / boundedness).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean#L174-L269",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean",
+  "lines": [
+   174,
+   269
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.sqrt_add3_le_add3_sqrt",
+   "MIPStarRE.LDT.SelfImprovement.d_q_ratio_nonneg"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 86,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.selfImprovementHelperError_nonneg",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.selfImprovementHelperError_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.selfImprovementHelperError_nonneg\n    (params : Parameters) [FieldModel params.q]\n    (eps delta : Error) :\n    0 ≤ selfImprovementHelperError params eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "The helper-stage threshold is nonnegative.\n\nThis is the basic positivity fact reused by the helper-stage absorption wrappers\nand by the final-stage comparison with `selfImprovementError`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Helper",
+  "module_doc": "/-!\n# Section 9 — helper-stage numerical threshold absorptions\n\nReusable arithmetic threshold lemmas that compare the *natural* paper sums of\nerrors emitted by the helper-stage self-improvement constructions against the\nliteral `selfImprovementHelperError` threshold used by the final-field\nstatements (`SelfImprovementFinalFields` in `Statements.lean`).\n\nThe helper-stage absorptions formalize the displayed paper inequalities:\n\n* `references/ldt-paper/self_improvement.tex`, lines 438--443 — point\n  consistency: `4 √ζ_var ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 595--603 — strong\n  self-consistency: `11 √ζ_var + √(2δ) + md/q ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 403--414 — completeness:\n  `3 √δ ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 614--624 — boundedness:\n  `3 √δ + 4 √ζ_var ≤ ζ̂`.\n\nThe final-stage comparisons with `selfImprovementError` are collected in\n`Thresholds.Final`.\n\nBlueprint mirrors:\n\n* `blueprint/src/chapter/ch07_self_improvement.tex`, lines 161--168 (point\n  consistency) and 256--279 (strong self-consistency / boundedness).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean#L286-L295",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean",
+  "lines": [
+   286,
+   295
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.helper_point_consistency_error_le_selfImprovementHelperError",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.helper_point_consistency_error_le_selfImprovementHelperError",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.helper_point_consistency_error_le_selfImprovementHelperError\n    (params : Parameters) [FieldModel params.q]\n    (eps delta : Error)\n    (heps : 0 ≤ eps) (hdelta : 0 ≤ delta) :\n    4 * Real.sqrt (selfImprovementVarianceError params eps delta) ≤\n      selfImprovementHelperError params eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "Helper-stage point-consistency absorption (`self_improvement.tex`,\nlines 438--443).\n\n`4 √ζ_variance ≤ ζ̂`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Helper",
+  "module_doc": "/-!\n# Section 9 — helper-stage numerical threshold absorptions\n\nReusable arithmetic threshold lemmas that compare the *natural* paper sums of\nerrors emitted by the helper-stage self-improvement constructions against the\nliteral `selfImprovementHelperError` threshold used by the final-field\nstatements (`SelfImprovementFinalFields` in `Statements.lean`).\n\nThe helper-stage absorptions formalize the displayed paper inequalities:\n\n* `references/ldt-paper/self_improvement.tex`, lines 438--443 — point\n  consistency: `4 √ζ_var ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 595--603 — strong\n  self-consistency: `11 √ζ_var + √(2δ) + md/q ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 403--414 — completeness:\n  `3 √δ ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 614--624 — boundedness:\n  `3 √δ + 4 √ζ_var ≤ ζ̂`.\n\nThe final-stage comparisons with `selfImprovementError` are collected in\n`Thresholds.Final`.\n\nBlueprint mirrors:\n\n* `blueprint/src/chapter/ch07_self_improvement.tex`, lines 161--168 (point\n  consistency) and 256--279 (strong self-consistency / boundedness).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean#L297-L328",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean",
+  "lines": [
+   297,
+   328
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SelfImprovement.sqrt_selfImprovementVarianceError_le"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.helper_strong_self_consistency_error_le_selfImprovementHelperError",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.helper_strong_self_consistency_error_le_selfImprovementHelperError",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.helper_strong_self_consistency_error_le_selfImprovementHelperError\n    (params : Parameters) [FieldModel params.q]\n    (eps delta : Error)\n    (heps : 0 ≤ eps) (hdelta : 0 ≤ delta)\n    (hd_le_q : (params.d : Error) ≤ (params.q : Error)) :\n    11 * Real.sqrt (selfImprovementVarianceError params eps delta) +\n        Real.sqrt (2 * delta) +\n        ((params.m : Error) * (params.d : Error) / (params.q : Error)) ≤\n      selfImprovementHelperError params eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "Helper-stage strong-self-consistency absorption (`self_improvement.tex`,\nlines 595--603).\n\n`11 √ζ_variance + √(2δ) + md/q ≤ ζ̂`.  The hypothesis `hd_le_q`\nrecords the small-error branch `d/q ≤ 1` used in the paper, since `q > 0`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Helper",
+  "module_doc": "/-!\n# Section 9 — helper-stage numerical threshold absorptions\n\nReusable arithmetic threshold lemmas that compare the *natural* paper sums of\nerrors emitted by the helper-stage self-improvement constructions against the\nliteral `selfImprovementHelperError` threshold used by the final-field\nstatements (`SelfImprovementFinalFields` in `Statements.lean`).\n\nThe helper-stage absorptions formalize the displayed paper inequalities:\n\n* `references/ldt-paper/self_improvement.tex`, lines 438--443 — point\n  consistency: `4 √ζ_var ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 595--603 — strong\n  self-consistency: `11 √ζ_var + √(2δ) + md/q ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 403--414 — completeness:\n  `3 √δ ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 614--624 — boundedness:\n  `3 √δ + 4 √ζ_var ≤ ζ̂`.\n\nThe final-stage comparisons with `selfImprovementError` are collected in\n`Thresholds.Final`.\n\nBlueprint mirrors:\n\n* `blueprint/src/chapter/ch07_self_improvement.tex`, lines 161--168 (point\n  consistency) and 256--279 (strong self-consistency / boundedness).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean#L330-L469",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean",
+  "lines": [
+   330,
+   469
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SelfImprovement.d_q_ratio_nonneg",
+   "MIPStarRE.LDT.SelfImprovement.d_q_ratio_le_one_of_d_le_q",
+   "MIPStarRE.LDT.SelfImprovement.sqrt_selfImprovementVarianceError_le"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 126,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.helper_boundedness_error_le_selfImprovementHelperError",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.helper_boundedness_error_le_selfImprovementHelperError",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.helper_boundedness_error_le_selfImprovementHelperError\n    (params : Parameters) [FieldModel params.q]\n    (eps delta : Error)\n    (heps : 0 ≤ eps) (hdelta : 0 ≤ delta) :\n    3 * Real.sqrt delta + 4 * Real.sqrt (selfImprovementVarianceError params eps delta) ≤\n      selfImprovementHelperError params eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "Helper-stage boundedness absorption (`self_improvement.tex`, lines\n614--624).\n\n`3 √δ + 4 √ζ_variance ≤ ζ̂`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Helper",
+  "module_doc": "/-!\n# Section 9 — helper-stage numerical threshold absorptions\n\nReusable arithmetic threshold lemmas that compare the *natural* paper sums of\nerrors emitted by the helper-stage self-improvement constructions against the\nliteral `selfImprovementHelperError` threshold used by the final-field\nstatements (`SelfImprovementFinalFields` in `Statements.lean`).\n\nThe helper-stage absorptions formalize the displayed paper inequalities:\n\n* `references/ldt-paper/self_improvement.tex`, lines 438--443 — point\n  consistency: `4 √ζ_var ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 595--603 — strong\n  self-consistency: `11 √ζ_var + √(2δ) + md/q ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 403--414 — completeness:\n  `3 √δ ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 614--624 — boundedness:\n  `3 √δ + 4 √ζ_var ≤ ζ̂`.\n\nThe final-stage comparisons with `selfImprovementError` are collected in\n`Thresholds.Final`.\n\nBlueprint mirrors:\n\n* `blueprint/src/chapter/ch07_self_improvement.tex`, lines 161--168 (point\n  consistency) and 256--279 (strong self-consistency / boundedness).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean#L471-L543",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean",
+  "lines": [
+   471,
+   543
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SelfImprovement.sqrt_selfImprovementVarianceError_le"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 63,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.helper_completeness_error_le_selfImprovementHelperError",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.helper_completeness_error_le_selfImprovementHelperError",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.helper_completeness_error_le_selfImprovementHelperError\n    (params : Parameters) [FieldModel params.q]\n    (eps delta : Error)\n    (heps : 0 ≤ eps) (hdelta : 0 ≤ delta) :\n    3 * Real.sqrt delta ≤ selfImprovementHelperError params eps delta := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective"
+  ],
+  "docstring": "Helper-stage completeness absorption (`self_improvement.tex`, lines\n403--414).\n\nThe loss `3 √δ` from the Cauchy--Schwarz comparison is bounded by the helper\nthreshold `ζ̂`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.Theorems.Thresholds.Helper",
+  "module_doc": "/-!\n# Section 9 — helper-stage numerical threshold absorptions\n\nReusable arithmetic threshold lemmas that compare the *natural* paper sums of\nerrors emitted by the helper-stage self-improvement constructions against the\nliteral `selfImprovementHelperError` threshold used by the final-field\nstatements (`SelfImprovementFinalFields` in `Statements.lean`).\n\nThe helper-stage absorptions formalize the displayed paper inequalities:\n\n* `references/ldt-paper/self_improvement.tex`, lines 438--443 — point\n  consistency: `4 √ζ_var ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 595--603 — strong\n  self-consistency: `11 √ζ_var + √(2δ) + md/q ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 403--414 — completeness:\n  `3 √δ ≤ ζ̂`.\n* `references/ldt-paper/self_improvement.tex`, lines 614--624 — boundedness:\n  `3 √δ + 4 √ζ_var ≤ ζ̂`.\n\nThe final-stage comparisons with `selfImprovementError` are collected in\n`Thresholds.Final`.\n\nBlueprint mirrors:\n\n* `blueprint/src/chapter/ch07_self_improvement.tex`, lines 161--168 (point\n  consistency) and 256--279 (strong self-consistency / boundedness).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean#L545-L565",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/Theorems/Thresholds/Helper.lean",
+  "lines": [
+   545,
+   565
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SelfImprovement.helper_boundedness_error_le_selfImprovementHelperError"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.bipartiteConsError_eq_consError_placed",
+  "source_name": "MIPStarRE.LDT.bipartiteConsError_eq_consError_placed",
+  "formal_statement": "theorem MIPStarRE.LDT.bipartiteConsError_eq_consError_placed {Question Outcome : Type*}\n    {ιA ιB : Type*} [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB]\n    [Fintype Outcome]\n    (ψ : QuantumState (ιA × ιB)) (𝒟 : Distribution Question)\n    (A : IdxSubMeas Question Outcome ιA)\n    (B : IdxSubMeas Question Outcome ιB) :\n    bipartiteConsError ψ 𝒟 A B =\n      consError ψ 𝒟\n        (fun q => leftPlacedSubMeas (A q))\n        (fun q => rightPlacedSubMeas (B q)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "**Bridge lemma**: averaged bipartite consistency equals the same-space\n`consError` applied to the left/right-placed families.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs",
+  "module_doc": "/-!\n# Section 3 — Definitions\n\nCore definitions for the low individual degree test: evaluation families,\nmatching mass, consistency defect, and test-passing predicates.\n\nAll operator fields now use `Op ι` directly with a generic `Fintype` index `ι`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/Defs.lean#L267-L281",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/Defs.lean",
+  "lines": [
+   267,
+   281
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.leftTensor_mul_rightTensor_eq_opTensor"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.qSDD_nonneg",
+  "source_name": "MIPStarRE.LDT.qSDD_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.qSDD_nonneg {Outcome : Type*} {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState ι) (A B : SubMeas Outcome ι) :\n    0 ≤ qSDD ψ A B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The squared-distance defect is nonneg since each summand is `⟨ψ, M†M ψ⟩ ≥ 0`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs",
+  "module_doc": "/-!\n# Section 3 — Definitions\n\nCore definitions for the low individual degree test: evaluation families,\nmatching mass, consistency defect, and test-passing predicates.\n\nAll operator fields now use `Op ι` directly with a generic `Fintype` index `ι`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/Defs.lean#L365-L371",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/Defs.lean",
+  "lines": [
+   365,
+   371
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.ev_adjoint_self_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.sddError_nonneg",
+  "source_name": "MIPStarRE.LDT.sddError_nonneg",
+  "formal_statement": "theorem MIPStarRE.LDT.sddError_nonneg {Question Outcome : Type*} {ι : Type*} [Fintype ι] [DecidableEq ι]\n    [Fintype Outcome]\n    (ψ : QuantumState ι) (𝒟 : Distribution Question)\n    (A B : IdxSubMeas Question Outcome ι) :\n    0 ≤ sddError ψ 𝒟 A B := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The averaged squared-distance error is nonneg.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Test.Defs",
+  "module_doc": "/-!\n# Section 3 — Definitions\n\nCore definitions for the low individual degree test: evaluation families,\nmatching mass, consistency defect, and test-passing predicates.\n\nAll operator fields now use `Op ι` directly with a generic `Fintype` index `ι`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Test/Defs.lean#L373-L379",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Test/Defs.lean",
+  "lines": [
+   373,
+   379
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_nonneg",
+   "MIPStarRE.LDT.qSDD_nonneg"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ }
+]

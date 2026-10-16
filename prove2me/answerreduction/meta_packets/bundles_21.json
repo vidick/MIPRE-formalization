@@ -1,0 +1,6477 @@
+[
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_TM_Interp_Reach",
+  "module": "MIPRE.TM.Interp.Reach",
+  "module_doc": "/-!\n# Runs of the interpreter\n\n`Reach c n c' out`: from the configuration `c`, `n` steps of `U` lead to `c'`, emitting\n`out`. It composes (`Reach.trans`), and a single step is the action of the current\ninstruction phase (`step_eq`, `applyAct`). The routine specifications (`Routines.lean`)\nare reachability statements with step bounds.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Reach.lean",
+  "source_path": "MIPRE/TM/Interp/Reach.lean",
+  "defmat": [
+   "MIPRE.TM.Interp.Cfg",
+   "MIPRE.TM.Interp.HaltsIn",
+   "MIPRE.TM.Interp.Reach",
+   "MIPRE.TM.Interp.actOf",
+   "MIPRE.TM.Interp.applyAct"
+  ],
+  "embedded": [
+   "MIPRE.TM.Interp.Act.base_inMoves",
+   "MIPRE.TM.Interp.Act.base_next",
+   "MIPRE.TM.Interp.Act.base_out",
+   "MIPRE.TM.Interp.Act.base_works",
+   "MIPRE.TM.Interp.Act.emit_inMoves",
+   "MIPRE.TM.Interp.Act.emit_next",
+   "MIPRE.TM.Interp.Act.emit_out",
+   "MIPRE.TM.Interp.Act.emit_works",
+   "MIPRE.TM.Interp.Act.mi_inMoves",
+   "MIPRE.TM.Interp.Act.mi_next",
+   "MIPRE.TM.Interp.Act.mi_out",
+   "MIPRE.TM.Interp.Act.mi_works",
+   "MIPRE.TM.Interp.Act.mw_inMoves",
+   "MIPRE.TM.Interp.Act.mw_next",
+   "MIPRE.TM.Interp.Act.mw_out",
+   "MIPRE.TM.Interp.Act.mw_works_self",
+   "MIPRE.TM.Interp.Act.ww_inMoves",
+   "MIPRE.TM.Interp.Act.ww_next",
+   "MIPRE.TM.Interp.Act.ww_out",
+   "MIPRE.TM.Interp.Act.ww_works_self",
+   "MIPRE.TM.Interp.applyAct_inputPos",
+   "MIPRE.TM.Interp.applyAct_state",
+   "MIPRE.TM.Interp.applyAct_workTapePos"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.TM.Interp.Act.base_inMoves",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     160,
+     160
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Act.base_next",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     163,
+     163
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Act.base_out",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     162,
+     162
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Act.base_works",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     161,
+     161
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Act.emit_inMoves",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     177,
+     177
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Act.emit_next",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     168,
+     168
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Act.emit_out",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     173,
+     173
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Act.emit_works",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     182,
+     182
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Act.mi_inMoves",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     178,
+     179
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Act.mi_next",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     167,
+     167
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Act.mi_out",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     172,
+     172
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Act.mi_works",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     181,
+     181
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Act.mw_inMoves",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     175,
+     175
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Act.mw_next",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     165,
+     165
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Act.mw_out",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     170,
+     170
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Act.mw_works_self",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     184,
+     185
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Act.ww_inMoves",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     176,
+     176
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Act.ww_next",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     166,
+     166
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Act.ww_out",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     171,
+     171
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Act.ww_works_self",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     190,
+     191
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Cfg",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     25,
+     26
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.HaltsIn",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     105,
+     107
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Reach",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     59,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.actOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     38,
+     40
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.applyAct",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     28,
+     36
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.applyAct_inputPos",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     140,
+     141
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.applyAct_state",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     138,
+     138
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.applyAct_workTapePos",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     143,
+     144
+    ]
+   }
+  ],
+  "lines": 128,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Cslib_Foundations_Data_RelatesInSteps",
+   "import Definitions.Def_MIPRE_Cslib_Computability_Machines_Turing_MultiTape_Deterministic",
+   "import Definitions.Def_MIPRE_TM_MultiInput_Deterministic",
+   "import Definitions.Def_MIPRE_TM_Interp_Instr",
+   "import Definitions.Def_MIPRE_TM_Interp_Machine",
+   "import Definitions.Def_MIPRE_TM_Interp_Tape"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TM.Interp.Cfg": [
+    "/-- Configurations of the interpreter on the inputs `input`. -/"
+   ],
+   "MIPRE.TM.Interp.HaltsIn": [
+    "/-- Halting silently: the state is `none` after `n` steps, and nothing was emitted. -/"
+   ],
+   "MIPRE.TM.Interp.Reach": [
+    "/-- `n` steps from `c` lead to `c'`, emitting `out`. -/"
+   ],
+   "MIPRE.TM.Interp.actOf": [
+    "/-- The action of the current instruction phase. -/"
+   ],
+   "MIPRE.TM.Interp.applyAct": [
+    "/-- The configuration after the actions `a`, with the control `q'`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_TM_Interp_Routines",
+  "module": "MIPRE.TM.Interp.Routines",
+  "module_doc": "/-!\n# The routines: specifications of the instructions\n\nEach instruction's specification is a reachability statement: from a configuration at\nthe instruction's first phase, with the tapes it reads in a stated shape, a bounded\nnumber of steps leads to the configuration at the next instruction, with the stated\neffect on the tapes it touches and none on the others (`Untouched`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Routines.lean",
+  "source_path": "MIPRE/TM/Interp/Routines.lean",
+  "defmat": [
+   "MIPRE.TM.Interp.Act.Within",
+   "MIPRE.TM.Interp.Unary",
+   "MIPRE.TM.Interp.Untouched",
+   "MIPRE.TM.Interp.at_",
+   "MIPRE.TM.Interp.next_"
+  ],
+  "embedded": [
+   "MIPRE.TM.Interp.resolve_halt",
+   "MIPRE.TM.Interp.resolve_jmp",
+   "MIPRE.TM.Interp.resolve_stay"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.TM.Interp.Act.Within",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     96,
+     99
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Unary",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     856,
+     858
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Untouched",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     43,
+     46
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.at_",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     24,
+     25
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.next_",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     27,
+     29
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.resolve_halt",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     41,
+     41
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.resolve_jmp",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     38,
+     39
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.resolve_stay",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     35,
+     36
+    ]
+   }
+  ],
+  "lines": 105,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Cslib_Foundations_Data_RelatesInSteps",
+   "import Definitions.Def_MIPRE_Cslib_Computability_Machines_Turing_MultiTape_Deterministic",
+   "import Definitions.Def_MIPRE_TM_MultiInput_Deterministic",
+   "import Definitions.Def_MIPRE_TM_Interp_Instr",
+   "import Definitions.Def_MIPRE_TM_Interp_Machine",
+   "import Definitions.Def_MIPRE_TM_Interp_Tape",
+   "import Definitions.Def_MIPRE_TM_Interp_Reach"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TM.Interp.Act.Within": [
+    "/-- An action that moves only the input heads in `SI` and touches only the work tapes in",
+    "`SW`. -/"
+   ],
+   "MIPRE.TM.Interp.Unary": [
+    "/-- A unary tape: `n` ones from cell `0`, blank elsewhere. -/"
+   ],
+   "MIPRE.TM.Interp.Untouched": [
+    "/-- `c'` agrees with `c` on the input heads outside `SI` and on the work tapes outside `SW`. -/"
+   ],
+   "MIPRE.TM.Interp.at_": [
+    "/-- The control at `(k, pc)`, first phase. -/"
+   ],
+   "MIPRE.TM.Interp.next_": [
+    "/-- The control at the instruction after `(k, pc)`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_TM_Interp_Repr",
+  "module": "MIPRE.TM.Interp.Repr",
+  "module_doc": "/-!\n# The tape representation of configurations\n\nValues as their preorder bits (`S`), the control (`ctrlRepr`), the environment\n(`envRepr`, innermost value at the right end, `#`-separated), the frames (`frameRepr`) and\nthe stack (`kontRepr`), as lists of symbols; and their lengths in terms of the sizes.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Repr.lean",
+  "source_path": "MIPRE/TM/Interp/Repr.lean",
+  "defmat": [
+   "MIPRE.TM.Interp.S",
+   "MIPRE.TM.Interp.ctrlRepr",
+   "MIPRE.TM.Interp.envRepr",
+   "MIPRE.TM.Interp.frameBody",
+   "MIPRE.TM.Interp.frameRepr",
+   "MIPRE.TM.Interp.frameTag",
+   "MIPRE.TM.Interp.kontRepr"
+  ],
+  "embedded": [
+   "MIPRE.TM.Interp.S_nil",
+   "MIPRE.TM.Interp.envRepr_cons",
+   "MIPRE.TM.Interp.envRepr_nil",
+   "MIPRE.TM.Interp.kontRepr_cons",
+   "MIPRE.TM.Interp.kontRepr_nil",
+   "MIPRE.TM.Interp.length_S"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.TM.Interp.S",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     21,
+     22
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.S_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     24,
+     24
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.ctrlRepr",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     41,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.envRepr",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     46,
+     49
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.envRepr_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     53,
+     54
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.envRepr_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     51,
+     51
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.frameBody",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     88,
+     93
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.frameRepr",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     81,
+     86
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.frameTag",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     74,
+     79
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.kontRepr",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     139,
+     142
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.kontRepr_cons",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     146,
+     147
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.kontRepr_nil",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     144,
+     144
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.length_S",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     29,
+     29
+    ]
+   }
+  ],
+  "lines": 101,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_TM_Interp_Instr",
+   "import Definitions.Def_MIPRE_TM_Interp_Tape"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TM.Interp.S": [
+    "/-- A value: its preorder bits. -/"
+   ],
+   "MIPRE.TM.Interp.ctrlRepr": [
+    "/-- The control: `0 · S(p.toData)` for `ev p`, `1 · S(v)` for `ret v`. -/"
+   ],
+   "MIPRE.TM.Interp.envRepr": [
+    "/-- The environment `[v₁, …, vₙ]` (`v₁` innermost): `S(vₙ) # … # S(v₁) #`. -/"
+   ],
+   "MIPRE.TM.Interp.frameBody": [
+    "/-- The body of a frame: the frame without its final `$`. -/"
+   ],
+   "MIPRE.TM.Interp.frameRepr": [
+    "/-- A frame: its tag, its payload, `$`; a closure carries its environment after `¶`. -/"
+   ],
+   "MIPRE.TM.Interp.frameTag": [
+    "/-- The two tag bits of a frame. -/"
+   ],
+   "MIPRE.TM.Interp.kontRepr": [
+    "/-- The stack `[f₁, …, fₘ]` (`f₁` the top): `frameRepr fₘ ++ … ++ frameRepr f₁`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_TM_Interp_CopyTree",
+  "module": "MIPRE.TM.Interp.CopyTree",
+  "module_doc": "/-!\n# The `copyTree` routine\n\nCopying (or skipping) a preorder-serialized value: a scan with a unary counter of the\npending subtrees on `CNT`, one more per `1` (a node with two children, itself consumed) and\none fewer per `0` (a leaf), finishing when none is pending. The scan from `d ≥ 1` pending\nsubtrees over `S(v)` leaves `d - 1` pending (`copyTree_scan`), finishing when `d = 1`; the\ninstruction starts with one (`exec_copyTree`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/CopyTree.lean",
+  "source_path": "MIPRE/TM/Interp/CopyTree.lean",
+  "defmat": [
+   "MIPRE.TM.Interp.DstEff",
+   "MIPRE.TM.Interp.scanExit"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.TM.Interp.DstEff",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     29,
+     35
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.scanExit",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     25,
+     27
+    ]
+   }
+  ],
+  "lines": 79,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Cslib_Foundations_Data_RelatesInSteps",
+   "import Definitions.Def_MIPRE_Cslib_Computability_Machines_Turing_MultiTape_Deterministic",
+   "import Definitions.Def_MIPRE_TM_MultiInput_Deterministic",
+   "import Definitions.Def_MIPRE_TM_Interp_Instr",
+   "import Definitions.Def_MIPRE_TM_Interp_Machine",
+   "import Definitions.Def_MIPRE_TM_Interp_Tape",
+   "import Definitions.Def_MIPRE_TM_Interp_Reach",
+   "import Definitions.Def_MIPRE_TM_Interp_Routines",
+   "import Definitions.Def_MIPRE_TM_Interp_Repr"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TM.Interp.DstEff": [
+    "/-- The effect of writing `l` at the head of `t`: `l` held from the old head, the rest of",
+    "the tape kept, the head past `l`. -/"
+   ],
+   "MIPRE.TM.Interp.scanExit": [
+    "/-- The control at `(k, pc, p1)` if `d ≠ 1`, else at the next instruction. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_TM_Interp_GetEnv",
+  "module": "MIPRE.TM.Interp.GetEnv",
+  "module_doc": "/-!\n# The `getEnv` routine\n\nWith the unary index `S(ofNat i)` under the head of `C` and the environment `envRepr env` on\n`E` with its head at the end, `getEnv` writes `S(env.get i)` at the head of `X`: it walks\nleft over `i` separators (phases `p1`–`p3`), then to the start of the element (`p4`), copies\nit (`p5`) and returns the head of `E` to the end (`p8`); past the start of the environment\nthe index is out of range, the rest of it is consumed (`p6`, `p7`) and `nil` is written\n(`p9`). The proof is by induction on the index, over the suffix of the environment not yet\npassed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/GetEnv.lean",
+  "source_path": "MIPRE/TM/Interp/GetEnv.lean",
+  "defmat": [
+   "MIPRE.TM.Interp.EnvTape"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.TM.Interp.EnvTape",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     48,
+     52
+    ]
+   }
+  ],
+  "lines": 80,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Cslib_Foundations_Data_RelatesInSteps",
+   "import Definitions.Def_MIPRE_Cslib_Computability_Machines_Turing_MultiTape_Deterministic",
+   "import Definitions.Def_MIPRE_TM_MultiInput_Deterministic",
+   "import Definitions.Def_MIPRE_TM_Interp_Instr",
+   "import Definitions.Def_MIPRE_TM_Interp_Machine",
+   "import Definitions.Def_MIPRE_TM_Interp_Tape",
+   "import Definitions.Def_MIPRE_TM_Interp_Reach",
+   "import Definitions.Def_MIPRE_TM_Interp_Routines",
+   "import Definitions.Def_MIPRE_TM_Interp_Repr",
+   "import Definitions.Def_MIPRE_TM_Interp_CopyTree"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TM.Interp.EnvTape": [
+    "/-- A tape holding the environment from `0`, blank before. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_TM_Interp_Desc",
+  "module": "MIPRE.TM.Interp.Desc",
+  "module_doc": "/-!\n# Tape descriptions\n\nA work tape is described by the list it holds from cell `0` (blank elsewhere) and its head\nposition; a configuration by its control and the six descriptions (`Desc`). Every routine\nbecomes a transformation of descriptions (`D_write`, `D_copyTree`, …), so that the\ncorrectness of a step of the evaluation machine is a chain of such transformations followed\nby list algebra (`overwrite`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Desc.lean",
+  "source_path": "MIPRE/TM/Interp/Desc.lean",
+  "defmat": [
+   "MIPRE.TM.Interp.Desc",
+   "MIPRE.TM.Interp.TapeIs",
+   "MIPRE.TM.Interp.TapeSt",
+   "MIPRE.TM.Interp.overwrite"
+  ],
+  "embedded": [
+   "MIPRE.TM.Interp.overwrite_cons_succ",
+   "MIPRE.TM.Interp.overwrite_zero"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.TM.Interp.Desc",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     201,
+     203
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.TapeIs",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     32,
+     35
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.TapeSt",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     27,
+     30
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.overwrite",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     37,
+     39
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.overwrite_cons_succ",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     65,
+     68
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.overwrite_zero",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     41,
+     42
+    ]
+   }
+  ],
+  "lines": 119,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Cslib_Foundations_Data_RelatesInSteps",
+   "import Definitions.Def_MIPRE_Cslib_Computability_Machines_Turing_MultiTape_Deterministic",
+   "import Definitions.Def_MIPRE_TM_MultiInput_Deterministic",
+   "import Definitions.Def_MIPRE_TM_Interp_Instr",
+   "import Definitions.Def_MIPRE_TM_Interp_Machine",
+   "import Definitions.Def_MIPRE_TM_Interp_Tape",
+   "import Definitions.Def_MIPRE_TM_Interp_Reach",
+   "import Definitions.Def_MIPRE_TM_Interp_Routines",
+   "import Definitions.Def_MIPRE_TM_Interp_Repr",
+   "import Definitions.Def_MIPRE_TM_Interp_CopyTree",
+   "import Definitions.Def_MIPRE_TM_Interp_GetEnv"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TM.Interp.Desc": [
+    "/-- The configuration `c` has control `q` and its work tapes are as described by `ds`. -/"
+   ],
+   "MIPRE.TM.Interp.TapeIs": [
+    "/-- The tape `τ` with head `pos` is as described by `s`. -/"
+   ],
+   "MIPRE.TM.Interp.TapeSt": [
+    "/-- A tape holding exactly `l` from cell `0`, its head at cell `p`. -/"
+   ],
+   "MIPRE.TM.Interp.overwrite": [
+    "/-- Writing `w` over `l` from position `p` (no gap: `p ≤ l.length`). -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_TM_Interp_Step",
+  "module": "MIPRE.TM.Interp.Step",
+  "module_doc": "/-!\n# One step of the evaluation machine\n\nThe representation of a configuration of the CEK machine on the tapes (`RepOf`), the\ndispatcher, and, for each case of `Machine.step`, the run of the case program from the\nrepresentation of `m` to that of `step m`, charging `stepCost m` (`StepTo`), or halting\nsilently when the budget is short.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Step.lean",
+  "source_path": "MIPRE/TM/Interp/Step.lean",
+  "defmat": [
+   "MIPRE.TM.Interp.AcceptsFrom",
+   "MIPRE.TM.Interp.CDesc",
+   "MIPRE.TM.Interp.PreTo",
+   "MIPRE.TM.Interp.PreTo1",
+   "MIPRE.TM.Interp.RepOf",
+   "MIPRE.TM.Interp.RunTo",
+   "MIPRE.TM.Interp.StepTo",
+   "MIPRE.TM.Interp.caseBound",
+   "MIPRE.TM.Interp.evHead",
+   "MIPRE.TM.Interp.evTarget",
+   "MIPRE.TM.Interp.retTarget",
+   "MIPRE.TM.Interp.stepBound",
+   "MIPRE.TM.Interp.sz"
+  ],
+  "embedded": [
+   "MIPRE.TM.Interp.BUD_ne_C",
+   "MIPRE.TM.Interp.BUD_ne_CNT",
+   "MIPRE.TM.Interp.BUD_ne_E",
+   "MIPRE.TM.Interp.BUD_ne_K",
+   "MIPRE.TM.Interp.BUD_ne_X",
+   "MIPRE.TM.Interp.CNT_ne_BUD",
+   "MIPRE.TM.Interp.CNT_ne_C",
+   "MIPRE.TM.Interp.CNT_ne_E",
+   "MIPRE.TM.Interp.CNT_ne_K",
+   "MIPRE.TM.Interp.CNT_ne_X",
+   "MIPRE.TM.Interp.C_ne_BUD",
+   "MIPRE.TM.Interp.C_ne_CNT",
+   "MIPRE.TM.Interp.C_ne_E",
+   "MIPRE.TM.Interp.C_ne_K",
+   "MIPRE.TM.Interp.C_ne_X",
+   "MIPRE.TM.Interp.E_ne_BUD",
+   "MIPRE.TM.Interp.E_ne_C",
+   "MIPRE.TM.Interp.E_ne_CNT",
+   "MIPRE.TM.Interp.E_ne_K",
+   "MIPRE.TM.Interp.E_ne_X",
+   "MIPRE.TM.Interp.K_ne_BUD",
+   "MIPRE.TM.Interp.K_ne_C",
+   "MIPRE.TM.Interp.K_ne_CNT",
+   "MIPRE.TM.Interp.K_ne_E",
+   "MIPRE.TM.Interp.K_ne_X",
+   "MIPRE.TM.Interp.X_ne_BUD",
+   "MIPRE.TM.Interp.X_ne_C",
+   "MIPRE.TM.Interp.X_ne_CNT",
+   "MIPRE.TM.Interp.X_ne_E",
+   "MIPRE.TM.Interp.X_ne_K",
+   "MIPRE.TM.Interp.instNeZeroNatMaxPc"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.TM.Interp.AcceptsFrom",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     1755,
+     1756
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.BUD_ne_C",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     57,
+     57
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.BUD_ne_CNT",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     61,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.BUD_ne_E",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     58,
+     58
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.BUD_ne_K",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     59,
+     59
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.BUD_ne_X",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     60,
+     60
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.CDesc",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     1719,
+     1721
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.CNT_ne_BUD",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     56,
+     56
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.CNT_ne_C",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     52,
+     52
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.CNT_ne_E",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     53,
+     53
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.CNT_ne_K",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     54,
+     54
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.CNT_ne_X",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     55,
+     55
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.C_ne_BUD",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     36,
+     36
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.C_ne_CNT",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     35,
+     35
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.C_ne_E",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     32,
+     32
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.C_ne_K",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     33,
+     33
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.C_ne_X",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     34,
+     34
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.E_ne_BUD",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     41,
+     41
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.E_ne_C",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     37,
+     37
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.E_ne_CNT",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     40,
+     40
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.E_ne_K",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     38,
+     38
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.E_ne_X",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     39,
+     39
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.K_ne_BUD",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     46,
+     46
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.K_ne_C",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     42,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.K_ne_CNT",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     45,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.K_ne_E",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     43,
+     43
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.K_ne_X",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     44,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.PreTo",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     96,
+     100
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.PreTo1",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     107,
+     110
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.RepOf",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     65,
+     75
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.RunTo",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     112,
+     114
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.StepTo",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     102,
+     105
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.X_ne_BUD",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     51,
+     51
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.X_ne_C",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     47,
+     47
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.X_ne_CNT",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     50,
+     50
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.X_ne_E",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     48,
+     48
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.X_ne_K",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     49,
+     49
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.caseBound",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     386,
+     387
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.evHead",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     256,
+     263
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.evTarget",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     246,
+     254
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.instNeZeroNatMaxPc",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     27,
+     27
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.retTarget",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     990,
+     995
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.stepBound",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     1828,
+     1830
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.sz",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     92,
+     94
+    ]
+   }
+  ],
+  "lines": 212,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Cslib_Foundations_Data_RelatesInSteps",
+   "import Definitions.Def_MIPRE_Cslib_Computability_Machines_Turing_MultiTape_Deterministic",
+   "import Definitions.Def_MIPRE_TM_MultiInput_Deterministic",
+   "import Definitions.Def_MIPRE_TM_Interp_Instr",
+   "import Definitions.Def_MIPRE_TM_Interp_Machine",
+   "import Definitions.Def_MIPRE_TM_Interp_Tape",
+   "import Definitions.Def_MIPRE_TM_Interp_Reach",
+   "import Definitions.Def_MIPRE_TM_Interp_Routines",
+   "import Definitions.Def_MIPRE_TM_Interp_Repr",
+   "import Definitions.Def_MIPRE_TM_Interp_CopyTree",
+   "import Definitions.Def_MIPRE_TM_Interp_GetEnv",
+   "import Definitions.Def_MIPRE_TM_Interp_Desc"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TM.Interp.AcceptsFrom": [
+    "/-- `U` accepts from `c` within `n` silent steps followed by the output `1`. -/"
+   ],
+   "MIPRE.TM.Interp.CDesc": [
+    "/-- The control and the tape `C` alone (the stack head may sit before the tape). -/"
+   ],
+   "MIPRE.TM.Interp.PreTo": [
+    "/-- `c` reaches, within `B` silent steps, the control `q` with tapes representing `m'`",
+    "(budget `r'`, heads of `C` and `K` at `pC`, `pK`), its scratch tape of length at most `xl`. -/"
+   ],
+   "MIPRE.TM.Interp.PreTo1": [
+    "/-- `PreTo` with at least one step. -/"
+   ],
+   "MIPRE.TM.Interp.RepOf": [
+    "/-- The descriptions representing the machine configuration `m` with budget `r`: the",
+    "control followed by garbage `g` (its head at `pC`), the environment and the stack exactly",
+    "(the stack head at `pK`), a scratch tape with its head inside its content, an empty",
+    "counter, a unary budget. -/"
+   ],
+   "MIPRE.TM.Interp.RunTo": [
+    "/-- `StepTo` with at least one step. -/"
+   ],
+   "MIPRE.TM.Interp.StepTo": [
+    "/-- `c` reaches, within `B` silent steps, the dispatcher representing `m'` with budget `r'`,",
+    "its scratch tape of length at most `xl`. -/"
+   ],
+   "MIPRE.TM.Interp.caseBound": [
+    "/-- The bound on the steps of a case program. -/"
+   ],
+   "MIPRE.TM.Interp.evHead": null,
+   "MIPRE.TM.Interp.evTarget": [
+    "/-- The case program of a control to evaluate, and the position of the final `0` of its tag. -/"
+   ],
+   "MIPRE.TM.Interp.retTarget": [
+    "/-- The case program of a return to a frame. -/"
+   ],
+   "MIPRE.TM.Interp.stepBound": [
+    "/-- The bound on the steps of `U` simulating one step of the machine from a representation with",
+    "a scratch tape of length `xl`. -/"
+   ],
+   "MIPRE.TM.Interp.sz": [
+    "/-- The size of the representation of `m`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_TM_Interp_InputRoutines",
+  "module": "MIPRE.TM.Interp.InputRoutines",
+  "module_doc": "/-!\n# The input-tape routines\n\n`copyUnary`, `copyInputBits`, `checkLen` and `buildAnswer` read an input tape from its\nhead to the blank after the input, writing on a work tape; their specifications are by\ninduction on the remaining suffix of the input.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/InputRoutines.lean",
+  "source_path": "MIPRE/TM/Interp/InputRoutines.lean",
+  "defmat": [
+   "MIPRE.TM.Interp.WEff",
+   "MIPRE.TM.Interp.answerBits",
+   "MIPRE.TM.Interp.boolOf"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.TM.Interp.WEff",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     24,
+     29
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.answerBits",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     232,
+     233
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.boolOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     227,
+     230
+    ]
+   }
+  ],
+  "lines": 89,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Cslib_Foundations_Data_RelatesInSteps",
+   "import Definitions.Def_MIPRE_Cslib_Computability_Machines_Turing_MultiTape_Deterministic",
+   "import Definitions.Def_MIPRE_TM_MultiInput_Deterministic",
+   "import Definitions.Def_MIPRE_TM_Interp_Instr",
+   "import Definitions.Def_MIPRE_TM_Interp_Machine",
+   "import Definitions.Def_MIPRE_TM_Interp_Tape",
+   "import Definitions.Def_MIPRE_TM_Interp_Reach",
+   "import Definitions.Def_MIPRE_TM_Interp_Routines",
+   "import Definitions.Def_MIPRE_TM_Interp_Repr"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TM.Interp.WEff": [
+    "/-- The effect of writing `l` at the head of `t` (as in `CopyTree.lean`). -/"
+   ],
+   "MIPRE.TM.Interp.answerBits": [
+    "/-- The written form of an answer suffix: `S(encode (l.map boolOf))`. -/"
+   ],
+   "MIPRE.TM.Interp.boolOf": [
+    "/-- The bit of an input symbol. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_TM_Interp_Run",
+  "module": "MIPRE.TM.Interp.Run",
+  "module_doc": "/-!\n# The run of the interpreter\n\nThe inputs of `U` (`uInput`), the initialization (`init_run`), the simulation of a run of the\nevaluation machine (`sim_run`), and the acceptance theorem: on the inputs\n`(𝒟, n, T, x, y, a, b)` with `|a|, |b| ≤ T`, `U` accepts (halts having output `1`) iff `𝒟`\naccepts `(n, x, y, a, b)` within cost `T`, and then within an explicit polynomial number of\nsteps.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/Interp/Run.lean",
+  "source_path": "MIPRE/TM/Interp/Run.lean",
+  "defmat": [
+   "MIPRE.TM.Interp.InPos",
+   "MIPRE.TM.Interp.V0",
+   "MIPRE.TM.Interp.Z0",
+   "MIPRE.TM.Interp.initBound",
+   "MIPRE.TM.Interp.runBound",
+   "MIPRE.TM.Interp.stepB",
+   "MIPRE.TM.Interp.szBound",
+   "MIPRE.TM.Interp.uInput",
+   "MIPRE.TM.Interp.vSize"
+  ],
+  "embedded": [
+   "MIPRE.TM.Interp.A_ne_B",
+   "MIPRE.TM.Interp.A_ne_N",
+   "MIPRE.TM.Interp.A_ne_PROG",
+   "MIPRE.TM.Interp.A_ne_T",
+   "MIPRE.TM.Interp.A_ne_XS",
+   "MIPRE.TM.Interp.A_ne_YS",
+   "MIPRE.TM.Interp.B_ne_A",
+   "MIPRE.TM.Interp.B_ne_N",
+   "MIPRE.TM.Interp.B_ne_PROG",
+   "MIPRE.TM.Interp.B_ne_T",
+   "MIPRE.TM.Interp.B_ne_XS",
+   "MIPRE.TM.Interp.B_ne_YS",
+   "MIPRE.TM.Interp.N_ne_A",
+   "MIPRE.TM.Interp.N_ne_B",
+   "MIPRE.TM.Interp.N_ne_PROG",
+   "MIPRE.TM.Interp.N_ne_T",
+   "MIPRE.TM.Interp.N_ne_XS",
+   "MIPRE.TM.Interp.N_ne_YS",
+   "MIPRE.TM.Interp.PROG_ne_A",
+   "MIPRE.TM.Interp.PROG_ne_B",
+   "MIPRE.TM.Interp.PROG_ne_N",
+   "MIPRE.TM.Interp.PROG_ne_T",
+   "MIPRE.TM.Interp.PROG_ne_XS",
+   "MIPRE.TM.Interp.PROG_ne_YS",
+   "MIPRE.TM.Interp.T_ne_A",
+   "MIPRE.TM.Interp.T_ne_B",
+   "MIPRE.TM.Interp.T_ne_N",
+   "MIPRE.TM.Interp.T_ne_PROG",
+   "MIPRE.TM.Interp.T_ne_XS",
+   "MIPRE.TM.Interp.T_ne_YS",
+   "MIPRE.TM.Interp.XS_ne_A",
+   "MIPRE.TM.Interp.XS_ne_B",
+   "MIPRE.TM.Interp.XS_ne_N",
+   "MIPRE.TM.Interp.XS_ne_PROG",
+   "MIPRE.TM.Interp.XS_ne_T",
+   "MIPRE.TM.Interp.XS_ne_YS",
+   "MIPRE.TM.Interp.YS_ne_A",
+   "MIPRE.TM.Interp.YS_ne_B",
+   "MIPRE.TM.Interp.YS_ne_N",
+   "MIPRE.TM.Interp.YS_ne_PROG",
+   "MIPRE.TM.Interp.YS_ne_T",
+   "MIPRE.TM.Interp.YS_ne_XS",
+   "MIPRE.TM.Interp.uInput_A",
+   "MIPRE.TM.Interp.uInput_B",
+   "MIPRE.TM.Interp.uInput_N",
+   "MIPRE.TM.Interp.uInput_PROG",
+   "MIPRE.TM.Interp.uInput_T",
+   "MIPRE.TM.Interp.uInput_XS",
+   "MIPRE.TM.Interp.uInput_YS"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.TM.Interp.A_ne_B",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     135,
+     135
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.A_ne_N",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     131,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.A_ne_PROG",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     130,
+     130
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.A_ne_T",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     132,
+     132
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.A_ne_XS",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     133,
+     133
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.A_ne_YS",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     134,
+     134
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.B_ne_A",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     141,
+     141
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.B_ne_N",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     137,
+     137
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.B_ne_PROG",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     136,
+     136
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.B_ne_T",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     138,
+     138
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.B_ne_XS",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     139,
+     139
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.B_ne_YS",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     140,
+     140
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.InPos",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     65,
+     66
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.N_ne_A",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     110,
+     110
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.N_ne_B",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     111,
+     111
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.N_ne_PROG",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     106,
+     106
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.N_ne_T",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     107,
+     107
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.N_ne_XS",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     108,
+     108
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.N_ne_YS",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     109,
+     109
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.PROG_ne_A",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     104,
+     104
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.PROG_ne_B",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     105,
+     105
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.PROG_ne_N",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     100,
+     100
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.PROG_ne_T",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     101,
+     101
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.PROG_ne_XS",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     102,
+     102
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.PROG_ne_YS",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     103,
+     103
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.T_ne_A",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     116,
+     116
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.T_ne_B",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     117,
+     117
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.T_ne_N",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     113,
+     113
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.T_ne_PROG",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     112,
+     112
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.T_ne_XS",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     114,
+     114
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.T_ne_YS",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     115,
+     115
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.V0",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     493,
+     494
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.XS_ne_A",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     122,
+     122
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.XS_ne_B",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     123,
+     123
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.XS_ne_N",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     119,
+     119
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.XS_ne_PROG",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     118,
+     118
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.XS_ne_T",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     120,
+     120
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.XS_ne_YS",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     121,
+     121
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.YS_ne_A",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     128,
+     128
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.YS_ne_B",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     129,
+     129
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.YS_ne_N",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     125,
+     125
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.YS_ne_PROG",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     124,
+     124
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.YS_ne_T",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     126,
+     126
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.YS_ne_XS",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     127,
+     127
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.Z0",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     496,
+     498
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.initBound",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     254,
+     257
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.runBound",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     500,
+     503
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.stepB",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     406,
+     408
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.szBound",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     362,
+     363
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.uInput",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     31,
+     34
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.uInput_A",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     41,
+     41
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.uInput_B",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     42,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.uInput_N",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     37,
+     37
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.uInput_PROG",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     36,
+     36
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.uInput_T",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     38,
+     38
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.uInput_XS",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     39,
+     39
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.uInput_YS",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     40,
+     40
+    ]
+   },
+   {
+    "name": "MIPRE.TM.Interp.vSize",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     490,
+     491
+    ]
+   }
+  ],
+  "lines": 213,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Cslib_Foundations_Data_RelatesInSteps",
+   "import Definitions.Def_MIPRE_Cslib_Computability_Machines_Turing_MultiTape_Deterministic",
+   "import Definitions.Def_MIPRE_TM_MultiInput_Deterministic",
+   "import Definitions.Def_MIPRE_TM_Interp_Instr",
+   "import Definitions.Def_MIPRE_TM_Interp_Machine",
+   "import Definitions.Def_MIPRE_TM_Interp_Tape",
+   "import Definitions.Def_MIPRE_TM_Interp_Reach",
+   "import Definitions.Def_MIPRE_TM_Interp_Routines",
+   "import Definitions.Def_MIPRE_TM_Interp_Repr",
+   "import Definitions.Def_MIPRE_TM_Interp_CopyTree",
+   "import Definitions.Def_MIPRE_TM_Interp_GetEnv",
+   "import Definitions.Def_MIPRE_TM_Interp_Desc",
+   "import Definitions.Def_MIPRE_TM_Interp_Step",
+   "import Definitions.Def_MIPRE_TM_Interp_InputRoutines"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TM.Interp.InPos": [
+    "/-- The input heads are at the positions `f`. -/"
+   ],
+   "MIPRE.TM.Interp.V0": [
+    "/-- The size bound on the machine's values along the run. -/"
+   ],
+   "MIPRE.TM.Interp.Z0": [
+    "/-- The size bound on the representations along the run. -/"
+   ],
+   "MIPRE.TM.Interp.initBound": [
+    "/-- The bound on the steps of the initialization. -/"
+   ],
+   "MIPRE.TM.Interp.runBound": [
+    "/-- The bound on the accepting run of `U`. -/"
+   ],
+   "MIPRE.TM.Interp.stepB": [
+    "/-- The bound on the steps of `U` for one step of the machine, from representations of size at",
+    "most `Z` with a scratch tape of length at most `xl`. -/"
+   ],
+   "MIPRE.TM.Interp.szBound": [
+    "/-- A bound on `sz` from `CfgBound V L P K`. -/"
+   ],
+   "MIPRE.TM.Interp.uInput": [
+    "/-- The seven inputs of `U`: the program, `n`, the budget `T` in unary, `x`, `y` as the bits",
+    "of their encodings, and the answers `a`, `b` as raw bit strings. -/"
+   ],
+   "MIPRE.TM.Interp.vSize": [
+    "/-- The value of the encoded input. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_Foundations_SAT_Table",
+  "module": "MIPRE.Foundations.SAT.Table",
+  "module_doc": "/-!\n# Every Boolean function has a circuit\n\nThe formula of a Boolean function on `N` bits from its truth table (`Fml.table`): a mux tree\non the bits, of size at most `7 · 2^N`. Its circuit is well-formed (`Fml.toCircuit_wellFormed`)\nand computes the function (`Fml.eval_table`). This is how the check circuit of the\nCook–Levin tableau of the interpreter machine is obtained: from the truth table of the\nlocal check predicate, as in the paper's `lem:pack-check-size`\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/SAT/Table.lean",
+  "source_path": "MIPRE/Foundations/SAT/Table.lean",
+  "defmat": [
+   "MIPRE.SAT.Fml.table"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.SAT.Fml.table",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     23,
+     29
+    ]
+   }
+  ],
+  "lines": 51,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.SAT.Fml.table": [
+    "/-- The formula of a Boolean function on `N` bits: a mux tree on the bits, the leaves being",
+    "the entries of the truth table. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_TM_CookLevin_Params",
+  "module": "MIPRE.TM.CookLevin.Params",
+  "module_doc": "/-!\n# The parameters of the describer: the check circuit and the tableau length\n\nTwo constants and one choice.\n\n* `chk` is the check circuit of the interpreter machine: the truth-table circuit\n  (`Fml.table`) of its local check predicate `checkPred U 1`, of `winCard 7 6 Sym Ctl` inputs\n  and at most `7 · 2 ^ winCard` gates — an enormous constant, exactly as the paper's\n  `lem:pack-check-size`, and formally harmless. `chk_isCheckCircuit` is the hypothesis of\n  `lem:correct-tableau`; `Gc` is its gate count.\n* `eOf T σ = 5 (⌈log T⌉ + ⌈log σ⌉) + 24` is the exponent of the tableau length: under the\n  validity hypotheses and `|a|, |b| ≤ T`, the accepting run of `U` is shorter than\n  `2 ^ eOf T σ` (`runBound_le_two_pow`), so the tableau of `Sof (eOf T σ)` steps is long\n  enough. The bound comes from an explicit fifth-power majorant of `runBound`\n  (`runBound_le`) (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Params.lean",
+  "source_path": "MIPRE/TM/CookLevin/Params.lean",
+  "defmat": [
+   "MIPRE.TM.CookLevin.Desc.Gc",
+   "MIPRE.TM.CookLevin.Desc.chk",
+   "MIPRE.TM.CookLevin.Desc.chkFun",
+   "MIPRE.TM.CookLevin.Desc.eOf"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.Gc",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     49,
+     50
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.chk",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     39,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.chkFun",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     33,
+     37
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.eOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     223,
+     224
+    ]
+   }
+  ],
+  "lines": 146,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Cslib_Foundations_Data_RelatesInSteps",
+   "import Definitions.Def_MIPRE_Cslib_Computability_Machines_Turing_MultiTape_Deterministic",
+   "import Definitions.Def_MIPRE_TM_MultiInput_Deterministic",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Local",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Tseitin",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Tableau",
+   "import Definitions.Def_MIPRE_TM_Interp_Instr",
+   "import Definitions.Def_MIPRE_TM_Interp_Machine",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Layout",
+   "import Definitions.Def_MIPRE_TM_CookLevin_FieldFml",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Kinds",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Families",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Window",
+   "import Definitions.Def_MIPRE_TM_CookLevin_FamilyFml",
+   "import Definitions.Def_MIPRE_TM_Interp_Tape",
+   "import Definitions.Def_MIPRE_TM_Interp_Reach",
+   "import Definitions.Def_MIPRE_TM_Interp_Routines",
+   "import Definitions.Def_MIPRE_TM_Interp_Repr",
+   "import Definitions.Def_MIPRE_TM_Interp_CopyTree",
+   "import Definitions.Def_MIPRE_TM_Interp_GetEnv",
+   "import Definitions.Def_MIPRE_TM_Interp_Desc",
+   "import Definitions.Def_MIPRE_TM_Interp_Step",
+   "import Definitions.Def_MIPRE_TM_Interp_InputRoutines",
+   "import Definitions.Def_MIPRE_TM_Interp_Run",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Table"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TM.CookLevin.Desc.Gc": [
+    "/-- The number of gates of the check circuit. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.chk": [
+    "/-- **The check circuit of the interpreter machine**: a truth-table circuit of `chkFun`,",
+    "taken from `Fml.exists_circuit`. It is never unfolded: its defining term mentions",
+    "`Fintype.card (WinVar 7 6 Sym Ctl)`, whose evaluation does not terminate in practice. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.chkFun": [
+    "/-- The local check predicate of the interpreter machine as a Boolean function of the window",
+    "bits, in the canonical order. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.eOf": [
+    "/-- The exponent of the tableau length: `5 (⌈log T⌉ + ⌈log σ⌉) + 24`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_TM_CookLevin_AnsEnd",
+  "module": "MIPRE.TM.CookLevin.AnsEnd",
+  "module_doc": "/-!\n# The answer tapes end at `T`\n\nTwo clauses beyond the tableau: the cell at position `T + 3` of each of the two free tapes\nholds the blank. They are what makes the soundness direction of the describer give answers of\nlength at most `T`: the free-tape clauses force the blanks of a free tape to be trailing\n(`freeClauses`), so a blank at `T + 3` bounds the string read off the time-`0` row by `T`\n(`freeLen`, `Sound.lean`). An accepting run on answers of length at most `T` satisfies them,\nso they cost the completeness direction nothing.\n\n`tableauPlus` is the tableau together with them, `tableauPlusF` the formula, and\n`eval_tableauPlusF` its exactness (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/AnsEnd.lean",
+  "source_path": "MIPRE/TM/CookLevin/AnsEnd.lean",
+  "defmat": [
+   "MIPRE.TM.CookLevin.Desc.AnsEnd",
+   "MIPRE.TM.CookLevin.Desc.ansEndClauses",
+   "MIPRE.TM.CookLevin.Desc.ansEndF",
+   "MIPRE.TM.CookLevin.Desc.tableauPlus",
+   "MIPRE.TM.CookLevin.Desc.tableauPlusF"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.AnsEnd",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     33,
+     36
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.ansEndClauses",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     28,
+     31
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.ansEndF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     67,
+     71
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.tableauPlus",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     59,
+     63
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.tableauPlusF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     87,
+     90
+    ]
+   }
+  ],
+  "lines": 147,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Cslib_Foundations_Data_RelatesInSteps",
+   "import Definitions.Def_MIPRE_Cslib_Computability_Machines_Turing_MultiTape_Deterministic",
+   "import Definitions.Def_MIPRE_TM_MultiInput_Deterministic",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Local",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Tseitin",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Tableau",
+   "import Definitions.Def_MIPRE_TM_Interp_Instr",
+   "import Definitions.Def_MIPRE_TM_Interp_Machine",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Layout",
+   "import Definitions.Def_MIPRE_TM_CookLevin_FieldFml",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Kinds",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Families",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Window",
+   "import Definitions.Def_MIPRE_TM_CookLevin_FamilyFml",
+   "import Definitions.Def_MIPRE_TM_Interp_Tape",
+   "import Definitions.Def_MIPRE_TM_Interp_Reach",
+   "import Definitions.Def_MIPRE_TM_Interp_Routines",
+   "import Definitions.Def_MIPRE_TM_Interp_Repr",
+   "import Definitions.Def_MIPRE_TM_Interp_CopyTree",
+   "import Definitions.Def_MIPRE_TM_Interp_GetEnv",
+   "import Definitions.Def_MIPRE_TM_Interp_Desc",
+   "import Definitions.Def_MIPRE_TM_Interp_Step",
+   "import Definitions.Def_MIPRE_TM_Interp_InputRoutines",
+   "import Definitions.Def_MIPRE_TM_Interp_Run",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Table",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Params"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TM.CookLevin.Desc.AnsEnd": [
+    "/-- The candidate is one of the two answer-end clauses. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.ansEndClauses": [
+    "/-- The two clauses: the cell at position `T + 3` of a free tape holds the blank. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.ansEndF": [
+    "/-- `AnsEnd`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.tableauPlus": [
+    "/-- The tableau together with the two answer-end clauses: the clause set the describer",
+    "describes. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.tableauPlusF": [
+    "/-- The formula of the whole clause set. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_TM_CookLevin_Index",
+  "module": "MIPRE.TM.CookLevin.Index",
+  "module_doc": "/-!\n# The canonical index of a tableau variable\n\n`idxOf e G T v` is the index of the variable `v` in the described 3SAT formula: the *answer\nindex* `j < 4T` for a cell of one of the two free tapes inside the answer block — tape `5`\nfor `j < 2T` and tape `6` otherwise, position `r / 2 + 3` for `r = j mod 2T`, the value `1`\nfor `r` odd and the blank for `r` even — and the structured index (`encodeVar`) for every\nother variable. So the first `4T` variables of the formula are exactly the two answer blocks,\nwhich is what item 1 of `thm:succinct-sat` needs, and `decodeVar_fieldsOf_idxOf` says that\ndecoding the canonical index returns the variable. `decodeVar_ans` is the other half: every\nindex below `4T` decodes to the answer variable it stands for\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Index.lean",
+  "source_path": "MIPRE/TM/CookLevin/Index.lean",
+  "defmat": [
+   "MIPRE.TM.CookLevin.Desc.IsAnsCell",
+   "MIPRE.TM.CookLevin.Desc.ansIdx",
+   "MIPRE.TM.CookLevin.Desc.idxOf",
+   "MIPRE.TM.CookLevin.Desc.instDecidableIsAnsCell",
+   "MIPRE.TM.CookLevin.Desc.rOf",
+   "MIPRE.TM.CookLevin.Desc.tapeIdx",
+   "MIPRE.TM.CookLevin.Desc.valOf"
+  ],
+  "embedded": [
+   "MIPRE.TM.CookLevin.Desc.ansIdx_lt",
+   "MIPRE.TM.CookLevin.Desc.bitsVal_encodeVar_lt",
+   "MIPRE.TM.CookLevin.Desc.flag_lt_m",
+   "MIPRE.TM.CookLevin.Desc.four_T_le_flag",
+   "MIPRE.TM.CookLevin.Desc.idxOf_lt"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.IsAnsCell",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     109,
+     114
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.ansIdx",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     119,
+     121
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.ansIdx_lt",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     140,
+     144
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.bitsVal_encodeVar_lt",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     135,
+     138
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.flag_lt_m",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     70,
+     70
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.four_T_le_flag",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     60,
+     68
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.idxOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     123,
+     133
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.idxOf_lt",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     146,
+     163
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.instDecidableIsAnsCell",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     116,
+     117
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.rOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     43,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.tapeIdx",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     46,
+     47
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.valOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     49,
+     50
+    ]
+   }
+  ],
+  "lines": 205,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Cslib_Foundations_Data_RelatesInSteps",
+   "import Definitions.Def_MIPRE_Cslib_Computability_Machines_Turing_MultiTape_Deterministic",
+   "import Definitions.Def_MIPRE_TM_MultiInput_Deterministic",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Local",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Tseitin",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Tableau",
+   "import Definitions.Def_MIPRE_TM_Interp_Instr",
+   "import Definitions.Def_MIPRE_TM_Interp_Machine",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Layout",
+   "import Definitions.Def_MIPRE_TM_CookLevin_FieldFml",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Kinds",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Families",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Window",
+   "import Definitions.Def_MIPRE_TM_CookLevin_FamilyFml",
+   "import Definitions.Def_MIPRE_TM_Interp_Tape",
+   "import Definitions.Def_MIPRE_TM_Interp_Reach",
+   "import Definitions.Def_MIPRE_TM_Interp_Routines",
+   "import Definitions.Def_MIPRE_TM_Interp_Repr",
+   "import Definitions.Def_MIPRE_TM_Interp_CopyTree",
+   "import Definitions.Def_MIPRE_TM_Interp_GetEnv",
+   "import Definitions.Def_MIPRE_TM_Interp_Desc",
+   "import Definitions.Def_MIPRE_TM_Interp_Step",
+   "import Definitions.Def_MIPRE_TM_Interp_InputRoutines",
+   "import Definitions.Def_MIPRE_TM_Interp_Run",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Table",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Params",
+   "import Definitions.Def_MIPRE_TM_CookLevin_AnsEnd"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TM.CookLevin.Desc.IsAnsCell": [
+    "/-- The cell is an *answer cell*: at time `0` on a free tape, inside the answer block, holding",
+    "`1` or the blank. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.ansIdx": [
+    "/-- The answer index of an answer cell. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.idxOf": [
+    "/-- The canonical index of a tableau variable: the answer index for an answer cell, the",
+    "structured index (`encodeVar`) otherwise. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.instDecidableIsAnsCell": null,
+   "MIPRE.TM.CookLevin.Desc.rOf": [
+    "/-- The offset of an answer index inside its block. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.tapeIdx": [
+    "/-- The tape code of an answer index: `5` for the first block, `6` for the second. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.valOf": [
+    "/-- The cell value of an answer index: `1` for an odd offset, the blank for an even one. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_TM_CookLevin_Describer",
+  "module": "MIPRE.TM.CookLevin.Describer",
+  "module_doc": "/-!\n# The describer circuit and the clauses it describes\n\n`descCirc e T D n x y` is the circuit of the describer: the flattening of the formula\n`tableauPlusF` on the candidate that reads the three `m`-bit indices and the three signs off\nits `3m + 3` inputs (`candOf`). `mem_formula3_iff` is what it describes: a clause of\n`Fin (2 ^ m)` is accepted iff its three indices decode to the literals of a clause of\n`tableauPlus` — the tableau of `U` on the input tapes `fixedOf` together with the two\nanswer-end clauses (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Describer.lean",
+  "source_path": "MIPRE/TM/CookLevin/Describer.lean",
+  "defmat": [
+   "MIPRE.TM.CookLevin.Desc.FixedLen",
+   "MIPRE.TM.CookLevin.Desc.candOf",
+   "MIPRE.TM.CookLevin.Desc.candOfClause",
+   "MIPRE.TM.CookLevin.Desc.descCirc",
+   "MIPRE.TM.CookLevin.Desc.descFml",
+   "MIPRE.TM.CookLevin.Desc.fixedOf",
+   "MIPRE.TM.CookLevin.Desc.tabsOf"
+  ],
+  "embedded": [],
+  "kept": [
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.FixedLen",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     53,
+     55
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.candOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     105,
+     109
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.candOfClause",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     151,
+     155
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.descCirc",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     129,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.descFml",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     124,
+     127
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.fixedOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     43,
+     47
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.tabsOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     57,
+     62
+    ]
+   }
+  ],
+  "lines": 170,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Cslib_Foundations_Data_RelatesInSteps",
+   "import Definitions.Def_MIPRE_Cslib_Computability_Machines_Turing_MultiTape_Deterministic",
+   "import Definitions.Def_MIPRE_TM_MultiInput_Deterministic",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Local",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Tseitin",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Tableau",
+   "import Definitions.Def_MIPRE_TM_Interp_Instr",
+   "import Definitions.Def_MIPRE_TM_Interp_Machine",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Layout",
+   "import Definitions.Def_MIPRE_TM_CookLevin_FieldFml",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Kinds",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Families",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Window",
+   "import Definitions.Def_MIPRE_TM_CookLevin_FamilyFml",
+   "import Definitions.Def_MIPRE_TM_Interp_Tape",
+   "import Definitions.Def_MIPRE_TM_Interp_Reach",
+   "import Definitions.Def_MIPRE_TM_Interp_Routines",
+   "import Definitions.Def_MIPRE_TM_Interp_Repr",
+   "import Definitions.Def_MIPRE_TM_Interp_CopyTree",
+   "import Definitions.Def_MIPRE_TM_Interp_GetEnv",
+   "import Definitions.Def_MIPRE_TM_Interp_Desc",
+   "import Definitions.Def_MIPRE_TM_Interp_Step",
+   "import Definitions.Def_MIPRE_TM_Interp_InputRoutines",
+   "import Definitions.Def_MIPRE_TM_Interp_Run",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Table",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Params",
+   "import Definitions.Def_MIPRE_TM_CookLevin_AnsEnd",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Index"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TM.CookLevin.Desc.FixedLen": [
+    "/-- The tapes are short enough for the tableau. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.candOf": [
+    "/-- The candidate the describer reads off its inputs: the three `m`-bit indices at bases `0`,",
+    "`m`, `2m` and the three signs at `3m`, `3m + 1`, `3m + 2`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.candOfClause": [
+    "/-- The candidate of a clause: the fields of its three indices and its three signs. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.descCirc": [
+    "/-- **The describer circuit**: the flattening of `descFml` on `3 m + 3` inputs. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.descFml": [
+    "/-- The formula of the describer. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.fixedOf": [
+    "/-- The input tapes of the interpreter machine: the program, the index, the time bound in",
+    "unary and the two questions are fixed; the two answer tapes are free. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.tabsOf": [
+    "/-- The value formulas of the fixed tapes. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_TM_CookLevin_LayoutProg",
+  "module": "MIPRE.TM.CookLevin.LayoutProg",
+  "module_doc": "/-!\n# The layout arithmetic as programs\n\nThe widths and offsets of the index layout (`Layout.lean`) as programs. Two conventions make\nthem cheap:\n\n* **widths and offsets are unary.** `W e`, `mOf e G`, the field offsets: all are affine in\n  `e` with small coefficients, so in unary they are `append` and iterated `append`, and no\n  arithmetic program is needed. `e` itself must be unary in any case — the formulas are of\n  size polynomial in `e`, so a binary `e` would make the output exponential in the input.\n* **a constant of a field is a resize of a bit string.** `resize w bs` keeps the low `w` bits\n  of `bs`, padding with `false`, and `resize_eq_nbits` identifies it with `nbits w k` for any\n  `bs` whose bits are those of `k`. So `nbits w (2 * T)` is a resize of `false :: T.bits` and\n  `nbits w (T + 3)` one of `incBits (incBits (incBits T.bits))`, with no multiplication or\n  addition on numbers (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/LayoutProg.lean",
+  "source_path": "MIPRE/TM/CookLevin/LayoutProg.lean",
+  "defmat": [
+   "MIPRE.TM.CookLevin.Desc.GbU",
+   "MIPRE.TM.CookLevin.Desc.QbU",
+   "MIPRE.TM.CookLevin.Desc.WU",
+   "MIPRE.TM.CookLevin.Desc.addU",
+   "MIPRE.TM.CookLevin.Desc.bitsR",
+   "MIPRE.TM.CookLevin.Desc.cstR",
+   "MIPRE.TM.CookLevin.Desc.dOffU",
+   "MIPRE.TM.CookLevin.Desc.dblP",
+   "MIPRE.TM.CookLevin.Desc.flagOffU",
+   "MIPRE.TM.CookLevin.Desc.fourU",
+   "MIPRE.TM.CookLevin.Desc.gOffU",
+   "MIPRE.TM.CookLevin.Desc.incN",
+   "MIPRE.TM.CookLevin.Desc.jsOffU",
+   "MIPRE.TM.CookLevin.Desc.mU",
+   "MIPRE.TM.CookLevin.Desc.muxListP",
+   "MIPRE.TM.CookLevin.Desc.nbitsR",
+   "MIPRE.TM.CookLevin.Desc.nsmulU",
+   "MIPRE.TM.CookLevin.Desc.pOffU",
+   "MIPRE.TM.CookLevin.Desc.pow2P",
+   "MIPRE.TM.CookLevin.Desc.qOffU",
+   "MIPRE.TM.CookLevin.Desc.resize",
+   "MIPRE.TM.CookLevin.Desc.resizeP",
+   "MIPRE.TM.CookLevin.Desc.threeU",
+   "MIPRE.TM.CookLevin.Desc.vOffU"
+  ],
+  "embedded": [
+   "MIPRE.TM.CookLevin.Desc.addU_apply",
+   "MIPRE.TM.CookLevin.Desc.bits_two_pow",
+   "MIPRE.TM.CookLevin.Desc.dblP_apply",
+   "MIPRE.TM.CookLevin.Desc.incN_apply",
+   "MIPRE.TM.CookLevin.Desc.length_GbU",
+   "MIPRE.TM.CookLevin.Desc.length_QbU",
+   "MIPRE.TM.CookLevin.Desc.length_WU",
+   "MIPRE.TM.CookLevin.Desc.length_addU",
+   "MIPRE.TM.CookLevin.Desc.length_dOffU",
+   "MIPRE.TM.CookLevin.Desc.length_flagOffU",
+   "MIPRE.TM.CookLevin.Desc.length_fourU",
+   "MIPRE.TM.CookLevin.Desc.length_gOffU",
+   "MIPRE.TM.CookLevin.Desc.length_jsOffU",
+   "MIPRE.TM.CookLevin.Desc.length_mU",
+   "MIPRE.TM.CookLevin.Desc.length_nsmulU",
+   "MIPRE.TM.CookLevin.Desc.length_pOffU",
+   "MIPRE.TM.CookLevin.Desc.length_qOffU",
+   "MIPRE.TM.CookLevin.Desc.length_threeU",
+   "MIPRE.TM.CookLevin.Desc.length_vOffU",
+   "MIPRE.TM.CookLevin.Desc.muxListP_apply",
+   "MIPRE.TM.CookLevin.Desc.pow2P_apply",
+   "MIPRE.TM.CookLevin.Desc.resizeP_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.GbU",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     212,
+     212
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.QbU",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     211,
+     211
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.WU",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     202,
+     203
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.addU",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     33,
+     34
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.addU_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     36,
+     36
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.bitsR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     192,
+     193
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.bits_two_pow",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     121,
+     125
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.cstR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     175,
+     177
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.dOffU",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     244,
+     245
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.dblP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     136,
+     137
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.dblP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     139,
+     139
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.flagOffU",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     227,
+     229
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.fourU",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     210,
+     210
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.gOffU",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     236,
+     238
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.incN",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     152,
+     155
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.incN_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     157,
+     159
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.jsOffU",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     272,
+     274
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.length_GbU",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     217,
+     217
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.length_QbU",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     216,
+     216
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.length_WU",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     205,
+     206
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.length_addU",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     38,
+     39
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.length_dOffU",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     247,
+     248
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.length_flagOffU",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     231,
+     234
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.length_fourU",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     215,
+     215
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.length_gOffU",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     240,
+     242
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.length_jsOffU",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     276,
+     279
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.length_mU",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     223,
+     225
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.length_nsmulU",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     46,
+     50
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.length_pOffU",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     253,
+     254
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.length_qOffU",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     268,
+     270
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.length_threeU",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     214,
+     214
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.length_vOffU",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     260,
+     262
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.mU",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     219,
+     221
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.muxListP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     285,
+     292
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.muxListP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     294,
+     295
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.nbitsR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     167,
+     169
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.nsmulU",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     41,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.pOffU",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     250,
+     251
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.pow2P",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     141,
+     148
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.pow2P_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     150,
+     150
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.qOffU",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     264,
+     266
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.resize",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     54,
+     55
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.resizeP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     129,
+     132
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.resizeP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     134,
+     134
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.threeU",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     208,
+     209
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.vOffU",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     256,
+     258
+    ]
+   }
+  ],
+  "lines": 312,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Cslib_Foundations_Data_RelatesInSteps",
+   "import Definitions.Def_MIPRE_Cslib_Computability_Machines_Turing_MultiTape_Deterministic",
+   "import Definitions.Def_MIPRE_TM_MultiInput_Deterministic",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Local",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Tseitin",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Tableau",
+   "import Definitions.Def_MIPRE_TM_Interp_Instr",
+   "import Definitions.Def_MIPRE_TM_Interp_Machine",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Layout",
+   "import Definitions.Def_MIPRE_TM_CookLevin_FieldFml",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Kinds",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Families",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Window",
+   "import Definitions.Def_MIPRE_TM_CookLevin_FamilyFml",
+   "import Definitions.Def_MIPRE_TM_Interp_Tape",
+   "import Definitions.Def_MIPRE_TM_Interp_Reach",
+   "import Definitions.Def_MIPRE_TM_Interp_Routines",
+   "import Definitions.Def_MIPRE_TM_Interp_Repr",
+   "import Definitions.Def_MIPRE_TM_Interp_CopyTree",
+   "import Definitions.Def_MIPRE_TM_Interp_GetEnv",
+   "import Definitions.Def_MIPRE_TM_Interp_Desc",
+   "import Definitions.Def_MIPRE_TM_Interp_Step",
+   "import Definitions.Def_MIPRE_TM_Interp_InputRoutines",
+   "import Definitions.Def_MIPRE_TM_Interp_Run",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Table",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Params",
+   "import Definitions.Def_MIPRE_TM_CookLevin_AnsEnd",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Index",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Describer"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TM.CookLevin.Desc.GbU": null,
+   "MIPRE.TM.CookLevin.Desc.QbU": null,
+   "MIPRE.TM.CookLevin.Desc.WU": [
+    "/-- `W e`, in unary. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.addU": [
+    "/-- Unary addition. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.bitsR": [
+    "/-- The bits of a numeral, as a reader. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.cstR": [
+    "/-- The formulas of the constant `k` on `w` bits. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.dOffU": [
+    "/-- `dOff e`, in unary. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.dblP": [
+    "/-- Doubling a bit string: a `false` in front. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.flagOffU": [
+    "/-- `flagOff e Gc`, in unary. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.fourU": null,
+   "MIPRE.TM.CookLevin.Desc.gOffU": [
+    "/-- `gOff e`, in unary. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.incN": [
+    "/-- Adding a constant to a number. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.jsOffU": [
+    "/-- `jsOff e d`, in unary. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.mU": [
+    "/-- `mOf e Gc`, in unary. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.muxListP": [
+    "/-- `muxList`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.nbitsR": [
+    "/-- The constant `k` on `w` bits, read off a width in unary and the bits of `k`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.nsmulU": [
+    "/-- Unary multiplication by a constant. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.pOffU": [
+    "/-- `pOff e`, in unary. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.pow2P": [
+    "/-- `2 ^ e`, from `e` in unary: its bit string is `e` zeros and a one. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.qOffU": [
+    "/-- `qOff e`, in unary. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.resize": [
+    "/-- The low `w` bits of a bit string, padded with `false` to the width `w`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.resizeP": [
+    "/-- `resize`, the width in unary. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.threeU": [
+    "/-- `3`, `4` and `Qb` and `Gb Gc`, in unary: the widths that do not depend on `e`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.vOffU": [
+    "/-- `vOff e`, in unary. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_TM_CookLevin_FieldProg",
+  "module": "MIPRE.TM.CookLevin.FieldProg",
+  "module_doc": "/-!\n# The fields of a literal, as programs\n\n`FieldsR ι` is a record of *readers*: one program per field of `FieldsF`, all of them reading\nthe same input `ι`. `FieldsR.ev A i` is the field record its programs produce on the input\n`i`, and it is a structure literal whose components are, definitionally, the values of those\nprograms — so every formula built from a `FieldsR` matches the same formula built from\n`FieldsR.ev` by `rfl`, and the whole family of programs of `FamilyProg.lean` costs one `rfl`\neach.\n\n`litFieldsR` is the record of programs for `litFields`: the one place where the constants of\nthe layout have to be produced, and the only proof in the program layer that is not\ndefinitional (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/FieldProg.lean",
+  "source_path": "MIPRE/TM/CookLevin/FieldProg.lean",
+  "defmat": [
+   "MIPRE.TM.CookLevin.Desc.CandR",
+   "MIPRE.TM.CookLevin.Desc.CandR.ev",
+   "MIPRE.TM.CookLevin.Desc.FieldsR",
+   "MIPRE.TM.CookLevin.Desc.FieldsR.ev",
+   "MIPRE.TM.CookLevin.Desc.ansOkR",
+   "MIPRE.TM.CookLevin.Desc.dR",
+   "MIPRE.TM.CookLevin.Desc.dblR",
+   "MIPRE.TM.CookLevin.Desc.flagR",
+   "MIPRE.TM.CookLevin.Desc.gR",
+   "MIPRE.TM.CookLevin.Desc.jR",
+   "MIPRE.TM.CookLevin.Desc.jsR",
+   "MIPRE.TM.CookLevin.Desc.litFieldsR",
+   "MIPRE.TM.CookLevin.Desc.lt2TR",
+   "MIPRE.TM.CookLevin.Desc.offR",
+   "MIPRE.TM.CookLevin.Desc.pAnsR",
+   "MIPRE.TM.CookLevin.Desc.pR",
+   "MIPRE.TM.CookLevin.Desc.qR",
+   "MIPRE.TM.CookLevin.Desc.quadR",
+   "MIPRE.TM.CookLevin.Desc.rR",
+   "MIPRE.TM.CookLevin.Desc.tR",
+   "MIPRE.TM.CookLevin.Desc.tagR",
+   "MIPRE.TM.CookLevin.Desc.twoTbR",
+   "MIPRE.TM.CookLevin.Desc.vR"
+  ],
+  "embedded": [
+   "MIPRE.TM.CookLevin.Desc.offR_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.CandR",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     48,
+     55
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.CandR.ev",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     57,
+     59
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.FieldsR",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     31,
+     42
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.FieldsR.ev",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     44,
+     46
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.ansOkR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     235,
+     238
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.dR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     167,
+     170
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.dblR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     72,
+     74
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.flagR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     104,
+     105
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.gR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     225,
+     227
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.jR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     110,
+     112
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.jsR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     214,
+     216
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.litFieldsR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     250,
+     261
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.lt2TR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     123,
+     124
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.offR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     96,
+     98
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.offR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     100,
+     102
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.pAnsR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     137,
+     139
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.pR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     179,
+     181
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.qR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     204,
+     206
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.quadR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     80,
+     81
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.rR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     129,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.tR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     157,
+     159
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.tagR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     147,
+     149
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.twoTbR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     117,
+     118
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.vR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     190,
+     194
+    ]
+   }
+  ],
+  "lines": 260,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Cslib_Foundations_Data_RelatesInSteps",
+   "import Definitions.Def_MIPRE_Cslib_Computability_Machines_Turing_MultiTape_Deterministic",
+   "import Definitions.Def_MIPRE_TM_MultiInput_Deterministic",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Local",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Tseitin",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Tableau",
+   "import Definitions.Def_MIPRE_TM_Interp_Instr",
+   "import Definitions.Def_MIPRE_TM_Interp_Machine",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Layout",
+   "import Definitions.Def_MIPRE_TM_CookLevin_FieldFml",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Kinds",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Families",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Window",
+   "import Definitions.Def_MIPRE_TM_CookLevin_FamilyFml",
+   "import Definitions.Def_MIPRE_TM_Interp_Tape",
+   "import Definitions.Def_MIPRE_TM_Interp_Reach",
+   "import Definitions.Def_MIPRE_TM_Interp_Routines",
+   "import Definitions.Def_MIPRE_TM_Interp_Repr",
+   "import Definitions.Def_MIPRE_TM_Interp_CopyTree",
+   "import Definitions.Def_MIPRE_TM_Interp_GetEnv",
+   "import Definitions.Def_MIPRE_TM_Interp_Desc",
+   "import Definitions.Def_MIPRE_TM_Interp_Step",
+   "import Definitions.Def_MIPRE_TM_Interp_InputRoutines",
+   "import Definitions.Def_MIPRE_TM_Interp_Run",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Table",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Params",
+   "import Definitions.Def_MIPRE_TM_CookLevin_AnsEnd",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Index",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Describer",
+   "import Definitions.Def_MIPRE_TM_CookLevin_LayoutProg"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TM.CookLevin.Desc.CandR": [
+    "/-- A candidate of programs. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.CandR.ev": [
+    "/-- The candidate the programs produce on an input. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.FieldsR": [
+    "/-- A field record of programs, all reading the same input. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.FieldsR.ev": [
+    "/-- The field record the programs produce on an input. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.ansOkR": [
+    "/-- The `ansOk` field. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.dR": [
+    "/-- The `d` field. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.dblR": [
+    "/-- Twice a number, as a bit string. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.flagR": [
+    "/-- `flagF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.gR": [
+    "/-- The `g` field. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.jR": [
+    "/-- `jF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.jsR": [
+    "/-- The `js` fields. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.litFieldsR": [
+    "/-- The field programs of the literal with base `b`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.lt2TR": [
+    "/-- `lt2TF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.offR": [
+    "/-- An index into a field, from an offset in unary. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.pAnsR": [
+    "/-- `pAnsF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.pR": [
+    "/-- The `p` field. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.qR": [
+    "/-- The `q` field. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.quadR": [
+    "/-- Four times a number, as a bit string. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.rR": [
+    "/-- `rF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.tR": [
+    "/-- The `t` field. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.tagR": [
+    "/-- The `tag` field. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.twoTbR": [
+    "/-- `twoTb`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.vR": [
+    "/-- The `v` field. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_TM_CookLevin_FamilyProg",
+  "module": "MIPRE.TM.CookLevin.FamilyProg",
+  "module_doc": "/-!\n# The family formulas as programs\n\nEvery formula of `FamilyFml.lean` as a program reading a shared input: a candidate of\nreaders (`CandR`), the width `e` in unary, and the data the explicit families need. The\nstatement of each is `progR … i = familyF (eu i).length Gc … (C.ev i)`, and its proof is\n`simp` over the constants of the layout — the shape of the formula matches definitionally,\nbecause `CandR.ev` is a structure literal of the programs' own values.\n\nThe constants are the only content: `Sof e = 2 ^ e` and `2 * Sof e + k = 2 ^ (e + 1) + k`\ncome from `pow2P` and `incN`, and `numR` turns a number and a width into the bit string of\nthe field constant (`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/FamilyProg.lean",
+  "source_path": "MIPRE/TM/CookLevin/FamilyProg.lean",
+  "defmat": [
+   "MIPRE.TM.CookLevin.Desc.SofAddR",
+   "MIPRE.TM.CookLevin.Desc.SofR",
+   "MIPRE.TM.CookLevin.Desc.addRelR",
+   "MIPRE.TM.CookLevin.Desc.andR",
+   "MIPRE.TM.CookLevin.Desc.andTwo",
+   "MIPRE.TM.CookLevin.Desc.ansEndR",
+   "MIPRE.TM.CookLevin.Desc.auxEqR",
+   "MIPRE.TM.CookLevin.Desc.auxMatchR",
+   "MIPRE.TM.CookLevin.Desc.bdryCellR",
+   "MIPRE.TM.CookLevin.Desc.bdryHeadR",
+   "MIPRE.TM.CookLevin.Desc.bdryPredR",
+   "MIPRE.TM.CookLevin.Desc.bdryR",
+   "MIPRE.TM.CookLevin.Desc.cellEqR",
+   "MIPRE.TM.CookLevin.Desc.cellValR",
+   "MIPRE.TM.CookLevin.Desc.emitBadR",
+   "MIPRE.TM.CookLevin.Desc.emitMonoR",
+   "MIPRE.TM.CookLevin.Desc.emitOnceR",
+   "MIPRE.TM.CookLevin.Desc.emitOneR",
+   "MIPRE.TM.CookLevin.Desc.emitPredR",
+   "MIPRE.TM.CookLevin.Desc.emitStepR",
+   "MIPRE.TM.CookLevin.Desc.emitZeroR",
+   "MIPRE.TM.CookLevin.Desc.eqC",
+   "MIPRE.TM.CookLevin.Desc.eqF",
+   "MIPRE.TM.CookLevin.Desc.finalEmittedR",
+   "MIPRE.TM.CookLevin.Desc.finalPredR",
+   "MIPRE.TM.CookLevin.Desc.finalStateR",
+   "MIPRE.TM.CookLevin.Desc.freeBdryR",
+   "MIPRE.TM.CookLevin.Desc.freeBlankR",
+   "MIPRE.TM.CookLevin.Desc.freeNandR",
+   "MIPRE.TM.CookLevin.Desc.freeOneOfR",
+   "MIPRE.TM.CookLevin.Desc.freeOtherR",
+   "MIPRE.TM.CookLevin.Desc.freeR",
+   "MIPRE.TM.CookLevin.Desc.freeTapeR",
+   "MIPRE.TM.CookLevin.Desc.freeTwoR",
+   "MIPRE.TM.CookLevin.Desc.headEqR",
+   "MIPRE.TM.CookLevin.Desc.isAuxR",
+   "MIPRE.TM.CookLevin.Desc.isCellR",
+   "MIPRE.TM.CookLevin.Desc.isEmitBadR",
+   "MIPRE.TM.CookLevin.Desc.isEmitOneR",
+   "MIPRE.TM.CookLevin.Desc.isEmittedR",
+   "MIPRE.TM.CookLevin.Desc.isHeadR",
+   "MIPRE.TM.CookLevin.Desc.isStateR",
+   "MIPRE.TM.CookLevin.Desc.lookupR",
+   "MIPRE.TM.CookLevin.Desc.ltC",
+   "MIPRE.TM.CookLevin.Desc.ltF",
+   "MIPRE.TM.CookLevin.Desc.mainR",
+   "MIPRE.TM.CookLevin.Desc.mapR",
+   "MIPRE.TM.CookLevin.Desc.muxR",
+   "MIPRE.TM.CookLevin.Desc.notR",
+   "MIPRE.TM.CookLevin.Desc.numC",
+   "MIPRE.TM.CookLevin.Desc.numEqR",
+   "MIPRE.TM.CookLevin.Desc.numR",
+   "MIPRE.TM.CookLevin.Desc.orR",
+   "MIPRE.TM.CookLevin.Desc.orTwo",
+   "MIPRE.TM.CookLevin.Desc.posR",
+   "MIPRE.TM.CookLevin.Desc.samePosR",
+   "MIPRE.TM.CookLevin.Desc.sameSignsR",
+   "MIPRE.TM.CookLevin.Desc.selectR",
+   "MIPRE.TM.CookLevin.Desc.specMatchR",
+   "MIPRE.TM.CookLevin.Desc.startCellR",
+   "MIPRE.TM.CookLevin.Desc.startFixedR",
+   "MIPRE.TM.CookLevin.Desc.startHeadR",
+   "MIPRE.TM.CookLevin.Desc.startR",
+   "MIPRE.TM.CookLevin.Desc.startStateR",
+   "MIPRE.TM.CookLevin.Desc.startWorkR",
+   "MIPRE.TM.CookLevin.Desc.stateEqR",
+   "MIPRE.TM.CookLevin.Desc.tZeroR",
+   "MIPRE.TM.CookLevin.Desc.tableauPlusR",
+   "MIPRE.TM.CookLevin.Desc.tableauR",
+   "MIPRE.TM.CookLevin.Desc.tplR",
+   "MIPRE.TM.CookLevin.Desc.twoSAddR",
+   "MIPRE.TM.CookLevin.Desc.twoSR",
+   "MIPRE.TM.CookLevin.Desc.unaryValR",
+   "MIPRE.TM.CookLevin.Desc.unitAuxR",
+   "MIPRE.TM.CookLevin.Desc.unitCellR",
+   "MIPRE.TM.CookLevin.Desc.unitEmitBadR",
+   "MIPRE.TM.CookLevin.Desc.unitEmittedR",
+   "MIPRE.TM.CookLevin.Desc.unitHeadR",
+   "MIPRE.TM.CookLevin.Desc.unitStateR",
+   "MIPRE.TM.CookLevin.Desc.winMatchR",
+   "MIPRE.TM.CookLevin.Desc.windowGatesR",
+   "MIPRE.TM.CookLevin.Desc.windowOutR",
+   "MIPRE.TM.CookLevin.Desc.windowR",
+   "MIPRE.TM.CookLevin.Desc.workValR",
+   "MIPRE.TM.CookLevin.Desc.xnorR"
+  ],
+  "embedded": [
+   "MIPRE.TM.CookLevin.Desc.SofAddR_apply",
+   "MIPRE.TM.CookLevin.Desc.SofR_apply",
+   "MIPRE.TM.CookLevin.Desc.addRelR_apply",
+   "MIPRE.TM.CookLevin.Desc.andR_apply",
+   "MIPRE.TM.CookLevin.Desc.andTwo_apply",
+   "MIPRE.TM.CookLevin.Desc.ansEndR_apply",
+   "MIPRE.TM.CookLevin.Desc.auxEqR_apply",
+   "MIPRE.TM.CookLevin.Desc.auxMatchR_apply",
+   "MIPRE.TM.CookLevin.Desc.bdryCellR_apply",
+   "MIPRE.TM.CookLevin.Desc.bdryHeadR_apply",
+   "MIPRE.TM.CookLevin.Desc.bdryPredR_apply",
+   "MIPRE.TM.CookLevin.Desc.bdryR_apply",
+   "MIPRE.TM.CookLevin.Desc.cellEqR_apply",
+   "MIPRE.TM.CookLevin.Desc.cellValR_apply",
+   "MIPRE.TM.CookLevin.Desc.emitBadR_apply",
+   "MIPRE.TM.CookLevin.Desc.emitMonoR_apply",
+   "MIPRE.TM.CookLevin.Desc.emitOnceR_apply",
+   "MIPRE.TM.CookLevin.Desc.emitOneR_apply",
+   "MIPRE.TM.CookLevin.Desc.emitPredR_apply",
+   "MIPRE.TM.CookLevin.Desc.emitStepR_apply",
+   "MIPRE.TM.CookLevin.Desc.emitZeroR_apply",
+   "MIPRE.TM.CookLevin.Desc.eqC_apply",
+   "MIPRE.TM.CookLevin.Desc.eqF_apply",
+   "MIPRE.TM.CookLevin.Desc.finalEmittedR_apply",
+   "MIPRE.TM.CookLevin.Desc.finalPredR_apply",
+   "MIPRE.TM.CookLevin.Desc.finalStateR_apply",
+   "MIPRE.TM.CookLevin.Desc.freeBdryR_apply",
+   "MIPRE.TM.CookLevin.Desc.freeBlankR_apply",
+   "MIPRE.TM.CookLevin.Desc.freeNandR_apply",
+   "MIPRE.TM.CookLevin.Desc.freeOneOfR_apply",
+   "MIPRE.TM.CookLevin.Desc.freeOtherR_apply",
+   "MIPRE.TM.CookLevin.Desc.freeR_apply",
+   "MIPRE.TM.CookLevin.Desc.freeTapeR_apply",
+   "MIPRE.TM.CookLevin.Desc.freeTwoR_apply",
+   "MIPRE.TM.CookLevin.Desc.headEqR_apply",
+   "MIPRE.TM.CookLevin.Desc.isAuxR_apply",
+   "MIPRE.TM.CookLevin.Desc.isCellR_apply",
+   "MIPRE.TM.CookLevin.Desc.isEmitBadR_apply",
+   "MIPRE.TM.CookLevin.Desc.isEmitOneR_apply",
+   "MIPRE.TM.CookLevin.Desc.isEmittedR_apply",
+   "MIPRE.TM.CookLevin.Desc.isHeadR_apply",
+   "MIPRE.TM.CookLevin.Desc.isStateR_apply",
+   "MIPRE.TM.CookLevin.Desc.lookupList_eq",
+   "MIPRE.TM.CookLevin.Desc.lookupR_apply",
+   "MIPRE.TM.CookLevin.Desc.ltC_apply",
+   "MIPRE.TM.CookLevin.Desc.ltF_apply",
+   "MIPRE.TM.CookLevin.Desc.mainR_apply",
+   "MIPRE.TM.CookLevin.Desc.mapR_apply",
+   "MIPRE.TM.CookLevin.Desc.muxR_apply",
+   "MIPRE.TM.CookLevin.Desc.notR_apply",
+   "MIPRE.TM.CookLevin.Desc.numC_apply",
+   "MIPRE.TM.CookLevin.Desc.numEqR_apply",
+   "MIPRE.TM.CookLevin.Desc.numR_apply",
+   "MIPRE.TM.CookLevin.Desc.orR_apply",
+   "MIPRE.TM.CookLevin.Desc.orTwo_apply",
+   "MIPRE.TM.CookLevin.Desc.posR_apply",
+   "MIPRE.TM.CookLevin.Desc.samePosR_apply",
+   "MIPRE.TM.CookLevin.Desc.sameSignsR_apply",
+   "MIPRE.TM.CookLevin.Desc.selectF_eq",
+   "MIPRE.TM.CookLevin.Desc.selectF_zipWith",
+   "MIPRE.TM.CookLevin.Desc.selectR_apply",
+   "MIPRE.TM.CookLevin.Desc.specMatchR_apply",
+   "MIPRE.TM.CookLevin.Desc.startCellR_apply",
+   "MIPRE.TM.CookLevin.Desc.startFixedR_apply",
+   "MIPRE.TM.CookLevin.Desc.startHeadR_apply",
+   "MIPRE.TM.CookLevin.Desc.startR_apply",
+   "MIPRE.TM.CookLevin.Desc.startStateR_apply",
+   "MIPRE.TM.CookLevin.Desc.startWorkR_apply",
+   "MIPRE.TM.CookLevin.Desc.stateEqR_apply",
+   "MIPRE.TM.CookLevin.Desc.tZeroR_apply",
+   "MIPRE.TM.CookLevin.Desc.tableauPlusR_apply",
+   "MIPRE.TM.CookLevin.Desc.tableauR_apply",
+   "MIPRE.TM.CookLevin.Desc.tplR_apply",
+   "MIPRE.TM.CookLevin.Desc.twoSAddR_apply",
+   "MIPRE.TM.CookLevin.Desc.twoSR_apply",
+   "MIPRE.TM.CookLevin.Desc.unaryValR_apply",
+   "MIPRE.TM.CookLevin.Desc.unitAuxR_apply",
+   "MIPRE.TM.CookLevin.Desc.unitCellR_apply",
+   "MIPRE.TM.CookLevin.Desc.unitEmitBadR_apply",
+   "MIPRE.TM.CookLevin.Desc.unitEmittedR_apply",
+   "MIPRE.TM.CookLevin.Desc.unitHeadR_apply",
+   "MIPRE.TM.CookLevin.Desc.unitStateR_apply",
+   "MIPRE.TM.CookLevin.Desc.winMatchR_apply",
+   "MIPRE.TM.CookLevin.Desc.windowGatesR_apply",
+   "MIPRE.TM.CookLevin.Desc.windowOutR_apply",
+   "MIPRE.TM.CookLevin.Desc.windowR_apply",
+   "MIPRE.TM.CookLevin.Desc.workValR_apply",
+   "MIPRE.TM.CookLevin.Desc.xnorR_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.SofAddR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     142,
+     143
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.SofAddR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     145,
+     146
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.SofR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     130,
+     131
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.SofR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     133,
+     133
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.addRelR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     103,
+     105
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.addRelR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     107,
+     108
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.andR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     30,
+     32
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.andR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     34,
+     36
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.andTwo",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     46,
+     47
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.andTwo_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     49,
+     50
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.ansEndR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     830,
+     835
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.ansEndR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     837,
+     839
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.auxEqR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     252,
+     254
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.auxEqR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     256,
+     257
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.auxMatchR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     755,
+     758
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.auxMatchR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     760,
+     762
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.bdryCellR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     567,
+     570
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.bdryCellR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     572,
+     574
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.bdryHeadR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     576,
+     578
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.bdryHeadR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     580,
+     582
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.bdryPredR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     584,
+     585
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.bdryPredR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     587,
+     589
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.bdryR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     350,
+     352
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.bdryR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     354,
+     355
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.cellEqR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     233,
+     235
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.cellEqR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     237,
+     238
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.cellValR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     394,
+     399
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.cellValR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     401,
+     403
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.emitBadR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     636,
+     638
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.emitBadR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     640,
+     642
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.emitMonoR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     608,
+     612
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.emitMonoR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     614,
+     616
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.emitOnceR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     627,
+     630
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.emitOnceR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     632,
+     634
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.emitOneR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     618,
+     621
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.emitOneR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     623,
+     625
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.emitPredR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     644,
+     647
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.emitPredR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     649,
+     651
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.emitStepR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     599,
+     602
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.emitStepR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     604,
+     606
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.emitZeroR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     591,
+     593
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.emitZeroR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     595,
+     597
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.eqC",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     75,
+     77
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.eqC_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     79,
+     80
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.eqF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     89,
+     91
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.eqF_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     93,
+     94
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.finalEmittedR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     662,
+     664
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.finalEmittedR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     666,
+     668
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.finalPredR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     670,
+     672
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.finalPredR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     674,
+     676
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.finalStateR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     653,
+     656
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.finalStateR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     658,
+     660
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.freeBdryR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     490,
+     493
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.freeBdryR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     495,
+     497
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.freeBlankR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     539,
+     544
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.freeBlankR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     546,
+     548
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.freeNandR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     529,
+     533
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.freeNandR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     535,
+     537
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.freeOneOfR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     518,
+     523
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.freeOneOfR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     525,
+     527
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.freeOtherR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     499,
+     503
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.freeOtherR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     505,
+     507
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.freeR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     550,
+     553
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.freeR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     555,
+     557
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.freeTapeR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     416,
+     418
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.freeTapeR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     420,
+     422
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.freeTwoR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     509,
+     512
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.freeTwoR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     514,
+     516
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.headEqR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     240,
+     241
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.headEqR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     243,
+     244
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.isAuxR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     222,
+     226
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.isAuxR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     228,
+     229
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.isCellR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     171,
+     177
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.isCellR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     179,
+     180
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.isEmitBadR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     206,
+     208
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.isEmitBadR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     210,
+     212
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.isEmitOneR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     198,
+     200
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.isEmitOneR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     202,
+     204
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.isEmittedR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     214,
+     216
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.isEmittedR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     218,
+     220
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.isHeadR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     182,
+     185
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.isHeadR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     187,
+     188
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.isStateR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     190,
+     193
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.isStateR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     195,
+     196
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.lookupList_eq",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     374,
+     381
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.lookupR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     383,
+     387
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.lookupR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     389,
+     392
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.ltC",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     82,
+     84
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.ltC_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     86,
+     87
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.ltF",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     96,
+     98
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.ltF_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     100,
+     101
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.mainR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     682,
+     686
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.mainR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     688,
+     691
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.mapR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     269,
+     272
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.mapR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     274,
+     276
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.muxR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     69,
+     70
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.muxR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     72,
+     73
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.notR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     58,
+     59
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.notR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     61,
+     61
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.numC",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     119,
+     121
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.numC_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     123,
+     124
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.numEqR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     163,
+     166
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.numEqR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     168,
+     169
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.numR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     112,
+     114
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.numR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     116,
+     117
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.orR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     38,
+     40
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.orR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     42,
+     44
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.orTwo",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     52,
+     53
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.orTwo_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     55,
+     56
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.posR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     726,
+     730
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.posR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     732,
+     734
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.samePosR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     259,
+     260
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.samePosR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     262,
+     263
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.sameSignsR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     335,
+     337
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.sameSignsR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     339,
+     340
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.selectF_eq",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     708,
+     710
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.selectF_zipWith",
+    "kind": "theorem",
+    "has_doc": true,
+    "lines": [
+     699,
+     706
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.selectR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     712,
+     715
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.selectR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     717,
+     720
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.specMatchR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     764,
+     766
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.specMatchR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     768,
+     770
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.startCellR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     357,
+     360
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.startCellR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     362,
+     364
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.startFixedR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     455,
+     459
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.startFixedR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     461,
+     463
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.startHeadR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     438,
+     440
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.startHeadR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     442,
+     444
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.startR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     474,
+     476
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.startR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     478,
+     480
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.startStateR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     446,
+     449
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.startStateR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     451,
+     453
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.startWorkR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     465,
+     468
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.startWorkR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     470,
+     472
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.stateEqR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     246,
+     247
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.stateEqR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     249,
+     250
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.tZeroR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     424,
+     425
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.tZeroR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     427,
+     428
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.tableauPlusR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     841,
+     845
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.tableauPlusR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     847,
+     851
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.tableauR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     816,
+     820
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.tableauR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     822,
+     826
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.tplR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     778,
+     782
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.tplR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     784,
+     786
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.twoSAddR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     148,
+     149
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.twoSAddR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     151,
+     153
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.twoSR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     135,
+     136
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.twoSR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     138,
+     140
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.unaryValR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     405,
+     410
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.unaryValR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     412,
+     414
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.unitAuxR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     327,
+     329
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.unitAuxR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     331,
+     333
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.unitCellR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     284,
+     286
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.unitCellR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     288,
+     290
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.unitEmitBadR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     309,
+     312
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.unitEmitBadR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     314,
+     316
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.unitEmittedR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     318,
+     321
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.unitEmittedR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     323,
+     325
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.unitHeadR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     292,
+     294
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.unitHeadR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     296,
+     298
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.unitStateR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     300,
+     303
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.unitStateR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     305,
+     307
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.winMatchR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     736,
+     749
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.winMatchR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     751,
+     753
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.windowGatesR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     788,
+     790
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.windowGatesR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     792,
+     794
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.windowOutR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     796,
+     798
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.windowOutR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     800,
+     802
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.windowR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     804,
+     806
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.windowR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     808,
+     810
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.workValR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     366,
+     368
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.workValR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     370,
+     372
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.xnorR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     63,
+     64
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.xnorR_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     66,
+     67
+    ]
+   }
+  ],
+  "lines": 954,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Cslib_Foundations_Data_RelatesInSteps",
+   "import Definitions.Def_MIPRE_Cslib_Computability_Machines_Turing_MultiTape_Deterministic",
+   "import Definitions.Def_MIPRE_TM_MultiInput_Deterministic",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Local",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Tseitin",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Tableau",
+   "import Definitions.Def_MIPRE_TM_Interp_Instr",
+   "import Definitions.Def_MIPRE_TM_Interp_Machine",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Layout",
+   "import Definitions.Def_MIPRE_TM_CookLevin_FieldFml",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Kinds",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Families",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Window",
+   "import Definitions.Def_MIPRE_TM_CookLevin_FamilyFml",
+   "import Definitions.Def_MIPRE_TM_Interp_Tape",
+   "import Definitions.Def_MIPRE_TM_Interp_Reach",
+   "import Definitions.Def_MIPRE_TM_Interp_Routines",
+   "import Definitions.Def_MIPRE_TM_Interp_Repr",
+   "import Definitions.Def_MIPRE_TM_Interp_CopyTree",
+   "import Definitions.Def_MIPRE_TM_Interp_GetEnv",
+   "import Definitions.Def_MIPRE_TM_Interp_Desc",
+   "import Definitions.Def_MIPRE_TM_Interp_Step",
+   "import Definitions.Def_MIPRE_TM_Interp_InputRoutines",
+   "import Definitions.Def_MIPRE_TM_Interp_Run",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Table",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Params",
+   "import Definitions.Def_MIPRE_TM_CookLevin_AnsEnd",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Index",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Describer",
+   "import Definitions.Def_MIPRE_TM_CookLevin_LayoutProg",
+   "import Definitions.Def_MIPRE_TM_CookLevin_FieldProg"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TM.CookLevin.Desc.SofAddR": [
+    "/-- `Sof e + k`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.SofR": [
+    "/-- `Sof e`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.addRelR": [
+    "/-- `addConstRel`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.andR": [
+    "/-- `andList` of readers. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.andTwo": [
+    "/-- `and` of two readers. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.ansEndR": [
+    "/-- `ansEndF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.auxEqR": [
+    "/-- `auxEqF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.auxMatchR": [
+    "/-- `auxMatchN`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.bdryCellR": [
+    "/-- `bdryCellF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.bdryHeadR": [
+    "/-- `bdryHeadF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.bdryPredR": [
+    "/-- `bdryPredF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.bdryR": [
+    "/-- `bdryF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.cellEqR": [
+    "/-- `cellEqF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.cellValR": [
+    "/-- `cellValF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.emitBadR": [
+    "/-- `emitBadF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.emitMonoR": [
+    "/-- `emitMonoF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.emitOnceR": [
+    "/-- `emitOnceF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.emitOneR": [
+    "/-- `emitOneF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.emitPredR": [
+    "/-- `emitPredF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.emitStepR": [
+    "/-- `emitStepF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.emitZeroR": [
+    "/-- `emitZeroF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.eqC": [
+    "/-- `eqConst`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.eqF": [
+    "/-- `eqFields`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.finalEmittedR": [
+    "/-- `finalEmittedF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.finalPredR": [
+    "/-- `finalPredF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.finalStateR": [
+    "/-- `finalStateF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.freeBdryR": [
+    "/-- `freeBdryF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.freeBlankR": [
+    "/-- `freeBlankF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.freeNandR": [
+    "/-- `freeNandF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.freeOneOfR": [
+    "/-- `freeOneOfF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.freeOtherR": [
+    "/-- `freeOtherF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.freeR": [
+    "/-- `freeF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.freeTapeR": [
+    "/-- `freeTapeF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.freeTwoR": [
+    "/-- `freeTwoF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.headEqR": [
+    "/-- `headEqF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.isAuxR": [
+    "/-- `isAuxF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.isCellR": [
+    "/-- `isCellF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.isEmitBadR": [
+    "/-- `isEmitBadF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.isEmitOneR": [
+    "/-- `isEmitOneF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.isEmittedR": [
+    "/-- `isEmittedF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.isHeadR": [
+    "/-- `isHeadF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.isStateR": [
+    "/-- `isStateF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.lookupR": [
+    "/-- `lookupList`, from cell `3`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.ltC": [
+    "/-- `ltConst`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.ltF": [
+    "/-- `ltFields`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.mainR": [
+    "/-- `mainF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.mapR": [
+    "/-- Mapping a reader of pairs over a list read off the input. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.muxR": [
+    "/-- `mux` of three readers. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.notR": [
+    "/-- `not` of a reader. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.numC": [
+    "/-- A field constant with a fixed value. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.numEqR": [
+    "/-- `numEqF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.numR": [
+    "/-- A field constant, from a width in unary and the number. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.orR": [
+    "/-- `orList` of readers. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.orTwo": [
+    "/-- `or` of two readers. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.posR": [
+    "/-- `posF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.samePosR": [
+    "/-- `samePosF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.sameSignsR": [
+    "/-- `sameSignsF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.selectR": [
+    "/-- `selectF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.specMatchR": [
+    "/-- `specMatchN`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.startCellR": [
+    "/-- `startCellF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.startFixedR": [
+    "/-- `startFixedF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.startHeadR": [
+    "/-- `startHeadF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.startR": [
+    "/-- `startF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.startStateR": [
+    "/-- `startStateF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.startWorkR": [
+    "/-- `startWorkF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.stateEqR": [
+    "/-- `stateEqF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.tZeroR": [
+    "/-- `tZeroF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.tableauPlusR": [
+    "/-- `tableauPlusF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.tableauR": [
+    "/-- `tableauF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.tplR": [
+    "/-- `tplN`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.twoSAddR": [
+    "/-- `2 * Sof e + k`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.twoSR": [
+    "/-- `2 * Sof e`, as `Sof (e + 1)`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.unaryValR": [
+    "/-- `unaryValF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.unitAuxR": [
+    "/-- `unitAuxF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.unitCellR": [
+    "/-- `unitCellF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.unitEmitBadR": [
+    "/-- `unitEmitBadF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.unitEmittedR": [
+    "/-- `unitEmittedF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.unitHeadR": [
+    "/-- `unitHeadF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.unitStateR": [
+    "/-- `unitStateF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.winMatchR": [
+    "/-- `winMatchN`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.windowGatesR": [
+    "/-- `windowGatesN`, on the templates of the check circuit. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.windowOutR": [
+    "/-- `windowOutF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.windowR": [
+    "/-- `windowN`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.workValR": [
+    "/-- `workValF`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.xnorR": [
+    "/-- `xnor` of two readers. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_TM_CookLevin_DescProg",
+  "module": "MIPRE.TM.CookLevin.DescProg",
+  "module_doc": "/-!\n# The describer as a program\n\n`descCircP` is the describer circuit as a polynomial-time function of\n`((e in unary, T), (𝒟, n), (x, y))`, and `descCircP_apply` says it is `descCirc`. This is\nitem 4 of `thm:succinct-sat`; item 3, the gate bound, follows from it, because\n`PolyTimeFun.esize_apply_le` bounds the size of the output of a program by its time bound\n(`planning/succinct-cook-levin.md`, S3).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/DescProg.lean",
+  "source_path": "MIPRE/TM/CookLevin/DescProg.lean",
+  "defmat": [
+   "MIPRE.TM.CookLevin.Desc.DI",
+   "MIPRE.TM.CookLevin.Desc.DInp",
+   "MIPRE.TM.CookLevin.Desc.PInp",
+   "MIPRE.TM.CookLevin.Desc.TI",
+   "MIPRE.TM.CookLevin.Desc.bitsData",
+   "MIPRE.TM.CookLevin.Desc.codesP",
+   "MIPRE.TM.CookLevin.Desc.describeM",
+   "MIPRE.TM.CookLevin.Desc.eP",
+   "MIPRE.TM.CookLevin.Desc.euI",
+   "MIPRE.TM.CookLevin.Desc.mP",
+   "MIPRE.TM.CookLevin.Desc.nI",
+   "MIPRE.TM.CookLevin.Desc.sizeU",
+   "MIPRE.TM.CookLevin.Desc.tabsR",
+   "MIPRE.TM.CookLevin.Desc.xI",
+   "MIPRE.TM.CookLevin.Desc.yI"
+  ],
+  "embedded": [
+   "MIPRE.TM.CookLevin.Desc.DI_apply",
+   "MIPRE.TM.CookLevin.Desc.TI_apply",
+   "MIPRE.TM.CookLevin.Desc.bitsData_apply",
+   "MIPRE.TM.CookLevin.Desc.codesOf_S",
+   "MIPRE.TM.CookLevin.Desc.codesP_apply",
+   "MIPRE.TM.CookLevin.Desc.describeM_apply",
+   "MIPRE.TM.CookLevin.Desc.euI_apply",
+   "MIPRE.TM.CookLevin.Desc.length_eP",
+   "MIPRE.TM.CookLevin.Desc.length_sizeU",
+   "MIPRE.TM.CookLevin.Desc.mP_apply",
+   "MIPRE.TM.CookLevin.Desc.nI_apply",
+   "MIPRE.TM.CookLevin.Desc.xI_apply",
+   "MIPRE.TM.CookLevin.Desc.yI_apply"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.DI",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     113,
+     113
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.DI_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     120,
+     120
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.DInp",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     107,
+     109
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.PInp",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     200,
+     202
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.TI",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     112,
+     112
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.TI_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     119,
+     119
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.bitsData",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     75,
+     77
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.bitsData_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     79,
+     79
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.codesOf_S",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     64,
+     69
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.codesP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     59,
+     62
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.codesP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     71,
+     73
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.describeM",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     219,
+     220
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.describeM_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     222,
+     223
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.eP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     180,
+     183
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.euI",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     111,
+     111
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.euI_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     118,
+     118
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.length_eP",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     185,
+     188
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.length_sizeU",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     176,
+     178
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.mP",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     192,
+     193
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.mP_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     195,
+     196
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.nI",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     114,
+     114
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.nI_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     121,
+     121
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.sizeU",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     172,
+     174
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.tabsR",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     81,
+     91
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.xI",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     115,
+     115
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.xI_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     122,
+     122
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.yI",
+    "kind": "def",
+    "has_doc": false,
+    "lines": [
+     116,
+     116
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.Desc.yI_apply",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     123,
+     123
+    ]
+   }
+  ],
+  "lines": 228,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Games",
+   "import Definitions.Def_MIPRE_Foundations_CL_Register",
+   "import Definitions.Def_MIPRE_Foundations_CL_Basic",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Foundations_Cost_PolyTime",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure",
+   "import Definitions.Def_MIPRE_Foundations_CL_Closure_B",
+   "import Definitions.Def_MIPRE_Foundations_CL_Sampler",
+   "import Definitions.Def_MIPRE_Foundations_Verifier",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Succinct",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Closure",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Loops_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Fold",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Unary",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Codable_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Binary",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Formula",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlLib",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Flatten",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Reader",
+   "import Definitions.Def_MIPRE_Foundations_SAT_FmlProg",
+   "import Definitions.Def_MIPRE_Foundations_Cost_TreeBits",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Machine_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineData_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_MachineBound_B",
+   "import Definitions.Def_MIPRE_Cslib_Foundations_Data_RelatesInSteps",
+   "import Definitions.Def_MIPRE_Cslib_Computability_Machines_Turing_MultiTape_Deterministic",
+   "import Definitions.Def_MIPRE_TM_MultiInput_Deterministic",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Local",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Tseitin",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Tableau",
+   "import Definitions.Def_MIPRE_TM_Interp_Instr",
+   "import Definitions.Def_MIPRE_TM_Interp_Machine",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Layout",
+   "import Definitions.Def_MIPRE_TM_CookLevin_FieldFml",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Kinds",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Families",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Window",
+   "import Definitions.Def_MIPRE_TM_CookLevin_FamilyFml",
+   "import Definitions.Def_MIPRE_TM_Interp_Tape",
+   "import Definitions.Def_MIPRE_TM_Interp_Reach",
+   "import Definitions.Def_MIPRE_TM_Interp_Routines",
+   "import Definitions.Def_MIPRE_TM_Interp_Repr",
+   "import Definitions.Def_MIPRE_TM_Interp_CopyTree",
+   "import Definitions.Def_MIPRE_TM_Interp_GetEnv",
+   "import Definitions.Def_MIPRE_TM_Interp_Desc",
+   "import Definitions.Def_MIPRE_TM_Interp_Step",
+   "import Definitions.Def_MIPRE_TM_Interp_InputRoutines",
+   "import Definitions.Def_MIPRE_TM_Interp_Run",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Table",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Params",
+   "import Definitions.Def_MIPRE_TM_CookLevin_AnsEnd",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Index",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Describer",
+   "import Definitions.Def_MIPRE_TM_CookLevin_LayoutProg",
+   "import Definitions.Def_MIPRE_TM_CookLevin_FieldProg",
+   "import Definitions.Def_MIPRE_TM_CookLevin_FamilyProg"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TM.CookLevin.Desc.DI": null,
+   "MIPRE.TM.CookLevin.Desc.DInp": [
+    "/-- The input of the describer: `e` in unary and the time bound, the decider and the index,",
+    "the two questions. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.PInp": [
+    "/-- The input of the theorem's algorithm: the time bound and the size bound, the decider and",
+    "the index, the two questions. `e` is computed from `T` and `σ`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.TI": null,
+   "MIPRE.TM.CookLevin.Desc.bitsData": [
+    "/-- A bit string as its encoding. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.codesP": [
+    "/-- The symbol codes of the serialization of a value. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.describeM": [
+    "/-- The index width, in the theorem's own parameters. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.eP": [
+    "/-- `eOf`, in unary: it is affine in `Nat.size T` and `Nat.size σ`. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.euI": null,
+   "MIPRE.TM.CookLevin.Desc.mP": [
+    "/-- The index width `m`, as a program: it is affine in `e`, so it is an `append` in unary. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.nI": null,
+   "MIPRE.TM.CookLevin.Desc.sizeU": [
+    "/-- `Nat.size`, in unary: one unit per bit. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.tabsR": [
+    "/-- `tabsOf`: the value formulas of the five fixed tapes. -/"
+   ],
+   "MIPRE.TM.CookLevin.Desc.xI": null,
+   "MIPRE.TM.CookLevin.Desc.yI": null
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_TM_CookLevin_Semantics",
+  "module": "MIPRE.TM.CookLevin.Semantics",
+  "module_doc": "/-!\n# The windows of a run are locally consistent\n\n`localCfgOf M acc c js` is the local configuration read off a configuration `c` and its\nsuccessor at the window `js`; its encoding is the assignment of the run on the window's\nvariables (`encode_localCfgOf`), and it is locally consistent\n(`locallyConsistent_localCfgOf`): the completeness half of the tableau's correctness\n(`planning/succinct-cook-levin.md`, S1). The proof is the case analysis of the paper's\n`lem:correct-tableau` on where the heads are, with the clamping of the input heads\n(`Turing.moveInputPos`) matched against the tableau's rule (`newOffset`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Semantics.lean",
+  "source_path": "MIPRE/TM/CookLevin/Semantics.lean",
+  "defmat": [
+   "MIPRE.TM.CookLevin.HeadsIn",
+   "MIPRE.TM.CookLevin.localCfgOf"
+  ],
+  "embedded": [
+   "MIPRE.TM.CookLevin.cellIdx_val",
+   "MIPRE.TM.CookLevin.center_val"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.TM.CookLevin.HeadsIn",
+    "kind": "inductive",
+    "has_doc": true,
+    "lines": [
+     260,
+     264
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.cellIdx_val",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     33,
+     33
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.center_val",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     35,
+     35
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.localCfgOf",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     50,
+     60
+    ]
+   }
+  ],
+  "lines": 101,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Cslib_Foundations_Data_RelatesInSteps",
+   "import Definitions.Def_MIPRE_Cslib_Computability_Machines_Turing_MultiTape_Deterministic",
+   "import Definitions.Def_MIPRE_TM_MultiInput_Deterministic",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Local",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Tseitin",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Tableau"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TM.CookLevin.HeadsIn": [
+    "/-- The bounds under which every head is on an interior cell; they hold at every time",
+    "`t ≤ S` of a run (`headsIn_cfgAt`), since a head moves at most one position per step. -/"
+   ],
+   "MIPRE.TM.CookLevin.localCfgOf": [
+    "/-- The local configuration of a configuration and its successor at the window `js`. -/"
+   ]
+  }
+ },
+ {
+  "kind": "bundle-new",
+  "definition_name": "MIPRE_TM_CookLevin_Correct",
+  "module": "MIPRE.TM.CookLevin.Correct",
+  "module_doc": "/-!\n# Correctness of the Cook–Levin tableau\n\nThe tableau formula of `S` steps of a machine `M` (`tableau`) is satisfiable, with the fixed\ninput tapes holding their strings, iff `M` accepts some completion of the free input tapes\nwithin `S` steps (`planning/succinct-cook-levin.md`, S1; `answer_reduction.tex`\n`lem:correct-tableau`). Acceptance is `AcceptsIn`: halted at time `S` with output string\nexactly `[acc]`.\n\n* **Completeness** (`tableau_sat_of_acceptsIn`): the assignment of an accepting run\n  (`runAssign`) satisfies every clause; the window clauses because the windows of a run are\n  locally consistent (`locallyConsistent_localCfgOf`) and the check circuit computes local\n  consistency, its specification being the hypothesis `hchk`.\n* **Soundness** (`acceptsIn_of_tableau_sat`): a satisfying assignment determines the free\n  input strings from its time-`0` rows, and its rows encode the configurations of the run on\n  those inputs, by induction on time: at each step the window clauses force, through the\n  check circuit, local consistency of every window, and a locally consistent window whose\n  time-`t` part is that of a configuration has the time-`t + 1` part of its successor\n  (`post_of_pre`). The acceptance row and the emission bookkeeping then give acceptance.\n\nBoth directions use the head bounds `headsIn_cfgAt`: along a run, a head moves at most one\ncell per step, so at every time `t ≤ S` every head is on an interior cell of the tableau.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Correct.lean",
+  "source_path": "MIPRE/TM/CookLevin/Correct.lean",
+  "defmat": [
+   "MIPRE.TM.CookLevin.AcceptsIn"
+  ],
+  "embedded": [
+   "MIPRE.TM.CookLevin.lit_eval_false",
+   "MIPRE.TM.CookLevin.lit_eval_true",
+   "MIPRE.TM.CookLevin.runAssign_cell",
+   "MIPRE.TM.CookLevin.runAssign_emitBad",
+   "MIPRE.TM.CookLevin.runAssign_emitOne",
+   "MIPRE.TM.CookLevin.runAssign_emitted",
+   "MIPRE.TM.CookLevin.runAssign_head",
+   "MIPRE.TM.CookLevin.runAssign_state"
+  ],
+  "kept": [
+   {
+    "name": "MIPRE.TM.CookLevin.AcceptsIn",
+    "kind": "def",
+    "has_doc": true,
+    "lines": [
+     43,
+     45
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.lit_eval_false",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     230,
+     232
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.lit_eval_true",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     226,
+     228
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.runAssign_cell",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     160,
+     162
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.runAssign_emitBad",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     176,
+     178
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.runAssign_emitOne",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     172,
+     174
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.runAssign_emitted",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     180,
+     182
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.runAssign_head",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     164,
+     166
+    ]
+   },
+   {
+    "name": "MIPRE.TM.CookLevin.runAssign_state",
+    "kind": "theorem",
+    "has_doc": false,
+    "lines": [
+     168,
+     170
+    ]
+   }
+  ],
+  "lines": 132,
+  "published_bundle": null,
+  "imports": [
+   "import Definitions.Def_MIPRE_Foundations_Cost_Basic_B",
+   "import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Circuit",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Cnf",
+   "import Definitions.Def_MIPRE_Cslib_Foundations_Data_RelatesInSteps",
+   "import Definitions.Def_MIPRE_Cslib_Computability_Machines_Turing_MultiTape_Deterministic",
+   "import Definitions.Def_MIPRE_TM_MultiInput_Deterministic",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Local",
+   "import Definitions.Def_MIPRE_Foundations_SAT_Tseitin",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Tableau",
+   "import Definitions.Def_MIPRE_TM_CookLevin_Semantics"
+  ],
+  "blueprint": [],
+  "defmat_docstrings": {
+   "MIPRE.TM.CookLevin.AcceptsIn": [
+    "/-- Acceptance within `S` steps: halted at time `S`, having output exactly `[acc]`. -/"
+   ]
+  }
+ }
+]

@@ -1,0 +1,625 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.sddRel_symm",
+  "source_name": "MIPStarRE.LDT.Preliminaries.sddRel_symm",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.sddRel_symm\n    {Question Outcome : Type*} {ι : Type*}\n    [Fintype ι] [DecidableEq ι] [Fintype Outcome]\n    (ψ : QuantumState ι) (𝒟 : Distribution Question)\n    (A B : IdxSubMeas Question Outcome ι) (δ : Error) :\n    SDDRel ψ 𝒟 A B δ →\n      SDDRel ψ 𝒟 B A δ := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Symmetry of the state-dependent distance relation.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.Core",
+  "module_doc": "/-!\n# Triangle Inequalities for State-Dependent Distance: Core\n\nThis module contains the main triangle-substitution estimates for approximate\nmeasurements.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Triangles/Core.lean#L94-L104",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Triangles/Core.lean",
+  "lines": [
+   94,
+   104
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.qSDD_symm"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.triangleSub_heterogeneous",
+  "source_name": "MIPStarRE.LDT.Preliminaries.triangleSub_heterogeneous",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.triangleSub_heterogeneous\n    {Question Outcome : Type*} {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Fintype Outcome]\n    (ψ : QuantumState (ιA × ιB)) (𝒟 : Distribution Question)\n    (hψ : ψ.IsNormalized) (h𝒟 : ∑ q ∈ 𝒟.support, 𝒟.weight q ≤ 1)\n    (A B : IdxMeas Question Outcome ιA) (C : IdxSubMeas Question Outcome ιB)\n    (δ ε : Error)\n    (hAC : ConsRel ψ 𝒟\n      (IdxMeas.toIdxSubMeas A) C δ)\n    (hAB : SDDRel ψ 𝒟\n      (IdxSubMeas.placeLeft (ιB := ιB) (IdxMeas.toIdxSubMeas A))\n      (IdxSubMeas.placeLeft (ιB := ιB) (IdxMeas.toIdxSubMeas B)) ε) :\n    ConsRel ψ 𝒟\n      (IdxMeas.toIdxSubMeas B)\n      C (δ + Real.sqrt ε) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Heterogeneous left-register substitution.\n\nThis is the same proof as `triangleSub`, with the two left families placed on\n`H_A` and the right family placed on `H_B`.  It is the form needed when the\npaper's final triangle replaces Alice's polynomial measurement while Bob's\npoint measurement is held fixed.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.Core",
+  "module_doc": "/-!\n# Triangle Inequalities for State-Dependent Distance: Core\n\nThis module contains the main triangle-substitution estimates for approximate\nmeasurements.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Triangles/Core.lean#L360-L509",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Triangles/Core.lean",
+  "lines": [
+   360,
+   509
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.ev_sub",
+   "MIPStarRE.LDT.SubMeas.outcome_hermitian",
+   "MIPStarRE.LDT.Preliminaries.subMeas_diagMass_le_one",
+   "MIPStarRE.LDT.bipartiteConsError_eq_consError_placed",
+   "MIPStarRE.LDT.qSDD_nonneg"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 129,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.triangleSub_right",
+  "source_name": "MIPStarRE.LDT.Preliminaries.triangleSub_right",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.triangleSub_right\n    {Question Outcome : Type*} {ι : Type*}\n    [Fintype ι] [DecidableEq ι] [Fintype Outcome]\n    (ψ : QuantumState (ι × ι)) (𝒟 : Distribution Question)\n    (hψ : ψ.IsNormalized) (h𝒟 : ∑ q ∈ 𝒟.support, 𝒟.weight q ≤ 1)\n    (A : IdxSubMeas Question Outcome ι)\n    (B D : IdxMeas Question Outcome ι) (δ ε : Error)\n    (hAB : ConsRel ψ 𝒟\n      A (IdxMeas.toIdxSubMeas B) δ)\n    (hBD : SDDRel ψ 𝒟\n      (IdxSubMeas.liftRight (IdxMeas.toIdxSubMeas B))\n      (IdxSubMeas.liftRight (IdxMeas.toIdxSubMeas D)) ε) :\n    ConsRel ψ 𝒟\n      A\n      (IdxMeas.toIdxSubMeas D) (δ + Real.sqrt ε) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.Core",
+  "module_doc": "/-!\n# Triangle Inequalities for State-Dependent Distance: Core\n\nThis module contains the main triangle-substitution estimates for approximate\nmeasurements.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Triangles/Core.lean#L568-L661",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Triangles/Core.lean",
+  "lines": [
+   568,
+   661
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.bipartiteConsError_eq_consError_placed",
+   "MIPStarRE.LDT.qSDD_nonneg"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 79,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.triangleSub_right_heterogeneous",
+  "source_name": "MIPStarRE.LDT.Preliminaries.triangleSub_right_heterogeneous",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.triangleSub_right_heterogeneous\n    {Question Outcome : Type*} {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Fintype Outcome]\n    (ψ : QuantumState (ιA × ιB)) (𝒟 : Distribution Question)\n    (hψ : ψ.IsNormalized) (h𝒟 : ∑ q ∈ 𝒟.support, 𝒟.weight q ≤ 1)\n    (A : IdxSubMeas Question Outcome ιA)\n    (B D : IdxMeas Question Outcome ιB) (δ ε : Error)\n    (hAB : ConsRel ψ 𝒟\n      A (IdxMeas.toIdxSubMeas B) δ)\n    (hBD : SDDRel ψ 𝒟\n      (IdxSubMeas.placeRight (ιA := ιA) (IdxMeas.toIdxSubMeas B))\n      (IdxSubMeas.placeRight (ιA := ιA) (IdxMeas.toIdxSubMeas D)) ε) :\n    ConsRel ψ 𝒟\n      A\n      (IdxMeas.toIdxSubMeas D) (δ + Real.sqrt ε) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Heterogeneous right-register substitution.\n\nThis is the same proof as `triangleSub_right`, with the left family placed on\n`H_A` and the two right families placed on `H_B`.  It is the form needed for\nthe paper-facing two-prover strategy in `thm:main-formal`, where Alice's and\nBob's local Hilbert spaces are not assumed to be the same.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.Core",
+  "module_doc": "/-!\n# Triangle Inequalities for State-Dependent Distance: Core\n\nThis module contains the main triangle-substitution estimates for approximate\nmeasurements.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Triangles/Core.lean#L663-L763",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Triangles/Core.lean",
+  "lines": [
+   663,
+   763
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.bipartiteConsError_eq_consError_placed",
+   "MIPStarRE.LDT.qSDD_nonneg"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 80,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.triangleSub_right_subMeas_totalGap",
+  "source_name": "MIPStarRE.LDT.Preliminaries.triangleSub_right_subMeas_totalGap",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.triangleSub_right_subMeas_totalGap\n    {Question Outcome : Type*} {ι : Type*}\n    [Fintype ι] [DecidableEq ι] [Fintype Outcome]\n    (ψ : QuantumState (ι × ι)) (𝒟 : Distribution Question)\n    (hψ : ψ.IsNormalized) (h𝒟 : ∑ q ∈ 𝒟.support, 𝒟.weight q ≤ 1)\n    (A B D : IdxSubMeas Question Outcome ι) (δ ε η : Error)\n    (hAB : ConsRel ψ 𝒟 A B δ)\n    (hBD : SDDRel ψ 𝒟\n      (IdxSubMeas.liftRight B)\n      (IdxSubMeas.liftRight D) ε)\n    (hTotal :\n      avgOver 𝒟 (fun q =>\n        |ev ψ (leftTensor (ι₂ := ι) ((A q).total) *\n            rightTensor (ι₁ := ι) ((D q).total)) -\n          ev ψ (leftTensor (ι₂ := ι) ((A q).total) *\n            rightTensor (ι₁ := ι) ((B q).total))|) ≤ η) :\n    ConsRel ψ 𝒟 A D (δ + Real.sqrt ε + η) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Right-register substitution for submeasurements, with the total-overlap\ndisplacement stated explicitly.\n\nFor complete right-register measurements the total-overlap term\n`ev ψ (A_total ⊗ B_total)` is independent of the right family.  For general\nsubmeasurements this term may change.  The lemma therefore separates the usual\nstate-dependent-distance contribution from the averaged displacement of the\nright total operator.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.Core",
+  "module_doc": "/-!\n# Triangle Inequalities for State-Dependent Distance: Core\n\nThis module contains the main triangle-substitution estimates for approximate\nmeasurements.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Triangles/Core.lean#L765-L867",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Triangles/Core.lean",
+  "lines": [
+   765,
+   867
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.avgOver_mono",
+   "MIPStarRE.LDT.avgOver_add",
+   "MIPStarRE.LDT.bipartiteConsError_eq_consError_placed",
+   "MIPStarRE.LDT.qSDD_nonneg"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 78,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.Preliminaries.simeqTriangleInequality_heterogeneous",
+  "source_name": "MIPStarRE.LDT.Preliminaries.simeqTriangleInequality_heterogeneous",
+  "formal_statement": "theorem MIPStarRE.LDT.Preliminaries.simeqTriangleInequality_heterogeneous\n    {Question Outcome : Type*} {ιA ιB : Type*}\n    [Fintype ιA] [DecidableEq ιA] [Fintype ιB] [DecidableEq ιB] [Fintype Outcome]\n    (ψ : QuantumState (ιA × ιB)) (𝒟 : Distribution Question)\n    (hψ : ψ.IsNormalized) (h𝒟 : ∑ q ∈ 𝒟.support, 𝒟.weight q ≤ 1)\n    (A C : IdxMeas Question Outcome ιA)\n    (B D : IdxMeas Question Outcome ιB)\n    (ε δ γ : Error)\n    (hAB : ConsRel ψ 𝒟\n      (IdxMeas.toIdxSubMeas A)\n      (IdxMeas.toIdxSubMeas B) ε)\n    (hCB : ConsRel ψ 𝒟\n      (IdxMeas.toIdxSubMeas C)\n      (IdxMeas.toIdxSubMeas B) δ)\n    (hCD : ConsRel ψ 𝒟\n      (IdxMeas.toIdxSubMeas C)\n      (IdxMeas.toIdxSubMeas D) γ) :\n    ConsRel ψ 𝒟\n      (IdxMeas.toIdxSubMeas A)\n      (IdxMeas.toIdxSubMeas D)\n      (ε + 2 * Real.sqrt (δ + γ)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.Preliminaries",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Heterogeneous form of `prop:simeq-triangle-inequality`.\n\nThis is the paper's triangle step for a general bipartite strategy: the first\nand third measurements act on Alice's space, while the second and fourth act on\nBob's space.  No same-space identification or swap symmetry is used.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.Preliminaries.Triangles.SimEq",
+  "module_doc": "/-!\n# Triangle Inequalities for State-Dependent Distance: Simultaneous Equivalence\n\nThis module contains the simultaneous-equivalence triangle inequalities and the\nfinal approximate-delta triangle estimate.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Triangles/SimEq.lean#L158-L247",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/Preliminaries/Triangles/SimEq.lean",
+  "lines": [
+   158,
+   247
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.Preliminaries.simeqToApprox_heterogeneous",
+   "MIPStarRE.LDT.Preliminaries.stateDependentDistanceRel_triangle",
+   "MIPStarRE.LDT.Preliminaries.triangleSub_right_heterogeneous",
+   "MIPStarRE.LDT.Preliminaries.sddRel_symm",
+   "MIPStarRE.LDT.bipartiteConsError_nonneg"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 64,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixAveragedPointOperator_le_one",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixAveragedPointOperator_le_one",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixAveragedPointOperator_le_one (params : Parameters)\n    [FieldModel params.q]\n    (model : MatrixSdpRealization params)\n    (g : Polynomial params) :\n    matrixAveragedPointOperator params model g ≤ 1 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open MIPStarRE.Quantum",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The averaged point operator `A_g` is bounded by the identity.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Base",
+  "module_doc": "/-!\n# Section 9 — Matrix realization\n\nConcrete finite-dimensional matrix realizations of the self-improvement SDP data.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Base.lean#L210-L226",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Base.lean",
+  "lines": [
+   210,
+   226
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.averageOperatorOverDistribution_uniform_le_one"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalObjective_trace_extractedPrimalSubmeasurement",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalObjective_trace_extractedPrimalSubmeasurement",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalObjective_trace_extractedPrimalSubmeasurement\n    (params : Parameters) [FieldModel params.q]\n    (model : MatrixSdpRealization params)\n    (X : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model))\n    (hX : MatrixSdpCanonicalPrimalFeasible params model X) :\n    Complex.re (Matrix.trace\n        (matrixSdpCanonicalObjectiveOperator params model * X)) =\n      matrixSdpPrimalObjective params model\n        (matrixSdpCanonicalExtractedPrimalSubmeasurement params model X hX) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "The canonical block objective evaluated on an arbitrary feasible canonical\nprimal matrix is the paper primal objective of its extracted submeasurement.\n\nThis is the converse objective identity to\n`matrixSdpCanonicalObjective_trace_primalBlockMatrix`: once a canonical feasible\nmatrix `X` is given, reading the polynomial diagonal blocks as `T_g = X_{gg}`\npreserves the SDP objective value.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical",
+  "module_doc": "/-!\n# Section 9 — Canonical matrix SDP dual and slackness layer\n\nThis module contains the canonical objective and dual operators, the dual slack\nblock identities, and the slack-block saturation step used to extract the\npaper-form primal normalization.  The optimal-witness packages built from these\ncanonical facts live in `MatrixRealization/Canonical/Witness.lean`.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical.lean#L465-L492",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical.lean",
+  "lines": [
+   465,
+   492
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualOperator_trace_feasible",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualOperator_trace_feasible",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualOperator_trace_feasible\n    (params : Parameters) [FieldModel params.q]\n    (model : MatrixSdpRealization params)\n    (X : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model))\n    (hX : MatrixSdpCanonicalPrimalFeasible params model X)\n    (Z : MatrixOperator model.space) :\n    Complex.re (Matrix.trace\n        (matrixSdpCanonicalDualOperator params model Z * X)) =\n      matrixSdpDualObjective model Z := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Pairing the canonical dual operator with a feasible canonical primal\nmatrix gives the paper dual objective.\n\nThe canonical equality constraint says that the sum of the diagonal blocks of\n`X` is the identity.  Since the canonical dual operator has the same block `Z`\non every summand, the trace pairing collapses to `Tr Z`, exactly the paper\ndual objective.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical",
+  "module_doc": "/-!\n# Section 9 — Canonical matrix SDP dual and slackness layer\n\nThis module contains the canonical objective and dual operators, the dual slack\nblock identities, and the slack-block saturation step used to extract the\npaper-form primal normalization.  The optimal-witness packages built from these\ncanonical facts live in `MatrixRealization/Canonical/Witness.lean`.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical.lean#L510-L537",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical.lean",
+  "lines": [
+   510,
+   537
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalComplementarySlackness_of_strongDuality",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalComplementarySlackness_of_strongDuality",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalComplementarySlackness_of_strongDuality\n    (params : Parameters) [FieldModel params.q]\n    (model : MatrixSdpRealization params)\n    (X : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model))\n    (hX : MatrixSdpCanonicalPrimalFeasible params model X)\n    (Z : MatrixOperator model.space)\n    (hdual :\n      ∀ g : Polynomial params,\n        0 ≤ matrixSdpDualSlackOperator params model Z g)\n    (hstrong :\n      Complex.re (Matrix.trace\n          (matrixSdpCanonicalObjectiveOperator params model * X)) =\n        matrixSdpDualObjective model Z) :\n    X * (matrixSdpCanonicalDualOperator params model Z -\n          matrixSdpCanonicalObjectiveOperator params model) =\n      0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Zero duality gap gives canonical complementary slackness.\n\nThis is the local algebraic consequence used after the Watrous strong-duality\ntheorem supplies an optimal feasible primal-dual pair with equal objective\nvalues.  The remaining hard part is producing such a pair from Slater's\ncondition; once it is available, this theorem converts the zero gap into the\nproduct equation `X * (D(Z) - C) = 0`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical",
+  "module_doc": "/-!\n# Section 9 — Canonical matrix SDP dual and slackness layer\n\nThis module contains the canonical objective and dual operators, the dual slack\nblock identities, and the slack-block saturation step used to extract the\npaper-form primal normalization.  The optimal-witness packages built from these\ncanonical facts live in `MatrixRealization/Canonical/Witness.lean`.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical.lean#L582-L624",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical.lean",
+  "lines": [
+   582,
+   624
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.averageOperatorOverDistribution_nonneg",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualOperator_trace_feasible",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalBlockDiagonal_nonneg_iff",
+   "MIPStarRE.Quantum.kronecker_nonneg",
+   "MIPStarRE.Quantum.mul_eq_zero_of_nonneg_of_trace_mul_eq_zero"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 20,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalBlockMatrix_extracted_mul_dualSlack_of_canonical",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalBlockMatrix_extracted_mul_dualSlack_of_canonical",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalBlockMatrix_extracted_mul_dualSlack_of_canonical\n    (params : Parameters) [FieldModel params.q]\n    (model : MatrixSdpRealization params)\n    (X : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model))\n    (hX : MatrixSdpCanonicalPrimalFeasible params model X)\n    (Z : MatrixOperator model.space)\n    (hcanonical :\n      X * (matrixSdpCanonicalDualOperator params model Z -\n            matrixSdpCanonicalObjectiveOperator params model) =\n        0) :\n    matrixSdpCanonicalPrimalBlockMatrix params model\n          (matrixSdpCanonicalExtractedPrimalSubmeasurement params model X hX) *\n        (matrixSdpCanonicalDualOperator params model Z -\n          matrixSdpCanonicalObjectiveOperator params model) =\n      0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "If a feasible canonical primal matrix satisfies canonical complementary\nslackness, then the block-diagonal matrix obtained from its polynomial diagonal\nblocks also satisfies canonical complementary slackness.\n\nThis is the formal version of the reduction in the SDP proof which permits one\nto replace an optimal canonical matrix by its block-diagonal part.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical",
+  "module_doc": "/-!\n# Section 9 — Canonical matrix SDP dual and slackness layer\n\nThis module contains the canonical objective and dual operators, the dual slack\nblock identities, and the slack-block saturation step used to extract the\npaper-form primal normalization.  The optimal-witness packages built from these\ncanonical facts live in `MatrixRealization/Canonical/Witness.lean`.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical.lean#L674-L741",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical.lean",
+  "lines": [
+   674,
+   741
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 5,
+  "prooflines": 47,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpComplementarySlacknessDefect_of_canonical",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpComplementarySlacknessDefect_of_canonical",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixSdpComplementarySlacknessDefect_of_canonical\n    (params : Parameters) [FieldModel params.q]\n    (model : MatrixSdpRealization params)\n    (T : MatrixSubmeasurement (DegreeBoundedPolynomialAnswer params) model.space)\n    (Z : MatrixOperator model.space)\n    (hcanonical :\n      matrixSdpCanonicalPrimalBlockMatrix params model T *\n          (matrixSdpCanonicalDualOperator params model Z -\n            matrixSdpCanonicalObjectiveOperator params model) =\n        0)\n    (g : Polynomial params) :\n    matrixSdpComplementarySlacknessDefect params model T Z g = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Canonical complementary slackness implies the paper-form defect equation\n`T_g (Z - A_g) = 0` on each polynomial block.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical",
+  "module_doc": "/-!\n# Section 9 — Canonical matrix SDP dual and slackness layer\n\nThis module contains the canonical objective and dual operators, the dual slack\nblock identities, and the slack-block saturation step used to extract the\npaper-form primal normalization.  The optimal-witness packages built from these\ncanonical facts live in `MatrixRealization/Canonical/Witness.lean`.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical.lean#L743-L769",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical.lean",
+  "lines": [
+   743,
+   769
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 3,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalSaturateSlackBlockMatrix_feasible",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalSaturateSlackBlockMatrix_feasible",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalSaturateSlackBlockMatrix_feasible\n    (params : Parameters) [FieldModel params.q]\n    (model : MatrixSdpRealization params)\n    (X : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model))\n    (hX : MatrixSdpCanonicalPrimalFeasible params model X) :\n    MatrixSdpCanonicalPrimalFeasible params model\n      (matrixSdpCanonicalSaturateSlackBlockMatrix params model X) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Feasibility is preserved by moving the `none` slack block into\n`sdpDistinguishedPolynomial params`.\n\nThe proof uses only positivity of principal diagonal blocks of the original\nfeasible canonical matrix and the canonical equality constraint.  It is the\nsource-faithful saturation step corresponding to\n`references/ldt-paper/self_improvement.tex:182-190`, avoiding any use of an\nauxiliary dominance hypothesis `I ≤ Z`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical.Saturated",
+  "module_doc": "/-!\n# Section 9 — Saturated canonical SDP witnesses\n\nThis module contains the zero-slack variant of the canonical SDP output used in\nthe self-improvement argument.  The canonical block SDP supplies a feasible\nmatrix `X`; when its slack diagonal block is zero, the extracted polynomial\nblocks form a complete measurement without using the auxiliary dominance\ncondition \\(I \\le Z\\).\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/Saturated.lean#L143-L204",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/Saturated.lean",
+  "lines": [
+   143,
+   204
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.Quantum.kronecker_nonneg"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 47,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalObjective_trace_saturateSlackBlockMatrix",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalObjective_trace_saturateSlackBlockMatrix",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalObjective_trace_saturateSlackBlockMatrix\n    (params : Parameters) [FieldModel params.q]\n    (model : MatrixSdpRealization params)\n    (X : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model)) :\n    Complex.re (Matrix.trace\n        (matrixSdpCanonicalObjectiveOperator params model *\n          matrixSdpCanonicalSaturateSlackBlockMatrix params model X)) =\n      Complex.re (Matrix.trace\n        (matrixSdpCanonicalObjectiveOperator params model * X)) +\n        Complex.re (Matrix.trace\n          (matrixAveragedPointOperator params model\n              (sdpDistinguishedPolynomial params) *\n            matrixSdpCanonicalDiagonalBlock params model X none)) := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Exact objective formula for source-faithful slack saturation.\n\nAfter the `none` block is moved to `sdpDistinguishedPolynomial params`, the\ncanonical objective increases by the trace pairing of the old slack block with\nthe averaged point operator for that distinguished polynomial.  The `none` block\nitself has objective coefficient zero, which is why this completion is the\npaper-faithful alternative to deriving saturation through an auxiliary `I ≤ Z`\nhypothesis.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical.Saturated",
+  "module_doc": "/-!\n# Section 9 — Saturated canonical SDP witnesses\n\nThis module contains the zero-slack variant of the canonical SDP output used in\nthe self-improvement argument.  The canonical block SDP supplies a feasible\nmatrix `X`; when its slack diagonal block is zero, the extracted polynomial\nblocks form a complete measurement without using the auxiliary dominance\ncondition \\(I \\le Z\\).\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/Saturated.lean#L206-L282",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/Saturated.lean",
+  "lines": [
+   206,
+   282
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 5,
+  "prooflines": 56,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalSaturateSlackBlockMatrix_strongDuality",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalSaturateSlackBlockMatrix_strongDuality",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalSaturateSlackBlockMatrix_strongDuality\n    (params : Parameters) [FieldModel params.q]\n    (model : MatrixSdpRealization params)\n    (X : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model))\n    (hX : MatrixSdpCanonicalPrimalFeasible params model X)\n    (Z : MatrixOperator model.space)\n    (hdual :\n      ∀ g : Polynomial params,\n        0 ≤ matrixSdpDualSlackOperator params model Z g)\n    (hstrong :\n      Complex.re (Matrix.trace\n          (matrixSdpCanonicalObjectiveOperator params model * X)) =\n        matrixSdpDualObjective model Z) :\n    Complex.re (Matrix.trace\n        (matrixSdpCanonicalObjectiveOperator params model *\n          matrixSdpCanonicalSaturateSlackBlockMatrix params model X)) =\n      matrixSdpDualObjective model Z := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Objective equality survives source-faithful slack saturation.\n\nIf a feasible canonical primal matrix and a dual-feasible `Z` have equal\nobjective values, then the saturated matrix obtained by moving the slack block\nto `sdpDistinguishedPolynomial params` has the same objective value.  The proof\ncombines objective monotonicity of the completion with canonical weak duality;\nit does not use the auxiliary dominance condition `I ≤ Z`.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical.Saturated",
+  "module_doc": "/-!\n# Section 9 — Saturated canonical SDP witnesses\n\nThis module contains the zero-slack variant of the canonical SDP output used in\nthe self-improvement argument.  The canonical block SDP supplies a feasible\nmatrix `X`; when its slack diagonal block is zero, the extracted polynomial\nblocks form a complete measurement without using the auxiliary dominance\ncondition \\(I \\le Z\\).\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/Saturated.lean#L307-L347",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/Saturated.lean",
+  "lines": [
+   307,
+   347
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.averageOperatorOverDistribution_nonneg",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalSaturateSlackBlockMatrix_feasible",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalObjective_trace_saturateSlackBlockMatrix",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualOperator_trace_feasible",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalBlockDiagonal_nonneg_iff",
+   "MIPStarRE.Quantum.kronecker_nonneg",
+   "MIPStarRE.Quantum.trace_mul_nonneg_of_nonneg"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpOptimalWitness_of_canonicalSaturatedComplementarySlackness",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpOptimalWitness_of_canonicalSaturatedComplementarySlackness",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixSdpOptimalWitness_of_canonicalSaturatedComplementarySlackness\n    (params : Parameters) [FieldModel params.q]\n    (model : MatrixSdpRealization params)\n    (T : MatrixSubmeasurement (DegreeBoundedPolynomialAnswer params) model.space)\n    (Z : MatrixOperator model.space)\n    (hdual :\n      ∀ g : Polynomial params,\n        0 ≤ matrixSdpDualSlackOperator params model Z g)\n    (hstrong :\n      matrixSdpPrimalObjective params model T = matrixSdpDualObjective model Z)\n    (hcanonical :\n      matrixSdpCanonicalPrimalBlockMatrix params model T *\n          (matrixSdpCanonicalDualOperator params model Z -\n            matrixSdpCanonicalObjectiveOperator params model) =\n        0)\n    (hSlack : matrixSdpCanonicalSlackOperator params model T = 0) :\n    MatrixSdpOptimalWitness params model T Z := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Assemble a paper-form optimal witness from canonical complementary\nslackness and an explicitly saturated slack block.\n\nThe hypotheses are precisely the canonical SDP data needed after the\nblock-diagonal reduction: dual feasibility, equality of the primal and dual\nobjectives, canonical complementary slackness, and zero slack block\n`I - ∑_g T_g = 0`.  No dominance condition on the dual variable is used.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical.Saturated",
+  "module_doc": "/-!\n# Section 9 — Saturated canonical SDP witnesses\n\nThis module contains the zero-slack variant of the canonical SDP output used in\nthe self-improvement argument.  The canonical block SDP supplies a feasible\nmatrix `X`; when its slack diagonal block is zero, the extracted polynomial\nblocks form a complete measurement without using the auxiliary dominance\ncondition \\(I \\le Z\\).\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/Saturated.lean#L370-L405",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/Saturated.lean",
+  "lines": [
+   370,
+   405
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpComplementarySlacknessDefect_of_canonical"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpOptimalWitness_of_canonicalFeasibleSaturatedComplementarySlackness",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpOptimalWitness_of_canonicalFeasibleSaturatedComplementarySlackness",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixSdpOptimalWitness_of_canonicalFeasibleSaturatedComplementarySlackness\n    (params : Parameters) [FieldModel params.q]\n    (model : MatrixSdpRealization params)\n    (X : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model))\n    (hX : MatrixSdpCanonicalPrimalFeasible params model X)\n    (Z : MatrixOperator model.space)\n    (hdual :\n      ∀ g : Polynomial params,\n        0 ≤ matrixSdpDualSlackOperator params model Z g)\n    (hstrong :\n      Complex.re (Matrix.trace\n          (matrixSdpCanonicalObjectiveOperator params model * X)) =\n        matrixSdpDualObjective model Z)\n    (hcanonical :\n      X * (matrixSdpCanonicalDualOperator params model Z -\n            matrixSdpCanonicalObjectiveOperator params model) =\n        0)\n    (hSlack : matrixSdpCanonicalDiagonalBlock params model X none = 0) :\n    MatrixSdpOptimalWitness params model\n      (matrixSdpCanonicalExtractedPrimalSubmeasurement params model X hX) Z := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder"
+  ],
+  "docstring": "Assemble a paper-form optimal witness from an arbitrary feasible canonical\nmatrix with zero slack block.\n\nThe extracted polynomial diagonal blocks form the paper primal measurement.\nThe zero slack block supplies normalization; the canonical objective and\ncomplementary-slackness equations are transported to the extracted\nsubmeasurement.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical.Saturated",
+  "module_doc": "/-!\n# Section 9 — Saturated canonical SDP witnesses\n\nThis module contains the zero-slack variant of the canonical SDP output used in\nthe self-improvement argument.  The canonical block SDP supplies a feasible\nmatrix `X`; when its slack diagonal block is zero, the extracted polynomial\nblocks form a complete measurement without using the auxiliary dominance\ncondition \\(I \\le Z\\).\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/Saturated.lean#L407-L448",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/Saturated.lean",
+  "lines": [
+   407,
+   448
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpOptimalWitness_of_canonicalSaturatedComplementarySlackness",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalObjective_trace_extractedPrimalSubmeasurement",
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalBlockMatrix_extracted_mul_dualSlack_of_canonical"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalFeasible_isClosed",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalFeasible_isClosed",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalPrimalFeasible_isClosed\n    (params : Parameters) [FieldModel params.q]\n    (model : MatrixSdpRealization params) :\n    IsClosed\n      {X : MatrixOperator (matrixSdpCanonicalBlockHilbertSpace params model) |\n        MatrixSdpCanonicalPrimalFeasible params model X} := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open Filter",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise Topology"
+  ],
+  "docstring": "The feasible set of the canonical primal SDP is closed.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical.StrongDuality.Basic",
+  "module_doc": "/-!\n# Section 9 -- Canonical SDP strong-duality preliminaries\n\nThis module contains the feasibility, compactness, closedness, and\nobjective-continuity lemmas used in the finite-dimensional strong-duality\nargument for the canonical matrix SDP.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Basic.lean#L395-L424",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Basic.lean",
+  "lines": [
+   395,
+   424
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualFeasible_isClosed",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualFeasible_isClosed",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualFeasible_isClosed\n    (params : Parameters) [FieldModel params.q]\n    (model : MatrixSdpRealization params) :\n    IsClosed\n      {Z : MatrixOperator model.space |\n        ∀ g : Polynomial params,\n          0 ≤ matrixSdpDualSlackOperator params model Z g} := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open Filter",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise Topology"
+  ],
+  "docstring": "The paper-form canonical dual feasible set is closed.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical.StrongDuality.Basic",
+  "module_doc": "/-!\n# Section 9 -- Canonical SDP strong-duality preliminaries\n\nThis module contains the feasibility, compactness, closedness, and\nobjective-continuity lemmas used in the finite-dimensional strong-duality\nargument for the canonical matrix SDP.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Basic.lean#L426-L450",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Basic.lean",
+  "lines": [
+   426,
+   450
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualFeasibleSublevel_isClosed",
+  "source_name": "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualFeasibleSublevel_isClosed",
+  "formal_statement": "theorem MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualFeasibleSublevel_isClosed\n    (params : Parameters) [FieldModel params.q]\n    (model : MatrixSdpRealization params) :\n    IsClosed\n      {Z : MatrixOperator model.space |\n        (∀ g : Polynomial params,\n          0 ≤ matrixSdpDualSlackOperator params model Z g) ∧\n        matrixSdpDualObjective model Z ≤\n          matrixSdpDualObjective model (matrixSdpStrictDualWitness model)} := by sorry",
+  "preamble_opens": [
+   "open MIPStarRE",
+   "open MIPStarRE.LDT",
+   "open MIPStarRE.LDT.SelfImprovement",
+   "open MIPStarRE.LDT.ExpansionHypercubeGraph",
+   "open MIPStarRE.LDT.GlobalVariance",
+   "open MIPStarRE.LDT.MakingMeasurementsProjective",
+   "open Filter",
+   "open scoped BigOperators MatrixOrder Matrix ComplexOrder Matrix.Norms.Elementwise Topology"
+  ],
+  "docstring": "The strict-witness-bounded dual feasible sublevel is closed.",
+  "module": "MIPRE.Background.LIDT.MIPStarRE.LDT.SelfImprovement.MatrixRealization.Canonical.StrongDuality.Basic",
+  "module_doc": "/-!\n# Section 9 -- Canonical SDP strong-duality preliminaries\n\nThis module contains the feasibility, compactness, closedness, and\nobjective-continuity lemmas used in the finite-dimensional strong-duality\nargument for the canonical matrix SDP.\n\n## References\n\n- `references/ldt-paper/self_improvement.tex`\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Basic.lean#L460-L490",
+  "source_path": "MIPRE/Background/LIDT/MIPStarRE/LDT/SelfImprovement/MatrixRealization/Canonical/StrongDuality/Basic.lean",
+  "lines": [
+   460,
+   490
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPStarRE.LDT.SelfImprovement.matrixSdpCanonicalDualFeasible_isClosed"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 21,
+  "is_target": false
+ }
+]

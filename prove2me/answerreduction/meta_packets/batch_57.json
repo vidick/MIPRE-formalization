@@ -1,0 +1,687 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LIDT.Simul.clSoundness",
+  "source_name": "MIPRE.LIDT.Simul.clSoundness",
+  "formal_statement": "theorem MIPRE.LIDT.Simul.clSoundness {k : ℕ} (hq : Fintype.card F = 2 ^ k) (hm : m ∣ Fintype.card F)\n    (hd : 1 ≤ d) (hr : 1 ≤ r) (S : TensorProductStrategy (clGame (d := d) (ldc := r) hm))\n    (ε : ℝ) (hε : 0 ≤ ε) (hS : 1 - ε ≤ S.value) :\n    ∃ GA : ProjectiveMeasurement Unit (Fin r → LowIndDegPoly (F := F) (m := m) (d := d))\n        (Matrix (Fin S.dA) (Fin S.dA) ℂ),\n    ∃ GB : ProjectiveMeasurement Unit (Fin r → LowIndDegPoly (F := F) (m := m) (d := d))\n        (Matrix (Fin S.dB) (Fin S.dB) ℂ),\n      inconsistency (uniform (Point F m)) S.ψ (tuplePOVMA hm S) (evalTuplePOVM GB)\n          ≤ deltaSim (Fintype.card F) m d r ε ∧\n        inconsistency (uniform (Point F m)) S.ψ (evalTuplePOVM GA) (tuplePOVMB hm S)\n          ≤ deltaSim (Fintype.card F) m d r ε ∧\n        inconsistency (uniform Unit) S.ψ (fun _ => GA.toPOVM ()) (fun _ => GB.toPOVM ())\n          ≤ deltaSim (Fintype.card F) m d r ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LIDT",
+   "open MIPRE.LIDT.Simul",
+   "open Finset MIPRE MIPRE.LIDT MIPRE.LIDT.CL MIPRE.LIDT.Adapter Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {K m d r : ℕ} [NeZero m]"
+  ],
+  "docstring": "**Quantum soundness of the seeded CL test** (blueprint `thm:lidt-cl-soundness`, through\n`lem:lidt-ldc`): for `q` a power of two, `m ∣ q` and `m, d, r ≥ 1`, every strategy passing the\nseeded test with `r` codewords with probability at least `1 - ε` admits projective measurements\nof complete `r`-tuples of polynomials on the two players' spaces, each evaluated at a uniform\npoint consistent with the other player's point measurement, and consistent with each other, all\nwith error `δ_sim(ε, q, m, d, r)`.",
+  "module": "MIPRE.Background.LIDT.Simultaneous",
+  "module_doc": "/-!\n# Quantum soundness of the seeded CL test with several codewords\n\nBlueprint `thm:lidt-cl-soundness`, through `lem:lidt-ldc` and `lem:lidt-ldc-error`: the\nsimultaneous contract for `r` codewords, from the single-codeword theorem\n`MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL`.\n\nThe chain is three steps. A strategy for the test with `r` codewords in `m` variables is played\nas one for the test with one codeword in `M = K + m` variables (`MIPRE/Background/LIDT/Padding`),\nfailing at most `9 (K + 1)` times as often; the single-codeword theorem applies to it; and the\nextraction of `MIPRE/Background/LIDT/Extraction` reads `r`-tuples of polynomials in the original\n`m` variables off its measurements, at an additive cost `M d / q` on the two point conclusions.\n`clSoundness_padded` is the three steps at any `K ≥ r`.\n\n## Choosing `M`, and the error\n\n`M` is the least power of two at least `m + r`, so that `M ∣ q` when `q` is a power of two and\n`m + r ≤ q`, and `M ≤ 2 (m + r) ≤ 4 m r`. The error is then absorbed into\n`δ_sim = a (d m r)^a (ε^b + q^{-b} + 2^{-b m d})` with `b` the single-codeword exponent and `a`\na (large, explicit) constant: `M ≤ 4 m r` controls the polynomial factor, `x^b ≤ x` for `x ≥ 1`\nthe failure blow-up, and `M ≥ m` the exponential term. When `m + r > q` there is no room to pad,\nand the bound is at least one, so any measurements do (`clSoundness`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/LIDT/Simultaneous.lean#L297-L338",
+  "source_path": "MIPRE/Background/LIDT/Simultaneous.lean",
+  "lines": [
+   297,
+   338
+  ],
+  "blueprint": [
+   {
+    "label": "thm:lidt-cl-soundness",
+    "env": "theorem",
+    "title": "Quantum soundness of the seeded CL test",
+    "file": "03_background_results.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.Simul.inconsistency_eq_one_sub",
+   "MIPRE.LIDT.Simul.one_le_deltaSim",
+   "MIPRE.LIDT.Simul.clSoundness_padded",
+   "MIPRE.LIDT.Simul.padM_le",
+   "MIPRE.LIDT.Simul.deltaCL_padded_le",
+   "MIPRE.POVM.posSemidef"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.QLD.PauliCL.representative_eq_canonLin",
+  "source_name": "MIPRE.QLD.PauliCL.representative_eq_canonLin",
+  "formal_statement": "theorem MIPRE.QLD.PauliCL.representative_eq_canonLin {F : Type*} [Field F] [DecidableEq F] {n : ℕ}\n    (u v : Fin n → F) : representative u v = CL.canonLin (Submodule.span F {v}) u := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.QLD",
+   "open MIPRE.QLD.PauliCL",
+   "open MIPRE.Introspection.LineProgram MIPRE.SAT"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Background.QLD.LineRepresentative",
+  "module_doc": "/-! # The executable representative is the Pauli sampler's canonical point\n\nThis bridge identifies the uniform Shoup program with the actual `canonLin`\nused by both axis and diagonal question maps, including the zero direction.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/QLD/LineRepresentative.lean#L18-L30",
+  "source_path": "MIPRE/Background/QLD/LineRepresentative.lean",
+  "lines": [
+   18,
+   30
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-executable-lines",
+    "env": "lemma",
+    "title": "Executable canonical lines and explicit binary coordinates",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LIDT.Adapter.rep_eq",
+   "MIPRE.Introspection.LineProgram.firstPair_ofFn"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "Relation.RelatesInSteps.succ_iff",
+  "source_name": "Relation.RelatesInSteps.succ_iff",
+  "formal_statement": "theorem Relation.RelatesInSteps.succ_iff {a b : α} {n : ℕ} :\n    RelatesInSteps r a b (n + 1) ↔ ∃ t', RelatesInSteps r a t' n ∧ r t' b := by sorry",
+  "preamble_opens": [
+   "open Relation",
+   "open Relation.RelatesInSteps",
+   "variable {α : Type*} {r : α → α → Prop} {a b c : α}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Cslib.Foundations.Data.RelatesInSteps",
+  "module_doc": "/-! # Relations Across Steps\n\nThis file defines `Relation.RelatesInSteps` (and `Relation.RelatesWithinSteps`).\nThese are inductively defines propositions that communicate whether a relation forms a\nchain of length `n` (or at most `n`) between two elements.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Cslib/Foundations/Data/RelatesInSteps.lean#L116-L121",
+  "source_path": "MIPRE/Cslib/Foundations/Data/RelatesInSteps.lean",
+  "lines": [
+   116,
+   121
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.ExactlyOn.concat",
+  "source_name": "MIPRE.CL.CLFun.ExactlyOn.concat",
+  "formal_statement": "theorem MIPRE.CL.CLFun.ExactlyOn.concat {L : CLFun F ι k} {R : (ι → F) → CLFun F ι ℓ} {U W : Finset ι}\n    (hL : L.ExactlyOn U) (hR : ∀ u, (R u).ExactlyOn W) (hUW : Disjoint U W) :\n    (L.concat R).ExactlyOn (U ∪ W) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "open MIPRE.CL.CLFun.ExactlyOn",
+   "variable {F : Type u} [Semiring F] {ι : Type v} [DecidableEq ι] {k ℓ : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.Closure",
+  "module_doc": "/-!\n# Closure properties of conditionally linear functions, and CL distributions\n\nPaper `linear.tex`: concatenation (`lem:cl-concat`) and direct sums (`lem:cl-func-prod`) of\nconditionally linear functions, and the conditionally linear distribution of a pair of CL\nfunctions (`def:cl-dist`); blueprint `def:cl-function` and `lem:cl-closure`, ledger node\n`1.1.2`.\n\nBoth constructions are on presentations (`MIPRE.CL.CLFun`) and are hypothesis-free; the\nhypotheses of the paper's lemmas — the pieces live on disjoint register subspaces — enter only\nin the evaluation lemmas (`SupportedOn.eval_concat`, `SupportedOn.eval_directSum`), which say\nthat the constructions present the functions the paper writes down, and in the support\nlemmas. The paper's statements about *functions* follow as `IsCLFun.concat` and\n`IsCLFun.directSum`.\n\n* `CLFun.concat L R`: run `L` (level `k`), then the `R_u` (level `ℓ`) selected by its output;\n  level `ℓ + k` — the paper's `T(x) = L(x^U) + R_{L(x^U)}(x^V)` on `U ⊕ V`, here for `L` on\n  `V_U`, the `R_u` on `V_W`, `U` and `W` disjoint.\n* `CLFun.directSum P Q`: stage by stage, the register subspaces are joined and the two\n  continuations run side by side, each selected by its own component of the joint output;\n  the paper's `⊕ⱼ L⁽ʲ⁾`, two summands at a time (`liftN` pads to a common level, the paper's\n  `ℓ = maxⱼ ℓⱼ`).\n* `MIPRE.CL.clDist L R`: the law of `(L x, R x)` for `x` uniform, as a real-valued probability\n  mass function on pairs, the format of `MIPRE.Game`.\n\nThe paper's third closure property, downsizing to `𝔽₂` (`lem:cl-downsize`), needs the self-dual\nbases of blueprint `lem:self-dual-basis` and is not here.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Closure.lean#L77-L90",
+  "source_path": "MIPRE/Foundations/CL/Closure.lean",
+  "lines": [
+   77,
+   90
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.ExactlyOn.directSum",
+  "source_name": "MIPRE.CL.CLFun.ExactlyOn.directSum",
+  "formal_statement": "theorem MIPRE.CL.CLFun.ExactlyOn.directSum {P Q : CLFun F ι ℓ} {T T' : Finset ι} (hP : P.ExactlyOn T)\n    (hQ : Q.ExactlyOn T') (hTT' : Disjoint T T') : (P.directSum Q).ExactlyOn (T ∪ T') := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "open MIPRE.CL.CLFun.ExactlyOn",
+   "variable {F : Type u} [Semiring F] {ι : Type v} [DecidableEq ι] {k ℓ : ℕ}"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.Closure",
+  "module_doc": "/-!\n# Closure properties of conditionally linear functions, and CL distributions\n\nPaper `linear.tex`: concatenation (`lem:cl-concat`) and direct sums (`lem:cl-func-prod`) of\nconditionally linear functions, and the conditionally linear distribution of a pair of CL\nfunctions (`def:cl-dist`); blueprint `def:cl-function` and `lem:cl-closure`, ledger node\n`1.1.2`.\n\nBoth constructions are on presentations (`MIPRE.CL.CLFun`) and are hypothesis-free; the\nhypotheses of the paper's lemmas — the pieces live on disjoint register subspaces — enter only\nin the evaluation lemmas (`SupportedOn.eval_concat`, `SupportedOn.eval_directSum`), which say\nthat the constructions present the functions the paper writes down, and in the support\nlemmas. The paper's statements about *functions* follow as `IsCLFun.concat` and\n`IsCLFun.directSum`.\n\n* `CLFun.concat L R`: run `L` (level `k`), then the `R_u` (level `ℓ`) selected by its output;\n  level `ℓ + k` — the paper's `T(x) = L(x^U) + R_{L(x^U)}(x^V)` on `U ⊕ V`, here for `L` on\n  `V_U`, the `R_u` on `V_W`, `U` and `W` disjoint.\n* `CLFun.directSum P Q`: stage by stage, the register subspaces are joined and the two\n  continuations run side by side, each selected by its own component of the joint output;\n  the paper's `⊕ⱼ L⁽ʲ⁾`, two summands at a time (`liftN` pads to a common level, the paper's\n  `ℓ = maxⱼ ℓⱼ`).\n* `MIPRE.CL.clDist L R`: the law of `(L x, R x)` for `x` uniform, as a real-valued probability\n  mass function on pairs, the format of `MIPRE.Game`.\n\nThe paper's third closure property, downsizing to `𝔽₂` (`lem:cl-downsize`), needs the self-dual\nbases of blueprint `lem:self-dual-basis` and is not here.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Closure.lean#L136-L154",
+  "source_path": "MIPRE/Foundations/CL/Closure.lean",
+  "lines": [
+   136,
+   154
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.mapOfPrefix_zeroOn",
+  "source_name": "MIPRE.CL.CLFun.mapOfPrefix_zeroOn",
+  "formal_statement": "theorem MIPRE.CL.CLFun.mapOfPrefix_zeroOn [Fintype ι] (S : Finset ι) (ℓ j : ℕ) (x : ι → F) :\n    (zeroOn (F := F) S ℓ).mapOfPrefix j x = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "open Finset Classical",
+   "variable {F ι : Type*} [Semiring F] [DecidableEq ι]"
+  ],
+  "docstring": "Fallback linear queries are zero for all prefixes and levels.",
+  "module": "MIPRE.Foundations.CL.Detyping",
+  "module_doc": "/-! # Detyped conditionally linear functions\n\nThe construction of `types.tex`, `def:detyped-CL`: run the graph sampler,\nthen the selected typed presentation on an independent register. An invalid\ngraph view selects a zero presentation that still consumes the whole content\nregister. The conditional law retains the common content seed of both players.\n\nThis file constructs the presentations and proves their law. The ambient\nprogram and its runtime are the separate `lem:detype-sampler` obligation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Detyping.lean#L60-L68",
+  "source_path": "MIPRE/Foundations/CL/Detyping.lean",
+  "lines": [
+   60,
+   68
+  ],
+  "blueprint": [
+   {
+    "label": "lem:detype-queries",
+    "env": "lemma",
+    "title": "Register embeddings and detyped query routing",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.CLFun.factorOfPrefix_zeroOn",
+  "source_name": "MIPRE.CL.CLFun.factorOfPrefix_zeroOn",
+  "formal_statement": "theorem MIPRE.CL.CLFun.factorOfPrefix_zeroOn [Fintype ι] (S : Finset ι) (ℓ j : ℕ) (x : ι → F) :\n    (zeroOn (F := F) S ℓ).factorOfPrefix j x = if ℓ = 0 ∨ j ≠ 0 then ∅ else S := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.CLFun",
+   "open Finset Classical",
+   "variable {F ι : Type*} [Semiring F] [DecidableEq ι]"
+  ],
+  "docstring": "Only the first fallback level has a nonempty factor.",
+  "module": "MIPRE.Foundations.CL.Detyping",
+  "module_doc": "/-! # Detyped conditionally linear functions\n\nThe construction of `types.tex`, `def:detyped-CL`: run the graph sampler,\nthen the selected typed presentation on an independent register. An invalid\ngraph view selects a zero presentation that still consumes the whole content\nregister. The conditional law retains the common content seed of both players.\n\nThis file constructs the presentations and proves their law. The ambient\nprogram and its runtime are the separate `lem:detype-sampler` obligation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Detyping.lean#L70-L75",
+  "source_path": "MIPRE/Foundations/CL/Detyping.lean",
+  "lines": [
+   70,
+   75
+  ],
+  "blueprint": [
+   {
+    "label": "lem:detype-queries",
+    "env": "lemma",
+    "title": "Register embeddings and detyped query routing",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.select_eq_some_iff",
+  "source_name": "MIPRE.CL.Detyping.select_eq_some_iff",
+  "formal_statement": "theorem MIPRE.CL.Detyping.select_eq_some_iff (E : T → T → Prop) [DecidableRel E] (w : Bool)\n    (g : Graph.Coord T → ZMod 2) (u : T) :\n    select E w g = some u ↔\n      (fun p => g (w, p)) = Graph.encode E u ∧ g (!w, (true, u)) = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open Finset Classical",
+   "variable {T ι : Type*} [Fintype T] [DecidableEq T] [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The exact specification of successful type selection.",
+  "module": "MIPRE.Foundations.CL.Detyping",
+  "module_doc": "/-! # Detyped conditionally linear functions\n\nThe construction of `types.tex`, `def:detyped-CL`: run the graph sampler,\nthen the selected typed presentation on an independent register. An invalid\ngraph view selects a zero presentation that still consumes the whole content\nregister. The conditional law retains the common content seed of both players.\n\nThis file constructs the presentations and proves their law. The ambient\nprogram and its runtime are the separate `lem:detype-sampler` obligation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Detyping.lean#L94-L120",
+  "source_path": "MIPRE/Foundations/CL/Detyping.lean",
+  "lines": [
+   94,
+   120
+  ],
+  "blueprint": [
+   {
+    "label": "lem:detype-cl",
+    "env": "lemma",
+    "title": "Detyped conditionally linear functions",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.Graph.decode_eq_some_iff"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 22,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.select_output",
+  "source_name": "MIPRE.CL.Detyping.select_output",
+  "formal_statement": "theorem MIPRE.CL.Detyping.select_output (E : T → T → Prop) [DecidableRel E] (w : Bool)\n    (g : Graph.Coord T → ZMod 2) : select E w ((Graph.presentation E w).eval g) = select E w g := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open Finset Classical",
+   "variable {T ι : Type*} [Fintype T] [DecidableEq T] [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Type selection is unchanged by passing from a seed to the sampled graph view.",
+  "module": "MIPRE.Foundations.CL.Detyping",
+  "module_doc": "/-! # Detyped conditionally linear functions\n\nThe construction of `types.tex`, `def:detyped-CL`: run the graph sampler,\nthen the selected typed presentation on an independent register. An invalid\ngraph view selects a zero presentation that still consumes the whole content\nregister. The conditional law retains the common content seed of both players.\n\nThis file constructs the presentations and proves their law. The ambient\nprogram and its runtime are the separate `lem:detype-sampler` obligation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Detyping.lean#L122-L140",
+  "source_path": "MIPRE/Foundations/CL/Detyping.lean",
+  "lines": [
+   122,
+   140
+  ],
+  "blueprint": [
+   {
+    "label": "lem:detype-cl",
+    "env": "lemma",
+    "title": "Detyped conditionally linear functions",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.select_eq_some_iff",
+   "MIPRE.CL.Graph.decode_eq_some_iff"
+  ],
+  "pasted_helpers": 4,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.presentation_eval",
+  "source_name": "MIPRE.CL.Detyping.presentation_eval",
+  "formal_statement": "theorem MIPRE.CL.Detyping.presentation_eval {ℓ : ℕ} (E : T → T → Prop) [DecidableRel E] (w : Bool)\n    (P : T → CLFun (ZMod 2) ι ℓ) (hP : ∀ t, (P t).ExactlyOn univ) (hℓ : 0 < ℓ)\n    (x : Coord T ι → ZMod 2) :\n    (presentation E w P).eval x = Sum.elim\n      ((Graph.presentation E w).eval (pull .inl x))\n      ((selected P (select E w (pull .inl x))).eval (pull .inr x)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open Finset Classical",
+   "variable {T ι : Type*} [Fintype T] [DecidableEq T] [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "The output consists of the sampled graph view and exactly the selected typed output.",
+  "module": "MIPRE.Foundations.CL.Detyping",
+  "module_doc": "/-! # Detyped conditionally linear functions\n\nThe construction of `types.tex`, `def:detyped-CL`: run the graph sampler,\nthen the selected typed presentation on an independent register. An invalid\ngraph view selects a zero presentation that still consumes the whole content\nregister. The conditional law retains the common content seed of both players.\n\nThis file constructs the presentations and proves their law. The ambient\nprogram and its runtime are the separate `lem:detype-sampler` obligation.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/Detyping.lean#L194-L211",
+  "source_path": "MIPRE/Foundations/CL/Detyping.lean",
+  "lines": [
+   194,
+   211
+  ],
+  "blueprint": [
+   {
+    "label": "lem:detype-cl",
+    "env": "lemma",
+    "title": "Detyped conditionally linear functions",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.select_output",
+   "MIPRE.CL.pull_proj_compl"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.complete_commutes_sample",
+  "source_name": "MIPRE.CL.Detyping.complete_commutes_sample",
+  "formal_statement": "theorem MIPRE.CL.Detyping.complete_commutes_sample {ℓ : ℕ} (E : T → T → Prop) [DecidableRel E]\n    (hE : ∀ u v, E u v → E v u) (hne : (Graph.edges E).Nonempty)\n    (P : Bool → T → CLFun (ZMod 2) ι ℓ) (hP : ∀ w t, (P w t).ExactlyOn univ) (hℓ : 0 < ℓ)\n    (D : Question T ι → Question T ι → A → A → Bool)\n    (S : SyncStrategy (typedGame E hne P D).doubled) (hS : S.IsPCC) (a₀ : A)\n    (g : Graph.Coord T → ZMod 2) (z : ι → ZMod 2) (a b : A) :\n    let R := complete E hne P D S a₀\n    let x := (presentation E false (P false)).eval (Sum.elim g z)\n    let y := (presentation E true (P true)).eval (Sum.elim g z)\n    R.P.M (false, x) a * R.P.M (true, y) b = R.P.M (true, y) b * R.P.M (false, x) a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open Finset Classical Matrix Kronecker",
+   "variable {T ι A : Type*} [Fintype T] [DecidableEq T] [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "At each detyped seed, the two measurements commute if the original strategy is PCC.",
+  "module": "MIPRE.Foundations.CL.DetypingComplete",
+  "module_doc": "/-! # PCC completeness of finite-game detyping\n\nThe complete strategy uses the input strategy's dimension and one common\nmeasurement rule for both players. Invalid local graph views select a constant\nmeasurement. On jointly valid views, the original strategy is played on the\nsame ordered edge and common content seed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingComplete.lean#L121-L149",
+  "source_path": "MIPRE/Foundations/CL/DetypingComplete.lean",
+  "lines": [
+   121,
+   149
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.select_eq_some_iff",
+   "MIPRE.CL.Detyping.presentation_eval",
+   "MIPRE.CL.Detyping.decodeView_output",
+   "MIPRE.CL.Detyping.graph_output_of_select",
+   "MIPRE.CL.Graph.localValid_both_iff"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.complete_failAt_question",
+  "source_name": "MIPRE.CL.Detyping.complete_failAt_question",
+  "formal_statement": "theorem MIPRE.CL.Detyping.complete_failAt_question {ℓ : ℕ} (E : T → T → Prop) [DecidableRel E]\n    (hne : (Graph.edges E).Nonempty) (P : Bool → T → CLFun (ZMod 2) ι ℓ)\n    (D : Question T ι → Question T ι → A → A → Bool)\n    (S : SyncStrategy (typedGame E hne P D).doubled) (a₀ : A)\n    (x y : Question T ι) (hxy : E x.1 y.1) :\n    (complete E hne P D S a₀).toTensorProductStrategy.undouble.failAt\n      (question E false x) (question E true y) =\n      S.toTensorProductStrategy.undouble.failAt x y := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open Finset Classical Matrix Kronecker",
+   "variable {T ι A : Type*} [Fintype T] [DecidableEq T] [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "On valid views the completed strategy has exactly the original conditional failure.",
+  "module": "MIPRE.Foundations.CL.DetypingComplete",
+  "module_doc": "/-! # PCC completeness of finite-game detyping\n\nThe complete strategy uses the input strategy's dimension and one common\nmeasurement rule for both players. Invalid local graph views select a constant\nmeasurement. On jointly valid views, the original strategy is played on the\nsame ordered edge and common content seed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingComplete.lean#L187-L207",
+  "source_path": "MIPRE/Foundations/CL/DetypingComplete.lean",
+  "lines": [
+   187,
+   207
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.select_eq_some_iff"
+  ],
+  "pasted_helpers": 7,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.complete_failAt_sample",
+  "source_name": "MIPRE.CL.Detyping.complete_failAt_sample",
+  "formal_statement": "theorem MIPRE.CL.Detyping.complete_failAt_sample {ℓ : ℕ} (E : T → T → Prop) [DecidableRel E]\n    (hE : ∀ u v, E u v → E v u) (hne : (Graph.edges E).Nonempty)\n    (P : Bool → T → CLFun (ZMod 2) ι ℓ) (hP : ∀ w t, (P w t).ExactlyOn univ) (hℓ : 0 < ℓ)\n    (D : Question T ι → Question T ι → A → A → Bool)\n    (S : SyncStrategy (typedGame E hne P D).doubled) (hval : S.value = 1) (a₀ : A)\n    (g : Graph.Coord T → ZMod 2) (z : ι → ZMod 2) :\n    (complete E hne P D S a₀).toTensorProductStrategy.undouble.failAt\n      ((presentation E false (P false)).eval (Sum.elim g z))\n      ((presentation E true (P true)).eval (Sum.elim g z)) = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open Finset Classical Matrix Kronecker",
+   "variable {T ι A : Type*} [Fintype T] [DecidableEq T] [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Every actual sample is won with certainty by completion of a perfect typed strategy.",
+  "module": "MIPRE.Foundations.CL.DetypingComplete",
+  "module_doc": "/-! # PCC completeness of finite-game detyping\n\nThe complete strategy uses the input strategy's dimension and one common\nmeasurement rule for both players. Invalid local graph views select a constant\nmeasurement. On jointly valid views, the original strategy is played on the\nsame ordered edge and common content seed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingComplete.lean#L209-L233",
+  "source_path": "MIPRE/Foundations/CL/DetypingComplete.lean",
+  "lines": [
+   209,
+   233
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.select_eq_some_iff",
+   "MIPRE.CL.Detyping.select_output",
+   "MIPRE.CL.Detyping.presentation_eval",
+   "MIPRE.CL.Detyping.complete_failAt_question",
+   "MIPRE.CL.Detyping.graph_output_of_select",
+   "MIPRE.CL.Graph.localValid_both_iff"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 15,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.complete_value",
+  "source_name": "MIPRE.CL.Detyping.complete_value",
+  "formal_statement": "theorem MIPRE.CL.Detyping.complete_value {ℓ : ℕ} (E : T → T → Prop) [DecidableRel E]\n    (hE : ∀ u v, E u v → E v u) (hne : (Graph.edges E).Nonempty)\n    (P : Bool → T → CLFun (ZMod 2) ι ℓ) (hP : ∀ w t, (P w t).ExactlyOn univ) (hℓ : 0 < ℓ)\n    (D : Question T ι → Question T ι → A → A → Bool)\n    (S : SyncStrategy (typedGame E hne P D).doubled) (hval : S.value = 1) (a₀ : A) :\n    (complete E hne P D S a₀).value = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open Finset Classical Matrix Kronecker",
+   "variable {T ι A : Type*} [Fintype T] [DecidableEq T] [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "Completion preserves perfect value.",
+  "module": "MIPRE.Foundations.CL.DetypingComplete",
+  "module_doc": "/-! # PCC completeness of finite-game detyping\n\nThe complete strategy uses the input strategy's dimension and one common\nmeasurement rule for both players. Invalid local graph views select a constant\nmeasurement. On jointly valid views, the original strategy is played on the\nsame ordered edge and common content seed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingComplete.lean#L235-L259",
+  "source_path": "MIPRE/Foundations/CL/DetypingComplete.lean",
+  "lines": [
+   235,
+   259
+  ],
+  "blueprint": [
+   {
+    "label": "lem:detype-game-completeness",
+    "env": "lemma",
+    "title": "Finite-game detyping PCC completeness",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.complete_failAt_sample",
+   "MIPRE.SampledGame.one_sub_value"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.decodeView_output",
+  "source_name": "MIPRE.CL.Detyping.decodeView_output",
+  "formal_statement": "theorem MIPRE.CL.Detyping.decodeView_output (E : T → T → Prop) [DecidableRel E] (w : Bool)\n    (g : Graph.Coord T → ZMod 2) :\n    decodeView E ((Graph.presentation E w).eval g) = (select E w g).map (w, ·) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open Finset Classical",
+   "variable {T ι : Type*} [Fintype T] [DecidableEq T] [Fintype ι] [DecidableEq ι]"
+  ],
+  "docstring": "On a sampled graph view, the common decoder is exactly the local selector.",
+  "module": "MIPRE.Foundations.CL.DetypingCompleteSupport",
+  "module_doc": "/-! # The common measurement rule and support of detyping\n\nBoth players use one decoder of graph views. It agrees with their own type\nselector on sampled questions, and otherwise selects a deterministic fallback.\nThis is the player-independent rule in `types.tex`, `lem:detyping-verifiers`.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingCompleteSupport.lean#L71-L87",
+  "source_path": "MIPRE/Foundations/CL/DetypingCompleteSupport.lean",
+  "lines": [
+   71,
+   87
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.select_eq_some_iff",
+   "MIPRE.CL.Detyping.select_output",
+   "MIPRE.CL.Detyping.graph_output_of_select"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.DeciderProgram.route_call_typed",
+  "source_name": "MIPRE.CL.Detyping.DeciderProgram.route_call_typed",
+  "formal_statement": "theorem MIPRE.CL.Detyping.DeciderProgram.route_call_typed (n s inner outer : ℕ) (d payload : Data)\n    (h : route E (context (.cons (encode n) d) s inner outer) = (true, payload)) :\n    ∃ (u v : T) (x y a b : BitStr), payload = .cons (encode (n, u, x, v, y, a, b)) .nil ∧\n      x.length = s ∧ y.length = s ∧ a.length ≤ inner ∧ b.length ≤ inner := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open MIPRE.CL.Detyping.DeciderProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Pipeline",
+   "variable {T : Type*} [Fintype T] [DecidableEq T] [SizedEncoding T]",
+   "variable (E : T → T → Prop) [DecidableRel E]"
+  ],
+  "docstring": "**The one call of the router** is to the typed decider on a typed input, with the index,\nquestions of the typed sampler's dimension and answers within the inner cut, whatever the input.",
+  "module": "MIPRE.Foundations.CL.DetypingDeciderCost",
+  "module_doc": "/-!\n# The running time of the detyped decider\n\nThe detyped decider (`CL.Detyping.DeciderProgram.prog`) runs three stages on its input `(n, d)`:\nthe typed sampler on the dimension query, the cutoff routine on `n`, and the router, which either\nanswers directly or calls the typed decider once, on a typed input whose questions have the\ntyped sampler's dimension and whose answers are within the inner cut (`route_call_typed`). So its\ntime is dominated in the sense of `MIPRE.Pipeline.PDom` as soon as the three programs' are, the\ntyped decider's on those inputs only (`prog_time`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingDeciderCost.lean#L27-L58",
+  "source_path": "MIPRE/Foundations/CL/DetypingDeciderCost.lean",
+  "lines": [
+   27,
+   58
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-construction",
+    "env": "lemma",
+    "title": "Answer-reduction construction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.Program.readNat_encode"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 26,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.DeciderProgram.prog_time",
+  "source_name": "MIPRE.CL.Detyping.DeciderProgram.prog_time",
+  "formal_statement": "theorem MIPRE.CL.Detyping.DeciderProgram.prog_time (cS mS eS cC mC eC cD mD eD : ℕ) : ∃ c m e, ∀ {W K : ℕ}\n    (S : TypedSampler ℓ T) (D : TypedDecider T) (C : CutoffProgram) (n : ℕ), n ≤ W →\n    S.TimeBoundAt n ((cS * (W + 1) ^ mS) ^ (K + 1)) (eS * (K + 1)) →\n    (∀ {X : ℕ}, 1 ≤ X → PRuns W X K cC mC eC C.prog (encode n) (encode (C.inner n, C.outer n))) →\n    (∀ {X : ℕ}, 1 ≤ X → ∀ (u v : T) (x y a b : BitStr), x.length = S.dim n →\n      y.length = S.dim n → a.length ≤ C.inner n → b.length ≤ C.inner n →\n      ∃ r, PRuns W X K cD mD eD D.prog (encode (n, u, x, v, y, a, b)) r) →\n    (decider E S D C).TimeBoundAt n ((c * (W + 1) ^ m) ^ (K + 1)) (e * (K + 1)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open MIPRE.CL.Detyping.DeciderProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program MIPRE.Pipeline",
+   "variable {T : Type*} [Fintype T] [DecidableEq T] [SizedEncoding T]",
+   "variable (E : T → T → Prop) [DecidableRel E]",
+   "variable {ℓ : ℕ}"
+  ],
+  "docstring": "**The running time of the detyped decider**: dominated as soon as the typed sampler runs\nwithin `(cS (W + 1)^{mS})^{K + 1}` at degree `eS (K + 1)` at `n`, the cutoff routine within a\ndominated time, and the typed decider within one on the typed inputs the router hands it.",
+  "module": "MIPRE.Foundations.CL.DetypingDeciderCost",
+  "module_doc": "/-!\n# The running time of the detyped decider\n\nThe detyped decider (`CL.Detyping.DeciderProgram.prog`) runs three stages on its input `(n, d)`:\nthe typed sampler on the dimension query, the cutoff routine on `n`, and the router, which either\nanswers directly or calls the typed decider once, on a typed input whose questions have the\ntyped sampler's dimension and whose answers are within the inner cut (`route_call_typed`). So its\ntime is dominated in the sense of `MIPRE.Pipeline.PDom` as soon as the three programs' are, the\ntyped decider's on those inputs only (`prog_time`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingDeciderCost.lean#L62-L130",
+  "source_path": "MIPRE/Foundations/CL/DetypingDeciderCost.lean",
+  "lines": [
+   62,
+   130
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-construction",
+    "env": "lemma",
+    "title": "Answer-reduction construction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.Detyping.DeciderProgram.route_call_typed",
+   "MIPRE.CL.Detyping.Program.readNat_encode",
+   "MIPRE.Cost.Eval.deterministic",
+   "MIPRE.Cost.seqProg_closed",
+   "MIPRE.Cost.seqProg_runs",
+   "MIPRE.Pipeline.PDom.poly",
+   "MIPRE.Pipeline.PRuns.routeCall"
+  ],
+  "pasted_helpers": 17,
+  "prooflines": 58,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.sampler_time",
+  "source_name": "MIPRE.CL.Detyping.sampler_time",
+  "formal_statement": "theorem MIPRE.CL.Detyping.sampler_time (cS mS eS : ℕ) : ∃ c m d, ∀ {W K : ℕ} (S : TypedSampler ℓ T) (hℓ : 0 < ℓ)\n    (n : ℕ), n ≤ W →\n    S.TimeBoundAt n ((cS * (W + 1) ^ mS) ^ (K + 1)) (eS * (K + 1)) →\n    (sampler E S hℓ).TimeBoundAt n ((c * (W + 1) ^ m) ^ (K + 1)) (d * (K + 1)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open MIPRE.Cost MIPRE.Pipeline Polynomial",
+   "variable {T : Type*} [Fintype T] [DecidableEq T] [SizedEncoding T] {ℓ : ℕ}",
+   "variable (E : T → T → Prop) [DecidableRel E]"
+  ],
+  "docstring": "**The running time of the detyped sampler**: dominated as soon as the typed sampler's is.",
+  "module": "MIPRE.Foundations.CL.DetypingDeciderCost",
+  "module_doc": "/-!\n# The running time of the detyped decider\n\nThe detyped decider (`CL.Detyping.DeciderProgram.prog`) runs three stages on its input `(n, d)`:\nthe typed sampler on the dimension query, the cutoff routine on `n`, and the router, which either\nanswers directly or calls the typed decider once, on a typed input whose questions have the\ntyped sampler's dimension and whose answers are within the inner cut (`route_call_typed`). So its\ntime is dominated in the sense of `MIPRE.Pipeline.PDom` as soon as the three programs' are, the\ntyped decider's on those inputs only (`prog_time`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingDeciderCost.lean#L152-L199",
+  "source_path": "MIPRE/Foundations/CL/DetypingDeciderCost.lean",
+  "lines": [
+   152,
+   199
+  ],
+  "blueprint": [
+   {
+    "label": "lem:ar-construction",
+    "env": "lemma",
+    "title": "Answer-reduction construction",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.routeOneCall_haltsWithin",
+   "MIPRE.CL.Detyping.Program.route_preserves",
+   "MIPRE.Pipeline.PDom.poly",
+   "MIPRE.Pipeline.PDom.ofPoweredCall"
+  ],
+  "pasted_helpers": 13,
+  "prooflines": 43,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.DeciderProgram.decisionStage_direct",
+  "source_name": "MIPRE.CL.Detyping.DeciderProgram.decisionStage_direct",
+  "formal_statement": "theorem MIPRE.CL.Detyping.DeciderProgram.decisionStage_direct (c r : Data) (h : route E c = (false, r)) :\n    ∃ time, (decisionStage E D).Runs c r time := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open MIPRE.CL.Detyping.DeciderProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program",
+   "variable {T : Type*} [Fintype T] [DecidableEq T] [SizedEncoding T]",
+   "variable {ℓ : ℕ} (E : T → T → Prop) [DecidableRel E]",
+   "variable (S : TypedSampler ℓ T) (D : TypedDecider T) (C : CutoffProgram)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.DetypingDeciderProg",
+  "module_doc": "/-! # Executable detyping of the decision predicate\n\nThe compiler first queries the supplied typed sampler for its dimension, then\nruns the supplied cutoff routine, and finally applies the graph router. Both\nthe original answers and the original index are retained. The cutoff routine\nis an actual program: its bounds need not be polynomial in the binary index.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingDeciderProg.lean#L96-L98",
+  "source_path": "MIPRE/Foundations/CL/DetypingDeciderProg.lean",
+  "lines": [
+   96,
+   98
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.routeOneCall_direct"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.CL.Detyping.DeciderProgram.decisionStage_indirect",
+  "source_name": "MIPRE.CL.Detyping.DeciderProgram.decisionStage_indirect",
+  "formal_statement": "theorem MIPRE.CL.Detyping.DeciderProgram.decisionStage_indirect (c arg ctx r : Data) (time : ℕ)\n    (h : route E c = (true, .cons arg ctx)) (hr : D.prog.Runs arg r time) :\n    ∃ time, (decisionStage E D).Runs c (post (ctx, r)) time := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.CL",
+   "open MIPRE.CL.Detyping",
+   "open MIPRE.CL.Detyping.DeciderProgram",
+   "open MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.CL.Detyping.Program",
+   "variable {T : Type*} [Fintype T] [DecidableEq T] [SizedEncoding T]",
+   "variable {ℓ : ℕ} (E : T → T → Prop) [DecidableRel E]",
+   "variable (S : TypedSampler ℓ T) (D : TypedDecider T) (C : CutoffProgram)"
+  ],
+  "docstring": "",
+  "module": "MIPRE.Foundations.CL.DetypingDeciderProg",
+  "module_doc": "/-! # Executable detyping of the decision predicate\n\nThe compiler first queries the supplied typed sampler for its dimension, then\nruns the supplied cutoff routine, and finally applies the graph router. Both\nthe original answers and the original index are retained. The cutoff routine\nis an actual program: its bounds need not be polynomial in the binary index.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/CL/DetypingDeciderProg.lean#L100-L103",
+  "source_path": "MIPRE/Foundations/CL/DetypingDeciderProg.lean",
+  "lines": [
+   100,
+   103
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Cost.Prog.routeOneCall_indirect"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ }
+]

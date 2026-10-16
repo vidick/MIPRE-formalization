@@ -1,0 +1,421 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Weyl.sum_synOf",
+  "source_name": "MIPRE.Weyl.sum_synOf",
+  "formal_statement": "theorem MIPRE.Weyl.sum_synOf {C D : Type*} [Fintype C] [DecidableEq C] [DecidableEq D]\n    (w : (n → F) → Matrix (n → F) (n → F) ℂ) (φ : (n → F) → C) (g : C → D) (c : D) :\n    ∑ o ∈ univ.filter fun o => g o = c, synOf w φ o = synOf w (fun e => g (φ e)) c := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Weyl",
+   "open Finset Matrix",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {w : (n → F) → Matrix (n → F) (n → F) ℂ}"
+  ],
+  "docstring": "**Coarse-graining a level-set family again is the level-set family of the composite label.**\nThe level sets of `g ∘ φ` are the unions of the level sets of `φ` along the level sets of `g`, so\nrelabelling a coarse-grained eigenbasis measurement never leaves the family.",
+  "module": "MIPRE.Foundations.Weyl",
+  "module_doc": "/-!\n# Generalized Pauli operators over a field of characteristic two\n\nThe paper's `sec:generalized-pauli`: for `a ∈ F_q^n` the `X`-type operator shifts the\ncomputational basis of `(C^q)^{⊗ n}` by `a`, the `Z`-type operator is diagonal with the phase\n`ω^{tr(a · b)}`, and the two families *twisted-commute*,\n`τ^X(a) τ^Z(b) = ω^{-tr(a · b)} τ^Z(b) τ^X(a)`.\n\nThis is the missing half of the Pauli basis test's infrastructure. `MIPRE/LCS/Pauli.lean` is the\n`2 × 2` Pauli matrices for the Magic Square; what the appendix's expansion stage and its swap\nisometry both run on is the `F_q` Weyl system, and that is this file.\n\n## Two deliberate restrictions\n\n**Characteristic two.** The paper states the construction over `F_p` with `ω = e^{2πi/p}` and\nthen specializes. This file is only the `p = 2` case, where `ω = -1` and every phase is the real\nsign `MIPRE.sgn` of `MIPRE/Foundations/Sign.lean`. That is not a loss for this project: the\nPauli basis test's parameters are *admissible* (`def:admissible`), which means `q = 2^k`, and no\nconsumer instantiates it elsewhere. What it buys is large — there are no roots of unity, the\noperators are self-adjoint involutions rather than order-`p` unitaries, so they are genuine\n`±1`-observables, and `(τ^W(a))² = 1` is where the paper needs `(σ^W(a))^p = I`.\n\n**One matrix, not an iterated Kronecker product.** `(C^q)^{⊗ n}` is presented as\n`Matrix (n → F) (n → F) C`: the basis of the `n`-fold tensor power is indexed by the functions\n`n → F`, which *is* `F_q^n`. So `τ^W(a)` is a single matrix and the `n`-register statements are\nthe one-register statements with no associativity bookkeeping. The index type `n` is an arbitrary\nfinite type rather than `Fin n`, which is what lets the Pauli basis test use it at\n`n = (Fin m → Bool)`, the indexing `MIPRE.LowDegree` already uses for `F_q^M` with `M = 2^m`.\n\n## What is here\n\n`wX`, `wZ`, the group laws, self-adjointness, involutivity, unitarity, and the twisted\ncommutation `wX_mul_wZ`. Then the `Z`-eigenbasis projectors, the expansion of `wZ` in them, and\nthe Fourier inversion that recovers a projector from an average of operators --- the identity the\nexpansion stage's `E_r (-1)^{tr(ar)} Ŵ^r(u)` is an instance of. The `X` side and the maximally\nentangled state come next; they go through the Fourier transform conjugating one family into the\nother.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Weyl.lean#L634-L655",
+  "source_path": "MIPRE/Foundations/Weyl.lean",
+  "lines": [
+   634,
+   655
+  ],
+  "blueprint": [
+   {
+    "label": "def:weyl-epr",
+    "env": "definition",
+    "title": "The maximally entangled state of the Weyl system",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Weyl.proj_wZ_binEquiv",
+  "source_name": "MIPRE.Weyl.proj_wZ_binEquiv",
+  "formal_statement": "theorem MIPRE.Weyl.proj_wZ_binEquiv (hb : IsSelfDualBasis b) (e : n → F) :\n    (proj wZ (binEquiv (n := n) b e)).submatrix (binEquiv b) (binEquiv b)\n      = proj (wZ (F := F) (n := n)) e := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Weyl",
+   "open Finset Matrix MIPRE MIPRE.LowDegree",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]",
+   "variable {b : Module.Basis ι (ZMod 2) F}"
+  ],
+  "docstring": "**The `Z`-side projectors transport.**",
+  "module": "MIPRE.Foundations.WeylBinary",
+  "module_doc": "/-!\n# From qudits to qubits: the generalized Pauli system is a qubit Pauli system\n\nBlueprint `lem:pauli-binary`. A self-dual basis of `F_q` over `F_2` identifies `F_q^n` with\n`F_2^{n x k}`, and under that identification **every piece of the Weyl data over `F_q` becomes the\ncorresponding piece over `F_2`**: the form `trDot`, the two operator families, their spectral\nprojectors, and the maximally entangled state.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/WeylBinary.lean#L114-L120",
+  "source_path": "MIPRE/Foundations/WeylBinary.lean",
+  "lines": [
+   114,
+   120
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-binary",
+    "env": "lemma",
+    "title": "Qudits are qubits, in characteristic two",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 8,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Weyl.proj_wX_binEquiv",
+  "source_name": "MIPRE.Weyl.proj_wX_binEquiv",
+  "formal_statement": "theorem MIPRE.Weyl.proj_wX_binEquiv (hb : IsSelfDualBasis b) (e : n → F) :\n    (proj wX (binEquiv (n := n) b e)).submatrix (binEquiv b) (binEquiv b)\n      = proj (wX (F := F) (n := n)) e := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Weyl",
+   "open Finset Matrix MIPRE MIPRE.LowDegree",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {ι : Type*} [Fintype ι] [DecidableEq ι]",
+   "variable {b : Module.Basis ι (ZMod 2) F}"
+  ],
+  "docstring": "**The `X`-side projectors transport.**",
+  "module": "MIPRE.Foundations.WeylBinary",
+  "module_doc": "/-!\n# From qudits to qubits: the generalized Pauli system is a qubit Pauli system\n\nBlueprint `lem:pauli-binary`. A self-dual basis of `F_q` over `F_2` identifies `F_q^n` with\n`F_2^{n x k}`, and under that identification **every piece of the Weyl data over `F_q` becomes the\ncorresponding piece over `F_2`**: the form `trDot`, the two operator families, their spectral\nprojectors, and the maximally entangled state.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/WeylBinary.lean#L122-L128",
+  "source_path": "MIPRE/Foundations/WeylBinary.lean",
+  "lines": [
+   122,
+   128
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-binary",
+    "env": "lemma",
+    "title": "Qudits are qubits, in characteristic two",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 9,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Weyl.epr_unit",
+  "source_name": "MIPRE.Weyl.epr_unit",
+  "formal_statement": "theorem MIPRE.Weyl.epr_unit : star (epr (F := F) (n := n)) ⬝ᵥ epr = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Weyl",
+   "open Finset Matrix MIPRE",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]"
+  ],
+  "docstring": "The state is a unit vector.",
+  "module": "MIPRE.Foundations.WeylEPR",
+  "module_doc": "/-!\n# The maximally entangled state of the Weyl system\n\n`|EPR_q⟩^{⊗ n}` on two copies of `(C^q)^{⊗ n}`, normalized, and the one property the Pauli basis\ntest uses it for: **the two parties' Weyl operators act identically on it.**\n\nThat property is the reason the expansion stage of the appendix works at all. Its expanded state\nadjoins `|EPR_q⟩^{⊗ M}` to each player, and the sign `(-1)^γ` that the strategy's own observables\ncarry is cancelled against one the *ancilla* observables carry; for that the ancilla halves must\nbe tied together, and `stateVec_epr_wX`/`stateVec_epr_wZ` is the tie.\n\n## The general fact, and why the Weyl case is clean\n\nFor any operator, `(M ⊗ Id)|EPR⟩ = (Id ⊗ Mᵗ)|EPR⟩` (`stateVec_epr`) --- the maximally entangled\nstate transports an operator to the other factor at the cost of a transpose. Generalized Paulis\nover a field of characteristic two are *real symmetric* matrices, so the transpose is the\nidentity map on them and the cost vanishes. Over `F_p` for odd `p` it would not: `τ^Z(b)` has\nentries `ω^{tr(bj)}`, whose transpose is `τ^Z(b)` but whose conjugate is `τ^Z(-b)`, and the\nbookkeeping reappears. This is the second dividend of the characteristic-two restriction, after\nthe operators being involutions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/WeylEPR.lean#L72-L92",
+  "source_path": "MIPRE/Foundations/WeylEPR.lean",
+  "lines": [
+   72,
+   92
+  ],
+  "blueprint": [
+   {
+    "label": "def:weyl-epr",
+    "env": "definition",
+    "title": "The maximally entangled state of the Weyl system",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Weyl.stateVec_epr",
+  "source_name": "MIPRE.Weyl.stateVec_epr",
+  "formal_statement": "theorem MIPRE.Weyl.stateVec_epr (M : Matrix (n → F) (n → F) ℂ) :\n    stateVec (epr (F := F) (n := n)) M = stateVecB epr Mᵀ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Weyl",
+   "open Finset Matrix MIPRE",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]"
+  ],
+  "docstring": "**The maximally entangled state transports an operator to the other factor**, at the cost of\na transpose: `(M ⊗ Id)|EPR⟩ = (Id ⊗ Mᵗ)|EPR⟩`.",
+  "module": "MIPRE.Foundations.WeylEPR",
+  "module_doc": "/-!\n# The maximally entangled state of the Weyl system\n\n`|EPR_q⟩^{⊗ n}` on two copies of `(C^q)^{⊗ n}`, normalized, and the one property the Pauli basis\ntest uses it for: **the two parties' Weyl operators act identically on it.**\n\nThat property is the reason the expansion stage of the appendix works at all. Its expanded state\nadjoins `|EPR_q⟩^{⊗ M}` to each player, and the sign `(-1)^γ` that the strategy's own observables\ncarry is cancelled against one the *ancilla* observables carry; for that the ancilla halves must\nbe tied together, and `stateVec_epr_wX`/`stateVec_epr_wZ` is the tie.\n\n## The general fact, and why the Weyl case is clean\n\nFor any operator, `(M ⊗ Id)|EPR⟩ = (Id ⊗ Mᵗ)|EPR⟩` (`stateVec_epr`) --- the maximally entangled\nstate transports an operator to the other factor at the cost of a transpose. Generalized Paulis\nover a field of characteristic two are *real symmetric* matrices, so the transpose is the\nidentity map on them and the cost vanishes. Over `F_p` for odd `p` it would not: `τ^Z(b)` has\nentries `ω^{tr(bj)}`, whose transpose is `τ^Z(b)` but whose conjugate is `τ^Z(-b)`, and the\nbookkeeping reappears. This is the second dividend of the characteristic-two restriction, after\nthe operators being involutions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/WeylEPR.lean#L103-L117",
+  "source_path": "MIPRE/Foundations/WeylEPR.lean",
+  "lines": [
+   103,
+   117
+  ],
+  "blueprint": [
+   {
+    "label": "def:weyl-epr",
+    "env": "definition",
+    "title": "The maximally entangled state of the Weyl system",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Weyl.isPVM_synOf",
+  "source_name": "MIPRE.Weyl.isPVM_synOf",
+  "formal_statement": "theorem MIPRE.Weyl.isPVM_synOf {C : Type*} [Fintype C] [DecidableEq C] (hw : IsWeylFamily w)\n    (φ : (n → F) → C) : IsPVM (synOf w φ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Weyl",
+   "open Finset Matrix MIPRE",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {w : (n → F) → Matrix (n → F) (n → F) ℂ}"
+  ],
+  "docstring": "**A coarse-grained eigenbasis measurement is a projective measurement**, indexed by the values\nof the label. Orthogonality of the spectral projectors makes each element idempotent, and the level\nsets partition the index group.",
+  "module": "MIPRE.Foundations.WeylEPR",
+  "module_doc": "/-!\n# The maximally entangled state of the Weyl system\n\n`|EPR_q⟩^{⊗ n}` on two copies of `(C^q)^{⊗ n}`, normalized, and the one property the Pauli basis\ntest uses it for: **the two parties' Weyl operators act identically on it.**\n\nThat property is the reason the expansion stage of the appendix works at all. Its expanded state\nadjoins `|EPR_q⟩^{⊗ M}` to each player, and the sign `(-1)^γ` that the strategy's own observables\ncarry is cancelled against one the *ancilla* observables carry; for that the ancilla halves must\nbe tied together, and `stateVec_epr_wX`/`stateVec_epr_wZ` is the tie.\n\n## The general fact, and why the Weyl case is clean\n\nFor any operator, `(M ⊗ Id)|EPR⟩ = (Id ⊗ Mᵗ)|EPR⟩` (`stateVec_epr`) --- the maximally entangled\nstate transports an operator to the other factor at the cost of a transpose. Generalized Paulis\nover a field of characteristic two are *real symmetric* matrices, so the transpose is the\nidentity map on them and the cost vanishes. Over `F_p` for odd `p` it would not: `τ^Z(b)` has\nentries `ω^{tr(bj)}`, whose transpose is `τ^Z(b)` but whose conjugate is `τ^Z(-b)`, and the\nbookkeeping reappears. This is the second dividend of the characteristic-two restriction, after\nthe operators being involutions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/WeylEPR.lean#L167-L185",
+  "source_path": "MIPRE/Foundations/WeylEPR.lean",
+  "lines": [
+   167,
+   185
+  ],
+  "blueprint": [
+   {
+    "label": "def:weyl-epr",
+    "env": "definition",
+    "title": "The maximally entangled state of the Weyl system",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.star_sgn",
+   "MIPRE.Weyl.proj_mul_proj",
+   "MIPRE.Weyl.sum_proj"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Weyl.isPVM_syn",
+  "source_name": "MIPRE.Weyl.isPVM_syn",
+  "formal_statement": "theorem MIPRE.Weyl.isPVM_syn (hw : IsWeylFamily w) (v : n → F) : IsPVM (syn w v) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Weyl",
+   "open Finset Matrix MIPRE",
+   "open scoped Kronecker",
+   "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F]",
+   "variable {n : Type*} [Fintype n] [DecidableEq n]",
+   "variable {w : (n → F) → Matrix (n → F) (n → F) ℂ}"
+  ],
+  "docstring": "**The syndrome projectors form a projective measurement**, indexed by the value of the\npairing.",
+  "module": "MIPRE.Foundations.WeylEPR",
+  "module_doc": "/-!\n# The maximally entangled state of the Weyl system\n\n`|EPR_q⟩^{⊗ n}` on two copies of `(C^q)^{⊗ n}`, normalized, and the one property the Pauli basis\ntest uses it for: **the two parties' Weyl operators act identically on it.**\n\nThat property is the reason the expansion stage of the appendix works at all. Its expanded state\nadjoins `|EPR_q⟩^{⊗ M}` to each player, and the sign `(-1)^γ` that the strategy's own observables\ncarry is cancelled against one the *ancilla* observables carry; for that the ancilla halves must\nbe tied together, and `stateVec_epr_wX`/`stateVec_epr_wZ` is the tie.\n\n## The general fact, and why the Weyl case is clean\n\nFor any operator, `(M ⊗ Id)|EPR⟩ = (Id ⊗ Mᵗ)|EPR⟩` (`stateVec_epr`) --- the maximally entangled\nstate transports an operator to the other factor at the cost of a transpose. Generalized Paulis\nover a field of characteristic two are *real symmetric* matrices, so the transpose is the\nidentity map on them and the cost vanishes. Over `F_p` for odd `p` it would not: `τ^Z(b)` has\nentries `ω^{tr(bj)}`, whose transpose is `τ^Z(b)` but whose conjugate is `τ^Z(-b)`, and the\nbookkeeping reappears. This is the second dividend of the characteristic-two restriction, after\nthe operators being involutions.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/WeylEPR.lean#L187-L190",
+  "source_path": "MIPRE/Foundations/WeylEPR.lean",
+  "lines": [
+   187,
+   190
+  ],
+  "blueprint": [
+   {
+    "label": "def:weyl-epr",
+    "env": "definition",
+    "title": "The maximally entangled state of the Weyl system",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Weyl.isPVM_synOf"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LCS.zmod_two_eq_zero_or_one",
+  "source_name": "MIPRE.LCS.zmod_two_eq_zero_or_one",
+  "formal_statement": "theorem MIPRE.LCS.zmod_two_eq_zero_or_one (a : ZMod 2) : a = 0 ∨ a = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LCS"
+  ],
+  "docstring": "Case analysis for `ZMod 2`.",
+  "module": "MIPRE.LCS.Common",
+  "module_doc": "/-!\n# Common Utilities for LCS Games\n\nThis module provides technical lemmas and definitions for signs, indicator functions,\nand basic properties of the outcome space $\\mathbb{F}_2$.\n\n## Key Definitions\n- `observableSign`: Returns $1$ if $a=0$ or $-1$ if $a=1$.\n\n## Key Lemmas\n- `sign_mul`: The product of signs corresponds to the sum in $\\mathbb{F}_2$.\n- `sign_indicator`: Relates the sign-based expression $(1/2)(1 + (-1)^{b+s})$\n  to the Kronecker delta.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/LCS/Common.lean#L28-L30",
+  "source_path": "MIPRE/LCS/Common.lean",
+  "lines": [
+   28,
+   30
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LCS.binary_measurement_eq_projector",
+  "source_name": "MIPRE.LCS.binary_measurement_eq_projector",
+  "formal_statement": "theorem MIPRE.LCS.binary_measurement_eq_projector (f : ZMod 2 → R) (h : IsMeasurementSystem f) (y : ZMod 2) :\n    f y = (1 / 2 : ℂ) • (1 + (-1 : ℂ) ^ y.val • observableOfMeasurementSystem f) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LCS",
+   "variable {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R]"
+  ],
+  "docstring": "",
+  "module": "MIPRE.LCS.Observable",
+  "module_doc": "/-!\n# Observables in LCS Games\n\nThis module defines the algebraic properties of quantum observables\nin the context of Linear Constraint System (LCS) games. An observable\nis represented as a self-adjoint, involutive operator.\n\n## Key Definitions\n- `IsObservable`: A property of an element $O$ in a star-ring if $O^2=1$ and $O^\\dagger=O$.\n- `observableOfMeasurementSystem`: Constructs an observable from a binary projector measurement $P$\n  as $O = P_0 - P_1$.\n\n## Key Lemmas\n- `isObservable_observableOfMeasurementSystem`: Verifies that the difference of projectors\n  in a binary measurement forms a valid observable.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/LCS/Observable.lean#L61-L78",
+  "source_path": "MIPRE/LCS/Observable.lean",
+  "lines": [
+   61,
+   78
+  ],
+  "blueprint": [
+   {
+    "label": "def:observable",
+    "env": "definition",
+    "title": "Binary observables",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LCS.zmod_two_eq_zero_or_one"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LCS.Pauli.X_anticomm_Z",
+  "source_name": "MIPRE.LCS.Pauli.X_anticomm_Z",
+  "formal_statement": "theorem MIPRE.LCS.Pauli.X_anticomm_Z : X * Z = -(Z * X) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LCS",
+   "open MIPRE.LCS.Pauli",
+   "open Matrix",
+   "open scoped Kronecker"
+  ],
+  "docstring": "",
+  "module": "MIPRE.LCS.Pauli",
+  "module_doc": "/-!\n# Pauli Matrices\n\nThis module defines the single-qubit Pauli matrices `Pauli.I`, `Pauli.X`, `Pauli.Y`,\n`Pauli.Z`, together with their multiplication table, anticommutation relations, and\nobservable structure. It also records the Kronecker-product lemmas used to combine\ncommuting or anticommuting pairs into commuting two-qubit observables.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/LCS/Pauli.lean#L137-L139",
+  "source_path": "MIPRE/LCS/Pauli.lean",
+  "lines": [
+   137,
+   139
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LCS.idempotent_observableToProjector",
+  "source_name": "MIPRE.LCS.idempotent_observableToProjector",
+  "formal_statement": "theorem MIPRE.LCS.idempotent_observableToProjector (O : R) (hO : IsObservable O) (a : ZMod 2) :\n    observableToProjector O a * observableToProjector O a = observableToProjector O a := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LCS",
+   "variable {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R]"
+  ],
+  "docstring": "If $O$ is an observable, then each $\\mathrm{observableToProjector}(O,a)$ is idempotent,\nso it is a projector.",
+  "module": "MIPRE.LCS.Strategy.ObservableToProjector",
+  "module_doc": "/-!\n# Conversion from Observables to Projectors\n\nThis module defines the mapping from observables (self-adjoint involutive operators)\nto projector measurement systems and proves their fundamental algebraic properties.\n\nGiven an observable $O$, we define two projectors $P_0, P_1$ corresponding to\nthe outcomes $\\{0, 1\\} \\subseteq \\mathbb{F}_2$:\n- $P_0 = \\frac{1}{2}(I + O)$\n- $P_1 = \\frac{1}{2}(I - O)$\n\nThese projectors form a complete binary measurement system.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/LCS/Strategy/ObservableToProjector.lean#L50-L85",
+  "source_path": "MIPRE/LCS/Strategy/ObservableToProjector.lean",
+  "lines": [
+   50,
+   85
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LCS.zmod_two_eq_zero_or_one"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 31,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.LCS.isMeasurementSystem_observableToProjector",
+  "source_name": "MIPRE.LCS.isMeasurementSystem_observableToProjector",
+  "formal_statement": "theorem MIPRE.LCS.isMeasurementSystem_observableToProjector (O : R) (hO : IsObservable O) :\n    IsMeasurementSystem (observableToProjector O) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.LCS",
+   "variable {R : Type*} [Ring R] [StarRing R] [Algebra ℂ R] [StarModule ℂ R]"
+  ],
+  "docstring": "Given an observable $O$, the mapping `observableToProjector O` is a measurement system.",
+  "module": "MIPRE.LCS.Strategy.ObservableToProjector",
+  "module_doc": "/-!\n# Conversion from Observables to Projectors\n\nThis module defines the mapping from observables (self-adjoint involutive operators)\nto projector measurement systems and proves their fundamental algebraic properties.\n\nGiven an observable $O$, we define two projectors $P_0, P_1$ corresponding to\nthe outcomes $\\{0, 1\\} \\subseteq \\mathbb{F}_2$:\n- $P_0 = \\frac{1}{2}(I + O)$\n- $P_1 = \\frac{1}{2}(I - O)$\n\nThese projectors form a complete binary measurement system.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/LCS/Strategy/ObservableToProjector.lean#L140-L153",
+  "source_path": "MIPRE/LCS/Strategy/ObservableToProjector.lean",
+  "lines": [
+   140,
+   153
+  ],
+  "blueprint": [
+   {
+    "label": "lem:observable-projector",
+    "env": "lemma",
+    "title": "Observables and projective measurements correspond",
+    "file": "02_foundations.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.LCS.zmod_two_eq_zero_or_one",
+   "MIPRE.LCS.idempotent_observableToProjector"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 11,
+  "is_target": false
+ },
+ {
+  "kind": "glue-leaf-closure",
+  "theorem_name": "MIPRE.Introspection.nonempty_seven",
+  "formal_statement": "theorem MIPRE.Introspection.nonempty_seven : Nonempty (MIPRE.Introspection 7) := by sorry",
+  "preamble_opens": [],
+  "docstring": "",
+  "module": null,
+  "module_doc": "",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Background/Introspection/Compiler.lean",
+  "source_path": "MIPRE/Background/Introspection/Compiler.lean",
+  "lines": null,
+  "witness": "⟨MIPRE.Introspection.seven⟩",
+  "blueprint": [],
+  "imported_nodes": [],
+  "stub_published": true,
+  "solution_file": "Solutions/Sol_MIPRE_Introspection_nonempty_seven.lean"
+ }
+]

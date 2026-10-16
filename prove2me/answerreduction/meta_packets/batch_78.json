@@ -1,0 +1,708 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.verifierTests_typed_iff",
+  "source_name": "MIPRE.TM.CookLevin.Pad.verifierTests_typed_iff",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.verifierTests_typed_iff (D : Prog) (n T Q σ : ℕ) (x y : BitStr)\n    (hV : Valid D n T Q σ x y) (E : BinField (pcpParams n T Q σ).k) [CharP E.carrier 2]\n    (root : E.carrier)\n    (hroot : root ^ (pcpModulus n T Q σ).length = BinaryPolynomial.evalBits root (pcpModulus n T Q σ))\n    (hencode : ∀ a : E.carrier, BinaryPolynomial.evalBits root (E.toBits a) = a)\n    (faithful : ∀ a b : BitStr, a.length = (pcpParams n T Q σ).k →\n      b.length = (pcpParams n T Q σ).k →\n      (BinaryPolynomial.evalBits root a = BinaryPolynomial.evalBits root b ↔ a = b))\n    (z : Fin (pcpParams n T Q σ).m' → E.carrier)\n    (α : Fin 5 → E.carrier) (β : Fin ((pcpParams n T Q σ).m' + 1) → E.carrier) :\n    verifierTests (pcpInput D n T Q σ x y (E.vecBits z) (E.vecBits α ++ E.vecBits β)) = true ↔\n      PcpAlgebra.TypedAccepts (clausePolynomial D n T Q σ x y hV) z (α, β) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial MvPolynomial"
+  ],
+  "docstring": "With faithful coefficient decoding, the executable field tests on a typed\nview are the algebraic PCP tests for its fixed clause polynomial.",
+  "module": "MIPRE.TM.CookLevin.PcpBridge",
+  "module_doc": "/-! # The raw verifier and its fixed typed clause polynomial -/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpBridge.lean#L102-L125",
+  "source_path": "MIPRE/TM/CookLevin/PcpBridge.lean",
+  "lines": [
+   102,
+   125
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_xor",
+   "MIPRE.LowDegree.BinaryPolynomial.length_mulReduce",
+   "MIPRE.LowDegree.BinaryPolynomial.evalBits_mulReduce",
+   "MIPRE.LowDegree.shoupIrreducible_monic",
+   "MIPRE.LowDegree.shoupIrreducible_natDegree",
+   "MIPRE.TM.CookLevin.Pad.outerDimProg_apply",
+   "MIPRE.TM.CookLevin.Pad.pcpParams_degree_pos",
+   "MIPRE.TM.CookLevin.Pad.verifierCircuitValue_typed"
+  ],
+  "pasted_helpers": 44,
+  "prooflines": 10,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.PcpParams.pointClause_mem_of_circuitArith",
+  "source_name": "MIPRE.SAT.PcpParams.pointClause_mem_of_circuitArith",
+  "formal_statement": "theorem MIPRE.SAT.PcpParams.pointClause_mem_of_circuitArith (P : PcpParams) (C : Circuit) (hC : C.WellFormed)\n    (hI : C.inputs = 5 * P.m + 5) (h : C.inputs + C.size = P.m')\n    (y : Fin P.m' → Bool) (hy : eval (pt y) (P.circuitArith (F := F) C h) = 1) :\n    P.pointClause y ∈ C.formula5 P.m P.m := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.PcpParams",
+   "open MIPRE.LowDegree MvPolynomial",
+   "variable {F : Type*} [Field F] [CharP F 2]"
+  ],
+  "docstring": "On a satisfying Boolean point, the encoded clause belongs to the describer's\nactual five-block formula.",
+  "module": "MIPRE.TM.CookLevin.PcpCircuit",
+  "module_doc": "/-!\n# The circuit polynomial in the PCP clause coordinates\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpCircuit.lean#L66-L84",
+  "source_path": "MIPRE/TM/CookLevin/PcpCircuit.lean",
+  "lines": [
+   66,
+   84
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Circuit.eval_routedArith_iff",
+   "MIPRE.SAT.Circuit.routedConsistent_iff",
+   "MIPRE.SAT.Circuit.valueAt_congr"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.PcpParams.exists_point_of_clause_mem",
+  "source_name": "MIPRE.SAT.PcpParams.exists_point_of_clause_mem",
+  "formal_statement": "theorem MIPRE.SAT.PcpParams.exists_point_of_clause_mem (P : PcpParams) (C : Circuit) (hC : C.WellFormed)\n    (hI : C.inputs = 5 * P.m + 5) (h : C.inputs + C.size = P.m')\n    (c : Clause5 (Fin (2 ^ P.m)) (Fin (2 ^ P.m)) (Fin (2 ^ P.m))\n      (Fin (2 ^ P.m)) (Fin (2 ^ P.m))) (hc : c ∈ C.formula5 P.m P.m) :\n    ∃ y : Fin P.m' → Bool, P.pointClause y = c ∧\n      eval (pt y) (P.circuitArith (F := F) C h) = 1 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.PcpParams",
+   "open MIPRE.LowDegree MvPolynomial",
+   "variable {F : Type*} [Field F] [CharP F 2]"
+  ],
+  "docstring": "Every actual clause has a Boolean witness point whose blocks and signs\ndecode back to precisely that clause.",
+  "module": "MIPRE.TM.CookLevin.PcpCircuit",
+  "module_doc": "/-!\n# The circuit polynomial in the PCP clause coordinates\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpCircuit.lean#L86-L107",
+  "source_path": "MIPRE/TM/CookLevin/PcpCircuit.lean",
+  "lines": [
+   86,
+   107
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Circuit.eval_iff_exists_finiteArith"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.PcpParams.formula5_sat_of_majority",
+  "source_name": "MIPRE.SAT.PcpParams.formula5_sat_of_majority",
+  "formal_statement": "theorem MIPRE.SAT.PcpParams.formula5_sat_of_majority [Fintype F] [DecidableEq F]\n    (P : PcpParams) (C : Circuit) (hC : C.WellFormed)\n    (hI : C.inputs = 5 * P.m + 5) (h : C.inputs + C.size = P.m')\n    (pf : PcpProof P F) (hq : 82 * P.m' ≤ Fintype.card F)\n    (S : Finset (Fin P.m' → F))\n    (hS : ∀ z ∈ S, PcpAlgebra.TypedAccepts (P.circuitArith C h) z (pf.ev z))\n    (hmajority : Fintype.card F ^ P.m' < 2 * S.card) :\n    (C.formula5 P.m P.m).Sat (decodedAssignment pf 0) (decodedAssignment pf 1)\n      (decodedAssignment pf 2) (decodedAssignment pf 3) (decodedAssignment pf 4) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.PcpParams",
+   "open MIPRE.LowDegree MvPolynomial",
+   "variable {F : Type*} [Field F] [CharP F 2]"
+  ],
+  "docstring": "Majority acceptance supplies an actual satisfying five-tuple for the\nsuccinctly described clause set, including every Boolean clause witness.",
+  "module": "MIPRE.TM.CookLevin.PcpCircuit",
+  "module_doc": "/-!\n# The circuit polynomial in the PCP clause coordinates\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpCircuit.lean#L140-L162",
+  "source_path": "MIPRE/TM/CookLevin/PcpCircuit.lean",
+  "lines": [
+   140,
+   162
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-circuit-semantics",
+    "env": "lemma",
+    "title": "PCP semantics for a circuit describer",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.SAT.Circuit.degreeOf_routedArith_le",
+   "MIPRE.SAT.PcpAlgebra.decoded_clause_of_majority",
+   "MIPRE.SAT.PcpParams.exists_point_of_clause_mem"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.PcpParams.completeness_of_describes",
+  "source_name": "MIPRE.SAT.PcpParams.completeness_of_describes",
+  "formal_statement": "theorem MIPRE.SAT.PcpParams.completeness_of_describes (P : PcpParams) (C : Circuit) (hC : C.WellFormed)\n    (hI : C.inputs = 5 * P.m + 5) (h : C.inputs + C.size = P.m')\n    (D : Decider) (n T : ℕ) (x y ap bp : Cost.BitStr)\n    (hD : C.DescribesDecider P.m P.m D n x y T)\n    (hap : ap.length ≤ T) (hbp : bp.length ≤ T)\n    (hacc : D.AcceptsWithin n x y ap bp T) :\n    ∃ pf : PcpProof P F,\n      pf.g 0 = ldEnc (answerVec F P.m ap) ∧\n      pf.g 1 = ldEnc (answerVec F P.m bp) ∧\n      ∀ z, PcpAlgebra.TypedAccepts (P.circuitArith C h) z (pf.ev z) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.PcpParams",
+   "open MIPRE.LowDegree MvPolynomial",
+   "variable {F : Type*} [Field F] [CharP F 2]"
+  ],
+  "docstring": "Typed PCP completeness against the describer's actual accepting answer tapes.",
+  "module": "MIPRE.TM.CookLevin.PcpCircuit",
+  "module_doc": "/-!\n# The circuit polynomial in the PCP clause coordinates\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpCircuit.lean#L164-L184",
+  "source_path": "MIPRE/TM/CookLevin/PcpCircuit.lean",
+  "lines": [
+   164,
+   184
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-circuit-semantics",
+    "env": "lemma",
+    "title": "PCP semantics for a circuit describer",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.SAT.Circuit.eval_routedArith_bool",
+   "MIPRE.SAT.Circuit.degreeOf_routedArith_le",
+   "MIPRE.SAT.PcpAlgebra.exists_proof_of_satisfying_assignment",
+   "MIPRE.SAT.PcpParams.pointClause_mem_of_circuitArith"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 10,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.SAT.PcpParams.soundness_of_describes",
+  "source_name": "MIPRE.SAT.PcpParams.soundness_of_describes",
+  "formal_statement": "theorem MIPRE.SAT.PcpParams.soundness_of_describes [Fintype F] [DecidableEq F]\n    (P : PcpParams) (C : Circuit) (hC : C.WellFormed)\n    (hI : C.inputs = 5 * P.m + 5) (h : C.inputs + C.size = P.m')\n    (D : Decider) (n T : ℕ) (x y : Cost.BitStr)\n    (hD : C.DescribesDecider P.m P.m D n x y T)\n    (pf : PcpProof P F) (hq : 82 * P.m' ≤ Fintype.card F)\n    (S : Finset (Fin P.m' → F))\n    (hS : ∀ z ∈ S, PcpAlgebra.TypedAccepts (P.circuitArith C h) z (pf.ev z))\n    (hmajority : Fintype.card F ^ P.m' < 2 * S.card) :\n    ∃ ap bp : Cost.BitStr, ap.length ≤ T ∧ bp.length ≤ T ∧\n      D.AcceptsWithin n x y ap bp T ∧\n      coded (pf.g 0) = answerVec F P.m ap ∧ coded (pf.g 1) = answerVec F P.m bp := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.SAT",
+   "open MIPRE.SAT.PcpParams",
+   "open MIPRE.LowDegree MvPolynomial",
+   "variable {F : Type*} [Field F] [CharP F 2]"
+  ],
+  "docstring": "Typed PCP soundness yields accepted prefixes and the entire decoded answer\ntapes, using the describer's exact tape relation.",
+  "module": "MIPRE.TM.CookLevin.PcpCircuit",
+  "module_doc": "/-!\n# The circuit polynomial in the PCP clause coordinates\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpCircuit.lean#L186-L211",
+  "source_path": "MIPRE/TM/CookLevin/PcpCircuit.lean",
+  "lines": [
+   186,
+   211
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-circuit-semantics",
+    "env": "lemma",
+    "title": "PCP semantics for a circuit describer",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.SAT.PcpParams.formula5_sat_of_majority"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.pcpParams_outer",
+  "source_name": "MIPRE.TM.CookLevin.Pad.pcpParams_outer",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.pcpParams_outer (n T Q σ : ℕ) : (pcpParams n T Q σ).m' = outerDim n T Q σ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.TM.CookLevin.Desc"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.PcpParameters",
+  "module_doc": "/-!\n# Effective parameters for the classical PCP\n\nThe odd extension degree makes the field admissible. Its size is large enough\nfor the classical majority argument, and both power-of-two dimensions divide\nthe field size. It is also *eventually larger than every fixed power* of\n`8 (Q + 1) m'` (`pcpParams_field_eventually_large`): the degree carries the square of\n`s = size Q + size m' + 3`, and `8 (Q + 1) m' < 2^s`, so `(8 (Q + 1) m')^e < 2^{s e} ≤ q` once\n`s ≥ e`. Answer reduction's low-degree test needs a field polynomially larger than `m'` with an\nexponent this module need not know; the degree stays polylogarithmic\n(`fieldDegree_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpParameters.lean#L38-L39",
+  "source_path": "MIPRE/TM/CookLevin/PcpParameters.lean",
+  "lines": [
+   38,
+   39
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.pcpParams_odd",
+  "source_name": "MIPRE.TM.CookLevin.Pad.pcpParams_odd",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.pcpParams_odd (n T Q σ : ℕ) : Odd (pcpParams n T Q σ).k := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.TM.CookLevin.Desc"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.PcpParameters",
+  "module_doc": "/-!\n# Effective parameters for the classical PCP\n\nThe odd extension degree makes the field admissible. Its size is large enough\nfor the classical majority argument, and both power-of-two dimensions divide\nthe field size. It is also *eventually larger than every fixed power* of\n`8 (Q + 1) m'` (`pcpParams_field_eventually_large`): the degree carries the square of\n`s = size Q + size m' + 3`, and `8 (Q + 1) m' < 2^s`, so `(8 (Q + 1) m')^e < 2^{s e} ≤ q` once\n`s ≥ e`. Answer reduction's low-degree test needs a field polynomially larger than `m'` with an\nexponent this module need not know; the degree stays polylogarithmic\n(`fieldDegree_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpParameters.lean#L41-L44",
+  "source_path": "MIPRE/TM/CookLevin/PcpParameters.lean",
+  "lines": [
+   41,
+   44
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-effective-parameters",
+    "env": "lemma",
+    "title": "Effective classical PCP parameters",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.pcpParams_field_large",
+  "source_name": "MIPRE.TM.CookLevin.Pad.pcpParams_field_large",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.pcpParams_field_large (n T Q σ : ℕ) :\n    82 * (pcpParams n T Q σ).m' ≤ (pcpParams n T Q σ).q := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.TM.CookLevin.Desc"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.PcpParameters",
+  "module_doc": "/-!\n# Effective parameters for the classical PCP\n\nThe odd extension degree makes the field admissible. Its size is large enough\nfor the classical majority argument, and both power-of-two dimensions divide\nthe field size. It is also *eventually larger than every fixed power* of\n`8 (Q + 1) m'` (`pcpParams_field_eventually_large`): the degree carries the square of\n`s = size Q + size m' + 3`, and `8 (Q + 1) m' < 2^s`, so `(8 (Q + 1) m')^e < 2^{s e} ≤ q` once\n`s ≥ e`. Answer reduction's low-degree test needs a field polynomially larger than `m'` with an\nexponent this module need not know; the degree stays polylogarithmic\n(`fieldDegree_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpParameters.lean#L46-L61",
+  "source_path": "MIPRE/TM/CookLevin/PcpParameters.lean",
+  "lines": [
+   46,
+   61
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-effective-parameters",
+    "env": "lemma",
+    "title": "Effective classical PCP parameters",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Pad.pcpParams_outer"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.pcpParams_outer_dvd",
+  "source_name": "MIPRE.TM.CookLevin.Pad.pcpParams_outer_dvd",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.pcpParams_outer_dvd (n T Q σ : ℕ) :\n    (pcpParams n T Q σ).m' ∣ (pcpParams n T Q σ).q := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.TM.CookLevin.Desc"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.PcpParameters",
+  "module_doc": "/-!\n# Effective parameters for the classical PCP\n\nThe odd extension degree makes the field admissible. Its size is large enough\nfor the classical majority argument, and both power-of-two dimensions divide\nthe field size. It is also *eventually larger than every fixed power* of\n`8 (Q + 1) m'` (`pcpParams_field_eventually_large`): the degree carries the square of\n`s = size Q + size m' + 3`, and `8 (Q + 1) m' < 2^s`, so `(8 (Q + 1) m')^e < 2^{s e} ≤ q` once\n`s ≥ e`. Answer reduction's low-degree test needs a field polynomially larger than `m'` with an\nexponent this module need not know; the degree stays polylogarithmic\n(`fieldDegree_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpParameters.lean#L67-L74",
+  "source_path": "MIPRE/TM/CookLevin/PcpParameters.lean",
+  "lines": [
+   67,
+   74
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-effective-parameters",
+    "env": "lemma",
+    "title": "Effective classical PCP parameters",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Pad.outerDim_isPow",
+   "MIPRE.TM.CookLevin.Pad.pcpParams_outer",
+   "MIPRE.TM.CookLevin.Pad.pcpParams_field_large"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.pcpParams_inner_dvd",
+  "source_name": "MIPRE.TM.CookLevin.Pad.pcpParams_inner_dvd",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.pcpParams_inner_dvd (n T Q σ : ℕ) :\n    (pcpParams n T Q σ).m ∣ (pcpParams n T Q σ).q := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.TM.CookLevin.Desc"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.PcpParameters",
+  "module_doc": "/-!\n# Effective parameters for the classical PCP\n\nThe odd extension degree makes the field admissible. Its size is large enough\nfor the classical majority argument, and both power-of-two dimensions divide\nthe field size. It is also *eventually larger than every fixed power* of\n`8 (Q + 1) m'` (`pcpParams_field_eventually_large`): the degree carries the square of\n`s = size Q + size m' + 3`, and `8 (Q + 1) m' < 2^s`, so `(8 (Q + 1) m')^e < 2^{s e} ≤ q` once\n`s ≥ e`. Answer reduction's low-degree test needs a field polynomially larger than `m'` with an\nexponent this module need not know; the degree stays polylogarithmic\n(`fieldDegree_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpParameters.lean#L76-L87",
+  "source_path": "MIPRE/TM/CookLevin/PcpParameters.lean",
+  "lines": [
+   76,
+   87
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-effective-parameters",
+    "env": "lemma",
+    "title": "Effective classical PCP parameters",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Pad.innerDim_isPow",
+   "MIPRE.TM.CookLevin.Pad.pcpParams_outer",
+   "MIPRE.TM.CookLevin.Pad.pcpParams_field_large"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 10,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.pcpParams_field_eventually_large",
+  "source_name": "MIPRE.TM.CookLevin.Pad.pcpParams_field_eventually_large",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.pcpParams_field_eventually_large (e : ℕ) : ∀ n T Q σ, 2 ^ e ≤ Q →\n    (8 * ((Q + 1) * (pcpParams n T Q σ).m')) ^ e ≤ (pcpParams n T Q σ).q := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.TM.CookLevin.Desc"
+  ],
+  "docstring": "**The field is eventually large**: for every exponent `e`, once `Q ≥ 2^e` the field has at\nleast `(8 (Q + 1) m')^e` elements.",
+  "module": "MIPRE.TM.CookLevin.PcpParameters",
+  "module_doc": "/-!\n# Effective parameters for the classical PCP\n\nThe odd extension degree makes the field admissible. Its size is large enough\nfor the classical majority argument, and both power-of-two dimensions divide\nthe field size. It is also *eventually larger than every fixed power* of\n`8 (Q + 1) m'` (`pcpParams_field_eventually_large`): the degree carries the square of\n`s = size Q + size m' + 3`, and `8 (Q + 1) m' < 2^s`, so `(8 (Q + 1) m')^e < 2^{s e} ≤ q` once\n`s ≥ e`. Answer reduction's low-degree test needs a field polynomially larger than `m'` with an\nexponent this module need not know; the degree stays polylogarithmic\n(`fieldDegree_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpParameters.lean#L89-L113",
+  "source_path": "MIPRE/TM/CookLevin/PcpParameters.lean",
+  "lines": [
+   89,
+   113
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-effective-parameters",
+    "env": "lemma",
+    "title": "Effective classical PCP parameters",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Pad.pcpParams_outer"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 21,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.fieldDegree_le",
+  "source_name": "MIPRE.TM.CookLevin.Pad.fieldDegree_le",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.fieldDegree_le (n T Q σ : ℕ) :\n    fieldDegree n T Q σ ≤ 2 * ((Q + outerDim n T Q σ + 3) ^ 2 + outerDim n T Q σ) + 7 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.TM.CookLevin.Desc"
+  ],
+  "docstring": "The field degree is polylogarithmic in `Q m'`: at most `2 ((Q + m' + 3)^2 + m') + 7`.",
+  "module": "MIPRE.TM.CookLevin.PcpParameters",
+  "module_doc": "/-!\n# Effective parameters for the classical PCP\n\nThe odd extension degree makes the field admissible. Its size is large enough\nfor the classical majority argument, and both power-of-two dimensions divide\nthe field size. It is also *eventually larger than every fixed power* of\n`8 (Q + 1) m'` (`pcpParams_field_eventually_large`): the degree carries the square of\n`s = size Q + size m' + 3`, and `8 (Q + 1) m' < 2^s`, so `(8 (Q + 1) m')^e < 2^{s e} ≤ q` once\n`s ≥ e`. Answer reduction's low-degree test needs a field polynomially larger than `m'` with an\nexponent this module need not know; the degree stays polylogarithmic\n(`fieldDegree_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpParameters.lean#L115-L123",
+  "source_path": "MIPRE/TM/CookLevin/PcpParameters.lean",
+  "lines": [
+   115,
+   123
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-effective-parameters",
+    "env": "lemma",
+    "title": "Effective classical PCP parameters",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Desc.size_le_self"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 6,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.pcpParamsProg_apply",
+  "source_name": "MIPRE.TM.CookLevin.Pad.pcpParamsProg_apply",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.pcpParamsProg_apply (n T Q σ : ℕ) :\n    pcpParamsProg (n, T, Q, σ) =\n      ((pcpParams n T Q σ).k, (pcpParams n T Q σ).m, (pcpParams n T Q σ).s) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.TM.CookLevin.Desc"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.PcpParameters",
+  "module_doc": "/-!\n# Effective parameters for the classical PCP\n\nThe odd extension degree makes the field admissible. Its size is large enough\nfor the classical majority argument, and both power-of-two dimensions divide\nthe field size. It is also *eventually larger than every fixed power* of\n`8 (Q + 1) m'` (`pcpParams_field_eventually_large`): the degree carries the square of\n`s = size Q + size m' + 3`, and `8 (Q + 1) m' < 2^s`, so `(8 (Q + 1) m')^e < 2^{s e} ≤ q` once\n`s ≥ e`. Answer reduction's low-degree test needs a field polynomially larger than `m'` with an\nexponent this module need not know; the degree stays polylogarithmic\n(`fieldDegree_le`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpParameters.lean#L159-L162",
+  "source_path": "MIPRE/TM/CookLevin/PcpParameters.lean",
+  "lines": [
+   159,
+   162
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-effective-parameters",
+    "env": "lemma",
+    "title": "Effective classical PCP parameters",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Pad.outerDimProg_apply"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.verifyPcp_true_iff",
+  "source_name": "MIPRE.TM.CookLevin.Pad.verifyPcp_true_iff",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.verifyPcp_true_iff (D : Prog) (n T Q σ : ℕ) (x y : BitStr) (z ev : List BitStr) :\n    verifyPcp (pcpInput D n T Q σ x y z ev) = true ↔\n      Valid D n T Q σ x y ∧ ViewFormat (pcpParams n T Q σ) z ev ∧\n        verifierTests (pcpInput D n T Q σ x y z ev) = true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.TM.CookLevin.Desc MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial"
+  ],
+  "docstring": "",
+  "module": "MIPRE.TM.CookLevin.PcpVerifier",
+  "module_doc": "/-!\n# The raw polynomial-time classical PCP verifier\n\nThe verifier rejects invalid specifications and malformed field views, constructs\nthe exact circuit within the supplied view budget, evaluates its polynomial, and\nchecks both algebraic identities on coefficient vectors. Its correspondence to\ntyped low-degree proofs is established separately.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpVerifier.lean#L118-L139",
+  "source_path": "MIPRE/TM/CookLevin/PcpVerifier.lean",
+  "lines": [
+   118,
+   139
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Pad.outerDimProg_apply",
+   "MIPRE.TM.CookLevin.Pad.pcpParams_outer"
+  ],
+  "pasted_helpers": 6,
+  "prooflines": 18,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.verifyPcp_reject_invalid",
+  "source_name": "MIPRE.TM.CookLevin.Pad.verifyPcp_reject_invalid",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.verifyPcp_reject_invalid (D : Prog) (n T Q σ : ℕ) (x y : BitStr) (z ev : List BitStr)\n    (h : ¬ Valid D n T Q σ x y ∨ ¬ ViewFormat (pcpParams n T Q σ) z ev) :\n    verifyPcp (pcpInput D n T Q σ x y z ev) = false := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.TM.CookLevin.Desc MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial"
+  ],
+  "docstring": "Invalid specifications and malformed views are rejected unconditionally.",
+  "module": "MIPRE.TM.CookLevin.PcpVerifier",
+  "module_doc": "/-!\n# The raw polynomial-time classical PCP verifier\n\nThe verifier rejects invalid specifications and malformed field views, constructs\nthe exact circuit within the supplied view budget, evaluates its polynomial, and\nchecks both algebraic identities on coefficient vectors. Its correspondence to\ntyped low-degree proofs is established separately.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpVerifier.lean#L141-L148",
+  "source_path": "MIPRE/TM/CookLevin/PcpVerifier.lean",
+  "lines": [
+   141,
+   148
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-executable-tests",
+    "env": "lemma",
+    "title": "The executable PCP tests",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Pad.verifyPcp_true_iff"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.verifyPcp_time_le",
+  "source_name": "MIPRE.TM.CookLevin.Pad.verifyPcp_time_le",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.verifyPcp_time_le :\n    ∃ R : Polynomial ℕ, ∀ D n T Q σ x y z ev, Valid D n T Q σ x y →\n      ViewFormat (pcpParams n T Q σ) z ev →\n      ∃ t ≤ R.eval (Nat.size n + Nat.size T + Q + σ),\n        verifyPcp.code.Runs (encode (pcpInput D n T Q σ x y z ev))\n          (encode (verifyPcp (pcpInput D n T Q σ x y z ev))) t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun MIPRE.TM.CookLevin.Desc MIPRE.LowDegree MIPRE.LowDegree.BinaryPolynomial"
+  ],
+  "docstring": "The raw verifier has exactly the source-parameter time bound in the PCP contract.",
+  "module": "MIPRE.TM.CookLevin.PcpVerifier",
+  "module_doc": "/-!\n# The raw polynomial-time classical PCP verifier\n\nThe verifier rejects invalid specifications and malformed field views, constructs\nthe exact circuit within the supplied view budget, evaluates its polynomial, and\nchecks both algebraic identities on coefficient vectors. Its correspondence to\ntyped low-degree proofs is established separately.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpVerifier.lean#L150-L157",
+  "source_path": "MIPRE/TM/CookLevin/PcpVerifier.lean",
+  "lines": [
+   150,
+   157
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-executable-tests",
+    "env": "lemma",
+    "title": "The executable PCP tests",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Pad.pcpInput_size_polynomial"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Pad.pcpInput_size_polynomial",
+  "source_name": "MIPRE.TM.CookLevin.Pad.pcpInput_size_polynomial",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Pad.pcpInput_size_polynomial : ∃ B : Polynomial ℕ, ∀ D n T Q σ x y z ev,\n    Valid D n T Q σ x y → ViewFormat (pcpParams n T Q σ) z ev →\n      esize (pcpInput D n T Q σ x y z ev) ≤ B.eval (LOf n T Q σ) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Pad",
+   "open MIPRE.SAT MIPRE.Cost MIPRE.TM.CookLevin.Desc Polynomial"
+  ],
+  "docstring": "The complete encoded verifier input is polynomially bounded in precisely\nthe source's four runtime parameters.",
+  "module": "MIPRE.TM.CookLevin.PcpViewSize",
+  "module_doc": "/-!\n# The source runtime bound for formatted PCP views\n\nAn ambient polynomial-time program is polynomial in encoded input size. This\nmodule bounds that size in the paper's parameter `log n + log T + Q + sigma`,\nincluding all field coordinates in the view.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/PcpViewSize.lean#L39-L68",
+  "source_path": "MIPRE/TM/CookLevin/PcpViewSize.lean",
+  "lines": [
+   39,
+   68
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pcp-view-size",
+    "env": "lemma",
+    "title": "Encoded PCP view size and source runtime",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.TM.CookLevin.Pad.outerDim_polynomial",
+   "MIPRE.TM.CookLevin.Pad.pcpParams_outer",
+   "MIPRE.TM.CookLevin.Pad.fieldDegree_le"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 25,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.decide_val_inputCellVal",
+  "source_name": "MIPRE.TM.CookLevin.Desc.decide_val_inputCellVal",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.decide_val_inputCellVal (e : ℕ) (ap : BitStr) (k : ℕ) {p : Pos (Sof e)}\n    (hp : (p : ℕ) = k / 2 + 3) (hk : k < 2 * Sof e) :\n    decide ((if k % 2 = 1 then CellVal.sym Sym.one else CellVal.blank) =\n      inputCellVal (bits ap) p) = tapeBits ap k := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost Fml"
+  ],
+  "docstring": "**The time-`0` row of a free tape reads the tape encoding of the string it holds**: the\ncell at position `k / 2 + 3` holds the blank for `k` even and `1` for `k` odd exactly when the\n`k`-th bit of the encoding is set.",
+  "module": "MIPRE.TM.CookLevin.Sat",
+  "module_doc": "/-!\n# The described formula and the answers\n\nThe two halves of item 1 of `thm:succinct-sat` for the describer: a satisfying assignment of\nthe described formula extending the two answer blocks exists iff the blocks are the two-bit\ntape encodings (`tapeBits`) of strings of length at most `T` that the decider accepts within\n`T` (`planning/succinct-cook-levin.md`, S3).\n\nThe bridge in both directions is the decoding: an assignment of the formula gives the tableau\nassignment `w ∘ idxOf` (`sat_tableau_of_sat_formula3`), and an assignment of the tableau gives\nthe formula assignment `decodeVar · |>.elim false` (`sat_formula3_of_sat_tableau`). The answer\nblocks match because the canonical index of an answer cell is its answer index (`idxOf_ans`)\nand because a time-`0` row of a free tape reads exactly the tape encoding of the string it\nholds (`decide_val_inputCellVal`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Sat.lean#L52-L85",
+  "source_path": "MIPRE/TM/CookLevin/Sat.lean",
+  "lines": [
+   52,
+   85
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 2,
+  "prooflines": 27,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.TM.CookLevin.Desc.sat_tableau_of_sat_formula3",
+  "source_name": "MIPRE.TM.CookLevin.Desc.sat_tableau_of_sat_formula3",
+  "formal_statement": "theorem MIPRE.TM.CookLevin.Desc.sat_tableau_of_sat_formula3 (hT : T ≤ Sof e) (hlen : FixedLen e D n T x y)\n    (hTm : T + 3 < 2 ^ W e) (w : Fin (2 ^ mOf e Gc) → Bool)\n    (hw : ((descCirc e T D n x y).formula3 (mOf e Gc)).Sat w) :\n    (tableauPlus e T (fixedOf D n T x y) chk).Sat\n      fun v => w ⟨idxOf e Gc T v, idxOf_lt e Gc T hT v⟩ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.TM",
+   "open MIPRE.TM.CookLevin",
+   "open MIPRE.TM.CookLevin.Desc",
+   "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost Fml",
+   "variable (e T : ℕ) (D : Prog) (n : ℕ) (x y : BitStr)"
+  ],
+  "docstring": "**From an assignment of the described formula to a tableau assignment.**",
+  "module": "MIPRE.TM.CookLevin.Sat",
+  "module_doc": "/-!\n# The described formula and the answers\n\nThe two halves of item 1 of `thm:succinct-sat` for the describer: a satisfying assignment of\nthe described formula extending the two answer blocks exists iff the blocks are the two-bit\ntape encodings (`tapeBits`) of strings of length at most `T` that the decider accepts within\n`T` (`planning/succinct-cook-levin.md`, S3).\n\nThe bridge in both directions is the decoding: an assignment of the formula gives the tableau\nassignment `w ∘ idxOf` (`sat_tableau_of_sat_formula3`), and an assignment of the tableau gives\nthe formula assignment `decodeVar · |>.elim false` (`sat_formula3_of_sat_tableau`). The answer\nblocks match because the canonical index of an answer cell is its answer index (`idxOf_ans`)\nand because a time-`0` row of a free tape reads exactly the tape encoding of the string it\nholds (`decide_val_inputCellVal`).\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/Sat.lean#L120-L143",
+  "source_path": "MIPRE/TM/CookLevin/Sat.lean",
+  "lines": [
+   120,
+   143
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.SAT.Fml.eval_addConstRel_iff",
+   "MIPRE.SAT.bitsVal_injective",
+   "MIPRE.SAT.Fml.eval_toCircuit",
+   "MIPRE.SAT.Fml.exists_circuit",
+   "MIPRE.TM.CookLevin.Desc.ibOf_getD",
+   "MIPRE.TM.CookLevin.Desc.tapeSpec",
+   "MIPRE.TM.CookLevin.Desc.exists_cell",
+   "MIPRE.TM.CookLevin.Desc.eval_winMatchN",
+   "MIPRE.TM.CookLevin.Desc.evalFields_litFields",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_fieldsOf_idxOf",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_emitOne_iff",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_emitBad_iff",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_emitted_iff",
+   "MIPRE.TM.CookLevin.Desc.eval_isAuxF",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_cell_iff",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_head_iff",
+   "MIPRE.TM.CookLevin.Desc.decodeVar_state_iff",
+   "MIPRE.TM.CookLevin.Desc.bitsVal_bitsOfNat",
+   "MIPRE.TM.CookLevin.Desc.windowPred_iff"
+  ],
+  "pasted_helpers": 226,
+  "prooflines": 18,
+  "is_target": false
+ }
+]

@@ -1,0 +1,719 @@
+[
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.commutator_product_bound",
+  "source_name": "MIPRE.Introspection.commutator_product_bound",
+  "formal_statement": "theorem MIPRE.Introspection.commutator_product_bound (ψ : N → ℂ) (M : A → Matrix N N ℂ)\n    (hM : ∑ a, (M a)ᴴ * M a ≤ (1 : Matrix N N ℂ))\n    (U V W : Matrix N N ℂ) (hU : Uᴴ * U = 1) (hW : Wᴴ * W = 1)\n    (hWU : W * U = U * W) (hWM : ∀ a, W * M a = M a * W) :\n    (∑ a, snorm ψ (M a * (U * V) - (U * V) * M a) ^ 2) ≤\n      4 * (∑ a, snorm ψ (M a * U - U * M a) ^ 2) +\n      4 * (∑ a, snorm ψ (M a * V - V * M a) ^ 2) +\n      8 * snorm ψ (V - W) ^ 2 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {N A : Type*} [Fintype N] [DecidableEq N] [Fintype A]"
+  ],
+  "docstring": "The four-link commutation argument, with an arbitrary commuting mirror `W`.",
+  "module": "MIPRE.Foundations.Introspection.TwoSidedCommutation",
+  "module_doc": "/-! # Combining approximate commutations across a bipartite state\n\nTransfer the second unitary to the other party, commute the first, and transfer back.\nThe POVM square-sum bound controls both transfer errors without an alphabet factor.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TwoSidedCommutation.lean#L22-L76",
+  "source_path": "MIPRE/Foundations/Introspection/TwoSidedCommutation.lean",
+  "lines": [
+   22,
+   76
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-two-sided-commutation",
+    "env": "lemma",
+    "title": "Combining two approximate commutations",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.sum_snorm_sq_mul_le"
+  ],
+  "pasted_helpers": 10,
+  "prooflines": 46,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.two_sided_commutation_avg",
+  "source_name": "MIPRE.Introspection.two_sided_commutation_avg",
+  "formal_statement": "theorem MIPRE.Introspection.two_sided_commutation_avg {X I J : Type*} [Fintype X] [Fintype I] [Fintype J]\n    (D : X → ℝ) (hD : ∀ x, 0 ≤ D x)\n    (μ : X → I → ℝ) (ν : X → J → ℝ)\n    (hμ0 : ∀ x i, 0 ≤ μ x i) (hν0 : ∀ x j, 0 ≤ ν x j)\n    (hμ1 : ∀ x, ∑ i, μ x i = 1) (hν1 : ∀ x, ∑ j, ν x j = 1)\n    (ψ : dA × dB → ℂ) (M : X → POVM A dA)\n    (U : X → I → Matrix dA dA ℂ) (V : X → J → Matrix dA dA ℂ)\n    (W : X → J → Matrix dB dB ℂ)\n    (hU : ∀ x i, (U x i)ᴴ * U x i = 1) (hW : ∀ x j, (W x j)ᴴ * W x j = 1) :\n    (∑ x, D x * ∑ i, μ x i * ∑ j, ν x j * ∑ a,\n      stateSqNorm ψ (((M x).mats a).val * (U x i * V x j) -\n        (U x i * V x j) * ((M x).mats a).val)) ≤\n      4 * (∑ x, D x * ∑ i, μ x i * ∑ a,\n        stateSqNorm ψ (((M x).mats a).val * U x i - U x i * ((M x).mats a).val)) +\n      4 * (∑ x, D x * ∑ j, ν x j * ∑ a,\n        stateSqNorm ψ (((M x).mats a).val * V x j - V x j * ((M x).mats a).val)) +\n      8 * (∑ x, D x * ∑ j, ν x j * xSqNorm ψ (V x j) (W x j)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open Finset Matrix",
+   "open scoped ComplexOrder MatrixOrder",
+   "variable {N A : Type*} [Fintype N] [DecidableEq N] [Fintype A]",
+   "variable {dA dB : Type*} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]"
+  ],
+  "docstring": "Independent conditional unitary distributions preserve the same explicit constants.",
+  "module": "MIPRE.Foundations.Introspection.TwoSidedCommutation",
+  "module_doc": "/-! # Combining approximate commutations across a bipartite state\n\nTransfer the second unitary to the other party, commute the first, and transfer back.\nThe POVM square-sum bound controls both transfer errors without an alphabet factor.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TwoSidedCommutation.lean#L95-L136",
+  "source_path": "MIPRE/Foundations/Introspection/TwoSidedCommutation.lean",
+  "lines": [
+   95,
+   136
+  ],
+  "blueprint": [
+   {
+    "label": "lem:pauli-two-sided-commutation",
+    "env": "lemma",
+    "title": "Combining two approximate commutations",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.commutator_product_bound",
+   "MIPRE.aOp_mul",
+   "MIPRE.aOp_sub",
+   "MIPRE.aOp_conjTranspose",
+   "MIPRE.aOp_sum",
+   "MIPRE.POVM.sum_val"
+  ],
+  "pasted_helpers": 16,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypeGraph.symmetric",
+  "source_name": "MIPRE.Introspection.TypeGraph.symmetric",
+  "formal_statement": "theorem MIPRE.Introspection.TypeGraph.symmetric (E : PauliType → PauliType → Bool) (X Z : PauliType) :\n    ∀ t u : QuestionType PauliType ℓ, Adj E X Z t u → Adj E X Z u t := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypeGraph",
+   "open MIPRE.Introspection.QuestionType Finset",
+   "variable {PauliType : Type*} [DecidableEq PauliType] {ℓ : ℕ}"
+  ],
+  "docstring": "Adjacency has the exact symmetry needed by graph detyping.",
+  "module": "MIPRE.Foundations.Introspection.TypeGraph",
+  "module_doc": "/-! # The introspection type graph\n\nThe graph of `introspection.tex`, Figure `fig:type-graph-intro`: the Pauli\nsubgraph, two chains from Pauli-X through hiding levels to Read, two chains\nfrom Pauli-Z through Sample and Introspect to Read, the cross-introspection\nedge, and a loop at every vertex. The construction uses only the Pauli graph\nand its two distinguished vertices; no rigidity conclusion is assumed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TypeGraph.lean#L52-L58",
+  "source_path": "MIPRE/Foundations/Introspection/TypeGraph.lean",
+  "lines": [
+   52,
+   58
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-type-presentation",
+    "env": "lemma",
+    "title": "Introspection type graph and typed CL family",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 1,
+  "prooflines": 4,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypeGraph.adj_pauli",
+  "source_name": "MIPRE.Introspection.TypeGraph.adj_pauli",
+  "formal_statement": "theorem MIPRE.Introspection.TypeGraph.adj_pauli (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (hE : ∀ p q, E p q = E q p) (hloop : ∀ p, E p p = true) (p q : PauliType) :\n    adj (ℓ := ℓ) E X Z (pauli p) (pauli q) = E p q := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypeGraph",
+   "open MIPRE.Introspection.QuestionType Finset",
+   "variable {PauliType : Type*} [DecidableEq PauliType] {ℓ : ℕ}"
+  ],
+  "docstring": "A symmetric reflexive Pauli graph is embedded without adding any Pauli edge.",
+  "module": "MIPRE.Foundations.Introspection.TypeGraph",
+  "module_doc": "/-! # The introspection type graph\n\nThe graph of `introspection.tex`, Figure `fig:type-graph-intro`: the Pauli\nsubgraph, two chains from Pauli-X through hiding levels to Read, two chains\nfrom Pauli-Z through Sample and Introspect to Read, the cross-introspection\nedge, and a loop at every vertex. The construction uses only the Pauli graph\nand its two distinguished vertices; no rigidity conclusion is assumed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TypeGraph.lean#L63-L69",
+  "source_path": "MIPRE/Foundations/Introspection/TypeGraph.lean",
+  "lines": [
+   63,
+   69
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-type-presentation",
+    "env": "lemma",
+    "title": "Introspection type graph and typed CL family",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypeGraph.edges_nonempty",
+  "source_name": "MIPRE.Introspection.TypeGraph.edges_nonempty",
+  "formal_statement": "theorem MIPRE.Introspection.TypeGraph.edges_nonempty (E : PauliType → PauliType → Bool) (X Z : PauliType) (ℓ : ℕ) :\n    (edges E X Z ℓ).Nonempty := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypeGraph",
+   "open MIPRE.Introspection.QuestionType Finset",
+   "variable {PauliType : Type*} [DecidableEq PauliType] {ℓ : ℕ}",
+   "variable [Fintype PauliType]"
+  ],
+  "docstring": "Every introspection graph is nonempty, even with no hiding levels.",
+  "module": "MIPRE.Foundations.Introspection.TypeGraph",
+  "module_doc": "/-! # The introspection type graph\n\nThe graph of `introspection.tex`, Figure `fig:type-graph-intro`: the Pauli\nsubgraph, two chains from Pauli-X through hiding levels to Read, two chains\nfrom Pauli-Z through Sample and Introspect to Read, the cross-introspection\nedge, and a loop at every vertex. The construction uses only the Pauli graph\nand its two distinguished vertices; no rigidity conclusion is assumed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TypeGraph.lean#L132-L136",
+  "source_path": "MIPRE/Foundations/Introspection/TypeGraph.lean",
+  "lines": [
+   132,
+   136
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-type-presentation",
+    "env": "lemma",
+    "title": "Introspection type graph and typed CL family",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 2,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.aux_agreement_estimate",
+  "source_name": "MIPRE.Introspection.TypedEstimates.aux_agreement_estimate",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.aux_agreement_estimate (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (P : PauliType → CL.CLFun (ZMod 2) κ 3)\n    (D : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      CL.Detyping.Question (QuestionType PauliType ℓ) κ → A → B → Bool)\n    (ψ : H × K → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1)\n    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVM A H)\n    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ → POVM B K)\n    {ε : ℝ} (hfail : 1 - povmValue (TypedPresentation.game E X Z ℓ P D) ψ MA MB ≤ ε)\n    (t u : AuxType ℓ) (w w' : Bool)\n    (hedge : TypeGraph.Adj E X Z (.inr (t, w)) (.inr (u, w')))\n    (f : A → C) (g : B → C)\n    (hcheck : ∀ a b, D (.inr (t, w), 0) (.inr (u, w'), 0) a b = true → f a = g b) :\n    (∑ z, xSqNorm ψ ((((MA (.inr (t, w), 0)).map f).mats z).val)\n      ((((MB (.inr (u, w'), 0)).map g).mats z).val)) ≤\n        2 * (TypeGraph.edges E X Z ℓ).card * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {PauliType PauliAnswer F ι κ A B C H K : Type*}"
+  ],
+  "docstring": "On any auxiliary edge, the coarsened cross-party distance costs exactly twice\nthe ordered-edge count times the game's failure.",
+  "module": "MIPRE.Foundations.Introspection.TypedEstimates",
+  "module_doc": "/-! # Auxiliary estimates for the concrete typed introspection game\n\nThe uniform ordered-edge law supplies the selection probability. The parsed\nsampling predicate supplies the accepted-answer relation, including malformed\nconstructors, so its estimate has no abstract subtest or probability premise.\nThe Pauli predicate is passed the actual question contents; constructing that\npredicate, and compiling the byte parser, remain separate obligations.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TypedEstimates.lean#L29-L64",
+  "source_path": "MIPRE/Foundations/Introspection/TypedEstimates.lean",
+  "lines": [
+   29,
+   64
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-typed-estimates",
+    "env": "lemma",
+    "title": "Concrete typed sampling and terminal hiding estimates",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.xSqNorm_sum_le_two_mul",
+   "MIPRE.one_sub_sum_bornProb_le_condFail",
+   "MIPRE.Introspection.TypeGraph.edges_nonempty",
+   "MIPRE.Introspection.TypedPresentation.mu_aux",
+   "MIPRE.POVM.posSemidef",
+   "MIPRE.bornProb_nonneg",
+   "MIPRE.sum_bornProb"
+  ],
+  "pasted_helpers": 5,
+  "prooflines": 19,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedExtraction.sum_pairs",
+  "source_name": "MIPRE.Introspection.TypedExtraction.sum_pairs",
+  "formal_statement": "theorem MIPRE.Introspection.TypedExtraction.sum_pairs {R : Type*} [AddCommMonoid R]\n    (f : ParsedAnswer (ι → F) A PauliAnswer → R)\n    (hp : ∀ p, f (.pauli p) = 0) (hr : ∀ x y a, f (.read x y a) = 0)\n    (hh : ∀ x y z, f (.hide x y z) = 0) :\n    ∑ a, f a = ∑ xa : (ι → F) × A, f (.pair xa.1 xa.2) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedExtraction",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "A sum supported on the pair answers is exactly a sum over their two components.",
+  "module": "MIPRE.Foundations.Introspection.TypedExtraction",
+  "module_doc": "/-! # Final extraction from the actual typed introspection game\n\nThis is the last game calculation in `introspection.tex`: the cross-introspection\nedge has probability exactly `1 / |E|`, accepts precisely the original predicate\non pair answers, and rejects all other constructors. Consequently terminal\nreadout measurements yield an actual original-game strategy with failure at\nmost `|E|` times the typed-game failure. The tensor-product form is the output\nrequired of the hiding induction; no separate acceptance premise is assumed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TypedExtraction.lean#L51-L70",
+  "source_path": "MIPRE/Foundations/Introspection/TypedExtraction.lean",
+  "lines": [
+   51,
+   70
+  ],
+  "blueprint": [],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedExtraction.condWin_cross_eq",
+  "source_name": "MIPRE.Introspection.TypedExtraction.condWin_cross_eq",
+  "formal_statement": "theorem MIPRE.Introspection.TypedExtraction.condWin_cross_eq (ψ : H × K → ℂ)\n    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) H)\n    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) K) :\n    condWin (TypedEstimates.parsedGame E X Z P L projectPauli D DP) ψ MA MB\n      (QuestionType.introspect false, 0) (QuestionType.introspect true, 0) =\n        ∑ xa : (ι → F) × A, ∑ yb : (ι → F) × A,\n          (if D xa.1 yb.1 xa.2 yb.2 then 1 else 0) *\n            bornProb ψ (((MA (QuestionType.introspect false, 0)).mats (.pair xa.1 xa.2)).val)\n              (((MB (QuestionType.introspect true, 0)).mats (.pair yb.1 yb.2)).val) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedExtraction",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}",
+   "variable (E : PauliType → PauliType → Bool) (X Z : PauliType)"
+  ],
+  "docstring": "On the concrete game edge, only pair answers contribute to the conditional value.",
+  "module": "MIPRE.Foundations.Introspection.TypedExtraction",
+  "module_doc": "/-! # Final extraction from the actual typed introspection game\n\nThis is the last game calculation in `introspection.tex`: the cross-introspection\nedge has probability exactly `1 / |E|`, accepts precisely the original predicate\non pair answers, and rejects all other constructors. Consequently terminal\nreadout measurements yield an actual original-game strategy with failure at\nmost `|E|` times the typed-game failure. The tensor-product form is the output\nrequired of the hiding induction; no separate acceptance premise is assumed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TypedExtraction.lean#L98-L125",
+  "source_path": "MIPRE/Foundations/Introspection/TypedExtraction.lean",
+  "lines": [
+   98,
+   125
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-typed-final-extraction",
+    "env": "lemma",
+    "title": "Quantitative extraction from the concrete typed game",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.TypedExtraction.sum_pairs"
+  ],
+  "pasted_helpers": 1,
+  "prooflines": 16,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedExtraction.cross_failure_le",
+  "source_name": "MIPRE.Introspection.TypedExtraction.cross_failure_le",
+  "formal_statement": "theorem MIPRE.Introspection.TypedExtraction.cross_failure_le (ψ : H × K → ℂ) (hψ : star ψ ⬝ᵥ ψ = 1)\n    (MA : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) H)\n    (MB : CL.Detyping.Question (QuestionType PauliType ℓ) κ →\n      POVM (ParsedAnswer (ι → F) A PauliAnswer) K)\n    {ε : ℝ}\n    (hfail : 1 - povmValue (TypedEstimates.parsedGame E X Z P L projectPauli D DP)\n      ψ MA MB ≤ ε) :\n    condFail (TypedEstimates.parsedGame E X Z P L projectPauli D DP) ψ MA MB\n      (QuestionType.introspect false, 0) (QuestionType.introspect true, 0) ≤\n        (TypeGraph.edges E X Z ℓ).card * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedExtraction",
+   "open Finset Matrix Classical",
+   "open scoped Kronecker",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}",
+   "variable (E : PauliType → PauliType → Bool) (X Z : PauliType)"
+  ],
+  "docstring": "The actual typed game's success bounds the conditional cross-test failure.",
+  "module": "MIPRE.Foundations.Introspection.TypedExtraction",
+  "module_doc": "/-! # Final extraction from the actual typed introspection game\n\nThis is the last game calculation in `introspection.tex`: the cross-introspection\nedge has probability exactly `1 / |E|`, accepts precisely the original predicate\non pair answers, and rejects all other constructors. Consequently terminal\nreadout measurements yield an actual original-game strategy with failure at\nmost `|E|` times the typed-game failure. The tensor-product form is the output\nrequired of the hiding induction; no separate acceptance premise is assumed.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TypedExtraction.lean#L127-L151",
+  "source_path": "MIPRE/Foundations/Introspection/TypedExtraction.lean",
+  "lines": [
+   127,
+   151
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-typed-final-extraction",
+    "env": "lemma",
+    "title": "Quantitative extraction from the concrete typed game",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.TypeGraph.edges_nonempty",
+   "MIPRE.Introspection.TypedPresentation.mu_aux",
+   "MIPRE.condFail_le_div"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.prefixChainType_adj",
+  "source_name": "MIPRE.Introspection.TypedEstimates.prefixChainType_adj",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.prefixChainType_adj (E : PauliType → PauliType → Bool) (w : Bool)\n    (j : Fin ℓ) (i : ℕ) (hi : i < ℓ - j.val + 1) :\n    TypeGraph.Adj E X Z (.inr (prefixChainType j i, w))\n      (.inr (prefixChainType j (i + 1), w)) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}",
+   "variable (L : Bool → CL.CLFun F ι ℓ) (X Z : PauliType)",
+   "variable [DecidableEq PauliType]"
+  ],
+  "docstring": "Every step of this path is an actual edge of the introspection graph.",
+  "module": "MIPRE.Foundations.Introspection.TypedPrefixChain",
+  "module_doc": "/-! # Propagating reported question prefixes through the actual hiding chain\n\nThe adjacent hiding, terminal hiding/Read, and Read/Introspect tests preserve\nevery earlier question prefix. Coarse-graining these accepted-answer relations\nbefore using consistency loops gives a polynomial chain loss, without an\nanswer-cardinality factor or an assumption that claimed answers are CL images.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TypedPrefixChain.lean#L103-L119",
+  "source_path": "MIPRE/Foundations/Introspection/TypedPrefixChain.lean",
+  "lines": [
+   103,
+   119
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-actual-prefix-chain",
+    "env": "lemma",
+    "title": "Actual hiding-prefix propagation to Introspect",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.TypeGraph.symmetric"
+  ],
+  "pasted_helpers": 3,
+  "prooflines": 12,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.prefixChainType_check",
+  "source_name": "MIPRE.Introspection.TypedEstimates.prefixChainType_check",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.prefixChainType_check (w : Bool) (hL : (L w).SupportedOn univ)\n    (j : Fin ℓ) (m : ℕ) (hm : m ≤ j.val) (i : ℕ) (hi : i < ℓ - j.val + 1)\n    {a b : ParsedAnswer (ι → F) A PauliAnswer}\n    (h : TypedPredicate.check L X Z projectPauli D DP\n      (.inr (prefixChainType j i, w)) (.inr (prefixChainType j (i + 1), w)) a b = true) :\n    reportedPrefix (L w) m (prefixChainType j i) a =\n      reportedPrefix (L w) m (prefixChainType j (i + 1)) b := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}",
+   "variable (L : Bool → CL.CLFun F ι ℓ) (X Z : PauliType)",
+   "variable [DecidableEq PauliType]"
+  ],
+  "docstring": "Accepted answers on every actual path edge preserve the requested earlier\nprefix. There is no additional accepted-answer hypothesis in the final bound.",
+  "module": "MIPRE.Foundations.Introspection.TypedPrefixChain",
+  "module_doc": "/-! # Propagating reported question prefixes through the actual hiding chain\n\nThe adjacent hiding, terminal hiding/Read, and Read/Introspect tests preserve\nevery earlier question prefix. Coarse-graining these accepted-answer relations\nbefore using consistency loops gives a polynomial chain loss, without an\nanswer-cardinality factor or an assumption that claimed answers are CL images.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TypedPrefixChain.lean#L121-L143",
+  "source_path": "MIPRE/Foundations/Introspection/TypedPrefixChain.lean",
+  "lines": [
+   121,
+   143
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-actual-prefix-chain",
+    "env": "lemma",
+    "title": "Actual hiding-prefix propagation to Introspect",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.CLChecks.outputPrefix_outputPrefix"
+  ],
+  "pasted_helpers": 8,
+  "prooflines": 14,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.prefix_chain_step_estimate_bob",
+  "source_name": "MIPRE.Introspection.TypedEstimates.prefix_chain_step_estimate_bob",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.prefix_chain_step_estimate_bob (w : Bool) (hL : (L w).SupportedOn univ)\n    (j : Fin ℓ) (m : ℕ) (hm : m ≤ j.val) (i : ℕ) (hi : i < ℓ - j.val + 1) :\n    (∑ z, stateSqNorm (swapVec ψ)\n      (((((MB (.inr (prefixChainType j i, w), 0)).map\n        (reportedPrefix (L w) m (prefixChainType j i))).mats z).val) -\n      ((((MB (.inr (prefixChainType j (i + 1), w), 0)).map\n        (reportedPrefix (L w) m (prefixChainType j (i + 1)))).mats z).val))) ≤\n      8 * (TypeGraph.edges E X Z ℓ).card * ε := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "The actual next edge and the earlier loop compare Bob's two prefix\nmeasurements with the same `8 |E| ε` loss.",
+  "module": "MIPRE.Foundations.Introspection.TypedPrefixChainBob",
+  "module_doc": "/-! # Bob's reported-prefix chain\n\nThe same actual oriented tests suffice for the right-party estimate: the loop\nat each earlier endpoint supplies the common Alice measurement. No symmetry\nof the supplied Pauli decision predicate is required.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TypedPrefixChainBob.lean#L41-L74",
+  "source_path": "MIPRE/Foundations/Introspection/TypedPrefixChainBob.lean",
+  "lines": [
+   41,
+   74
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-actual-normalizer-prefix",
+    "env": "lemma",
+    "title": "The actual later normalizer from the prefix chain",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.TypedEstimates.aux_agreement_estimate",
+   "MIPRE.Introspection.TypedEstimates.prefixChainType_adj",
+   "MIPRE.Introspection.TypedEstimates.prefixChainType_check",
+   "MIPRE.aOp_sub"
+  ],
+  "pasted_helpers": 15,
+  "prooflines": 24,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedEstimates.hiding_introspect_prefix_estimate_bob",
+  "source_name": "MIPRE.Introspection.TypedEstimates.hiding_introspect_prefix_estimate_bob",
+  "formal_statement": "theorem MIPRE.Introspection.TypedEstimates.hiding_introspect_prefix_estimate_bob (w : Bool) (hL : (L w).SupportedOn univ)\n    (j : Fin ℓ) (m : ℕ) (hm : m ≤ j.val) :\n    (∑ z, snorm ψ (bOp\n      (((((MB (QuestionType.hide w j, 0)).map\n        (reportedPrefix (L w) m (.hide j))).mats z).val) -\n      ((((MB (QuestionType.introspect w, 0)).map\n        (reportedPrefix (L w) m .introspect)).mats z).val))) ^ 2) ≤\n      ((ℓ - j.val + 1 : ℕ) : ℝ) ^ 2 * (8 * (TypeGraph.edges E X Z ℓ).card * ε) := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedEstimates",
+   "open Finset Matrix Classical",
+   "variable {PauliType PauliAnswer F ι κ A H K : Type*}"
+  ],
+  "docstring": "Bob's version of the actual prefix chain, in the right-party state norm\nused by conditional normalizer replacement.",
+  "module": "MIPRE.Foundations.Introspection.TypedPrefixChainBob",
+  "module_doc": "/-! # Bob's reported-prefix chain\n\nThe same actual oriented tests suffice for the right-party estimate: the loop\nat each earlier endpoint supplies the common Alice measurement. No symmetry\nof the supplied Pauli decision predicate is required.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TypedPrefixChainBob.lean#L76-L98",
+  "source_path": "MIPRE/Foundations/Introspection/TypedPrefixChainBob.lean",
+  "lines": [
+   76,
+   98
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-actual-normalizer-prefix",
+    "env": "lemma",
+    "title": "The actual later normalizer from the prefix chain",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.Introspection.hiding_chain_average",
+   "MIPRE.Introspection.TypedEstimates.prefix_chain_step_estimate_bob",
+   "MIPRE.norm_stateVecB"
+  ],
+  "pasted_helpers": 2,
+  "prooflines": 13,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedPresentation.family_exactlyOn",
+  "source_name": "MIPRE.Introspection.TypedPresentation.family_exactlyOn",
+  "formal_statement": "theorem MIPRE.Introspection.TypedPresentation.family_exactlyOn (P : PauliType → CL.CLFun F ι 3)\n    (hP : ∀ p, (P p).ExactlyOn univ) (t : QuestionType PauliType ℓ) :\n    (family P t).ExactlyOn univ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedPresentation",
+   "open Finset Classical",
+   "variable {PauliType F ι : Type*} [Fintype ι] [DecidableEq ι] [Semiring F] {ℓ : ℕ}"
+  ],
+  "docstring": "The auxiliary zero presentation still partitions the full register.",
+  "module": "MIPRE.Foundations.Introspection.TypedPresentation",
+  "module_doc": "/-! # The typed introspection CL presentation\n\nThe three-level Pauli presentations are retained verbatim. Every auxiliary\ntype uses the zero presentation, padded to three levels with a full factor\npartition. Both players use the same family. The corresponding finite game\nhas an exactly uniform ordered-edge law, and the cross-introspection edge\nasks the two zero-content questions with probability the inverse edge count.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TypedPresentation.lean#L34-L40",
+  "source_path": "MIPRE/Foundations/Introspection/TypedPresentation.lean",
+  "lines": [
+   34,
+   40
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-type-presentation",
+    "env": "lemma",
+    "title": "Introspection type graph and typed CL family",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.CLFun.zeroOn_exactlyOn"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 3,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedPresentation.marginal_aux",
+  "source_name": "MIPRE.Introspection.TypedPresentation.marginal_aux",
+  "formal_statement": "theorem MIPRE.Introspection.TypedPresentation.marginal_aux (P : PauliType → CL.CLFun F ι 3) (t : AuxType ℓ)\n    (w : Bool) (j : ℕ) (z : ι → F) : ((family P (.inr (t, w))).truncate j).eval z = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedPresentation",
+   "open Finset Classical",
+   "variable {PauliType F ι : Type*} [Fintype ι] [DecidableEq ι] [Semiring F] {ℓ : ℕ}"
+  ],
+  "docstring": "The zero-content assertion holds at every truncation level.",
+  "module": "MIPRE.Foundations.Introspection.TypedPresentation",
+  "module_doc": "/-! # The typed introspection CL presentation\n\nThe three-level Pauli presentations are retained verbatim. Every auxiliary\ntype uses the zero presentation, padded to three levels with a full factor\npartition. Both players use the same family. The corresponding finite game\nhas an exactly uniform ordered-edge law, and the cross-introspection edge\nasks the two zero-content questions with probability the inverse edge count.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TypedPresentation.lean#L47-L50",
+  "source_path": "MIPRE/Foundations/Introspection/TypedPresentation.lean",
+  "lines": [
+   47,
+   50
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-type-presentation",
+    "env": "lemma",
+    "title": "Introspection type graph and typed CL family",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedPresentation.linear_aux",
+  "source_name": "MIPRE.Introspection.TypedPresentation.linear_aux",
+  "formal_statement": "theorem MIPRE.Introspection.TypedPresentation.linear_aux (P : PauliType → CL.CLFun F ι 3) (t : AuxType ℓ)\n    (w : Bool) (j : ℕ) (u : ι → F) : (family P (.inr (t, w))).mapOfPrefix j u = 0 := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedPresentation",
+   "open Finset Classical",
+   "variable {PauliType F ι : Type*} [Fintype ι] [DecidableEq ι] [Semiring F] {ℓ : ℕ}"
+  ],
+  "docstring": "Every linear query for an auxiliary question is the zero map.",
+  "module": "MIPRE.Foundations.Introspection.TypedPresentation",
+  "module_doc": "/-! # The typed introspection CL presentation\n\nThe three-level Pauli presentations are retained verbatim. Every auxiliary\ntype uses the zero presentation, padded to three levels with a full factor\npartition. Both players use the same family. The corresponding finite game\nhas an exactly uniform ordered-edge law, and the cross-introspection edge\nasks the two zero-content questions with probability the inverse edge count.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TypedPresentation.lean#L52-L55",
+  "source_path": "MIPRE/Foundations/Introspection/TypedPresentation.lean",
+  "lines": [
+   52,
+   55
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-type-presentation",
+    "env": "lemma",
+    "title": "Introspection type graph and typed CL family",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.CLFun.mapOfPrefix_zeroOn"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedPresentation.factor_aux",
+  "source_name": "MIPRE.Introspection.TypedPresentation.factor_aux",
+  "formal_statement": "theorem MIPRE.Introspection.TypedPresentation.factor_aux (P : PauliType → CL.CLFun F ι 3) (t : AuxType ℓ)\n    (w : Bool) (j : ℕ) (u : ι → F) :\n    (family P (.inr (t, w))).factorOfPrefix j u = if j = 0 then univ else ∅ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedPresentation",
+   "open Finset Classical",
+   "variable {PauliType F ι : Type*} [Fintype ι] [DecidableEq ι] [Semiring F] {ℓ : ℕ}"
+  ],
+  "docstring": "The first auxiliary factor consumes the register; later factors are empty.",
+  "module": "MIPRE.Foundations.Introspection.TypedPresentation",
+  "module_doc": "/-! # The typed introspection CL presentation\n\nThe three-level Pauli presentations are retained verbatim. Every auxiliary\ntype uses the zero presentation, padded to three levels with a full factor\npartition. Both players use the same family. The corresponding finite game\nhas an exactly uniform ordered-edge law, and the cross-introspection edge\nasks the two zero-content questions with probability the inverse edge count.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TypedPresentation.lean#L57-L61",
+  "source_path": "MIPRE/Foundations/Introspection/TypedPresentation.lean",
+  "lines": [
+   57,
+   61
+  ],
+  "blueprint": [
+   {
+    "label": "lem:intro-type-presentation",
+    "env": "lemma",
+    "title": "Introspection type graph and typed CL family",
+    "file": "06_proof_structure.tex"
+   }
+  ],
+  "imported_nodes": [
+   "MIPRE.CL.CLFun.factorOfPrefix_zeroOn"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 1,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.TypedPresentation.mu_aux",
+  "source_name": "MIPRE.Introspection.TypedPresentation.mu_aux",
+  "formal_statement": "theorem MIPRE.Introspection.TypedPresentation.mu_aux (E : PauliType → PauliType → Bool) (X Z : PauliType)\n    (P : PauliType → CL.CLFun (ZMod 2) ι 3)\n    (D : CL.Detyping.Question (QuestionType PauliType ℓ) ι →\n      CL.Detyping.Question (QuestionType PauliType ℓ) ι → A → B → Bool)\n    (t u : AuxType ℓ) (w w' : Bool)\n    (h : TypeGraph.Adj E X Z (.inr (t, w)) (.inr (u, w'))) :\n    (game E X Z ℓ P D).μ (.inr (t, w), 0) (.inr (u, w'), 0) =\n      ((TypeGraph.edges E X Z ℓ).card : ℝ)⁻¹ := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.TypedPresentation",
+   "open Finset Classical",
+   "variable {PauliType F ι : Type*} [Fintype ι] [DecidableEq ι] [Semiring F] {ℓ : ℕ}",
+   "variable [Fintype PauliType] [DecidableEq PauliType]"
+  ],
+  "docstring": "A fixed edge between auxiliary types has exactly inverse-edge-count probability.",
+  "module": "MIPRE.Foundations.Introspection.TypedPresentation",
+  "module_doc": "/-! # The typed introspection CL presentation\n\nThe three-level Pauli presentations are retained verbatim. Every auxiliary\ntype uses the zero presentation, padded to three levels with a full factor\npartition. Both players use the same family. The corresponding finite game\nhas an exactly uniform ordered-edge law, and the cross-introspection edge\nasks the two zero-content questions with probability the inverse edge count.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TypedPresentation.lean#L81-L112",
+  "source_path": "MIPRE/Foundations/Introspection/TypedPresentation.lean",
+  "lines": [
+   81,
+   112
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.TypeGraph.edges_nonempty"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 23,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryQuotient.directed_sound",
+  "source_name": "MIPRE.Introspection.AuxiliaryQuotient.directed_sound",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryQuotient.directed_sound (hL : ∀ w, (L w).SupportedOn Finset.univ)\n    (t u : QuestionType PauliType ℓ) (a b : ParsedAnswer (ι → F) A PauliAnswer)\n    (h : directed L X Z project D t u a b = true) :\n    TypedPredicate.directed L X Z project D t u (decodeAnswer L t a) (decodeAnswer L u b) =\n      true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryQuotient",
+   "open Classical",
+   "variable {PauliType PauliAnswer F A : Type*} [Field F] {ι : Type*} [Fintype ι] [DecidableEq ι] {ℓ : ℕ}",
+   "variable (L : Bool → CL.CLFun F (ι) ℓ) (X Z : PauliType)"
+  ],
+  "docstring": "Every quotient directed comparison becomes a legacy comparison after decoding.",
+  "module": "MIPRE.Foundations.Introspection.TypedQuotientPredicate",
+  "module_doc": "/-! # Quotient hiding comparisons in the complete typed predicate\n\nThe quotient comparisons accept every legacy accepted tuple. Deterministic\nanswer decoding restores legacy acceptance on every raw question and answer,\nincluding consistency loops and both orientations of auxiliary edges.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TypedQuotientPredicate.lean#L75-L97",
+  "source_path": "MIPRE/Foundations/Introspection/TypedQuotientPredicate.lean",
+  "lines": [
+   75,
+   97
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.AuxiliaryDual.proj_decodeDual",
+   "MIPRE.Introspection.AuxiliaryDual.proj_prefix_decodeDual_congr",
+   "MIPRE.Introspection.CLChecks.outputPrefix_outputPrefix",
+   "MIPRE.Introspection.CLChecks.proj_outputPrefix_cons"
+  ],
+  "pasted_helpers": 11,
+  "prooflines": 17,
+  "is_target": false
+ },
+ {
+  "kind": "theorem",
+  "theorem_name": "MIPRE.Introspection.AuxiliaryQuotient.check_sound",
+  "source_name": "MIPRE.Introspection.AuxiliaryQuotient.check_sound",
+  "formal_statement": "theorem MIPRE.Introspection.AuxiliaryQuotient.check_sound (hL : ∀ w, (L w).SupportedOn Finset.univ)\n    (DP : PauliType → PauliType → PauliAnswer → PauliAnswer → Bool)\n    (t u : QuestionType PauliType ℓ) (a b : ParsedAnswer (ι → F) A PauliAnswer)\n    (h : check L X Z project D DP t u a b = true) :\n    TypedPredicate.check L X Z project D DP t u (decodeAnswer L t a) (decodeAnswer L u b) =\n      true := by sorry",
+  "preamble_opens": [
+   "open MIPRE",
+   "open MIPRE.Introspection",
+   "open MIPRE.Introspection.AuxiliaryQuotient",
+   "open Classical",
+   "variable {PauliType PauliAnswer F A : Type*} [Field F] {ι : Type*} [Fintype ι] [DecidableEq ι] {ℓ : ℕ}",
+   "variable (L : Bool → CL.CLFun F (ι) ℓ) (X Z : PauliType)"
+  ],
+  "docstring": "Every accepted quotient tuple is accepted by the legacy predicate after decoding.\nThis statement covers every raw answer, rather than only sampler outputs.",
+  "module": "MIPRE.Foundations.Introspection.TypedQuotientPredicate",
+  "module_doc": "/-! # Quotient hiding comparisons in the complete typed predicate\n\nThe quotient comparisons accept every legacy accepted tuple. Deterministic\nanswer decoding restores legacy acceptance on every raw question and answer,\nincluding consistency loops and both orientations of auxiliary edges.\n-/",
+  "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/Foundations/Introspection/TypedQuotientPredicate.lean#L123-L142",
+  "source_path": "MIPRE/Foundations/Introspection/TypedQuotientPredicate.lean",
+  "lines": [
+   123,
+   142
+  ],
+  "blueprint": [],
+  "imported_nodes": [
+   "MIPRE.Introspection.AuxiliaryQuotient.directed_sound"
+  ],
+  "pasted_helpers": 0,
+  "prooflines": 12,
+  "is_target": false
+ }
+]
