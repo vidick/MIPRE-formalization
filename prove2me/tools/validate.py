@@ -223,9 +223,12 @@ def check_body(it):
             '#print axioms solution\n')
 
 def parse_check(out):
-    """(default print, explicit print or None, axioms)."""
-    ta = [l[len("TALL :: "):] for l in out.splitlines() if l.startswith("TALL :: ")]
-    t = list(parse("\n".join(l for l in out.splitlines() if l.startswith("T :: ") or l.startswith(" "))).values())
+    """(default print, explicit print or None, axioms).  Both prints may run over several lines (the
+    pretty-printer breaks a `have` even at a large width): `parse` joins the continuation lines, as the
+    stub check does."""
+    d = parse(out)
+    t = [d["T"]] if "T" in d else []
+    ta = [d["TALL"]] if "TALL" in d else []
     ax = re.search(r"'solution' depends on axioms: \[([^\]]*)\]", out)
     if ax:
         axs = ax.group(1)
@@ -314,7 +317,10 @@ def phase_solutions(s):
             # predicates are imported, `∀ (i : ℕ), i < n → …` where they are not)
             ta = TALL.get(it["name"])
             if it["name"] in stubs_all and ta is not None:
-                same = ta == stubs_all[it["name"]]
+                # a proof inside the statement is abstracted as an auxiliary lemma named after the
+                # declaration (`pt6_block._proof_1` in the stub, `solution._proof_1` in the solution)
+                aux = re.compile(re.escape(it["name"]) + r"\.(?=_proof_\d|match_\d|_auxLemma|proof_\d)")
+                same = ta == aux.sub("solution.", stubs_all[it["name"]])
             else:
                 same = t is not None and t == stubs.get(it["name"])
             ok = rc == 0 and t is not None and same
