@@ -15171,13 +15171,34 @@
    "submitted_at": 1792224127.9450216,
    "http": 200,
    "submission_id": "fd6c553f-2c56-4ce5-90d3-51b994d31300",
-   "status": "PENDING",
-   "error_message": "Failed to resolve platform imports: Import parser timed out after 5s"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Introspection.DecisionKernel.program_sound_numbered": {
    "submitted_at": 1792224264.1584249,
    "http": 200,
    "submission_id": "a5fffe87-66c3-41c0-a3de-b10b8ff7a66d",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.DecisionKernel.program_complete_numbered": {
+   "submitted_at": 1792224749.306711,
+   "http": 200,
+   "submission_id": "dffceae3-29d8-4b9a-b6fe-25a480f5d716",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.CanonicalComplete.exists_raw_perfectPCC": {
+   "submitted_at": 1792225085.953314,
+   "http": 200,
+   "submission_id": "7320a66b-fce3-4035-9669-a8b604b05632",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.CanonicalComplete.output_hasPerfectPCC": {
+   "submitted_at": 1792225536.4163425,
+   "http": 200,
+   "submission_id": "adc8918f-692a-49b8-aeba-052a3898f30f",
    "status": "PENDING"
   }
  },

@@ -27721,7 +27721,8 @@
    "submitted_at": 1792223937.4109497,
    "http": 200,
    "submission_id": "f789eaa7-9d2b-452f-b2e8-45415b3592a5",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MainInductionStep.answerComMainForCarrier_ofAnswerGood": {
    "submitted_at": 1792223938.380121,
@@ -27741,8 +27742,8 @@
    "submitted_at": 1792224412.03174,
    "http": 200,
    "submission_id": "09438b7d-2843-4204-89bc-ee07f8a4a9cd",
-   "status": "PENDING",
-   "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MainInductionStep.answer_family_pointConsistencyError_eq_avg": {
    "submitted_at": 1792223961.0824351,
@@ -27769,8 +27770,8 @@
    "submitted_at": 1792224376.2155836,
    "http": 200,
    "submission_id": "cfed7f10-c844-4385-bb79-3cb1c4987d5b",
-   "status": "PENDING",
-   "error_message": "Failed to resolve platform imports: DB error looking up import 'Theorems.Thm_MIPStarRE_LDT_avgOver_zero': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MainInductionStep.mainInductionFromStageData": {
    "submitted_at": 1792223984.0812612,
@@ -27790,31 +27791,71 @@
    "submitted_at": 1792224150.0621223,
    "http": 200,
    "submission_id": "4df9b99a-d309-4ccf-901b-225ec740d806",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MainInductionStep.idxPolyFamily_complete_of_slice_bounds": {
    "submitted_at": 1792224182.1914828,
    "http": 200,
    "submission_id": "1eb6d88c-c670-4fae-94ca-41870fb57a9b",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MainInductionStep.selfImprovementInInductionError_le_mainInductionNu": {
-   "submitted_at": 1792224284.6879783,
+   "submitted_at": 1792224879.7567477,
    "http": 200,
-   "submission_id": "e70c9611-e0c2-4e5f-97da-233d117af647",
-   "status": "PENDING"
+   "submission_id": "9a172d08-16d7-4072-bc38-6f7347f588bf",
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MainInductionStep.answer_family_consistency_of_slice_bounds": {
    "submitted_at": 1792224288.4029627,
    "http": 200,
    "submission_id": "c553a03b-a165-4994-b1bc-635aed8fc964",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MainInductionStep.answerSuccessorRecursiveSliceMeasurements_ofMainInductionHypothesis": {
    "submitted_at": 1792224412.8362231,
    "http": 200,
    "submission_id": "11f50311-6415-4fce-847e-6fea87c81cb2",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerSuccessorSelfImprovementOutputs_ofMainInductionHypothesis": {
+   "submitted_at": 1792224699.210034,
+   "http": 200,
+   "submission_id": "74358fc2-e630-4ac0-91b0-ba1d63d8205a",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerLdPastingInInductionError_le_mainInductionError_of_smallError": {
+   "submitted_at": 1792224700.0093937,
+   "http": 200,
+   "submission_id": "be0de8db-9700-487b-9298-753d243c51f8",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerLdPastingInInductionSectionDegreeZeroOfSmallError": {
+   "submitted_at": 1792224962.7530334,
+   "http": 200,
+   "submission_id": "aec68eb3-3bf6-4a4c-9903-8de53db5ae69",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerSuccessorAveragedFamilyFields_ofMainInductionHypothesis": {
+   "submitted_at": 1792225002.0864775,
+   "http": 200,
+   "submission_id": "25c180e8-57b1-4235-8d27-ba1578959705",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.selfImprovementInInductionError_le_one_of_mainInductionError_lt_one": {
+   "submitted_at": 1792225521.1097422,
+   "http": 200,
+   "submission_id": "d11ea4f4-8a9c-4cd8-aea2-ae69a1f65989",
+   "status": "PENDING",
+   "error_message": "Failed to record the decomposition edge for import 'MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Bernoulli_FromHToG_AdjacentStages_Chain_HalfSandwich': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>. The proof verified but its reduction could not be recorded — please resubmit."
   }
  },
  "log": []
