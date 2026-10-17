@@ -15490,7 +15490,8 @@
    "submitted_at": 1792229367.6679156,
    "http": 200,
    "submission_id": "b6287379-e261-4635-9917-5b374d9bcb78",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.QLD.errSmall_qldErr": {
    "submitted_at": 1792229368.6476288,
@@ -15498,6 +15499,26 @@
    "submission_id": "aa96a9ee-2e53-4b75-9f0e-b7ed1c2c4258",
    "status": "ACCEPTED",
    "error_message": ""
+  },
+  "MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL_of_povm": {
+   "submitted_at": 1792230903.3928537,
+   "http": 200,
+   "submission_id": "cce9401b-1e0f-41a3-9115-d6c91a65c348",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.exists_global_pvm": {
+   "submitted_at": 1792231295.6238098,
+   "http": 200,
+   "submission_id": "e6d44b21-822d-44f3-a1e1-ebe9c6183ce6",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.exists_phys_of_regime": {
+   "submitted_at": 1792231676.2037182,
+   "http": 200,
+   "submission_id": "61a0d0c1-e390-4047-bed6-b7196d70627a",
+   "status": "PENDING"
   }
  },
  "log": []
