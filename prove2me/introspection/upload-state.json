@@ -2297,18 +2297,90 @@
    "error_message": ""
   },
   "MIPRE_Foundations_SAT_EffectiveSelfDual": {
-   "submitted_at": 1792217388.8985147,
+   "submitted_at": 1792217509.2289526,
    "http": 202,
-   "status": "FAILED",
-   "job_id": "2d96e795-44ca-411e-a6bb-4ad005c62a71",
-   "theorem_id": null,
-   "error_message": "definition does not compile: Import parser timed out after 5s"
+   "status": "PUBLISHED",
+   "job_id": "4d495367-5b66-46b1-b78d-30e359007fa7",
+   "theorem_id": "3961bd55-9a5d-48d6-879d-5a993419da08",
+   "error_message": ""
   },
   "MIPRE_Foundations_SAT_NormalElement": {
    "submitted_at": 1792217452.110032,
    "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "7bb38f97-7279-4ca6-9f29-57ab0246138f",
+   "theorem_id": "97f07293-c6ac-4f6f-8a98-34367da5f27b",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_SAT_NormalElementProg_B": {
+   "submitted_at": 1792217538.6690788,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "5a041844-52ba-4eab-a73b-39caaf67bf9f",
+   "theorem_id": "15d2113e-a44e-4171-86c9-feb67fffa3ad",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Introspection_PauliStageProg_B": {
+   "submitted_at": 1792218031.8407652,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "0940d0d3-0caf-428a-8021-b79b41e0846b",
+   "theorem_id": "077a10b4-a54e-481b-a706-c6cf1a6b3cfb",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Introspection_FieldIndicatorProg": {
+   "submitted_at": 1792217710.4711754,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "cdb395d3-641f-4860-9c10-79a5fa765d59",
+   "theorem_id": "9d10a9f9-d0a3-484e-93c2-82424ddf1758",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Introspection_FieldTableProg": {
+   "submitted_at": 1792217798.6633456,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "91d30e83-847c-42b2-a9b8-28c70c5ca411",
+   "theorem_id": "7605fc9e-4107-41d5-b6d2-4851656a1038",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Introspection_FieldGammaProg": {
+   "submitted_at": 1792217882.7175648,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "c61327cd-df41-4cd0-9ed7-46225e84edba",
+   "theorem_id": "e00a13f7-47c5-4866-8501-797e5aa81f3e",
+   "error_message": ""
+  },
+  "MIPRE_Background_QLD_PauliArithmeticPrograms": {
+   "submitted_at": 1792217978.8914363,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "6b5dc96d-6d34-412a-a49f-22c1c8f0315a",
+   "theorem_id": "e85810b7-22e6-4407-a921-291eb7a52d76",
+   "error_message": ""
+  },
+  "MIPRE_Background_QLD_PauliStagePrograms": {
+   "submitted_at": 1792218146.9130347,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "b3114fe3-85fe-483c-b621-a4f820ee0b73",
+   "theorem_id": "e32e422b-f66e-40bb-8dd3-39c1816fd4ef",
+   "error_message": ""
+  },
+  "MIPRE_Background_QLD_TypeEncoding": {
+   "submitted_at": 1792218355.9581447,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "67e8679d-9577-408f-8b9f-7e6dc93151b0",
+   "theorem_id": "fe32e19d-6eb2-487d-aa06-7dafd3f28368",
+   "error_message": ""
+  },
+  "MIPRE_Background_QLD_PauliBranchPrograms": {
+   "submitted_at": 1792218498.7536955,
+   "http": 202,
    "status": "PENDING",
-   "job_id": "7bb38f97-7279-4ca6-9f29-57ab0246138f"
+   "job_id": "695d1433-b134-4f12-b244-18d24e38c8dc"
   }
  },
  "theorems": {
@@ -8369,26 +8441,28 @@
    "error_message": ""
   },
   "MIPRE.Introspection.option_valid_acceptance_le_complete": {
-   "submitted_at": 1792217385.171679,
+   "submitted_at": 1792217644.1960695,
    "http": 202,
-   "job_id": "a689acf9-ee46-43e6-9759-a32a2c6dcfc9",
-   "status": "FAILED",
-   "theorem_id": null,
-   "error_message": "formal statement does not compile: Import parser timed out after 5s"
+   "job_id": "b6ace60e-8c25-43c6-95cc-71937a0974dd",
+   "status": "PUBLISHED",
+   "theorem_id": "3fb179f0-1fdb-4af8-9dd8-2705002676f8",
+   "error_message": ""
   },
   "MIPRE.Introspection.readoutAcceptance_le_completedValue": {
-   "submitted_at": 1792217385.6579108,
+   "submitted_at": 1792217643.821321,
    "http": 202,
-   "job_id": "685e60bc-72be-4e1e-a1a0-baffdefd856f",
-   "status": "FAILED",
-   "theorem_id": null,
-   "error_message": "formal statement does not compile: Import parser timed out after 5s"
+   "job_id": "81d416be-f7d7-4638-93e3-87938dc7704e",
+   "status": "PUBLISHED",
+   "theorem_id": "b02cdc5d-56d0-49d9-88f5-86f9798121ba",
+   "error_message": ""
   },
   "MIPRE.Introspection.introspectPair_map_some": {
    "submitted_at": 1792217386.0791354,
    "http": 202,
    "job_id": "49d7ed81-707f-4b0e-8045-94108aec7b16",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "f53616c1-6ba8-4d83-8067-04480f8c9424",
+   "error_message": ""
   },
   "MIPRE.Introspection.TypedExtraction.exists_strategy_of_terminal_invariants": {
    "submitted_at": 1792217386.508994,
@@ -8396,6 +8470,22 @@
    "job_id": "fe459a70-1fea-4e22-87c6-39586015a992",
    "status": "PUBLISHED",
    "theorem_id": "98d6a9e4-3ff4-44bf-a6e0-7ecb7745af25",
+   "error_message": ""
+  },
+  "MIPRE.SAT.shoupNormalBasis_normal": {
+   "submitted_at": 1792217539.0790975,
+   "http": 202,
+   "job_id": "9893de3a-f850-4bee-b594-9250739eacfa",
+   "status": "PUBLISHED",
+   "theorem_id": "c2cbbf11-53da-44cd-a010-7957a6004876",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.FieldTableProgram.tableProg_correct": {
+   "submitted_at": 1792217915.2566512,
+   "http": 202,
+   "job_id": "ab3e7ea7-0d7d-45fe-b9ad-bbae88f49af3",
+   "status": "PUBLISHED",
+   "theorem_id": "5cf9e493-df40-421f-ad0f-df8d29efd578",
    "error_message": ""
   }
  },
@@ -13332,43 +13422,362 @@
    "submitted_at": 1792217389.5453901,
    "http": 200,
    "submission_id": "56f4fdf9-5c67-4391-ae2a-1ca18fbe5536",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.QLD.SimulPair.sum_qform_ne_eq": {
    "submitted_at": 1792217390.0671668,
    "http": 200,
    "submission_id": "6df42232-3b99-491a-a305-f0159203fd39",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.QLD.SimulPair.ancProj_mulVec_mVec": {
-   "submitted_at": 1792217411.3350565,
+   "submitted_at": 1792217569.6430066,
    "http": 200,
-   "submission_id": "4ea96d12-5ab8-4409-8e1e-2ec02250015c",
-   "status": "PENDING"
+   "submission_id": "5ee6ad5f-7ce6-4bb1-b850-37aad863c043",
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.QLD.sum_epr_proj_mulVec": {
-   "submitted_at": 1792217414.352634,
+   "submitted_at": 1792217588.2806015,
    "http": 200,
-   "submission_id": "477fb8fd-9a1e-4613-8438-d07691d142fe",
-   "status": "PENDING"
+   "submission_id": "5224a50c-fa9a-4e69-b88f-ee4b0c0252d6",
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.QLD.kron_one_mulVec": {
    "submitted_at": 1792217429.3231435,
    "http": 200,
    "submission_id": "7bd59bd8-be12-480a-8a22-4a55e4764aae",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.QLD.kron_mulVec_one": {
    "submitted_at": 1792217429.9154305,
    "http": 200,
    "submission_id": "7d96fb3f-09a3-419f-90ea-d985818359c0",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.QLD.MirrorSimul.bobHat_conj_bobWeyl": {
    "submitted_at": 1792217440.7273164,
    "http": 200,
    "submission_id": "58ba032b-c418-490b-80c2-809efd67df16",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.SAT.shoupActionProg_correct": {
+   "submitted_at": 1792217527.8775403,
+   "http": 200,
+   "submission_id": "e5d192e7-2acb-490b-a63d-f3af47a88572",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainP_le": {
+   "submitted_at": 1792217550.1036744,
+   "http": 200,
+   "submission_id": "1f543fd1-641c-431e-bfe6-65605056025c",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainQ_disagree_le": {
+   "submitted_at": 1792217550.755019,
+   "http": 200,
+   "submission_id": "df1607ed-31fd-4dfc-a9cf-d4fa0163a108",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.sum_qform_bobTail_eq": {
+   "submitted_at": 1792217551.3037317,
+   "http": 200,
+   "submission_id": "e6b27d1b-84a8-412f-b92c-72637786ccfd",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.sum_qform_bobLift_eq": {
+   "submitted_at": 1792217572.801109,
+   "http": 200,
+   "submission_id": "a58a09d5-a2dd-41bd-b54e-2d338d3fb059",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.SimulPair.sum_uniform_qform_ne_le": {
+   "submitted_at": 1792217588.9964263,
+   "http": 200,
+   "submission_id": "91aa3b32-d997-47b6-9cdd-0145747a841d",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.SimulPair.ancB_ptA_mulVec": {
+   "submitted_at": 1792217767.5505688,
+   "http": 200,
+   "submission_id": "72fefaa2-9206-4b0d-bdbb-d1b09791d3fd",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.sum_uniform_chainCoupled_agree_le": {
+   "submitted_at": 1792217978.2571855,
+   "http": 200,
+   "submission_id": "b8f9e552-0166-4585-a96a-90fe86e1bab5",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.sum_bobPairProj_mulVec": {
+   "submitted_at": 1792217768.818188,
+   "http": 200,
+   "submission_id": "782ad29b-cf27-4d8b-9595-5aaf8de4d5df",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.bobPairProj_mulVec": {
+   "submitted_at": 1792217769.3975875,
+   "http": 200,
+   "submission_id": "889c756d-c96c-4bc2-bf1d-3a69700ff1c9",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.sum_snorm_sq_chainQ_agree_le": {
+   "submitted_at": 1792217771.8137927,
+   "http": 200,
+   "submission_id": "e93cec8e-f129-4d3a-970b-4ef8ccfdc8f6",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.SimulPair.bornProb_mVec_ext": {
+   "submitted_at": 1792217772.3815603,
+   "http": 200,
+   "submission_id": "2cf1d8d7-3bb0-456c-b654-00e6062a117b",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.chainT_five_sub_four": {
+   "submitted_at": 1792217787.0964742,
+   "http": 200,
+   "submission_id": "5d54047d-2a90-4116-bdd6-ed19ec762391",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.chainT_five_eq_six": {
+   "submitted_at": 1792217826.3045714,
+   "http": 200,
+   "submission_id": "4841dc68-523d-4166-8b4c-2f1d7963ead1",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.SimulPair.xSqNorm_mVec_ext": {
+   "submitted_at": 1792218099.0638044,
+   "http": 200,
+   "submission_id": "206c758b-2b0f-42c0-b7fc-d01521c5531f",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.SimulPair.chainS_three_mulVec": {
+   "submitted_at": 1792217974.3722105,
+   "http": 200,
+   "submission_id": "7f77b3b8-101b-4cca-8465-27aecded98be",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.chainT_six_sub_seven": {
+   "submitted_at": 1792217974.9200788,
+   "http": 200,
+   "submission_id": "ba049981-bd55-4571-b483-af6969c5f31a",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.chainT_eight_sub_seven": {
+   "submitted_at": 1792217975.4759855,
+   "http": 200,
+   "submission_id": "af795663-8c36-49bc-bf98-8665e9d15bf0",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.chainT_eight_sub_nine": {
+   "submitted_at": 1792217976.065401,
+   "http": 200,
+   "submission_id": "6d74863f-b163-4c90-92b8-2f7625696852",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.physLift_chainU3b_mulVec": {
+   "submitted_at": 1792217979.4364111,
+   "http": 200,
+   "submission_id": "f4186e4f-0d09-441f-9000-fdc44f52a5ab",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.snorm_sq_obs_sub_le": {
+   "submitted_at": 1792218042.945684,
+   "http": 200,
+   "submission_id": "79cfaf08-67d1-4454-a8a2-2231bcaf8f24",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_six_seven": {
+   "submitted_at": 1792218224.1376193,
+   "http": 200,
+   "submission_id": "769bae1e-505c-41bb-8537-75709c8a5527",
+   "status": "SKETCH_ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.qform_endState_weyl": {
+   "submitted_at": 1792218100.4154165,
+   "http": 200,
+   "submission_id": "b10fc4c4-a8b4-4756-adb8-871b2391f483",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.toMv_coeffTable": {
+   "submitted_at": 1792218101.0176985,
+   "http": 200,
+   "submission_id": "ab87723c-89c5-43b3-a64b-e7b75fcbfb70",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.sum_uniform_chainCoupled_mass_le": {
+   "submitted_at": 1792218147.557317,
+   "http": 200,
+   "submission_id": "db46579e-e76c-43c6-9cbc-b4b08a7dd27b",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.mulVec_outerUnVec_auxVec": {
+   "submitted_at": 1792218150.3947167,
+   "http": 200,
+   "submission_id": "1fa6f8e9-daab-4f80-918e-1559188ce899",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.sum_bornProb_physVec_ge": {
+   "submitted_at": 1792218151.1503634,
+   "http": 200,
+   "submission_id": "fef6c560-c75d-44fc-830b-4eb6b68dbe9c",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.sum_bornProb_conj_ge_of_close": {
+   "submitted_at": 1792218178.0071383,
+   "http": 200,
+   "submission_id": "fc3a9a3a-1778-4fca-9714-0023e1c23db4",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.nextPrefixDecodedPOVM_option_isPVM": {
+   "submitted_at": 1792218178.661326,
+   "http": 200,
+   "submission_id": "201a76e8-841b-4fa3-933e-0467559f638e",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.nextPrefixDecodedPOVM_some_support": {
+   "submitted_at": 1792218246.3156872,
+   "http": 200,
+   "submission_id": "3ac8b7c9-4a78-4bc2-a48b-b968e0150563",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.SimulPair.sum_uniform_xSqNorm_pt_le": {
+   "submitted_at": 1792218257.7392192,
+   "http": 200,
+   "submission_id": "0c3ec528-c53f-4be8-900a-d2732a4bc894",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainQ_notCoupled_le": {
+   "submitted_at": 1792218542.6456304,
+   "http": 200,
+   "submission_id": "b3c02d9d-ac71-41e9-b234-652207bfefbe",
+   "status": "PENDING",
+   "error_message": "Failed to record the decomposition edge for import 'MIPRE_Background_QLD_Game': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>. The proof verified but its reduction could not be recorded — please resubmit."
+  },
+  "MIPRE.Introspection.nextPrefixJointPOVM_map_mats": {
+   "submitted_at": 1792218280.1828208,
+   "http": 200,
+   "submission_id": "3f24ce35-db40-4d00-97d9-17934c7a92b5",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.adaptiveOldJointPOVM_map_mats": {
+   "submitted_at": 1792218280.7522101,
+   "http": 200,
+   "submission_id": "08e8587e-711f-4791-be4a-0a2f86f9b389",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.prefixResidualOp_terminal": {
+   "submitted_at": 1792218282.8267622,
+   "http": 200,
+   "submission_id": "80fa5476-5349-4c10-918e-eaa8f18bde96",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.IntroPrefixInvariant.terminal_map_some": {
+   "submitted_at": 1792218303.7942007,
+   "http": 200,
+   "submission_id": "8e76b659-d1d1-4d28-ba6a-6f93a6f3b36b",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.sum_bornProb_fibre_ge": {
+   "submitted_at": 1792218327.0635507,
+   "http": 200,
+   "submission_id": "51312de7-df59-4e5b-9db9-0f0dd832fb94",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.FieldTableProgram.tableProg_correct": {
+   "submitted_at": 1792218486.3967278,
+   "http": 200,
+   "submission_id": "2735f386-0b5f-4a14-8845-0322bc061bc3",
+   "status": "PENDING",
+   "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
+  },
+  "MIPRE.Introspection.adaptiveRefinedJoint_decode": {
+   "submitted_at": 1792218424.5487478,
+   "http": 200,
+   "submission_id": "fd2dd330-a4c1-4066-a3cb-2ed8b08b84de",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.option_valid_acceptance_le_complete": {
+   "submitted_at": 1792218425.1990488,
+   "http": 200,
+   "submission_id": "e5d73354-9fa8-42e9-840e-baea54763770",
    "status": "PENDING"
+  },
+  "MIPRE.Introspection.introspectPair_map_some": {
+   "submitted_at": 1792218425.9173098,
+   "http": 200,
+   "submission_id": "0ccb940a-cc0f-4e6a-99d4-7e32b45cde5b",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.SAT.shoupNormalBasis_normal": {
+   "submitted_at": 1792218577.647364,
+   "http": 200,
+   "submission_id": "380548c2-d9e1-4915-914b-7dd7608112ef",
+   "status": "PENDING",
+   "error_message": "Failed to resolve platform imports: Import parser timed out after 5s"
+  },
+  "MIPRE.QLD.MirrorSimul.sum_snorm_sq_aliceConjPauli_le": {
+   "submitted_at": 1792218487.1731293,
+   "http": 200,
+   "submission_id": "d5d36b3d-3bfb-4380-86e7-e77a20f2289a",
+   "status": "PENDING"
+  },
+  "MIPRE.Introspection.registeredReplacement_nextOption_mats": {
+   "submitted_at": 1792218487.8881845,
+   "http": 200,
+   "submission_id": "0499a004-1cf3-4a63-9770-55d41d1d81c6",
+   "status": "PENDING"
+  },
+  "MIPRE.Introspection.IntroPrefixInvariant.terminal_some": {
+   "submitted_at": 1792218488.5306485,
+   "http": 200,
+   "submission_id": "51995bb7-3557-490f-acda-b6ad0953ed4d",
+   "status": "ERROR",
+   "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
   }
  },
  "log": []
