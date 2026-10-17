@@ -25798,8 +25798,8 @@
    "submitted_at": 1792218584.264319,
    "http": 200,
    "submission_id": "31f29ae9-94ff-4b1e-816e-50eb76f72a28",
-   "status": "PENDING",
-   "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.verdictP_apply": {
    "submitted_at": 1792218287.091635,
@@ -25896,7 +25896,8 @@
    "submitted_at": 1792218447.1785734,
    "http": 200,
    "submission_id": "3bdcc8b4-a568-405e-b799-05bf55158455",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_one_le_sum": {
    "submitted_at": 1792218447.7887516,
@@ -25906,10 +25907,10 @@
    "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.fromHToG_gHatHalfProduct_reverse_eq_adjoint": {
-   "submitted_at": 1792218512.431595,
+   "submitted_at": 1792218895.4545784,
    "http": 200,
-   "submission_id": "6ba987e5-752a-4545-b8d2-f83bfdd224ed",
-   "status": "ERROR",
+   "submission_id": "3a32a468-a209-4706-801d-17680f17eb9e",
+   "status": "PENDING",
    "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
   },
   "MIPStarRE.LDT.Pasting.one_le_ldPastingError_of_one_le_nu": {
@@ -25934,10 +25935,10 @@
    "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_split_succ_iff": {
-   "submitted_at": 1792218515.094038,
+   "submitted_at": 1792218825.5755022,
    "http": 200,
-   "submission_id": "2989efad-8811-4cb1-88ed-88cd121c56d8",
-   "status": "ERROR",
+   "submission_id": "fd154b1e-240b-4983-ae89-6dd431b5610c",
+   "status": "PENDING",
    "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
   },
   "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_postMoveFlatFamily_last_active": {
@@ -25951,85 +25952,199 @@
    "submitted_at": 1792218584.863053,
    "http": 200,
    "submission_id": "79a1636c-051f-41dd-804f-e5b923c0c05e",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.parCore_runs": {
    "submitted_at": 1792218585.6362393,
    "http": 200,
    "submission_id": "5e223fc5-701a-43ea-ac4e-d2280ce1a179",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.parCore_time": {
    "submitted_at": 1792218586.235135,
    "http": 200,
    "submission_id": "239c7f38-5eb2-4754-9d74-730bd6343514",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_flatChainError_sum": {
    "submitted_at": 1792218586.814643,
    "http": 200,
    "submission_id": "dd185ae1-e095-4d43-b1db-1ea23e3c77f2",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_large_degreeRatio": {
    "submitted_at": 1792218590.4640563,
    "http": 200,
    "submission_id": "2a63c791-269d-4e3e-843b-eb70e42e3d5a",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_prefixSecondSliceLeftLift": {
    "submitted_at": 1792218608.0825548,
    "http": 200,
    "submission_id": "8d1eb0e3-8368-4682-95a4-30f08134182a",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_splitSuccLift": {
    "submitted_at": 1792218608.7098255,
    "http": 200,
    "submission_id": "21290247-dbba-475a-8440-567cc04ec819",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_moveChainLift": {
    "submitted_at": 1792218609.2992084,
    "http": 200,
    "submission_id": "07096de0-7d72-4aa5-8f9f-7116f4c78b46",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_pointwise_finalLeftShape": {
-   "submitted_at": 1792218630.0100772,
+   "submitted_at": 1792218894.853892,
    "http": 200,
-   "submission_id": "837a32bf-0003-41a7-85f6-0b3231be6701",
-   "status": "PENDING"
+   "submission_id": "5daf5246-bdbc-40ac-bca7-8e6fc77dbfa5",
+   "status": "PENDING",
+   "error_message": "Failed to record the decomposition edge for import 'MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Bernoulli_FromHToG_Core_BernoulliTail': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>. The proof verified but its reduction could not be recorded — please resubmit."
   },
   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM4_pointwise_finalRightShape": {
    "submitted_at": 1792218687.8972473,
    "http": 200,
    "submission_id": "8fc42b92-4a95-4de8-a680-22f689fcaf54",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_pointwise_halfSandwichLeftShape": {
    "submitted_at": 1792218688.4824228,
    "http": 200,
    "submission_id": "6dbe3d99-ae12-44a0-a91b-8914d6df6e06",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_pointwise_halfSandwichRightShape": {
    "submitted_at": 1792218689.0625684,
    "http": 200,
    "submission_id": "dbf67f6c-8cb3-43d0-aa18-26d24806cf64",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_pointwise_halfSandwichRightAdjointShape": {
    "submitted_at": 1792218693.6816115,
    "http": 200,
    "submission_id": "07a01239-0ef3-42d9-a386-35a87f6edf81",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_pointwise_halfSandwichLeftAdjointShape": {
    "submitted_at": 1792218694.3144271,
    "http": 200,
    "submission_id": "adfba4d5-8476-4bfc-822f-72e7c603e1eb",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageA0_pointwise_leftShape": {
+   "submitted_at": 1792218724.4444103,
+   "http": 200,
+   "submission_id": "1eac4b37-09ce-4e86-897e-ba1b33d79764",
+   "status": "ERROR",
+   "error_message": "Failed to resolve platform imports: Import parser timed out after 5s"
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_pointwise_rightShape": {
+   "submitted_at": 1792218896.1889296,
+   "http": 200,
+   "submission_id": "2ef19390-9dd8-4b98-b9a4-4a50afc626d3",
+   "status": "PENDING",
+   "error_message": "Failed to materialize the target's dependencies: DB error looking up import 'Theorems.Thm_MIPStarRE_LDT_Pasting_bernoulliTailOperator_le_one': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
+  },
+  "MIPStarRE.LDT.Pasting.fromHToG_cons_type_outcome_sum": {
+   "submitted_at": 1792218763.0935898,
+   "http": 200,
+   "submission_id": "06c1e4b8-e0df-4707-bfdd-5f037659270d",
    "status": "PENDING"
+  },
+  "MIPRE.AnswerReduction.verdictB_eq": {
+   "submitted_at": 1792218782.1025453,
+   "http": 200,
+   "submission_id": "860bf794-7fdb-4d39-96db-539c3da41ae1",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Pasting.fromHToG_SUS_context_avg_le_one": {
+   "submitted_at": 1792218817.9091122,
+   "http": 200,
+   "submission_id": "ee8241d1-11a4-4957-8791-4caa086f9792",
+   "status": "ERROR",
+   "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
+  },
+  "MIPRE.AnswerReduction.parProg_runs": {
+   "submitted_at": 1792218822.821701,
+   "http": 200,
+   "submission_id": "d327ebdf-14b1-474b-acbe-1789561de5b9",
+   "status": "PENDING"
+  },
+  "MIPRE.AnswerReduction.parProg_time": {
+   "submitted_at": 1792218823.5160062,
+   "http": 200,
+   "submission_id": "10c2d214-bfb7-480c-a061-312ca1e87b59",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_large_gamma": {
+   "submitted_at": 1792218824.3713596,
+   "http": 200,
+   "submission_id": "0f166894-ad23-42fb-a07f-8d6aa9a76bdd",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_large_zeta": {
+   "submitted_at": 1792218824.971815,
+   "http": 200,
+   "submission_id": "aefd9ce6-e95e-4667-8174-2ba2edbc6126",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_flatChainFamily_last": {
+   "submitted_at": 1792218826.1785007,
+   "http": 200,
+   "submission_id": "05afcdf0-7ce4-427e-8936-ef38b82af8cb",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_eq_halfSandwichRightAdjointShape": {
+   "submitted_at": 1792218837.8826346,
+   "http": 200,
+   "submission_id": "39d5301c-ba45-4f48-91ba-de81140a5a7d",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_eq_halfSandwichLeftAdjointShape": {
+   "submitted_at": 1792218838.4982524,
+   "http": 200,
+   "submission_id": "e678005b-a06a-46bf-90f7-6363df7b6f79",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_postMoveFlatStep": {
+   "submitted_at": 1792218839.0613554,
+   "http": 200,
+   "submission_id": "86f36f2e-42df-4cb5-94a1-6a21824abc66",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM4_eq_finalRightShape": {
+   "submitted_at": 1792218847.4764447,
+   "http": 200,
+   "submission_id": "804e26f2-4029-45a0-b77b-ec01ad12f630",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_eq_halfSandwichLeftShape": {
+   "submitted_at": 1792218848.1689062,
+   "http": 200,
+   "submission_id": "7671b61e-9a94-4abf-9686-e904670c5e66",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_moveChainLift_moveFamily_last": {
+   "submitted_at": 1792218848.770786,
+   "http": 200,
+   "submission_id": "15988055-a23b-46b6-8cc7-ca4989382818",
+   "status": "FAILED",
+   "error_message": "Submission rejected by the soundness guard:\ncould not lex the submitted code: Token scanner timed out after 10s"
   }
  },
  "log": []

@@ -2387,8 +2387,30 @@
   "MIPRE_Foundations_Introspection_AdaptiveInductionStep": {
    "submitted_at": 1792218684.7059786,
    "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "4984dcb1-aae6-4390-8258-80e311ecf85e",
+   "theorem_id": "4fb3f1ae-cd1f-4827-9f6f-eb2b55a4dad0",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Introspection_AdaptiveInductionIteration": {
+   "submitted_at": 1792218773.6853182,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "d728ff0f-c74f-4296-a706-0c356a34a6f6",
+   "theorem_id": "54f91bc4-d37a-41e7-b79d-c6b16a520332",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_SAT_EffectiveNormalBasis": {
+   "submitted_at": 1792218857.6652648,
+   "http": 202,
    "status": "PENDING",
-   "job_id": "4984dcb1-aae6-4390-8258-80e311ecf85e"
+   "job_id": "2f3dab8c-1986-4891-a24f-fae98811a993"
+  },
+  "MIPRE_Foundations_Introspection_AdaptivePlayerSwap": {
+   "submitted_at": 1792218896.2486043,
+   "http": 202,
+   "status": "PENDING",
+   "job_id": "877c3795-54d3-41c2-9806-ef2c7768898b"
   }
  },
  "theorems": {
@@ -8500,6 +8522,22 @@
    "submitted_at": 1792218685.0779989,
    "http": 202,
    "job_id": "12fda3d2-1fb0-457c-a10f-57c0e1165663",
+   "status": "PUBLISHED",
+   "theorem_id": "907976fd-8eb3-4a8f-9bbd-a01ab09da43e",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.TypedEstimates.exists_intro_successor": {
+   "submitted_at": 1792218774.1484098,
+   "http": 202,
+   "job_id": "0723b1ea-e772-4737-9e9a-d36296c3b0d9",
+   "status": "PUBLISHED",
+   "theorem_id": "84852674-0da1-4351-b81b-6322706aa13b",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.TypedEstimates.exists_intro_iteration": {
+   "submitted_at": 1792218897.3116848,
+   "http": 202,
+   "job_id": "5a7c04ff-e684-482e-9129-0b238c8e7fbe",
    "status": "QUEUED"
   }
  },
@@ -13702,8 +13740,8 @@
    "submitted_at": 1792218542.6456304,
    "http": 200,
    "submission_id": "b3c02d9d-ac71-41e9-b234-652207bfefbe",
-   "status": "PENDING",
-   "error_message": "Failed to record the decomposition edge for import 'MIPRE_Background_QLD_Game': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>. The proof verified but its reduction could not be recorded — please resubmit."
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Introspection.nextPrefixJointPOVM_map_mats": {
    "submitted_at": 1792218280.1828208,
@@ -13772,8 +13810,8 @@
    "submitted_at": 1792218682.111129,
    "http": 200,
    "submission_id": "2d5d4244-7c0f-4de7-b9a1-21717bf2bf92",
-   "status": "PENDING",
-   "error_message": "Failed to resolve platform imports: Import parser timed out after 5s"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.QLD.MirrorSimul.sum_snorm_sq_aliceConjPauli_le": {
    "submitted_at": 1792218487.1731293,
@@ -13793,19 +13831,54 @@
    "submitted_at": 1792218681.558056,
    "http": 200,
    "submission_id": "f92cda5b-d63e-4d5f-a1c3-e03acdb3635e",
-   "status": "PENDING",
-   "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.QLD.MirrorSimul.sum_snorm_sq_bob_le": {
    "submitted_at": 1792218685.647046,
    "http": 200,
    "submission_id": "7c012ed0-3de2-419c-b4c5-9eee526f0707",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Introspection.readoutAcceptance_le_completedValue": {
    "submitted_at": 1792218686.2588716,
    "http": 200,
    "submission_id": "66a4a0bf-723f-41b0-a44a-173c7e3106ae",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.sum_uniform_snorm_sq_chainT_le": {
+   "submitted_at": 1792218733.7157733,
+   "http": 200,
+   "submission_id": "5ec14758-73a0-4183-9b27-d0bfd2943037",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.TypedExtraction.exists_strategy_of_terminal_invariants": {
+   "submitted_at": 1792218847.7024515,
+   "http": 200,
+   "submission_id": "1f451b0c-b436-4956-bada-e38f6d85b52e",
+   "status": "FAILED",
+   "error_message": "Submission rejected by the soundness guard:\ncould not lex the submitted code: Token scanner timed out after 10s"
+  },
+  "MIPRE.Introspection.TypedEstimates.exists_intro_successor": {
+   "submitted_at": 1792218872.1351628,
+   "http": 200,
+   "submission_id": "b03c25d4-ac26-44f4-a749-3079ccc5b5f3",
+   "status": "PENDING"
+  },
+  "MIPRE.QLD.MirrorSimul.snorm_sq_wTilde_le": {
+   "submitted_at": 1792218896.892294,
+   "http": 200,
+   "submission_id": "04194fe4-7d0d-4405-8664-b12ec0d9ecb3",
+   "status": "ERROR",
+   "error_message": "Failed to materialize the target's dependencies: DB error looking up import 'Definitions.Def_MIPRE_Foundations_POVMValue': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
+  },
+  "MIPRE.QLD.PauliQuestionProgram.gammaProg_fieldEncoding": {
+   "submitted_at": 1792218920.5039616,
+   "http": 200,
+   "submission_id": "ad95db46-eb83-4ccf-88ba-71283b5a3ad0",
    "status": "PENDING"
   }
  },
