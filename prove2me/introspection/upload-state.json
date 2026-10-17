@@ -7228,7 +7228,9 @@
    "submitted_at": 1792213734.6610427,
    "http": 202,
    "job_id": "3c3a0f9e-ec2c-49c0-81ce-1236d5734d4d",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "c0137d25-a53a-4403-bfad-ac51ef14035f",
+   "error_message": ""
   },
   "MIPRE.QLD.one_sub_inv_card_mul_sum_le": {
    "submitted_at": 1792213735.1329548,
@@ -7247,10 +7249,10 @@
    "error_message": ""
   },
   "MIPRE.QLD.sum_shift_param": {
-   "submitted_at": 1792213743.9335427,
+   "submitted_at": 1792213843.7261612,
    "http": 202,
-   "job_id": "0be3b825-bddf-4bca-8812-0c6114ab1f89",
-   "status": "FAILED",
+   "job_id": "56a60265-e31e-4a5d-a88c-967979631f1a",
+   "status": "QUEUED",
    "theorem_id": null,
    "error_message": "formal statement does not compile: Import parser timed out after 5s"
   },
@@ -7270,6 +7272,12 @@
    "submitted_at": 1792213821.7704713,
    "http": 202,
    "job_id": "d00cdfd1-fbd7-4a62-900c-11f822cb2f60",
+   "status": "QUEUED"
+  },
+  "MIPRE.QLD.padW_line_line_le": {
+   "submitted_at": 1792213832.5390687,
+   "http": 202,
+   "job_id": "a9475b81-28cc-45ec-903e-9c1452815871",
    "status": "QUEUED"
   }
  },

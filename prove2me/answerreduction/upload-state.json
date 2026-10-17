@@ -3183,6 +3183,12 @@
    "job_id": "5099d4fd-697e-4825-a852-04da685f6a47",
    "theorem_id": "050d1a99-7936-4e71-b7b0-74edbabbafa2",
    "error_message": ""
+  },
+  "MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_SwitcherooCompletion": {
+   "submitted_at": 1792213842.4864554,
+   "http": 202,
+   "status": "PENDING",
+   "job_id": "e8017248-eb2d-4850-8650-d849e41ef554"
   }
  },
  "theorems": {
@@ -22324,10 +22330,10 @@
    "error_message": ""
   },
   "MIPStarRE.LDT.Commutativity.evaluatedSlice_scalar_chain_bound": {
-   "submitted_at": 1792213734.717953,
+   "submitted_at": 1792213841.2563784,
    "http": 200,
-   "submission_id": "918014ac-2b5d-4a28-952e-407d0a13943c",
-   "status": "ERROR",
+   "submission_id": "6d5f6af2-830b-4039-8de2-1c85c1ccc8d9",
+   "status": "PENDING",
    "error_message": "Failed to materialize the target's dependencies: DB error looking up import 'Theorems.Thm_MIPStarRE_LDT_ev_mono': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
   },
   "MIPStarRE.LDT.MakingMeasurementsProjective.sqrt_orthonormalizationError_eq": {
@@ -22445,19 +22451,22 @@
    "submitted_at": 1792213699.724794,
    "http": 200,
    "submission_id": "96c28fe0-32a4-4979-a8bc-d1025ff2717e",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.switcherooAggregateMGCenterComplete_eq_opTensor_avg": {
    "submitted_at": 1792213700.4415317,
    "http": 200,
    "submission_id": "b14bc34e-2e52-43f8-b69f-9004c79e098f",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.switcherooAggregateTarget_eq_opTensor_avg": {
    "submitted_at": 1792213701.0516288,
    "http": 200,
    "submission_id": "47911962-936d-447e-a7e3-89c82e7dbc30",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.sddOpRel_swap_questions": {
    "submitted_at": 1792213802.186837,
@@ -22513,7 +22522,8 @@
    "submitted_at": 1792213742.8988824,
    "http": 200,
    "submission_id": "a3dd37ee-b00b-47fb-89a0-7990063f90eb",
-   "status": "PENDING"
+   "status": "ERROR",
+   "error_message": "Failed to resolve platform imports: Import parser timed out after 5s"
   },
   "MIPStarRE.LDT.SelfImprovement.addInULeftQuantity_pointConsistencySelection_eq_off_diagonal_avg": {
    "submitted_at": 1792213754.4596336,
@@ -22538,6 +22548,18 @@
    "submitted_at": 1792213815.8595562,
    "http": 200,
    "submission_id": "148ef2e5-2368-44b4-a631-ddd5fe1a8ccb",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.SelfImprovement.addInU_cs_chain_step1_abs_le_sqrt_two_delta": {
+   "submitted_at": 1792213843.0837631,
+   "http": 200,
+   "submission_id": "4fc170ec-f044-462e-9885-fc68c2b04a00",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.SelfImprovement.addInU_cs_chain_step2_abs_le_sqrt_two_delta": {
+   "submitted_at": 1792213843.740279,
+   "http": 200,
+   "submission_id": "1c85cbf8-8151-48da-be7b-5d67c8ec2def",
    "status": "PENDING"
   }
  },
