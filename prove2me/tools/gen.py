@@ -15,7 +15,7 @@ nothing already on the platform is regenerated: published nodes are imported as
 published bundle lacks a needed declaration gets a delta bundle ``Def_<name>_B`` holding just
 the missing declarations.
 """
-import os, json, re, sys, collections, shutil, glob
+import os, json, re, sys, collections, shutil, glob, bisect
 
 S = os.environ.get("P2M_DIR", "/tmp/claude-0/-home-user-MIPRE-formalization/b05e6b3f-df9f-5d1d-be42-41cac66efc40/scratchpad/p2m")
 WS = f"{S}/ws"
@@ -656,6 +656,83 @@ def prune_open(m, text, chain, env_ns, absolute=False):
         return None
     return "open " + " ".join(out)
 
+# ---------- references a de-privatized copy would make ambiguous ----------
+# The copies drop `private` (other generated files use the declarations), so a private declaration
+# becomes a candidate wherever its namespace is visible: `private def andCheck` of SourceCompilerGuard
+# competes in ClockedSourceChecks, which opens both `SourceCompiler` and `AuxiliaryProgram`, with the
+# `AuxiliaryProgram.andCheck` the source resolved to.  Lean resolves an identifier through the namespace
+# chain first and only then through the opens, so a copied private declaration is a new candidate when it
+# is a chain match, or an open match while the source's constant is not a chain match; such a reference is
+# written in full (REF_FIX: (module, start, end) -> name), and no other.
+DEPRIV = collections.defaultdict(set)   # short name -> {(user name, module)} of the copied private declarations
+for _x, _u in U.items():
+    if _u.get("name") and _u["cls"] in ("defmat", "embedded", "inline", "avail") and \
+            any(r.startswith("_private") for r in _u.get("rows", [])):
+        _un = _user_of(_u["rows"][0])
+        if _un.split(".")[-1] in PRIVATE_RENAMES.get(_u["module"], {}):
+            continue   # its copies carry a name after their module (see PRIVATE_RENAMES): no rival
+        DEPRIV[_un.split(".")[-1]].add((_un, _u["module"]))
+
+def _open_tokens(text):
+    """The namespaces a plain `open` command names (no `hiding`/`renaming` form)."""
+    if re.search(r"\b(hiding|renaming)\b", text):
+        return []
+    rest = re.sub(r"\([^)]*\)", " ", text.strip()[len("open"):])
+    return [t for t in rest.split() if t not in ("scoped", "in")]
+
+REF_FIX = {}
+_REFS_AT = {}   # module -> (ref start offsets, refs), sorted, to find the references inside a declaration
+for _x, _u in U.items():
+    if not DEPRIV or _u["cls"] not in ("defmat", "embedded", "inline", "node") or not _u.get("decl"):
+        continue
+    _m = _u["module"]
+    try:
+        _ctx = unit_ctx(_x)
+    except KeyError:
+        continue
+    if _m not in _REFS_AT:
+        _rs = sorted(F[_m]["refs"], key=lambda r: r["start"]["offset"])
+        _REFS_AT[_m] = ([r["start"]["offset"] for r in _rs], _rs)
+    _full = ns_of_chain(_ctx["ns"])
+    _pre = [".".join(_full.split(".")[:i]) for i in range(len(_full.split(".")), 0, -1)] if _full else []
+    _opened = set()
+    for _o in _ctx["opens"]:
+        for _tk in _open_tokens(_o):
+            _r = resolve_src(_m, _tk, _ctx["ns"])
+            _opened.add(_r if _r else _tk)
+    _a, _b = _u["decl"]["declStart"]["offset"], _u["decl"]["declEnd"]["offset"]
+    _clos = set(mod_closure.get(_m, ())) | {_m}
+    _starts, _rs = _REFS_AT[_m]
+    for _rf in _rs[bisect.bisect_left(_starts, _a):bisect.bisect_right(_starts, _b)]:
+        if _rf["end"]["offset"] > _b:
+            continue
+        _tok = txt(_m, _rf["start"]["offset"], _rf["end"]["offset"])
+        if "." in _tok or _tok not in DEPRIV:
+            continue
+        _const = _user_of(_rf["const"])
+        if not (_const == _tok or _const.endswith("." + _tok)):
+            continue
+        def _chain_hit(name, tok=_tok, pre=_pre):
+            return name == tok or any(name == p_ + "." + tok for p_ in pre)
+        for _riv, _pm in DEPRIV[_tok]:
+            if _riv == _const or _pm == _m or _pm not in _clos:
+                continue
+            _rns = _riv[:-len(_tok) - 1] if _riv != _tok else ""
+            if _chain_hit(_riv) or (_rns in _opened and not _chain_hit(_const)):
+                REF_FIX[(_m, _rf["start"]["offset"], _rf["end"]["offset"])] = _const
+                break
+
+def spliced(m, a, b, extra=()):
+    """The source text of module m from a to b with the REF_FIX references in it written in full and
+    the given insertions [(offset, text)] made."""
+    edits = sorted([(k[1], k[2], v) for k, v in REF_FIX.items() if k[0] == m and a <= k[1] and k[2] <= b]
+                   + [(k, k, t) for k, t in extra])
+    B, out, pos = F[m]["B"], [], a
+    for s_, e_, t_ in edits:
+        out.append(B[pos:s_].decode("utf-8")); out.append(t_); pos = e_
+    out.append(B[pos:b].decode("utf-8"))
+    return "".join(out)
+
 def topo_modules():
     order, seen = [], set()
     def visit(m):
@@ -748,8 +825,17 @@ if not CFG["wipe"] and CFG["manifest"]:
             previous |= set(json.load(open(mf, encoding="utf-8")))
 generated = []
 
+# P2M_GEN_DRYRUN=1: write nothing, report the files a run would change (while an upload reads them)
+DRYRUN = bool(os.environ.get("P2M_GEN_DRYRUN"))
+WOULD_CHANGE = []
+
 def emit(rel, text):
     fn = f"{WS}/{rel}"
+    if DRYRUN:
+        generated.append(rel)
+        if not (os.path.exists(fn) and open(fn, encoding="utf-8").read() == text):
+            WOULD_CHANGE.append(rel)
+        return
     if not CFG["wipe"] and os.path.exists(fn) and rel not in previous:
         raise RuntimeError(f"refusing to overwrite an existing file not generated by this plan: {rel}")
     generated.append(rel)
@@ -790,6 +876,11 @@ for m in TOPO:
                 k, short = ANON_LOCAL[uid]
                 dele.append((k, k))
                 repl[k] = (" " + short).encode("utf-8")
+            if (delta_bundles.get(m) or mslug(m)) not in PUBLISHED_DEFS:   # a published bundle stays as published
+                for (fm, fs, fe), full in REF_FIX.items():
+                    if fm == m and a <= fs and fe <= b:
+                        dele.append((fs, fe))
+                        repl[fs] = full.encode("utf-8")
         else:
             # extend to end of line
             while b < len(B) and B[b:b+1] in (b" ", b"\t"):
@@ -918,10 +1009,9 @@ for m in TOPO:
 def unit_text(uid):
     u = U[uid]
     a, b = u["decl"]["declStart"]["offset"], u["decl"]["declEnd"]["offset"]
-    if uid in ANON_LOCAL:   # an anonymous local instance keeps its source name (see ANON_LOCAL)
-        k, short = ANON_LOCAL[uid]
-        return mod_rename(u["module"], txt(u["module"], a, k) + " " + short + txt(u["module"], k, b))
-    return mod_rename(u["module"], txt(u["module"], a, b))
+    # an anonymous local instance keeps its source name (see ANON_LOCAL); see REF_FIX for the rest
+    extra = [(ANON_LOCAL[uid][0], " " + ANON_LOCAL[uid][1])] if uid in ANON_LOCAL else []
+    return mod_rename(u["module"], spliced(u["module"], a, b, extra))
 
 def head_rest(uid, upto):
     """Text from after the binding name up to `upto` ('val' = valStart, 'end' = declEnd)."""
@@ -929,7 +1019,7 @@ def head_rest(uid, upto):
     assert u["bind"], u["name"]
     a = u["bind"]["end"]["offset"]
     b = u["decl"]["valStart"]["offset"] if upto == "val" else u["decl"]["declEnd"]["offset"]
-    return mod_rename(u["module"], txt(u["module"], a, b))
+    return mod_rename(u["module"], spliced(u["module"], a, b))
 
 def hoisted_context(uid):
     """Top-level `open`/`variable` lines reproducing the resolution scope of a declaration."""
@@ -1148,6 +1238,11 @@ for uid in nodes:
         "is_target": u["name"] in plan["targets"],
     }
 
+if DRYRUN:
+    print(f"dry run: {len(WOULD_CHANGE)} file(s) would change, {len(REF_FIX)} reference(s) written in full:")
+    for rel in WOULD_CHANGE:
+        print("  ", rel)
+    sys.exit(0)
 # the anonymous local instances whose copies are referred to under a name the source did not give them
 # (in a published bundle, named by Lean): for checking against the compiled bundles
 json.dump({U[x]["name"]: n for x, n in LOCAL_NAME.items()},
