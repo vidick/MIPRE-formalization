@@ -3675,8 +3675,10 @@
   "MIPRE_Background_LIDT_MIPStarRE_LDT_MainInductionStep_Theorems_RestrictedProbabilities_AnswerValued": {
    "submitted_at": 1792222265.9914086,
    "http": 202,
-   "status": "PENDING",
-   "job_id": "963fa7d1-a10b-4dba-85bf-f9c122c54c15"
+   "status": "PUBLISHED",
+   "job_id": "963fa7d1-a10b-4dba-85bf-f9c122c54c15",
+   "theorem_id": "1502aa40-e29e-49a4-87e6-12eb7a552142",
+   "error_message": ""
   }
  },
  "theorems": {
@@ -16278,6 +16280,72 @@
    "status": "PUBLISHED",
    "theorem_id": "dcf2ed55-e3fb-47d1-bad1-7cd4e3293ad7",
    "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerRestricted_axisParallelFailureProbability_eq": {
+   "submitted_at": 1792222523.228017,
+   "http": 202,
+   "job_id": "fab40268-157b-4599-bf29-19918769b8d5",
+   "status": "QUEUED"
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerRestricted_selfConsistencyFailureProbability_eq": {
+   "submitted_at": 1792222523.6526322,
+   "http": 202,
+   "job_id": "abf26c38-c7d6-4ef7-86fb-681027ea56a3",
+   "status": "QUEUED"
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerRestricted_diagonalFailureProbability_eq": {
+   "submitted_at": 1792222524.1071672,
+   "http": 202,
+   "job_id": "006a32bf-64cc-487f-8e46-4c386cdf7520",
+   "status": "QUEUED"
+  },
+  "MIPStarRE.LDT.MainInductionStep.answer_weighted_axisParallel_bound": {
+   "submitted_at": 1792222524.5275981,
+   "http": 202,
+   "job_id": "b24689ef-afad-4432-bde1-e37ed37752d6",
+   "status": "QUEUED"
+  },
+  "MIPStarRE.LDT.MainInductionStep.answer_weighted_diagonal_bound": {
+   "submitted_at": 1792222524.9258218,
+   "http": 202,
+   "job_id": "199dc27c-e73c-4d91-ab65-35f143bad36f",
+   "status": "QUEUED"
+  },
+  "MIPStarRE.LDT.MainInductionStep.AnswerRestrictedProbabilitiesStatement.ofWeightedBounds": {
+   "submitted_at": 1792222525.4280872,
+   "http": 202,
+   "job_id": "1418d40f-443a-4ea0-bb71-041bc4e5fd90",
+   "status": "QUEUED"
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerSuccessor_weighted_axisParallel_bound": {
+   "submitted_at": 1792222525.8101861,
+   "http": 202,
+   "job_id": "85838c20-006f-4c4a-9a14-62f46645e016",
+   "status": "QUEUED"
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerSuccessor_selfConsistencyRestrictedAverage_eq": {
+   "submitted_at": 1792222526.16934,
+   "http": 202,
+   "job_id": "68972fb0-687d-47a5-ab6d-1cb6d8096e13",
+   "status": "QUEUED"
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerSuccessor_weighted_diagonal_bound": {
+   "submitted_at": 1792222526.6738415,
+   "http": 202,
+   "job_id": "3deb7968-7f02-4503-9627-3b42b627bac6",
+   "status": "QUEUED"
+  },
+  "MIPStarRE.LDT.MainInductionStep.AnswerSuccessorRestrictedProbabilitiesStatement.ofWeightedBounds": {
+   "submitted_at": 1792222527.161748,
+   "http": 202,
+   "job_id": "0c2ca45e-28d1-4cc6-b15a-835c40cfb406",
+   "status": "QUEUED"
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerSuccessorRestrictedSliceConclusions": {
+   "submitted_at": 1792222527.5900307,
+   "http": 202,
+   "job_id": "9f562101-9cef-4e26-894f-8a1ea5d01699",
+   "status": "QUEUED"
   }
  },
  "solutions": {
