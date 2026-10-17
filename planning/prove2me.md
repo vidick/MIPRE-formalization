@@ -593,3 +593,33 @@ unverified from the API. Two lessons for the remaining increments: list what the
 before uploading vendored or third-party code (`GET /theorems?tags=<tag>` lists a tag,
 `/search?q=` finds definitions as well), and import it rather than duplicate it, with the type
 matched to the platform's statement file rather than the proof file (`token_renames`).
+
+**Increment 3, the answer-reduction and introspection stages (2026-10-16/17).** The remaining two
+leaves close with the closures of `MIPRE.AnswerReduction.answerReduction` and `MIPRE.Introspection.seven`:
+1,107 modules, among them the in-repository low individual degree test (vendored from LionSR/MIPStarRE
+with the authors' permission; the platform hosts none of it, checked by `/search` and tag listings
+before the upload) and the Pauli basis test. They were compiled in the workspace (`compile_modules.py`)
+after `tools/ws_rewrite_meta.py` had rewritten away the metaprogramming of 23 modules (30 local
+notations, five tactic macros and elaborators, one simp set), which the platform refuses. The source
+types were dumped (`tools/orig_types.lean`) so that the source oleans could be archived for disk. Two
+trees, answer reduction first (476 bundles, 1,673 nodes) and introspection (361 bundles, 852 nodes),
+whose 125 bundles importing answer-reduction nodes wait for those to be Proved. The first build of the
+generated files, the first minutes of the upload and of the solution check exposed nine gaps, each
+fixed in the generator rather than by hand, and recorded in `prove2me/README.md`: a single first-module
+copyright header for every file (now each source's own, and the metadata credits the third-party
+authors), opens of namespaces the generated file's environment lacks (pruned, as the source resolved
+them; Mathlib's kept), a `variable` line hoisted to a stub's top level resolving a name differently
+(written in full), a de-privatized copy capturing a reference (written in full where Lean's resolution
+order gives it to the copy), local instances whose effect ended with the generated block (reactivated
+in each block, the copies named as in the source), an instance node with a plain theorem stub
+(registered where imported), an axiom guard (`#guard_msgs`) left in a bundle, and imported nodes
+recorded under their source names, which let the uploader send one bundle (BinaryQuotient) ahead of
+the node it imports; the platform refused it, so nothing wrong was published. Two rules came out of
+this. A tree whose upload has begun is regenerated only under the guard that every published bundle
+stays byte-identical (gen.py reads the upload state; the 77 bundles published before the fixes were
+read back from the platform and match). And the solution check compares types printed with `pp.all`:
+the default print depends on the notation an environment has, and gave false mismatches both ways.
+The uploader's new `--pipeline` mode submits each item as soon as what it imports is ready instead of
+wave by wave (a simulation with the observed job times gave about eight hours for the
+answer-reduction tree wave by wave and under four pipelined), with the local check gating each
+solution and `--after` letting the introspection upload run alongside.
