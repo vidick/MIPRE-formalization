@@ -3695,6 +3695,28 @@
    "job_id": "52137156-f915-4f6a-a04f-89edfed8fe7a",
    "theorem_id": "c47c96ee-3c89-4b31-85f2-f286cbf9ec4e",
    "error_message": ""
+  },
+  "MIPRE_Background_LIDT_MIPStarRE_LDT_MainInductionStep_Theorems_PastingAssembly_Successor": {
+   "submitted_at": 1792225767.672623,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "03a8bc87-ee23-4944-a144-5d979a155afd",
+   "theorem_id": "b992b316-d7dc-4b00-b162-c9b0063be79c",
+   "error_message": ""
+  },
+  "MIPRE_Background_LIDT_MIPStarRE_LDT_Test_MainTheorem_SourceRoleRegister_Completion": {
+   "submitted_at": 1792225938.9316788,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "fbe2266e-b880-43c2-bc25-83ebc72a095b",
+   "theorem_id": "383c4315-29fe-4b6d-993f-07a4270423ad",
+   "error_message": ""
+  },
+  "MIPRE_Background_LIDT_Bridge_Main": {
+   "submitted_at": 1792226259.028626,
+   "http": 202,
+   "status": "PENDING",
+   "job_id": "7c09433a-c08a-41a9-a15f-583ee0df1150"
   }
  },
  "theorems": {
@@ -16584,6 +16606,106 @@
    "status": "PUBLISHED",
    "theorem_id": "ab1e7c3a-0aa3-4b2b-b529-55ae07ad1158",
    "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.mainInductionBaseCase": {
+   "submitted_at": 1792225939.3545306,
+   "http": 202,
+   "job_id": "e5f23903-0c2f-4632-98da-3ccb187368f3",
+   "status": "PUBLISHED",
+   "theorem_id": "21222479-92ed-471c-a8e9-fec0876fc764",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerMainInductionBaseCase": {
+   "submitted_at": 1792225939.7258322,
+   "http": 202,
+   "job_id": "d1863bce-fdb0-46cc-ba75-006fd0f4db07",
+   "status": "PUBLISHED",
+   "theorem_id": "18369f49-b3ef-462d-8395-8865c076f8e9",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerMainInduction": {
+   "submitted_at": 1792225940.1382847,
+   "http": 202,
+   "job_id": "4a6e150d-b0a8-4aba-b5e3-a8f4b8dc05d7",
+   "status": "PUBLISHED",
+   "theorem_id": "d596d552-d7a8-40d1-9a6b-257d9b38b083",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.mainInductionSuccessorNext_ofAnswerCarrier": {
+   "submitted_at": 1792225940.5581615,
+   "http": 202,
+   "job_id": "7742e1f3-9673-4152-a6ce-dc16d2b157c0",
+   "status": "PUBLISHED",
+   "theorem_id": "ab6d10e1-ed3d-4e57-9ff8-9775364d4e33",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerLdPastingInInductionSectionOfSmallError": {
+   "submitted_at": 1792225941.063476,
+   "http": 202,
+   "job_id": "25580cd9-9de1-4870-abd8-8e8ef2d9cf9b",
+   "status": "PUBLISHED",
+   "theorem_id": "5cf5f172-3391-4b56-908d-f82b47620288",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterPointConsistency_ofSymConsistency": {
+   "submitted_at": 1792225941.5417013,
+   "http": 202,
+   "job_id": "ef34c50b-c43c-4478-88bc-06189d7634c5",
+   "status": "PUBLISHED",
+   "theorem_id": "5bffe04e-c12a-4692-be12-552b203886b6",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.ProjStrat.pointAgreementFailureProbability_le_three_mul": {
+   "submitted_at": 1792225941.9588315,
+   "http": 202,
+   "job_id": "55e59704-44cf-4ff7-9894-de267faa7406",
+   "status": "PUBLISHED",
+   "theorem_id": "f093585c-5e21-4fc8-8724-7412b131d83a",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterFullPolynomialSelfConsistency_ofPointConsistency": {
+   "submitted_at": 1792225977.9317546,
+   "http": 202,
+   "job_id": "de571525-3546-46c7-a4b3-c065f88a598d",
+   "status": "PUBLISHED",
+   "theorem_id": "ad6ec700-5b15-49ee-b836-831df6fae98d",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Test.mainFormalConclusion_ofRoleRegisterScalarBoundary": {
+   "submitted_at": 1792226259.4161105,
+   "http": 202,
+   "job_id": "4fa92d0e-4a23-4bf5-9458-b9767d9210ce",
+   "status": "QUEUED"
+  },
+  "MIPStarRE.LDT.ProjStrat.completedProjectiveMeasurementsAndLine169_ofTwoSidedSubmeasurements": {
+   "submitted_at": 1792226259.8124042,
+   "http": 202,
+   "job_id": "e08df811-2bf6-4a99-a2dd-e5991f709fb8",
+   "status": "QUEUED"
+  },
+  "MIPStarRE.LDT.ProjStrat.completedProjectiveConsistency_ofFullConsistency": {
+   "submitted_at": 1792226260.3599262,
+   "http": 202,
+   "job_id": "a78534d5-760e-4228-b4de-ee978f6d5b85",
+   "status": "QUEUED"
+  },
+  "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterTwoSidedProjectiveSubmeasurements": {
+   "submitted_at": 1792226260.8120797,
+   "http": 202,
+   "job_id": "39dda676-2278-4d94-81a8-fb3c44655561",
+   "status": "QUEUED"
+  },
+  "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterCompletedProjectiveMeasurements": {
+   "submitted_at": 1792226261.303973,
+   "http": 202,
+   "job_id": "e166ee33-4af3-4671-b0b3-8992a44719b4",
+   "status": "QUEUED"
+  },
+  "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterFinalPointConsistency": {
+   "submitted_at": 1792226261.7456,
+   "http": 202,
+   "job_id": "25d29797-b0bd-4071-92f0-21922268fd68",
+   "status": "QUEUED"
   }
  },
  "solutions": {
@@ -27854,8 +27976,39 @@
    "submitted_at": 1792225521.1097422,
    "http": 200,
    "submission_id": "d11ea4f4-8a9c-4cd8-aea2-ae69a1f65989",
-   "status": "PENDING",
-   "error_message": "Failed to record the decomposition edge for import 'MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Bernoulli_FromHToG_AdjacentStages_Chain_HalfSandwich': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>. The proof verified but its reduction could not be recorded — please resubmit."
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.mainInductionBaseCase": {
+   "submitted_at": 1792226085.9080904,
+   "http": 200,
+   "submission_id": "b809dd3a-6895-4f1c-88c8-df19e7fd2f67",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterPointConsistency_ofSymConsistency": {
+   "submitted_at": 1792226114.316513,
+   "http": 200,
+   "submission_id": "c2cb418e-fd78-49da-98bb-b96e7c193f9a",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.ProjStrat.pointAgreementFailureProbability_le_three_mul": {
+   "submitted_at": 1792226114.9433236,
+   "http": 200,
+   "submission_id": "e8e53728-ba85-4748-b29c-53713d016816",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerLdPastingInInductionSectionOfSmallError": {
+   "submitted_at": 1792226188.873977,
+   "http": 200,
+   "submission_id": "fc6cf2da-fba1-4f81-be0d-699180eee868",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.MainInductionStep.mainInductionSuccessorNext_ofAnswerCarrier": {
+   "submitted_at": 1792226248.622387,
+   "http": 200,
+   "submission_id": "eaa1893a-fcc0-4492-9ec0-1894968f0869",
+   "status": "ERROR",
+   "error_message": "Failed to materialize the target's dependencies: DB error looking up import 'Theorems.Thm_MIPStarRE_LDT_DiagonalLine_appendAtHeight_rebaseAt': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
   }
  },
  "log": []
