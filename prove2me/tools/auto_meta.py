@@ -196,7 +196,8 @@ def theorem_record(it):
                 f"`{args.commit}`, in `{it['source_path']}`, which the platform cannot host yet; the Lean development proves it, the platform does not.")
     elif kind in ("leaf-closure", "glue-leaf-closure"):
         # tested before the generic glue case: a glue item's kind is "glue-" + its kind, and the leaf
-        # closure of the repetition tree went out with the sketch text below (2026-10-16)
+        # closure of the repetition tree went out with the sketch text below (2026-10-16; its explanation
+        # was replaced on the platform with this one on 2026-10-17, PATCH /submissions/:id)
         expl = (f"The proof is the witness `{it.get('witness')}` of the repository, built from the published definition bundles; it closes the "
                 "leaf, so every sketch resting on it is proved.")
     elif kind.startswith("glue-"):

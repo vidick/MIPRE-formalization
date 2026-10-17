@@ -1161,7 +1161,7 @@
     "nonlocal-games",
     "parallel-repetition"
    ],
-   "explanation": "The proof is the source's one-line application of the own-code theorem to the stage witnesses taken from the `Nonempty` leaves (), so the theorem is an accepted sketch whose open frontier is those leaves; the repository proves them in full."
+   "explanation": "The proof is the witness `⟨MIPRE.repetition 7⟩` of the repository, built from the published definition bundles; it closes the leaf, so every sketch resting on it is proved."
   }
  ],
  "bundles": [
