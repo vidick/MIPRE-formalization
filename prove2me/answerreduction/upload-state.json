@@ -9017,7 +9017,9 @@
    "submitted_at": 1792206237.2298408,
    "http": 202,
    "job_id": "88b412f9-10bf-4ae6-8861-f0a720270241",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "990bba65-99ce-43be-a439-f837624a5a7b",
+   "error_message": ""
   },
   "MIPRE.TM.CookLevin.Pad.describeExact_variables": {
    "submitted_at": 1792206237.6724234,
@@ -14576,13 +14578,15 @@
    "submitted_at": 1792206304.5459778,
    "http": 200,
    "submission_id": "42d56f03-c77c-4031-8e53-67976fb36c88",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Test.mainFormalStep5_selfConsistency_ofExpansionBound_heterogeneous": {
    "submitted_at": 1792206310.2374635,
    "http": 200,
    "submission_id": "dbcea4fd-8e4f-4750-8327-d5908b75afa2",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.CL.Detyping.DeciderProgram.prog_time": {
    "submitted_at": 1792206363.656919,
@@ -14624,6 +14628,42 @@
    "submitted_at": 1792206382.5273232,
    "http": 200,
    "submission_id": "d3ce5c94-ec44-4619-b224-bd8367b9ed45",
+   "status": "PENDING"
+  },
+  "MIPRE.LowDegree.BinaryArtinSchreier.towerStepBits_monic_natDegree": {
+   "submitted_at": 1792206385.9482737,
+   "http": 200,
+   "submission_id": "2bda678a-81cb-49c4-bffd-0c4193dbaf05",
+   "status": "PENDING"
+  },
+  "MIPRE.LowDegree.BinaryArtinSchreier.towerStepBits_cubic": {
+   "submitted_at": 1792206386.6555276,
+   "http": 200,
+   "submission_id": "bd243d5f-f169-4ec6-b4a3-d9644969940f",
+   "status": "PENDING"
+  },
+  "MIPRE.LowDegree.BinaryArtinSchreier.initial_invariant": {
+   "submitted_at": 1792206387.2123113,
+   "http": 200,
+   "submission_id": "e1eeb307-85db-4e87-908d-d6fbf9318a7c",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Preliminaries.switchSandwich_rightTransfer": {
+   "submitted_at": 1792206390.8182812,
+   "http": 200,
+   "submission_id": "a7c0c1fc-e6ea-426e-a7e0-737c7231ff78",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Preliminaries.closenessOfInnerProduct_left": {
+   "submitted_at": 1792206391.4929736,
+   "http": 200,
+   "submission_id": "695f16d8-c90d-4eb3-801e-3cb2f0bfcfad",
+   "status": "PENDING"
+  },
+  "MIPRE.LowDegree.BinaryQuotient.map_composedSumBits": {
+   "submitted_at": 1792206392.123934,
+   "http": 200,
+   "submission_id": "06ea3883-c182-43bd-bba7-13f1340a5c63",
    "status": "PENDING"
   }
  },

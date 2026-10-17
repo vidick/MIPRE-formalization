@@ -1571,8 +1571,10 @@
   "MIPRE_Foundations_Introspection_SourceCompilerParamsCost": {
    "submitted_at": 1792206235.6249757,
    "http": 202,
-   "status": "PENDING",
-   "job_id": "63bd31f3-3742-4942-a4ab-37bf34373046"
+   "status": "PUBLISHED",
+   "job_id": "63bd31f3-3742-4942-a4ab-37bf34373046",
+   "theorem_id": "c4648e96-bd56-4db5-8f3f-516ebcef3ae9",
+   "error_message": ""
   },
   "MIPRE_Foundations_Introspection_AuxiliaryScanProgram": {
    "submitted_at": 1792206332.100168,
@@ -6546,13 +6548,15 @@
    "submitted_at": 1792206287.1713789,
    "http": 200,
    "submission_id": "e2c82a3f-da75-4313-ab4a-155fb7661b6d",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Introspection.Honest.pauliX_entry": {
    "submitted_at": 1792206299.1432147,
    "http": 200,
    "submission_id": "e29b8e50-d4b0-4e9c-bc9d-75837a97e971",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Introspection.isometricPOVM_map_mats_eq": {
    "submitted_at": 1792206299.8256238,
@@ -6596,6 +6600,12 @@
    "submitted_at": 1792206365.6934352,
    "http": 200,
    "submission_id": "ed131f06-3751-48db-bb36-36e27d85301a",
+   "status": "PENDING"
+  },
+  "MIPRE.Introspection.TypedPresentation.mu_constant_edge": {
+   "submitted_at": 1792206382.9176905,
+   "http": 200,
+   "submission_id": "a22d7478-628c-42b9-8a19-8337ee560643",
    "status": "PENDING"
   }
  },
