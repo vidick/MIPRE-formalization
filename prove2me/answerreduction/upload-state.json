@@ -17181,9 +17181,9 @@
    "submitted_at": 1792233393.6211848,
    "http": 202,
    "job_id": "7e3af19f-343d-43c1-ba34-c5553c329dc2",
-   "status": "QUEUED",
-   "theorem_id": null,
-   "error_message": "formal statement does not compile: Import parser timed out after 5s"
+   "status": "PUBLISHED",
+   "theorem_id": "4dfafa4d-53c1-4b49-aeb2-34149320666f",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.arVerifier_soundness": {
    "submitted_at": 1792233218.4669406,
@@ -28693,8 +28693,8 @@
    "submitted_at": 1792232687.0635028,
    "http": 200,
    "submission_id": "78ec706c-dd58-42c4-8689-c012f3ded3b6",
-   "status": "PENDING",
-   "error_message": "Failed to resolve platform imports: DB error looking up import 'Definitions.Def_MIPRE_Background_LIDT_Game': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.check_of_typedPred": {
    "submitted_at": 1792232524.5661268,
@@ -28728,8 +28728,8 @@
    "submitted_at": 1792233154.5598714,
    "http": 200,
    "submission_id": "e686d2c1-636c-4cb1-8015-d8d4afb30293",
-   "status": "PENDING",
-   "error_message": "Failed to resolve platform imports: DB error looking up import 'Definitions.Def_MIPRE_Foundations_SAT_Decoupled': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.condFail_aa_le": {
    "submitted_at": 1792232879.5327432,
@@ -28756,8 +28756,8 @@
    "submitted_at": 1792233398.7136486,
    "http": 200,
    "submission_id": "a6938275-8e7a-4707-9c18-253e2a47f887",
-   "status": "PENDING",
-   "error_message": "Failed to materialize the target's dependencies: DB error looking up import 'Definitions.Def_MIPRE_Background_LIDT_MIPStarRE_LDT_Test_MainTheorem_ScalarBounds_EnvelopeBounds': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.condFail_ba_le": {
    "submitted_at": 1792233085.3289378,
@@ -28777,67 +28777,118 @@
    "submitted_at": 1792233128.862079,
    "http": 200,
    "submission_id": "c6400b6c-b49b-4146-9387-e104adb5bd5b",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.errE_le": {
    "submitted_at": 1792233450.607974,
    "http": 200,
    "submission_id": "0b3cd92e-1c91-4044-8ece-9dace3b91c05",
-   "status": "PENDING",
-   "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.sum_gcEvA_le": {
    "submitted_at": 1792233219.1908035,
    "http": 200,
    "submission_id": "75e38244-982a-4205-adb7-86ffd74495dd",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.sum_gcEvB_le": {
    "submitted_at": 1792233292.8317275,
    "http": 200,
    "submission_id": "a02db591-bc39-4139-845e-36699c7a2cba",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.pcpSound": {
    "submitted_at": 1792233336.3936596,
    "http": 200,
    "submission_id": "bb69c27e-f377-436b-a8fe-c6dce5b3f100",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.sum_dis_MA1_GBe_le": {
    "submitted_at": 1792233337.0950027,
    "http": 200,
    "submission_id": "2a75fcdb-bb49-4a3c-802a-43d6a4bd4278",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.sum_dis_GAe_MB1_le": {
    "submitted_at": 1792233455.258869,
    "http": 200,
    "submission_id": "820dc3ad-cc94-4226-8628-fa5835af4f3a",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.sum_dis_JAe_MB6_le": {
    "submitted_at": 1792233499.9180794,
    "http": 200,
    "submission_id": "25fcd28a-2311-4e44-9586-5404f4b22cb9",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.gcA_le": {
    "submitted_at": 1792233512.8910375,
    "http": 200,
    "submission_id": "5d2fdeaa-0faa-4a31-b0f2-6ae59f7746ca",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.gcB_le": {
-   "submitted_at": 1792233526.1424625,
+   "submitted_at": 1792233988.3379147,
    "http": 200,
-   "submission_id": "0f6e8486-fdff-40a1-ab9e-49439a567167",
-   "status": "PENDING"
+   "submission_id": "f4c2600e-88dc-4f34-a2cd-ce6d6f0a64ac",
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.sum_dis_MA6_JBe_le": {
-   "submitted_at": 1792233538.9181325,
+   "submitted_at": 1792233909.5766284,
    "http": 200,
-   "submission_id": "6f61bcac-46d8-4d5b-a66e-3d9c02edac27",
+   "submission_id": "0f6dcd89-8054-461d-af37-2f11e1820527",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.z_le": {
+   "submitted_at": 1792234235.8937595,
+   "http": 200,
+   "submission_id": "eb20fa55-282e-4032-a3bb-f3c9fbd3a957",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.sum_disPolyA_le": {
+   "submitted_at": 1792233957.3295178,
+   "http": 200,
+   "submission_id": "1711a7fa-3a28-4d84-afc7-870a38535d62",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.sum_disPolyB_le": {
+   "submitted_at": 1792234455.5900145,
+   "http": 200,
+   "submission_id": "2461067c-48f9-4fda-ae37-3e1bb8f4bbb2",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.sum_gcA_le": {
+   "submitted_at": 1792234482.5282655,
+   "http": 200,
+   "submission_id": "24ff68eb-e3f3-4b8f-b69e-ed414c6dd2ae",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.sum_roles_condFail_le": {
+   "submitted_at": 1792234483.2058668,
+   "http": 200,
+   "submission_id": "ed3803f5-30e0-478d-b005-5b26a8303581",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.sum_gcB_le": {
+   "submitted_at": 1792234858.50366,
+   "http": 200,
+   "submission_id": "39c90903-2934-462f-ba24-04d6a1785be0",
    "status": "PENDING"
   }
  },
