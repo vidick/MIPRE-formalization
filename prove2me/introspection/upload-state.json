@@ -8394,7 +8394,9 @@
    "submitted_at": 1792217386.508994,
    "http": 202,
    "job_id": "fe459a70-1fea-4e22-87c6-39586015a992",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "98d6a9e4-3ff4-44bf-a6e0-7ecb7745af25",
+   "error_message": ""
   }
  },
  "solutions": {
