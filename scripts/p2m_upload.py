@@ -930,7 +930,7 @@ def upload_pipelined(tree, meta, st, args, siblings):
     log(f"pipeline: {len(pending)} item(s) to submit, {len(inflight)} in flight from an earlier run, "
         f"at most {args.max_inflight} in flight")
     attempts, retry_at, failed = collections.defaultdict(int), {}, {}
-    last_report = time.time()
+    last_report = started = time.time()
 
     def dead(kx, memo):
         """Blocked for this run by a failure upstream in this tree."""
@@ -942,6 +942,12 @@ def upload_pipelined(tree, meta, st, args, siblings):
         return memo[kx]
 
     while pending or inflight:
+        if args.stop_after and time.time() - started > args.stop_after:
+            # here no submission is half-recorded: the jobs in flight are in the state file and the
+            # next run polls them
+            log(f"pipeline: stopping after {args.stop_after} s as asked, {len(inflight)} job(s) in flight "
+                f"and {len(pending)} item(s) left for the next run")
+            sys.exit(3)
         submitted = False
         for kx in list(pending):
             if len(inflight) >= args.max_inflight:
@@ -1060,6 +1066,10 @@ def main():
     ap.add_argument("--after", action="append", default=[],
                     help="with --pipeline: a tree directory being uploaded alongside, whose content this tree "
                          "imports once that tree's state file records it (repeatable)")
+    ap.add_argument("--stop-after", type=int, default=0,
+                    help="with --pipeline: stop cleanly after this many seconds (exit status 3), between two "
+                         "submissions, leaving the jobs in flight to the next run (a run killed from outside "
+                         "can lose a job that was submitted and not yet recorded)")
     args = ap.parse_args()
     DRY = args.dry_run
     set_tree_dir(args.tree)
