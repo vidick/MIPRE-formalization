@@ -93,7 +93,7 @@
   ],
   "blueprint": [],
   "imported_nodes": [
-   "MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits"
+   "MIPRE.LowDegree.BinaryPolynomial.eval2_polyOfBits"
   ],
   "pasted_helpers": 1,
   "prooflines": 9,

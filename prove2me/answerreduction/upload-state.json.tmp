@@ -1,0 +1,255 @@
+{
+ "definitions": {
+  "MIPRE_Foundations_Distances": {
+   "submitted_at": 1792192088.7658362,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "8d8f0ea4-c48d-4761-ad04-6955255abe49",
+   "theorem_id": "d4db0748-4c51-449c-8cad-a10723ee4986",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_CL_Canonical": {
+   "submitted_at": 1792192089.3624125,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "1d6a7fae-86b4-4fc1-a3b0-0af33b3a40f7",
+   "theorem_id": "92c10466-4da4-4df5-9ff5-88b00e3e4c03",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_SAT_Circuit": {
+   "submitted_at": 1792192089.877109,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "489d3dce-2e15-41de-8ca4-07df3d4b142b",
+   "theorem_id": "308ee67a-afe6-463d-9b28-a14534139ac8",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_SAT_Cnf": {
+   "submitted_at": 1792192090.555091,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "0e06c316-30e0-421b-8dfa-85f882c9cc68",
+   "theorem_id": "fb7b94a9-472e-4750-bf35-432ba735349e",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_CL_Closure_B": {
+   "submitted_at": 1792192091.085334,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "7c720948-8ff5-4338-aa55-1a31505c9e51",
+   "theorem_id": "1e5ae226-64cb-4392-a436-57450aa339b8",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_LowDegree_Encoding": {
+   "submitted_at": 1792192092.0078428,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "872b4079-3ee7-4776-abc1-93c522e837b6",
+   "theorem_id": "c751a651-ebda-467b-a258-683de9e73071",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_OracularGame": {
+   "submitted_at": 1792192092.7711852,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "e57ee658-e480-4779-a980-9f1768897a95",
+   "theorem_id": "74077abe-b6ef-4324-a6ad-79efe6122c7f",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_OpBound": {
+   "submitted_at": 1792192098.6536903,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "1abc0037-f280-4357-be10-707252184bb4",
+   "theorem_id": "08115632-fdb7-4b75-bb8f-8c2c82d89469",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_POVMValue": {
+   "submitted_at": 1792192099.34566,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "143bb504-e682-4d87-8ffa-eee602f6725a",
+   "theorem_id": "2257bf95-7d65-4c0c-9bd6-a7687cc70fa4",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_PVM": {
+   "submitted_at": 1792192099.8706505,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "feff6dad-d92e-48c1-900d-4c7acc02bfe0",
+   "theorem_id": "114afc74-68e8-4b94-b4f9-47575157bf0b",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_LowDegree_SchwartzZippel": {
+   "submitted_at": 1792192100.5748532,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "7ec34a49-9344-45d0-993b-7131a4ccbc7f",
+   "theorem_id": "65e649a7-7c1d-41ee-b115-574afeca3ee0",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_GameAdapt": {
+   "submitted_at": 1792192101.03861,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "d6093342-7b16-4d66-90a3-599debc4e61e",
+   "theorem_id": "966d2c98-b8fb-4a24-8c35-1e142bd65a36",
+   "error_message": ""
+  },
+  "MIPRE_Background_LIDT_Game": {
+   "submitted_at": 1792192103.1495855,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "977c6f2b-cbdd-45c3-b20f-9f1ba277968e",
+   "theorem_id": "d95d70d5-5e14-491c-b38e-31e124b28a49",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Closeness": {
+   "submitted_at": 1792192103.6174464,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "ee08f03f-2825-4bf5-b131-51d109475735",
+   "theorem_id": "448edf5e-b2db-404f-b031-33606584fada",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_CL_Embedding": {
+   "submitted_at": 1792192104.1651416,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "adc117ea-3510-491f-bc5b-c6ecf2a5048e",
+   "theorem_id": "c51afac1-a81e-4455-91a8-0243d44317e8",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_SAT_Succinct": {
+   "submitted_at": 1792192105.9345546,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "173a12e5-6ffe-41ba-8b36-4044d5c7257a",
+   "theorem_id": "d7f7e851-6270-499d-b9e6-cb9f246e722b",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_CL_Graph": {
+   "submitted_at": 1792192106.5817342,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "34d80f83-8eed-44fb-9b24-8079644a26bf",
+   "theorem_id": "90fb5e3d-0ed6-4d0c-b97c-3fc037a20764",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_CL_Downsize": {
+   "submitted_at": 1792192107.0036213,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "4dbede16-2b6b-409f-b4c8-d9502f38dd15",
+   "theorem_id": "4fe01969-2504-49bb-b188-7f76cf01420c",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_CL_TypedSampler": {
+   "submitted_at": 1792192122.2421424,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "aa7d55d7-a464-4061-ba01-ca0641df8a55",
+   "theorem_id": "a239b47a-1acb-480c-a9c6-3c5e904e8459",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_LowDegree_BinaryRepresentation": {
+   "submitted_at": 1792192122.6622586,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "897c33cd-d59a-45c1-b719-54906175a462",
+   "theorem_id": "9132ed41-97ff-48f5-a43d-ab4c573553a1",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_SAT_Formula": {
+   "submitted_at": 1792192123.1857028,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "4bce4495-d58a-4c57-8a3c-2fa48ab822fc",
+   "theorem_id": "90728ca4-4628-4ed5-a957-13fb95d88510",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_LowDegree_FiniteReducedComponents": {
+   "submitted_at": 1792192123.6659832,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "ff15dd07-6935-4c37-a36e-b75e42e0e89c",
+   "theorem_id": "03a4f5e8-43df-41df-8a76-fe5fa909f509",
+   "error_message": ""
+  },
+  "MIPRE_Background_LIDT_CLGame": {
+   "submitted_at": 1792192163.6309586,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "25a76460-9737-447c-8c8c-4ed6c59f7d8e",
+   "theorem_id": "a4491eab-221c-47b5-8cb2-65d858c1b6d2",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_SAT_Decoupled": {
+   "submitted_at": 1792192164.252848,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "3068fda3-94d0-44ba-abf4-084015d09ae7",
+   "theorem_id": "f20c6087-6957-4e48-b234-2849583de4ec",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_StateDistance": {
+   "submitted_at": 1792192164.745876,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "8c183379-ee90-442c-9a5a-540a24121727",
+   "theorem_id": "660b260e-76f3-46d7-869c-e246b08bc25b",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_CL_Detyping": {
+   "submitted_at": 1792192165.305957,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "c7e47ca0-0e4f-4208-8a0d-45df351c86e8",
+   "theorem_id": "a207bbfa-0baf-4014-a209-547ffe6df17a",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_SampledGame": {
+   "submitted_at": 1792192165.9476979,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "c7cc2b8f-f81f-4533-8e5c-1bf7c311f34f",
+   "theorem_id": "1817fd67-140d-47a7-895b-31e175a2986b",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_CL_Product": {
+   "submitted_at": 1792192166.6141832,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "66af522b-ecb8-4dc8-a3d1-a94481851694",
+   "theorem_id": "18d01860-785b-4859-a84d-929ccbed8904",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_LowDegree_BinaryCoprimeDegree": {
+   "submitted_at": 1792192167.07589,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "19a5a8b8-bb7e-47d5-a95e-62b56b0ad8ae",
+   "theorem_id": "2e4b8f82-3e4d-4abd-b459-62bf12dcff11",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_LowDegree_BinaryDegreeFactors": {
+   "submitted_at": 1792192167.6085904,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "30719f80-53f0-4018-a215-4ccf365bcfd1",
+   "theorem_id": "290dd223-52eb-4988-9513-5bcb99e5cfef",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_LowDegree_BinaryPolynomial": {
+   "submitted_at": 1792192169.6328442,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "65158611-315c-45e2-8ce3-9609ed0a36f0",
+   "theorem_id": "c467d818-559b-42c6-8944-6944cf235c4a",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_SAT_FmlLib": {
+   "submitted_at": 1792192170.253454,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "72439bf7-8557-4867-9fa7-85eb8dbbf6a8"

@@ -315,7 +315,7 @@
    "MIPRE.AnswerReduction.disPolyB_le",
    "MIPRE.AnswerReduction.sum_dis_GAe_MB1_le",
    "MIPRE.AnswerReduction.sum_dis_MA6_JBe_le",
-   "MIPRE.AnswerReduction.rd_eq_of_typedPred'",
+   "MIPRE.AnswerReduction.rd_eq_of_typedPred_prime",
    "MIPRE.one_sub_sum_bornProb_le_condFail",
    "MIPRE.sum_dis_triangle"
   ],
@@ -409,7 +409,7 @@
    "MIPRE.CL.pull_proj_compl",
    "MIPRE.CL.CLFun.eval_truncate_of_le",
    "MIPRE.dis_map_le",
-   "MIPRE.POVM.ext'",
+   "MIPRE.POVM.ext_prime",
    "MIPRE.POVM.map_map",
    "MIPRE.exactlyOn_roleFamily"
   ],
@@ -451,7 +451,7 @@
    "MIPRE.CL.pull_proj_compl",
    "MIPRE.CL.CLFun.eval_truncate_of_le",
    "MIPRE.dis_map_le",
-   "MIPRE.POVM.ext'",
+   "MIPRE.POVM.ext_prime",
    "MIPRE.POVM.map_map",
    "MIPRE.exactlyOn_roleFamily"
   ],
@@ -493,7 +493,7 @@
    "MIPRE.CL.pull_proj_compl",
    "MIPRE.CL.CLFun.eval_truncate_of_le",
    "MIPRE.dis_map_le",
-   "MIPRE.POVM.ext'",
+   "MIPRE.POVM.ext_prime",
    "MIPRE.POVM.map_map",
    "MIPRE.exactlyOn_roleFamily"
   ],
@@ -535,7 +535,7 @@
    "MIPRE.CL.pull_proj_compl",
    "MIPRE.CL.CLFun.eval_truncate_of_le",
    "MIPRE.dis_map_le",
-   "MIPRE.POVM.ext'",
+   "MIPRE.POVM.ext_prime",
    "MIPRE.POVM.map_map",
    "MIPRE.exactlyOn_roleFamily"
   ],

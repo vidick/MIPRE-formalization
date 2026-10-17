@@ -218,7 +218,7 @@
    "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ} [NeZero m]",
    "variable [Algebra (ZMod 2) F] {hm : m ∣ Fintype.card F}",
    "variable {d : ℕ} {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
-   "variable {M : Question F m → POVM (Answer F m d) dB}"
+   "variable {M : MIPRE.QLD.Question F m → POVM (MIPRE.QLD.Answer F m d) dB}"
   ],
   "docstring": "",
   "module": "MIPRE.Background.QLD.Product",
@@ -257,7 +257,7 @@
    "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ} [NeZero m]",
    "variable [Algebra (ZMod 2) F] {hm : m ∣ Fintype.card F}",
    "variable {d : ℕ} {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
-   "variable {M : Question F m → POVM (Answer F m d) dB}"
+   "variable {M : MIPRE.QLD.Question F m → POVM (MIPRE.QLD.Answer F m d) dB}"
   ],
   "docstring": "",
   "module": "MIPRE.Background.QLD.Product",
@@ -296,7 +296,7 @@
    "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ} [NeZero m]",
    "variable [Algebra (ZMod 2) F] {hm : m ∣ Fintype.card F}",
    "variable {d : ℕ} {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
-   "variable {M : Question F m → POVM (Answer F m d) dB}"
+   "variable {M : MIPRE.QLD.Question F m → POVM (MIPRE.QLD.Answer F m d) dB}"
   ],
   "docstring": "The fine self-consistency of the `X` line measurement involves no point at all, so the transfer\nis the point-free form of the same identity.",
   "module": "MIPRE.Background.QLD.Product",
@@ -335,7 +335,7 @@
    "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m : ℕ} [NeZero m]",
    "variable [Algebra (ZMod 2) F] {hm : m ∣ Fintype.card F}",
    "variable {d : ℕ} {dA dB : Type} [Fintype dA] [DecidableEq dA] [Fintype dB] [DecidableEq dB]",
-   "variable {M : Question F m → POVM (Answer F m d) dB}"
+   "variable {M : MIPRE.QLD.Question F m → POVM (MIPRE.QLD.Answer F m d) dB}"
   ],
   "docstring": "The collision probability reads only the direction, so it transfers the same way.",
   "module": "MIPRE.Background.QLD.Product",

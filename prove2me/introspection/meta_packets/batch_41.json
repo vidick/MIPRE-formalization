@@ -338,7 +338,7 @@
    }
   ],
   "imported_nodes": [
-   "MIPRE.LowDegree.card_filter_ker_mul'"
+   "MIPRE.LowDegree.card_filter_ker_mul_prime"
   ],
   "pasted_helpers": 1,
   "prooflines": 25,
@@ -664,7 +664,7 @@
    }
   ],
   "imported_nodes": [
-   "MIPRE.LowDegree.card_filter_ker_mul'"
+   "MIPRE.LowDegree.card_filter_ker_mul_prime"
   ],
   "pasted_helpers": 0,
   "prooflines": 20,

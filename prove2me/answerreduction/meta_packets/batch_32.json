@@ -181,7 +181,7 @@
    "MIPStarRE.LDT.rightTensor_finset_sum",
    "MIPStarRE.LDT.Pasting.fromHToG_avgOver_tail_type_ev",
    "MIPStarRE.LDT.Pasting.fromHToG_bool_type_filtered_outcome_sum",
-   "MIPStarRE.LDT.Pasting.fromHToG_sum₂_avgOver₂",
+   "MIPStarRE.LDT.Pasting.fromHToG_sum2_avgOver2",
    "MIPStarRE.LDT.Pasting.psd_contraction_comm_sandwich_le",
    "MIPStarRE.LDT.Pasting.fromHToG_sum_averagedSandwichByType_total_eq_one",
    "MIPStarRE.LDT.Pasting.fromHToG_ev_sum_isSome_sandwich_weight",

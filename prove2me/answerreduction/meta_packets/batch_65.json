@@ -386,7 +386,7 @@
    "MIPRE.LowDegree.BinaryQuotient.factor_dropLast_factors",
    "MIPRE.LowDegree.BinaryQuotient.factor_dropLast_tail_isEmpty_iff",
    "MIPRE.LowDegree.BinaryPolynomial.gcdStep_correct",
-   "MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits",
+   "MIPRE.LowDegree.BinaryPolynomial.eval2_polyOfBits",
    "MIPRE.LowDegree.BinaryPolynomial.evalBits_xor",
    "MIPRE.LowDegree.BinaryQuotient.quotientComponentsProg_correct",
    "MIPRE.LowDegree.BinaryQuotient.componentFactors_toBits_prod",
@@ -587,7 +587,7 @@
    "MIPRE.LowDegree.BinaryPolynomial.nonresidueLiftBitsProg_correct",
    "MIPRE.LowDegree.BinaryPolynomial.oddExtensionLowerBits_spec",
    "MIPRE.LowDegree.BinaryPolynomial.evalBits_oddTraceBits_of_root",
-   "MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits",
+   "MIPRE.LowDegree.BinaryPolynomial.eval2_polyOfBits",
    "MIPRE.LowDegree.BinaryPrimePowerTrace.flat_trace_natDegree",
    "MIPRE.LowDegree.BinaryQuotient.root_eq"
   ],
@@ -632,7 +632,7 @@
    "MIPRE.LowDegree.BinaryQuotient.map_orbitPolynomialBits",
    "MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBits_monic_natDegree",
    "MIPRE.LowDegree.BinaryQuotient.eval_orbitPolynomial",
-   "MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits",
+   "MIPRE.LowDegree.BinaryPolynomial.eval2_polyOfBits",
    "MIPRE.LowDegree.BinaryPolynomial.length_mulReduce"
   ],
   "pasted_helpers": 22,

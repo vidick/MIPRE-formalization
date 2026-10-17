@@ -15,7 +15,7 @@ nothing already on the platform is regenerated: published nodes are imported as
 published bundle lacks a needed declaration gets a delta bundle ``Def_<name>_B`` holding just
 the missing declarations.
 """
-import os, json, re, sys, collections, shutil
+import os, json, re, sys, collections, shutil, glob
 
 S = os.environ.get("P2M_DIR", "/tmp/claude-0/-home-user-MIPRE-formalization/b05e6b3f-df9f-5d1d-be42-41cac66efc40/scratchpad/p2m")
 WS = f"{S}/ws"
@@ -161,6 +161,7 @@ def open_ns_tokens(text):
         out.append(tk)
     return out
 VAR_GROUPS = {}  # (module, variable command text) -> [(binder group text, {units it references}, [names it binds])]
+VAR_REFS = {}    # (module, variable command text) -> [(token, constant)] of its references
 BRACKETS = {"(": ")", "{": "}", "[": "]", "⦃": "⦄"}
 
 def binder_groups(m, c):
@@ -276,7 +277,52 @@ def mod_rename(m, text):
         text = re.sub(r"(?<![\w.'])" + re.escape(o) + r"(?![\w'])", lambda _m, n=n: n, text)
     return text
 
-def filter_vars(m, var_texts, avail):
+_VIS_NAMES = {}
+def visible_names(m):
+    """The project declarations a stub of module m sees: those of its closure's bundles."""
+    if m not in _VIS_NAMES:
+        mods = set(mod_closure.get(m, ())) | {m}
+        _VIS_NAMES[m] = {uu["name"] for uu in U.values()
+                         if uu.get("name") and uu["module"] in mods and uu["cls"] in ("defmat", "embedded", "avail")}
+    return _VIS_NAMES[m]
+
+def open_namespaces(lines):
+    """The namespaces plain `open` lines open (not `scoped`-only, `hiding` or `renaming` forms)."""
+    out = []
+    for l in lines:
+        mm = re.match(r"open\s+(.*)$", l.strip())
+        if not mm or re.search(r"\b(hiding|renaming)\b", l):
+            continue
+        rest = re.sub(r"\([^)]*\)", " ", mm.group(1))
+        if rest.split()[:1] == ["scoped"]:
+            continue
+        out += [x for x in rest.split() if x not in ("in",)]
+    return out
+
+def qualify_var(m, key, line, opens):
+    """A hoisted `variable` line with a reference to a project constant written in full where the stub's
+    top level would not resolve it as the source did.  A stub hoists its scope to the top level, where
+    `open MIPRE.QLD` (reproducing the namespace chain) and the source's `open MIPRE.LIDT` are equal
+    candidates, so `Question` is ambiguous; in the source, inside `namespace MIPRE.QLD`, the chain's
+    `MIPRE.QLD.Question` wins before any open is consulted.  (The theorem is elaborated inside its
+    namespace, its name being dotted; only the `variable` command is elaborated at the top level.)"""
+    seen = {}
+    for tok, const in VAR_REFS.get((m, key), []):
+        seen.setdefault(tok, set()).add(const)
+    vis = visible_names(m)
+    for tok, consts in seen.items():
+        if len(consts) != 1:
+            continue
+        const = next(iter(consts))
+        if const == tok or not const.endswith("." + tok) or const.startswith("_private"):
+            continue
+        cands = {f"{ns}.{tok}" for ns in opens if f"{ns}.{tok}" in vis} | ({tok} if tok in vis else set())
+        if cands == {const}:
+            continue   # resolves as in the source: the line stays as written
+        line = re.sub(r"(?<![\w.'])" + re.escape(tok) + r"(?![\w'])", lambda _m, c=const: c, line)
+    return line
+
+def filter_vars(m, var_texts, avail, qualify=None):
     """The `variable`/`include`/`omit` lines of a scope without the binders over declarations the file
     cannot see: a declaration left out of every bundle (no kept declaration needs it, so none uses such
     a binder) is still named by its section's `variable (I : Index)`.  An `include`/`omit` loses the
@@ -289,10 +335,9 @@ def filter_vars(m, var_texts, avail):
             for g in groups:
                 if g not in kept:
                     dropped.update(g[2])
-            if len(kept) == len(groups):
-                out.append(v)
-            elif kept:
-                out.append("variable " + " ".join(g[0] for g in kept))
+            line = v if len(kept) == len(groups) else ("variable " + " ".join(g[0] for g in kept)) if kept else None
+            if line is not None:
+                out.append(qualify_var(m, v.strip(), line, qualify) if qualify is not None else line)
             continue
         mm = re.match(r"\s*(include|omit)\b(.*)$", v, re.S)
         if mm and dropped:
@@ -332,6 +377,53 @@ LOCAL_INST = re.compile(r"(?:/--.*?-/\s*)?(?:@\[(?:[^\]]*,\s*)?local\s+instance(
                         r"|(?:@\[[^\]]*\]\s*)?(?:noncomputable\s+)?local\s+instance\b(?:\s*\(\s*priority\s*:=\s*([^)]*?)\s*\))?)", re.S)
 DECL_AT = {(uu["module"], uu["decl"]["declStart"]["offset"]): x for x, uu in U.items()
            if uu.get("decl") and uu["decl"].get("declStart")}
+
+# The bundles already on the platform, which no regeneration may change: this tree's per its upload
+# state (an upload stopped half-way and resumed after a generator fix), and every earlier tree's
+_UP = os.path.join(os.path.dirname(os.path.abspath(os.environ["P2M_CONFIG"])), "upload-state.json") \
+    if os.environ.get("P2M_CONFIG") else None
+PUBLISHED_DEFS = set()
+if _UP and os.path.exists(_UP):
+    PUBLISHED_DEFS = {k for k, v in json.load(open(_UP, encoding="utf-8"))["definitions"].items()
+                      if v.get("status") == "PUBLISHED"}
+
+# An anonymous instance is named by Lean after its type, with a suffix from the module's root when the
+# type names nothing of the module's own project (`instDecidableEq_mIPRE` in the source,
+# `instDecidableEq_definitions` in a bundle, `…_solutions` in a solution), so a copy may carry another
+# name.  An anonymous `local instance` is reactivated by name in the blocks after it, so each copy of
+# one is given its source name explicitly: (byte offset just after `local instance (priority := p)`,
+# the name's last component)
+LOCAL_INST_HEAD = re.compile(r"(?:/--.*?-/\s*)?(?:@\[[^\]]*\]\s*)?(?:noncomputable\s+)?local\s+instance\b"
+                             r"(?:\s*\(\s*priority\s*:=\s*[^)]*?\s*\))?", re.S)
+ANON_LOCAL = {}
+LOCAL_NAME = {}   # uid -> the name of the local instance's copy, where it differs from the source's
+for _x, _u in U.items():
+    _d = _u.get("decl")
+    if not _u.get("name") or not _d or not _d.get("declStart") or not _d.get("valStart"):
+        continue
+    _head = F[_u["module"]]["B"][_d["declStart"]["offset"]:_d["valStart"]["offset"]].decode("utf-8")
+    _mm = LOCAL_INST_HEAD.match(_head)
+    if _mm and _head[_mm.end():].lstrip()[:1] in (":", "[", "{", "⦃", "("):
+        # the bundle that holds its copy: this tree's bundle of the module (its delta bundle when an
+        # earlier tree published the module's bundle) for a unit kept here, an earlier tree's for an
+        # available one; a copy in a published bundle is as it was generated then, named explicitly
+        # when that bundle's text names it, else anonymous, and then Lean named it with the suffix of
+        # the bundle's root `Definitions` where the source's has `MIPRE` (`instDecidableEq_definitions`
+        # in the published FiniteMatrix/Order bundle for the source's `instDecidableEq_mIPRE`)
+        _m = _u["module"]
+        _held = (delta_bundles.get(_m) or mslug(_m)) if _u["cls"] in ("defmat", "embedded") else \
+            published_bundles.get(_m) if _u["cls"] == "avail" else None
+        if _held is not None and (_u["cls"] == "avail" or _held in PUBLISHED_DEFS):
+            _short = _u["name"].split(".")[-1]
+            # an earlier tree may hold the module's declarations in its bundle and in a later delta bundle
+            _files = ([f"{WS}/Definitions/Def_{_held}.lean"] if _u["cls"] != "avail" else
+                      [f"{WS}/Definitions/Def_{mslug(_m)}.lean"] + sorted(glob.glob(f"{WS}/Definitions/Def_{mslug(_m)}_B*.lean")))
+            _named = any(re.search(r"local\s+instance\s+(?:\(\s*priority\s*:=[^)]*\)\s*)?" + re.escape(_short) + r"\b",
+                                   open(f, encoding="utf-8").read()) for f in _files if os.path.exists(f))
+            if not _named:
+                LOCAL_NAME[_x] = re.sub(r"_mIPRE(?=(_\d+)?$)", "_definitions", _u["name"])
+            continue
+        ANON_LOCAL[_x] = (_d["declStart"]["offset"] + len(_head[:_mm.end()].encode("utf-8")), _u["name"].split(".")[-1])
 const_unit = {}
 for uid, u in U.items():
     for r in u["rows"]:
@@ -400,6 +492,9 @@ for m in modules:
             (stack[-1] if stack else root)["vars"].append(t)
             if k == "variable":
                 VAR_GROUPS[(m, t)] = binder_groups(m, c)
+                a0, b0 = c["start"]["offset"], c["end"]["offset"]
+                VAR_REFS[(m, t)] = [(txt(m, rf["start"]["offset"], rf["end"]["offset"]), rf["const"]) for rf in F[m]["refs"]
+                                    if a0 <= rf["start"]["offset"] and rf["end"]["offset"] <= b0]
         elif k in ("set_option", "universe"):
             # a top-level `set_option` (the vendored parts set `autoImplicit`, `maxHeartbeats`,
             # `maxRecDepth` and `backward.isDefEq.respectTransparency` this way, hundreds of times)
@@ -424,7 +519,7 @@ for m in modules:
             luid = DECL_AT.get((m, c["start"]["offset"]))
             if lm and luid is not None and U[luid].get("name"):
                 prio = lm.group(1) or lm.group(2)
-                n_ = U[luid]["name"]
+                n_ = LOCAL_NAME.get(luid, U[luid]["name"])   # the name its copy has (see ANON_LOCAL)
                 (stack[-1] if stack else root)["attrs"].append(
                     {"attr": f"[local instance {prio}]" if prio else "[local instance]", "names": [(n_, luid, n_)]})
         # moduleDoc, macro, export, eoi: no scope effect
@@ -662,6 +757,9 @@ def emit(rel, text):
         json.dump(generated, open(PARTIAL, "w"), indent=0)
     if os.path.exists(fn) and open(fn, encoding="utf-8").read() == text:
         return
+    if rel.startswith("Definitions/Def_") and rel[len("Definitions/Def_"):-len(".lean")] in PUBLISHED_DEFS:
+        raise RuntimeError(f"{rel} is published, and this run would change it: the generator must reproduce "
+                           "a published bundle exactly (the platform keeps the published text)")
     open(fn, "w", encoding="utf-8").write(text)
 
 def collapse(s):
@@ -678,8 +776,9 @@ for m in TOPO:
     cmds = F[m]["cmds"]
     body_start = cmds[0]["start"]["offset"]  # first command after the import header
     body_end = len(B)
-    # spans to delete: declaration commands of units not kept in the bundle
-    dele = []
+    # spans to delete: declaration commands of units not kept in the bundle (a span may carry its
+    # replacement text in `repl`)
+    dele, repl = [], {}
     kept_units = []
     for uid, u in U.items():
         if u["module"] != m:
@@ -687,6 +786,10 @@ for m in TOPO:
         a, b = u["decl"]["declStart"]["offset"], u["decl"]["declEnd"]["offset"]
         if u["cls"] in ("defmat", "embedded"):
             kept_units.append(uid)
+            if uid in ANON_LOCAL:   # an anonymous local instance keeps its source name (see ANON_LOCAL)
+                k, short = ANON_LOCAL[uid]
+                dele.append((k, k))
+                repl[k] = (" " + short).encode("utf-8")
         else:
             # extend to end of line
             while b < len(B) and B[b:b+1] in (b" ", b"\t"):
@@ -706,7 +809,6 @@ for m in TOPO:
             dele.append((a, b))
     # attribute commands: keep the names this bundle's environment has (kept here, kept in an
     # imported bundle, or not a project declaration); drop the command when none remains
-    repl = {}
     visible = set(kept_units) | {uid for uid, u in U.items() if u["cls"] in ("avail",)
                                   or (u["cls"] in ("defmat", "embedded") and u["module"] in mod_closure[m])}
     visible |= set(bundle_node_deps.get(m, []))   # this tree's nodes the bundle imports
@@ -815,7 +917,11 @@ for m in TOPO:
 # ---------- helpers for hoisted context ----------
 def unit_text(uid):
     u = U[uid]
-    return mod_rename(u["module"], txt(u["module"], u["decl"]["declStart"]["offset"], u["decl"]["declEnd"]["offset"]))
+    a, b = u["decl"]["declStart"]["offset"], u["decl"]["declEnd"]["offset"]
+    if uid in ANON_LOCAL:   # an anonymous local instance keeps its source name (see ANON_LOCAL)
+        k, short = ANON_LOCAL[uid]
+        return mod_rename(u["module"], txt(u["module"], a, k) + " " + short + txt(u["module"], k, b))
+    return mod_rename(u["module"], txt(u["module"], a, b))
 
 def head_rest(uid, upto):
     """Text from after the binding name up to `upto` ('val' = valStart, 'end' = declEnd)."""
@@ -844,7 +950,8 @@ def hoisted_context(uid):
         if r is not None and r not in lines:
             lines.append(r)
     lines += ctx["opts"]
-    lines += filter_vars(u["module"], ctx["vars"], lambda v: U[v]["cls"] in ("defmat", "embedded", "avail"))
+    lines += filter_vars(u["module"], ctx["vars"], lambda v: U[v]["cls"] in ("defmat", "embedded", "avail"),
+                         qualify=open_namespaces(lines))
     return lines
 
 def attr_lines(uid, available):
@@ -1041,6 +1148,10 @@ for uid in nodes:
         "is_target": u["name"] in plan["targets"],
     }
 
+# the anonymous local instances whose copies are referred to under a name the source did not give them
+# (in a published bundle, named by Lean): for checking against the compiled bundles
+json.dump({U[x]["name"]: n for x, n in LOCAL_NAME.items()},
+          open(os.path.join(os.path.dirname(CFG["tree_out"]), "local_instance_names.json"), "w"), indent=1)
 tree = {"bundles": [bundle_meta[m] for m in TOPO if m in bundle_meta],
         "nodes": [node_meta[uid] for uid in nodes], "topo_modules": TOPO,
         "published_bundles": published_bundles,

@@ -371,7 +371,7 @@
    }
   ],
   "imported_nodes": [
-   "MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits"
+   "MIPRE.LowDegree.BinaryPolynomial.eval2_polyOfBits"
   ],
   "pasted_helpers": 0,
   "prooflines": 10,
@@ -476,7 +476,7 @@
    }
   ],
   "imported_nodes": [
-   "MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits",
+   "MIPRE.LowDegree.BinaryPolynomial.eval2_polyOfBits",
    "MIPRE.LowDegree.BinaryPolynomial.normalize_monic",
    "MIPRE.LowDegree.shoupIrreducible_monic",
    "MIPRE.LowDegree.shoupIrreducible_irreducible",

@@ -478,7 +478,7 @@
   ],
   "imported_nodes": [
    "MIPRE.fourierOf_pair_mul",
-   "MIPRE.fourierOf_pair_mul'",
+   "MIPRE.fourierOf_pair_mul_prime",
    "MIPRE.sum_stateSqNorm_fourierOf",
    "MIPRE.trFourier_trObs"
   ],

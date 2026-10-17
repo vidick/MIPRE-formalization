@@ -53,7 +53,7 @@
   "imported_nodes": [
    "MIPRE.LIDT.Adapter.canonLin_bot",
    "MIPRE.LIDT.Adapter.card_filter_clDiag_ge",
-   "MIPRE.LIDT.Adapter.sum_fibre_μ_eq_sum_samples",
+   "MIPRE.LIDT.Adapter.sum_fibre_mu_eq_sum_samples",
    "MIPRE.LIDT.Adapter.sum_sum_le_card_mul",
    "MIPRE.LIDT.Adapter.card_filter_seed_le",
    "MIPRE.LIDT.Adapter.eq_diag_zero_of_qmapS",
@@ -206,7 +206,7 @@
    "MIPRE.LIDT.Adapter.card_filter_diag_le",
    "MIPRE.LIDT.Adapter.weight_le_of_questions_diag",
    "MIPRE.LIDT.Adapter.card_filter_clDiag_ge",
-   "MIPRE.LIDT.Adapter.sum_fibre_μ_eq_sum_samples",
+   "MIPRE.LIDT.Adapter.sum_fibre_mu_eq_sum_samples",
    "MIPRE.LIDT.Adapter.sum_sum_le_card_mul",
    "MIPRE.LIDT.Adapter.card_filter_pinned_le",
    "MIPRE.LIDT.Adapter.forced_of_qmapS_dline",
@@ -267,7 +267,7 @@
   ],
   "blueprint": [],
   "imported_nodes": [
-   "MIPRE.LIDT.Adapter.sum_fibre_μ_eq_sum_samples",
+   "MIPRE.LIDT.Adapter.sum_fibre_mu_eq_sum_samples",
    "MIPRE.LIDT.Adapter.filter_qmapS_line_line_eq_empty"
   ],
   "pasted_helpers": 1,
@@ -304,7 +304,7 @@
    }
   ],
   "imported_nodes": [
-   "MIPRE.LIDT.Adapter.sum_fibre_μ_eq_sum_samples",
+   "MIPRE.LIDT.Adapter.sum_fibre_mu_eq_sum_samples",
    "MIPRE.LIDT.Adapter.pushforward_axis",
    "MIPRE.LIDT.Adapter.pushforward_point",
    "MIPRE.LIDT.Adapter.pushforward_diag_zero",

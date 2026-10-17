@@ -251,7 +251,7 @@
   ],
   "imported_nodes": [
    "MIPRE.POVM.sum_mats_map_prod",
-   "MIPRE.POVM.sum_mats_map_prod'",
+   "MIPRE.POVM.sum_mats_map_prod_prime",
    "MIPRE.Introspection.linear_measurements_commute",
    "MIPRE.Introspection.coarse_joint_commutator_bound",
    "MIPRE.Introspection.linear_measurement_isPVM",
@@ -308,7 +308,7 @@
   "imported_nodes": [
    "MIPRE.sum_xSqNorm_le_of_two_step",
    "MIPRE.POVM.sum_mats_map_prod",
-   "MIPRE.POVM.sum_mats_map_prod'",
+   "MIPRE.POVM.sum_mats_map_prod_prime",
    "MIPRE.POVM.map_map",
    "MIPRE.norm_evec_expVec",
    "MIPRE.mulVec_kron_kron_expVec",

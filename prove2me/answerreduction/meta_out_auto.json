@@ -6201,7 +6201,7 @@
    "answer-reduction",
    "pcp"
   ],
-  "explanation": "The uploaded proof is the source proof (101 lines). It pastes 40 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.AnswerReduction.total`, `MIPRE.AnswerReduction.one_sub_povmValue_decoded_le`, `MIPRE.AnswerReduction.exists_threshold_clB`, `MIPRE.AnswerReduction.sqrt_le_delta`, `MIPRE.AnswerReduction.errE_le`, `MIPRE.AnswerReduction.z_le`, `MIPRE.AnswerReduction.pcpSound`, `MIPRE.AnswerReduction.typedStrategy_value_ge`, `MIPRE.ancillaEmbed_isometry`, `MIPRE.exists_projective_dilation`, `MIPRE.POVM.ext'`, `MIPRE.TensorProductStrategy.succAt_adapt_eq` and others, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (101 lines). It pastes 40 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.AnswerReduction.total`, `MIPRE.AnswerReduction.one_sub_povmValue_decoded_le`, `MIPRE.AnswerReduction.exists_threshold_clB`, `MIPRE.AnswerReduction.sqrt_le_delta`, `MIPRE.AnswerReduction.errE_le`, `MIPRE.AnswerReduction.z_le`, `MIPRE.AnswerReduction.pcpSound`, `MIPRE.AnswerReduction.typedStrategy_value_ge`, `MIPRE.ancillaEmbed_isometry`, `MIPRE.exists_projective_dilation`, `MIPRE.POVM.ext_prime`, `MIPRE.TensorProductStrategy.succAt_adapt_eq` and others, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -6266,7 +6266,7 @@
    "low-degree-test",
    "polynomial-time"
   ],
-  "explanation": "The uploaded proof is the source proof (26 lines). It reduces to the uploaded theorems `MIPStarRE.LDT.avgOver_uniform_prod`, `MIPStarRE.LDT.avgOver_congr`, `MIPStarRE.LDT.Pasting.fromHToG_sum₂_avgOver₂`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (26 lines). It reduces to the uploaded theorems `MIPStarRE.LDT.avgOver_uniform_prod`, `MIPStarRE.LDT.avgOver_congr`, `MIPStarRE.LDT.Pasting.fromHToG_sum2_avgOver2`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -8970,7 +8970,7 @@
    "answer-reduction",
    "pcp"
   ],
-  "explanation": "The uploaded proof is the source proof (20 lines). It pastes 8 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.AnswerReduction.sum_edges_le`, `MIPRE.AnswerReduction.disPolyB_le`, `MIPRE.AnswerReduction.sum_dis_GAe_MB1_le`, `MIPRE.AnswerReduction.sum_dis_MA6_JBe_le`, `MIPRE.AnswerReduction.rd_eq_of_typedPred'`, `MIPRE.one_sub_sum_bornProb_le_condFail`, `MIPRE.sum_dis_triangle`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (20 lines). It pastes 8 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.AnswerReduction.sum_edges_le`, `MIPRE.AnswerReduction.disPolyB_le`, `MIPRE.AnswerReduction.sum_dis_GAe_MB1_le`, `MIPRE.AnswerReduction.sum_dis_MA6_JBe_le`, `MIPRE.AnswerReduction.rd_eq_of_typedPred_prime`, `MIPRE.one_sub_sum_bornProb_le_condFail`, `MIPRE.sum_dis_triangle`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -9009,7 +9009,7 @@
    "answer-reduction",
    "pcp"
   ],
-  "explanation": "The uploaded proof is the source proof (25 lines). It pastes 41 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.AnswerReduction.pcpCl_exactlyOn`, `MIPRE.LIDT.Simul.sum_deltaSim_le`, `MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy_le`, `MIPRE.LIDT.Simul.inconsistency_eq_one_sub`, `MIPRE.CL.sum_comp_injective`, `MIPRE.LIDT.CL.Regs.pres_eval`, `MIPRE.CL.CLFun.truncate_reindex`, `MIPRE.CL.CLFun.eval_reindex`, `MIPRE.CL.pull_proj_compl`, `MIPRE.CL.CLFun.eval_truncate_of_le`, `MIPRE.dis_map_le`, `MIPRE.POVM.ext'` and others, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (25 lines). It pastes 41 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.AnswerReduction.pcpCl_exactlyOn`, `MIPRE.LIDT.Simul.sum_deltaSim_le`, `MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy_le`, `MIPRE.LIDT.Simul.inconsistency_eq_one_sub`, `MIPRE.CL.sum_comp_injective`, `MIPRE.LIDT.CL.Regs.pres_eval`, `MIPRE.CL.CLFun.truncate_reindex`, `MIPRE.CL.CLFun.eval_reindex`, `MIPRE.CL.pull_proj_compl`, `MIPRE.CL.CLFun.eval_truncate_of_le`, `MIPRE.dis_map_le`, `MIPRE.POVM.ext_prime` and others, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -9022,7 +9022,7 @@
    "answer-reduction",
    "pcp"
   ],
-  "explanation": "The uploaded proof is the source proof (25 lines). It pastes 41 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.AnswerReduction.pcpCl_exactlyOn`, `MIPRE.LIDT.Simul.sum_deltaSim_le`, `MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy_le`, `MIPRE.LIDT.Simul.inconsistency_eq_one_sub`, `MIPRE.CL.sum_comp_injective`, `MIPRE.LIDT.CL.Regs.pres_eval`, `MIPRE.CL.CLFun.truncate_reindex`, `MIPRE.CL.CLFun.eval_reindex`, `MIPRE.CL.pull_proj_compl`, `MIPRE.CL.CLFun.eval_truncate_of_le`, `MIPRE.dis_map_le`, `MIPRE.POVM.ext'` and others, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (25 lines). It pastes 41 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.AnswerReduction.pcpCl_exactlyOn`, `MIPRE.LIDT.Simul.sum_deltaSim_le`, `MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy_le`, `MIPRE.LIDT.Simul.inconsistency_eq_one_sub`, `MIPRE.CL.sum_comp_injective`, `MIPRE.LIDT.CL.Regs.pres_eval`, `MIPRE.CL.CLFun.truncate_reindex`, `MIPRE.CL.CLFun.eval_reindex`, `MIPRE.CL.pull_proj_compl`, `MIPRE.CL.CLFun.eval_truncate_of_le`, `MIPRE.dis_map_le`, `MIPRE.POVM.ext_prime` and others, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -9035,7 +9035,7 @@
    "answer-reduction",
    "pcp"
   ],
-  "explanation": "The uploaded proof is the source proof (24 lines). It pastes 40 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.AnswerReduction.pcpCl_exactlyOn`, `MIPRE.LIDT.Simul.sum_deltaSim_le`, `MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy6_le`, `MIPRE.LIDT.Simul.inconsistency_eq_one_sub`, `MIPRE.CL.sum_comp_injective`, `MIPRE.LIDT.CL.Regs.pres_eval`, `MIPRE.CL.CLFun.truncate_reindex`, `MIPRE.CL.CLFun.eval_reindex`, `MIPRE.CL.pull_proj_compl`, `MIPRE.CL.CLFun.eval_truncate_of_le`, `MIPRE.dis_map_le`, `MIPRE.POVM.ext'` and others, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (24 lines). It pastes 40 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.AnswerReduction.pcpCl_exactlyOn`, `MIPRE.LIDT.Simul.sum_deltaSim_le`, `MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy6_le`, `MIPRE.LIDT.Simul.inconsistency_eq_one_sub`, `MIPRE.CL.sum_comp_injective`, `MIPRE.LIDT.CL.Regs.pres_eval`, `MIPRE.CL.CLFun.truncate_reindex`, `MIPRE.CL.CLFun.eval_reindex`, `MIPRE.CL.pull_proj_compl`, `MIPRE.CL.CLFun.eval_truncate_of_le`, `MIPRE.dis_map_le`, `MIPRE.POVM.ext_prime` and others, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -9048,7 +9048,7 @@
    "answer-reduction",
    "pcp"
   ],
-  "explanation": "The uploaded proof is the source proof (25 lines). It pastes 40 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.AnswerReduction.pcpCl_exactlyOn`, `MIPRE.LIDT.Simul.sum_deltaSim_le`, `MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy6_le`, `MIPRE.LIDT.Simul.inconsistency_eq_one_sub`, `MIPRE.CL.sum_comp_injective`, `MIPRE.LIDT.CL.Regs.pres_eval`, `MIPRE.CL.CLFun.truncate_reindex`, `MIPRE.CL.CLFun.eval_reindex`, `MIPRE.CL.pull_proj_compl`, `MIPRE.CL.CLFun.eval_truncate_of_le`, `MIPRE.dis_map_le`, `MIPRE.POVM.ext'` and others, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (25 lines). It pastes 40 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.AnswerReduction.pcpCl_exactlyOn`, `MIPRE.LIDT.Simul.sum_deltaSim_le`, `MIPRE.AnswerReduction.sum_one_sub_value_copyStrategy6_le`, `MIPRE.LIDT.Simul.inconsistency_eq_one_sub`, `MIPRE.CL.sum_comp_injective`, `MIPRE.LIDT.CL.Regs.pres_eval`, `MIPRE.CL.CLFun.truncate_reindex`, `MIPRE.CL.CLFun.eval_reindex`, `MIPRE.CL.pull_proj_compl`, `MIPRE.CL.CLFun.eval_truncate_of_le`, `MIPRE.dis_map_le`, `MIPRE.POVM.ext_prime` and others, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -13754,7 +13754,7 @@
    "low-degree-test",
    "polynomial-time"
   ],
-  "explanation": "The uploaded proof is the source proof (15 lines). It pastes 8 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LIDT.lidtError_le_deltaCL`, `MIPRE.LIDT.Adapter.clSoundness_ldc_one`, `MIPRE.LIDT.CL.card_div_pos`, `MIPRE.LIDT.Simul.extracted_conclusions`, `MIPRE.LIDT.Simul.eval_linPoly_padB`, `MIPRE.LIDT.Simul.accepts_rmap`, `MIPRE.LIDT.Simul.sum_mu_qmap_le`, `MIPRE.POVM.ext'`, `MIPRE.POVM.map_map`, `MIPRE.TensorProductStrategy.exists_one_sub_value_adapt_le`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (15 lines). It pastes 8 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LIDT.lidtError_le_deltaCL`, `MIPRE.LIDT.Adapter.clSoundness_ldc_one`, `MIPRE.LIDT.CL.card_div_pos`, `MIPRE.LIDT.Simul.extracted_conclusions`, `MIPRE.LIDT.Simul.eval_linPoly_padB`, `MIPRE.LIDT.Simul.accepts_rmap`, `MIPRE.LIDT.Simul.sum_mu_qmap_le`, `MIPRE.POVM.ext_prime`, `MIPRE.POVM.map_map`, `MIPRE.TensorProductStrategy.exists_one_sub_value_adapt_le`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -14683,7 +14683,7 @@
    "low-degree-test",
    "polynomial-time"
   ],
-  "explanation": "The uploaded proof is the source proof (42 lines). It pastes 1 helper lemma verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LIDT.Adapter.hD_selfCons`, `MIPRE.LIDT.Adapter.hD_axis`, `MIPRE.LIDT.Adapter.hD_diag`, `MIPRE.LIDT.Adapter.hD_axis'`, `MIPRE.LIDT.Adapter.hD_diag'`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (42 lines). It pastes 1 helper lemma verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LIDT.Adapter.hD_selfCons`, `MIPRE.LIDT.Adapter.hD_axis`, `MIPRE.LIDT.Adapter.hD_diag`, `MIPRE.LIDT.Adapter.hD_axis_prime`, `MIPRE.LIDT.Adapter.hD_diag_prime`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -14865,7 +14865,7 @@
    "low-degree-test",
    "polynomial-time"
   ],
-  "explanation": "The uploaded proof is the source proof (95 lines). It pastes 14 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LIDT.Adapter.sum_fibre_μ_eq_sum_samples`, `MIPRE.LIDT.Adapter.sum_sum_le_card_mul`, `MIPRE.LIDT.Adapter.filter_qmapS_axis_subset`, `MIPRE.LIDT.Adapter.base_of_qmapS_axis`, `MIPRE.LIDT.Adapter.card_filter_axis_le`, `MIPRE.LIDT.CL.card_div_pos`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (95 lines). It pastes 14 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LIDT.Adapter.sum_fibre_mu_eq_sum_samples`, `MIPRE.LIDT.Adapter.sum_sum_le_card_mul`, `MIPRE.LIDT.Adapter.filter_qmapS_axis_subset`, `MIPRE.LIDT.Adapter.base_of_qmapS_axis`, `MIPRE.LIDT.Adapter.card_filter_axis_le`, `MIPRE.LIDT.CL.card_div_pos`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -14878,7 +14878,7 @@
    "low-degree-test",
    "polynomial-time"
   ],
-  "explanation": "The uploaded proof is the source proof (69 lines). It pastes 13 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LIDT.Adapter.card_filter_clPoint_ge`, `MIPRE.LIDT.Adapter.sum_fibre_μ_eq_sum_samples`, `MIPRE.LIDT.Adapter.filter_qmapS_point_subset`, `MIPRE.LIDT.Adapter.sum_sum_le_card_mul`, `MIPRE.LIDT.CL.card_div_pos`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (69 lines). It pastes 13 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LIDT.Adapter.card_filter_clPoint_ge`, `MIPRE.LIDT.Adapter.sum_fibre_mu_eq_sum_samples`, `MIPRE.LIDT.Adapter.filter_qmapS_point_subset`, `MIPRE.LIDT.Adapter.sum_sum_le_card_mul`, `MIPRE.LIDT.CL.card_div_pos`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -15579,7 +15579,7 @@
    "mip-re",
    "verifiers"
   ],
-  "explanation": "The uploaded proof is the source proof (16 lines). It reduces to the uploaded theorem `MIPRE.POVM.ext'`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (16 lines). It reduces to the uploaded theorem `MIPRE.POVM.ext_prime`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -15802,7 +15802,7 @@
    "mip-re",
    "verifiers"
   ],
-  "explanation": "The uploaded proof is the source proof (2 lines). It pastes 8 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits`, `MIPRE.LowDegree.BinaryPolynomial.evalBits_xor`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (2 lines). It pastes 8 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LowDegree.BinaryPolynomial.eval2_polyOfBits`, `MIPRE.LowDegree.BinaryPolynomial.evalBits_xor`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -16306,7 +16306,7 @@
    "mip-re",
    "verifiers"
   ],
-  "explanation": "The uploaded proof is the source proof (24 lines). It pastes 71 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LowDegree.BinaryLinear.typedBasis_span`, `MIPRE.LowDegree.BinaryPolynomial.natDegree_polyOfBits_append_true`, `MIPRE.LowDegree.BinaryPolynomial.monic_polyOfBits_append_true`, `MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits`, `MIPRE.LowDegree.BinaryPolynomial.divModBits_width`, `MIPRE.LowDegree.BinaryLinear.IsPivotBasis.append_reduced`, `MIPRE.LowDegree.BinaryLinear.binary_eq_zero_or_one`, `MIPRE.LowDegree.BinaryLinear.getD_vectorBits`, `MIPRE.LowDegree.BinaryQuotient.factor_dropLast_factors`, `MIPRE.LowDegree.BinaryQuotient.factor_dropLast_tail_isEmpty_iff`, `MIPRE.LowDegree.BinaryPolynomial.gcdStep_correct`, `MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits` and others, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (24 lines). It pastes 71 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LowDegree.BinaryLinear.typedBasis_span`, `MIPRE.LowDegree.BinaryPolynomial.natDegree_polyOfBits_append_true`, `MIPRE.LowDegree.BinaryPolynomial.monic_polyOfBits_append_true`, `MIPRE.LowDegree.BinaryPolynomial.evalBits_oneBits`, `MIPRE.LowDegree.BinaryPolynomial.divModBits_width`, `MIPRE.LowDegree.BinaryLinear.IsPivotBasis.append_reduced`, `MIPRE.LowDegree.BinaryLinear.binary_eq_zero_or_one`, `MIPRE.LowDegree.BinaryLinear.getD_vectorBits`, `MIPRE.LowDegree.BinaryQuotient.factor_dropLast_factors`, `MIPRE.LowDegree.BinaryQuotient.factor_dropLast_tail_isEmpty_iff`, `MIPRE.LowDegree.BinaryPolynomial.gcdStep_correct`, `MIPRE.LowDegree.BinaryPolynomial.eval2_polyOfBits` and others, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -16378,7 +16378,7 @@
    "mip-re",
    "verifiers"
   ],
-  "explanation": "The uploaded proof is the source proof (26 lines). It pastes 14 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LowDegree.BinaryPolynomial.cyclotomicSeedBits_correct`, `MIPRE.LowDegree.BinaryPolynomial.irreducible_comp_prime_pow_of_nonresidue`, `MIPRE.LowDegree.BinaryPolynomial.nonresidueLiftBitsProg_correct`, `MIPRE.LowDegree.BinaryPolynomial.oddExtensionLowerBits_spec`, `MIPRE.LowDegree.BinaryPolynomial.evalBits_oddTraceBits_of_root`, `MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits`, `MIPRE.LowDegree.BinaryPrimePowerTrace.flat_trace_natDegree`, `MIPRE.LowDegree.BinaryQuotient.root_eq`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (26 lines). It pastes 14 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LowDegree.BinaryPolynomial.cyclotomicSeedBits_correct`, `MIPRE.LowDegree.BinaryPolynomial.irreducible_comp_prime_pow_of_nonresidue`, `MIPRE.LowDegree.BinaryPolynomial.nonresidueLiftBitsProg_correct`, `MIPRE.LowDegree.BinaryPolynomial.oddExtensionLowerBits_spec`, `MIPRE.LowDegree.BinaryPolynomial.evalBits_oddTraceBits_of_root`, `MIPRE.LowDegree.BinaryPolynomial.eval2_polyOfBits`, `MIPRE.LowDegree.BinaryPrimePowerTrace.flat_trace_natDegree`, `MIPRE.LowDegree.BinaryQuotient.root_eq`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -16390,7 +16390,7 @@
    "mip-re",
    "verifiers"
   ],
-  "explanation": "The uploaded proof is the source proof (35 lines). It pastes 22 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LowDegree.BinaryPolynomial.monic_polyOfBits_append_true`, `MIPRE.LowDegree.BinaryPolynomial.irreducible_comp_prime_pow_of_nonresidue`, `MIPRE.LowDegree.BinaryPolynomial.nonresidueLiftBitsProg_correct`, `MIPRE.LowDegree.BinaryPolynomial.oddTraceBits_natDegree`, `MIPRE.LowDegree.BinaryPolynomial.oddExtensionLowerBits_spec`, `MIPRE.LowDegree.BinaryQuotient.map_orbitPolynomialBits`, `MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBits_monic_natDegree`, `MIPRE.LowDegree.BinaryQuotient.eval_orbitPolynomial`, `MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits`, `MIPRE.LowDegree.BinaryPolynomial.length_mulReduce`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (35 lines). It pastes 22 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LowDegree.BinaryPolynomial.monic_polyOfBits_append_true`, `MIPRE.LowDegree.BinaryPolynomial.irreducible_comp_prime_pow_of_nonresidue`, `MIPRE.LowDegree.BinaryPolynomial.nonresidueLiftBitsProg_correct`, `MIPRE.LowDegree.BinaryPolynomial.oddTraceBits_natDegree`, `MIPRE.LowDegree.BinaryPolynomial.oddExtensionLowerBits_spec`, `MIPRE.LowDegree.BinaryQuotient.map_orbitPolynomialBits`, `MIPRE.LowDegree.BinaryQuotient.orbitPolynomialBits_monic_natDegree`, `MIPRE.LowDegree.BinaryQuotient.eval_orbitPolynomial`, `MIPRE.LowDegree.BinaryPolynomial.eval2_polyOfBits`, `MIPRE.LowDegree.BinaryPolynomial.length_mulReduce`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -16414,7 +16414,7 @@
    "mip-re",
    "verifiers"
   ],
-  "explanation": "The uploaded proof is the source proof (15 lines). It pastes 10 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LowDegree.BinaryPolynomial.irreducible_comp_prime_pow_of_nonresidue`, `MIPRE.LowDegree.BinaryPolynomial.nonresidueLiftBitsProg_correct`, `MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (15 lines). It pastes 10 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LowDegree.BinaryPolynomial.irreducible_comp_prime_pow_of_nonresidue`, `MIPRE.LowDegree.BinaryPolynomial.nonresidueLiftBitsProg_correct`, `MIPRE.LowDegree.BinaryPolynomial.eval2_polyOfBits`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -16678,7 +16678,7 @@
    "mip-re",
    "verifiers"
   ],
-  "explanation": "The uploaded proof is the source proof (9 lines). It pastes 1 helper lemma verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorem `MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (9 lines). It pastes 1 helper lemma verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorem `MIPRE.LowDegree.BinaryPolynomial.eval2_polyOfBits`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -17390,7 +17390,7 @@
    "low-degree-test",
    "polynomial-time"
   ],
-  "explanation": "The uploaded proof is the source proof (134 lines). It pastes 19 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LIDT.Adapter.canonLin_bot`, `MIPRE.LIDT.Adapter.card_filter_clDiag_ge`, `MIPRE.LIDT.Adapter.sum_fibre_μ_eq_sum_samples`, `MIPRE.LIDT.Adapter.sum_sum_le_card_mul`, `MIPRE.LIDT.Adapter.card_filter_seed_le`, `MIPRE.LIDT.Adapter.eq_diag_zero_of_qmapS`, `MIPRE.LIDT.CL.card_div_pos`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (134 lines). It pastes 19 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LIDT.Adapter.canonLin_bot`, `MIPRE.LIDT.Adapter.card_filter_clDiag_ge`, `MIPRE.LIDT.Adapter.sum_fibre_mu_eq_sum_samples`, `MIPRE.LIDT.Adapter.sum_sum_le_card_mul`, `MIPRE.LIDT.Adapter.card_filter_seed_le`, `MIPRE.LIDT.Adapter.eq_diag_zero_of_qmapS`, `MIPRE.LIDT.CL.card_div_pos`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -17455,7 +17455,7 @@
    "low-degree-test",
    "polynomial-time"
   ],
-  "explanation": "The uploaded proof is the source proof (151 lines). It pastes 22 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LIDT.Adapter.card_filter_diag_le`, `MIPRE.LIDT.Adapter.weight_le_of_questions_diag`, `MIPRE.LIDT.Adapter.card_filter_clDiag_ge`, `MIPRE.LIDT.Adapter.sum_fibre_μ_eq_sum_samples`, `MIPRE.LIDT.Adapter.sum_sum_le_card_mul`, `MIPRE.LIDT.Adapter.card_filter_pinned_le`, `MIPRE.LIDT.Adapter.forced_of_qmapS_dline`, `MIPRE.LIDT.Adapter.base_of_qmapS_dline`, `MIPRE.LIDT.CL.card_div_pos`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (151 lines). It pastes 22 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LIDT.Adapter.card_filter_diag_le`, `MIPRE.LIDT.Adapter.weight_le_of_questions_diag`, `MIPRE.LIDT.Adapter.card_filter_clDiag_ge`, `MIPRE.LIDT.Adapter.sum_fibre_mu_eq_sum_samples`, `MIPRE.LIDT.Adapter.sum_sum_le_card_mul`, `MIPRE.LIDT.Adapter.card_filter_pinned_le`, `MIPRE.LIDT.Adapter.forced_of_qmapS_dline`, `MIPRE.LIDT.Adapter.base_of_qmapS_dline`, `MIPRE.LIDT.CL.card_div_pos`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -17481,7 +17481,7 @@
    "low-degree-test",
    "polynomial-time"
   ],
-  "explanation": "The uploaded proof is the source proof (17 lines). It pastes 1 helper lemma verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LIDT.Adapter.sum_fibre_μ_eq_sum_samples`, `MIPRE.LIDT.Adapter.filter_qmapS_line_line_eq_empty`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (17 lines). It pastes 1 helper lemma verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LIDT.Adapter.sum_fibre_mu_eq_sum_samples`, `MIPRE.LIDT.Adapter.filter_qmapS_line_line_eq_empty`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -17494,7 +17494,7 @@
    "low-degree-test",
    "polynomial-time"
   ],
-  "explanation": "The uploaded proof is the source proof (22 lines). It pastes 4 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LIDT.Adapter.sum_fibre_μ_eq_sum_samples`, `MIPRE.LIDT.Adapter.pushforward_axis`, `MIPRE.LIDT.Adapter.pushforward_point`, `MIPRE.LIDT.Adapter.pushforward_diag_zero`, `MIPRE.LIDT.Adapter.pushforward_diag_ne`, `MIPRE.LIDT.Adapter.pushforward_line_line`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (22 lines). It pastes 4 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LIDT.Adapter.sum_fibre_mu_eq_sum_samples`, `MIPRE.LIDT.Adapter.pushforward_axis`, `MIPRE.LIDT.Adapter.pushforward_point`, `MIPRE.LIDT.Adapter.pushforward_diag_zero`, `MIPRE.LIDT.Adapter.pushforward_diag_ne`, `MIPRE.LIDT.Adapter.pushforward_line_line`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -18486,7 +18486,7 @@
    "mip-re",
    "verifiers"
   ],
-  "explanation": "The uploaded proof is the source proof (10 lines). It reduces to the uploaded theorem `MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (10 lines). It reduces to the uploaded theorem `MIPRE.LowDegree.BinaryPolynomial.eval2_polyOfBits`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -18522,7 +18522,7 @@
    "mip-re",
    "verifiers"
   ],
-  "explanation": "The uploaded proof is the source proof (3 lines). It pastes 4 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits`, `MIPRE.LowDegree.BinaryPolynomial.normalize_monic`, `MIPRE.LowDegree.shoupIrreducible_monic`, `MIPRE.LowDegree.shoupIrreducible_irreducible`, `MIPRE.LowDegree.shoupIrreducible_natDegree`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
+  "explanation": "The uploaded proof is the source proof (3 lines). It pastes 4 helper lemmas verbatim from the source modules, each used only by proofs. It reduces to the uploaded theorems `MIPRE.LowDegree.BinaryPolynomial.eval2_polyOfBits`, `MIPRE.LowDegree.BinaryPolynomial.normalize_monic`, `MIPRE.LowDegree.shoupIrreducible_monic`, `MIPRE.LowDegree.shoupIrreducible_irreducible`, `MIPRE.LowDegree.shoupIrreducible_natDegree`, imported as statement stubs. It compiles against the published definition bundles of the module's import closure.",
   "auto": true
  },
  {
@@ -19204,7 +19204,7 @@
  {
   "theorem_name": "MIPRE.TM.CookLevin.Desc.litFieldsR_ev",
   "theorem_title": "The field programs are the field formulas: the record of programs for litFields produces litFields",
-  "natural_language_statement": "A statement of the module `MIPRE.TM.CookLevin.FieldProg` of the MIP\\* = RE formalization (commit `70cbf1c` of vidick/MIPRE-formalization). The fields of a literal, as programs. `FieldsR ι` is a record of *readers*: one program per field of `FieldsF`, all of them reading the same input `ι`. `FieldsR.ev A i` is the field record its programs produce on the input `i`, and it is a structure literal whose components are, definitionally, the values of those programs — so every formula built from a `FieldsR` matches the same formula built from `FieldsR.ev` by `rfl`, and the whole family of programs of `FamilyProg.lean` costs one `rfl` each. `litFieldsR` is the record of programs for `litFields`: the one place where the constants of the…\n\n**The field programs are the field formulas**: the record of programs for `litFields`\nproduces `litFields`.\n\n**Formal statement.** In Lean, with the scope shown:\n\n```lean\nopen MIPRE\nopen MIPRE.TM\nopen MIPRE.TM.CookLevin\nopen MIPRE.TM.CookLevin.Desc\nopen MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun\nvariable {ι : Type*} [SizedEncoding ι]\nvariable (eu : PolyTimeFun ι Unary) (TR : PolyTimeFun ι ℕ) (b : PolyTimeFun ι Unary)\n\ntheorem MIPRE.TM.CookLevin.Desc.litFieldsR_ev (i : ι) :\n    (litFieldsR eu TR b).ev i = litFields (eu i).length Gc (TR i) (b i).length\n```\n\n**Formalization Note** `MIPRE.TM.CookLevin.Desc.litFieldsR_ev` is declared in `MIPRE/TM/CookLevin/FieldProg.lean`, lines 263–270. The binders, hypotheses and conclusion are exactly those of the Lean statement above; the uploaded statement elaborates to the same type as the declaration in the repository. The definitions it mentions are those of the published definition bundles of the module's import closure.",
+  "natural_language_statement": "A statement of the module `MIPRE.TM.CookLevin.FieldProg` of the MIP\\* = RE formalization (commit `70cbf1c` of vidick/MIPRE-formalization). The fields of a literal, as programs. `FieldsR ι` is a record of *readers*: one program per field of `FieldsF`, all of them reading the same input `ι`. `FieldsR.ev A i` is the field record its programs produce on the input `i`, and it is a structure literal whose components are, definitionally, the values of those programs — so every formula built from a `FieldsR` matches the same formula built from `FieldsR.ev` by `rfl`, and the whole family of programs of `FamilyProg.lean` costs one `rfl` each. `litFieldsR` is the record of programs for `litFields`: the one place where the constants of the…\n\n**The field programs are the field formulas**: the record of programs for `litFields`\nproduces `litFields`.\n\n**Formal statement.** In Lean, with the scope shown:\n\n```lean\nopen MIPRE\nopen MIPRE.TM\nopen MIPRE.TM.CookLevin\nopen MIPRE.TM.CookLevin.Desc\nopen MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun\nvariable {ι : Type*} [SizedEncoding ι]\nvariable (eu : PolyTimeFun ι MIPRE.Cost.Unary) (TR : PolyTimeFun ι ℕ) (b : PolyTimeFun ι MIPRE.Cost.Unary)\n\ntheorem MIPRE.TM.CookLevin.Desc.litFieldsR_ev (i : ι) :\n    (litFieldsR eu TR b).ev i = litFields (eu i).length Gc (TR i) (b i).length\n```\n\n**Formalization Note** `MIPRE.TM.CookLevin.Desc.litFieldsR_ev` is declared in `MIPRE/TM/CookLevin/FieldProg.lean`, lines 263–270. The binders, hypotheses and conclusion are exactly those of the Lean statement above; the uploaded statement elaborates to the same type as the declaration in the repository. The definitions it mentions are those of the published definition bundles of the module's import closure.",
   "source": "https://github.com/vidick/MIPRE-formalization/blob/70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed/MIPRE/TM/CookLevin/FieldProg.lean#L263-L270",
   "tags": [
    "mip-re",

@@ -137,7 +137,7 @@
    "open MIPRE.TM.CookLevin.Desc",
    "open MIPRE.TM.Interp MIPRE.SAT MIPRE.Cost MIPRE.Cost.PolyTimeFun",
    "variable {ι : Type*} [SizedEncoding ι]",
-   "variable (eu : PolyTimeFun ι Unary) (TR : PolyTimeFun ι ℕ) (b : PolyTimeFun ι Unary)"
+   "variable (eu : PolyTimeFun ι MIPRE.Cost.Unary) (TR : PolyTimeFun ι ℕ) (b : PolyTimeFun ι MIPRE.Cost.Unary)"
   ],
   "docstring": "**The field programs are the field formulas**: the record of programs for `litFields`\nproduces `litFields`.",
   "module": "MIPRE.TM.CookLevin.FieldProg",

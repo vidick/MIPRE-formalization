@@ -584,7 +584,7 @@
    "MIPRE.LIDT.Simul.eval_linPoly_padB",
    "MIPRE.LIDT.Simul.accepts_rmap",
    "MIPRE.LIDT.Simul.sum_mu_qmap_le",
-   "MIPRE.POVM.ext'",
+   "MIPRE.POVM.ext_prime",
    "MIPRE.POVM.map_map",
    "MIPRE.TensorProductStrategy.exists_one_sub_value_adapt_le"
   ],

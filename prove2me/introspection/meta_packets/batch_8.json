@@ -150,7 +150,7 @@
    "MIPRE.sq_sum_le_card_mul_sum_sq",
    "MIPRE.sum_xSqNorm_le_of_two_step",
    "MIPRE.POVM.sum_mats_map_prod",
-   "MIPRE.POVM.sum_mats_map_prod'",
+   "MIPRE.POVM.sum_mats_map_prod_prime",
    "MIPRE.commutation_analysis",
    "MIPRE.obs2_commutator_eq",
    "MIPRE.norm_stateVec_comm_le",

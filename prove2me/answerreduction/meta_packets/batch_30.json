@@ -26,7 +26,7 @@
   "imported_nodes": [
    "MIPStarRE.LDT.avgOver_uniform_prod",
    "MIPStarRE.LDT.avgOver_congr",
-   "MIPStarRE.LDT.Pasting.fromHToG_sum₂_avgOver₂"
+   "MIPStarRE.LDT.Pasting.fromHToG_sum2_avgOver2"
   ],
   "pasted_helpers": 0,
   "prooflines": 26,

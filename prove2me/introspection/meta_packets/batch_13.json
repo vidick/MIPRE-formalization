@@ -127,7 +127,7 @@
    "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
    "variable (hm4 : 4 * m ∣ Fintype.card F)",
    "variable (hm)",
-   "variable {dB : Type} [Fintype dB] [DecidableEq dB] {M : Question F m → POVM (Answer F m d) dB}"
+   "variable {dB : Type} [Fintype dB] [DecidableEq dB] {M : MIPRE.QLD.Question F m → POVM (MIPRE.QLD.Answer F m d) dB}"
   ],
   "docstring": "The `X` line measurement of the pair of sublines is unchanged by the padded shift.",
   "module": "MIPRE.Background.QLD.PaddedStrategy",
@@ -166,7 +166,7 @@
    "variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] [Algebra (ZMod 2) F] {m d : ℕ}",
    "variable (hm4 : 4 * m ∣ Fintype.card F)",
    "variable (hm)",
-   "variable {dB : Type} [Fintype dB] [DecidableEq dB] {M : Question F m → POVM (Answer F m d) dB}"
+   "variable {dB : Type} [Fintype dB] [DecidableEq dB] {M : MIPRE.QLD.Question F m → POVM (MIPRE.QLD.Answer F m d) dB}"
   ],
   "docstring": "The `Z` line measurement of the pair of sublines is unchanged by the padded shift.",
   "module": "MIPRE.Background.QLD.PaddedStrategy",

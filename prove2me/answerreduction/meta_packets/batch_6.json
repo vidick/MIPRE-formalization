@@ -123,8 +123,8 @@
    "MIPRE.LIDT.Adapter.hD_selfCons",
    "MIPRE.LIDT.Adapter.hD_axis",
    "MIPRE.LIDT.Adapter.hD_diag",
-   "MIPRE.LIDT.Adapter.hD_axis'",
-   "MIPRE.LIDT.Adapter.hD_diag'"
+   "MIPRE.LIDT.Adapter.hD_axis_prime",
+   "MIPRE.LIDT.Adapter.hD_diag_prime"
   ],
   "pasted_helpers": 1,
   "prooflines": 42,
@@ -516,7 +516,7 @@
   ],
   "blueprint": [],
   "imported_nodes": [
-   "MIPRE.LIDT.Adapter.sum_fibre_μ_eq_sum_samples",
+   "MIPRE.LIDT.Adapter.sum_fibre_mu_eq_sum_samples",
    "MIPRE.LIDT.Adapter.sum_sum_le_card_mul",
    "MIPRE.LIDT.Adapter.filter_qmapS_axis_subset",
    "MIPRE.LIDT.Adapter.base_of_qmapS_axis",
@@ -551,7 +551,7 @@
   "blueprint": [],
   "imported_nodes": [
    "MIPRE.LIDT.Adapter.card_filter_clPoint_ge",
-   "MIPRE.LIDT.Adapter.sum_fibre_μ_eq_sum_samples",
+   "MIPRE.LIDT.Adapter.sum_fibre_mu_eq_sum_samples",
    "MIPRE.LIDT.Adapter.filter_qmapS_point_subset",
    "MIPRE.LIDT.Adapter.sum_sum_le_card_mul",
    "MIPRE.LIDT.CL.card_div_pos"

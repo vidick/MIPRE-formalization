@@ -23,7 +23,7 @@
   "imported_nodes": [
    "MIPRE.LowDegree.BinaryPolynomial.irreducible_comp_prime_pow_of_nonresidue",
    "MIPRE.LowDegree.BinaryPolynomial.nonresidueLiftBitsProg_correct",
-   "MIPRE.LowDegree.BinaryPolynomial.eval₂_polyOfBits"
+   "MIPRE.LowDegree.BinaryPolynomial.eval2_polyOfBits"
   ],
   "pasted_helpers": 10,
   "prooflines": 15,

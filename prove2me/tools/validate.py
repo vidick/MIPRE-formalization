@@ -81,13 +81,20 @@ def ppType (n : Name) : MetaM String := do
   let ci ← getConstInfo n
   let f ← ppExpr ci.type
   return f.pretty 100000
+
+open Lean Meta in
+def ppTypeAll (n : Name) : MetaM String := do
+  let ci ← getConstInfo n
+  let o := (((← getOptions).setBool `pp.all true).set `pp.maxSteps (100000000 : Nat)).setBool `pp.deepTerms true
+  let f ← withTheReader Core.Context (fun c => { c with options := o }) (ppExpr ci.type)
+  return f.pretty 1000000000
 '''
 
 def run_lean(path):
     r = subprocess.run(["lake", "env", "lean", path], cwd=WS, env=env, capture_output=True, text=True)
     return r.returncode, r.stdout + r.stderr
 
-def write_check(name, imports, pairs):
+def write_check(name, imports, pairs, explicit=False):
     # one `run_meta` block per 40 names: a single block of 500 statements exceeds the elaborator's
     # recursion depth (the repetition tree has 515 nodes)
     body = "\n".join(f"import {i}" for i in imports) + "\n" + PP
@@ -95,6 +102,8 @@ def write_check(name, imports, pairs):
         body += "\nrun_meta do\n"
         for (n, lab) in pairs[k:k + 40]:
             body += f'  IO.println s!"{lab} :: {{← ppType `{n}}}"\n'
+            if explicit:
+                body += f'  IO.println s!"{lab}#ALL :: {{← ppTypeAll `{n}}}"\n'
     open(f"{WS}/Check/{name}.lean", "w", encoding="utf-8").write(body)
     return f"Check/{name}.lean"
 
@@ -174,9 +183,14 @@ def load(path, phase):
 
 def phase_stubs(o):
   # stub tree
-  p = write_check("Stubs", [f"Theorems.Thm_{it['slug']}" for it in items], [(it["name"], it["name"]) for it in items])
+  p = write_check("Stubs", [f"Theorems.Thm_{it['slug']}" for it in items], [(it["name"], it["name"]) for it in items],
+                  explicit=True)
   rc, out = run_lean(p)
-  stubs = parse(out)
+  both = parse(out)
+  # the default print is compared with the source's (the dump is printed so); the explicit one
+  # (pp.all), which no notation of the environment affects, with each solution's
+  stubs = {k: v for k, v in both.items() if not k.endswith("#ALL")}
+  stubs_all = {k[:-4]: v for k, v in both.items() if k.endswith("#ALL")}
   print("stub tree:", rc, len(stubs), "types of", len(items))
   if rc != 0:
       print(out[:3000])
@@ -198,7 +212,7 @@ def phase_stubs(o):
   for it in items:
       if not it["source_name"]:
           print("leaf (no source declaration):", it["name"], "::", stubs.get(it["name"]))
-  res = {"stubs": stubs, "stub_mismatch": bad, "stub_private_marker_only": priv, "rc": rc}
+  res = {"stubs": stubs, "stubs_all": stubs_all, "stub_mismatch": bad, "stub_private_marker_only": priv, "rc": rc}
   json.dump(res, open(STUB_OUT, "w", encoding="utf-8"), indent=1)
   return res
 
@@ -209,6 +223,8 @@ def check_body(it):
             '#print axioms solution\n')
 
 def parse_check(out):
+    """(default print, explicit print or None, axioms)."""
+    ta = [l[len("TALL :: "):] for l in out.splitlines() if l.startswith("TALL :: ")]
     t = list(parse("\n".join(l for l in out.splitlines() if l.startswith("T :: ") or l.startswith(" "))).values())
     ax = re.search(r"'solution' depends on axioms: \[([^\]]*)\]", out)
     if ax:
@@ -217,13 +233,13 @@ def parse_check(out):
         axs = ""
     else:
         axs = out.strip()[-300:]   # the check itself failed: reported as an unexpected "axiom"
-    return (t[0] if t else None), axs
+    return (t[0] if t else None), (ta[0] if ta else None), axs
 
 def check_solution(it):
     path = f"Check/Sol_{it['slug']}.lean"
     open(f"{WS}/{path}", "w", encoding="utf-8").write(check_body(it))
     rc, out = run_lean(path)
-    t, axs = parse_check(out)
+    t, TALL[it["name"]], axs = parse_check(out)
     return it, rc, t, axs, out
 
 def remove(p):
@@ -233,7 +249,9 @@ def remove(p):
         pass
 
 SECS = {}   # solution -> seconds its checked copy took to compile
-CHECK_TAIL = PP + '\nrun_meta do\n  IO.println s!"T :: {← ppType `solution}"\n#print axioms solution\n'
+TALL = {}   # solution -> its type printed with pp.all
+CHECK_TAIL = PP + ('\nrun_meta do\n  IO.println s!"T :: {← ppType `solution}"\n'
+                   '  IO.println s!"TALL :: {← ppTypeAll `solution}"\n#print axioms solution\n')
 
 def compile_and_check(it):
     """Compile a copy of the solution with the check appended, with the platform's options, and
@@ -264,11 +282,12 @@ def compile_and_check(it):
     if r.returncode != 0:
         errs = [l for l in out.splitlines() if ": error" in l]
         return it, r.returncode, None, "compile failed: " + (errs[0][:300] if errs else out.strip()[-300:]), out
-    t, axs = parse_check(out)
+    t, TALL[it["name"]], axs = parse_check(out)
     return it, r.returncode, t, axs, out
 
 def phase_solutions(s):
     stubs = s["stubs"]
+    stubs_all = s.get("stubs_all", {})
     sol_items = [it for it in items if it["solution"]]
     rec = {}
     if args.phase == "all" or args.redo:
@@ -290,8 +309,17 @@ def phase_solutions(s):
     t0 = time.time()
     with ThreadPoolExecutor(max_workers=args.jobs) as ex, open(SOL_OUT, "a", encoding="utf-8") as fo:
         for k, (it, rc, t, ax, out) in enumerate(ex.map(fn, todo), 1):
-            ok = rc == 0 and t is not None and t == stubs.get(it["name"])
-            r = {"name": it["name"], "rc": rc, "type": t, "axioms": ax, "ok": ok}
+            # the types printed with pp.all are compared when the stub check recorded them: the default
+            # print depends on the notation the environment has (`∀ i < n, …` where Mathlib's binder
+            # predicates are imported, `∀ (i : ℕ), i < n → …` where they are not)
+            ta = TALL.get(it["name"])
+            if it["name"] in stubs_all and ta is not None:
+                same = ta == stubs_all[it["name"]]
+            else:
+                same = t is not None and t == stubs.get(it["name"])
+            ok = rc == 0 and t is not None and same
+            r = {"name": it["name"], "rc": rc, "type": t, "axioms": ax, "ok": ok,
+                 "compared": "pp.all" if it["name"] in stubs_all and ta is not None else "default"}
             if it["name"] in SECS:
                 r["secs"] = SECS[it["name"]]
             rec[it["name"]] = r
