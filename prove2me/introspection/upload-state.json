@@ -2667,8 +2667,10 @@
   "MIPRE_Background_Introspection_DecisionKernelInput": {
    "submitted_at": 1792220562.3756464,
    "http": 202,
-   "status": "PENDING",
-   "job_id": "740b1377-3b22-4cda-9e65-6a4c18ba2b56"
+   "status": "PUBLISHED",
+   "job_id": "740b1377-3b22-4cda-9e65-6a4c18ba2b56",
+   "theorem_id": "6c7497cb-e2d2-4f91-b905-ba373e647f3a",
+   "error_message": ""
   },
   "MIPRE_Background_Introspection_PauliSamplerZero": {
    "submitted_at": 1792220614.4094892,
@@ -9045,6 +9047,24 @@
    "status": "PUBLISHED",
    "theorem_id": "5ad50f44-53a6-4f15-ac7f-3519516c2367",
    "error_message": ""
+  },
+  "MIPRE.Introspection.PauliSampler.coefficient_le_majorant": {
+   "submitted_at": 1792220740.6182992,
+   "http": 202,
+   "job_id": "2d261689-de78-44d3-8eb7-2b2cd41d7a9a",
+   "status": "QUEUED"
+  },
+  "MIPRE.Introspection.PauliSampler.fullSampler_dim": {
+   "submitted_at": 1792220741.121246,
+   "http": 202,
+   "job_id": "5f510757-da88-477e-8d3b-95f454ecb498",
+   "status": "QUEUED"
+  },
+  "MIPRE.Introspection.PauliSampler.fullSampler_uniform_bound": {
+   "submitted_at": 1792220743.1538708,
+   "http": 202,
+   "job_id": "398cb442-ab90-4886-8ef3-81c479077f62",
+   "status": "QUEUED"
   }
  },
  "solutions": {
@@ -14523,10 +14543,10 @@
    "error_message": ""
   },
   "MIPRE.Introspection.NumberedComplete.coordinate_exists_perfectPCC_with_format": {
-   "submitted_at": 1792220384.9005983,
+   "submitted_at": 1792220739.6243732,
    "http": 200,
-   "submission_id": "d35aa8b3-7106-4de0-b486-73bb1e080edf",
-   "status": "ERROR",
+   "submission_id": "432de30b-8110-4009-b37b-903ebb4a1f2b",
+   "status": "PENDING",
    "error_message": "Failed to resolve platform imports: DB error looking up import 'Definitions.Def_MIPRE_Foundations_LowDegree_BinaryQuotientOrbit': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
   },
   "MIPRE.QLD.PauliBooleanProgram.program_same_type": {
@@ -14561,7 +14581,8 @@
    "submitted_at": 1792220504.6896193,
    "http": 200,
    "submission_id": "2028e61a-7e9a-43cd-949f-b7477aec86ad",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.QLD.PauliBooleanProgram.program_probe": {
    "submitted_at": 1792220562.9517665,
@@ -14579,6 +14600,13 @@
    "submitted_at": 1792220671.6107132,
    "http": 200,
    "submission_id": "3bcf85c4-e814-40b7-8f44-f4144ebfeb93",
+   "status": "ERROR",
+   "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
+  },
+  "MIPRE.QLD.PauliBooleanProgram.program_magic": {
+   "submitted_at": 1792220740.249171,
+   "http": 200,
+   "submission_id": "e705b0a5-7462-445c-8680-42824ef553b8",
    "status": "PENDING"
   }
  },
