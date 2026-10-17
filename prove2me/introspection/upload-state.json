@@ -15658,10 +15658,10 @@
    "error_message": ""
   },
   "MIPRE.Introspection.CompiledSoundness.output_soundness": {
-   "submitted_at": 1792237651.6498911,
+   "submitted_at": 1792237786.2946095,
    "http": 200,
-   "submission_id": "eed06303-970f-491f-9c18-92446a77e0b8",
-   "status": "ERROR",
+   "submission_id": "56d1b676-76e4-47bd-8fff-57fd0d42b984",
+   "status": "PENDING",
    "error_message": "Failed to materialize the target's dependencies: DB error looking up import 'Theorems.Thm_MIPRE_CL_Detyping_graphOfBits_take_eq': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
   }
  },
