@@ -9574,37 +9574,49 @@
    "submitted_at": 1792227883.663921,
    "http": 202,
    "job_id": "d03c1667-910a-4979-b862-bddd29c8f722",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "fbcdf47c-0809-44df-985b-1611dc1ccfe5",
+   "error_message": ""
   },
   "MIPRE.QLD.exists_legal_dilation": {
    "submitted_at": 1792227884.0597868,
    "http": 202,
    "job_id": "679d7b7b-f6e9-4b31-a620-8048d7070cae",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "1aba2e4b-e49e-414e-9a14-5936a354fe2c",
+   "error_message": ""
   },
   "MIPRE.QLD.MirrorSimul.exists_phys_descent": {
    "submitted_at": 1792227894.7087944,
    "http": 202,
    "job_id": "7b1678dd-896a-4c8b-b8b7-2b6309b6e900",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "bd22341b-97f5-43f5-a87b-c7134d7e8eb4",
+   "error_message": ""
   },
   "MIPRE.QLD.exists_phys_of_regime": {
    "submitted_at": 1792227916.79985,
    "http": 202,
    "job_id": "456e9f96-bbc9-4997-9d31-77e4e81fa5de",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "4ccd578f-da9f-465d-8910-9ed152b2a6e5",
+   "error_message": ""
   },
   "MIPRE.QLD.exists_le_qldErr": {
    "submitted_at": 1792227938.8215618,
    "http": 202,
    "job_id": "b3075e9d-93ea-4cda-b827-f563637a9b3e",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "386002b8-a60e-4727-894d-dcd17be0cce5",
+   "error_message": ""
   },
   "MIPRE.QLD.qld_soundness": {
    "submitted_at": 1792227978.419242,
    "http": 202,
    "job_id": "699878c0-f62c-4b14-a82a-67ebb207489f",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "fdf94b63-5af0-4513-b6f3-62e615c5bdd3",
+   "error_message": ""
   }
  },
  "solutions": {
@@ -15394,8 +15406,8 @@
    "submitted_at": 1792228034.1695595,
    "http": 200,
    "submission_id": "d48183fb-1bb1-4b79-a65e-5e4d1c8af03b",
-   "status": "PENDING",
-   "error_message": "Failed to resolve platform imports: DB error looking up import 'Theorems.Thm_MIPStarRE_LDT_ExpansionHypercubeGraph_hypercubeSpectralGap_operator': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.QLD.deltaCL_four_mul_le": {
    "submitted_at": 1792227663.3787034,
@@ -15408,19 +15420,84 @@
    "submitted_at": 1792227820.285545,
    "http": 200,
    "submission_id": "c24adb7c-10ba-4f71-85f8-c9cdba582264",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.QLD.errSmall_two_rpow_neg": {
    "submitted_at": 1792228012.2108438,
    "http": 200,
    "submission_id": "d1ab4dc7-dc96-4519-8dc5-6af0f0a14ec2",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.QLD.physEmb_isometry": {
    "submitted_at": 1792228034.7876053,
    "http": 200,
    "submission_id": "f5c49a13-c2c7-4942-938b-1da8a2a6fccb",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.physVec_mirrorOfGlobalPairs": {
+   "submitted_at": 1792228158.8991737,
+   "http": 200,
+   "submission_id": "1636bf57-2afb-4c51-ad74-43be9396d1c4",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.exists_legal_dilation": {
+   "submitted_at": 1792228169.9985685,
+   "http": 200,
+   "submission_id": "2796b03b-7d97-4e43-ad9c-cf9e3cafcf7d",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.MirrorSimul.exists_phys_descent": {
+   "submitted_at": 1792228181.0237787,
+   "http": 200,
+   "submission_id": "d4ca9909-d04c-4f51-af77-8a306fa2d734",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.errShape_add": {
+   "submitted_at": 1792228407.5081673,
+   "http": 200,
+   "submission_id": "1448a217-f1d7-44c9-a920-d7557cdfa41f",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.errShape_rpow_le": {
+   "submitted_at": 1792228441.4836779,
+   "http": 200,
+   "submission_id": "28b40a8e-4d84-4c35-a9a2-6a22983a4179",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.ErrSmall.of_cases": {
+   "submitted_at": 1792228770.9834337,
+   "http": 200,
+   "submission_id": "44f76625-b4bc-4d73-a336-5ae451d801d9",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.errSmall_deltaGS": {
+   "submitted_at": 1792228865.0288663,
+   "http": 200,
+   "submission_id": "90a51925-31db-4f9a-91f0-69f01ba5fb48",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL_transport": {
+   "submitted_at": 1792229367.6679156,
+   "http": 200,
+   "submission_id": "b6287379-e261-4635-9917-5b374d9bcb78",
    "status": "PENDING"
+  },
+  "MIPRE.QLD.errSmall_qldErr": {
+   "submitted_at": 1792229368.6476288,
+   "http": 200,
+   "submission_id": "aa96a9ee-2e53-4b75-9f0e-b7ed1c2c4258",
+   "status": "ACCEPTED",
+   "error_message": ""
   }
  },
  "log": []
