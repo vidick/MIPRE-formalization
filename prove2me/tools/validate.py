@@ -253,6 +253,7 @@ def remove(p):
 
 SECS = {}   # solution -> seconds its checked copy took to compile
 TALL = {}   # solution -> its type printed with pp.all
+AUXONLY = {}  # solution -> True when its type equals the stub's only up to auxiliary proof names
 CHECK_TAIL = PP + ('\nrun_meta do\n  IO.println s!"T :: {← ppType `solution}"\n'
                    '  IO.println s!"TALL :: {← ppTypeAll `solution}"\n#print axioms solution\n')
 
@@ -321,11 +322,19 @@ def phase_solutions(s):
                 # declaration (`pt6_block._proof_1` in the stub, `solution._proof_1` in the solution)
                 aux = re.compile(re.escape(it["name"]) + r"\.(?=_proof_\d|match_\d|_auxLemma|proof_\d)")
                 same = ta == aux.sub("solution.", stubs_all[it["name"]])
+                if not same:
+                    # Lean reuses an auxiliary proof lemma of the same proposition already in the file
+                    # (`gHatSandwich_sum_last_eq_prefix`'s statement takes a pasted helper's `_proof_1`):
+                    # the types then agree up to the names of proofs, that is up to proof irrelevance
+                    anyaux = re.compile(r"[\w.'₀-₉]+\._proof_\d+")
+                    if anyaux.sub("_proof", ta) == anyaux.sub("_proof", stubs_all[it["name"]]):
+                        same, AUXONLY[it["name"]] = True, True
             else:
                 same = t is not None and t == stubs.get(it["name"])
             ok = rc == 0 and t is not None and same
             r = {"name": it["name"], "rc": rc, "type": t, "axioms": ax, "ok": ok,
-                 "compared": "pp.all" if it["name"] in stubs_all and ta is not None else "default"}
+                 "compared": ("pp.all, up to auxiliary proof names" if AUXONLY.get(it["name"]) else "pp.all")
+                             if it["name"] in stubs_all and ta is not None else "default"}
             if it["name"] in SECS:
                 r["secs"] = SECS[it["name"]]
             rec[it["name"]] = r
