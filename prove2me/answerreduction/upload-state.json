@@ -11005,13 +11005,17 @@
    "submitted_at": 1792208194.7213135,
    "http": 202,
    "job_id": "3512f9c0-2155-4734-bb8d-53c90a13b951",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "e8476b3c-299c-4850-a515-5a83c63e2469",
+   "error_message": ""
   },
   "MIPRE.TM.CookLevin.Pad.pcpParams_outer_dvd": {
    "submitted_at": 1792208195.1748593,
    "http": 202,
    "job_id": "774e49b6-d29b-4024-bdd2-ee216a5a9b94",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "e93f0f78-f182-4811-a26d-312e6ae25a70",
+   "error_message": ""
   },
   "MIPRE.TM.CookLevin.Pad.pcpParams_inner_dvd": {
    "submitted_at": 1792208195.5718744,
@@ -11039,7 +11043,9 @@
    "submitted_at": 1792208196.6847029,
    "http": 202,
    "job_id": "1e10a283-1077-47fe-8c51-a8859fe839d3",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "95de23e1-445d-410d-becd-5d8978a5bf1d",
+   "error_message": ""
   },
   "MIPRE.TM.CookLevin.Pad.pcpInput_size_polynomial": {
    "submitted_at": 1792208197.0724182,
@@ -16941,7 +16947,8 @@
    "submitted_at": 1792208199.3672729,
    "http": 200,
    "submission_id": "0e5c9987-afdb-4570-8d91-ae0a685df41c",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Commutativity.GCommStability.Scalar.averagedSlicePointEvaluationOperator_hermitian": {
    "submitted_at": 1792208199.9783897,
@@ -17008,6 +17015,12 @@
    "submitted_at": 1792208290.4650567,
    "http": 200,
    "submission_id": "ad52a9c9-e2b0-47d7-b37a-bc8ee397aed1",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Commutativity.fullSlice_selfConsistency_fst_bound": {
+   "submitted_at": 1792208299.2552052,
+   "http": 200,
+   "submission_id": "87cca4ac-02e9-4bd8-8682-99ed16eb7983",
    "status": "PENDING"
   }
  },
