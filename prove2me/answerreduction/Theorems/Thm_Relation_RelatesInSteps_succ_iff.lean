@@ -1,0 +1,39 @@
+/-
+Copyright (c) 2025 Bolton Bailey. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Bolton Bailey
+-/
+
+/-
+Vendored from CSLib (https://github.com/leanprover/cslib), upstream file
+  Cslib/Foundations/Data/RelatesInSteps.lean
+at commit 3aa9d4416c185e0b9faeb72bbd65abe85b95dbcc (2026-08-03); fetched 2026-08-05.
+
+CSLib cannot currently be a Lake dependency of this project: its MultiTape development
+requires Lean >= v4.33.0-rc1, while this project pins v4.32.0. See
+`planning/tm-infrastructure.md` (decision D1). Delete this copy and `require` CSLib once
+the toolchains align.
+
+Adaptations (the only differences from upstream):
+* module-system markers removed: the `module` line, `public import` -> `import`, and the
+  `@[expose] public section` line (replaced by the `set_option` lines below);
+* `set_option autoImplicit true` / `set_option relaxedAutoImplicit true` added to restore
+  the upstream Lean defaults (this project's lakefile disables both);
+* `import Cslib.Init` dropped (only needed under the module system); in its stead,
+  `import Mathlib.Data.Nat.Notation` added — upstream receives the `ℕ` notation through
+  `Cslib.Init`, and `Mathlib.Logic.Relation` alone does not provide it.
+-/
+/- Generated for Prove2Me from vidick/MIPRE-formalization@70cbf1c, MIPRE/Cslib/Foundations/Data/RelatesInSteps.lean (statement stub of Relation.RelatesInSteps.succ_iff);
+   produced mechanically by prove2me/tools/gen.py, never edited by hand. -/
+import Mathlib.Data.Nat.Notation
+import Mathlib.Logic.Relation
+import Definitions.Def_MIPRE_Cslib_Foundations_Data_RelatesInSteps
+
+open Relation
+open Relation.RelatesInSteps
+set_option autoImplicit true
+set_option relaxedAutoImplicit true
+variable {α : Type*} {r : α → α → Prop} {a b c : α}
+
+theorem Relation.RelatesInSteps.succ_iff {a b : α} {n : ℕ} :
+    RelatesInSteps r a b (n + 1) ↔ ∃ t', RelatesInSteps r a t' n ∧ r t' b := by sorry

@@ -1,0 +1,44 @@
+/-
+Copyright (c) 2026 Thomas Vidick. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Thomas Vidick
+-/
+/- Generated for Prove2Me from vidick/MIPRE-formalization@70cbf1c, MIPRE/Background/LIDT/Adapter/Weights.lean (statement stub of MIPRE.LIDT.Adapter.le_rev_diagIdx_of_questions);
+   produced mechanically by prove2me/tools/gen.py, never edited by hand. -/
+import Mathlib.Algebra.Polynomial.Eval.Degree
+import Mathlib.Analysis.CStarAlgebra.CStarMatrix
+import Mathlib.Analysis.CStarAlgebra.Classes
+import Mathlib.Analysis.Matrix.Order
+import Mathlib.Data.ENat.Lattice
+import Mathlib.Data.Fin.Tuple.Basic
+import Mathlib.LinearAlgebra.BilinearForm.Orthogonal
+import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
+import Mathlib.LinearAlgebra.Matrix.Kronecker
+import Mathlib.LinearAlgebra.Pi
+import Mathlib.Tactic.DeriveFintype
+import Definitions.Def_MIPRE_Foundations_Games
+import Definitions.Def_MIPRE_Foundations_Distances
+import Definitions.Def_MIPRE_Background_LIDT_Game
+import Definitions.Def_MIPRE_Foundations_CL_Register
+import Definitions.Def_MIPRE_Foundations_CL_Canonical
+import Definitions.Def_MIPRE_Background_LIDT_CLGame
+import Definitions.Def_MIPRE_Foundations_GameTransport
+import Definitions.Def_MIPRE_Foundations_GameAdapt
+import Definitions.Def_MIPRE_Background_LIDT_Adapter_Geometry
+import Definitions.Def_MIPRE_Background_LIDT_Adapter_Seeds
+import Definitions.Def_MIPRE_Background_LIDT_Adapter_Reparam
+import Definitions.Def_MIPRE_Background_LIDT_Adapter_Strategy
+import Definitions.Def_MIPRE_Background_LIDT_Adapter_Weights
+
+open MIPRE
+open MIPRE.LIDT
+open MIPRE.LIDT.Adapter
+open Finset MIPRE.LIDT MIPRE.LIDT.CL
+variable {F : Type*} [Field F] [Fintype F] [DecidableEq F] {m d ldc : ℕ} [NeZero m]
+omit [Fintype F]
+
+theorem MIPRE.LIDT.Adapter.le_rev_diagIdx_of_questions {ℓ : Line F m} {u : Point F m} {j : Fin m}
+    {v : Fin ((j : ℕ) + 1) → F} (hℓ : ∃ k, ℓ.2 k ≠ 0)
+    (hs : (Sample.diag false u j v).questions
+      = ((Question.diagLine ℓ : Question F m), Question.point u)) :
+    ((Fin.rev (diagIdx ℓ) : ℕ)) ≤ (j : ℕ) := by sorry

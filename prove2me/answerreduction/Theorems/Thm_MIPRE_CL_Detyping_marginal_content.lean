@@ -1,0 +1,36 @@
+/-
+Copyright (c) 2026 MIPRE contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+/- Generated for Prove2Me from vidick/MIPRE-formalization@70cbf1c, MIPRE/Foundations/CL/DetypingQueries.lean (statement stub of MIPRE.CL.Detyping.marginal_content);
+   produced mechanically by prove2me/tools/gen.py, never edited by hand. -/
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Data.Finset.Image
+import Mathlib.Data.Fintype.BigOperators
+import Mathlib.Data.Fintype.Pi
+import Mathlib.Data.Real.Basic
+import Mathlib.Data.ZMod.Basic
+import Mathlib.LinearAlgebra.Pi
+import Definitions.Def_MIPRE_Foundations_CL_Register
+import Definitions.Def_MIPRE_Foundations_CL_Basic
+import Definitions.Def_MIPRE_Foundations_CL_Closure
+import Definitions.Def_MIPRE_Foundations_CL_Closure_B
+import Definitions.Def_MIPRE_Foundations_CL_Embedding
+import Definitions.Def_MIPRE_Foundations_CL_Graph
+import Definitions.Def_MIPRE_Foundations_CL_Detyping
+import Definitions.Def_MIPRE_Foundations_CL_DetypingQueries
+
+open MIPRE
+open MIPRE.CL
+open MIPRE.CL.Detyping
+open Finset Classical
+set_option linter.unusedSectionVars false
+variable {T ι : Type*} [Fintype T] [DecidableEq T] [Fintype ι] [DecidableEq ι]
+
+theorem MIPRE.CL.Detyping.marginal_content {ℓ : ℕ} (E : T → T → Prop) [DecidableRel E] (w : Bool)
+    (P : T → CLFun (ZMod 2) ι ℓ) (hP : ∀ t, (P t).ExactlyOn univ) (hℓ : 0 < ℓ)
+    (j : ℕ) (x : Coord T ι → ZMod 2) :
+    ((presentation E w P).truncate (j + 2)).eval x = Sum.elim
+      ((Graph.presentation E w).eval (pull .inl x))
+      (((selected P (select E w (pull .inl x))).truncate j).eval (pull .inr x)) := by sorry

@@ -1,0 +1,35 @@
+/-
+Copyright (c) 2026 Thomas Vidick. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Thomas Vidick
+-/
+/- Generated for Prove2Me from vidick/MIPRE-formalization@70cbf1c, MIPRE/Foundations/SAT/FmlLib.lean (statement stub of MIPRE.SAT.Fml.val_addBits);
+   produced mechanically by prove2me/tools/gen.py, never edited by hand. -/
+import Mathlib.Algebra.Polynomial.Eval.Defs
+import Mathlib.Data.List.Basic
+import Mathlib.Data.Nat.Bits
+import Mathlib.Data.Nat.Notation
+import Mathlib.Data.Nat.Size
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
+import Definitions.Def_MIPRE_Foundations_Cost_Basic_B
+import Definitions.Def_MIPRE_Foundations_Cost_Encoding_B
+import Definitions.Def_MIPRE_Foundations_SAT_Circuit
+import Definitions.Def_MIPRE_Foundations_Cost_PolyTime
+import Definitions.Def_MIPRE_Foundations_Cost_Closure
+import Definitions.Def_MIPRE_Foundations_Cost_Loops_B
+import Definitions.Def_MIPRE_Foundations_Cost_Fold
+import Definitions.Def_MIPRE_Foundations_Cost_Unary
+import Definitions.Def_MIPRE_Foundations_Cost_Numeric_B
+import Definitions.Def_MIPRE_Foundations_Cost_Binary
+import Definitions.Def_MIPRE_Foundations_SAT_Formula
+import Definitions.Def_MIPRE_Foundations_SAT_FmlLib
+
+open MIPRE
+open MIPRE.SAT
+open MIPRE.SAT.Fml
+open MIPRE.Cost
+
+theorem MIPRE.SAT.Fml.val_addBits : ∀ (fs : List Fml) (c : BitStr), fs.length = c.length → ∀ (cin : Fml) (x : ℕ → Bool),
+    val (addBits fs c cin).1 x + 2 ^ fs.length * ((addBits fs c cin).2.eval x).toNat =
+      val fs x + bitsVal c + (cin.eval x).toNat := by sorry
