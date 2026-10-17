@@ -623,3 +623,18 @@ The uploader's new `--pipeline` mode submits each item as soon as what it import
 wave by wave (a simulation with the observed job times gave about eight hours for the
 answer-reduction tree wave by wave and under four pipelined), with the local check gating each
 solution and `--after` letting the introspection upload run alongside.
+
+**Outcome (2026-10-17).** Both trees are uploaded and every theorem in them is Proved on the platform:
+476 + 361 bundles, 2,525 statements and 2,527 solutions, from 23:08 to 12:16 UTC. With them the goal
+theorem `HaltingGameValue.halting_reduces_to_gameValue`, the mission's main theorem, is Proved and its
+tree has no open leaf (`GET /theorems/:id/open-leaves`, total 0). The local check held back three introspection solutions while the upload ran, each a
+name the generated file resolves differently from its source: the node's own name `solution`
+shadowing a definition of that name, a pasted helper's `C` taken by a structure field its module did
+not see, and a statement taking a pasted helper's matcher. All three were fixed in the generator
+(`prove2me/README.md`) and accepted; nothing wrong reached the platform. The other lesson is about
+time: past the first few hours the upload was bounded by the depth of the dependency graph, not its
+size, since a bundle that imports a theorem waits for the whole tree under it to be Proved. The last
+four hours were one chain through the low individual degree test's soundness, at five to twenty
+minutes a step (the platform's import parser and database dropped about one submission in twelve,
+each costing a resubmission). A later increment of this size should be planned around its longest
+chain, and splitting a long proof chain into fewer, larger nodes would shorten it.

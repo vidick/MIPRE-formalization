@@ -7,6 +7,11 @@ compressibility criterion, the efficient universal machine, the efficient s-m-n 
 efficient Kleene recursion theorem and succinct descriptions. Why this closure went first, and
 what the platform is, is recorded in [`planning/prove2me.md`](../planning/prove2me.md).
 
+**Status (2026-10-17).** The mission's goal theorem `HaltingGameValue.halting_reduces_to_gameValue`
+is Proved on the platform, with no open leaf: its closure went up in five trees, this directory's
+and `assembly/`, `repetition/`, `answerreduction/`, `introspection/` (below), with the parallel
+repetition proof the platform already hosted (openai/ten-proofs) in place of the vendored copy.
+
 Everything here was **generated mechanically** from this repository at commit
 `70cbf1c52e3d5e1dff1162fdf952c9a9f4bd99ed` (Lean `v4.33.0`, Mathlib `db584cd`, the parent of
 the platform's pin `0df444a` = "chore: bump toolchain to v4.33.1") and compiled against the
@@ -269,9 +274,20 @@ What this closure needed beyond the earlier increments, in the order it surfaced
   `--stop-after` ends a run between two submissions (a run killed from outside can lose a job it
   submitted and had not yet recorded), and the next run polls the jobs left in flight.
 
-The upload of both trees began on 2026-10-16 at 23:08 UTC and is recorded in
-`answerreduction/upload-state.json` and `introspection/upload-state.json`; its outcome is added here
-when it completes.
+The upload of both trees ran from 2026-10-16 23:08 UTC to 2026-10-17 12:16 UTC, the introspection
+tree alongside the answer-reduction tree (`--after`), in runs of at most two hours each resumed from
+the upload state (`answerreduction/upload-state.json`, `introspection/upload-state.json`): 476 and
+361 bundles published, 1,673 and 852 statements (the leaves' were published with the assembly
+layer), 1,674 and 853 solutions accepted. Read back afterwards, the platform shows every theorem of
+both trees Proved, `MIPRE.AnswerReduction.nonempty_five` from 11:48 and
+`MIPRE.Introspection.nonempty_seven` from 12:15; the goal theorem
+`HaltingGameValue.halting_reduces_to_gameValue` is Proved, with no open leaf left. No submission
+failed for a reason of its own. The platform's transient failures (import-parser and token-scanner
+timeouts, dropped database connections) cost 295 and 204 resubmissions, all accepted in the end, and
+the three solutions the local check had held back were regenerated and accepted. From about 08:00 the
+upload was a single dependency chain: the soundness of the low individual degree test
+(`MIPRE.LIDT.Simul.clSoundness`), on which both leaves rest, then the soundness bundles of each stage
+one after the other, at five to twenty minutes a step.
 
 ## Reproducing
 
