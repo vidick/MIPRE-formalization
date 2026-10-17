@@ -2379,8 +2379,16 @@
   "MIPRE_Background_QLD_PauliBranchPrograms": {
    "submitted_at": 1792218498.7536955,
    "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "695d1433-b134-4f12-b244-18d24e38c8dc",
+   "theorem_id": "05c3c0f3-99d1-4376-a739-1ea21b0f06b3",
+   "error_message": ""
+  },
+  "MIPRE_Foundations_Introspection_AdaptiveInductionStep": {
+   "submitted_at": 1792218684.7059786,
+   "http": 202,
    "status": "PENDING",
-   "job_id": "695d1433-b134-4f12-b244-18d24e38c8dc"
+   "job_id": "4984dcb1-aae6-4390-8258-80e311ecf85e"
   }
  },
  "theorems": {
@@ -8487,6 +8495,12 @@
    "status": "PUBLISHED",
    "theorem_id": "5cf9e493-df40-421f-ad0f-df8d29efd578",
    "error_message": ""
+  },
+  "MIPRE.QLD.PauliQuestionProgram.gammaProg_fieldEncoding": {
+   "submitted_at": 1792218685.0779989,
+   "http": 202,
+   "job_id": "12fda3d2-1fb0-457c-a10f-57c0e1165663",
+   "status": "QUEUED"
   }
  },
  "solutions": {
@@ -13730,8 +13744,8 @@
    "submitted_at": 1792218486.3967278,
    "http": 200,
    "submission_id": "2735f386-0b5f-4a14-8845-0322bc061bc3",
-   "status": "PENDING",
-   "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Introspection.adaptiveRefinedJoint_decode": {
    "submitted_at": 1792218424.5487478,
@@ -13744,7 +13758,8 @@
    "submitted_at": 1792218425.1990488,
    "http": 200,
    "submission_id": "e5d73354-9fa8-42e9-840e-baea54763770",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Introspection.introspectPair_map_some": {
    "submitted_at": 1792218425.9173098,
@@ -13754,9 +13769,9 @@
    "error_message": ""
   },
   "MIPRE.SAT.shoupNormalBasis_normal": {
-   "submitted_at": 1792218577.647364,
+   "submitted_at": 1792218682.111129,
    "http": 200,
-   "submission_id": "380548c2-d9e1-4915-914b-7dd7608112ef",
+   "submission_id": "2d5d4244-7c0f-4de7-b9a1-21717bf2bf92",
    "status": "PENDING",
    "error_message": "Failed to resolve platform imports: Import parser timed out after 5s"
   },
@@ -13764,19 +13779,21 @@
    "submitted_at": 1792218487.1731293,
    "http": 200,
    "submission_id": "d5d36b3d-3bfb-4380-86e7-e77a20f2289a",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Introspection.registeredReplacement_nextOption_mats": {
    "submitted_at": 1792218487.8881845,
    "http": 200,
    "submission_id": "0499a004-1cf3-4a63-9770-55d41d1d81c6",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Introspection.IntroPrefixInvariant.terminal_some": {
-   "submitted_at": 1792218488.5306485,
+   "submitted_at": 1792218681.558056,
    "http": 200,
-   "submission_id": "51995bb7-3557-490f-acda-b6ad0953ed4d",
-   "status": "ERROR",
+   "submission_id": "f92cda5b-d63e-4d5f-a1c3-e03acdb3635e",
+   "status": "PENDING",
    "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
   }
  },
