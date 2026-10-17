@@ -2403,8 +2403,10 @@
   "MIPRE_Foundations_SAT_EffectiveNormalBasis": {
    "submitted_at": 1792218857.6652648,
    "http": 202,
-   "status": "PENDING",
-   "job_id": "2f3dab8c-1986-4891-a24f-fae98811a993"
+   "status": "PUBLISHED",
+   "job_id": "2f3dab8c-1986-4891-a24f-fae98811a993",
+   "theorem_id": "c640b13e-04ce-4218-8ca3-edadab656ff2",
+   "error_message": ""
   },
   "MIPRE_Foundations_Introspection_AdaptivePlayerSwap": {
    "submitted_at": 1792218896.2486043,

@@ -26047,10 +26047,10 @@
    "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageA0_pointwise_leftShape": {
-   "submitted_at": 1792218724.4444103,
+   "submitted_at": 1792218935.5379307,
    "http": 200,
-   "submission_id": "1eac4b37-09ce-4e86-897e-ba1b33d79764",
-   "status": "ERROR",
+   "submission_id": "4b2fa8d6-c9e1-41b9-a44b-f94222b06b9c",
+   "status": "PENDING",
    "error_message": "Failed to resolve platform imports: Import parser timed out after 5s"
   },
   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_pointwise_rightShape": {
@@ -26064,7 +26064,8 @@
    "submitted_at": 1792218763.0935898,
    "http": 200,
    "submission_id": "06c1e4b8-e0df-4707-bfdd-5f037659270d",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.verdictB_eq": {
    "submitted_at": 1792218782.1025453,
@@ -26095,7 +26096,8 @@
    "submitted_at": 1792218824.3713596,
    "http": 200,
    "submission_id": "0f166894-ad23-42fb-a07f-8d6aa9a76bdd",
-   "status": "PENDING"
+   "status": "ERROR",
+   "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
   },
   "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_large_zeta": {
    "submitted_at": 1792218824.971815,
