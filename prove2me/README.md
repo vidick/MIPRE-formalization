@@ -234,6 +234,20 @@ What this closure needed beyond the earlier increments, in the order it surfaced
     the files that import it register it.
   - The tree records name an imported node by its platform name (the ASCII renames): naming it by its
     source name made the uploader take it for published content.
+  - A node is uploaded as `solution`, and inside its own proof that name is the node itself (the
+    local of a recursive reference comes before any constant): `AuxiliaryScan.stage_correct` refers
+    to the definition `AuxiliaryScan.solution`, which its solution writes in full.
+  - A solution sees what its node's module sees, so a constant a pasted helper's module could not
+    see can take one of the helper's references: `MIPRE.Introspection.C`, a field of the structure
+    `Introspection`, took `C` (`Polynomial.C`) from a helper of `namespace MIPRE.Introspection`. The
+    extraction records references to the project's constants only, so such a capture of a Mathlib
+    name is listed (`PASTE_FIX` in gen.py, from the local check's report) and written in full where
+    the capturing constant is in the solution's environment.
+  - Lean shares one matcher among the declarations of a file whose `match`es compile to the same
+    function, so a solution's statement could take the matcher of a helper pasted before it
+    (`router_context.match_1` in `untypedKernel_iff`'s type, whose stub has its own); that helper
+    is pasted with `bootstrap.genMatcherCode false`, part of the matcher cache's key, and the type has
+    `solution.match_1` as the other solutions' do (`FRESH_MATCHER`).
 * **Published content is never regenerated differently.** A generator fix made after part of a tree
   is published must reproduce the published bundles byte for byte: gen.py reads the tree's upload
   state and refuses to change a published bundle's file, and code that refers into a published bundle
@@ -245,11 +259,15 @@ What this closure needed beyond the earlier increments, in the order it surfaced
   with its stub's printed with `pp.all`: the default print depends on the notation the environment
   has (`∀ i < n, …` where Mathlib's binder predicates are imported, `∀ (i : ℕ), i < n → …` where not).
   A statement naming a private definition prints it `name✝` in the source and bare in the stub, whose
-  copy is public; the check lists such pairs apart.
+  copy is public; the check lists such pairs apart. It held back three introspection solutions while
+  the upload ran (the last three name cases above: two compile failures, one type naming another
+  declaration's matcher), none of which reached the platform.
 * **Upload.** `scripts/p2m_upload.py --pipeline` replaces the waves' barriers by one scheduler: each
   bundle, statement and solution is submitted as soon as what it imports is ready (a bundle's imported
   nodes Proved), with one cap on the jobs of all kinds; `--gate` holds each solution until the local
-  check has passed it; `--after` lets a tree wait for content of a sibling tree uploaded alongside.
+  check has passed it; `--after` lets a tree wait for content of a sibling tree uploaded alongside;
+  `--stop-after` ends a run between two submissions (a run killed from outside can lose a job it
+  submitted and had not yet recorded), and the next run polls the jobs left in flight.
 
 The upload of both trees began on 2026-10-16 at 23:08 UTC and is recorded in
 `answerreduction/upload-state.json` and `introspection/upload-state.json`; its outcome is added here
@@ -284,7 +302,7 @@ P2M_CONFIG=… python3 tools/validate.py --phase solutions --compile --wave-orde
 P2M_CONFIG=… python3 tools/meta_packets.py && python3 tools/auto_meta.py --packets … --out <tree>
 python3 tools/merge_meta.py --tree <tree>              # metadata.json (writer records override)
 PROVE2ME_API_KEY=… python3 scripts/p2m_upload.py --tree <tree> --pipeline --gate <validation-solutions.jsonl> \
-    [--after <sibling tree>] --dry-run                   # then without --dry-run
+    [--after <sibling tree>] [--stop-after <seconds>] --dry-run   # then without --dry-run, until it says done
 ```
 
 The uploader publishes in dependency order (a bundle that imports a theorem of the same tree only
