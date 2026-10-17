@@ -2807,6 +2807,54 @@
    "job_id": "bb2172bc-5b51-4cad-84ca-1c378b4f81b4",
    "theorem_id": "a4dd2abe-c363-4990-ac6a-6145bb379424",
    "error_message": ""
+  },
+  "MIPRE_Background_LIDT_Adapter_Registers": {
+   "submitted_at": 1792226646.2442195,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "660674f6-8c6b-41dc-a70f-78d4162d5759",
+   "theorem_id": "3715e700-a3fa-41a8-b7dc-33e32c550cfd",
+   "error_message": ""
+  },
+  "MIPRE_Background_QLD_PaddedLIDT": {
+   "submitted_at": 1792226896.8144069,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "873cf7b9-d587-4c59-91c6-5c2345f04154",
+   "theorem_id": "abe40ad2-2129-4993-a5a8-ebbdac6200f9",
+   "error_message": ""
+  },
+  "MIPRE_Background_QLD_MirrorExists": {
+   "submitted_at": 1792227135.3415458,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "8e17b32a-40e2-4349-9961-20f55c976b67",
+   "theorem_id": "40ec5798-4d2f-42f2-84db-2737de6bb4ff",
+   "error_message": ""
+  },
+  "MIPRE_Background_QLD_ErrorShape": {
+   "submitted_at": 1792227135.775179,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "e5945f87-8c50-4ac4-aa4e-b3ebb6bb2e6e",
+   "theorem_id": "45be3e1f-6f3e-4090-a34e-dbfc13140db0",
+   "error_message": ""
+  },
+  "MIPRE_Background_QLD_PhysEmbed": {
+   "submitted_at": 1792227340.1217449,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "5307c18f-7a39-46fa-9a85-41f4bc4329a9",
+   "theorem_id": "5e6b0a29-8e1e-4b3b-91c8-39efda1f7a07",
+   "error_message": ""
+  },
+  "MIPRE_Background_QLD_QLDError": {
+   "submitted_at": 1792227379.733902,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "58685c23-f031-4ba2-82a7-39c93b03ed00",
+   "theorem_id": "5b4bdf6d-eb76-401c-86d3-43cbc2f877ca",
+   "error_message": ""
   }
  },
  "theorems": {
@@ -9417,6 +9465,146 @@
    "status": "PUBLISHED",
    "theorem_id": "ab6d68af-1c8d-4427-981c-8a255a358005",
    "error_message": ""
+  },
+  "MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL_transport": {
+   "submitted_at": 1792227024.8622208,
+   "http": 202,
+   "job_id": "6644202d-5816-489f-96e7-ac10687cb000",
+   "status": "PUBLISHED",
+   "theorem_id": "34bd5804-3b82-4907-aff7-cbd59999a2f3",
+   "error_message": ""
+  },
+  "MIPRE.LIDT.Adapter.clSoundness_ldc_one_deltaCL_of_povm": {
+   "submitted_at": 1792226897.5637236,
+   "http": 202,
+   "job_id": "dad493da-7303-484e-b01d-9d76ff52f0dc",
+   "status": "PUBLISHED",
+   "theorem_id": "af8e85ea-61e8-420a-abe8-e11c7d961dd4",
+   "error_message": ""
+  },
+  "MIPRE.QLD.exists_global_pvm": {
+   "submitted_at": 1792227136.212473,
+   "http": 202,
+   "job_id": "9d03d7b8-1573-44e9-8402-41bc23d7d359",
+   "status": "PUBLISHED",
+   "theorem_id": "aab44bb0-0708-485a-9629-ac8a1c0e0ee8",
+   "error_message": ""
+  },
+  "MIPRE.QLD.errSum_anti": {
+   "submitted_at": 1792227380.2016993,
+   "http": 202,
+   "job_id": "6e8696ff-87ff-42dd-b2dc-a38b193cc4ff",
+   "status": "PUBLISHED",
+   "theorem_id": "4793450e-4ce6-472a-9d07-72b4db7cff46",
+   "error_message": ""
+  },
+  "MIPRE.QLD.errSum_rpow_le": {
+   "submitted_at": 1792227380.641414,
+   "http": 202,
+   "job_id": "da4464b2-7d2b-4628-9d38-5142d06c9839",
+   "status": "PUBLISHED",
+   "theorem_id": "35863efb-b0f4-4d55-8ab6-957771ec00ad",
+   "error_message": ""
+  },
+  "MIPRE.QLD.errShape_add": {
+   "submitted_at": 1792227381.108935,
+   "http": 202,
+   "job_id": "2656e960-0087-4e33-8cc6-0863bd59ec5e",
+   "status": "PUBLISHED",
+   "theorem_id": "cd01c932-1cb7-4a97-8ffa-1880b2453b9f",
+   "error_message": ""
+  },
+  "MIPRE.QLD.errShape_rpow_le": {
+   "submitted_at": 1792227381.5849595,
+   "http": 202,
+   "job_id": "c5e32031-009f-4860-b45c-74599a5d2ba1",
+   "status": "PUBLISHED",
+   "theorem_id": "575e2d34-57fa-430e-b5ca-50be055f0d93",
+   "error_message": ""
+  },
+  "MIPRE.QLD.errSmall_two_rpow_neg": {
+   "submitted_at": 1792227382.0022075,
+   "http": 202,
+   "job_id": "dbd6e418-8030-4567-ab46-59e92fb9efa3",
+   "status": "PUBLISHED",
+   "theorem_id": "53a40f22-576d-44c4-8cdb-3c4bc4d9b810",
+   "error_message": ""
+  },
+  "MIPRE.QLD.errSmall_deltaGS": {
+   "submitted_at": 1792227382.475268,
+   "http": 202,
+   "job_id": "a2c0362f-1468-4e10-9530-5d3855e3ebf7",
+   "status": "PUBLISHED",
+   "theorem_id": "95dcaa67-5f39-4211-8f36-1e9211f47250",
+   "error_message": ""
+  },
+  "MIPRE.QLD.deltaCL_four_mul_le": {
+   "submitted_at": 1792227382.963712,
+   "http": 202,
+   "job_id": "88300ed2-24c9-483b-b587-1af4c492ffde",
+   "status": "PUBLISHED",
+   "theorem_id": "5d4ec485-4cc2-476d-b125-c293d3307881",
+   "error_message": ""
+  },
+  "MIPRE.QLD.ErrSmall.of_cases": {
+   "submitted_at": 1792227383.384347,
+   "http": 202,
+   "job_id": "56ce52b6-c6a9-4b94-9393-0a7ced7f947b",
+   "status": "PUBLISHED",
+   "theorem_id": "96393d9d-ca68-4a24-b841-1e7479ce58d3",
+   "error_message": ""
+  },
+  "MIPRE.QLD.physEmb_isometry": {
+   "submitted_at": 1792227745.1041396,
+   "http": 202,
+   "job_id": "383ee257-5f4c-4120-ae42-b249c6161d27",
+   "status": "PUBLISHED",
+   "theorem_id": "bb8ccb56-24d1-4a47-b472-b8b785d347a0",
+   "error_message": ""
+  },
+  "MIPRE.QLD.physVec_mirrorOfGlobalPairs": {
+   "submitted_at": 1792227659.1757424,
+   "http": 202,
+   "job_id": "fd55384a-6b11-4cad-b7f5-04823aa5c42c",
+   "status": "PUBLISHED",
+   "theorem_id": "e073aad7-eb36-409b-97e9-5162a3d2c379",
+   "error_message": ""
+  },
+  "MIPRE.QLD.errSmall_qldErr": {
+   "submitted_at": 1792227883.663921,
+   "http": 202,
+   "job_id": "d03c1667-910a-4979-b862-bddd29c8f722",
+   "status": "QUEUED"
+  },
+  "MIPRE.QLD.exists_legal_dilation": {
+   "submitted_at": 1792227884.0597868,
+   "http": 202,
+   "job_id": "679d7b7b-f6e9-4b31-a620-8048d7070cae",
+   "status": "QUEUED"
+  },
+  "MIPRE.QLD.MirrorSimul.exists_phys_descent": {
+   "submitted_at": 1792227894.7087944,
+   "http": 202,
+   "job_id": "7b1678dd-896a-4c8b-b8b7-2b6309b6e900",
+   "status": "QUEUED"
+  },
+  "MIPRE.QLD.exists_phys_of_regime": {
+   "submitted_at": 1792227916.79985,
+   "http": 202,
+   "job_id": "456e9f96-bbc9-4997-9d31-77e4e81fa5de",
+   "status": "QUEUED"
+  },
+  "MIPRE.QLD.exists_le_qldErr": {
+   "submitted_at": 1792227938.8215618,
+   "http": 202,
+   "job_id": "b3075e9d-93ea-4cda-b827-f563637a9b3e",
+   "status": "QUEUED"
+  },
+  "MIPRE.QLD.qld_soundness": {
+   "submitted_at": 1792227978.419242,
+   "http": 202,
+   "job_id": "699878c0-f62c-4b14-a82a-67ebb207489f",
+   "status": "QUEUED"
   }
  },
  "solutions": {
@@ -15201,6 +15389,38 @@
    "submission_id": "adc8918f-692a-49b8-aeba-052a3898f30f",
    "status": "ACCEPTED",
    "error_message": ""
+  },
+  "MIPRE.QLD.errSum_rpow_le": {
+   "submitted_at": 1792228034.1695595,
+   "http": 200,
+   "submission_id": "d48183fb-1bb1-4b79-a65e-5e4d1c8af03b",
+   "status": "PENDING",
+   "error_message": "Failed to resolve platform imports: DB error looking up import 'Theorems.Thm_MIPStarRE_LDT_ExpansionHypercubeGraph_hypercubeSpectralGap_operator': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
+  },
+  "MIPRE.QLD.deltaCL_four_mul_le": {
+   "submitted_at": 1792227663.3787034,
+   "http": 200,
+   "submission_id": "b93411a6-30a1-440b-9b35-a603dfb38e3f",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.errSum_anti": {
+   "submitted_at": 1792227820.285545,
+   "http": 200,
+   "submission_id": "c24adb7c-10ba-4f71-85f8-c9cdba582264",
+   "status": "PENDING"
+  },
+  "MIPRE.QLD.errSmall_two_rpow_neg": {
+   "submitted_at": 1792228012.2108438,
+   "http": 200,
+   "submission_id": "d1ab4dc7-dc96-4519-8dc5-6af0f0a14ec2",
+   "status": "PENDING"
+  },
+  "MIPRE.QLD.physEmb_isometry": {
+   "submitted_at": 1792228034.7876053,
+   "http": 200,
+   "submission_id": "f5c49a13-c2c7-4942-938b-1da8a2a6fccb",
+   "status": "PENDING"
   }
  },
  "log": []

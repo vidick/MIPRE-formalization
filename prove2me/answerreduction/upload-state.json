@@ -3715,8 +3715,26 @@
   "MIPRE_Background_LIDT_Bridge_Main": {
    "submitted_at": 1792226259.028626,
    "http": 202,
-   "status": "PENDING",
-   "job_id": "7c09433a-c08a-41a9-a15f-583ee0df1150"
+   "status": "PUBLISHED",
+   "job_id": "7c09433a-c08a-41a9-a15f-583ee0df1150",
+   "theorem_id": "3abab83f-6ee9-474e-a874-c0ffb8c648e6",
+   "error_message": ""
+  },
+  "MIPRE_Background_LIDT_Adapter_Reduction": {
+   "submitted_at": 1792226450.8926299,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "823d3852-0048-48ff-a876-a25d53c836d3",
+   "theorem_id": "a6086094-1a81-4aff-b09f-f1c4d64588b0",
+   "error_message": ""
+  },
+  "MIPRE_Background_LIDT_Simultaneous": {
+   "submitted_at": 1792226627.4227123,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "fcd1864e-d6bd-43ac-8f71-fbc2093d2e53",
+   "theorem_id": "e6688521-28c3-4480-b13e-37b45e0f8cca",
+   "error_message": ""
   }
  },
  "theorems": {
@@ -16675,37 +16693,121 @@
    "submitted_at": 1792226259.4161105,
    "http": 202,
    "job_id": "4fa92d0e-4a23-4bf5-9458-b9767d9210ce",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "26f2217f-f627-4b9d-bdc6-92040a182f9b",
+   "error_message": ""
   },
   "MIPStarRE.LDT.ProjStrat.completedProjectiveMeasurementsAndLine169_ofTwoSidedSubmeasurements": {
    "submitted_at": 1792226259.8124042,
    "http": 202,
    "job_id": "e08df811-2bf6-4a99-a2dd-e5991f709fb8",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "7c7bde03-f3f0-4af5-9952-4b2d676219a1",
+   "error_message": ""
   },
   "MIPStarRE.LDT.ProjStrat.completedProjectiveConsistency_ofFullConsistency": {
    "submitted_at": 1792226260.3599262,
    "http": 202,
    "job_id": "a78534d5-760e-4228-b4de-ee978f6d5b85",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "718129aa-955c-40b9-b1cc-03ae6d01796d",
+   "error_message": ""
   },
   "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterTwoSidedProjectiveSubmeasurements": {
    "submitted_at": 1792226260.8120797,
    "http": 202,
    "job_id": "39dda676-2278-4d94-81a8-fb3c44655561",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "f65e2f08-3f33-4fab-b63d-d7ac901f9ea0",
+   "error_message": ""
   },
   "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterCompletedProjectiveMeasurements": {
    "submitted_at": 1792226261.303973,
    "http": 202,
    "job_id": "e166ee33-4af3-4671-b0b3-8992a44719b4",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "aefb9324-73b0-4d22-b1c6-4eea57fdf292",
+   "error_message": ""
   },
   "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterFinalPointConsistency": {
    "submitted_at": 1792226261.7456,
    "http": 202,
    "job_id": "25d29797-b0bd-4071-92f0-21922268fd68",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "075aa4ef-37ea-4605-8163-c8b095ec9d07",
+   "error_message": ""
+  },
+  "MIPRE.LIDT.Bridge.soundness": {
+   "submitted_at": 1792226626.807127,
+   "http": 202,
+   "job_id": "17fd2690-e70f-490e-ae14-47ab2bbb838e",
+   "status": "PUBLISHED",
+   "theorem_id": "3d530457-fd86-423c-b753-c0c27b32319b",
+   "error_message": ""
+  },
+  "MIPRE.LIDT.Adapter.val_mats_pointPOVMA_adapted": {
+   "submitted_at": 1792226628.0768106,
+   "http": 202,
+   "job_id": "f05f211f-63d2-4aad-a2f2-ee15c70082d2",
+   "status": "PUBLISHED",
+   "theorem_id": "1986d01d-ae41-4659-b49a-51ec91548407",
+   "error_message": ""
+  },
+  "MIPRE.LIDT.Adapter.val_mats_pointPOVMB_adapted": {
+   "submitted_at": 1792226628.7628953,
+   "http": 202,
+   "job_id": "8ceaeb85-88f7-4253-a0a4-3c4a194d41aa",
+   "status": "PUBLISHED",
+   "theorem_id": "2e7ab32b-b589-4f03-8e79-41966fd92fab",
+   "error_message": ""
+  },
+  "MIPRE.LIDT.Adapter.clSoundness_ldc_one": {
+   "submitted_at": 1792226629.269961,
+   "http": 202,
+   "job_id": "09f59b66-0ee9-4278-a8cf-8ecbc3d902e1",
+   "status": "PUBLISHED",
+   "theorem_id": "4548143c-50c7-4778-8a43-a79849806966",
+   "error_message": ""
+  },
+  "MIPRE.LIDT.Simul.clSoundness_padded": {
+   "submitted_at": 1792226844.6915185,
+   "http": 202,
+   "job_id": "7077498a-3d0c-4549-9580-d861b77a0e5f",
+   "status": "PUBLISHED",
+   "theorem_id": "4e40b1d9-f82f-4be6-a8fc-ddb4ea2fbe49",
+   "error_message": ""
+  },
+  "MIPRE.LIDT.Simul.padM_le": {
+   "submitted_at": 1792226940.629375,
+   "http": 202,
+   "job_id": "0d2e420d-7321-41a6-a72f-00bd99b5657d",
+   "status": "PUBLISHED",
+   "theorem_id": "1d143590-bcb3-44f7-831b-244d1068ae84",
+   "error_message": ""
+  },
+  "MIPRE.LIDT.Simul.deltaCL_padded_le": {
+   "submitted_at": 1792227005.1225991,
+   "http": 202,
+   "job_id": "4d0544e3-9fd8-45a1-a560-19cb24a41ff5",
+   "status": "PUBLISHED",
+   "theorem_id": "a176bc8b-f718-484a-b09c-59992d3cefb1",
+   "error_message": ""
+  },
+  "MIPRE.LIDT.Simul.one_le_deltaSim": {
+   "submitted_at": 1792226846.3730855,
+   "http": 202,
+   "job_id": "dd29d9c9-e80b-4735-b45a-ad8946f61e38",
+   "status": "PUBLISHED",
+   "theorem_id": "e42031f5-8ee7-4e4b-9d25-12907485e06b",
+   "error_message": ""
+  },
+  "MIPRE.LIDT.Simul.clSoundness": {
+   "submitted_at": 1792226846.8745084,
+   "http": 202,
+   "job_id": "b7ec1e64-3765-4d24-b49f-1c3d8c580fa8",
+   "status": "PUBLISHED",
+   "theorem_id": "a37e1738-e182-44b5-a77d-85337d9b3cb8",
+   "error_message": ""
   }
  },
  "solutions": {
@@ -27983,32 +28085,126 @@
    "submitted_at": 1792226085.9080904,
    "http": 200,
    "submission_id": "b809dd3a-6895-4f1c-88c8-df19e7fd2f67",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterPointConsistency_ofSymConsistency": {
    "submitted_at": 1792226114.316513,
    "http": 200,
    "submission_id": "c2cb418e-fd78-49da-98bb-b96e7c193f9a",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.ProjStrat.pointAgreementFailureProbability_le_three_mul": {
    "submitted_at": 1792226114.9433236,
    "http": 200,
    "submission_id": "e8e53728-ba85-4748-b29c-53713d016816",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MainInductionStep.answerLdPastingInInductionSectionOfSmallError": {
    "submitted_at": 1792226188.873977,
    "http": 200,
    "submission_id": "fc6cf2da-fba1-4f81-be0d-699180eee868",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MainInductionStep.mainInductionSuccessorNext_ofAnswerCarrier": {
-   "submitted_at": 1792226248.622387,
+   "submitted_at": 1792226331.3404207,
    "http": 200,
-   "submission_id": "eaa1893a-fcc0-4492-9ec0-1894968f0869",
-   "status": "ERROR",
-   "error_message": "Failed to materialize the target's dependencies: DB error looking up import 'Theorems.Thm_MIPStarRE_LDT_DiagonalLine_appendAtHeight_rebaseAt': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
+   "submission_id": "933ded12-749c-40a3-b235-a6b93b717778",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerMainInductionBaseCase": {
+   "submitted_at": 1792226283.9791899,
+   "http": 200,
+   "submission_id": "1ef6149c-2a83-447e-9ecb-0f605b2de07d",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.ProjStrat.completedProjectiveMeasurementsAndLine169_ofTwoSidedSubmeasurements": {
+   "submitted_at": 1792226408.0990226,
+   "http": 200,
+   "submission_id": "4447966a-a71e-4143-95df-057fba15bebd",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterFullPolynomialSelfConsistency_ofPointConsistency": {
+   "submitted_at": 1792226408.709821,
+   "http": 200,
+   "submission_id": "bb67eefc-813c-4948-b5cf-efce2c6bef2c",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.ProjStrat.completedProjectiveConsistency_ofFullConsistency": {
+   "submitted_at": 1792226747.7844949,
+   "http": 200,
+   "submission_id": "50b395b2-8790-4274-8e6e-b1a9794f2f02",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerMainInduction": {
+   "submitted_at": 1792226842.4426055,
+   "http": 200,
+   "submission_id": "ca727bcf-f851-4a73-90fb-71e4d983ce1f",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.LIDT.Adapter.val_mats_pointPOVMA_adapted": {
+   "submitted_at": 1792227115.1318808,
+   "http": 200,
+   "submission_id": "c48fdac9-7cac-4858-9172-0476d05a12b1",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.LIDT.Adapter.val_mats_pointPOVMB_adapted": {
+   "submitted_at": 1792227246.4858408,
+   "http": 200,
+   "submission_id": "b624af56-c8f5-4298-a9e2-08771814c22a",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.LIDT.Simul.one_le_deltaSim": {
+   "submitted_at": 1792227059.231931,
+   "http": 200,
+   "submission_id": "180b98b9-9eb4-4483-a541-09ac401dcca4",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.LIDT.Simul.deltaCL_padded_le": {
+   "submitted_at": 1792227184.5171437,
+   "http": 200,
+   "submission_id": "f147499b-e609-4126-a77c-02ae2cd76cac",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterTwoSidedProjectiveSubmeasurements": {
+   "submitted_at": 1792227305.962998,
+   "http": 200,
+   "submission_id": "7774a7d0-3404-4539-94a5-912003bca927",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.LIDT.Simul.padM_le": {
+   "submitted_at": 1792227187.6001866,
+   "http": 200,
+   "submission_id": "ba755722-677f-4d42-bce7-628e253e22f9",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterCompletedProjectiveMeasurements": {
+   "submitted_at": 1792227718.585447,
+   "http": 200,
+   "submission_id": "6e79e47a-51fd-4cfa-9d2d-e6bf4334e00c",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.ProjStrat.sourceRoleRegisterFinalPointConsistency": {
+   "submitted_at": 1792227986.8228905,
+   "http": 200,
+   "submission_id": "bea5318c-0164-4ba2-b615-49ab09fa3e08",
+   "status": "PENDING"
   }
  },
  "log": []
