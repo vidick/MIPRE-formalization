@@ -15647,15 +15647,22 @@
    "submitted_at": 1792237011.7207494,
    "http": 200,
    "submission_id": "a7200c30-1f08-4005-ada8-fb8975911d32",
-   "status": "PENDING",
-   "error_message": "Failed to resolve platform imports: Import parser timed out after 5s"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Introspection.CompiledSoundness.source_value_ge_of_raw": {
    "submitted_at": 1792236855.9075549,
    "http": 200,
    "submission_id": "6360408a-759b-42dd-a7e1-cafb46a9e414",
-   "status": "PENDING",
-   "error_message": "Failed to record the decomposition edge for import 'MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_SwitcherooContraction_Split': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>. The proof verified but its reduction could not be recorded — please resubmit."
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.CompiledSoundness.output_soundness": {
+   "submitted_at": 1792237651.6498911,
+   "http": 200,
+   "submission_id": "eed06303-970f-491f-9c18-92446a77e0b8",
+   "status": "ERROR",
+   "error_message": "Failed to materialize the target's dependencies: DB error looking up import 'Theorems.Thm_MIPRE_CL_Detyping_graphOfBits_take_eq': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
   }
  },
  "log": []
