@@ -2879,6 +2879,14 @@
    "job_id": "da4874bd-f8d0-480b-a469-4cd6320d627f",
    "theorem_id": "0a921dd9-5245-4c9b-a2be-d3eb4b93de2f",
    "error_message": ""
+  },
+  "MIPRE_Background_Introspection_Compiler": {
+   "submitted_at": 1792238576.3403728,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "574eb6e6-7c8b-4ec6-b160-dc93e9c06014",
+   "theorem_id": "0166659c-d983-4c88-8029-6e03270bc8f0",
+   "error_message": ""
   }
  },
  "theorems": {
@@ -9697,6 +9705,11 @@
    "status": "PUBLISHED",
    "theorem_id": "d81a97c8-11dc-4f5a-9112-613e80da334b",
    "error_message": ""
+  },
+  "MIPRE.Introspection.nonempty_seven": {
+   "status": "PUBLISHED",
+   "theorem_id": "ad7c754c-d110-4bcd-925d-bba46df98838",
+   "note": "published before this tree"
   }
  },
  "solutions": {
@@ -15661,8 +15674,14 @@
    "submitted_at": 1792237786.2946095,
    "http": 200,
    "submission_id": "56d1b676-76e4-47bd-8fff-57fd0d42b984",
-   "status": "PENDING",
-   "error_message": "Failed to materialize the target's dependencies: DB error looking up import 'Theorems.Thm_MIPRE_CL_Detyping_graphOfBits_take_eq': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.nonempty_seven": {
+   "submitted_at": 1792238982.89093,
+   "http": 200,
+   "submission_id": "102a150f-e419-4b64-a0cc-37c67e700610",
+   "status": "PENDING"
   }
  },
  "log": []
