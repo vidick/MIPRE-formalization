@@ -3559,6 +3559,76 @@
    "job_id": "26e9f1b1-7717-4362-8f35-f2d0efbdbf53",
    "theorem_id": "d6a41f59-d648-4989-ad67-936408e981f2",
    "error_message": ""
+  },
+  "MIPRE_Background_AnswerReduction_ArSampler": {
+   "submitted_at": 1792219078.47247,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "32143f56-2762-4400-9c39-bc6c939b7419",
+   "theorem_id": "4142b160-ac24-4861-82c9-e55cf5587b44",
+   "error_message": ""
+  },
+  "MIPRE_Background_AnswerReduction_ArDecider": {
+   "submitted_at": 1792219582.8708181,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "e594753e-7511-4442-9ca7-3836f75c3be4",
+   "theorem_id": "85ea9da0-f136-4829-ae91-27171ad10b7b",
+   "error_message": ""
+  },
+  "MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_ComparisonLemmas_HBConsistency": {
+   "submitted_at": 1792219648.3196566,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "3977f427-bb78-4904-a700-321a98840062",
+   "theorem_id": "b0c6cc65-9459-42c0-adc8-cb5fb970c315",
+   "error_message": ""
+  },
+  "MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_ComparisonLemmas_HAConsistency": {
+   "submitted_at": 1792219803.1493177,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "ff30a875-407d-4aab-a796-224d44698db9",
+   "theorem_id": "2dec389c-b996-4472-8a0e-c92f40461766",
+   "error_message": ""
+  },
+  "MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Bernoulli_DegreeZero": {
+   "submitted_at": 1792219970.4517496,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "85db72d0-1ff1-482e-8848-823a13921f31",
+   "theorem_id": "a2214c47-7495-4bbe-8ec5-584d151fea2d",
+   "error_message": ""
+  },
+  "MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_ComparisonLemmas_OverAllOutcomes_ErrorAndMass": {
+   "submitted_at": 1792219972.4816656,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "d2c5c6ce-0df9-4e88-ae96-18e2f0947fd0",
+   "theorem_id": "e5bd2313-b057-4643-b5d1-5ac3fce09606",
+   "error_message": ""
+  },
+  "MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_ComparisonLemmas_OverAllOutcomes_NonglobalDecomposition": {
+   "submitted_at": 1792220081.9646122,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "de44aeaa-5f01-44d4-af1f-9d0d0ca03036",
+   "theorem_id": "aae650e6-1894-4ecc-bc29-9ae233641b14",
+   "error_message": ""
+  },
+  "MIPRE_Background_AnswerReduction_Construction": {
+   "submitted_at": 1792220476.0909624,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "c6d9a3d0-5ffc-4112-997a-62af462874c6",
+   "theorem_id": "e62d8325-58e3-44f6-8191-5965aea52ab9",
+   "error_message": ""
+  },
+  "MIPRE_Background_AnswerReduction_Complete": {
+   "submitted_at": 1792220657.2199166,
+   "http": 202,
+   "status": "PENDING",
+   "job_id": "3fca673e-f1fc-4f2b-99d6-d2e433ac8e2d"
   }
  },
  "theorems": {
@@ -15816,6 +15886,224 @@
    "status": "PUBLISHED",
    "theorem_id": "543b0247-9307-452b-8773-40f02808b144",
    "error_message": ""
+  },
+  "MIPRE.AnswerReduction.progs_size_pdom": {
+   "submitted_at": 1792219432.5452394,
+   "http": 202,
+   "job_id": "ba2677f2-37bb-4163-b2c0-f4ddecacb1ca",
+   "status": "PUBLISHED",
+   "theorem_id": "087a5297-b8ed-43ef-9e91-d3e5a9333766",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.typedSampler_time": {
+   "submitted_at": 1792219642.6292024,
+   "http": 202,
+   "job_id": "3af3cdc9-76ed-4681-8757-cd15ddb5a377",
+   "status": "PUBLISHED",
+   "theorem_id": "13d5bf11-52cc-45a3-afd2-3d36b1d96d9a",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.pd_heads": {
+   "submitted_at": 1792219804.558385,
+   "http": 202,
+   "job_id": "af239245-b5ed-4f09-b038-c9751905c356",
+   "status": "PUBLISHED",
+   "theorem_id": "136363f9-deb0-4222-959c-955c6f24233f",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.core_runs": {
+   "submitted_at": 1792219804.9797955,
+   "http": 202,
+   "job_id": "2d81aaad-ae99-45b6-b7ee-1b9a3d4c4bf1",
+   "status": "PUBLISHED",
+   "theorem_id": "80acd9a2-5ba8-4bf7-b94e-1ea0601f7d75",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.chkV_eq": {
+   "submitted_at": 1792219805.438634,
+   "http": 202,
+   "job_id": "dd9933ac-035b-429f-bd8d-21252c45baf6",
+   "status": "PUBLISHED",
+   "theorem_id": "121827cf-4f22-47e8-a99c-8ff89c00b329",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.accepts_iff": {
+   "submitted_at": 1792219886.5415442,
+   "http": 202,
+   "job_id": "6a4b87e5-d892-479d-ade7-43e3084fe7ac",
+   "status": "PUBLISHED",
+   "theorem_id": "7308490d-d210-4a17-8a70-0815e1e80724",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.total": {
+   "submitted_at": 1792219806.316371,
+   "http": 202,
+   "job_id": "21e0d36b-567f-4db0-a487-10366dd1ac6b",
+   "status": "PUBLISHED",
+   "theorem_id": "b3102b69-ed7a-4612-a3f3-943a40fb9998",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.margCall_pdom": {
+   "submitted_at": 1792219806.8181522,
+   "http": 202,
+   "job_id": "d94e8ba2-dac1-41db-b034-2f4e4b95ead5",
+   "status": "PUBLISHED",
+   "theorem_id": "5f623b97-08f0-4405-9dd2-48ac7516e021",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.typedDecider_time": {
+   "submitted_at": 1792219987.212702,
+   "http": 202,
+   "job_id": "6ee7aed1-1b23-4def-aec3-25b9e1b756c8",
+   "status": "PUBLISHED",
+   "theorem_id": "aa0aa59d-812e-424f-9005-9464ec0c1557",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.hAConsistency_submeas": {
+   "submitted_at": 1792220067.860559,
+   "http": 202,
+   "job_id": "01958f95-ab63-4d62-b13e-692298fb4e60",
+   "status": "PUBLISHED",
+   "theorem_id": "8983de95-f4f3-40fe-a8d0-c81d35860866",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.hAConsistency_completed_from_submeas": {
+   "submitted_at": 1792219973.461552,
+   "http": 202,
+   "job_id": "588d824f-3402-42b3-bdce-c1b32c7e745d",
+   "status": "PUBLISHED",
+   "theorem_id": "f3a1b866-57b7-4629-bea8-d49aaa4e253f",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.degreeZeroPastedPointConsistency": {
+   "submitted_at": 1792220069.859581,
+   "http": 202,
+   "job_id": "023f5d13-a486-48f5-87ba-210f6c8e74a9",
+   "status": "PUBLISHED",
+   "theorem_id": "fda28f6c-2831-41d2-9de8-c0b3860a22e8",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.degreeZeroPastedPointConsistency_of_axis_self": {
+   "submitted_at": 1792220070.3152509,
+   "http": 202,
+   "job_id": "f188cf60-04b5-4477-b676-d424158a1cfd",
+   "status": "PUBLISHED",
+   "theorem_id": "ba5e5df7-7377-40ea-80fe-4f3abe5cb1aa",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.avgOver_uniform_eligibleMass_le_distinct_add_dnoteq": {
+   "submitted_at": 1792220082.356947,
+   "http": 202,
+   "job_id": "6376c97c-7660-4849-a765-7577f329f68a",
+   "status": "PUBLISHED",
+   "theorem_id": "3dcb312c-0694-46e8-aec5-79f1483d7647",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.overAllOutcomesPastedMass_eq_avg_distinct_global": {
+   "submitted_at": 1792220082.7761114,
+   "http": 202,
+   "job_id": "c463b8da-47e1-4331-8511-948a921b351c",
+   "status": "PUBLISHED",
+   "theorem_id": "1d338022-6eed-4646-84f4-bea700cc3dce",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.overAllOutcomesExpansionMass_eq_avg_uniform_eligible": {
+   "submitted_at": 1792220357.9134226,
+   "http": 202,
+   "job_id": "7b014c9a-42e9-4f8a-b2f9-047775bc36b2",
+   "status": "PUBLISHED",
+   "theorem_id": "eeeb94dc-d17c-4875-a50c-8817c9a0f7d3",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.overAllOutcomes_reverse_mass_bound_of_not_d_add_one_le": {
+   "submitted_at": 1792220083.7024057,
+   "http": 202,
+   "job_id": "e91f5688-ad53-41e1-a135-3263dd7ad2e7",
+   "status": "PUBLISHED",
+   "theorem_id": "66c4be13-f2c0-4174-a571-789438505b15",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.overAllOutcomes_pasted_sub_expansion_le_dnoteq": {
+   "submitted_at": 1792220085.984226,
+   "http": 202,
+   "job_id": "dad18178-07c6-452c-8858-dfd2750e3188",
+   "status": "PUBLISHED",
+   "theorem_id": "aa193c56-6308-4eca-a0f0-247ca61e883e",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.dnoteq_term_le_overAllOutcomesError": {
+   "submitted_at": 1792220188.9558082,
+   "http": 202,
+   "job_id": "29d3aa0d-ec4d-4984-833b-f45beb41b618",
+   "status": "PUBLISHED",
+   "theorem_id": "f3ae9bba-0632-4f98-bed2-f52c318f2df2",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.hBConsistencyError_add_mdq_add_dnoteq_le_overAllOutcomesError": {
+   "submitted_at": 1792220189.3763752,
+   "http": 202,
+   "job_id": "dd6f2f08-0790-4793-a517-3009b2a44b20",
+   "status": "PUBLISHED",
+   "theorem_id": "9e27c0df-d39e-4320-a2d6-54ed77ef93bf",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.tupleInterpolatedVerticalLine_eq_of_no_supported_mismatch": {
+   "submitted_at": 1792220189.7639241,
+   "http": 202,
+   "job_id": "8993caa7-40f6-4ff1-a6bc-659f5af5025b",
+   "status": "PUBLISHED",
+   "theorem_id": "21595ff7-be22-4598-8dd1-0b00c7299b40",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.avgOver_distinct_eligibleMass_eq_global_add_nonglobal": {
+   "submitted_at": 1792220190.1500206,
+   "http": 202,
+   "job_id": "207f9d30-f4ca-412f-a46c-cb61f8657dfe",
+   "status": "PUBLISHED",
+   "theorem_id": "bc06ee48-ec87-476c-a814-5f8e0e567c05",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.overAllOutcomes_distinct_bad_line_mass_le_hBConsistencyError": {
+   "submitted_at": 1792220190.600033,
+   "http": 202,
+   "job_id": "13a875c1-4fbb-4ff8-b37a-8dd70c634ec9",
+   "status": "PUBLISHED",
+   "theorem_id": "c809bb37-a2da-4996-bd36-76111621e0b4",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.lineConsistentNonglobalMass_le_indicatorMass": {
+   "submitted_at": 1792220191.15299,
+   "http": 202,
+   "job_id": "6394fc2f-99d3-4268-9c1d-3e841fb8e0e4",
+   "status": "PUBLISHED",
+   "theorem_id": "9317e737-4925-4486-b50b-93562ee40f51",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.overAllOutcomes_distinct_nonglobal_mass_le_bad_line_mass_add_lineConsistent": {
+   "submitted_at": 1792220191.5248768,
+   "http": 202,
+   "job_id": "0c90a2b9-2985-450f-b0cd-32012a9fb5f4",
+   "status": "PUBLISHED",
+   "theorem_id": "f113983a-3e2e-49db-b231-5990fd8fb5e7",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.cutVal_pdom": {
+   "submitted_at": 1792220657.601659,
+   "http": 202,
+   "job_id": "ea7beefe-c164-4335-ac75-1bfe53ce756d",
+   "status": "QUEUED"
+  },
+  "MIPRE.AnswerReduction.typedArg_pdom": {
+   "submitted_at": 1792220658.0211372,
+   "http": 202,
+   "job_id": "503dcf23-bba1-43f7-adfd-a95872b2a827",
+   "status": "QUEUED"
+  },
+  "MIPRE.AnswerReduction.arVerifier_bounds": {
+   "submitted_at": 1792220658.400891,
+   "http": 202,
+   "job_id": "e8a4643c-ba6f-4fcc-a075-480114121ecb",
+   "status": "QUEUED"
   }
  },
  "solutions": {
@@ -25907,11 +26195,11 @@
    "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.fromHToG_gHatHalfProduct_reverse_eq_adjoint": {
-   "submitted_at": 1792218895.4545784,
+   "submitted_at": 1792219113.8490388,
    "http": 200,
-   "submission_id": "3a32a468-a209-4706-801d-17680f17eb9e",
-   "status": "PENDING",
-   "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
+   "submission_id": "6385f529-e744-4218-8f81-5b29249c0a09",
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.one_le_ldPastingError_of_one_le_nu": {
    "submitted_at": 1792218513.1524475,
@@ -25938,8 +26226,8 @@
    "submitted_at": 1792218825.5755022,
    "http": 200,
    "submission_id": "fd154b1e-240b-4983-ae89-6dd431b5610c",
-   "status": "PENDING",
-   "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_postMoveFlatFamily_last_active": {
    "submitted_at": 1792218518.7471087,
@@ -26008,8 +26296,8 @@
    "submitted_at": 1792218894.853892,
    "http": 200,
    "submission_id": "5daf5246-bdbc-40ac-bca7-8e6fc77dbfa5",
-   "status": "PENDING",
-   "error_message": "Failed to record the decomposition edge for import 'MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_Bernoulli_FromHToG_Core_BernoulliTail': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>. The proof verified but its reduction could not be recorded — please resubmit."
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM4_pointwise_finalRightShape": {
    "submitted_at": 1792218687.8972473,
@@ -26050,15 +26338,15 @@
    "submitted_at": 1792218935.5379307,
    "http": 200,
    "submission_id": "4b2fa8d6-c9e1-41b9-a44b-f94222b06b9c",
-   "status": "PENDING",
-   "error_message": "Failed to resolve platform imports: Import parser timed out after 5s"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_pointwise_rightShape": {
    "submitted_at": 1792218896.1889296,
    "http": 200,
    "submission_id": "2ef19390-9dd8-4b98-b9a4-4a50afc626d3",
-   "status": "PENDING",
-   "error_message": "Failed to materialize the target's dependencies: DB error looking up import 'Theorems.Thm_MIPStarRE_LDT_Pasting_bernoulliTailOperator_le_one': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.fromHToG_cons_type_outcome_sum": {
    "submitted_at": 1792218763.0935898,
@@ -26071,82 +26359,592 @@
    "submitted_at": 1792218782.1025453,
    "http": 200,
    "submission_id": "860bf794-7fdb-4d39-96db-539c3da41ae1",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.fromHToG_SUS_context_avg_le_one": {
-   "submitted_at": 1792218817.9091122,
+   "submitted_at": 1792219018.6922288,
    "http": 200,
-   "submission_id": "ee8241d1-11a4-4957-8791-4caa086f9792",
-   "status": "ERROR",
-   "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
+   "submission_id": "50e65622-1e89-4fad-b75a-691bdf48f531",
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.parProg_runs": {
    "submitted_at": 1792218822.821701,
    "http": 200,
    "submission_id": "d327ebdf-14b1-474b-acbe-1789561de5b9",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.parProg_time": {
    "submitted_at": 1792218823.5160062,
    "http": 200,
    "submission_id": "10c2d214-bfb7-480c-a061-312ca1e87b59",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_large_gamma": {
-   "submitted_at": 1792218824.3713596,
+   "submitted_at": 1792219017.9838777,
    "http": 200,
-   "submission_id": "0f166894-ad23-42fb-a07f-8d6aa9a76bdd",
-   "status": "ERROR",
-   "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
+   "submission_id": "6dd216da-d2a8-49e5-ad40-14b8af4c13dc",
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.one_le_ldPastingNu_of_large_zeta": {
    "submitted_at": 1792218824.971815,
    "http": 200,
    "submission_id": "aefd9ce6-e95e-4667-8174-2ba2edbc6126",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_flatChainFamily_last": {
    "submitted_at": 1792218826.1785007,
    "http": 200,
    "submission_id": "05afcdf0-7ce4-427e-8936-ef38b82af8cb",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_eq_halfSandwichRightAdjointShape": {
    "submitted_at": 1792218837.8826346,
    "http": 200,
    "submission_id": "39d5301c-ba45-4f48-91ba-de81140a5a7d",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_eq_halfSandwichLeftAdjointShape": {
    "submitted_at": 1792218838.4982524,
    "http": 200,
    "submission_id": "e678005b-a06a-46bf-90f7-6363df7b6f79",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_postMoveFlatStep": {
    "submitted_at": 1792218839.0613554,
    "http": 200,
    "submission_id": "86f36f2e-42df-4cb5-94a1-6a21824abc66",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM4_eq_finalRightShape": {
    "submitted_at": 1792218847.4764447,
    "http": 200,
    "submission_id": "804e26f2-4029-45a0-b77b-ec01ad12f630",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_eq_halfSandwichLeftShape": {
    "submitted_at": 1792218848.1689062,
    "http": 200,
    "submission_id": "7671b61e-9a94-4abf-9686-e904670c5e66",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_moveChainLift_moveFamily_last": {
-   "submitted_at": 1792218848.770786,
+   "submitted_at": 1792218969.680469,
    "http": 200,
-   "submission_id": "15988055-a23b-46b6-8cc7-ca4989382818",
-   "status": "FAILED",
-   "error_message": "Submission rejected by the soundness guard:\ncould not lex the submitted code: Token scanner timed out after 10s"
+   "submission_id": "cc79ea9e-b9c0-40a4-94b3-fe7d55b34ec8",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_eq_halfSandwichRightShape": {
+   "submitted_at": 1792218940.4086616,
+   "http": 200,
+   "submission_id": "f371ec2d-4890-491e-947d-fb192c77818c",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGTailStageMass_cons_eq_adjacentStageA0_branch": {
+   "submitted_at": 1792219159.866845,
+   "http": 200,
+   "submission_id": "ad39ad6c-ba53-48e6-8a02-78acbf32c581",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_eq_halfSandwichRightAdjointLeftActionShape": {
+   "submitted_at": 1792219023.93282,
+   "http": 200,
+   "submission_id": "7f20369d-01e6-49c7-b113-6e6752dcb25d",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_split_iff": {
+   "submitted_at": 1792219173.123827,
+   "http": 200,
+   "submission_id": "a8373146-8200-4693-b450-d30a83421bf9",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_split_one_iff": {
+   "submitted_at": 1792219025.1399395,
+   "http": 200,
+   "submission_id": "d1998c16-5da1-4195-b2fb-79621217acde",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.qBipartiteLinearConsDefect_option_eq_sum_some_complement": {
+   "submitted_at": 1792219026.0967965,
+   "http": 200,
+   "submission_id": "25b70d4e-de64-456a-a1b6-44eba08a6bc5",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_eq_halfSandwichLeftAdjointLeftActionShape": {
+   "submitted_at": 1792219050.1308649,
+   "http": 200,
+   "submission_id": "09d3d1ab-6eb1-4da2-bd1b-a3734173b041",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.qBipartiteLinearConsDefect_nonneg_of_right_total_one": {
+   "submitted_at": 1792219050.9899275,
+   "http": 200,
+   "submission_id": "cfe27b00-2a5e-4d10-bbb5-fae7b505f164",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_adjointRawCommutation_originalOutcome": {
+   "submitted_at": 1792219079.0694134,
+   "http": 200,
+   "submission_id": "01d07f33-69c0-4784-9589-f6cdfbcffcbb",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_ldGbcon_of_axis_self": {
+   "submitted_at": 1792219079.870924,
+   "http": 200,
+   "submission_id": "4777f6ca-fccc-4cfe-9a62-7a05f3f69ccd",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageA0_eq_leftShape": {
+   "submitted_at": 1792219100.230479,
+   "http": 200,
+   "submission_id": "771d5e62-9537-4fc5-ae2e-8c7231707fbd",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_eq_rightShape": {
+   "submitted_at": 1792219101.0748444,
+   "http": 200,
+   "submission_id": "154b8082-7301-4005-b4e7-0cf1d07bee2c",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_eq_finalLeftShape": {
+   "submitted_at": 1792219114.5823884,
+   "http": 200,
+   "submission_id": "3db4e209-1052-484f-811e-294fb589b223",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_moveChain_step": {
+   "submitted_at": 1792219422.4465237,
+   "http": 200,
+   "submission_id": "9337967a-03d3-4fb6-af48-41650c63ddab",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_zero_outcome_some_eq_endpoint": {
+   "submitted_at": 1792219186.0483367,
+   "http": 200,
+   "submission_id": "2f99a29b-724a-4785-b82e-a85a0912a00b",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_sqrt_bound": {
+   "submitted_at": 1792219199.1438231,
+   "http": 200,
+   "submission_id": "c3840f1f-0e54-4df4-8b4f-67299b0ee687",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.gHatSandwichFamily_restrict_eval_outcome_some": {
+   "submitted_at": 1792219199.8090813,
+   "http": 200,
+   "submission_id": "a430d65d-c925-4cbe-a37f-92f9e0d1d602",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.gHatHalfProduct_prefix_mul_last": {
+   "submitted_at": 1792219225.713678,
+   "http": 200,
+   "submission_id": "006d1027-325e-4996-8038-eaa7437f22a2",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.hBConsistency_fixed_u_defect_le_avgOver_distinct": {
+   "submitted_at": 1792219226.3633742,
+   "http": 200,
+   "submission_id": "18a5248d-2423-49c0-a7a9-ad52321a9606",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.avgOver_distinct_pasted_defect_le_badMass": {
+   "submitted_at": 1792219226.9985652,
+   "http": 200,
+   "submission_id": "b24809e7-9ca9-4e30-ba74-c69303815c2e",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.bipartiteConsError_le_of_linearDefect_average_bound": {
+   "submitted_at": 1792219452.7333987,
+   "http": 200,
+   "submission_id": "bed4d0fc-32c7-4422-a9b9-fd4c97f59c83",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.avgOver_uniform_badMass_le_k_mul_ldSandwichLineOnePointError_ofLinePointBounds": {
+   "submitted_at": 1792219254.8395827,
+   "http": 200,
+   "submission_id": "73700301-f335-4afc-bfad-9932f1f13a3a",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_ldGbcon_lift_of_axis_self": {
+   "submitted_at": 1792219308.0131261,
+   "http": 200,
+   "submission_id": "f3291fb2-0890-4c89-bdc1-6beebff1d2c0",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_facts": {
+   "submitted_at": 1792219312.951654,
+   "http": 200,
+   "submission_id": "30f17ac8-147f-4d01-a120-f423419361b0",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3E_paperMove": {
+   "submitted_at": 1792219365.4163206,
+   "http": 200,
+   "submission_id": "71cd49aa-eb1a-4403-93c8-11f6861204da",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.gHatSandwich_sum_last_eq_prefix": {
+   "submitted_at": 1792219506.3718941,
+   "http": 200,
+   "submission_id": "1d418e1d-7a1e-408e-90ba-17b28ecb7701",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.gHatHalfProduct_lastReverse_eq_conjTranspose": {
+   "submitted_at": 1792219366.6893296,
+   "http": 200,
+   "submission_id": "717dae4e-a068-4caf-84b2-4291d1c76360",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_zero_eq_endpoint": {
+   "submitted_at": 1792219370.2923782,
+   "http": 200,
+   "submission_id": "e50c9ef4-52d4-4eff-9485-fbcd7dc5279e",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.fromHToG_headTail_qSDDCore_bound": {
+   "submitted_at": 1792219706.8263695,
+   "http": 200,
+   "submission_id": "6fe1fb95-cc80-4711-915b-7cecc038b645",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_core_two": {
+   "submitted_at": 1792219430.3710005,
+   "http": 200,
+   "submission_id": "1957c7b4-965e-4a78-a18f-7e257fdbf6c6",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_error_le": {
+   "submitted_at": 1792219638.1251822,
+   "http": 200,
+   "submission_id": "33c5d111-010d-4556-bd39-4c08e92e21ec",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_endpoint_comm_error_le": {
+   "submitted_at": 1792219431.568977,
+   "http": 200,
+   "submission_id": "b323282f-0203-437a-a1f3-b183958a75b3",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.avgOver_distinct_badMass_le_hBConsistencyError_ofLinePointBounds": {
+   "submitted_at": 1792219432.138365,
+   "http": 200,
+   "submission_id": "05df9112-51a5-4851-86e9-9e7e3365bd48",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointPrefixMoved_eq_endpoint": {
+   "submitted_at": 1792219500.8145945,
+   "http": 200,
+   "submission_id": "1d8a5145-a295-401a-b34e-25181bbb5721",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_abs_bounds": {
+   "submitted_at": 1792219583.4753976,
+   "http": 200,
+   "submission_id": "94d3bdae-8c0f-4cc5-a6c9-ac760ac305ae",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.gHatRotatedHalfProduct_lastReverse_eq_conjTranspose_lastFront": {
+   "submitted_at": 1792219584.156926,
+   "http": 200,
+   "submission_id": "3372438d-f4d3-4609-b35c-d138d94ea08a",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.progs_size_pdom": {
+   "submitted_at": 1792219584.7839503,
+   "http": 200,
+   "submission_id": "1b0e695d-4af1-4fa9-a10b-813ca928e0a6",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGStageMass_eq_adjacentStageA0": {
+   "submitted_at": 1792219629.0766306,
+   "http": 200,
+   "submission_id": "e75b8741-6696-4d8a-a247-012eba582b08",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_flatChainStep": {
+   "submitted_at": 1792219631.0868297,
+   "http": 200,
+   "submission_id": "52b43cfe-46d3-4b7e-b5a0-db8d280ce407",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_drop_last_outcome_some": {
+   "submitted_at": 1792219707.4299874,
+   "http": 200,
+   "submission_id": "218611d8-9945-409c-8676-e3dc706f93f8",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_route": {
+   "submitted_at": 1792219804.0701513,
+   "http": 200,
+   "submission_id": "c1dd513c-f540-4170-9383-855cf7976510",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_core": {
+   "submitted_at": 1792219809.6769757,
+   "http": 200,
+   "submission_id": "4df653ad-aaa5-4b75-ab5a-8fff24f26ea3",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_adjointRawCommutation_qSDDCore_bound": {
+   "submitted_at": 1792219810.341233,
+   "http": 200,
+   "submission_id": "c80cc660-c4b7-4abd-95d4-412ac3e9e2b5",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.typedSampler_time": {
+   "submitted_at": 1792220143.9521997,
+   "http": 200,
+   "submission_id": "7cb1089b-c4bb-48fa-b0b4-20d120795e0d",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.ldSandwichLineOnePointLeftFamily_eq_prefixOriginal": {
+   "submitted_at": 1792219890.6883266,
+   "http": 200,
+   "submission_id": "b57a839c-fa82-4af2-bae6-3e308e5c2597",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.chkV_eq": {
+   "submitted_at": 1792219974.0707788,
+   "http": 200,
+   "submission_id": "ac0b9cd5-0062-488e-a5db-f34178242a4b",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.fromHToG_headTail_adjoint_qSDDCore_bound": {
+   "submitted_at": 1792220416.7862911,
+   "http": 200,
+   "submission_id": "c02d11a2-476c-483b-ac8a-cd1f9fd47396",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.total": {
+   "submitted_at": 1792220184.3129086,
+   "http": 200,
+   "submission_id": "db7b9b04-bef3-4d2c-b694-720268e3a8a5",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.margCall_pdom": {
+   "submitted_at": 1792219991.3705547,
+   "http": 200,
+   "submission_id": "24593216-8fa9-434d-ab0e-79903e73993c",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.pd_heads": {
+   "submitted_at": 1792220068.451334,
+   "http": 200,
+   "submission_id": "eac9d757-4f44-49c0-8566-2a505d76b9c3",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.degreeZeroPastedPointConsistency": {
+   "submitted_at": 1792220253.166774,
+   "http": 200,
+   "submission_id": "e65ff9b8-5c29-4a7e-bd93-52d8244706c4",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.degreeZeroPastedPointConsistency_of_axis_self": {
+   "submitted_at": 1792220257.5878868,
+   "http": 200,
+   "submission_id": "a3d8634e-36b2-45ba-b48b-3414b7697180",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.hAConsistency_completed_from_submeas": {
+   "submitted_at": 1792220422.1662602,
+   "http": 200,
+   "submission_id": "714ef359-530d-400b-9859-d12c29f9bd57",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.avgOver_uniform_eligibleMass_le_distinct_add_dnoteq": {
+   "submitted_at": 1792220287.4831717,
+   "http": 200,
+   "submission_id": "23d7fb35-0db8-4a74-ae7d-b9664409b580",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.overAllOutcomesPastedMass_eq_avg_distinct_global": {
+   "submitted_at": 1792220288.6669471,
+   "http": 200,
+   "submission_id": "7cd75c63-8a08-4bf9-8730-14f845d75c5d",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_outcomeSum_cauchySchwarz_bound": {
+   "submitted_at": 1792220292.811276,
+   "http": 200,
+   "submission_id": "ffb00382-29cf-4f4a-ac1f-8beadd526b21",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.dnoteq_term_le_overAllOutcomesError": {
+   "submitted_at": 1792220293.356008,
+   "http": 200,
+   "submission_id": "5706b1d6-2903-4386-8642-cffcc7175dfd",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.hBConsistencyError_add_mdq_add_dnoteq_le_overAllOutcomesError": {
+   "submitted_at": 1792220309.6922898,
+   "http": 200,
+   "submission_id": "b57e6966-78d2-4921-8260-2973b167dc60",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.tupleInterpolatedVerticalLine_eq_of_no_supported_mismatch": {
+   "submitted_at": 1792220311.0438101,
+   "http": 200,
+   "submission_id": "09b7eb72-d562-44a7-b3fa-cdb393636ed5",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.avgOver_distinct_eligibleMass_eq_global_add_nonglobal": {
+   "submitted_at": 1792220481.9026816,
+   "http": 200,
+   "submission_id": "6628429b-2eda-49cd-9f84-5765cbb1060b",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.overAllOutcomes_distinct_nonglobal_mass_le_bad_line_mass_add_lineConsistent": {
+   "submitted_at": 1792220617.5244267,
+   "http": 200,
+   "submission_id": "56b7008c-16f8-491e-b69a-d97f491cab9f",
+   "status": "PENDING",
+   "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
+  },
+  "MIPRE.AnswerReduction.core_runs": {
+   "submitted_at": 1792220363.661138,
+   "http": 200,
+   "submission_id": "d1a862a2-84a9-49d3-8263-cef928a2b609",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.typedDecider_time": {
+   "submitted_at": 1792220364.3304963,
+   "http": 200,
+   "submission_id": "7b9d67fe-3b21-49e2-a80c-2969436ae2ad",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.overAllOutcomes_distinct_bad_line_mass_le_hBConsistencyError": {
+   "submitted_at": 1792220548.120435,
+   "http": 200,
+   "submission_id": "05a89b21-72ca-4aec-880e-2e3869abfbac",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.overAllOutcomesExpansionMass_eq_avg_uniform_eligible": {
+   "submitted_at": 1792220470.4192448,
+   "http": 200,
+   "submission_id": "fc7eca92-8a28-43d5-a6b3-90afc1eae1ba",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_linearDefect_average_cauchySchwarz_bound": {
+   "submitted_at": 1792220476.6975803,
+   "http": 200,
+   "submission_id": "3cb951dd-fc6a-42cd-9ffd-30b7b4f6bde2",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.lineConsistentNonglobalMass_le_indicatorMass": {
+   "submitted_at": 1792220477.3016214,
+   "http": 200,
+   "submission_id": "0a36dca2-52ab-4e31-98da-78d6f9d89723",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2M3_paperMove": {
+   "submitted_at": 1792220618.0877066,
+   "http": 200,
+   "submission_id": "99d2ce6e-e5aa-4f2c-81bc-7d1ca235908b",
+   "status": "PENDING"
+  },
+  "MIPRE.AnswerReduction.accepts_iff": {
+   "submitted_at": 1792220621.1576772,
+   "http": 200,
+   "submission_id": "cae9bf24-f9e4-44f2-b1b5-ff7d498a3d16",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Pasting.ldSandwichLineOnePoint_prefix_cauchySchwarz_transport": {
+   "submitted_at": 1792220646.0907478,
+   "http": 200,
+   "submission_id": "12459043-3999-4b9c-8498-f7d5259239bc",
+   "status": "ERROR",
+   "error_message": "Failed to resolve platform imports: Import parser timed out after 5s"
+  },
+  "MIPStarRE.LDT.Pasting.overAllOutcomes_reverse_mass_bound_of_not_d_add_one_le": {
+   "submitted_at": 1792220683.5214624,
+   "http": 200,
+   "submission_id": "fff6ed7b-50c8-49cb-ada3-22eca7ef197d",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Pasting.overAllOutcomes_pasted_sub_expansion_le_dnoteq": {
+   "submitted_at": 1792220684.1377735,
+   "http": 200,
+   "submission_id": "b104392a-8fbf-4336-b6f1-931f166e55c8",
+   "status": "PENDING"
   }
  },
  "log": []
