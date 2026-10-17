@@ -13795,6 +13795,18 @@
    "submission_id": "f92cda5b-d63e-4d5f-a1c3-e03acdb3635e",
    "status": "PENDING",
    "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
+  },
+  "MIPRE.QLD.MirrorSimul.sum_snorm_sq_bob_le": {
+   "submitted_at": 1792218685.647046,
+   "http": 200,
+   "submission_id": "7c012ed0-3de2-419c-b4c5-9eee526f0707",
+   "status": "PENDING"
+  },
+  "MIPRE.Introspection.readoutAcceptance_le_completedValue": {
+   "submitted_at": 1792218686.2588716,
+   "http": 200,
+   "submission_id": "66a4a0bf-723f-41b0-a44a-173c7e3106ae",
+   "status": "PENDING"
   }
  },
  "log": []

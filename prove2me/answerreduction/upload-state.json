@@ -25889,7 +25889,8 @@
    "submitted_at": 1792218446.6677651,
    "http": 200,
    "submission_id": "954fccd7-5265-4bba-abe0-c87544e22cfb",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.ldPasting_degreeRatio_nonneg": {
    "submitted_at": 1792218447.1785734,
@@ -25929,7 +25930,8 @@
    "submitted_at": 1792218514.4802682,
    "http": 200,
    "submission_id": "690789a3-8e6b-4e71-813a-36bc223c2868",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.Pasting.commuteGHalfSandwich_split_succ_iff": {
    "submitted_at": 1792218515.094038,
@@ -25997,6 +25999,36 @@
    "submitted_at": 1792218630.0100772,
    "http": 200,
    "submission_id": "837a32bf-0003-41a7-85f6-0b3231be6701",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM4_pointwise_finalRightShape": {
+   "submitted_at": 1792218687.8972473,
+   "http": 200,
+   "submission_id": "8fc42b92-4a95-4de8-a680-22f689fcaf54",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM1_pointwise_halfSandwichLeftShape": {
+   "submitted_at": 1792218688.4824228,
+   "http": 200,
+   "submission_id": "6dbe3d99-ae12-44a0-a91b-8914d6df6e06",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_pointwise_halfSandwichRightShape": {
+   "submitted_at": 1792218689.0625684,
+   "http": 200,
+   "submission_id": "dbf67f6c-8cb3-43d0-aa18-26d24806cf64",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM2_pointwise_halfSandwichRightAdjointShape": {
+   "submitted_at": 1792218693.6816115,
+   "http": 200,
+   "submission_id": "07a01239-0ef3-42d9-a386-35a87f6edf81",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Pasting.fromHToGAdjacentStageM3_pointwise_halfSandwichLeftAdjointShape": {
+   "submitted_at": 1792218694.3144271,
+   "http": 200,
+   "submission_id": "adfba4d5-8476-4bfc-822f-72e7c603e1eb",
    "status": "PENDING"
   }
  },
