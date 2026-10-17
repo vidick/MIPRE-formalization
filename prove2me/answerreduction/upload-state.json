@@ -3799,6 +3799,12 @@
    "job_id": "11c86b8b-1db2-49bb-b9b8-19045c49dc75",
    "theorem_id": "4fb329ee-9677-4391-a6e9-121e9ffdc3f9",
    "error_message": ""
+  },
+  "MIPRE_Background_AnswerReduction_Instance": {
+   "submitted_at": 1792236953.5575185,
+   "http": 202,
+   "status": "PENDING",
+   "job_id": "fe7f8282-549b-4394-ad6a-81c1c1d7c18a"
   }
  },
  "theorems": {
@@ -28889,7 +28895,22 @@
    "submitted_at": 1792234858.50366,
    "http": 200,
    "submission_id": "39c90903-2934-462f-ba24-04d6a1785be0",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.one_sub_povmValue_decoded_le": {
+   "submitted_at": 1792235744.7435908,
+   "http": 200,
+   "submission_id": "c51b5d01-4635-4e3b-9a62-b9ed55d810a1",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.arVerifier_soundness": {
+   "submitted_at": 1792236184.3184717,
+   "http": 200,
+   "submission_id": "12d98b95-f918-4038-ae65-8b71a0b05c3f",
+   "status": "ACCEPTED",
+   "error_message": ""
   }
  },
  "log": []

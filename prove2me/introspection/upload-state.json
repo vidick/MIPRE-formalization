@@ -9662,31 +9662,41 @@
    "submitted_at": 1792235364.8350096,
    "http": 202,
    "job_id": "c8050e96-64c3-4cbb-987a-a5a1a1a832c4",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "cc517a86-5c9a-42ae-8bec-7e32e66808c9",
+   "error_message": ""
   },
   "MIPRE.Introspection.CompiledSoundness.exponent_pos": {
-   "submitted_at": 1792235365.2705216,
+   "submitted_at": 1792235637.805953,
    "http": 202,
-   "job_id": "d9d01d97-19e4-43b5-8d4a-365c3935bf79",
-   "status": "QUEUED"
+   "job_id": "01ee1920-3800-47fb-839a-db5e3f5bbc75",
+   "status": "PUBLISHED",
+   "theorem_id": "60b09ebb-b574-40e4-b31b-fd864e6781c5",
+   "error_message": ""
   },
   "MIPRE.Introspection.CompiledSoundness.exponent_le_one": {
    "submitted_at": 1792235365.7942505,
    "http": 202,
    "job_id": "83a9c3f0-4151-4ad9-a03e-0d0403d8e5b5",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "57b996d7-5dac-4d67-8d9d-c6eab03a5ad3",
+   "error_message": ""
   },
   "MIPRE.Introspection.CompiledSoundness.source_value_ge_of_raw": {
    "submitted_at": 1792235401.4499233,
    "http": 202,
    "job_id": "72975c87-3ae1-4c04-a435-28f55a848edc",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "374a2dd7-82fa-44b1-bd5a-20ea84fae374",
+   "error_message": ""
   },
   "MIPRE.Introspection.CompiledSoundness.output_soundness": {
    "submitted_at": 1792235402.0197444,
    "http": 202,
    "job_id": "ca815949-1d03-4f99-9d54-f231e9e088b9",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "d81a97c8-11dc-4f5a-9112-613e80da334b",
+   "error_message": ""
   }
  },
  "solutions": {
@@ -15616,7 +15626,36 @@
    "submitted_at": 1792235351.649115,
    "http": 200,
    "submission_id": "fab78c75-5858-4d62-8cb4-b424d317bce3",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.CompiledSoundness.exponent_le_one": {
+   "submitted_at": 1792236388.5317526,
+   "http": 200,
+   "submission_id": "43007af4-6ac5-409e-b254-fcdb79a1a5d0",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.CompiledSoundness.exponent_pos": {
+   "submitted_at": 1792236077.5641315,
+   "http": 200,
+   "submission_id": "f0a1714e-611e-4b6a-a141-a240262aa0d0",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.CompiledSoundness.coefficient_one_le": {
+   "submitted_at": 1792237011.7207494,
+   "http": 200,
+   "submission_id": "a7200c30-1f08-4005-ada8-fb8975911d32",
+   "status": "PENDING",
+   "error_message": "Failed to resolve platform imports: Import parser timed out after 5s"
+  },
+  "MIPRE.Introspection.CompiledSoundness.source_value_ge_of_raw": {
+   "submitted_at": 1792236855.9075549,
+   "http": 200,
+   "submission_id": "6360408a-759b-42dd-a7e1-cafb46a9e414",
+   "status": "PENDING",
+   "error_message": "Failed to record the decomposition edge for import 'MIPRE_Background_LIDT_MIPStarRE_LDT_Pasting_SwitcherooContraction_Split': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>. The proof verified but its reduction could not be recorded — please resubmit."
   }
  },
  "log": []
