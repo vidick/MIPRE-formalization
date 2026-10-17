@@ -3814,60 +3814,340 @@
    "submitted_at": 1792204776.918941,
    "http": 202,
    "job_id": "cb9bca86-e43d-43c7-a6ac-8267ae54db50",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "504f373d-16b3-4517-b9f3-1569b82d7141",
+   "error_message": ""
   },
   "MIPRE.Introspection.replaceExtended_value": {
    "submitted_at": 1792204777.3009248,
    "http": 202,
    "job_id": "c598655c-78c3-4801-9c04-f895999c7375",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "303365b4-2fc0-46d6-a7d1-efa572cf9685",
+   "error_message": ""
   },
   "MIPRE.Introspection.povmValue_stability_of_condWin": {
    "submitted_at": 1792204777.6629448,
    "http": 202,
    "job_id": "06f03ebb-9d4e-4bea-83b2-4767c75fad80",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "d4d2dc4e-43ce-4839-b28d-fe3eb0b7263d",
+   "error_message": ""
   },
   "MIPRE.Introspection.povmValue_stability_at": {
    "submitted_at": 1792204778.0252542,
    "http": 202,
    "job_id": "b89864d9-bee7-405b-933f-a30513d5cbb2",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "16af9ef1-0eae-47e1-a616-0695edb3d989",
+   "error_message": ""
   },
   "MIPRE.Introspection.submeasurement_completion_mass": {
    "submitted_at": 1792204779.832848,
    "http": 202,
    "job_id": "9465d6f5-78a9-49c5-9d16-87c6da07d8fa",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "bfc26068-901e-48fc-b003-589f848318a5",
+   "error_message": ""
   },
   "MIPRE.Introspection.submeasurement_completion_dist_avg": {
    "submitted_at": 1792204780.2134917,
    "http": 202,
    "job_id": "88e2aff2-373e-49e1-b5dd-bcd674426203",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "a5e9a2fb-c932-445c-a480-fe1545f5fe52",
+   "error_message": ""
   },
   "MIPRE.Introspection.TypedEstimates.aux_agreement_estimate": {
    "submitted_at": 1792204780.5926206,
    "http": 202,
    "job_id": "59c563ba-35b2-48a9-9351-808fd4644786",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "d44ae027-fce1-43a8-ae0b-07faa7e46cd9",
+   "error_message": ""
   },
   "MIPRE.Introspection.TypedExtraction.sum_pairs": {
    "submitted_at": 1792204780.9777646,
    "http": 202,
    "job_id": "4887eedb-d43a-4926-b5b8-965fa669a59d",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "2000e784-536c-48ca-b8a8-b51140e4ddb2",
+   "error_message": ""
   },
   "MIPRE.Introspection.TypedExtraction.condWin_cross_eq": {
    "submitted_at": 1792204781.3610942,
    "http": 202,
    "job_id": "9113526f-c6f7-476e-ac19-208aebfbd8f0",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "bf595275-43cb-40d0-8a3e-bc6ed072f351",
+   "error_message": ""
   },
   "MIPRE.Introspection.TypedExtraction.cross_failure_le": {
    "submitted_at": 1792204781.73707,
    "http": 202,
    "job_id": "c0102f88-8133-48c0-a3e3-bd980e5aa76d",
+   "status": "PUBLISHED",
+   "theorem_id": "b9474b99-a415-4e7c-aee6-289cf8c4113b",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.TypedEstimates.prefixChainType_adj": {
+   "submitted_at": 1792204808.096217,
+   "http": 202,
+   "job_id": "f28518cb-8ac2-4b48-8968-c02babf31a5f",
+   "status": "PUBLISHED",
+   "theorem_id": "e2a4d7cc-2850-4fe0-b460-8c021c0bac79",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.TypedEstimates.prefixChainType_check": {
+   "submitted_at": 1792204819.3808618,
+   "http": 202,
+   "job_id": "54b6c211-a758-433f-b5cf-f1ef22fbcba7",
+   "status": "PUBLISHED",
+   "theorem_id": "145ffd8b-fa26-47f8-939f-023300c716e2",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.TypedEstimates.prefix_chain_step_estimate_bob": {
+   "submitted_at": 1792204819.848454,
+   "http": 202,
+   "job_id": "3fb77140-b542-42eb-aea5-f0e3040fc593",
+   "status": "PUBLISHED",
+   "theorem_id": "1bb624fe-1879-4538-b2fd-c398a0cb89db",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.TypedEstimates.hiding_introspect_prefix_estimate_bob": {
+   "submitted_at": 1792204820.2425818,
+   "http": 202,
+   "job_id": "764f1378-8437-4bce-890c-93b846cf8693",
+   "status": "PUBLISHED",
+   "theorem_id": "b6052ab3-2940-49f0-a274-e23bbd1fbfb4",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.TypedPresentation.family_exactlyOn": {
+   "submitted_at": 1792204820.680706,
+   "http": 202,
+   "job_id": "1cb8c95e-e414-40dc-b47b-341b55d17537",
+   "status": "PUBLISHED",
+   "theorem_id": "8954f1d9-6cd1-4cef-a02d-d53ac8c4f378",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.TypedPresentation.marginal_aux": {
+   "submitted_at": 1792204832.2233942,
+   "http": 202,
+   "job_id": "e96927c1-6df7-4b07-9727-61d708ca1fd3",
+   "status": "PUBLISHED",
+   "theorem_id": "8daf08ad-042c-46a1-995f-cfd12d0f98b1",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.TypedPresentation.linear_aux": {
+   "submitted_at": 1792204832.664915,
+   "http": 202,
+   "job_id": "97c75e3e-9d31-49a6-997a-6e76dbea5c59",
+   "status": "PUBLISHED",
+   "theorem_id": "88d4c619-1d8c-4ca0-950b-42033e31f9a9",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.TypedPresentation.factor_aux": {
+   "submitted_at": 1792204833.109886,
+   "http": 202,
+   "job_id": "c3e9f098-0988-4ca4-b361-f65dd5cd0d03",
+   "status": "PUBLISHED",
+   "theorem_id": "93f81e1c-3c30-434c-abab-a5a3cbe2d0eb",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.TypedPresentation.mu_aux": {
+   "submitted_at": 1792204841.6218224,
+   "http": 202,
+   "job_id": "060c5d68-4554-42ba-b9b9-fc35ef05ca2c",
+   "status": "PUBLISHED",
+   "theorem_id": "7e0e3aea-f042-44ae-8307-a3e8b55ddded",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.submeasurement_extension_mass": {
+   "submitted_at": 1792204842.0867581,
+   "http": 202,
+   "job_id": "efeaf869-da42-4adb-a1cd-7dbeb54200e0",
+   "status": "PUBLISHED",
+   "theorem_id": "f034f1aa-9052-4eb7-9210-bdc0839adf35",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.valid_outcome_error_le": {
+   "submitted_at": 1792204852.801199,
+   "http": 202,
+   "job_id": "9570820a-1f5a-4725-b600-6edc4f3c283c",
+   "status": "PUBLISHED",
+   "theorem_id": "eb907690-3559-43fe-bd07-cc1ce76b0368",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.isometric_valid_outcome_alice_error_le": {
+   "submitted_at": 1792204863.699464,
+   "http": 202,
+   "job_id": "d9db2d24-8322-4ac6-a242-5f51565ef62c",
+   "status": "PUBLISHED",
+   "theorem_id": "964a9da4-a379-44c4-8af1-d2c51a008a5a",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.isometric_valid_outcome_bob_error_le": {
+   "submitted_at": 1792204864.0808825,
+   "http": 202,
+   "job_id": "2fe6d3eb-c760-43e0-931f-8f5b593c5aaf",
+   "status": "PUBLISHED",
+   "theorem_id": "0e28bd57-4ff1-4015-81bb-a7f53e3b697f",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.abs_sum_qform_mul_le": {
+   "submitted_at": 1792204864.5451474,
+   "http": 202,
+   "job_id": "532ab577-e5d8-44ae-a975-21bcf6ce615d",
+   "status": "PUBLISHED",
+   "theorem_id": "d62f0ef1-ad8a-4abf-a066-59d3cf688baf",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.pvm_event_stability": {
+   "submitted_at": 1792204864.9659598,
+   "http": 202,
+   "job_id": "7a0b2cd4-c059-4462-90b0-0b7566d1b0bc",
+   "status": "PUBLISHED",
+   "theorem_id": "6f7471de-49c3-4579-86f7-b710b57b2090",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.exists_pauli_mixing_varying": {
+   "submitted_at": 1792204875.3420475,
+   "http": 202,
+   "job_id": "3442831f-e1a0-4f37-80fe-d5a977a4197e",
+   "status": "PUBLISHED",
+   "theorem_id": "2235fdaa-d6f0-4ec5-9f44-3a7318721b56",
+   "error_message": ""
+  },
+  "MIPRE.fourierOf_pair_mul": {
+   "submitted_at": 1792204877.6136663,
+   "http": 202,
+   "job_id": "298c0931-4294-4c63-8ae2-fbad53a1a5e4",
+   "status": "PUBLISHED",
+   "theorem_id": "9121bc51-ff26-41e9-a7da-94a296d76fa3",
+   "error_message": ""
+  },
+  "MIPRE.fourierOf_pair_mul_prime": {
+   "submitted_at": 1792204892.0408304,
+   "http": 202,
+   "job_id": "dbb8a565-1f16-4198-b570-ee96d0d0e796",
+   "status": "PUBLISHED",
+   "theorem_id": "a6f3355a-676e-476f-a55a-07b262e3c867",
+   "error_message": ""
+  },
+  "MIPRE.sum_stateSqNorm_fourierOf": {
+   "submitted_at": 1792204892.3636837,
+   "http": 202,
+   "job_id": "7756880d-c114-468c-bc3b-f037b8764e31",
+   "status": "PUBLISHED",
+   "theorem_id": "36ada89f-6383-4250-8c19-97170c136f5f",
+   "error_message": ""
+  },
+  "MIPRE.kron_one_mul_ancillaEmbed": {
+   "submitted_at": 1792204893.7130735,
+   "http": 202,
+   "job_id": "d912d7df-6009-494b-b99d-9864bb184138",
+   "status": "PUBLISHED",
+   "theorem_id": "2741f2c4-8468-4fba-a623-4e37ac13f71e",
+   "error_message": ""
+  },
+  "MIPRE.condFail_le_one_sub_sum_bornProb_map": {
+   "submitted_at": 1792204894.093594,
+   "http": 202,
+   "job_id": "92db6ff0-9ac9-4b37-8d20-e7a5bd953586",
+   "status": "PUBLISHED",
+   "theorem_id": "7b87677d-ddc0-4273-b2fd-34caafca212c",
+   "error_message": ""
+  },
+  "MIPRE.condFail_le_one_sub_sum_bornProb_diag": {
+   "submitted_at": 1792204904.0907838,
+   "http": 202,
+   "job_id": "ff2e1549-91fa-4e40-89ce-3ff05cb3de81",
+   "status": "QUEUED"
+  },
+  "MIPRE.sum_dotProduct_fourierVecRaw": {
+   "submitted_at": 1792204904.4128165,
+   "http": 202,
+   "job_id": "8138a76c-560d-4f08-b65c-0bcae3fb5479",
+   "status": "PUBLISHED",
+   "theorem_id": "0598823f-f3d2-44af-9f71-e8a220b3df5f",
+   "error_message": ""
+  },
+  "MIPRE.dotProduct_star_self": {
+   "submitted_at": 1792204904.743868,
+   "http": 202,
+   "job_id": "c2c31ee1-7ab0-412b-b9dd-d157056cad15",
+   "status": "PUBLISHED",
+   "theorem_id": "0a62bc6b-6707-434d-94e4-708459e5539d",
+   "error_message": ""
+  },
+  "MIPRE.sum_norm_fourierVecRaw_sq": {
+   "submitted_at": 1792204915.2300565,
+   "http": 202,
+   "job_id": "9a9dd3a8-d5d3-435f-9411-a0450e1727e1",
+   "status": "QUEUED"
+  },
+  "MIPRE.sum_norm_fourierVec_sq": {
+   "submitted_at": 1792204915.621686,
+   "http": 202,
+   "job_id": "0954e5b3-8ce1-4dc2-9d60-65a8c6019e8c",
+   "status": "QUEUED"
+  },
+  "MIPRE.trFourier_trObs": {
+   "submitted_at": 1792204918.0715969,
+   "http": 202,
+   "job_id": "30089f2d-b6ca-41f4-bc5c-5433c441d3da",
+   "status": "PUBLISHED",
+   "theorem_id": "605de503-5d7a-4479-8503-665769209828",
+   "error_message": ""
+  },
+  "MIPRE.sum_dotProduct_trVecRaw": {
+   "submitted_at": 1792204918.4452214,
+   "http": 202,
+   "job_id": "e365dc4a-aba9-4f31-aafb-87bcaae9acc2",
+   "status": "PUBLISHED",
+   "theorem_id": "7a3f76d0-a4af-4c76-b432-466360b596be",
+   "error_message": ""
+  },
+  "MIPRE.sum_norm_char_two_sq": {
+   "submitted_at": 1792204918.7825,
+   "http": 202,
+   "job_id": "62398dc8-b4e9-4185-930a-defe10985e83",
+   "status": "QUEUED"
+  },
+  "MIPRE.sum_avg_norm_fibre_sq": {
+   "submitted_at": 1792204933.3144631,
+   "http": 202,
+   "job_id": "7e456f5c-cb57-4e23-9fce-caf6b75c888c",
+   "status": "QUEUED"
+  },
+  "MIPRE.qform_sum_ge_of_close": {
+   "submitted_at": 1792204933.702095,
+   "http": 202,
+   "job_id": "0d6872ce-0acc-4d48-9d46-e59bda87bc5a",
+   "status": "QUEUED"
+  },
+  "MIPRE.aOp_zero": {
+   "submitted_at": 1792204934.0953338,
+   "http": 202,
+   "job_id": "303cdb73-4366-4334-9257-f50a729504dd",
+   "status": "QUEUED"
+  },
+  "MIPRE.sum_bornProb_le_fibSum": {
+   "submitted_at": 1792204934.439255,
+   "http": 202,
+   "job_id": "922cb6b4-9503-4bf9-b1b9-d78492779dd0",
+   "status": "QUEUED"
+  },
+  "MIPRE.sum_snorm_sq_comm_eq": {
+   "submitted_at": 1792204935.6912665,
+   "http": 202,
+   "job_id": "955eed5f-5a38-4a5e-b1ed-49bb2e6d1ee1",
+   "status": "QUEUED"
+  },
+  "MIPRE.abs_sigma_sub_cloud_le": {
+   "submitted_at": 1792204936.0573375,
+   "http": 202,
+   "job_id": "fd6690e6-e1e9-41cd-9b39-3564b57b5e75",
    "status": "QUEUED"
   }
  },
