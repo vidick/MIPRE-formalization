@@ -910,9 +910,11 @@ def upload_pipelined(tree, meta, st, args, siblings):
         return rec["status"] == "PUBLISHED" and bool(rec.get("theorem_id")), rec["error_message"]
 
     # ---- the work list, earliest wave first; jobs an earlier run left in flight are polled, not resent
+    # a ready bundle first, whatever its wave: it unlocks every statement and solution beneath it, and
+    # waiting for the rest of the previous wave's solutions (by wave alone) left the slots to them
     order = {"B": 0, "T": 1, "S": 2}
     items = sorted([("B", b) for b in by_b] + [("T", n) for n in by_n] + [("S", n) for n in by_n],
-                   key=lambda kx: ((wb if kx[0] == "B" else wn)[kx[1]], order[kx[0]]))
+                   key=lambda kx: (kx[0] != "B", (wb if kx[0] == "B" else wn)[kx[1]], order[kx[0]]))
     done_now = {"B": lambda x: def_ok(x), "T": lambda x: stmt_ok(x),
                 "S": lambda x: st["solutions"].get(x, {}).get("status") in ACCEPTED}
     pending = [kx for kx in items if not done_now[kx[0]](kx[1])]
