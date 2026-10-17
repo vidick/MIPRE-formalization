@@ -20765,7 +20765,8 @@
    "submitted_at": 1792211867.0035658,
    "http": 200,
    "submission_id": "c3ffc3dd-f5f8-432a-af93-15d5688259aa",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MakingMeasurementsProjective.adjoint_image_eq_zero_of_unitary_positive_gram_completion_row": {
    "submitted_at": 1792211879.7492437,
@@ -20879,12 +20880,31 @@
    "submitted_at": 1792212010.7881832,
    "http": 200,
    "submission_id": "eff00d26-9685-4a2b-a92b-a2a2d3961e36",
-   "status": "PENDING"
+   "status": "ERROR",
+   "error_message": "Failed to materialize the target's dependencies: DB error looking up import 'Theorems.Thm_MIPStarRE_LDT_SubMeas_total_nonneg': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
   },
   "MIPStarRE.LDT.SelfImprovement.addInU_filtered_sandwiched_tensor_sum_le_one": {
    "submitted_at": 1792212011.548629,
    "http": 200,
    "submission_id": "f16cbd59-71f9-4c7f-9b3c-d50eb0e18a23",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.Pasting.switcheroo_first_term_close": {
+   "submitted_at": 1792212023.5003693,
+   "http": 200,
+   "submission_id": "ce6c461b-f949-4019-997f-73f1551d126c",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.SelfImprovement.addInUSelectedCSChainQ0_eq_leftQuantity_averagedSandwiched": {
+   "submitted_at": 1792212026.0948043,
+   "http": 200,
+   "submission_id": "fb677676-e449-4d5f-9c6f-3d5477b4cab6",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.SelfImprovement.addInUSelectedCSChainQ4_eq_rightQuantity": {
+   "submitted_at": 1792212029.3638303,
+   "http": 200,
+   "submission_id": "6691a617-f120-43a5-b4d4-e73a9279f889",
    "status": "PENDING"
   }
  },
