@@ -15515,10 +15515,11 @@
    "error_message": ""
   },
   "MIPRE.QLD.exists_phys_of_regime": {
-   "submitted_at": 1792231676.2037182,
+   "submitted_at": 1792232124.7769396,
    "http": 200,
-   "submission_id": "61a0d0c1-e390-4047-bed6-b7196d70627a",
-   "status": "PENDING"
+   "submission_id": "51cc972a-6485-4b7f-8732-d6f9c3bc4d1b",
+   "status": "PENDING",
+   "error_message": "Failed to resolve platform imports: DB error looking up import 'Definitions.Def_MIPRE_Background_QLD_Chain': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
   }
  },
  "log": []

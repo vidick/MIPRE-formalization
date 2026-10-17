@@ -3755,14 +3755,32 @@
   "MIPRE_Background_AnswerReduction_SoundError": {
    "submitted_at": 1792231501.1142871,
    "http": 202,
-   "status": "PENDING",
-   "job_id": "5257f7a9-2f21-4860-a53e-f489de4f3649"
+   "status": "PUBLISHED",
+   "job_id": "5257f7a9-2f21-4860-a53e-f489de4f3649",
+   "theorem_id": "589c9fbe-eeb2-42ab-92c8-f790d73c6610",
+   "error_message": ""
   },
   "MIPRE_Background_AnswerReduction_SoundPoly": {
    "submitted_at": 1792231783.5827544,
    "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "79263e88-d232-4311-a121-c25465891067",
+   "theorem_id": "51e5a311-9cef-42a2-a993-996bc1f86140",
+   "error_message": ""
+  },
+  "MIPRE_Background_AnswerReduction_SoundGameCheck": {
+   "submitted_at": 1792232088.2154253,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "311c4179-0b4d-48ff-b86b-853e3a36e3eb",
+   "theorem_id": "882d1971-a777-4ae8-a038-d6cba9dfd780",
+   "error_message": ""
+  },
+  "MIPRE_Background_AnswerReduction_SoundDecoded": {
+   "submitted_at": 1792232300.553146,
+   "http": 202,
    "status": "PENDING",
-   "job_id": "79263e88-d232-4311-a121-c25465891067"
+   "job_id": "a54e9f8e-f005-42b3-91cf-33c728f52fbb"
   }
  },
  "theorems": {
@@ -16857,36 +16875,142 @@
    "submitted_at": 1792231784.001576,
    "http": 202,
    "job_id": "8741cddc-5e29-4b16-b2a4-25d3ce29d1c1",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "013274e9-9d06-43fd-9735-b29b05be2f38",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.rd_eq_of_typedPred_prime": {
    "submitted_at": 1792231784.3544157,
    "http": 202,
    "job_id": "47cf067d-34cb-4730-8e83-ad46d857ccad",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "1b029bde-ff3a-4bdb-bfa8-2ec87d1e8897",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.sum_dis_MA1_GBe_le": {
    "submitted_at": 1792231789.9138217,
    "http": 202,
    "job_id": "58951d3a-455e-4631-87c9-75929e08364d",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "b6d7d1f1-6040-4d66-a69f-3e2899796f99",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.sum_dis_GAe_MB1_le": {
    "submitted_at": 1792231790.3295538,
    "http": 202,
    "job_id": "b958c2bf-aa5e-4b87-91ce-4961e5b25b89",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "e8d47ff5-2f2c-482f-9531-a06f4d57167e",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.sum_dis_JAe_MB6_le": {
    "submitted_at": 1792231790.7299674,
    "http": 202,
    "job_id": "bd6085b6-ccd7-4479-93aa-436e0b819523",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "c167eada-e9bc-409c-a3ea-5089bf2edc78",
+   "error_message": ""
   },
   "MIPRE.AnswerReduction.sum_dis_MA6_JBe_le": {
    "submitted_at": 1792231791.4735174,
    "http": 202,
    "job_id": "28f7153e-f9d5-42f8-97e4-e65023a942ad",
+   "status": "PUBLISHED",
+   "theorem_id": "e6ed1847-558b-4636-9d2d-3c41d8f2644a",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.simA_mul_rpow_le": {
+   "submitted_at": 1792231848.2250261,
+   "http": 202,
+   "job_id": "06d36bde-7c4f-4015-ad6d-2c91be7fe978",
+   "status": "PUBLISHED",
+   "theorem_id": "5f169ebc-8d0c-48c2-99da-c27095a7933f",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.deltaSim_le_of": {
+   "submitted_at": 1792231848.7854218,
+   "http": 202,
+   "job_id": "9d5b8ace-08f5-43ef-a5dd-acee33bf7ed4",
+   "status": "PUBLISHED",
+   "theorem_id": "68f37638-5c3d-4f30-8cd7-ed8661532a56",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.errE_le": {
+   "submitted_at": 1792231849.2761066,
+   "http": 202,
+   "job_id": "09962cea-7043-4ab7-80da-f573dd919cd0",
+   "status": "PUBLISHED",
+   "theorem_id": "9d0638be-9efb-4eba-bef5-40cdc90d6b79",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.exists_threshold_clB": {
+   "submitted_at": 1792231849.7240584,
+   "http": 202,
+   "job_id": "84d97059-1df6-4620-b1fd-5dfe060fcd8f",
+   "status": "PUBLISHED",
+   "theorem_id": "27d3d2e2-d8ab-4f73-80a0-05e6fb922b47",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.sqrt_le_delta": {
+   "submitted_at": 1792231850.225553,
+   "http": 202,
+   "job_id": "af7d8652-4175-4118-ab56-fac9a93f72d8",
+   "status": "PUBLISHED",
+   "theorem_id": "92a6be40-f9da-425f-a517-9016d1f82e29",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.disPolyA_le": {
+   "submitted_at": 1792232088.8796039,
+   "http": 202,
+   "job_id": "fbb3a290-fb39-4702-a1f6-24e7d73ea637",
+   "status": "PUBLISHED",
+   "theorem_id": "109a23cd-0eca-4345-a54c-b86bb507e64e",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.disPolyB_le": {
+   "submitted_at": 1792232089.3400774,
+   "http": 202,
+   "job_id": "bfc73daa-17c9-42ee-a2e4-044143fe78db",
+   "status": "PUBLISHED",
+   "theorem_id": "98dbf48f-f285-4e0b-b526-ffd0303dff81",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.sum_disPolyA_le": {
+   "submitted_at": 1792232089.735657,
+   "http": 202,
+   "job_id": "24624c49-64fe-4487-85a3-2edd0baf7f5d",
+   "status": "PUBLISHED",
+   "theorem_id": "b64a6782-ae08-4ce9-b953-51d1241fcf1e",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.sum_disPolyB_le": {
+   "submitted_at": 1792232090.1520503,
+   "http": 202,
+   "job_id": "a04da448-5842-4209-b988-09e7f7f32f74",
+   "status": "PUBLISHED",
+   "theorem_id": "a4dff184-54ce-46de-895f-5fa8f54ae461",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.check_of_typedPred": {
+   "submitted_at": 1792232301.0044203,
+   "http": 202,
+   "job_id": "5b995b77-e15b-4263-810f-53a417867b5b",
+   "status": "PUBLISHED",
+   "theorem_id": "9a36fbcc-ae52-43d7-9ae9-3ceb2d8f2f8e",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.sum_gcEvA_le": {
+   "submitted_at": 1792232301.5773776,
+   "http": 202,
+   "job_id": "e6083d19-90e0-4a58-9fe7-8ef333d77018",
+   "status": "PUBLISHED",
+   "theorem_id": "09009711-9a84-4a7d-9c0e-e5bd757f8186",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.sum_gcEvB_le": {
+   "submitted_at": 1792232302.0615613,
+   "http": 202,
+   "job_id": "5a21e790-cec0-401d-bdc3-6ac20afc29ad",
    "status": "QUEUED"
   }
  },
@@ -28326,6 +28450,70 @@
    "submitted_at": 1792231718.4582608,
    "http": 200,
    "submission_id": "46fe5b63-fdb5-42d3-9eb8-285fde9efd27",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.rd_eq_of_typedPred": {
+   "submitted_at": 1792232188.2076654,
+   "http": 200,
+   "submission_id": "7efc4ed7-f74a-410d-a771-76951e41de12",
+   "status": "PENDING",
+   "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
+  },
+  "MIPRE.AnswerReduction.exists_threshold_clB": {
+   "submitted_at": 1792232084.5480304,
+   "http": 200,
+   "submission_id": "105b4fda-e980-41ca-8270-1b63a860ec84",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.rd_eq_of_typedPred_prime": {
+   "submitted_at": 1792232085.3774705,
+   "http": 200,
+   "submission_id": "e91c7b46-daad-481c-a55d-6ffb3e0aa5ad",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.AnswerReduction.simA_mul_rpow_le": {
+   "submitted_at": 1792232129.37326,
+   "http": 200,
+   "submission_id": "dd163fd5-9db4-4b92-b710-e1b91fd0b082",
+   "status": "PENDING"
+  },
+  "MIPRE.AnswerReduction.deltaSim_le_of": {
+   "submitted_at": 1792232129.992768,
+   "http": 200,
+   "submission_id": "22efdb51-b7d3-4b8a-8c97-e2ac96c1b048",
+   "status": "PENDING"
+  },
+  "MIPRE.AnswerReduction.sqrt_le_delta": {
+   "submitted_at": 1792232164.4807732,
+   "http": 200,
+   "submission_id": "f9a4d019-e07c-4154-aafa-02400ced625c",
+   "status": "PENDING"
+  },
+  "MIPRE.LIDT.Simul.sum_deltaSim_le": {
+   "submitted_at": 1792232165.2967172,
+   "http": 200,
+   "submission_id": "46e183d4-5e4f-41d4-aa51-ee3abe89d180",
+   "status": "PENDING"
+  },
+  "MIPRE.AnswerReduction.disPolyB_le": {
+   "submitted_at": 1792232302.9799066,
+   "http": 200,
+   "submission_id": "6c5ac0a3-0c09-467b-88ad-b6fe5f2887de",
+   "status": "PENDING"
+  },
+  "MIPRE.AnswerReduction.disPolyA_le": {
+   "submitted_at": 1792232337.2621107,
+   "http": 200,
+   "submission_id": "75182118-72c3-4e02-a84d-2ef5f4910b14",
+   "status": "PENDING"
+  },
+  "MIPRE.AnswerReduction.check_of_typedPred": {
+   "submitted_at": 1792232524.5661268,
+   "http": 200,
+   "submission_id": "27fbcb0c-fd7e-41ae-ae03-6f5a8c21a540",
    "status": "PENDING"
   }
  },
