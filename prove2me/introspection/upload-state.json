@@ -10250,7 +10250,8 @@
    "submitted_at": 1792211629.9114492,
    "http": 200,
    "submission_id": "48c97cf6-a934-448e-a84e-c4451a3a8a50",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Introspection.BinaryComplete.sampleOp_commute": {
    "submitted_at": 1792211641.020197,
@@ -10269,13 +10270,15 @@
    "submitted_at": 1792211642.6119263,
    "http": 200,
    "submission_id": "b368bee5-68bb-4728-997a-2750fdaf1cf6",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.QLD.swapVec_unit": {
    "submitted_at": 1792211644.9464996,
    "http": 200,
    "submission_id": "47120995-ab55-4144-ae56-8ddc180eb3db",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Introspection.stageAnswerDecode_recover_some": {
    "submitted_at": 1792211675.9392762,
@@ -10287,6 +10290,30 @@
    "submitted_at": 1792211718.2074552,
    "http": 200,
    "submission_id": "6a141370-280a-477b-9743-27dbf73caed9",
+   "status": "PENDING"
+  },
+  "MIPRE.Introspection.residualDualOp_stage": {
+   "submitted_at": 1792211719.3449538,
+   "http": 200,
+   "submission_id": "e0156835-00bf-44b3-9cca-4e9b9b71ddc4",
+   "status": "PENDING"
+  },
+  "MIPRE.QLD.povmValue_swapped_le": {
+   "submitted_at": 1792211721.3874936,
+   "http": 200,
+   "submission_id": "75f55d1f-2737-4852-aa2f-068a6205aab4",
+   "status": "PENDING"
+  },
+  "MIPRE.Introspection.prefixResidualOp_initial_apply": {
+   "submitted_at": 1792211736.7487354,
+   "http": 200,
+   "submission_id": "b09426a0-f03a-497b-bcdd-fc2f5c5e783a",
+   "status": "PENDING"
+  },
+  "MIPRE.Introspection.initialResidualPOVM_isPVM": {
+   "submitted_at": 1792211737.3186953,
+   "http": 200,
+   "submission_id": "d2109dd9-8856-4a76-8f57-0f343935d4e7",
    "status": "PENDING"
   }
  },
