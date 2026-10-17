@@ -3679,6 +3679,22 @@
    "job_id": "963fa7d1-a10b-4dba-85bf-f9c122c54c15",
    "theorem_id": "1502aa40-e29e-49a4-87e6-12eb7a552142",
    "error_message": ""
+  },
+  "MIPRE_Background_LIDT_MIPStarRE_LDT_MainInductionStep_Theorems_StageDataConstructors": {
+   "submitted_at": 1792223229.5379398,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "7495787f-936d-448e-bbff-414788938e1b",
+   "theorem_id": "6ed39b8f-ce65-43ca-b891-72489e02ea08",
+   "error_message": ""
+  },
+  "MIPRE_Background_LIDT_MIPStarRE_LDT_MainInductionStep_Theorems_AvgSliceErrors_Core": {
+   "submitted_at": 1792223434.5853083,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "52137156-f915-4f6a-a04f-89edfed8fe7a",
+   "theorem_id": "c47c96ee-3c89-4b31-85f2-f286cbf9ec4e",
+   "error_message": ""
   }
  },
  "theorems": {
@@ -16285,67 +16301,289 @@
    "submitted_at": 1792222523.228017,
    "http": 202,
    "job_id": "fab40268-157b-4599-bf29-19918769b8d5",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "a9505ee6-04ab-4d1e-a471-10981b73a3d2",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MainInductionStep.answerRestricted_selfConsistencyFailureProbability_eq": {
    "submitted_at": 1792222523.6526322,
    "http": 202,
    "job_id": "abf26c38-c7d6-4ef7-86fb-681027ea56a3",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "b1d08194-3d25-4f5c-ae74-6b2fa784f99c",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MainInductionStep.answerRestricted_diagonalFailureProbability_eq": {
    "submitted_at": 1792222524.1071672,
    "http": 202,
    "job_id": "006a32bf-64cc-487f-8e46-4c386cdf7520",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "4c0cbc08-3e5e-4f30-821c-f84430803102",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MainInductionStep.answer_weighted_axisParallel_bound": {
    "submitted_at": 1792222524.5275981,
    "http": 202,
    "job_id": "b24689ef-afad-4432-bde1-e37ed37752d6",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "542973e3-fc15-4f56-9220-455333f523cc",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MainInductionStep.answer_weighted_diagonal_bound": {
    "submitted_at": 1792222524.9258218,
    "http": 202,
    "job_id": "199dc27c-e73c-4d91-ab65-35f143bad36f",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "28930b68-c649-46b2-98ac-5923e57d0cb9",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MainInductionStep.AnswerRestrictedProbabilitiesStatement.ofWeightedBounds": {
    "submitted_at": 1792222525.4280872,
    "http": 202,
    "job_id": "1418d40f-443a-4ea0-bb71-041bc4e5fd90",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "51697ea7-dabc-4043-abc1-14f65f5f90ed",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MainInductionStep.answerSuccessor_weighted_axisParallel_bound": {
    "submitted_at": 1792222525.8101861,
    "http": 202,
    "job_id": "85838c20-006f-4c4a-9a14-62f46645e016",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "308c4d39-d3f7-4c70-9858-df87f3234372",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MainInductionStep.answerSuccessor_selfConsistencyRestrictedAverage_eq": {
    "submitted_at": 1792222526.16934,
    "http": 202,
    "job_id": "68972fb0-687d-47a5-ab6d-1cb6d8096e13",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "7f4947c2-4e0f-4706-8ceb-7aeaccc24294",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MainInductionStep.answerSuccessor_weighted_diagonal_bound": {
    "submitted_at": 1792222526.6738415,
    "http": 202,
    "job_id": "3deb7968-7f02-4503-9627-3b42b627bac6",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "03f5433f-c9d3-4771-9d96-828953de547a",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MainInductionStep.AnswerSuccessorRestrictedProbabilitiesStatement.ofWeightedBounds": {
    "submitted_at": 1792222527.161748,
    "http": 202,
    "job_id": "0c2ca45e-28d1-4cc6-b15a-835c40cfb406",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "9f1cc9f2-1bdc-4ae5-93ec-0c4a756d0da5",
+   "error_message": ""
   },
   "MIPStarRE.LDT.MainInductionStep.answerSuccessorRestrictedSliceConclusions": {
    "submitted_at": 1792222527.5900307,
    "http": 202,
    "job_id": "9f562101-9cef-4e26-894f-8a1ea5d01699",
-   "status": "QUEUED"
+   "status": "PUBLISHED",
+   "theorem_id": "8da853fb-ab66-45f1-b81c-be729c5a8b0b",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.mainInductionFromStageData": {
+   "submitted_at": 1792223435.0047545,
+   "http": 202,
+   "job_id": "ebb3eadb-3d85-4f02-9f42-de02c545fe4c",
+   "status": "PUBLISHED",
+   "theorem_id": "92239a40-c9c3-4e4a-b762-a62b403fc4f1",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.average_sliceSelfImprovementError_le": {
+   "submitted_at": 1792223586.5179605,
+   "http": 202,
+   "job_id": "53af78f6-445a-48d7-9919-3874fe739f1d",
+   "status": "PUBLISHED",
+   "theorem_id": "5aa42517-3188-4fa2-87ec-0420eada7c21",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.average_sliceError_le": {
+   "submitted_at": 1792223587.0261192,
+   "http": 202,
+   "job_id": "0420a58e-a21b-4470-ae0b-7c93ea8872c2",
+   "status": "PUBLISHED",
+   "theorem_id": "0a4e5ebc-355b-4499-a20d-8148fdd86b75",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.average_answerSuccessorSliceSelfImprovementError_le": {
+   "submitted_at": 1792223587.5287797,
+   "http": 202,
+   "job_id": "73b71af5-c3af-49c4-a3b9-dbff21a4ed03",
+   "status": "PUBLISHED",
+   "theorem_id": "8271b0ca-b74c-4321-b732-0480cd6bf08d",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.average_answerSuccessorSliceMainInductionNu_le": {
+   "submitted_at": 1792223587.9280717,
+   "http": 202,
+   "job_id": "66f3e0a0-ea40-45d6-970a-7146012c7440",
+   "status": "PUBLISHED",
+   "theorem_id": "82a3227f-3511-4cc2-bab1-d29c565a9edf",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.average_answerSuccessorSliceMainInductionError_le": {
+   "submitted_at": 1792223588.3759758,
+   "http": 202,
+   "job_id": "6c397633-d3eb-4188-a1b1-60922d43e1bc",
+   "status": "PUBLISHED",
+   "theorem_id": "8cdb8f26-5d64-4a29-aff5-22dd96a165d9",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerSuccessorRecursiveSliceMeasurements_ofMainInductionHypothesis": {
+   "submitted_at": 1792223588.8369424,
+   "http": 202,
+   "job_id": "58640cf3-f7b7-4be6-b270-b100ff8adec2",
+   "status": "PUBLISHED",
+   "theorem_id": "ad02bd56-ea92-4eec-a6ba-e2e6b41aabd2",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerSuccessorSelfImprovementOutputs_ofMainInductionHypothesis": {
+   "submitted_at": 1792223589.2462165,
+   "http": 202,
+   "job_id": "8c304e64-3123-49f7-b2b6-4c8ac6b3fcf9",
+   "status": "PUBLISHED",
+   "theorem_id": "a92899d8-9941-4595-bb5d-4a1e2e80ffc4",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.selfImprovementInInductionError_le_mainInductionNu": {
+   "submitted_at": 1792224080.9119217,
+   "http": 202,
+   "job_id": "e765b3dc-160b-4108-aadb-2ab6f131acf6",
+   "status": "PUBLISHED",
+   "theorem_id": "d622f459-d000-4388-ab82-484a485c4e35",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answer_selfImprovementInInductionError_le_mainInductionNu": {
+   "submitted_at": 1792223590.0377226,
+   "http": 202,
+   "job_id": "20e40acf-378a-4202-bf26-8a45e7c1ea53",
+   "status": "PUBLISHED",
+   "theorem_id": "c9f684d3-4814-4640-8995-3793f336eb50",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerSuccessorAveragedFamilyFields_ofMainInductionHypothesis": {
+   "submitted_at": 1792223590.519479,
+   "http": 202,
+   "job_id": "f683a2dc-befe-4d9b-ab97-7f74bb398200",
+   "status": "PUBLISHED",
+   "theorem_id": "b9e138c3-d4a0-460f-9926-ef5bed5c291b",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerLdPastingInInductionSectionOfComMainAndErrorBound": {
+   "submitted_at": 1792223590.9234562,
+   "http": 202,
+   "job_id": "0da81a85-bf8a-44b7-a15c-c8dc5b5a3bbc",
+   "status": "PUBLISHED",
+   "theorem_id": "29e9eed9-5083-4008-86f8-38d45a892ac7",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerComMainForCarrier_ofAnswerGood": {
+   "submitted_at": 1792223591.2857969,
+   "http": 202,
+   "job_id": "b18e5df6-5b6e-4006-bc8c-91bd17394898",
+   "status": "PUBLISHED",
+   "theorem_id": "aca4c718-1aea-48da-a6f4-a63786aa2f9a",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.ldPastingInInductionNu_le_fifth_mainInductionNu": {
+   "submitted_at": 1792223591.87751,
+   "http": 202,
+   "job_id": "93656dc9-0e7b-48a2-a129-d73b82143fde",
+   "status": "PUBLISHED",
+   "theorem_id": "b1974f1f-2870-4244-b2e6-fc33099c48ca",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.selfImprovementInInductionError_le_one_of_mainInductionError_lt_one": {
+   "submitted_at": 1792223628.3329453,
+   "http": 202,
+   "job_id": "c609678c-171b-4e69-bd25-bc96c6422424",
+   "status": "PUBLISHED",
+   "theorem_id": "889bb5e9-a3da-475e-ae4f-e1347d28283d",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answer_selfImprovementInInductionError_le_one_of_mainInductionError_lt_one": {
+   "submitted_at": 1792223823.1206992,
+   "http": 202,
+   "job_id": "b6b846af-8295-466f-a241-dd19f51f3acc",
+   "status": "PUBLISHED",
+   "theorem_id": "98ec6115-5098-47f6-bc4e-5ca4d5edee94",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.idxPolyFamily_complete_of_slice_bounds": {
+   "submitted_at": 1792223924.0332224,
+   "http": 202,
+   "job_id": "d9f94c48-9e8f-4afd-8541-3b42bc2f36ca",
+   "status": "PUBLISHED",
+   "theorem_id": "0770d297-9fa4-444d-b491-191f87d3975e",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.family_pointConsistencyError_eq_avg": {
+   "submitted_at": 1792223757.6671274,
+   "http": 202,
+   "job_id": "2589b158-04ce-4b18-abe5-8732a71b6240",
+   "status": "PUBLISHED",
+   "theorem_id": "8331a4d5-f5a6-44cc-8b35-87aa4d54c5a2",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answer_family_pointConsistencyError_eq_avg": {
+   "submitted_at": 1792223758.065753,
+   "http": 202,
+   "job_id": "225a63ab-0e0e-4b7a-a703-c6ea3b53eb62",
+   "status": "PUBLISHED",
+   "theorem_id": "1febde61-2aa1-4e26-9764-dbfebe636753",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answer_family_consistency_of_slice_bounds": {
+   "submitted_at": 1792223770.7965932,
+   "http": 202,
+   "job_id": "fbdebac0-b8f8-43ef-83cb-0b893fdb60e4",
+   "status": "PUBLISHED",
+   "theorem_id": "af74f20e-69b4-4b4e-aff8-bb1f1b799389",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.idxPolyFamily_stronglySelfConsistent_of_slice_bounds": {
+   "submitted_at": 1792223771.2333438,
+   "http": 202,
+   "job_id": "b4c015d1-adcd-494d-86d3-21e7a2a0c3ae",
+   "status": "PUBLISHED",
+   "theorem_id": "e8847dfa-1211-40b0-a8ac-2abd12387577",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.idxPolyFamily_sliceBoundednessInput_of_slice_bounds": {
+   "submitted_at": 1792223771.7067103,
+   "http": 202,
+   "job_id": "96da24f8-3fd8-4d45-b474-e77d8e79640c",
+   "status": "PUBLISHED",
+   "theorem_id": "0c43ac8b-9477-41b8-a89a-5d7d4804abc1",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.ldPastingInInductionError_le_mainInductionError_of_bounds": {
+   "submitted_at": 1792223772.148072,
+   "http": 202,
+   "job_id": "af6976f6-a914-4e4b-8dcb-9ef3d9cc75d9",
+   "status": "PUBLISHED",
+   "theorem_id": "507426b6-82cb-4614-8f62-f24a8d7d469b",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerLdPastingInInductionError_le_mainInductionError_of_smallError": {
+   "submitted_at": 1792223824.442255,
+   "http": 202,
+   "job_id": "8f27df7e-398f-4bdb-9ae3-5aacddb77ce6",
+   "status": "PUBLISHED",
+   "theorem_id": "cef3c779-db4d-41dc-a34a-94c6eace0988",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerLdPastingInInductionSectionDegreeZeroOfSmallError": {
+   "submitted_at": 1792223824.9575524,
+   "http": 202,
+   "job_id": "bb738e8a-f85d-4935-ae45-f7da23293fde",
+   "status": "PUBLISHED",
+   "theorem_id": "ab1e7c3a-0aa3-4b2b-b529-55ae07ad1158",
+   "error_message": ""
   }
  },
  "solutions": {
@@ -27366,6 +27604,217 @@
    "submission_id": "f59fef7b-8d9d-4f10-8c6c-4c96bf9d2afb",
    "status": "ACCEPTED",
    "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerRestricted_selfConsistencyFailureProbability_eq": {
+   "submitted_at": 1792222685.2327695,
+   "http": 200,
+   "submission_id": "1cc1d067-0d4e-4867-b274-82dca933febc",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerRestricted_axisParallelFailureProbability_eq": {
+   "submitted_at": 1792222707.785132,
+   "http": 200,
+   "submission_id": "783bcea8-54ca-44c0-8a10-1edb1c7d4e56",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerSuccessor_weighted_diagonal_bound": {
+   "submitted_at": 1792222708.4675117,
+   "http": 200,
+   "submission_id": "98ced894-a8ce-47f4-8b11-9aa0d9d7c709",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerRestricted_diagonalFailureProbability_eq": {
+   "submitted_at": 1792222901.2885127,
+   "http": 200,
+   "submission_id": "bf9369f9-0776-4920-8bd1-a96bb6361c27",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answer_weighted_axisParallel_bound": {
+   "submitted_at": 1792222963.3913596,
+   "http": 200,
+   "submission_id": "38baf2e1-36ab-428c-bd00-77ac8923d74b",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.AnswerRestrictedProbabilitiesStatement.ofWeightedBounds": {
+   "submitted_at": 1792222964.9789443,
+   "http": 200,
+   "submission_id": "2be67021-e1b4-4fad-a83c-ba9eb8665c70",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerSuccessor_selfConsistencyRestrictedAverage_eq": {
+   "submitted_at": 1792222965.6077585,
+   "http": 200,
+   "submission_id": "31089c19-30b2-4e4a-97ff-29c5e0b06b17",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answer_weighted_diagonal_bound": {
+   "submitted_at": 1792223501.0804846,
+   "http": 200,
+   "submission_id": "0cf5aac2-d758-4108-9ea6-02209daf890b",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerSuccessor_weighted_axisParallel_bound": {
+   "submitted_at": 1792223540.9971051,
+   "http": 200,
+   "submission_id": "7f29520f-c1ff-4a61-b250-104c178ebbfb",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.AnswerSuccessorRestrictedProbabilitiesStatement.ofWeightedBounds": {
+   "submitted_at": 1792223312.5895936,
+   "http": 200,
+   "submission_id": "68b97e39-2e78-4949-a4c7-b71537bd1e88",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerSuccessorRestrictedSliceConclusions": {
+   "submitted_at": 1792223824.0258422,
+   "http": 200,
+   "submission_id": "d90f4687-f17e-4f89-8c6f-671acc78e062",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.average_sliceError_le": {
+   "submitted_at": 1792224035.6431506,
+   "http": 200,
+   "submission_id": "033df130-7355-4cc3-a3b0-70ab9aeb866f",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.average_answerSuccessorSliceSelfImprovementError_le": {
+   "submitted_at": 1792223826.268757,
+   "http": 200,
+   "submission_id": "a117bdfb-7984-4ea4-b208-2d3f585774ac",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.average_answerSuccessorSliceMainInductionNu_le": {
+   "submitted_at": 1792223829.7300842,
+   "http": 200,
+   "submission_id": "08dd7234-6207-49bc-aa13-5c762aafdd76",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answer_selfImprovementInInductionError_le_mainInductionNu": {
+   "submitted_at": 1792223846.803523,
+   "http": 200,
+   "submission_id": "9a044f05-6a17-4a00-905f-a8b64ec10297",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.average_sliceSelfImprovementError_le": {
+   "submitted_at": 1792223924.6580873,
+   "http": 200,
+   "submission_id": "16b04371-76ef-4738-9f7d-bf65da0f798c",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerLdPastingInInductionSectionOfComMainAndErrorBound": {
+   "submitted_at": 1792223937.4109497,
+   "http": 200,
+   "submission_id": "f789eaa7-9d2b-452f-b2e8-45415b3592a5",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerComMainForCarrier_ofAnswerGood": {
+   "submitted_at": 1792223938.380121,
+   "http": 200,
+   "submission_id": "37e11c7a-5e35-4b04-9c6f-8fdd9c3f55d3",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.ldPastingInInductionNu_le_fifth_mainInductionNu": {
+   "submitted_at": 1792223947.332254,
+   "http": 200,
+   "submission_id": "6afd8499-8fcd-4285-8cd0-08dc2c8dbda4",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.family_pointConsistencyError_eq_avg": {
+   "submitted_at": 1792224412.03174,
+   "http": 200,
+   "submission_id": "09438b7d-2843-4204-89bc-ee07f8a4a9cd",
+   "status": "PENDING",
+   "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
+  },
+  "MIPStarRE.LDT.MainInductionStep.answer_family_pointConsistencyError_eq_avg": {
+   "submitted_at": 1792223961.0824351,
+   "http": 200,
+   "submission_id": "e7eaf01b-57a4-4442-bbf8-fd752801b8a7",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.idxPolyFamily_stronglySelfConsistent_of_slice_bounds": {
+   "submitted_at": 1792223961.8221111,
+   "http": 200,
+   "submission_id": "4a1d9e7d-7ed1-4797-9b2c-47cdf63a0179",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.idxPolyFamily_sliceBoundednessInput_of_slice_bounds": {
+   "submitted_at": 1792223970.749454,
+   "http": 200,
+   "submission_id": "ba8edcd3-3bf3-4fa7-ae20-634d2165712e",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.ldPastingInInductionError_le_mainInductionError_of_bounds": {
+   "submitted_at": 1792224376.2155836,
+   "http": 200,
+   "submission_id": "cfed7f10-c844-4385-bb79-3cb1c4987d5b",
+   "status": "PENDING",
+   "error_message": "Failed to resolve platform imports: DB error looking up import 'Theorems.Thm_MIPStarRE_LDT_avgOver_zero': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
+  },
+  "MIPStarRE.LDT.MainInductionStep.mainInductionFromStageData": {
+   "submitted_at": 1792223984.0812612,
+   "http": 200,
+   "submission_id": "41aaef06-d983-420d-947b-2eaa7de60817",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.average_answerSuccessorSliceMainInductionError_le": {
+   "submitted_at": 1792224081.5640042,
+   "http": 200,
+   "submission_id": "912c050c-a089-4284-87f8-28664c4d9863",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPStarRE.LDT.MainInductionStep.answer_selfImprovementInInductionError_le_one_of_mainInductionError_lt_one": {
+   "submitted_at": 1792224150.0621223,
+   "http": 200,
+   "submission_id": "4df9b99a-d309-4ccf-901b-225ec740d806",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.MainInductionStep.idxPolyFamily_complete_of_slice_bounds": {
+   "submitted_at": 1792224182.1914828,
+   "http": 200,
+   "submission_id": "1eb6d88c-c670-4fae-94ca-41870fb57a9b",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.MainInductionStep.selfImprovementInInductionError_le_mainInductionNu": {
+   "submitted_at": 1792224284.6879783,
+   "http": 200,
+   "submission_id": "e70c9611-e0c2-4e5f-97da-233d117af647",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.MainInductionStep.answer_family_consistency_of_slice_bounds": {
+   "submitted_at": 1792224288.4029627,
+   "http": 200,
+   "submission_id": "c553a03b-a165-4994-b1bc-635aed8fc964",
+   "status": "PENDING"
+  },
+  "MIPStarRE.LDT.MainInductionStep.answerSuccessorRecursiveSliceMeasurements_ofMainInductionHypothesis": {
+   "submitted_at": 1792224412.8362231,
+   "http": 200,
+   "submission_id": "11f50311-6415-4fce-847e-6fea87c81cb2",
+   "status": "PENDING"
   }
  },
  "log": []
