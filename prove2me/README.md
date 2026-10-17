@@ -220,7 +220,8 @@ What this closure needed beyond the earlier increments, in the order it surfaced
   the headers of every module its pasted helpers come from, and the metadata credits each third-party
   author (`tools/auto_meta.py`, `provenance`). Until this increment every file got the header of the
   closure's first module; of the published files, three assembly bundles carry this project's other
-  header ("Thomas Vidick" for "MIPRE contributors"), and nothing third-party was published under it.
+  header ("Thomas Vidick" for "MIPRE contributors"), left as published at the maintainer's decision,
+  and nothing third-party was published under it.
 * **Names a generated file sees differently from its source.**
   - An `open` of a project namespace no declaration of the file's environment lives in is dropped
     (opening it would make nothing visible), resolved the way the source resolved it; a namespace
