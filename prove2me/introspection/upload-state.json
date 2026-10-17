@@ -15515,11 +15515,24 @@
    "error_message": ""
   },
   "MIPRE.QLD.exists_phys_of_regime": {
-   "submitted_at": 1792232124.7769396,
+   "submitted_at": 1792232638.50394,
    "http": 200,
-   "submission_id": "51cc972a-6485-4b7f-8732-d6f9c3bc4d1b",
-   "status": "PENDING",
-   "error_message": "Failed to resolve platform imports: DB error looking up import 'Definitions.Def_MIPRE_Background_QLD_Chain': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
+   "submission_id": "74d5fbe1-7709-49a7-a9dc-66551735ce3b",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.exists_le_qldErr": {
+   "submitted_at": 1792233204.2983038,
+   "http": 200,
+   "submission_id": "2d5392c2-7e09-4222-9379-f3182ab5bd6a",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.qld_soundness": {
+   "submitted_at": 1792233619.475379,
+   "http": 200,
+   "submission_id": "195eb0fb-8fcd-4eaf-bb14-06da2078c194",
+   "status": "PENDING"
   }
  },
  "log": []
