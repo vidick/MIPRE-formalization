@@ -422,7 +422,8 @@ for _x, _u in U.items():
                                    open(f, encoding="utf-8").read()) for f in _files if os.path.exists(f))
             if not _named:
                 LOCAL_NAME[_x] = re.sub(r"_mIPRE(?=(_\d+)?$)", "_definitions", _u["name"])
-            continue
+            if _u["cls"] == "avail" or not _named:
+                continue   # a published bundle that names it explicitly is regenerated naming it
         ANON_LOCAL[_x] = (_d["declStart"]["offset"] + len(_head[:_mm.end()].encode("utf-8")), _u["name"].split(".")[-1])
 const_unit = {}
 for uid, u in U.items():
@@ -721,6 +722,22 @@ for _x, _u in U.items():
             if _chain_hit(_riv) or (_rns in _opened and not _chain_hit(_const)):
                 REF_FIX[(_m, _rf["start"]["offset"], _rf["end"]["offset"])] = _const
                 break
+
+# A node is uploaded as `solution`, and inside its own proof that name is the node itself (the local of
+# the recursive reference, which comes before any constant): the proof's references to a constant
+# named `solution` (`AuxiliaryScan.solution` in `AuxiliaryScan.stage_correct`) are written in full.
+for _x, _u in U.items():
+    if _u["cls"] != "node" or not _u.get("decl"):
+        continue
+    _m = _u["module"]
+    if _m not in _REFS_AT:
+        _rs = sorted(F[_m]["refs"], key=lambda r: r["start"]["offset"])
+        _REFS_AT[_m] = ([r["start"]["offset"] for r in _rs], _rs)
+    _a, _b = _u["decl"]["valStart"]["offset"], _u["decl"]["declEnd"]["offset"]
+    _starts, _rs = _REFS_AT[_m]
+    for _rf in _rs[bisect.bisect_left(_starts, _a):bisect.bisect_right(_starts, _b)]:
+        if _rf["end"]["offset"] <= _b and txt(_m, _rf["start"]["offset"], _rf["end"]["offset"]) == "solution":
+            REF_FIX[(_m, _rf["start"]["offset"], _rf["end"]["offset"])] = _user_of(_rf["const"])
 
 def spliced(m, a, b, extra=()):
     """The source text of module m from a to b with the REF_FIX references in it written in full and
