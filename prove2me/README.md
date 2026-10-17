@@ -63,7 +63,8 @@ never answer a question about Lean code by pattern matching.
    not supported in submissions"), so the closure's one macro, `size_omega` of
    `Cost/Interpreter.lean`, is not uploaded: the generator drops its definition from the bundle
    and spells out its expansion, with the fully qualified names the macro pre-resolved, at each
-   of its 40 uses. Every generated file keeps the copyright header of its source.
+   of its 40 uses. Every generated file keeps the copyright header of its source (since increment 3;
+   see below).
 4. **Build.** The three libraries compile against Mathlib `0df444a`: 1,443 Lake jobs, no
    errors, and exactly 60 `sorry` warnings, one per stub.
 5. **Validation** (`tools/validate.py`). The elaborated type of every node is pretty-printed
@@ -179,6 +180,81 @@ statements published, 95 solutions accepted, and the platform shows all 95 theor
 `MIPRE.Repetition.nonempty_seven` among them. The goal theorem's frontier is now the two remaining
 leaves, `MIPRE.Introspection.nonempty_seven` and `MIPRE.AnswerReduction.nonempty_five`.
 
+## The answer-reduction and introspection stages (`answerreduction/`, `introspection/`)
+
+The third increment: the closures of the two remaining stage instances at `70cbf1c`,
+`MIPRE.AnswerReduction.answerReduction` (`AnswerReduction 5`, `MIPRE/Background/AnswerReduction/Instance.lean`)
+and `MIPRE.Introspection.seven` (`Introspection 7`), 1,107 modules together: the rest of the
+Foundations/TM/LCS own code, the low individual degree test (`Background/LIDT/`, much of it vendored
+from [LionSR/MIPStarRE](https://github.com/LionSR/MIPStarRE) with the authors' permission), the Pauli
+basis test (`Background/QLD/`), the orthogonalization development vendored from
+vidick/commuting-repetition, two CSLib files, Sean Perazzolo's LCS development and the two stage
+layers. A platform search (`/search`, `GET /theorems?tags=`) found none of it hosted. Two trees, answer
+reduction first; the introspection tree's registry includes it (125 of its bundles import
+answer-reduction nodes, so they wait for those to be Proved):
+
+| | answer reduction | introspection |
+|---|---|---|
+| modules with uploaded content | 600 | 425 |
+| bundles (new + delta) | 476 (475 + 1) | 361 (342 + 19) |
+| definitions in them, embedded theorems | 3,336, 2,012 | 1,634, 621 |
+| theorem nodes, inline helpers | 1,673, 2,651 | 852, 2,765 |
+| bundles importing same-tree nodes | 178 (975 imports) | 59 (192 imports) |
+| leaf closed | `MIPRE.AnswerReduction.nonempty_five` | `MIPRE.Introspection.nonempty_seven` |
+
+What this closure needed beyond the earlier increments, in the order it surfaced:
+
+* **Metaprogramming.** The platform refuses custom syntax and elaborator registration in a
+  submission. 23 modules use some: 30 `local notation` commands, the tactic macros `solve_line_comm`,
+  `norm_ds` and `norm_ds_goal`, the recursive `macro_rules` tactic `quantum_nonneg`, the elaborator
+  `avg_congr` and the simp set `ldt_simp`. `tools/ws_rewrite_meta.py` rewrites the workspace copies
+  (never the sources) into what the elaborator would have produced; each rewritten module was
+  recompiled before extraction. Check commands of the sources (`#guard_msgs in #print axioms`) are
+  dropped from bundles, whose definitions rest on sorry stubs.
+* **Copyright headers.** Each generated file carries the header of the source it copies, a solution
+  the headers of every module its pasted helpers come from, and the metadata credits each third-party
+  author (`tools/auto_meta.py`, `provenance`). Until this increment every file got the header of the
+  closure's first module; of the published files, three assembly bundles carry this project's other
+  header ("Thomas Vidick" for "MIPRE contributors"), and nothing third-party was published under it.
+* **Names a generated file sees differently from its source.**
+  - An `open` of a project namespace no declaration of the file's environment lives in is dropped
+    (opening it would make nothing visible), resolved the way the source resolved it; a namespace
+    Mathlib also has (`Matrix`, whose scoped `ᴴ` a stub parses) is kept (`tools/ext_namespaces.lean`).
+  - A stub hoists its scope to the top level, where the opens reproducing the namespace chain compete
+    with the source's own opens; a hoisted `variable` line writes in full each project constant its
+    top level would not resolve as the source did (`Question`: MIPRE.QLD's, not MIPRE.LIDT's).
+  - The copies drop `private`, so a private declaration can capture a reference elsewhere
+    (`SourceCompiler.andCheck` against `AuxiliaryProgram.andCheck`); exactly the references Lean's
+    resolution order (namespace chain, then opens) would give to the copy are written in full.
+  - A `local instance` is in effect for the rest of its section, and each generated block lives in
+    its own section: the blocks after one activate it again by name. An anonymous instance's name
+    depends on its module (`instDecidableEq_mIPRE` in the source, `instDecidableEq_definitions` in a
+    bundle), so the copies are named explicitly with the source's name.
+  - A node the source declares as an `instance` (of a Prop-valued class) has a plain theorem stub, so
+    the files that import it register it.
+  - The tree records name an imported node by its platform name (the ASCII renames): naming it by its
+    source name made the uploader take it for published content.
+* **Published content is never regenerated differently.** A generator fix made after part of a tree
+  is published must reproduce the published bundles byte for byte: gen.py reads the tree's upload
+  state and refuses to change a published bundle's file, and code that refers into a published bundle
+  uses the names Lean gave there (checked against the compiled bundles; the published text read back
+  from the platform equals the local files).
+* **Validation.** The source types come from a dump made while the source oleans existed
+  (`tools/orig_types.lean`, 18,570 theorems), so the oleans could be archived. Each solution is
+  checked by compiling a copy with the check appended (no olean written), and its type is compared
+  with its stub's printed with `pp.all`: the default print depends on the notation the environment
+  has (`∀ i < n, …` where Mathlib's binder predicates are imported, `∀ (i : ℕ), i < n → …` where not).
+  A statement naming a private definition prints it `name✝` in the source and bare in the stub, whose
+  copy is public; the check lists such pairs apart.
+* **Upload.** `scripts/p2m_upload.py --pipeline` replaces the waves' barriers by one scheduler: each
+  bundle, statement and solution is submitted as soon as what it imports is ready (a bundle's imported
+  nodes Proved), with one cap on the jobs of all kinds; `--gate` holds each solution until the local
+  check has passed it; `--after` lets a tree wait for content of a sibling tree uploaded alongside.
+
+The upload of both trees began on 2026-10-16 at 23:08 UTC and is recorded in
+`answerreduction/upload-state.json` and `introspection/upload-state.json`; its outcome is added here
+when it completes.
+
 ## Reproducing
 
 The build workspace is a Lake project pinned to the platform environment (toolchain
@@ -193,20 +269,28 @@ python3 tools/ws_extend.py <root module>               # the root's closure at 7
 lake env lean --run tools/min_imports.lean <vendored modules> > mi.out   # in the main repository
 python3 tools/ws_rewrite_imports.py --from-lean mi.out && python3 tools/ws_rewrite_imports.py
 tools/ws_fetch_closure.sh <list of Mathlib files>      # oleans the cache has, in batches
+python3 tools/ws_rewrite_meta.py                       # metaprogramming the platform refuses, rewritten away
 python3 tools/compile_modules.py --parts <roots>       # the rest, with lean --setup, in import order
 lake env lean tools/extract_decl_graph.lean            # in ws/: decl_graph.jsonl (Stage 1)
-lake env lean --run tools/extract_sketch_info_plus.lean <file> MIPRE,QuantumParallelRepetition  # Stage 2, per module
+lake env lean --run tools/extract_sketch_info_plus.lean <file> MIPRE,MIPStarRE,QuantumParallelRepetition  # Stage 2
+lake env lean --run tools/orig_types.lean <roots> > orig_types.txt   # source types, before archiving the oleans
+lake env lean --run tools/ext_namespaces.lean <external modules> > ext_namespaces.txt
 python3 <tree>/make_config.py                          # config.json: targets, published trees, glue leaves
 P2M_CONFIG=<tree>/config.json python3 tools/plan.py    # plan.json: bundles, nodes, inline helpers, waves' edges
 P2M_CONFIG=… python3 tools/gen.py && python3 tools/glue_leaves.py     # the generated files, tree.json, glue.json
-P2M_CONFIG=… python3 tools/build_tree.py --jobs 3      # compiles them directly with lean --setup
-P2M_CONFIG=… python3 tools/validate.py --jobs 3        # type diff original/stub/solution, axioms
+P2M_CONFIG=… python3 tools/build_tree.py --jobs 3 --no-solutions   # bundles and stubs, lean --setup
+P2M_CONFIG=… python3 tools/validate.py --phase orig --orig-from orig_types.txt && … --phase stubs
+P2M_CONFIG=… python3 tools/validate.py --phase solutions --compile --wave-order <tree> --jobs 3   # alongside:
 P2M_CONFIG=… python3 tools/meta_packets.py && python3 tools/auto_meta.py --packets … --out <tree>
 python3 tools/merge_meta.py --tree <tree>              # metadata.json (writer records override)
-PROVE2ME_API_KEY=… python3 scripts/p2m_upload.py --tree <tree> --dry-run   # then without --dry-run
+PROVE2ME_API_KEY=… python3 scripts/p2m_upload.py --tree <tree> --pipeline --gate <validation-solutions.jsonl> \
+    [--after <sibling tree>] --dry-run                   # then without --dry-run
 ```
 
-The uploader publishes in waves (a bundle that imports a theorem of the same tree goes one wave
-after that theorem, once the platform shows it Proved), resumes from `upload-state.json`, needs only
-Python 3 and network access to `prove2.me`, and reads the API key from the environment without
-printing or storing it.
+The uploader publishes in dependency order (a bundle that imports a theorem of the same tree only
+once the platform shows that theorem Proved): wave by wave, or with `--pipeline` each item as soon as
+what it imports is ready. It resumes from `upload-state.json`, needs only Python 3 and network access
+to `prove2.me`, and reads the API key from the environment without printing or storing it. A
+generator change made after part of a tree is published must leave the published bundles unchanged;
+`gen.py` checks this against the tree's upload state, and `P2M_GEN_DRYRUN=1` lists the files a run
+would change without writing them.
