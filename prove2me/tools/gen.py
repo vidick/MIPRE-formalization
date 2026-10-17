@@ -739,11 +739,58 @@ for _x, _u in U.items():
         if _rf["end"]["offset"] <= _b and txt(_m, _rf["start"]["offset"], _rf["end"]["offset"]) == "solution":
             REF_FIX[(_m, _rf["start"]["offset"], _rf["end"]["offset"])] = _user_of(_rf["const"])
 
-def spliced(m, a, b, extra=()):
-    """The source text of module m from a to b with the REF_FIX references in it written in full and
-    the given insertions [(offset, text)] made."""
+# A solution pastes each helper into a file that sees what its node's module sees (the bundles of that
+# module's whole closure), so a constant the helper's own module could not see may take one of the
+# helper's references: `MIPRE.Introspection.C`, a field of the structure `Introspection`, took `C`
+# (`Polynomial.C`, under `open Polynomial`) from a helper of `namespace MIPRE.Introspection` declared
+# before that structure existed.  The references to Mathlib have no ref facts (the extraction records
+# the project's constants only), so such captures are listed from the local check's reports: (helper,
+# the text, its replacement, the capturing constant); each is written in full in the solutions whose
+# environment has the capturing constant while the helper's module did not.
+PASTE_FIX = [("MIPRE.Introspection.typedSamplerCost_natDegree_le", "C (esize n + 1)",
+              "Polynomial.C (esize n + 1)", "MIPRE.Introspection.C")]
+ENV_AT = collections.defaultdict(list)   # constant (user name) -> [(unit, module, offset)] of the units declaring it
+for _x, _u in U.items():
+    if _u.get("decl") and _u.get("decl").get("declStart"):
+        for _r in _u.get("rows", []):
+            ENV_AT[_user_of(_r)].append((_x, _u["module"], _u["decl"]["declStart"]["offset"]))
+
+# Lean shares a matcher between declarations of one file whose `match`es compile to the same function, so
+# a node's statement can take the matcher of a helper pasted before it (`router_context.match_1` in the
+# type of `untypedKernel_iff`'s solution, where the stub has its own `untypedKernel_iff.match_1`): the
+# helpers listed here are pasted with their matchers left uncompiled, which are then not shared
+# (`bootstrap.genMatcherCode` is part of the cache key), and the solution's type has its own
+# `solution.match_1` as every other solution's does.  node -> helpers
+FRESH_MATCHER = {"MIPRE.Introspection.DecisionCompiler.untypedKernel_iff":
+                 ["MIPRE.Introspection.DecisionCompiler.router_context"]}
+
+def capture_fix(uid, m, imported_nodes, emitted):
+    """[(start, end, text)]: the PASTE_FIX replacements for helper uid pasted into the solution of a node
+    of module m."""
+    u = U[uid]
+    hm, hoff = u["module"], u["decl"]["declStart"]["offset"]
+    src_mods, sol_mods = mod_closure.get(hm, set()), mod_closure.get(m, set()) | {m}
+    def in_src(n):   # a constant the helper's module saw when it declared the helper
+        return any(md in src_mods or (md == hm and off < hoff) for _v, md, off in ENV_AT.get(n, ()))
+    def in_sol(n):   # a constant of the solution's environment: its bundles, imported stubs, pasted helpers
+        return any(v in emitted or v in imported_nodes or (U[v]["cls"] in ("defmat", "embedded", "avail") and md in sol_mods)
+                   for v, md, _off in ENV_AT.get(n, ()))
+    a, b = u["decl"]["declStart"]["offset"], u["decl"]["declEnd"]["offset"]
+    out = []
+    for helper, old, new, capturer in PASTE_FIX:
+        if helper != u["name"] or not in_sol(capturer) or in_src(capturer):
+            continue
+        text = F[hm]["B"][a:b]
+        k = text.find(old.encode("utf-8"))
+        assert k >= 0 and text.find(old.encode("utf-8"), k + 1) < 0, (helper, old)
+        out.append((a + k, a + k + len(old.encode("utf-8")), new))
+    return out
+
+def spliced(m, a, b, extra=(), repl=()):
+    """The source text of module m from a to b with the REF_FIX references in it written in full, the
+    given insertions [(offset, text)] made and the given references [(start, end, text)] replaced."""
     edits = sorted([(k[1], k[2], v) for k, v in REF_FIX.items() if k[0] == m and a <= k[1] and k[2] <= b]
-                   + [(k, k, t) for k, t in extra])
+                   + [(k, k, t) for k, t in extra] + list(repl))
     B, out, pos = F[m]["B"], [], a
     for s_, e_, t_ in edits:
         out.append(B[pos:s_].decode("utf-8")); out.append(t_); pos = e_
@@ -845,6 +892,7 @@ generated = []
 # P2M_GEN_DRYRUN=1: write nothing, report the files a run would change (while an upload reads them)
 DRYRUN = bool(os.environ.get("P2M_GEN_DRYRUN"))
 WOULD_CHANGE = []
+CAPTURED = []   # (solution slug, helper, reference written in full) of capture_fix
 
 def emit(rel, text):
     fn = f"{WS}/{rel}"
@@ -1023,12 +1071,12 @@ for m in TOPO:
     }
 
 # ---------- helpers for hoisted context ----------
-def unit_text(uid):
+def unit_text(uid, repl=()):
     u = U[uid]
     a, b = u["decl"]["declStart"]["offset"], u["decl"]["declEnd"]["offset"]
     # an anonymous local instance keeps its source name (see ANON_LOCAL); see REF_FIX for the rest
     extra = [(ANON_LOCAL[uid][0], " " + ANON_LOCAL[uid][1])] if uid in ANON_LOCAL else []
-    return mod_rename(u["module"], spliced(u["module"], a, b, extra))
+    return mod_rename(u["module"], spliced(u["module"], a, b, extra, repl))
 
 def head_rest(uid, upto):
     """Text from after the binding name up to `upto` ('val' = valStart, 'end' = declEnd)."""
@@ -1071,7 +1119,7 @@ def attr_lines(uid, available):
             out.append(f"attribute {attr} " + " ".join(dict.fromkeys(names)))
     return out
 
-def pasted_block(uid, available, env_ns):
+def pasted_block(uid, available, env_ns, repl=(), lead=""):
     """A helper declaration with its scope: namespace, then a section (noncomputable when the source
     declares it inside one, so that a pasted definition compiles as in the source) holding the `open`,
     `set_option`/`universe` and `variable` lines and the attribute commands in effect (a `local instance`
@@ -1092,7 +1140,7 @@ def pasted_block(uid, available, env_ns):
     body += ctx["opts"]
     body += filter_vars(U[uid]["module"], ctx["vars"], available)
     body += attr_lines(uid, available)
-    body.append(unit_text(uid).rstrip())
+    body.append(lead + unit_text(uid, repl).rstrip())
     body.append("end")
     if ns:
         body.append(f"end {ns}")
@@ -1186,7 +1234,11 @@ for uid in nodes:
                 or tu in c["imported_nodes"])
     for e in events:
         if e[0] == "unit":
-            sol_parts.append(pasted_block(e[3], available, sol_env | env_ns_of(emitted)))
+            fix = capture_fix(e[3], m, c["imported_nodes"], emitted)
+            CAPTURED.extend((slug, U[e[3]]["name"], t_) for _s, _e, t_ in fix)
+            lead = ("set_option bootstrap.genMatcherCode false in\n"
+                    if U[e[3]]["name"] in FRESH_MATCHER.get(u["name"], ()) else "")
+            sol_parts.append(pasted_block(e[3], available, sol_env | env_ns_of(emitted), fix, lead))
             emitted.add(e[3])
         else:
             at = e[3]
@@ -1259,6 +1311,7 @@ if DRYRUN:
     print(f"dry run: {len(WOULD_CHANGE)} file(s) would change, {len(REF_FIX)} reference(s) written in full:")
     for rel in WOULD_CHANGE:
         print("  ", rel)
+    print(f"{len(CAPTURED)} pasted-helper reference(s) written in full against a capture, e.g. {CAPTURED[:6]}")
     sys.exit(0)
 # the anonymous local instances whose copies are referred to under a name the source did not give them
 # (in a published bundle, named by Lean): for checking against the compiled bundles
