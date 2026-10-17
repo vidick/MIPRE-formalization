@@ -2083,14 +2083,32 @@
   "MIPRE_Background_QLD_Pulling": {
    "submitted_at": 1792211717.1840005,
    "http": 202,
-   "status": "PENDING",
-   "job_id": "36cf8a6b-e506-4654-a085-5143c2fd028a"
+   "status": "PUBLISHED",
+   "job_id": "36cf8a6b-e506-4654-a085-5143c2fd028a",
+   "theorem_id": "7d1c0f9d-9398-4f69-8aa1-fe4f72b00996",
+   "error_message": ""
   },
   "MIPRE_Background_QLD_TwoPairs": {
    "submitted_at": 1792211717.5973074,
    "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "9bb92a9d-c52a-4a1f-b782-4d25b42db071",
+   "theorem_id": "137aba74-c269-4965-b5b6-6aed69b71578",
+   "error_message": ""
+  },
+  "MIPRE_Background_QLD_SwapMeasure": {
+   "submitted_at": 1792211869.448558,
+   "http": 202,
+   "status": "PUBLISHED",
+   "job_id": "8a858975-9c51-47a3-852c-b75bd2b1a0e2",
+   "theorem_id": "b3a261e1-8d54-499a-a965-7d3a0554a06e",
+   "error_message": ""
+  },
+  "MIPRE_Background_QLD_ChainProbe": {
+   "submitted_at": 1792211973.6691988,
+   "http": 202,
    "status": "PENDING",
-   "job_id": "9bb92a9d-c52a-4a1f-b782-4d25b42db071"
+   "job_id": "364f5d6e-7271-4daa-93cd-79a8aab69e1f"
   }
  },
  "theorems": {
@@ -10236,8 +10254,8 @@
    "submitted_at": 1792211718.759138,
    "http": 200,
    "submission_id": "073d58f9-d623-4af3-9e32-7b26b81a46ad",
-   "status": "PENDING",
-   "error_message": "Failed to materialize the target's dependencies: Import parser timed out after 5s"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.QLD.avg_pair_eq_content_X_self": {
    "submitted_at": 1792211606.06337,
@@ -10254,17 +10272,18 @@
    "error_message": ""
   },
   "MIPRE.Introspection.BinaryComplete.sampleOp_commute": {
-   "submitted_at": 1792211641.020197,
+   "submitted_at": 1792211955.2194993,
    "http": 200,
-   "submission_id": "a56263a2-cc2a-4680-b4b8-83cc2a9cdb2f",
-   "status": "PENDING"
+   "submission_id": "90142279-dc79-4cd3-b664-193f4f282ec3",
+   "status": "PENDING",
+   "error_message": "Failed to resolve platform imports: Import parser timed out after 5s"
   },
   "MIPRE.QLD.bornProb_extVec2_aOp_aOp": {
-   "submitted_at": 1792211641.6443818,
+   "submitted_at": 1792211865.4730313,
    "http": 200,
-   "submission_id": "4947e55e-621d-4d72-83da-45d71883067d",
-   "status": "ERROR",
-   "error_message": "Failed to resolve platform imports: Import parser timed out after 5s"
+   "submission_id": "de5981e2-f997-400c-8af5-192cc0d3f8cb",
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.QLD.qldGame_mu_symm": {
    "submitted_at": 1792211642.6119263,
@@ -10284,36 +10303,134 @@
    "submitted_at": 1792211675.9392762,
    "http": 200,
    "submission_id": "c203aad5-f06b-4f9b-bd58-2d9f19fc0afa",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.QLD.sum_normSq_hat_point_sub_pauli_le": {
    "submitted_at": 1792211718.2074552,
    "http": 200,
    "submission_id": "6a141370-280a-477b-9743-27dbf73caed9",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Introspection.residualDualOp_stage": {
    "submitted_at": 1792211719.3449538,
    "http": 200,
    "submission_id": "e0156835-00bf-44b3-9cca-4e9b9b71ddc4",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.QLD.povmValue_swapped_le": {
    "submitted_at": 1792211721.3874936,
    "http": 200,
    "submission_id": "75f55d1f-2737-4852-aa2f-068a6205aab4",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Introspection.prefixResidualOp_initial_apply": {
    "submitted_at": 1792211736.7487354,
    "http": 200,
    "submission_id": "b09426a0-f03a-497b-bcdd-fc2f5c5e783a",
-   "status": "PENDING"
+   "status": "ACCEPTED",
+   "error_message": ""
   },
   "MIPRE.Introspection.initialResidualPOVM_isPVM": {
    "submitted_at": 1792211737.3186953,
    "http": 200,
    "submission_id": "d2109dd9-8856-4a76-8f57-0f343935d4e7",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.initialResidualPOVM_reassembly": {
+   "submitted_at": 1792211866.1350307,
+   "http": 200,
+   "submission_id": "95b330c7-f5b7-49cd-9d6b-a269b2a2aca0",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.initialResidualPOVM_some_support": {
+   "submitted_at": 1792211866.7232,
+   "http": 200,
+   "submission_id": "fc41bf4c-7ad8-4ccb-b5c7-30001856ee55",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.TypedEstimates.introspect_prefix_register_rigidity_alice": {
+   "submitted_at": 1792211867.3944373,
+   "http": 200,
+   "submission_id": "5c9be324-a397-4200-be82-9cdeaefc8039",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.CLChecks.outputPrefix_eq_of_agree": {
+   "submitted_at": 1792211870.1149273,
+   "http": 200,
+   "submission_id": "9d8a1394-5937-4f49-a592-d4b744099a79",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.advancePrefix_eval": {
+   "submitted_at": 1792211870.7139976,
+   "http": 200,
+   "submission_id": "064749da-f9f3-4c83-afc1-f42ab17eb177",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.prefixResidual_reassembled_commutator": {
+   "submitted_at": 1792211954.4514208,
+   "http": 200,
+   "submission_id": "e4e11c98-6dc9-46ed-b3d9-340b34e4a263",
+   "status": "PENDING",
+   "error_message": "Failed to materialize the target's dependencies: DB error looking up import 'Theorems.Thm_MIPRE_aOp_smul': <ConnectionTerminated error_code:0, last_stream_id:19999, additional_data:None>"
+  },
+  "MIPRE.Introspection.stageRemaining_step": {
+   "submitted_at": 1792211871.7926981,
+   "http": 200,
+   "submission_id": "3acc943a-ea09-4d26-8150-190bf5ee9ae4",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.QLD.sum_content_hatComm_le_B": {
+   "submitted_at": 1792211886.3560677,
+   "http": 200,
+   "submission_id": "1b29f753-eb5a-4504-a9e8-21b5f11ed79d",
+   "status": "ACCEPTED",
+   "error_message": ""
+  },
+  "MIPRE.Introspection.adaptiveReplacement_distance": {
+   "submitted_at": 1792211888.2401881,
+   "http": 200,
+   "submission_id": "4f50af0c-65d1-49b2-ab30-8d3eb19244cd",
+   "status": "PENDING"
+  },
+  "MIPRE.Introspection.advancePrefix_outputPrefix_fixed": {
+   "submitted_at": 1792211984.7298055,
+   "http": 200,
+   "submission_id": "80a536df-45c8-4aa4-9b35-90fae971d607",
+   "status": "PENDING"
+  },
+  "MIPRE.QLD.combined_points_pts": {
+   "submitted_at": 1792211996.207782,
+   "http": 200,
+   "submission_id": "5d762b2a-ca06-4606-ba22-18fdaa177b61",
+   "status": "PENDING"
+  },
+  "MIPRE.Introspection.advancePrefix_remaining": {
+   "submitted_at": 1792211996.8854108,
+   "http": 200,
+   "submission_id": "b9d56cc9-401b-4abf-a0c2-2155759e94e4",
+   "status": "PENDING"
+  },
+  "MIPRE.Introspection.advancePrefix_injective": {
+   "submitted_at": 1792211997.4899797,
+   "http": 200,
+   "submission_id": "e366ade7-fb84-40a2-8a9b-90184af1de10",
+   "status": "PENDING"
+  },
+  "MIPRE.Introspection.exists_adaptive_prefix_dilation": {
+   "submitted_at": 1792212008.1789389,
+   "http": 200,
+   "submission_id": "0ea0bc4b-4586-4001-84fd-be82574346df",
    "status": "PENDING"
   }
  },
