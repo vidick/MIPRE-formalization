@@ -3803,8 +3803,10 @@
   "MIPRE_Background_AnswerReduction_Instance": {
    "submitted_at": 1792236953.5575185,
    "http": 202,
-   "status": "PENDING",
-   "job_id": "fe7f8282-549b-4394-ad6a-81c1c1d7c18a"
+   "status": "PUBLISHED",
+   "job_id": "fe7f8282-549b-4394-ad6a-81c1c1d7c18a",
+   "theorem_id": "90e19f71-ea76-499c-8cad-84dbb01117b9",
+   "error_message": ""
   }
  },
  "theorems": {
@@ -17198,6 +17200,11 @@
    "status": "PUBLISHED",
    "theorem_id": "52b2710f-31ff-4340-88a4-4079aa79df87",
    "error_message": ""
+  },
+  "MIPRE.AnswerReduction.nonempty_five": {
+   "status": "PUBLISHED",
+   "theorem_id": "782fac86-587a-4954-ae00-f27c4c7c508d",
+   "note": "published before this tree"
   }
  },
  "solutions": {
@@ -28911,6 +28918,12 @@
    "submission_id": "12d98b95-f918-4038-ae65-8b71a0b05c3f",
    "status": "ACCEPTED",
    "error_message": ""
+  },
+  "MIPRE.AnswerReduction.nonempty_five": {
+   "submitted_at": 1792237378.9808848,
+   "http": 200,
+   "submission_id": "f1140276-4a9c-4dca-af87-ca17462809cd",
+   "status": "PENDING"
   }
  },
  "log": []
